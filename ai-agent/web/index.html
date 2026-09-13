@@ -34,6 +34,18 @@
         <span class="nav-icon">🌱</span>
         <span>线索培育</span>
       </a>
+      <a href="#" class="nav-item" data-page="notifications">
+        <span class="nav-icon">🔔</span>
+        <span>通知中心</span>
+      </a>
+      <a href="#" class="nav-item" data-page="analytics">
+        <span class="nav-icon">📊</span>
+        <span>数据分析</span>
+      </a>
+      <a href="#" class="nav-item" data-page="abtest">
+        <span class="nav-icon">🧪</span>
+        <span>A/B测试</span>
+      </a>
       <a href="#" class="nav-item" data-page="settings">
         <span class="nav-icon">⚙️</span>
         <span>系统设置</span>
@@ -164,6 +176,7 @@
           </select>
         </div>
         <button class="btn btn-primary" onclick="loadLeads()">刷新</button>
+        <button class="btn" style="background:#16a34a;color:white;" onclick="exportLeads()">导出CSV</button>
       </div>
 
       <div class="table-container">
@@ -404,6 +417,138 @@
       </div>
     </div>
 
+    <!-- 通知中心页面 -->
+    <div class="page" id="page-notifications">
+      <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="margin:0;">通知中心</h3>
+          <div>
+            <button class="btn" style="background:#f5f5f4;color:#1c1917;margin-right:8px;" onclick="loadNotifications()">刷新</button>
+            <button class="btn btn-primary" onclick="markAllAsRead()">全部已读</button>
+          </div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="margin-right:16px;">
+            <input type="checkbox" id="filter-unread" onchange="loadNotifications()" style="margin-right:6px;">
+            只看未读
+          </label>
+          <span id="unread-count" style="color:#ea580c; font-weight:600;"></span>
+        </div>
+        <div id="notifications-list">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:20px;">
+        <h3>通知规则设置</h3>
+        <div id="notification-rules">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据分析页面 -->
+    <div class="page" id="page-analytics">
+      <div class="stats-grid" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-value" id="ana-total">0</div>
+          <div class="stat-label">总线索数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ana-converted">0</div>
+          <div class="stat-label">已转化</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ana-rate">0%</div>
+          <div class="stat-label">转化率</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ana-a-level">0</div>
+          <div class="stat-label">A级意向</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:20px;">
+        <h3>转化漏斗</h3>
+        <div id="funnel-chart" style="padding:20px 0;">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:20px;">
+        <h3>近7天趋势</h3>
+        <div id="trend-chart" style="padding:20px 0;">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:20px;">
+        <h3>来源分析</h3>
+        <div id="source-analysis">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>优化建议</h3>
+        <div id="recommendations">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A/B 测试页面 -->
+    <div class="page" id="page-abtest">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="margin:0;">A/B 测试管理</h3>
+        <button class="btn btn-primary" onclick="showCreateABTest()">创建新测试</button>
+      </div>
+
+      <div id="abtest-list">
+        <div class="empty-state">加载中...</div>
+      </div>
+
+      <!-- 创建测试弹窗 -->
+      <div class="modal" id="abtest-modal" style="display:none;">
+        <div class="modal-content" style="max-width:600px;">
+          <div class="modal-header">
+            <h3>创建 A/B 测试</h3>
+            <button class="modal-close" onclick="closeABTestModal()">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>测试名称</label>
+              <input type="text" id="abtest-name" placeholder="例如：欢迎语优化测试">
+            </div>
+            <div class="form-group">
+              <label>测试类型</label>
+              <select id="abtest-type">
+                <option value="welcome_message">欢迎语</option>
+                <option value="script">对话话术</option>
+                <option value="content">营销内容</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>版本 A 内容</label>
+              <textarea id="abtest-variant-a" rows="3" placeholder="版本 A 的内容"></textarea>
+            </div>
+            <div class="form-group">
+              <label>版本 B 内容</label>
+              <textarea id="abtest-variant-b" rows="3" placeholder="版本 B 的内容"></textarea>
+            </div>
+            <div class="form-group">
+              <label>最小样本量</label>
+              <input type="number" id="abtest-min-sample" value="100">
+            </div>
+          </div>
+          <div class="modal-footer" style="padding:16px; border-top:1px solid #e7e5e4; display:flex; justify-content:flex-end; gap:8px;">
+            <button class="btn" style="background:#f5f5f4;color:#1c1917;" onclick="closeABTestModal()">取消</button>
+            <button class="btn btn-primary" onclick="createABTest()">创建测试</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 系统设置页面 -->
     <div class="page" id="page-settings">
       <div class="panel">
@@ -442,6 +587,17 @@
       <div class="panel">
         <h3>DSH 插件系统</h3>
         <div id="dsh-status">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>API Key 管理</h3>
+        <div style="margin-bottom:16px;">
+          <input type="text" id="new-key-name" placeholder="输入 API Key 名称" style="padding:8px 12px; border:1px solid #e7e5e4; border-radius:8px; width:250px; margin-right:8px;">
+          <button class="btn btn-primary" onclick="generateApiKey()">生成新 Key</button>
+        </div>
+        <div id="api-keys-list">
           <div class="empty-state">加载中...</div>
         </div>
       </div>
