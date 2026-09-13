@@ -1,0 +1,60 @@
+# WorkHogee DSH 插件配置
+# 基于 DeepSeek Harness 理念的插件系统配置
+
+# 插件列表
+plugins:
+  - name: workhogee-smart-intake
+    enabled: true
+    version: 0.1.0
+    description: 智能承接插件 - 对话承接、意向判定、资格筛选、线索记录
+
+  - name: workhogee-content-creator
+    enabled: true
+    version: 0.1.0
+    description: 内容智造插件 - 小红书笔记、公众号文章、营销文案、内容日历
+
+  - name: workhogee-lead-nurture
+    enabled: true
+    version: 0.1.0
+    description: 线索培育插件 - 跟进话术、培育内容、跟进计划、跟进提醒
+
+# 智能承接插件配置
+workhogee-smart-intake:
+  autoCreateLead: true
+  intentionThreshold: B
+  maxConversationLength: 50
+
+# 内容智造插件配置
+workhogee-content-creator:
+  defaultStyle: 种草
+  defaultWordCount: 1500
+  imageSuggestionCount: 6
+
+# 线索培育插件配置
+workhogee-lead-nurture:
+  followUpDaysThreshold: 3
+  aLevelFrequency: daily
+  bLevelFrequency: every2days
+  cLevelFrequency: weekly
+
+# 服务配置
+services:
+  llm:
+    provider: deepseek
+    model: deepseek-chat
+    maxTokens: 2048
+    temperature: 0.7
+
+  leadStorage:
+    type: file
+    path: ./data/leads
+
+  conversationStorage:
+    type: file
+    path: ./data/conversations
+
+# 业务配置
+business:
+  industry: AI SaaS / 企业服务 / 智能营销
+  product: WorkHogee AI 获客伙计
+  targetCustomer: 中小企业主、营销负责人、电商卖家
