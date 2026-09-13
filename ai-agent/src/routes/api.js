@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = function(services) {
-  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService } = services;
+  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService } = services;
 
   // ===== 对话相关 API =====
 
@@ -954,6 +954,240 @@ module.exports = function(services) {
     }
   });
 
+  // ===== 知识库 API =====
+
+  // --- 产品资料 ---
+  router.get('/knowledge/documents', (req, res) => {
+    try {
+      const docs = knowledgeBase.listDocuments(req.query.category, req.query.keyword);
+      res.json({ success: true, data: { documents: docs, total: docs.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.post('/knowledge/documents', (req, res) => {
+    try {
+      const { title, content, category, tags } = req.body;
+      if (!title || !content) {
+        return res.status(400).json({ success: false, error: '标题和内容必填' });
+      }
+      const doc = knowledgeBase.addDocument(title, content, category || 'product', tags || []);
+      res.json({ success: true, data: doc });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.get('/knowledge/documents/:id', (req, res) => {
+    try {
+      const doc = knowledgeBase.getDocument(req.params.id);
+      if (doc) res.json({ success: true, data: doc });
+      else res.status(404).json({ success: false, error: '文档不存在' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.put('/knowledge/documents/:id', (req, res) => {
+    try {
+      const doc = knowledgeBase.updateDocument(req.params.id, req.body);
+      if (doc) res.json({ success: true, data: doc });
+      else res.status(404).json({ success: false, error: '文档不存在' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.delete('/knowledge/documents/:id', (req, res) => {
+    try {
+      const success = knowledgeBase.deleteDocument(req.params.id);
+      res.json({ success, message: success ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // --- FAQ ---
+  router.get('/knowledge/faqs', (req, res) => {
+    try {
+      const faqs = knowledgeBase.listFAQs(req.query.category, req.query.keyword);
+      res.json({ success: true, data: { faqs, total: faqs.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.post('/knowledge/faqs', (req, res) => {
+    try {
+      const { question, answer, category, tags } = req.body;
+      if (!question || !answer) {
+        return res.status(400).json({ success: false, error: '问题和答案必填' });
+      }
+      const faq = knowledgeBase.addFAQ(question, answer, category || 'general', tags || []);
+      res.json({ success: true, data: faq });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.put('/knowledge/faqs/:id', (req, res) => {
+    try {
+      const faq = knowledgeBase.updateFAQ(req.params.id, req.body);
+      if (faq) res.json({ success: true, data: faq });
+      else res.status(404).json({ success: false, error: 'FAQ不存在' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.delete('/knowledge/faqs/:id', (req, res) => {
+    try {
+      const success = knowledgeBase.deleteFAQ(req.params.id);
+      res.json({ success, message: success ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // --- 话术库 ---
+  router.get('/knowledge/scripts', (req, res) => {
+    try {
+      const scripts = knowledgeBase.listScripts(req.query.scenario, req.query.keyword);
+      res.json({ success: true, data: { scripts, total: scripts.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.post('/knowledge/scripts', (req, res) => {
+    try {
+      const { title, content, scenario, tags } = req.body;
+      if (!title || !content) {
+        return res.status(400).json({ success: false, error: '标题和内容必填' });
+      }
+      const script = knowledgeBase.addScript(title, content, scenario || 'general', tags || []);
+      res.json({ success: true, data: script });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.put('/knowledge/scripts/:id', (req, res) => {
+    try {
+      const script = knowledgeBase.updateScript(req.params.id, req.body);
+      if (script) res.json({ success: true, data: script });
+      else res.status(404).json({ success: false, error: '话术不存在' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.delete('/knowledge/scripts/:id', (req, res) => {
+    try {
+      const success = knowledgeBase.deleteScript(req.params.id);
+      res.json({ success, message: success ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // --- 智能回复 & 统计 ---
+  router.post('/knowledge/reply', async (req, res) => {
+    try {
+      const { query, context } = req.body;
+      if (!query) {
+        return res.status(400).json({ success: false, error: '查询内容必填' });
+      }
+      const result = await knowledgeBase.generateKnowledgeReply(query, context || {});
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.get('/knowledge/stats', (req, res) => {
+    try {
+      const stats = knowledgeBase.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  router.post('/knowledge/import', (req, res) => {
+    try {
+      const { type, items } = req.body;
+      if (!type || !items || !Array.isArray(items)) {
+        return res.status(400).json({ success: false, error: '类型和数据列表必填' });
+      }
+      const result = knowledgeBase.importData(type, items);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 报告系统 API =====
+
+  /**
+   * 生成日报
+   * POST /api/reports/daily/generate
+   */
+  router.post('/reports/daily/generate', async (req, res) => {
+    try {
+      const report = await reportService.generateDailyReport(req.body.date);
+      await reportService.sendReportNotification(report);
+      res.json({ success: true, data: report });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 生成周报
+   * POST /api/reports/weekly/generate
+   */
+  router.post('/reports/weekly/generate', async (req, res) => {
+    try {
+      const report = await reportService.generateWeeklyReport(req.body.weekStart);
+      await reportService.sendReportNotification(report);
+      res.json({ success: true, data: report });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取报告列表
+   * GET /api/reports?type=daily&limit=20
+   */
+  router.get('/reports', (req, res) => {
+    try {
+      const reports = reportService.listReports(req.query.type, parseInt(req.query.limit) || 20);
+      res.json({ success: true, data: { reports, total: reports.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取报告详情
+   * GET /api/reports/:id
+   */
+  router.get('/reports/:id', (req, res) => {
+    try {
+      const report = reportService.getReport(req.params.id);
+      if (report) {
+        res.json({ success: true, data: report });
+      } else {
+        res.status(404).json({ success: false, error: '报告不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // ===== 健康检查 =====
 
   /**
@@ -966,7 +1200,7 @@ module.exports = function(services) {
       data: {
         status: 'ok',
         service: 'WorkHogee AI 获客伙计',
-        version: '0.3.0',
+        version: '0.4.0',
         capabilities: ['smart-intake', 'content-creator', 'lead-nurture'],
         timestamp: new Date().toISOString()
       }
