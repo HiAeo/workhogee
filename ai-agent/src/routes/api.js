@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = function(services) {
-  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture } = services;
+  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService } = services;
 
   // ===== 对话相关 API =====
 
@@ -354,6 +354,606 @@ module.exports = function(services) {
     }
   });
 
+  // ===== 数据导出 API =====
+
+  /**
+   * 导出线索数据为 CSV
+   * GET /api/export/leads?intentionLevel=A&status=following
+   */
+  router.get('/export/leads', (req, res) => {
+    try {
+      const filters = {
+        intentionLevel: req.query.intentionLevel,
+        status: req.query.status,
+        source: req.query.source
+      };
+      const result = exportService.exportLeadsToCSV(filters);
+
+      res.setHeader('Content-Type', result.mimeType);
+      res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+      res.send(result.content);
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 导出统计数据为 CSV
+   * GET /api/export/stats
+   */
+  router.get('/export/stats', (req, res) => {
+    try {
+      const result = exportService.exportStatsToCSV();
+      res.setHeader('Content-Type', result.mimeType);
+      res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+      res.send(result.content);
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== API Key 管理 =====
+
+  /**
+   * 获取所有 API Key 列表
+   * GET /api/auth/keys
+   */
+  router.get('/auth/keys', (req, res) => {
+    try {
+      const keys = authService.listKeys();
+      res.json({ success: true, data: { keys, total: keys.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 生成新的 API Key
+   * POST /api/auth/keys
+   */
+  router.post('/auth/keys', (req, res) => {
+    try {
+      const { name, permissions } = req.body;
+      if (!name) {
+        return res.status(400).json({ success: false, error: '请提供 API Key 名称' });
+      }
+      const apiKey = authService.generateKey(name, 'admin', permissions || {});
+      res.json({ success: true, data: apiKey });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 撤销 API Key
+   * DELETE /api/auth/keys/:id
+   */
+  router.delete('/auth/keys/:id', (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = authService.revokeKey(id);
+      if (success) {
+        res.json({ success: true, message: 'API Key 已撤销' });
+      } else {
+        res.status(404).json({ success: false, error: 'API Key 不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取 API 调用统计
+   * GET /api/auth/stats
+   */
+  router.get('/auth/stats', (req, res) => {
+    try {
+      const stats = authService.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 通知系统 API =====
+
+  /**
+   * 获取通知列表
+   * GET /api/notifications?page=1&pageSize=20&unreadOnly=true
+   */
+  router.get('/notifications', (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 20;
+      const unreadOnly = req.query.unreadOnly === 'true';
+      const result = notificationService.getNotifications({ page, pageSize, unreadOnly });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 标记通知为已读
+   * PUT /api/notifications/:id/read
+   */
+  router.put('/notifications/:id/read', (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = notificationService.markAsRead(id);
+      if (success) {
+        res.json({ success: true, message: '已标记为已读' });
+      } else {
+        res.status(404).json({ success: false, error: '通知不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 标记所有通知为已读
+   * PUT /api/notifications/read-all
+   */
+  router.put('/notifications/read-all', (req, res) => {
+    try {
+      notificationService.markAllAsRead();
+      res.json({ success: true, message: '所有通知已标记为已读' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取通知规则
+   * GET /api/notifications/rules
+   */
+  router.get('/notifications/rules', (req, res) => {
+    try {
+      const rules = notificationService.getRules();
+      res.json({ success: true, data: rules });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新通知规则
+   * PUT /api/notifications/rules/:ruleName
+   */
+  router.put('/notifications/rules/:ruleName', (req, res) => {
+    try {
+      const { ruleName } = req.params;
+      const updates = req.body;
+      const rule = notificationService.updateRule(ruleName, updates);
+      if (rule) {
+        res.json({ success: true, data: rule });
+      } else {
+        res.status(404).json({ success: false, error: '规则不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 数据分析 API =====
+
+  /**
+   * 获取综合分析报告
+   * GET /api/analytics/report
+   */
+  router.get('/analytics/report', (req, res) => {
+    try {
+      const report = analyticsService.getReport();
+      res.json({ success: true, data: report });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取转化漏斗数据
+   * GET /api/analytics/funnel
+   */
+  router.get('/analytics/funnel', (req, res) => {
+    try {
+      const report = analyticsService.getReport();
+      res.json({ success: true, data: report.conversion.funnel });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取趋势数据
+   * GET /api/analytics/trends
+   */
+  router.get('/analytics/trends', (req, res) => {
+    try {
+      const report = analyticsService.getReport();
+      res.json({ success: true, data: report.trends });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== A/B 测试 API =====
+
+  /**
+   * 获取 A/B 测试列表
+   * GET /api/ab-tests
+   */
+  router.get('/ab-tests', (req, res) => {
+    try {
+      const tests = abTestService.listTests();
+      res.json({ success: true, data: { tests, total: tests.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建 A/B 测试
+   * POST /api/ab-tests
+   */
+  router.post('/ab-tests', (req, res) => {
+    try {
+      const test = abTestService.createTest(req.body);
+      res.json({ success: true, data: test });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取 A/B 测试详情
+   * GET /api/ab-tests/:id
+   */
+  router.get('/ab-tests/:id', (req, res) => {
+    try {
+      const test = abTestService.getTest(req.params.id);
+      if (test) {
+        res.json({ success: true, data: test });
+      } else {
+        res.status(404).json({ success: false, error: '测试不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 暂停 A/B 测试
+   * PUT /api/ab-tests/:id/pause
+   */
+  router.put('/ab-tests/:id/pause', (req, res) => {
+    try {
+      const success = abTestService.pauseTest(req.params.id);
+      res.json({ success, message: success ? '测试已暂停' : '操作失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 恢复 A/B 测试
+   * PUT /api/ab-tests/:id/resume
+   */
+  router.put('/ab-tests/:id/resume', (req, res) => {
+    try {
+      const success = abTestService.resumeTest(req.params.id);
+      res.json({ success, message: success ? '测试已恢复' : '操作失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除 A/B 测试
+   * DELETE /api/ab-tests/:id
+   */
+  router.delete('/ab-tests/:id', (req, res) => {
+    try {
+      const success = abTestService.deleteTest(req.params.id);
+      res.json({ success, message: success ? '测试已删除' : '操作失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 多租户 API =====
+
+  /**
+   * 获取租户列表
+   * GET /api/tenants
+   */
+  router.get('/tenants', (req, res) => {
+    try {
+      const tenants = tenantService.listTenants();
+      res.json({ success: true, data: { tenants, total: tenants.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建租户
+   * POST /api/tenants
+   */
+  router.post('/tenants', (req, res) => {
+    try {
+      const tenant = tenantService.createTenant(req.body);
+      res.json({ success: true, data: tenant });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取租户详情
+   * GET /api/tenants/:id
+   */
+  router.get('/tenants/:id', (req, res) => {
+    try {
+      const tenant = tenantService.getTenant(req.params.id);
+      if (tenant) {
+        res.json({ success: true, data: tenant });
+      } else {
+        res.status(404).json({ success: false, error: '租户不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新租户
+   * PUT /api/tenants/:id
+   */
+  router.put('/tenants/:id', (req, res) => {
+    try {
+      const tenant = tenantService.updateTenant(req.params.id, req.body);
+      if (tenant) {
+        res.json({ success: true, data: tenant });
+      } else {
+        res.status(404).json({ success: false, error: '租户不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 暂停租户
+   * PUT /api/tenants/:id/suspend
+   */
+  router.put('/tenants/:id/suspend', (req, res) => {
+    try {
+      const tenant = tenantService.suspendTenant(req.params.id);
+      res.json({ success: !!tenant, message: tenant ? '租户已暂停' : '操作失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 恢复租户
+   * PUT /api/tenants/:id/activate
+   */
+  router.put('/tenants/:id/activate', (req, res) => {
+    try {
+      const tenant = tenantService.activateTenant(req.params.id);
+      res.json({ success: !!tenant, message: tenant ? '租户已恢复' : '操作失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取多租户统计
+   * GET /api/tenants/stats/overview
+   */
+  router.get('/tenants/stats/overview', (req, res) => {
+    try {
+      const stats = tenantService.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 日志系统 API =====
+
+  /**
+   * 查询日志
+   * GET /api/logs?level=ERROR&limit=50&keyword=error
+   */
+  router.get('/logs', (req, res) => {
+    try {
+      const result = logger.queryLogs({
+        level: req.query.level || 'all',
+        limit: parseInt(req.query.limit) || 100,
+        offset: parseInt(req.query.offset) || 0,
+        keyword: req.query.keyword
+      });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取日志统计
+   * GET /api/logs/stats
+   */
+  router.get('/logs/stats', (req, res) => {
+    try {
+      const stats = logger.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 清空日志
+   * DELETE /api/logs
+   */
+  router.delete('/logs', (req, res) => {
+    try {
+      const success = logger.clearLogs();
+      res.json({ success, message: success ? '日志已清空' : '清空失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 缓存系统 API =====
+
+  /**
+   * 获取缓存统计
+   * GET /api/cache/stats
+   */
+  router.get('/cache/stats', (req, res) => {
+    try {
+      const stats = cache.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 清空缓存
+   * DELETE /api/cache
+   */
+  router.delete('/cache', (req, res) => {
+    try {
+      cache.clear();
+      res.json({ success: true, message: '缓存已清空' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 清理过期缓存
+   * POST /api/cache/cleanup
+   */
+  router.post('/cache/cleanup', (req, res) => {
+    try {
+      const cleaned = cache.cleanup();
+      res.json({ success: true, data: { cleaned } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 客户画像 API =====
+
+  /**
+   * 生成客户画像
+   * POST /api/profiles/:leadId/generate
+   */
+  router.post('/profiles/:leadId/generate', async (req, res) => {
+    try {
+      const profile = await profileService.generateProfile(req.params.leadId);
+      res.json({ success: true, data: profile });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取客户画像
+   * GET /api/profiles/:leadId
+   */
+  router.get('/profiles/:leadId', (req, res) => {
+    try {
+      const profile = profileService.getProfile(req.params.leadId);
+      if (profile) {
+        res.json({ success: true, data: profile });
+      } else {
+        res.status(404).json({ success: false, error: '客户画像不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新客户画像
+   * PUT /api/profiles/:leadId
+   */
+  router.put('/profiles/:leadId', (req, res) => {
+    try {
+      const profile = profileService.updateProfile(req.params.leadId, req.body);
+      if (profile) {
+        res.json({ success: true, data: profile });
+      } else {
+        res.status(404).json({ success: false, error: '客户画像不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 添加标签
+   * POST /api/profiles/:leadId/tags
+   */
+  router.post('/profiles/:leadId/tags', (req, res) => {
+    try {
+      const { tag } = req.body;
+      if (!tag) {
+        return res.status(400).json({ success: false, error: '请提供标签' });
+      }
+      const profile = profileService.addTag(req.params.leadId, tag);
+      res.json({ success: true, data: profile });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 移除标签
+   * DELETE /api/profiles/:leadId/tags/:tag
+   */
+  router.delete('/profiles/:leadId/tags/:tag', (req, res) => {
+    try {
+      const profile = profileService.removeTag(req.params.leadId, req.params.tag);
+      res.json({ success: true, data: profile });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取所有标签统计
+   * GET /api/profiles/tags/all
+   */
+  router.get('/profiles/tags/all', (req, res) => {
+    try {
+      const tags = profileService.getAllTags();
+      res.json({ success: true, data: tags });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 按标签筛选线索
+   * GET /api/profiles/tags/:tag/leads
+   */
+  router.get('/profiles/tags/:tag/leads', (req, res) => {
+    try {
+      const leads = profileService.findLeadsByTag(req.params.tag);
+      res.json({ success: true, data: { leads, total: leads.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // ===== 健康检查 =====
 
   /**
@@ -366,7 +966,7 @@ module.exports = function(services) {
       data: {
         status: 'ok',
         service: 'WorkHogee AI 获客伙计',
-        version: '0.2.0',
+        version: '0.3.0',
         capabilities: ['smart-intake', 'content-creator', 'lead-nurture'],
         timestamp: new Date().toISOString()
       }
