@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   checkServerStatus();
   loadDSHStatus();
+  loadApiKeys();
 });
 
 // 导航初始化
@@ -49,6 +50,9 @@ function switchPage(page) {
 
   if (page === 'leads') loadLeads();
   if (page === 'settings') loadSettings();
+  if (page === 'notifications') { loadNotifications(); loadNotificationRules(); }
+  if (page === 'analytics') loadAnalytics();
+  if (page === 'abtest') loadABTests();
 }
 
 // 内容智造标签页
@@ -688,6 +692,472 @@ async function loadDSHStatus() {
   } catch (e) {
     document.getElementById('dsh-status').innerHTML = '<div class="empty-state">DSH 插件系统加载失败</div>';
   }
+}
+
+// ===== A/B 测试功能 =====
+
+async function loadABTests() {
+  try {
+    const res = await fetch(API_BASE + '/ab-tests');
+    const data = await res.json();
+    if (data.success) {
+      const container = document.getElementById('abtest-list');
+      if (data.data.tests.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无 A/B 测试，点击右上角创建新测试</div>';
+      } else {
+        container.innerHTML = data.data.tests.map(test => {
+          const statusColors = { active: '#16a34a', paused: '#f59e0b', completed: '#2563eb' };
+          const statusLabels = { active: '进行中', paused: '已暂停', completed: '已完成' };
+          return `
+            <div class="panel" style="margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div>
+                  <h4 style="margin:0 0 4px 0;">${test.name}</h4>
+                  <span style="font-size:12px; color:#78716c;">${test.description || ''} · 类型: ${test.type}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="padding:4px 10px; background:${statusColors[test.status]}; color:white; border-radius:10px; font-size:12px;">${statusLabels[test.status]}</span>
+                  ${test.status === 'active' ? `<button class="btn btn-sm" style="background:#f59e0b;color:white;" onclick="pauseABTest('${test.id}')">暂停</button>` : ''}
+                  ${test.status === 'paused' ? `<button class="btn btn-sm" style="background:#16a34a;color:white;" onclick="resumeABTest('${test.id}')">恢复</button>` : ''}
+                  <button class="btn btn-sm" style="background:#dc2626;color:white;" onclick="deleteABTest('${test.id}')">删除</button>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:12px;">
+                <div><div style="font-size:20px; font-weight:700; color:#ea580c;">${test.totalExposures}</div><div style="font-size:12px; color:#78716c;">总曝光</div></div>
+                <div><div style="font-size:20px; font-weight:700; color:#16a34a;">${test.totalConversions}</div><div style="font-size:12px; color:#78716c;">总转化</div></div>
+                <div><div style="font-size:20px; font-weight:700; color:#2563eb;">${test.totalExposures > 0 ? ((test.totalConversions/test.totalExposures)*100).toFixed(2) : 0}%</div><div style="font-size:12px; color:#78716c;">总转化率</div></div>
+                <div><div style="font-size:14px; font-weight:600; color:#ea580c;">${test.bestVariant ? test.bestVariant.name : '-'}</div><div style="font-size:12px; color:#78716c;">当前最优版本</div></div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(${test.variants.length},1fr); gap:12px;">
+                ${test.variants.map(v => {
+                  const rate = v.exposures > 0 ? ((v.conversions/v.exposures)*100).toFixed(2) : 0;
+                  const isWinner = test.winner === v.id;
+                  return `
+                    <div style="padding:12px; background:${isWinner ? '#f0fdf4' : '#fafaf9'}; border-radius:8px; border:1px solid ${isWinner ? '#16a34a' : '#e7e5e4'};">
+                      <div style="font-weight:600; margin-bottom:4px;">${v.name} ${isWinner ? '🏆' : ''}</div>
+                      <div style="font-size:12px; color:#78716c; margin-bottom:8px;">曝光: ${v.exposures} · 转化: ${v.conversions}</div>
+                      <div style="font-size:18px; font-weight:700; color:${isWinner ? '#16a34a' : '#44403c'};">${rate}%</div>
+                      <div style="font-size:11px; color:#78716c; margin-top:4px; max-height:40px; overflow:hidden;">${v.content.substring(0, 50)}...</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  } catch (e) {
+    document.getElementById('abtest-list').innerHTML = '<div class="empty-state">加载失败</div>';
+  }
+}
+
+function showCreateABTest() {
+  document.getElementById('abtest-modal').style.display = 'flex';
+}
+
+function closeABTestModal() {
+  document.getElementById('abtest-modal').style.display = 'none';
+}
+
+async function createABTest() {
+  const name = document.getElementById('abtest-name').value;
+  const variantA = document.getElementById('abtest-variant-a').value;
+  const variantB = document.getElementById('abtest-variant-b').value;
+
+  if (!name || !variantA || !variantB) {
+    alert('请填写测试名称和两个版本的内容');
+    return;
+  }
+
+  try {
+    const res = await fetch(API_BASE + '/ab-tests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        type: document.getElementById('abtest-type').value,
+        minSampleSize: parseInt(document.getElementById('abtest-min-sample').value) || 100,
+        variants: [
+          { name: '版本A', content: variantA },
+          { name: '版本B', content: variantB }
+        ]
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('A/B 测试创建成功！');
+      closeABTestModal();
+      loadABTests();
+    }
+  } catch (e) {
+    alert('创建失败: ' + e.message);
+  }
+}
+
+async function pauseABTest(id) {
+  if (!confirm('确定要暂停这个测试吗？')) return;
+  try {
+    await fetch(API_BASE + '/ab-tests/' + id + '/pause', { method: 'PUT' });
+    loadABTests();
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+async function resumeABTest(id) {
+  try {
+    await fetch(API_BASE + '/ab-tests/' + id + '/resume', { method: 'PUT' });
+    loadABTests();
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+async function deleteABTest(id) {
+  if (!confirm('确定要删除这个测试吗？此操作不可恢复。')) return;
+  try {
+    await fetch(API_BASE + '/ab-tests/' + id, { method: 'DELETE' });
+    loadABTests();
+  } catch (e) {
+    alert('删除失败: ' + e.message);
+  }
+}
+
+// ===== 数据分析功能 =====
+
+async function loadAnalytics() {
+  try {
+    const res = await fetch(API_BASE + '/analytics/report');
+    const data = await res.json();
+    if (data.success) {
+      const report = data.data;
+
+      // 概览数据
+      document.getElementById('ana-total').textContent = report.overview.totalLeads;
+      document.getElementById('ana-converted').textContent = report.overview.convertedCount;
+      document.getElementById('ana-rate').textContent = report.overview.conversionRate + '%';
+      document.getElementById('ana-a-level').textContent = report.overview.aLevelCount;
+
+      // 转化漏斗
+      renderFunnel(report.conversion.funnel);
+
+      // 趋势图
+      renderTrend(report.trends.daily);
+
+      // 来源分析
+      renderSourceAnalysis(report.source);
+
+      // 优化建议
+      renderRecommendations(report.recommendations);
+    }
+  } catch (e) {
+    console.error('加载分析数据失败:', e);
+  }
+}
+
+function renderFunnel(funnelData) {
+  const container = document.getElementById('funnel-chart');
+  const maxCount = Math.max(...funnelData.map(f => f.count), 1);
+
+  container.innerHTML = funnelData.map((stage, index) => {
+    const width = (stage.count / maxCount * 100).toFixed(1);
+    const colors = ['#ea580c', '#f97316', '#fb923c', '#fdba74'];
+    return `
+      <div style="display:flex; align-items:center; margin-bottom:12px;">
+        <div style="width:80px; text-align:right; padding-right:16px; font-size:14px; color:#44403c;">${stage.stage}</div>
+        <div style="flex:1; background:#f5f5f4; border-radius:8px; height:36px; position:relative; overflow:hidden;">
+          <div style="width:${width}%; background:${colors[index]}; height:100%; border-radius:8px; transition:width 0.5s;"></div>
+          <div style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:white; font-weight:600; font-size:14px;">${stage.count}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTrend(dailyData) {
+  const container = document.getElementById('trend-chart');
+  const maxCount = Math.max(...dailyData.map(d => d.total), 1);
+
+  container.innerHTML = `
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; height:200px; padding:0 20px; border-bottom:2px solid #e7e5e4;">
+      ${dailyData.map(day => {
+        const height = (day.total / maxCount * 100).toFixed(1);
+        return `
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; padding:0 4px;">
+            <div style="font-size:12px; color:#44403c; margin-bottom:4px;">${day.total}</div>
+            <div style="width:100%; max-width:40px; background:linear-gradient(180deg, #ea580c, #f97316); border-radius:4px 4px 0 0; height:${height}%; min-height:4px;"></div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 20px 0;">
+      ${dailyData.map(day => `<div style="flex:1; text-align:center; font-size:11px; color:#78716c;">${day.date.slice(5)}</div>`).join('')}
+    </div>
+  `;
+}
+
+function renderSourceAnalysis(sourceData) {
+  const container = document.getElementById('source-analysis');
+  const sources = sourceData.topSources || [];
+
+  if (sources.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无来源数据</div>';
+    return;
+  }
+
+  container.innerHTML = `
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="background:#fafaf9;">
+          <th style="padding:12px; text-align:left; font-size:13px; border-bottom:2px solid #e7e5e4;">来源</th>
+          <th style="padding:12px; text-align:left; font-size:13px; border-bottom:2px solid #e7e5e4;">线索数</th>
+          <th style="padding:12px; text-align:left; font-size:13px; border-bottom:2px solid #e7e5e4;">转化数</th>
+          <th style="padding:12px; text-align:left; font-size:13px; border-bottom:2px solid #e7e5e4;">转化率</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sources.map(s => {
+          const conv = sourceData.conversionBySource[s.source] || { total: 0, converted: 0, rate: 0 };
+          return `
+            <tr style="border-bottom:1px solid #f5f5f4;">
+              <td style="padding:12px; font-size:14px;">${s.source}</td>
+              <td style="padding:12px; font-size:14px;">${s.count}</td>
+              <td style="padding:12px; font-size:14px;">${conv.converted}</td>
+              <td style="padding:12px; font-size:14px; color:${conv.rate > 10 ? '#16a34a' : '#ea580c'}; font-weight:600;">${conv.rate}%</td>
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderRecommendations(recommendations) {
+  const container = document.getElementById('recommendations');
+  const levelColors = { high: '#dc2626', medium: '#ea580c', low: '#2563eb', info: '#16a34a' };
+  const levelLabels = { high: '高优先级', medium: '中优先级', low: '低优先级', info: '信息' };
+
+  container.innerHTML = recommendations.map(rec => `
+    <div style="padding:16px; background:#fafaf9; border-radius:10px; margin-bottom:12px; border-left:4px solid ${levelColors[rec.level]};">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h4 style="margin:0; font-size:15px;">${rec.title}</h4>
+        <span style="padding:4px 10px; background:${levelColors[rec.level]}; color:white; border-radius:10px; font-size:11px;">${levelLabels[rec.level]}</span>
+      </div>
+      <p style="margin:0 0 8px 0; font-size:14px; color:#44403c;">${rec.description}</p>
+      <p style="margin:0; font-size:13px; color:#78716c;"><strong>建议操作：</strong>${rec.action}</p>
+    </div>
+  `).join('');
+}
+
+// ===== 通知中心功能 =====
+
+async function loadNotifications() {
+  const unreadOnly = document.getElementById('filter-unread').checked;
+  try {
+    const res = await fetch(API_BASE + '/notifications?pageSize=50&unreadOnly=' + unreadOnly);
+    const data = await res.json();
+    if (data.success) {
+      const container = document.getElementById('notifications-list');
+      document.getElementById('unread-count').textContent = '未读: ' + data.data.unreadCount + ' 条';
+
+      if (data.data.items.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无通知</div>';
+      } else {
+        container.innerHTML = data.data.items.map(n => `
+          <div class="dsh-plugin-item" style="${n.read ? 'opacity:0.6;' : ''} border-left: 3px solid ${n.read ? '#e7e5e4' : '#ea580c'};">
+            <div style="flex:1;">
+              <div class="dsh-plugin-name">${n.title || '通知'}</div>
+              <div class="dsh-plugin-version">${n.message || ''} · ${formatDateTime(n.createdAt)}</div>
+            </div>
+            ${!n.read ? `<button class="btn btn-sm" style="background:#f5f5f4;color:#1c1917;" onclick="markAsRead('${n.id}')">已读</button>` : ''}
+          </div>
+        `).join('');
+      }
+    }
+  } catch (e) {
+    document.getElementById('notifications-list').innerHTML = '<div class="empty-state">加载失败</div>';
+  }
+}
+
+async function markAsRead(id) {
+  try {
+    await fetch(API_BASE + '/notifications/' + id + '/read', { method: 'PUT' });
+    loadNotifications();
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+async function markAllAsRead() {
+  try {
+    await fetch(API_BASE + '/notifications/read-all', { method: 'PUT' });
+    loadNotifications();
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+async function loadNotificationRules() {
+  try {
+    const res = await fetch(API_BASE + '/notifications/rules');
+    const data = await res.json();
+    if (data.success) {
+      const container = document.getElementById('notification-rules');
+      const rule = data.data.newLead;
+      container.innerHTML = `
+        <div style="padding:16px; background:#fafaf9; border-radius:10px;">
+          <h4 style="margin:0 0 12px 0;">新线索通知</h4>
+          <div style="margin-bottom:12px;">
+            <label style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="rule-enabled" ${rule.enabled ? 'checked' : ''} onchange="saveNotificationRules()">
+              启用新线索通知
+            </label>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="display:block; margin-bottom:6px; font-weight:500;">通知渠道</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; margin-right:16px;">
+              <input type="checkbox" class="rule-channel" value="system" ${rule.channels.includes('system') ? 'checked' : ''}>
+              系统通知
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:6px; margin-right:16px;">
+              <input type="checkbox" class="rule-channel" value="webhook" ${rule.channels.includes('webhook') ? 'checked' : ''}>
+              Webhook
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:6px;">
+              <input type="checkbox" class="rule-channel" value="email" ${rule.channels.includes('email') ? 'checked' : ''}>
+              邮件
+            </label>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="display:block; margin-bottom:6px; font-weight:500;">Webhook URL</label>
+            <input type="text" id="rule-webhook" value="${rule.webhookUrl || ''}" style="width:100%; padding:8px 12px; border:1px solid #e7e5e4; border-radius:8px;">
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="display:block; margin-bottom:6px; font-weight:500;">最低意向等级</label>
+            <select id="rule-min-level" style="padding:8px 12px; border:1px solid #e7e5e4; border-radius:8px;">
+              <option value="A" ${rule.minIntentionLevel === 'A' ? 'selected' : ''}>A级（最高）</option>
+              <option value="B" ${rule.minIntentionLevel === 'B' ? 'selected' : ''}>B级及以上</option>
+              <option value="C" ${rule.minIntentionLevel === 'C' ? 'selected' : ''}>C级及以上（全部）</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="saveNotificationRules()">保存设置</button>
+        </div>
+      `;
+    }
+  } catch (e) {
+    document.getElementById('notification-rules').innerHTML = '<div class="empty-state">加载失败</div>';
+  }
+}
+
+async function saveNotificationRules() {
+  const channels = Array.from(document.querySelectorAll('.rule-channel:checked')).map(c => c.value);
+  const updates = {
+    enabled: document.getElementById('rule-enabled').checked,
+    channels,
+    webhookUrl: document.getElementById('rule-webhook').value,
+    minIntentionLevel: document.getElementById('rule-min-level').value
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/notifications/rules/newLead', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('通知规则已保存');
+    }
+  } catch (e) {
+    alert('保存失败: ' + e.message);
+  }
+}
+
+// ===== API Key 管理功能 =====
+
+async function loadApiKeys() {
+  try {
+    const res = await fetch(API_BASE + '/auth/keys');
+    const data = await res.json();
+    if (data.success) {
+      const container = document.getElementById('api-keys-list');
+      if (data.data.keys.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无 API Key</div>';
+      } else {
+        container.innerHTML = data.data.keys.map(key => `
+          <div class="dsh-plugin-item">
+            <div>
+              <div class="dsh-plugin-name">${key.name}</div>
+              <div class="dsh-plugin-version">Key: ${key.key} · 创建: ${formatDate(key.createdAt)} · 调用次数: ${key.usageCount}</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="dsh-status-badge" style="${key.status === 'active' ? 'background:#dcfce7;color:#16a34a;' : 'background:#fee2e2;color:#dc2626;'}">${key.status === 'active' ? '启用' : '已撤销'}</span>
+              ${key.status === 'active' ? `<button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;" onclick="revokeApiKey('${key.id}')">撤销</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  } catch (e) {
+    document.getElementById('api-keys-list').innerHTML = '<div class="empty-state">加载失败</div>';
+  }
+}
+
+async function generateApiKey() {
+  const name = document.getElementById('new-key-name').value;
+  if (!name) { alert('请输入 API Key 名称'); return; }
+
+  try {
+    const res = await fetch(API_BASE + '/auth/keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('API Key 生成成功！\n\n请立即复制保存，关闭后无法再次查看完整 Key：\n\n' + data.data.key);
+      document.getElementById('new-key-name').value = '';
+      loadApiKeys();
+    }
+  } catch (e) {
+    alert('生成失败: ' + e.message);
+  }
+}
+
+async function revokeApiKey(id) {
+  if (!confirm('确定要撤销这个 API Key 吗？撤销后无法恢复。')) return;
+
+  try {
+    const res = await fetch(API_BASE + '/auth/keys/' + id, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      alert('API Key 已撤销');
+      loadApiKeys();
+    }
+  } catch (e) {
+    alert('撤销失败: ' + e.message);
+  }
+}
+
+// ===== 数据导出功能 =====
+
+function exportLeads() {
+  const intention = document.getElementById('filter-intention').value;
+  const status = document.getElementById('filter-status').value;
+
+  let url = API_BASE + '/export/leads?';
+  const params = [];
+  if (intention) params.push('intentionLevel=' + intention);
+  if (status) params.push('status=' + status);
+  url += params.join('&');
+
+  // 触发下载
+  window.open(url, '_blank');
+}
+
+function exportStats() {
+  window.open(API_BASE + '/export/stats', '_blank');
 }
 
 // ===== 工具函数 =====
