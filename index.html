@@ -195,6 +195,50 @@
   .tl-tag { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--orange-deep); background: var(--orange-soft); border-radius: 999px; padding: 3px 10px; }
   .roadmap-note { margin-top: 34px; font-size: 15px; color: var(--ink-soft); max-width: 760px; }
 
+  /* ===== 能力矩阵 ===== */
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .matrix-card {
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: 16px; padding: 28px 24px;
+    position: relative; overflow: hidden;
+    transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .matrix-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--orange); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+  .matrix-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(36,33,29,0.1); border-color: var(--orange); }
+  .matrix-card:hover::before { transform: scaleX(1); }
+  .matrix-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--orange-soft); color: var(--orange-deep);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    transition: transform 0.35s ease, background 0.35s ease, color 0.35s ease;
+  }
+  .matrix-card:hover .matrix-icon { transform: scale(1.1) rotate(-5deg); background: var(--orange); color: var(--white); }
+  .matrix-icon svg { width: 22px; height: 22px; }
+  .matrix-card h3 { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+  .matrix-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.65; }
+  .matrix-num {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 32px; font-weight: 900; color: rgba(234,88,12,0.08); line-height: 1;
+  }
+  .matrix-footer {
+    margin-top: 40px; padding: 24px 28px;
+    background: var(--orange-soft); border: 1px solid #fcd5ad;
+    border-radius: 14px; display: flex; align-items: center; gap: 16px;
+  }
+  .matrix-footer-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--orange); color: var(--white);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .matrix-footer-icon svg { width: 20px; height: 20px; }
+  .matrix-footer p { font-size: 15px; color: var(--ink-soft); margin: 0; }
+  .matrix-footer strong { color: var(--orange-deep); }
+
   /* ===== 品牌精神 ===== */
   .ethos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
   .ethos-card { display: flex; gap: 18px; align-items: flex-start; border: 1px solid var(--line); background: var(--white); border-radius: 16px; padding: 26px; }
@@ -231,6 +275,7 @@
     .ethos-grid { grid-template-columns: 1fr; }
     .timeline::before { left: calc(76px + 10px + 12px); }
     .tl-row { grid-template-columns: 76px 36px 1fr; gap: 10px; }
+    .matrix-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     .nav-links {
@@ -247,6 +292,8 @@
     body.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .cta-band { padding: 44px 24px; }
     .name-tag { left: 12px; bottom: 12px; padding: 8px 12px; }
+    .matrix-grid { grid-template-columns: 1fr; }
+    .matrix-footer { flex-direction: column; text-align: center; }
   }
   /* ===== 动画系统 ===== */
 
@@ -490,58 +537,70 @@
   </div>
 </section>
 
-<!-- ===== 获客伙计矩阵 ===== -->
+<!-- ===== 获客伙计能力矩阵 ===== -->
 <section class="roadmap" id="roadmap">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="sec-kicker">获客伙计矩阵</span>
-      <h2>一个获客伙计，就是一支获客团队</h2>
-      <p>AI 获客伙计不是单一功能，而是围绕"引流→承接→跟进→成交"全链路的矩阵式能力组合。我们按优先级逐步打磨，每个能力上线即能用。</p>
+      <span class="sec-kicker">获客伙计能力矩阵</span>
+      <h2>AI 获客伙计的最终形态</h2>
+      <p>不是一个工具，而是一个 24 小时在线的获客专员——覆盖从流量到成交的全链路，六大核心能力协同工作，形成自学习的获客飞轮。</p>
     </div>
-    <div class="timeline">
-      <div class="tl-row reveal reveal-d1">
-        <div class="tl-time">2026 · Q4</div>
-        <div class="tl-axis"><span class="tl-dot"></span></div>
-        <div class="tl-card">
-          <h4>线索承接能力</h4>
-          <p>落地页/官网 AI 对话承接，秒回每一个咨询；自动资格筛选（预算/周期/决策人），意向等级 A/B/C；预约到店/预约演示，把意向变成见面。</p>
-          <span class="tl-tag">现在 · 打磨中</span>
+    <div class="matrix-grid">
+      <div class="matrix-card reveal reveal-d1">
+        <span class="matrix-num">01</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
         </div>
+        <h3>生意理解</h3>
+        <p>自动学习你的行业、产品、目标客户与竞争环境，建立专属获客知识图谱，越用越懂你的生意。</p>
       </div>
-      <div class="tl-row reveal reveal-d2">
-        <div class="tl-time">2027 · Q1</div>
-        <div class="tl-axis"><span class="tl-dot"></span></div>
-        <div class="tl-card">
-          <h4>内容获客能力</h4>
-          <p>小红书图文笔记一键生成与发布；朋友圈/公众号/知乎多平台内容分发；内容排期与数据复盘，让公域引流不再靠灵感。</p>
+      <div class="matrix-card reveal reveal-d2">
+        <span class="matrix-num">02</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
         </div>
+        <h3>内容智造</h3>
+        <p>多模态内容智能生成，知道在什么渠道、对什么人、用什么形式、说什么话，让内容不再靠灵感。</p>
       </div>
-      <div class="tl-row reveal reveal-d3">
-        <div class="tl-time">2027 · Q2</div>
-        <div class="tl-axis"><span class="tl-dot"></span></div>
-        <div class="tl-card">
-          <h4>线索跟进能力</h4>
-          <p>商机线索自动跟进 SOP，不漏一个意向客户；邮件营销（EDM）自动触达与效果追踪；企微私域分层培育，唤醒沉睡客户。</p>
+      <div class="matrix-card reveal reveal-d3">
+        <span class="matrix-num">03</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
+        <h3>全渠触达</h3>
+        <p>智能选择最优渠道组合，付费流量、免费内容、私域转介绍协同发力，把每一分预算花在 ROI 最高的地方。</p>
       </div>
-      <div class="tl-row reveal">
-        <div class="tl-time">2027 · Q3</div>
-        <div class="tl-axis"><span class="tl-dot"></span></div>
-        <div class="tl-card">
-          <h4>广告投放能力</h4>
-          <p>广告素材（图文+短视频脚本）批量生成；落地页文案 A/B 测试与优化；跨平台投放数据分析与优化建议，让每一分广告费都花在刀刃上。</p>
+      <div class="matrix-card reveal reveal-d1">
+        <span class="matrix-num">04</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
+        <h3>智能承接</h3>
+        <p>转化型对话引擎，官网、落地页、企微、私信多入口承接，自动判断意向等级，最大化线索转化率。</p>
       </div>
-      <div class="tl-row reveal">
-        <div class="tl-time">2027 · Q4</div>
-        <div class="tl-axis"><span class="tl-dot"></span></div>
-        <div class="tl-card">
-          <h4>成交回传能力</h4>
-          <p>成交数据自动回传广告平台，让下次流量更便宜；ROI/获客成本实时分析；客户画像与标签体系，越用越懂你的客户，形成数据飞轮。</p>
+      <div class="matrix-card reveal reveal-d2">
+        <span class="matrix-num">05</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
+        <h3>线索培育</h3>
+        <p>个性化客户旅程引擎，根据意向、行为、痛点定制跟进策略，邮件、短信、企微多通道智能培育。</p>
+      </div>
+      <div class="matrix-card reveal reveal-d3">
+        <span class="matrix-num">06</span>
+        <div class="matrix-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        </div>
+        <h3>数据飞轮</h3>
+        <p>全链路归因分析，从第一次触追到最终成交，成交数据自动回传优化每一个环节，获客成本越来越低。</p>
       </div>
     </div>
-    <p class="roadmap-note">从接住第一个咨询开始，到把每一分广告费都变成更便宜的流量——AI 获客伙计的每一项能力，都围绕"让获客更简单、更便宜、更可复制"这一件事。</p>
+    <div class="matrix-footer reveal">
+      <div class="matrix-footer-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <p><strong>2026 年</strong>，我们专注打磨 AI 获客伙计的完整能力矩阵；<strong>2027 年</strong>，基于获客伙计的数据与渠道积累，规划更多岗位的 AI 伙计。</p>
+    </div>
   </div>
 </section>
 
