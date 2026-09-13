@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = function(services) {
-  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService } = services;
+  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService } = services;
 
   // ===== 对话相关 API =====
 
@@ -1188,6 +1188,410 @@ module.exports = function(services) {
     }
   });
 
+  // ===== 邮箱配置 API =====
+
+  /**
+   * 获取邮箱账户列表
+   * GET /api/email/accounts
+   */
+  router.get('/email/accounts', (req, res) => {
+    try {
+      const accounts = emailConfigService.listAccounts();
+      res.json({ success: true, data: { accounts, total: accounts.length } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 添加邮箱账户
+   * POST /api/email/accounts
+   */
+  router.post('/email/accounts', (req, res) => {
+    try {
+      const account = emailConfigService.addAccount(req.body);
+      res.json({ success: true, data: account });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取邮箱账户详情
+   * GET /api/email/accounts/:id
+   */
+  router.get('/email/accounts/:id', (req, res) => {
+    try {
+      const account = emailConfigService.getAccount(req.params.id);
+      if (account) {
+        res.json({ success: true, data: account });
+      } else {
+        res.status(404).json({ success: false, error: '账户不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新邮箱账户
+   * PUT /api/email/accounts/:id
+   */
+  router.put('/email/accounts/:id', (req, res) => {
+    try {
+      const account = emailConfigService.updateAccount(req.params.id, req.body);
+      res.json({ success: true, data: account });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除邮箱账户
+   * DELETE /api/email/accounts/:id
+   */
+  router.delete('/email/accounts/:id', (req, res) => {
+    try {
+      const success = emailConfigService.deleteAccount(req.params.id);
+      res.json({ success, message: success ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 测试邮箱连接
+   * POST /api/email/accounts/:id/test
+   */
+  router.post('/email/accounts/:id/test', async (req, res) => {
+    try {
+      const result = await emailConfigService.testConnection(req.params.id);
+      res.json({ success: result.success, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取邮箱配置统计
+   * GET /api/email/stats
+   */
+  router.get('/email/stats', (req, res) => {
+    try {
+      const stats = emailConfigService.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 邮件接收 API =====
+
+  /**
+   * 获取邮件列表
+   * GET /api/email/receiver/emails?page=1&pageSize=20&isInquiry=true
+   */
+  router.get('/email/receiver/emails', (req, res) => {
+    try {
+      const result = emailReceiverService.listEmails({
+        page: parseInt(req.query.page) || 1,
+        pageSize: parseInt(req.query.pageSize) || 20,
+        accountId: req.query.accountId,
+        isInquiry: req.query.isInquiry ? req.query.isInquiry === 'true' : undefined,
+        leadCreated: req.query.leadCreated ? req.query.leadCreated === 'true' : undefined
+      });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取邮件详情
+   * GET /api/email/receiver/emails/:id
+   */
+  router.get('/email/receiver/emails/:id', (req, res) => {
+    try {
+      const email = emailReceiverService.getEmail(req.params.id);
+      if (email) {
+        res.json({ success: true, data: email });
+      } else {
+        res.status(404).json({ success: false, error: '邮件不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动触发邮件检查（指定账户）
+   * POST /api/email/receiver/accounts/:id/fetch
+   */
+  router.post('/email/receiver/accounts/:id/fetch', async (req, res) => {
+    try {
+      const result = await emailReceiverService.fetchNewEmails(req.params.id);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动触发所有账户邮件检查
+   * POST /api/email/receiver/check-all
+   */
+  router.post('/email/receiver/check-all', async (req, res) => {
+    try {
+      const result = await emailReceiverService.checkAllAccounts();
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 启动自动轮询
+   * POST /api/email/receiver/polling/start
+   */
+  router.post('/email/receiver/polling/start', (req, res) => {
+    try {
+      const interval = parseInt(req.body.interval) || 60000;
+      const result = emailReceiverService.startPolling(interval);
+      res.json({ success: result.success, message: result.message });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 停止自动轮询
+   * POST /api/email/receiver/polling/stop
+   */
+  router.post('/email/receiver/polling/stop', (req, res) => {
+    try {
+      const result = emailReceiverService.stopPolling();
+      res.json({ success: result.success, message: result.message });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取邮件接收统计
+   * GET /api/email/receiver/stats
+   */
+  router.get('/email/receiver/stats', (req, res) => {
+    try {
+      const stats = emailReceiverService.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 邮件发送 API =====
+
+  /**
+   * 生成智能回复
+   * POST /api/email/sender/generate-reply/:emailId
+   */
+  router.post('/email/sender/generate-reply/:emailId', async (req, res) => {
+    try {
+      const reply = await emailSenderService.generateReply(req.params.emailId, req.body);
+      res.json({ success: true, data: reply });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 保存草稿
+   * POST /api/email/sender/drafts
+   */
+  router.post('/email/sender/drafts', (req, res) => {
+    try {
+      const { emailId, reply } = req.body;
+      if (!emailId || !reply) {
+        return res.status(400).json({ success: false, error: 'emailId和reply必填' });
+      }
+      const draft = emailSenderService.saveDraft(emailId, reply);
+      res.json({ success: true, data: draft });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取草稿列表
+   * GET /api/email/sender/drafts?status=pending
+   */
+  router.get('/email/sender/drafts', (req, res) => {
+    try {
+      const result = emailSenderService.listDrafts(req.query.status);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取草稿详情
+   * GET /api/email/sender/drafts/:id
+   */
+  router.get('/email/sender/drafts/:id', (req, res) => {
+    try {
+      const draft = emailSenderService.getDraft(req.params.id);
+      if (draft) {
+        res.json({ success: true, data: draft });
+      } else {
+        res.status(404).json({ success: false, error: '草稿不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新草稿
+   * PUT /api/email/sender/drafts/:id
+   */
+  router.put('/email/sender/drafts/:id', (req, res) => {
+    try {
+      const draft = emailSenderService.updateDraft(req.params.id, req.body);
+      if (draft) {
+        res.json({ success: true, data: draft });
+      } else {
+        res.status(404).json({ success: false, error: '草稿不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 审核通过并发送
+   * POST /api/email/sender/drafts/:id/approve-send
+   */
+  router.post('/email/sender/drafts/:id/approve-send', async (req, res) => {
+    try {
+      const result = await emailSenderService.approveAndSend(req.params.id);
+      res.json({ success: result.success, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 自动回复（直接发送）
+   * POST /api/email/sender/auto-reply/:emailId
+   */
+  router.post('/email/sender/auto-reply/:emailId', async (req, res) => {
+    try {
+      const result = await emailSenderService.autoReply(req.params.emailId);
+      res.json({ success: result.success, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动发送邮件
+   * POST /api/email/sender/send
+   */
+  router.post('/email/sender/send', async (req, res) => {
+    try {
+      const result = await emailSenderService.sendEmail(req.body);
+      res.json({ success: result.success, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取已发送邮件列表
+   * GET /api/email/sender/sent?page=1&pageSize=20
+   */
+  router.get('/email/sender/sent', (req, res) => {
+    try {
+      const result = emailSenderService.listSent(
+        parseInt(req.query.page) || 1,
+        parseInt(req.query.pageSize) || 20
+      );
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 回复模板列表
+   * GET /api/email/sender/templates?category=general
+   */
+  router.get('/email/sender/templates', (req, res) => {
+    try {
+      const result = emailSenderService.listTemplates(req.query.category);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 添加回复模板
+   * POST /api/email/sender/templates
+   */
+  router.post('/email/sender/templates', (req, res) => {
+    try {
+      const template = emailSenderService.addTemplate(req.body);
+      res.json({ success: true, data: template });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新回复模板
+   * PUT /api/email/sender/templates/:id
+   */
+  router.put('/email/sender/templates/:id', (req, res) => {
+    try {
+      const template = emailSenderService.updateTemplate(req.params.id, req.body);
+      if (template) {
+        res.json({ success: true, data: template });
+      } else {
+        res.status(404).json({ success: false, error: '模板不存在' });
+      }
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除回复模板
+   * DELETE /api/email/sender/templates/:id
+   */
+  router.delete('/email/sender/templates/:id', (req, res) => {
+    try {
+      const success = emailSenderService.deleteTemplate(req.params.id);
+      res.json({ success, message: success ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取发送统计
+   * GET /api/email/sender/stats
+   */
+  router.get('/email/sender/stats', (req, res) => {
+    try {
+      const stats = emailSenderService.getStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // ===== 健康检查 =====
 
   /**
@@ -1200,7 +1604,7 @@ module.exports = function(services) {
       data: {
         status: 'ok',
         service: 'WorkHogee AI 获客伙计',
-        version: '0.4.0',
+        version: '0.5.0',
         capabilities: ['smart-intake', 'content-creator', 'lead-nurture'],
         timestamp: new Date().toISOString()
       }
