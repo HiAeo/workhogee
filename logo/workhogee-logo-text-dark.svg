@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="360" height="80">
+  <!-- WorkHogee Text Logo v10 - Dark | W左半橙色，右半+其余白色 -->
+  <defs>
+    <clipPath id="wLeftDark">
+      <rect x="0" y="0" width="21" height="80"/>
+    </clipPath>
+  </defs>
+  <text x="0" y="58" font-family="'Corbel','Calibri','Segoe UI','Arial Rounded MT Bold',sans-serif" font-size="48" font-weight="700" fill="#ffffff">WorkHogee</text>
+  <text x="0" y="58" font-family="'Corbel','Calibri','Segoe UI','Arial Rounded MT Bold',sans-serif" font-size="48" font-weight="700" fill="#ea580c" clip-path="url(#wLeftDark)">W</text>
+</svg>
