@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkHogee AI 获客伙计 - 对话组件示例</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #1c1917;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #78716c;
+      margin-bottom: 32px;
+    }
+    .feature {
+      padding: 16px;
+      background: #fafaf9;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .feature h3 {
+      margin: 0 0 8px 0;
+      color: #ea580c;
+    }
+    .feature p {
+      margin: 0;
+      color: #57534e;
+      font-size: 14px;
+    }
+    .hint {
+      margin-top: 32px;
+      padding: 16px;
+      background: #fff7ed;
+      border-left: 4px solid #ea580c;
+      border-radius: 4px;
+      color: #9a3412;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>WorkHogee AI 获客伙计</h1>
+    <p class="subtitle">可嵌入网站的智能对话组件示例</p>
+
+    <div class="feature">
+      <h3>💬 智能对话承接</h3>
+      <p>24小时在线接待每一位访客，友好专业，永不离职</p>
+    </div>
+    <div class="feature">
+      <h3>🎯 意向等级判定</h3>
+      <p>自动分析客户意向，分为 A/B/C 三级，帮您聚焦高价值客户</p>
+    </div>
+    <div class="feature">
+      <h3>📋 资格筛选</h3>
+      <p>自动识别客户预算、决策周期、是否决策人，精准筛选</p>
+    </div>
+    <div class="feature">
+      <h3>📝 线索自动记录</h3>
+      <p>对话中自动提取客户信息，创建线索记录，无需人工录入</p>
+    </div>
+
+    <div class="hint">
+      💡 点击右下角的对话按钮，即可体验 AI 获客伙计的智能接待功能。
+      您的每一次对话都会自动记录为线索，并可以在管理后台查看。
+    </div>
+  </div>
+
+  <!-- WorkHogee AI 获客伙计对话组件 -->
+  <script>
+    window.WORKHOGEE_CONFIG = {
+      apiUrl: 'http://localhost:3000',
+      source: 'demo-page'
+    };
+  </script>
+  <script src="widget.js"></script>
+</body>
+</html>
