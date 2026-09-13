@@ -1,0 +1,19 @@
+{
+  "name": "workhogee-ai-agent",
+  "version": "0.1.0",
+  "description": "WorkHogee AI 获客伙计 - 基于 DeepSeek Harness 的智能获客 Agent",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "test": "node tests/test.js"
+  },
+  "keywords": ["ai", "agent", "lead-generation", "workhogee", "deepseek-harness"],
+  "author": "WorkHogee",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0"
+  }
+}
