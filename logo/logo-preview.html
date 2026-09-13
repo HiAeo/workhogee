@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee Logo 设计预览 v9.2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f3ef; color: #1c1917; padding: 40px 20px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .sub { font-size: 14px; color: #78716c; margin-bottom: 36px; }
+  .section {
+    background: #fff; border-radius: 16px; padding: 36px 40px;
+    margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .section-title {
+    font-size: 13px; font-weight: 700; color: #ea580c;
+    letter-spacing: 2px; margin-bottom: 24px; text-transform: uppercase;
+  }
+  .dark-section { background: #1c1917; }
+  .dark-section .section-title { color: #fb923c; }
+  .center { display: flex; justify-content: center; align-items: center; }
+  .icon-sizes { display: flex; align-items: center; gap: 32px; }
+  .icon-size-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .icon-size-label { font-size: 12px; color: #a8a29e; font-weight: 600; }
+  .nav-mock {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; background: #fff; border-radius: 12px; border: 1px solid #e7e5e4;
+  }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; color: #57534e; }
+  .nav-cta { background: #ea580c; color: #fff; padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>WorkHogee Logo 设计预览 v9.2</h1>
+  <p class="sub">H 竖线加粗至 W 两倍 · 仅向外侧加粗 · W 不变 · 直线尖角</p>
+
+  <!-- 主图标放大 -->
+  <div class="section">
+    <div class="section-title">00 · 图标</div>
+    <div class="center" style="padding: 10px 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="220" height="220">
+        <rect width="96" height="96" rx="22" fill="#ea580c"/>
+        <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+          <!-- H 左竖线：加粗至15，仅向外侧（左）加粗，内侧边缘不变 -->
+          <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+          <!-- H 右竖线：加粗至15，仅向外侧（右）加粗，内侧边缘不变 -->
+          <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+          <!-- W 心电图横线：保持不变，stroke-width 7.5 -->
+          <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 主 Logo 白底 -->
+  <div class="section">
+    <div class="section-title">01 · 主 Logo（横版 · 白底）</div>
+    <div class="center" style="padding: 20px 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+        <rect x="12" y="12" width="96" height="96" rx="22" fill="#ea580c"/>
+        <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none" transform="translate(12,12)">
+          <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+          <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+          <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+        </g>
+        <text x="124" y="60" dominant-baseline="central"
+              font-family="'Arial Black','Helvetica Neue',Arial,sans-serif"
+              font-size="38" font-weight="900" fill="#1c1917" letter-spacing="-0.5">WorkHogee</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 主 Logo 深色底 -->
+  <div class="section dark-section">
+    <div class="section-title">02 · 主 Logo（横版 · 深色底）</div>
+    <div class="center" style="padding: 20px 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+        <rect x="12" y="12" width="96" height="96" rx="22" fill="#ea580c"/>
+        <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none" transform="translate(12,12)">
+          <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+          <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+          <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+        </g>
+        <text x="124" y="60" dominant-baseline="central"
+              font-family="'Arial Black','Helvetica Neue',Arial,sans-serif"
+              font-size="38" font-weight="900" fill="#fafaf9" letter-spacing="-0.5">WorkHogee</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 多尺寸 -->
+  <div class="section">
+    <div class="section-title">03 · 图标-only（多尺寸）</div>
+    <div class="icon-sizes" style="padding: 16px 0;">
+      <div class="icon-size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+          <rect width="96" height="96" rx="22" fill="#ea580c"/>
+          <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+            <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+            <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+          </g>
+        </svg>
+        <span class="icon-size-label">96px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="64" height="64">
+          <rect width="96" height="96" rx="22" fill="#ea580c"/>
+          <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+            <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+            <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+          </g>
+        </svg>
+        <span class="icon-size-label">64px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="32" height="32">
+          <rect width="96" height="96" rx="22" fill="#ea580c"/>
+          <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+            <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+            <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="9"/>
+          </g>
+        </svg>
+        <span class="icon-size-label">32px</span>
+      </div>
+      <div class="icon-size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="16" height="16">
+          <rect width="96" height="96" rx="22" fill="#ea580c"/>
+          <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+            <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+            <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="11"/>
+          </g>
+        </svg>
+        <span class="icon-size-label">16px</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导航栏效果 -->
+  <div class="section">
+    <div class="section-title">04 · 官网导航栏实际效果</div>
+    <div class="nav-mock">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="170" height="49">
+        <rect x="12" y="12" width="96" height="96" rx="22" fill="#ea580c"/>
+        <g stroke="#ffffff" stroke-linecap="square" stroke-linejoin="miter" fill="none" transform="translate(12,12)">
+          <line x1="20.25" y1="22" x2="20.25" y2="74" stroke-width="15"/>
+          <line x1="75.75" y1="22" x2="75.75" y2="74" stroke-width="15"/>
+          <path d="M24 44 L34 60 L42 32 L52 60 L72 44" stroke-width="7.5"/>
+        </g>
+        <text x="124" y="60" dominant-baseline="central"
+              font-family="'Arial Black','Helvetica Neue',Arial,sans-serif"
+              font-size="38" font-weight="900" fill="#1c1917" letter-spacing="-0.5">WorkHogee</text>
+      </svg>
+      <div class="nav-links">
+        <span>产品矩阵</span><span>解决方案</span><span>开发者</span><span>关于我们</span>
+      </div>
+      <div class="nav-cta">开始使用</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
