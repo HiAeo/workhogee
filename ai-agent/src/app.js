@@ -38,6 +38,9 @@ const CacheService = require('./services/cacheService');
 const ProfileService = require('./services/profileService');
 const KnowledgeBaseService = require('./services/knowledgeBaseService');
 const ReportService = require('./services/reportService');
+const EmailConfigService = require('./services/emailConfigService');
+const EmailReceiverService = require('./services/emailReceiverService');
+const EmailSenderService = require('./services/emailSenderService');
 
 const smartIntake = new SmartIntakeSkill(llmService, leadStorage, conversationStorage, config.business);
 const contentCreator = new ContentCreatorSkill(llmService, config.business);
@@ -53,6 +56,9 @@ const cache = new CacheService(config.cache || {});
 const profileService = new ProfileService(leadStorage, conversationStorage, llmService, config);
 const knowledgeBase = new KnowledgeBaseService(llmService, config);
 const reportService = new ReportService(leadStorage, conversationStorage, notificationService, llmService, config);
+const emailConfigService = new EmailConfigService(config);
+const emailReceiverService = new EmailReceiverService(emailConfigService, leadStorage, llmService, knowledgeBase, notificationService, config);
+const emailSenderService = new EmailSenderService(emailConfigService, emailReceiverService, knowledgeBase, llmService, config);
 
 // 服务集合
 const services = {
@@ -72,7 +78,10 @@ const services = {
   cache,
   profileService,
   knowledgeBase,
-  reportService
+  reportService,
+  emailConfigService,
+  emailReceiverService,
+  emailSenderService
 };
 
 // 初始化 DSH 插件系统
