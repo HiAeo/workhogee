@@ -27,10 +27,28 @@ const conversationStorage = new ConversationStorageService(config);
 const SmartIntakeSkill = require('./skills/smart-intake');
 const ContentCreatorSkill = require('./skills/content-creator');
 const LeadNurtureSkill = require('./skills/lead-nurture');
+const ExportService = require('./services/exportService');
+const AuthService = require('./services/authService');
+const NotificationService = require('./services/notificationService');
+const AnalyticsService = require('./services/analyticsService');
+const ABTestService = require('./services/abTestService');
+const TenantService = require('./services/tenantService');
+const LoggerService = require('./services/loggerService');
+const CacheService = require('./services/cacheService');
+const ProfileService = require('./services/profileService');
 
 const smartIntake = new SmartIntakeSkill(llmService, leadStorage, conversationStorage, config.business);
 const contentCreator = new ContentCreatorSkill(llmService, config.business);
 const leadNurture = new LeadNurtureSkill(llmService, leadStorage, config.business);
+const exportService = new ExportService(leadStorage);
+const authService = new AuthService(config);
+const notificationService = new NotificationService(config);
+const analyticsService = new AnalyticsService(leadStorage, conversationStorage);
+const abTestService = new ABTestService(config);
+const tenantService = new TenantService(config);
+const logger = new LoggerService(config);
+const cache = new CacheService(config.cache || {});
+const profileService = new ProfileService(leadStorage, conversationStorage, llmService, config);
 
 // 服务集合
 const services = {
@@ -39,7 +57,16 @@ const services = {
   conversationStorage,
   smartIntake,
   contentCreator,
-  leadNurture
+  leadNurture,
+  exportService,
+  authService,
+  notificationService,
+  analyticsService,
+  abTestService,
+  tenantService,
+  logger,
+  cache,
+  profileService
 };
 
 // 初始化 DSH 插件系统
