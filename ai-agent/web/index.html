@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkHogee AI 获客伙计 - 管理后台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      <div class="logo-text">WorkHogee</div>
+    </div>
+    <nav class="nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span>
+        <span>仪表盘</span>
+      </a>
+      <a href="#" class="nav-item" data-page="leads">
+        <span class="nav-icon">👥</span>
+        <span>线索管理</span>
+      </a>
+      <a href="#" class="nav-item" data-page="conversations">
+        <span class="nav-icon">💬</span>
+        <span>对话记录</span>
+      </a>
+      <a href="#" class="nav-item" data-page="content">
+        <span class="nav-icon">✍️</span>
+        <span>内容智造</span>
+      </a>
+      <a href="#" class="nav-item" data-page="nurture">
+        <span class="nav-icon">🌱</span>
+        <span>线索培育</span>
+      </a>
+      <a href="#" class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span>
+        <span>系统设置</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="version">v0.2.0</div>
+      <div class="powered">基于 DeepSeek Harness</div>
+    </div>
+  </aside>
+
+  <!-- 主内容区 -->
+  <main class="main">
+    <!-- 顶部栏 -->
+    <header class="header">
+      <h1 id="page-title">仪表盘</h1>
+      <div class="header-actions">
+        <span class="status-badge" id="server-status">
+          <span class="status-dot"></span>
+          <span>服务运行中</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- 仪表盘页面 -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fff3e0;">📈</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">总线索数</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e8f5e9;">🔥</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-today">0</div>
+            <div class="stat-label">今日新增</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fce4ec;">⭐</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-a-level">0</div>
+            <div class="stat-label">高意向(A级)</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e3f2fd;">✅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-converted">0</div>
+            <div class="stat-label">已转化</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="panel">
+          <h3>意向等级分布</h3>
+          <div class="intention-bars">
+            <div class="intention-row">
+              <span class="intention-label">A级 (高意向)</span>
+              <div class="intention-bar"><div class="intention-fill" id="bar-a" style="width: 0%; background: #ef4444;"></div></div>
+              <span class="intention-count" id="count-a">0</span>
+            </div>
+            <div class="intention-row">
+              <span class="intention-label">B级 (中意向)</span>
+              <div class="intention-bar"><div class="intention-fill" id="bar-b" style="width: 0%; background: #f97316;"></div></div>
+              <span class="intention-count" id="count-b">0</span>
+            </div>
+            <div class="intention-row">
+              <span class="intention-label">C级 (低意向)</span>
+              <div class="intention-bar"><div class="intention-fill" id="bar-c" style="width: 0%; background: #94a3b8;"></div></div>
+              <span class="intention-count" id="count-c">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>最新线索</h3>
+          <div class="recent-leads" id="recent-leads">
+            <div class="empty-state">暂无数据</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>快捷操作</h3>
+        <div class="quick-actions">
+          <button class="quick-action-btn" onclick="switchPage('content')">
+            <span class="qa-icon">✍️</span>
+            <span class="qa-text">生成营销内容</span>
+          </button>
+          <button class="quick-action-btn" onclick="switchPage('nurture')">
+            <span class="qa-icon">🌱</span>
+            <span class="qa-text">线索跟进培育</span>
+          </button>
+          <button class="quick-action-btn" onclick="switchPage('leads')">
+            <span class="qa-icon">👥</span>
+            <span class="qa-text">查看全部线索</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 线索管理页面 -->
+    <div class="page" id="page-leads">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>意向等级:</label>
+          <select id="filter-intention">
+            <option value="">全部</option>
+            <option value="A">A级</option>
+            <option value="B">B级</option>
+            <option value="C">C级</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>状态:</label>
+          <select id="filter-status">
+            <option value="">全部</option>
+            <option value="new">新线索</option>
+            <option value="following">跟进中</option>
+            <option value="interested">有意向</option>
+            <option value="converted">已转化</option>
+            <option value="lost">已流失</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="loadLeads()">刷新</button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>姓名</th>
+              <th>联系方式</th>
+              <th>来源</th>
+              <th>意向等级</th>
+              <th>状态</th>
+              <th>需求</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table-body">
+            <tr><td colspan="8" class="empty-state">加载中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- 对话记录页面 -->
+    <div class="page" id="page-conversations">
+      <div class="conversations-list" id="conversations-list">
+        <div class="empty-state">对话记录功能开发中...</div>
+      </div>
+    </div>
+
+    <!-- 内容智造页面 -->
+    <div class="page" id="page-content">
+      <div class="content-tabs">
+        <button class="content-tab active" data-tab="xiaohongshu">小红书笔记</button>
+        <button class="content-tab" data-tab="wechat">公众号文章</button>
+        <button class="content-tab" data-tab="copy">营销文案</button>
+        <button class="content-tab" data-tab="calendar">内容日历</button>
+      </div>
+
+      <!-- 小红书笔记 -->
+      <div class="content-panel active" id="panel-xiaohongshu">
+        <div class="panel">
+          <h3>生成小红书图文笔记</h3>
+          <div class="form-group">
+            <label>笔记主题 *</label>
+            <input type="text" id="xhs-topic" placeholder="例如：中小企业如何用AI提升获客效率">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>风格</label>
+              <select id="xhs-style">
+                <option value="种草">种草</option>
+                <option value="干货">干货</option>
+                <option value="测评">测评</option>
+                <option value="故事">故事</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>配图数量</label>
+              <select id="xhs-images">
+                <option value="4">4张</option>
+                <option value="6" selected>6张</option>
+                <option value="9">9张</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateXiaohongshu()">生成笔记</button>
+        </div>
+        <div id="xhs-result" class="result-panel" style="display:none;"></div>
+      </div>
+
+      <!-- 公众号文章 -->
+      <div class="content-panel" id="panel-wechat">
+        <div class="panel">
+          <h3>生成公众号文章</h3>
+          <div class="form-group">
+            <label>文章主题 *</label>
+            <input type="text" id="wc-topic" placeholder="例如：2026年中小企业获客趋势洞察">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>切入角度</label>
+              <select id="wc-angle">
+                <option value="行业洞察">行业洞察</option>
+                <option value="案例分析">案例分析</option>
+                <option value="方法论">方法论</option>
+                <option value="趋势预测">趋势预测</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>目标字数</label>
+              <select id="wc-wordcount">
+                <option value="1000">1000字</option>
+                <option value="1500" selected>1500字</option>
+                <option value="2000">2000字</option>
+                <option value="3000">3000字</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateWechat()">生成文章</button>
+        </div>
+        <div id="wc-result" class="result-panel" style="display:none;"></div>
+      </div>
+
+      <!-- 营销文案 -->
+      <div class="content-panel" id="panel-copy">
+        <div class="panel">
+          <h3>生成营销文案</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>场景 *</label>
+              <select id="copy-scene">
+                <option value="朋友圈">朋友圈</option>
+                <option value="广告">广告投放</option>
+                <option value="短信">短信营销</option>
+                <option value="邮件">邮件营销</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>行动号召</label>
+              <input type="text" id="copy-cta" value="立即预约体验" placeholder="例如：立即咨询、点击购买">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>核心卖点 *</label>
+            <textarea id="copy-hook" rows="3" placeholder="例如：AI 获客伙计，24小时在线接待客户，自动筛选高意向线索，提升转化率300%"></textarea>
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateCopy()">生成文案</button>
+        </div>
+        <div id="copy-result" class="result-panel" style="display:none;"></div>
+      </div>
+
+      <!-- 内容日历 -->
+      <div class="content-panel" id="panel-calendar">
+        <div class="panel">
+          <h3>生成一周内容日历</h3>
+          <p style="color:#78716c; margin-bottom:16px;">根据产品和目标受众，自动生成一周的内容规划，包含每天的主题、形式、平台和核心要点。</p>
+          <button class="btn btn-primary btn-large" onclick="generateCalendar()">生成内容日历</button>
+        </div>
+        <div id="calendar-result" class="result-panel" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- 线索培育页面 -->
+    <div class="page" id="page-nurture">
+      <div class="content-tabs">
+        <button class="content-tab active" data-tab="to-followup">待跟进线索</button>
+        <button class="content-tab" data-tab="followup-script">跟进话术</button>
+        <button class="content-tab" data-tab="nurture-content">培育内容</button>
+        <button class="content-tab" data-tab="followup-plan">跟进计划</button>
+      </div>
+
+      <!-- 待跟进线索 -->
+      <div class="content-panel active" id="panel-to-followup">
+        <div class="panel">
+          <h3>需要跟进的线索</h3>
+          <div class="filter-bar" style="padding:0; margin-bottom:16px;">
+            <div class="filter-group">
+              <label>超过天数:</label>
+              <select id="nurture-days">
+                <option value="0">全部</option>
+                <option value="1">1天未跟进</option>
+                <option value="3" selected>3天未跟进</option>
+                <option value="7">7天未跟进</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="loadToFollowUp()">刷新</button>
+          </div>
+          <div id="to-followup-list">
+            <div class="empty-state">点击刷新加载待跟进线索</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 跟进话术 -->
+      <div class="content-panel" id="panel-followup-script">
+        <div class="panel">
+          <h3>生成个性化跟进话术</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>线索ID *</label>
+              <input type="text" id="script-lead-id" placeholder="输入线索ID，或从待跟进列表选择">
+            </div>
+            <div class="form-group">
+              <label>跟进场景 *</label>
+              <select id="script-scene">
+                <option value="首次跟进">首次跟进</option>
+                <option value="二次跟进">二次跟进</option>
+                <option value="逼单">逼单成交</option>
+                <option value="唤醒">沉睡唤醒</option>
+                <option value="节日问候">节日问候</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateFollowUpScript()">生成话术</button>
+        </div>
+        <div id="script-result" class="result-panel" style="display:none;"></div>
+      </div>
+
+      <!-- 培育内容 -->
+      <div class="content-panel" id="panel-nurture-content">
+        <div class="panel">
+          <h3>生成培育内容</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>线索ID *</label>
+              <input type="text" id="nurture-lead-id" placeholder="输入线索ID">
+            </div>
+            <div class="form-group">
+              <label>内容类型 *</label>
+              <select id="nurture-content-type">
+                <option value="产品资料">产品资料</option>
+                <option value="案例">客户案例</option>
+                <option value="行业报告">行业报告</option>
+                <option value="优惠信息">优惠信息</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateNurtureContent()">生成内容</button>
+        </div>
+        <div id="nurture-content-result" class="result-panel" style="display:none;"></div>
+      </div>
+
+      <!-- 跟进计划 -->
+      <div class="content-panel" id="panel-followup-plan">
+        <div class="panel">
+          <h3>生成个性化跟进计划 (SOP)</h3>
+          <p style="color:#78716c; margin-bottom:16px;">根据线索的意向等级，自动制定个性化的跟进频率和触达节点计划。</p>
+          <div class="form-group">
+            <label>线索ID *</label>
+            <input type="text" id="plan-lead-id" placeholder="输入线索ID">
+          </div>
+          <button class="btn btn-primary btn-large" onclick="generateFollowUpPlan()">生成计划</button>
+        </div>
+        <div id="plan-result" class="result-panel" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- 系统设置页面 -->
+    <div class="page" id="page-settings">
+      <div class="panel">
+        <h3>业务配置</h3>
+        <div class="form-group">
+          <label>行业</label>
+          <input type="text" id="setting-industry" placeholder="例如：教育、医美、家装">
+        </div>
+        <div class="form-group">
+          <label>产品/服务</label>
+          <input type="text" id="setting-product" placeholder="例如：雅思培训、整形项目">
+        </div>
+        <div class="form-group">
+          <label>目标客户</label>
+          <input type="text" id="setting-target" placeholder="例如：25-35岁女性、企业主">
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">保存配置</button>
+      </div>
+
+      <div class="panel">
+        <h3>模型配置</h3>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="setting-api-key" placeholder="DeepSeek API Key">
+        </div>
+        <div class="form-group">
+          <label>模型</label>
+          <select id="setting-model">
+            <option value="deepseek-chat">deepseek-chat</option>
+            <option value="deepseek-reasoner">deepseek-reasoner</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="saveModelSettings()">保存模型配置</button>
+      </div>
+
+      <div class="panel">
+        <h3>DSH 插件系统</h3>
+        <div id="dsh-status">
+          <div class="empty-state">加载中...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 线索详情弹窗 -->
+  <div class="modal" id="lead-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>线索详情</h3>
+        <button class="modal-close" onclick="closeLeadModal()">×</button>
+      </div>
+      <div class="modal-body" id="lead-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 加载遮罩 -->
+  <div class="loading-overlay" id="loading-overlay" style="display:none;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">AI 正在生成中...</div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
