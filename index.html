@@ -248,6 +248,97 @@
     .cta-band { padding: 44px 24px; }
     .name-tag { left: 12px; bottom: 12px; padding: 8px 12px; }
   }
+  /* ===== 动画系统 ===== */
+
+  /* 滚动揭示 */
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.75s cubic-bezier(.22,.61,.36,1), transform 0.75s cubic-bezier(.22,.61,.36,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: 0.1s; }
+  .reveal-d2 { transition-delay: 0.2s; }
+  .reveal-d3 { transition-delay: 0.3s; }
+
+  /* 图片浮动呼吸 */
+  @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .hero-visual img { animation: floatY 6.5s ease-in-out infinite; }
+  .product-visual img { animation: floatY 7.5s ease-in-out infinite; animation-delay: 1.2s; }
+
+  /* 图片光晕 */
+  .hero-visual::before {
+    content:''; position:absolute; inset:-24px; z-index:-1;
+    background: radial-gradient(ellipse at 35% 45%, rgba(234,88,12,0.18), transparent 65%);
+    border-radius: 32px; animation: glowPulse 5s ease-in-out infinite;
+  }
+  .product-visual::before {
+    content:''; position:absolute; inset:-24px; z-index:-1;
+    background: radial-gradient(ellipse at 65% 50%, rgba(234,88,12,0.14), transparent 65%);
+    border-radius: 32px; animation: glowPulse 6s ease-in-out infinite; animation-delay: 1.5s;
+  }
+  @keyframes glowPulse { 0%,100% { opacity:0.5; transform:scale(1); } 50% { opacity:1; transform:scale(1.06); } }
+
+  /* 工牌圆点呼吸 */
+  @keyframes pulseDot { 0%,100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.2); } 50% { box-shadow: 0 0 0 9px rgba(34,197,94,0.06); } }
+  .tag-dot { animation: pulseDot 2.2s ease-in-out infinite; }
+  .name-tag { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .hero-visual:hover .name-tag { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(36,33,29,0.18); }
+
+  /* Hero 强调字微光 */
+  @keyframes accentGlow { 0%,100% { text-shadow: 0 0 0 rgba(234,88,12,0); } 50% { text-shadow: 0 0 24px rgba(234,88,12,0.35); } }
+  .hero h1 .accent { animation: accentGlow 3.5s ease-in-out infinite; }
+
+  /* 理念卡片 hover */
+  .why-card { transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s ease, border-color 0.35s ease; }
+  .why-card:hover { transform: translateY(-8px); box-shadow: 0 20px 48px rgba(36,33,29,0.12); border-color: var(--orange); }
+  .why-icon { transition: transform 0.35s cubic-bezier(.22,.61,.36,1), background 0.35s ease, color 0.35s ease; }
+  .why-card:hover .why-icon { transform: scale(1.12) rotate(-6deg); background: var(--orange); color: var(--white); }
+
+  /* 流程步骤 hover */
+  .flow-step { transition: transform 0.3s ease; cursor: default; }
+  .flow-step:hover { transform: translateY(-5px); }
+  .flow-num { transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; }
+  .flow-step:hover .flow-num { background: var(--orange); transform: scale(1.18); box-shadow: 0 6px 16px rgba(234,88,12,0.35); }
+  .flow-step h4 { transition: color 0.3s ease; }
+  .flow-step:hover h4 { color: var(--orange); }
+
+  /* 时间轴卡片 hover */
+  .tl-card { transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s ease, border-color 0.35s ease; }
+  .tl-row:hover .tl-card { transform: translateX(8px); box-shadow: 0 10px 28px rgba(36,33,29,0.1); border-color: var(--orange); }
+  .tl-dot { transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease; }
+  .tl-row:hover .tl-dot { background: var(--orange); border-color: var(--orange); transform: scale(1.35); box-shadow: 0 0 0 6px rgba(234,88,12,0.15); }
+  .tl-time { transition: color 0.3s ease, transform 0.3s ease; }
+  .tl-row:hover .tl-time { color: var(--orange); transform: translateX(-4px); }
+
+  /* 品牌精神卡片 hover */
+  .ethos-card { transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s ease, border-color 0.35s ease; }
+  .ethos-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(36,33,29,0.1); border-color: var(--orange); }
+  .ethos-num { transition: color 0.3s ease, transform 0.3s ease; }
+  .ethos-card:hover .ethos-num { color: var(--orange); transform: scale(1.25); }
+  .ethos-card h3 { transition: color 0.3s ease; }
+  .ethos-card:hover h3 { color: var(--orange); }
+
+  /* 按钮波纹 */
+  .btn-primary { position: relative; overflow: hidden; }
+  .btn-primary::after {
+    content:''; position:absolute; top:50%; left:50%; width:0; height:0;
+    background: rgba(255,255,255,0.25); border-radius:50%;
+    transform: translate(-50%,-50%); transition: width 0.55s ease, height 0.55s ease;
+    pointer-events: none;
+  }
+  .btn-primary:hover::after { width: 320px; height: 320px; }
+  .btn-primary svg { transition: transform 0.3s ease; }
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  /* CTA 尾带微光 */
+  .cta-band { position: relative; overflow: hidden; }
+  .cta-band::before {
+    content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+    background: radial-gradient(circle at 30% 50%, rgba(234,88,12,0.12), transparent 50%);
+    animation: ctaGlow 8s ease-in-out infinite;
+  }
+  @keyframes ctaGlow { 0%,100% { transform: translate(0,0); } 50% { transform: translate(5%,3%); } }
+
+  /* 导航栏滚动阴影 */
+  .nav.scrolled { box-shadow: 0 4px 20px rgba(36,33,29,0.08); }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { transition: none !important; }
@@ -290,7 +381,7 @@
 <!-- ===== Hero ===== -->
 <section class="hero" id="top">
   <div class="container hero-grid">
-    <div>
+    <div class="reveal">
       <span class="hero-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
         中小企业的 AI 伙计
@@ -306,7 +397,7 @@
       </div>
       <p class="hero-note">轻资本 · 先收费 · 靠收入长大，不靠融资讲故事</p>
     </div>
-    <div class="hero-visual">
+    <div class="hero-visual reveal reveal-d2">
       <img src="assets/hero.png" alt="Work Hogee 的 AI 伙计形象：白色机器人穿着工装围裙，佩戴工牌，站在小店门前挥手">
       <div class="name-tag">
         <span class="tag-dot"></span>
@@ -322,27 +413,27 @@
 <!-- ===== 理念 ===== -->
 <section class="why" id="why">
   <div class="container">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-kicker">为什么是伙计，不是工具</span>
       <h2>工具要人学，伙计直接干活</h2>
       <p>市面上的办公智能体什么都能做，等于什么都做不好——老板拿到手，老虎吃天，无从下口。Work Hogee 只做一件事：一个岗位，一个伙计，按结果负责。</p>
     </div>
     <div class="why-grid">
-      <div class="why-card">
+      <div class="why-card reveal reveal-d1">
         <div class="why-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
         <h3>老板一看就懂</h3>
         <p>不需要培训，不需要配人。它顶的就是一个岗位——销售、客服、店长，老板一听就明白，用了就上手。</p>
       </div>
-      <div class="why-card">
+      <div class="why-card reveal reveal-d2">
         <div class="why-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         </div>
         <h3>按结果负责</h3>
         <p>不为"用了多少"收费，为"办成了什么"负责。干不出活，老板随时不续——所以它比谁都想把事办成。</p>
       </div>
-      <div class="why-card">
+      <div class="why-card reveal reveal-d3">
         <div class="why-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
         </div>
@@ -356,13 +447,13 @@
 <!-- ===== 第一款产品 ===== -->
 <section class="product" id="product">
   <div class="container">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-kicker">第一款伙计</span>
       <h2>AI 获客伙计：把流量变成客户</h2>
       <p>老板最大的浪费不是广告费，是钱花出去了，却没换来能成交的客户。AI 获客伙计替你把获客这摊事干完。</p>
     </div>
     <div class="product-grid">
-      <div class="product-copy">
+      <div class="product-copy reveal">
         <p class="lead">它一天二十四小时站在你店的门口，干四件事：</p>
         <div class="flow">
           <div class="flow-step">
@@ -392,7 +483,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
         </a>
       </div>
-      <div class="product-visual">
+      <div class="product-visual reveal reveal-d2">
         <img src="assets/product.png" alt="AI 获客伙计在店里接待顾客，老板在一旁看数据">
       </div>
     </div>
@@ -402,13 +493,13 @@
 <!-- ===== 路线图 ===== -->
 <section class="roadmap" id="roadmap">
   <div class="container">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-kicker">伙计矩阵</span>
       <h2>不把身价押在一个产品上</h2>
       <p>像配投资组合一样配岗位：每一个新伙计，都站在前一个的肩膀上，数据和渠道全程共用。</p>
     </div>
     <div class="timeline">
-      <div class="tl-row">
+      <div class="tl-row reveal reveal-d1">
         <div class="tl-time">2026 · Q4</div>
         <div class="tl-axis"><span class="tl-dot"></span></div>
         <div class="tl-card">
@@ -417,7 +508,7 @@
           <span class="tl-tag">现在 · 打磨中</span>
         </div>
       </div>
-      <div class="tl-row">
+      <div class="tl-row reveal reveal-d2">
         <div class="tl-time">2027 · H1</div>
         <div class="tl-axis"><span class="tl-dot"></span></div>
         <div class="tl-card">
@@ -425,7 +516,7 @@
           <p>看数据、盯库存、出促销，把店长的杂活接过去。</p>
         </div>
       </div>
-      <div class="tl-row">
+      <div class="tl-row reveal reveal-d3">
         <div class="tl-time">2027 · H2</div>
         <div class="tl-axis"><span class="tl-dot"></span></div>
         <div class="tl-card">
@@ -433,7 +524,7 @@
           <p>在企微里自动跟进、促活、约访，不放过任何一个回头客。</p>
         </div>
       </div>
-      <div class="tl-row">
+      <div class="tl-row reveal">
         <div class="tl-time">2028</div>
         <div class="tl-axis"><span class="tl-dot"></span></div>
         <div class="tl-card">
@@ -449,34 +540,34 @@
 <!-- ===== 品牌精神 ===== -->
 <section id="ethos">
   <div class="container">
-    <div class="sec-head center">
+    <div class="sec-head center reveal">
       <span class="sec-kicker">Work Hogee 的活法</span>
       <h2>轻资本，先把钱赚回来再说</h2>
       <p>我们学的是"一人公司"的打法：不融资、先收费、复利渠道、每天和客户说话。没有一分钱融资，也就没有一天到晚讲故事的负担。</p>
     </div>
     <div class="ethos-grid">
-      <div class="ethos-card">
+      <div class="ethos-card reveal reveal-d1">
         <span class="ethos-num">01</span>
         <div>
           <h3>不融资，先把钱赚回来</h3>
           <p>用真实的收入做验证，不靠估值和故事。跑不通的立刻换，跑得通的拼命放大。</p>
         </div>
       </div>
-      <div class="ethos-card">
+      <div class="ethos-card reveal reveal-d2">
         <span class="ethos-num">02</span>
         <div>
           <h3>第一天就收费</h3>
           <p>只服务真金白银买服务的老板。付费的门槛，本身就是最好的客户筛选。</p>
         </div>
       </div>
-      <div class="ethos-card">
+      <div class="ethos-card reveal reveal-d3">
         <span class="ethos-num">03</span>
         <div>
           <h3>渠道做复利</h3>
           <p>一次搭好的分销、SEO 与内容渠道，长期持续带来客户，而不是花一次钱买一波流量。</p>
         </div>
       </div>
-      <div class="ethos-card">
+      <div class="ethos-card reveal">
         <span class="ethos-num">04</span>
         <div>
           <h3>每天和客户说话</h3>
@@ -490,7 +581,7 @@
 <!-- ===== CTA 尾带 ===== -->
 <section style="padding-top:0;">
   <div class="container">
-    <div class="cta-band">
+    <div class="cta-band reveal">
       <h2>你的店，值得一个靠谱的伙计</h2>
       <p>留下邮箱，第一款 AI 获客伙计上线时，第一个通知你。</p>
       <a class="btn-primary" href="mailto:hello@workhogee.com">预约体验</a>
@@ -532,6 +623,7 @@
 
 <script>
 (function () {
+  /* 导航菜单 */
   var toggle = document.getElementById('navToggle');
   var links = document.getElementById('navLinks');
   if (toggle && links) {
@@ -545,6 +637,36 @@
         toggle.setAttribute('aria-expanded', 'false');
       }
     });
+  }
+
+  /* 滚动揭示动画 */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { observer.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('visible'); });
+  }
+
+  /* 导航栏滚动阴影 */
+  var nav = document.querySelector('.nav');
+  if (nav) {
+    var onScroll = function () {
+      if (window.scrollY > 8) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
 })();
 </script>
