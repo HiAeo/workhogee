@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Hogee — 中小企业的 AI 伙计</title>
+<meta name="description" content="Work Hogee 是给中小企业干活的 AI 伙计：不卖系统，卖人。第一款伙计——AI 获客伙计，替你接咨询、筛意向、约到店、把成交变成更便宜的流量。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ea580c'/%3E%3Ctext x='32' y='45' font-size='34' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E4%BC%99%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+  :root {
+    --ink: #24211d;
+    --ink-soft: #4b443c;
+    --paper: #faf8f4;
+    --white: #ffffff;
+    --sand: #f0e9db;
+    --line: #ddd2bf;
+    --orange: #ea580c;
+    --orange-deep: #c2410c;
+    --orange-soft: #fff1e2;
+    --muted: #7c7468;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  .container { width: min(1120px, 92%); margin: 0 auto; }
+  section { scroll-margin-top: 76px; padding: 88px 0; }
+
+  /* ===== 导航 ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 248, 244, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-badge {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: var(--orange); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 20px;
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,0.22);
+  }
+  .logo-text { font-weight: 900; font-size: 19px; letter-spacing: 0.2px; }
+  .logo-text small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+  .nav-links { display: flex; align-items: center; gap: 30px; }
+  .nav-links a { font-size: 15px; color: var(--ink-soft); transition: color 0.2s; }
+  .nav-links a:hover { color: var(--orange); }
+  .nav-cta {
+    font-size: 14px; font-weight: 700;
+    color: var(--white); background: var(--orange);
+    padding: 8px 18px; border-radius: 999px;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--orange-deep); }
+  .nav-toggle {
+    display: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+    border: 1px solid var(--line);
+    background: var(--white); border-radius: 10px; cursor: pointer;
+    flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  }
+  .nav-toggle span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 2px; transition: 0.25s; }
+
+  /* ===== Hero ===== */
+  .hero { padding: 96px 0 80px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange-soft); color: var(--orange-deep);
+    font-size: 13px; font-weight: 700;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid #fcd5ad;
+  }
+  .hero-badge svg { width: 14px; height: 14px; }
+  .hero h1 {
+    font-size: clamp(38px, 5vw, 60px);
+    font-weight: 900; line-height: 1.22; letter-spacing: 0.5px;
+    margin: 22px 0 20px;
+  }
+  .hero h1 .accent { color: var(--orange); }
+  .hero-sub { font-size: 17px; color: var(--ink-soft); max-width: 30em; margin-bottom: 32px; }
+  .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange); color: var(--white);
+    font-size: 16px; font-weight: 700;
+    padding: 13px 28px; border-radius: 999px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--orange-deep); transform: translateY(-1px); }
+  .btn-primary svg { width: 16px; height: 16px; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 16px; font-weight: 700; color: var(--ink);
+    padding: 13px 6px; border-bottom: 2px solid var(--line);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--orange); border-color: var(--orange); }
+  .hero-note { margin-top: 22px; font-size: 14px; color: var(--muted); }
+  .hero-visual { position: relative; }
+  .hero-visual img { border-radius: 20px; border: 1px solid var(--line); }
+  .name-tag {
+    position: absolute; left: 18px; bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: 12px; padding: 10px 16px;
+    box-shadow: 0 10px 30px rgba(36,33,29,0.12);
+  }
+  .name-tag .tag-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
+  }
+  .name-tag .tag-name { font-size: 14px; font-weight: 700; }
+  .name-tag .tag-role { font-size: 12px; color: var(--muted); }
+
+  /* ===== 通用区块头 ===== */
+  .sec-head { max-width: 720px; margin-bottom: 48px; }
+  .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+  .sec-kicker {
+    display: inline-block; font-size: 13px; font-weight: 700;
+    color: var(--orange-deep); letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .sec-head h2 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 900; line-height: 1.3; }
+  .sec-head p { margin-top: 14px; font-size: 16px; color: var(--ink-soft); }
+
+  /* ===== 理念三卡片 ===== */
+  .why { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .why-card {
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: 16px; padding: 30px 26px;
+  }
+  .why-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: var(--orange-soft); color: var(--orange-deep);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .why-icon svg { width: 24px; height: 24px; }
+  .why-card h3 { font-size: 19px; font-weight: 900; margin-bottom: 10px; }
+  .why-card p { font-size: 15px; color: var(--ink-soft); }
+
+  /* ===== 第一款产品 ===== */
+  .product-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 56px; align-items: center; }
+  .product-visual img { border-radius: 20px; border: 1px solid var(--line); }
+  .product-copy .lead { font-size: 17px; color: var(--ink-soft); margin-bottom: 30px; }
+  .flow { display: flex; gap: 0; margin-bottom: 28px; }
+  .flow-step { flex: 1; position: relative; padding-right: 18px; }
+  .flow-step:not(:last-child)::after {
+    content: ''; position: absolute; top: 17px; right: 2px; width: 20px; height: 2px;
+    background: var(--line);
+  }
+  .flow-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--ink); color: var(--white);
+    font-size: 14px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .flow-step h4 { font-size: 16px; font-weight: 900; margin-bottom: 6px; }
+  .flow-step p { font-size: 14px; color: var(--muted); }
+  .product-foot { font-size: 14px; color: var(--muted); margin: 0 0 26px; }
+  .product-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: var(--white); font-size: 15px; font-weight: 700; padding: 12px 24px; border-radius: 999px; transition: background 0.2s; }
+  .product-cta:hover { background: var(--orange-deep); }
+
+  /* ===== 时间轴 ===== */
+  .roadmap { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .timeline { position: relative; }
+  .timeline::before {
+    content: ''; position: absolute; left: calc(130px + 12px + 16px); top: 6px; bottom: 6px;
+    width: 2px; background: var(--line); border-radius: 2px;
+  }
+  .tl-row { display: grid; grid-template-columns: 130px 48px 1fr; gap: 12px; align-items: start; padding: 18px 0; }
+  .tl-time { text-align: right; padding-top: 2px; font-size: 15px; font-weight: 700; color: var(--orange-deep); }
+  .tl-axis { position: relative; justify-self: center; }
+  .tl-dot {
+    display: block; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--white); border: 4px solid var(--orange);
+    position: relative; z-index: 1; margin: 4px auto 0;
+  }
+  .tl-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; }
+  .tl-card h4 { font-size: 17px; font-weight: 900; margin-bottom: 4px; }
+  .tl-card p { font-size: 14px; color: var(--ink-soft); }
+  .tl-tag { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--orange-deep); background: var(--orange-soft); border-radius: 999px; padding: 3px 10px; }
+  .roadmap-note { margin-top: 34px; font-size: 15px; color: var(--ink-soft); max-width: 760px; }
+
+  /* ===== 品牌精神 ===== */
+  .ethos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .ethos-card { display: flex; gap: 18px; align-items: flex-start; border: 1px solid var(--line); background: var(--white); border-radius: 16px; padding: 26px; }
+  .ethos-num { font-size: 15px; font-weight: 900; color: var(--orange); padding-top: 2px; flex-shrink: 0; width: 34px; }
+  .ethos-card h3 { font-size: 17px; font-weight: 900; margin-bottom: 6px; }
+  .ethos-card p { font-size: 14.5px; color: var(--ink-soft); }
+
+  /* ===== CTA 尾带 ===== */
+  .cta-band { background: var(--ink); color: var(--paper); border-radius: 22px; padding: 56px 40px; text-align: center; }
+  .cta-band h2 { font-size: clamp(26px, 3vw, 36px); font-weight: 900; margin-bottom: 14px; }
+  .cta-band p { font-size: 16px; color: #c9c2b6; margin-bottom: 30px; }
+  .cta-band .btn-primary { background: var(--orange); font-size: 16px; padding: 14px 32px; }
+
+  /* ===== Footer ===== */
+  .footer { background: var(--ink); color: #a9a196; padding: 40px 0 48px; border-top: 1px solid #37322c; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; flex-wrap: wrap; }
+  .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; color: var(--paper); }
+  .footer-brand .logo-badge { width: 34px; height: 34px; font-size: 18px; }
+  .footer-brand small { display: block; font-weight: 500; font-size: 11px; color: #8a8276; letter-spacing: 1px; }
+  .footer-line { font-size: 14px; line-height: 2; }
+  .footer-line a { color: #d8d2c8; }
+  .footer-line a:hover { color: var(--orange); }
+  .footer-copy { margin-top: 34px; font-size: 12.5px; color: #7c7468; text-align: center; }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 900px) {
+    .hero-grid, .product-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero { padding: 64px 0 56px; }
+    section { padding: 64px 0; }
+    .why-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; gap: 0; }
+    .flow-step { padding-right: 0; padding-bottom: 22px; }
+    .flow-step:not(:last-child)::after { content: none; }
+    .ethos-grid { grid-template-columns: 1fr; }
+    .timeline::before { left: calc(76px + 10px + 12px); }
+    .tl-row { grid-template-columns: 76px 36px 1fr; gap: 10px; }
+  }
+  @media (max-width: 640px) {
+    .nav-links {
+      display: none; position: absolute; top: 64px; left: 0; right: 0;
+      background: var(--white); border-bottom: 1px solid var(--line);
+      flex-direction: column; align-items: stretch; gap: 0; padding: 8px 0;
+    }
+    .nav-links a { padding: 13px 22px; font-size: 16px; }
+    .nav-links .nav-cta { margin: 10px 22px; text-align: center; padding: 12px; }
+    .nav-toggle { display: flex; }
+    body.nav-open .nav-links { display: flex; }
+    body.nav-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    body.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    body.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .cta-band { padding: 44px 24px; }
+    .name-tag { left: 12px; bottom: 12px; padding: 8px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 导航 ===== -->
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="#top" aria-label="Work Hogee 首页">
+      <span class="logo-badge">伙</span>
+      <span class="logo-text">Work Hogee<small>AI 伙计</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#why">为什么是伙计</a>
+      <a href="#product">第一款伙计</a>
+      <a href="#roadmap">伙计矩阵</a>
+      <a href="#ethos">我们的活法</a>
+      <a class="nav-cta" href="mailto:hello@workhogee.com">预约体验</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+        中小企业的 AI 伙计
+      </span>
+      <h1>每个小生意，<br>都该有个<span class="accent">好伙计</span>。</h1>
+      <p class="hero-sub">Work Hogee 不卖系统，卖人。它替你接住每一个咨询，筛出真想买的客户，再把每一次成交，变成下一波更便宜的流量。</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#product">
+          认识第一款伙计
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
+        <a class="btn-ghost" href="#ethos">看看我们的活法</a>
+      </div>
+      <p class="hero-note">轻资本 · 先收费 · 靠收入长大，不靠融资讲故事</p>
+    </div>
+    <div class="hero-visual">
+      <img src="assets/hero.png" alt="Work Hogee 的 AI 伙计形象：白色机器人穿着工装围裙，佩戴工牌，站在小店门前挥手">
+      <div class="name-tag">
+        <span class="tag-dot"></span>
+        <div>
+          <div class="tag-name">工牌 · 随时上班</div>
+          <div class="tag-role">岗位：AI 伙计（待认领）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 理念 ===== -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-kicker">为什么是伙计，不是工具</span>
+      <h2>工具要人学，伙计直接干活</h2>
+      <p>市面上的办公智能体什么都能做，等于什么都做不好——老板拿到手，老虎吃天，无从下口。Work Hogee 只做一件事：一个岗位，一个伙计，按结果负责。</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <h3>老板一看就懂</h3>
+        <p>不需要培训，不需要配人。它顶的就是一个岗位——销售、客服、店长，老板一听就明白，用了就上手。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3>按结果负责</h3>
+        <p>不为"用了多少"收费，为"办成了什么"负责。干不出活，老板随时不续——所以它比谁都想把事办成。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        </div>
+        <h3>越用越懂你的生意</h3>
+        <p>每一单成交都记进它的账本。它越干越懂你的客户、你的行业，一个伙计越用越值钱。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 第一款产品 ===== -->
+<section class="product" id="product">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-kicker">第一款伙计</span>
+      <h2>AI 获客伙计：把流量变成客户</h2>
+      <p>老板最大的浪费不是广告费，是钱花出去了，却没换来能成交的客户。AI 获客伙计替你把获客这摊事干完。</p>
+    </div>
+    <div class="product-grid">
+      <div class="product-copy">
+        <p class="lead">它一天二十四小时站在你店的门口，干四件事：</p>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-num">01</div>
+            <h4>接咨询</h4>
+            <p>秒回每一个咨询，不漏一个客户</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">02</div>
+            <h4>筛意向</h4>
+            <p>问出预算、周期、决策人，排出 A / B / C</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">03</div>
+            <h4>约到店</h4>
+            <p>把意向变成见面，约到老板面前</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">04</div>
+            <h4>成交回传</h4>
+            <p>成交数据回传广告平台，让下次流量更便宜</p>
+          </div>
+        </div>
+        <p class="product-foot">首发瞄准招商加盟、本地生活、教育培训等线索最金贵的行业——无效线索最多的生意，伙计的价值最大。</p>
+        <a class="product-cta" href="mailto:hello@workhogee.com">
+          想给店里招一个？预约体验
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="product-visual">
+        <img src="assets/product.png" alt="AI 获客伙计在店里接待顾客，老板在一旁看数据">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 路线图 ===== -->
+<section class="roadmap" id="roadmap">
+  <div class="container">
+    <div class="sec-head">
+      <span class="sec-kicker">伙计矩阵</span>
+      <h2>不把身价押在一个产品上</h2>
+      <p>像配投资组合一样配岗位：每一个新伙计，都站在前一个的肩膀上，数据和渠道全程共用。</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-time">2026 · Q4</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-card">
+          <h4>AI 获客伙计</h4>
+          <p>首发岗位：接住广告流量，筛出真客户，把成交回传成更便宜的流量。</p>
+          <span class="tl-tag">现在 · 打磨中</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">2027 · H1</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-card">
+          <h4>门店经营伙计</h4>
+          <p>看数据、盯库存、出促销，把店长的杂活接过去。</p>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">2027 · H2</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-card">
+          <h4>私域跟进伙计</h4>
+          <p>在企微里自动跟进、促活、约访，不放过任何一个回头客。</p>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">2028</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-card">
+          <h4>财税伙计</h4>
+          <p>票、流水、申报预填，把会计的重复活接过去。</p>
+        </div>
+      </div>
+    </div>
+    <p class="roadmap-note">一个产品可能被新模型、新平台淘汰，一个懂行业的伙计不会——这正是 Work Hogee 把产品做成"岗位矩阵"的原因。</p>
+  </div>
+</section>
+
+<!-- ===== 品牌精神 ===== -->
+<section id="ethos">
+  <div class="container">
+    <div class="sec-head center">
+      <span class="sec-kicker">Work Hogee 的活法</span>
+      <h2>轻资本，先把钱赚回来再说</h2>
+      <p>我们学的是"一人公司"的打法：不融资、先收费、复利渠道、每天和客户说话。没有一分钱融资，也就没有一天到晚讲故事的负担。</p>
+    </div>
+    <div class="ethos-grid">
+      <div class="ethos-card">
+        <span class="ethos-num">01</span>
+        <div>
+          <h3>不融资，先把钱赚回来</h3>
+          <p>用真实的收入做验证，不靠估值和故事。跑不通的立刻换，跑得通的拼命放大。</p>
+        </div>
+      </div>
+      <div class="ethos-card">
+        <span class="ethos-num">02</span>
+        <div>
+          <h3>第一天就收费</h3>
+          <p>只服务真金白银买服务的老板。付费的门槛，本身就是最好的客户筛选。</p>
+        </div>
+      </div>
+      <div class="ethos-card">
+        <span class="ethos-num">03</span>
+        <div>
+          <h3>渠道做复利</h3>
+          <p>一次搭好的分销、SEO 与内容渠道，长期持续带来客户，而不是花一次钱买一波流量。</p>
+        </div>
+      </div>
+      <div class="ethos-card">
+        <span class="ethos-num">04</span>
+        <div>
+          <h3>每天和客户说话</h3>
+          <p>抱怨就是需求，催单就是机会。我们既是产品的开发者，也是产品最挑剔的用户。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA 尾带 ===== -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="cta-band">
+      <h2>你的店，值得一个靠谱的伙计</h2>
+      <p>留下邮箱，第一款 AI 获客伙计上线时，第一个通知你。</p>
+      <a class="btn-primary" href="mailto:hello@workhogee.com">预约体验</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <span class="logo-badge">伙</span>
+          <span>Work Hogee<small>AI 伙计</small></span>
+        </div>
+        <p style="margin-top:14px;font-size:14px;color:#b5ad9f;max-width:30em;">给中小企业干活的 AI 伙计。不卖系统，卖人；不靠融资，靠收入。</p>
+      </div>
+      <div class="footer-line">
+        联系伙计：<a href="mailto:hello@workhogee.com">hello@workhogee.com</a><br>
+        官网：workhogee.com · workhogee.cn<br>
+        首发：AI 获客伙计 · 预约体验中
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 Work Hogee · 保留所有权利</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  if (toggle && links) {
+    toggle.addEventListener('click', function () {
+      var open = document.body.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        document.body.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
