@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 class EmailSenderService {
   constructor(emailConfigService, emailReceiverService, knowledgeBase, llmService, config) {
@@ -270,45 +271,51 @@ ${account.signature || 'Best regards'}
   }
 
   /**
-   * 通过 SMTP 发送邮件（实际实现需要 nodemailer）
+   * 通过 SMTP 发送邮件（真实实现，使用 nodemailer）
    */
   async _sendViaSMTP(account, emailData) {
-    // 实际实现示例（需要安装 nodemailer）：
-    /*
-    const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       host: account.smtpHost,
-      port: account.smtpPort,
-      secure: account.smtpSecure,
+      port: account.smtpPort || 465,
+      secure: account.smtpSecure !== false,
       auth: {
-        user: account.username,
+        user: account.username || account.email,
         pass: account.password
-      }
+      },
+      logger: false,
+      debug: false
     });
 
-    const info = await transporter.sendMail({
-      from: `"${account.name}" <${account.email}>`,
-      to: emailData.to,
-      cc: emailData.cc,
-      bcc: emailData.bcc,
-      subject: emailData.subject,
-      html: emailData.body
-    });
+    try {
+      // 验证 SMTP 连接
+      await transporter.verify();
 
-    return {
-      success: true,
-      messageId: info.messageId,
-      response: info.response
-    };
-    */
+      const info = await transporter.sendMail({
+        from: `"${account.name || account.email}" <${account.email}>`,
+        to: emailData.to,
+        cc: emailData.cc,
+        bcc: emailData.bcc,
+        subject: emailData.subject,
+        text: emailData.text || emailData.body,
+        html: emailData.html || emailData.body,
+        attachments: emailData.attachments || []
+      });
 
-    // 演示版本：模拟发送成功
-    return {
-      success: true,
-      messageId: crypto.randomUUID(),
-      response: '250 OK (模拟发送)',
-      simulated: true
-    };
+      console.log(`[Email] 邮件发送成功: ${account.email} -> ${emailData.to}`);
+
+      return {
+        success: true,
+        messageId: info.messageId,
+        response: info.response,
+        accepted: info.accepted,
+        rejected: info.rejected
+      };
+    } catch (error) {
+      console.error(`[Email] 邮件发送失败 ${account.email}:`, error.message);
+      throw new Error(`SMTP 发送失败: ${error.message}`);
+    } finally {
+      transporter.close();
+    }
   }
 
   _getAccountIdByEmail(email) {
