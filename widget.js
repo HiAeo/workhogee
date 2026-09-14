@@ -1,9 +1,16 @@
 /**
  * WorkHogee AI 获客伙计 - 可嵌入网站对话组件
- * 
+ *
  * 使用方法：
- * 1. 在网站中引入此脚本：<script src="https://your-domain.com/widget.js"></script>
- * 2. 配置 API 地址：WorkHogeeWidget.init({ apiUrl: 'http://localhost:3000' })
+ * 1. 在网站中引入此脚本：<script src="https://www.workhogee.com/widget.js"></script>
+ * 2. 配置 API 地址（可选，默认自动检测）：
+ *    <script>
+ *      window.WORKHOGEE_CONFIG = {
+ *        apiUrl: 'https://api.workhogee.com',
+ *        primaryColor: '#ea580c',
+ *        welcomeMessage: '您好！我是 WorkHogee AI 获客伙计...'
+ *      };
+ *    </script>
  * 3. 页面右下角会出现对话浮窗，访客可直接与 AI 获客伙计对话
  */
 
@@ -18,7 +25,9 @@
     secondaryColor: '#1c1917',
     welcomeMessage: '您好！我是 WorkHogee AI 获客伙计，很高兴为您服务。请问有什么可以帮到您的？',
     buttonText: 'AI 获客顾问',
-    source: 'website'
+    source: 'website',
+    autoInit: true,
+    showConnectionStatus: true
   };
 
   // 状态
@@ -26,7 +35,10 @@
     conversationId: null,
     isOpen: false,
     isLoading: false,
-    messages: []
+    isConnected: false,
+    messages: [],
+    retryCount: 0,
+    maxRetries: 3
   };
 
   // DOM 元素
@@ -35,6 +47,30 @@
   let messagesContainer = null;
   let inputField = null;
   let sendButton = null;
+  let statusIndicator = null;
+
+  /**
+   * 自动检测 API 地址
+   */
+  function detectApiUrl() {
+    // 1. 从 script 标签的 data-api-url 属性获取
+    const scripts = document.querySelectorAll('script[src*="widget.js"]');
+    for (let i = 0; i < scripts.length; i++) {
+      const dataUrl = scripts[i].getAttribute('data-api-url');
+      if (dataUrl) return dataUrl;
+    }
+
+    // 2. 从当前脚本的 src 推断（如果 widget.js 托管在 API 服务器上）
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        const url = new URL(document.currentScript.src);
+        return url.origin;
+      } catch (e) {}
+    }
+
+    // 3. 默认使用生产环境地址
+    return 'https://api.workhogee.com';
+  }
 
   /**
    * 初始化组件
@@ -43,13 +79,53 @@
     // 合并配置
     Object.assign(CONFIG, options);
 
+    // 自动检测 API 地址
     if (!CONFIG.apiUrl) {
-      console.error('WorkHogeeWidget: apiUrl is required');
-      return;
+      CONFIG.apiUrl = detectApiUrl();
     }
 
+    console.log('[WorkHogee] 初始化，API 地址:', CONFIG.apiUrl);
+
     createWidget();
+    checkConnection();
     loadConversation();
+  }
+
+  /**
+   * 检查 API 连接状态
+   */
+  async function checkConnection() {
+    try {
+      const res = await fetch(CONFIG.apiUrl + '/api/health', {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000)
+      });
+      if (res.ok) {
+        state.isConnected = true;
+        updateConnectionStatus(true);
+        console.log('[WorkHogee] API 连接正常');
+      } else {
+        throw new Error('HTTP ' + res.status);
+      }
+    } catch (e) {
+      state.isConnected = false;
+      updateConnectionStatus(false);
+      console.warn('[WorkHogee] API 连接失败:', e.message);
+    }
+  }
+
+  /**
+   * 更新连接状态显示
+   */
+  function updateConnectionStatus(connected) {
+    if (!statusIndicator) return;
+    if (connected) {
+      statusIndicator.style.background = '#22c55e';
+      statusIndicator.title = '在线';
+    } else {
+      statusIndicator.style.background = '#ef4444';
+      statusIndicator.title = '离线 - 消息可能无法发送';
+    }
   }
 
   /**
@@ -82,20 +158,15 @@
         transform: scale(1.1);
         box-shadow: 0 6px 20px rgba(234, 88, 12, 0.5);
       }
-      .workhogee-widget-button .badge {
+      .workhogee-widget-button .connection-dot {
         position: absolute;
-        top: -4px;
-        right: -4px;
-        width: 20px;
-        height: 20px;
-        background: #ef4444;
+        top: 4px;
+        right: 4px;
+        width: 12px;
+        height: 12px;
+        background: #22c55e;
         border-radius: 50%;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
+        border: 2px solid white;
       }
       .workhogee-widget-panel {
         position: fixed;
@@ -110,12 +181,12 @@
         flex-direction: column;
         z-index: 9999;
         overflow: hidden;
-        animation: slideUp 0.3s ease;
+        animation: workhogee-slideUp 0.3s ease;
       }
       .workhogee-widget-panel.open {
         display: flex;
       }
-      @keyframes slideUp {
+      @keyframes workhogee-slideUp {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
       }
@@ -135,6 +206,16 @@
         font-size: 12px;
         opacity: 0.8;
         margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .workhogee-widget-header .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
       }
       .workhogee-widget-header .close-btn {
         background: none;
@@ -144,6 +225,7 @@
         cursor: pointer;
         opacity: 0.8;
         padding: 4px;
+        line-height: 1;
       }
       .workhogee-widget-header .close-btn:hover {
         opacity: 1;
@@ -157,9 +239,9 @@
       .workhogee-message {
         margin-bottom: 12px;
         display: flex;
-        animation: fadeIn 0.3s ease;
+        animation: workhogee-fadeIn 0.3s ease;
       }
-      @keyframes fadeIn {
+      @keyframes workhogee-fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
       }
@@ -173,6 +255,7 @@
         font-size: 14px;
         line-height: 1.5;
         word-wrap: break-word;
+        white-space: pre-wrap;
       }
       .workhogee-message.assistant .bubble {
         background: white;
@@ -185,21 +268,26 @@
         color: white;
         border-bottom-right-radius: 4px;
       }
+      .workhogee-message.error .bubble {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+      }
       .workhogee-typing {
         display: flex;
         gap: 4px;
-        padding: 10px 14px;
+        padding: 4px 0;
       }
       .workhogee-typing span {
         width: 8px;
         height: 8px;
         background: #a8a29e;
         border-radius: 50%;
-        animation: typing 1.4s infinite;
+        animation: workhogee-typing 1.4s infinite;
       }
       .workhogee-typing span:nth-child(2) { animation-delay: 0.2s; }
       .workhogee-typing span:nth-child(3) { animation-delay: 0.4s; }
-      @keyframes typing {
+      @keyframes workhogee-typing {
         0%, 60%, 100% { transform: translateY(0); }
         30% { transform: translateY(-8px); }
       }
@@ -222,6 +310,10 @@
       .workhogee-input:focus {
         border-color: ${CONFIG.primaryColor};
       }
+      .workhogee-input:disabled {
+        background: #f5f5f4;
+        cursor: not-allowed;
+      }
       .workhogee-send-btn {
         padding: 10px 16px;
         background: ${CONFIG.primaryColor};
@@ -233,12 +325,32 @@
         font-weight: 500;
         transition: background 0.2s;
       }
-      .workhogee-send-btn:hover {
+      .workhogee-send-btn:hover:not(:disabled) {
         background: #c2410c;
       }
       .workhogee-send-btn:disabled {
         background: #d6d3d1;
         cursor: not-allowed;
+      }
+      .workhogee-reconnect {
+        text-align: center;
+        padding: 8px;
+        background: #fef3c7;
+        color: #92400e;
+        font-size: 12px;
+        display: none;
+      }
+      .workhogee-reconnect.show {
+        display: block;
+      }
+      .workhogee-reconnect button {
+        background: none;
+        border: none;
+        color: #92400e;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 0;
       }
       @media (max-width: 480px) {
         .workhogee-widget-panel {
@@ -253,10 +365,11 @@
     // 创建浮动按钮
     widgetButton = document.createElement('button');
     widgetButton.className = 'workhogee-widget-button';
-    widgetButton.innerHTML = '💬';
+    widgetButton.innerHTML = '💬<span class="connection-dot"></span>';
     widgetButton.title = CONFIG.buttonText;
     widgetButton.onclick = toggleWidget;
     document.body.appendChild(widgetButton);
+    statusIndicator = widgetButton.querySelector('.connection-dot');
 
     // 创建对话面板
     widgetPanel = document.createElement('div');
@@ -265,13 +378,16 @@
       <div class="workhogee-widget-header">
         <div>
           <div class="title">WorkHogee AI 获客伙计</div>
-          <div class="subtitle">24小时在线 · 智能接待</div>
+          <div class="subtitle"><span class="status-dot"></span><span id="workhogee-status-text">24小时在线 · 智能接待</span></div>
         </div>
-        <button class="close-btn" onclick="WorkHogeeWidget.close()">×</button>
+        <button class="close-btn" aria-label="关闭">×</button>
+      </div>
+      <div class="workhogee-reconnect" id="workhogee-reconnect">
+        连接已断开，<button onclick="WorkHogeeWidget.reconnect()">点击重连</button>
       </div>
       <div class="workhogee-messages" id="workhogee-messages"></div>
       <div class="workhogee-input-area">
-        <input type="text" class="workhogee-input" id="workhogee-input" placeholder="输入您的问题..." />
+        <input type="text" class="workhogee-input" id="workhogee-input" placeholder="输入您的问题..." autocomplete="off" />
         <button class="workhogee-send-btn" id="workhogee-send">发送</button>
       </div>
     `;
@@ -284,6 +400,7 @@
 
     // 绑定事件
     sendButton.onclick = sendMessage;
+    widgetPanel.querySelector('.close-btn').onclick = closeWidget;
     inputField.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendMessage();
     });
@@ -301,17 +418,28 @@
       try {
         const res = await fetch(CONFIG.apiUrl + '/api/conversations/' + savedId);
         const data = await res.json();
-        if (data.success) {
-          state.messages = data.data.messages || [];
+        if (data.success && data.data && data.data.messages) {
+          state.messages = data.data.messages.map(m => ({
+            role: m.role,
+            content: m.content,
+            timestamp: m.createdAt || new Date().toISOString()
+          }));
           renderMessages();
           return;
         }
       } catch (e) {
-        console.error('Failed to load conversation:', e);
+        console.warn('[WorkHogee] 加载历史对话失败，创建新对话:', e.message);
       }
     }
 
     // 创建新对话
+    await createNewConversation();
+  }
+
+  /**
+   * 创建新对话
+   */
+  async function createNewConversation() {
     try {
       const res = await fetch(CONFIG.apiUrl + '/api/conversations', {
         method: 'POST',
@@ -319,15 +447,49 @@
         body: JSON.stringify({ source: CONFIG.source })
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.data) {
         state.conversationId = data.data.conversationId;
         localStorage.setItem('workhogee_conversation_id', state.conversationId);
         // 添加欢迎消息
-        addMessage('assistant', CONFIG.welcomeMessage);
+        const welcomeMsg = data.data.welcomeMessage || CONFIG.welcomeMessage;
+        addMessage('assistant', welcomeMsg);
+      } else {
+        throw new Error(data.error || '创建对话失败');
       }
     } catch (e) {
-      console.error('Failed to create conversation:', e);
-      addMessage('assistant', '抱歉，服务暂时不可用，请稍后再试。');
+      console.error('[WorkHogee] 创建对话失败:', e.message);
+      addMessage('error', '抱歉，服务暂时不可用，请稍后再试。\n错误信息: ' + e.message);
+      showReconnectBanner();
+    }
+  }
+
+  /**
+   * 显示重连提示
+   */
+  function showReconnectBanner() {
+    const banner = document.getElementById('workhogee-reconnect');
+    if (banner) banner.classList.add('show');
+  }
+
+  /**
+   * 隐藏重连提示
+   */
+  function hideReconnectBanner() {
+    const banner = document.getElementById('workhogee-reconnect');
+    if (banner) banner.classList.remove('show');
+  }
+
+  /**
+   * 重新连接
+   */
+  async function reconnect() {
+    hideReconnectBanner();
+    state.retryCount = 0;
+    await checkConnection();
+    if (state.isConnected) {
+      await createNewConversation();
+    } else {
+      showReconnectBanner();
     }
   }
 
@@ -362,6 +524,13 @@
     const message = inputField.value.trim();
     if (!message || state.isLoading) return;
 
+    // 检查连接状态
+    if (!state.isConnected) {
+      addMessage('error', '网络连接已断开，请检查网络后重试。');
+      showReconnectBanner();
+      return;
+    }
+
     // 清空输入框
     inputField.value = '';
 
@@ -371,6 +540,7 @@
     // 显示加载状态
     state.isLoading = true;
     sendButton.disabled = true;
+    inputField.disabled = true;
     showTypingIndicator();
 
     try {
@@ -383,18 +553,45 @@
 
       removeTypingIndicator();
 
-      if (data.success) {
-        addMessage('assistant', data.data.reply);
+      if (data.success && data.data) {
+        const reply = data.data.reply || data.data.response || data.data.message;
+        if (reply) {
+          addMessage('assistant', reply);
+        } else {
+          addMessage('assistant', JSON.stringify(data.data));
+        }
+        state.retryCount = 0;
       } else {
-        addMessage('assistant', '抱歉，我遇到了一些问题，请稍后再试。');
+        throw new Error(data.error || '发送失败');
       }
     } catch (e) {
       removeTypingIndicator();
-      addMessage('assistant', '网络连接失败，请检查网络后重试。');
+      console.error('[WorkHogee] 发送消息失败:', e.message);
+
+      // 重试机制
+      if (state.retryCount < state.maxRetries) {
+        state.retryCount++;
+        addMessage('assistant', '消息发送失败，正在重试（第 ' + state.retryCount + '/' + state.maxRetries + '次）...');
+        setTimeout(() => {
+          state.isLoading = false;
+          sendButton.disabled = false;
+          inputField.disabled = false;
+          // 自动重发
+          inputField.value = message;
+          sendMessage();
+        }, 2000);
+        return;
+      }
+
+      addMessage('error', '网络连接失败，请检查网络后重试。\n错误信息: ' + e.message);
+      state.isConnected = false;
+      updateConnectionStatus(false);
+      showReconnectBanner();
     }
 
     state.isLoading = false;
     sendButton.disabled = false;
+    inputField.disabled = false;
   }
 
   /**
@@ -409,11 +606,15 @@
    * 渲染所有消息
    */
   function renderMessages() {
+    if (!messagesContainer) return;
     messagesContainer.innerHTML = '';
     state.messages.forEach(function(msg) {
       const msgEl = document.createElement('div');
       msgEl.className = 'workhogee-message ' + msg.role;
-      msgEl.innerHTML = '<div class="bubble">' + escapeHtml(msg.content) + '</div>';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = msg.content;
+      msgEl.appendChild(bubble);
       messagesContainer.appendChild(msgEl);
     });
     // 滚动到底部
@@ -424,6 +625,7 @@
    * 显示输入指示器
    */
   function showTypingIndicator() {
+    if (!messagesContainer) return;
     const typingEl = document.createElement('div');
     typingEl.className = 'workhogee-message assistant';
     typingEl.id = 'workhogee-typing';
@@ -440,25 +642,31 @@
     if (typingEl) typingEl.remove();
   }
 
-  /**
-   * HTML 转义
-   */
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
   // 暴露全局 API
   window.WorkHogeeWidget = {
     init: init,
     open: function() { if (!state.isOpen) toggleWidget(); },
     close: closeWidget,
-    toggle: toggleWidget
+    toggle: toggleWidget,
+    reconnect: reconnect,
+    getState: function() { return { ...state }; },
+    getConversationId: function() { return state.conversationId; }
   };
 
-  // 自动初始化（如果页面中有配置）
-  if (window.WORKHOGEE_CONFIG) {
-    init(window.WORKHOGEE_CONFIG);
+  // 自动初始化（如果页面中有配置或设置了 autoInit）
+  if (CONFIG.autoInit) {
+    if (window.WORKHOGEE_CONFIG) {
+      init(window.WORKHOGEE_CONFIG);
+    } else if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.WORKHOGEE_CONFIG) {
+          init(window.WORKHOGEE_CONFIG);
+        } else {
+          init();
+        }
+      });
+    } else {
+      init();
+    }
   }
 })();
