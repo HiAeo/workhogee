@@ -1095,59 +1095,452 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- 技术能力 -->
-<section class="section tech-section">
+<!-- 技术能力展开 -->
+<section class="tech-detail-section" style="background: var(--ink); color: var(--white); padding: 80px 0;">
   <div class="container">
     <div class="section-head">
-      <div class="kicker">Tech Stack</div>
-      <h2>我们用什么让AIGC工作流真正跑起来</h2>
-      <p>不只是调用一个API。模型编排、工作流自动化、批量处理、质量控制——一整套技术栈确保Agent稳定高效运行</p>
+      <div class="kicker" style="color: var(--orange-light);">Tech Stack</div>
+      <h2 style="color: var(--white);">8大技术能力，让AIGC工作流真正跑起来</h2>
+      <p style="color: #a8a29e;">不只是调用一个API。从模型接入到私有化部署，一整套技术栈确保Agent稳定、高效、可控地运行</p>
     </div>
-    <div class="tech-grid">
-      <div class="tech-card">
-        <div class="t-icon">🎨</div>
-        <h4>多模型接入</h4>
-        <p>即梦/可灵/通义万相/Midjourney/SD，根据任务类型自动选择最优模型，文生图/图生图/文生视频全覆盖</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">⚡</div>
-        <h4>工作流编排</h4>
-        <p>多步骤工作流自动执行，条件分支、循环、批量处理，复杂AIGC流程也能自动化，无需人工干预</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">📦</div>
-        <h4>批量处理引擎</h4>
-        <p>支持批量上传、批量生成、批量导出，SKU再多也不怕，一次处理上百个商品图/视频</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">✅</div>
-        <h4>质量控制系统</h4>
-        <p>AI自动质检+人工复核混合模式，检测图片质量、文案合规、视频流畅度，不合格自动重生成</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">🔧</div>
-        <h4>DeepSeek Harness</h4>
-        <p>开源Agent编排框架，工具调用、记忆管理、多模型路由，技术透明可控，支持私有化部署</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">🚀</div>
-        <h4>多渠道分发</h4>
-        <p>天猫/京东/抖音/小红书/快手/视频号/公众号，一套内容多平台适配，一键分发，自动同步</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">📊</div>
-        <h4>效果监控系统</h4>
-        <p>生成量、质量分、发布量、互动率、转化率全指标监控，AI自动识别低效内容，生成优化建议</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">🔒</div>
-        <h4>私有化部署</h4>
-        <p>支持客户服务器/云服务器私有化部署，素材和数据完全自主，满足品牌商合规要求</p>
-      </div>
-    </div>
+  </div>
+</section>
 
-    <div class="section-head" style="margin-top: 64px; margin-bottom: 40px;">
-      <div class="kicker">Why WorkHogee</div>
+<!-- 技术能力01：多模型接入 -->
+<section class="tech-detail-section" style="background: #1c1917; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner">
+      <div>
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">01</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">多模型接入与智能路由</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">不是绑定一个模型，而是接入主流AIGC模型，根据任务类型、成本、质量要求自动选择最优模型。文生图、图生图、文生视频、数字人、语音合成全覆盖。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">即梦/可灵 — 视频生成，国内首选</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">通义万相/Midjourney — 图片生成，质量优先</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">Stable Diffusion — 开源可控，私有化部署</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">DeepSeek/豆包 — 文案/脚本/对话生成</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">模型智能路由 · 实时决策</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="padding: 12px; background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--orange-light); font-weight: 700; margin-bottom: 4px;">任务：商品图生成 · 预算优先</div>
+              <div style="font-size: 12px; color: #d6d3d1;">→ 路由至：通义万相 · 成本¥0.03/张 · 预计2秒</div>
+            </div>
+            <div style="padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+              <div style="font-size: 11px; color: #a8a29e; font-weight: 700; margin-bottom: 4px;">任务：品牌主视觉 · 质量优先</div>
+              <div style="font-size: 12px; color: #78716c;">→ 路由至：Midjourney · 成本¥0.5/张 · 预计30秒</div>
+            </div>
+            <div style="padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+              <div style="font-size: 11px; color: #a8a29e; font-weight: 700; margin-bottom: 4px;">任务：带货视频 · 速度优先</div>
+              <div style="font-size: 12px; color: #78716c;">→ 路由至：可灵 · 成本¥2/条 · 预计2分钟</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力02：工作流编排 -->
+<section class="tech-detail-section" style="background: #292524; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner" style="direction: rtl;">
+      <div style="direction: ltr;">
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">02</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">工作流编排引擎</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">不是单步调用，而是多步骤工作流自动执行。条件分支、循环、并行、错误重试，复杂AIGC流程也能全自动化，无需人工干预。可视化编排，所见即所得。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">条件分支 — 质检不合格自动重生成</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">并行执行 — 10条脚本同时生成视频</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">错误重试 — 模型超时自动切换备用模型</span>
+          </div>
+        </div>
+      </div>
+      <div style="direction: ltr;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">工作流编排 · 可视化流程</div>
+          <div style="display: flex; flex-direction: column; gap: 0; align-items: center;">
+            <div style="width: 100%; padding: 10px; background: rgba(234,88,12,0.15); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px; text-align: center; font-size: 12px; color: var(--orange-light); font-weight: 600;">输入：产品信息+目标平台</div>
+            <div style="width: 2px; height: 16px; background: rgba(255,255,255,0.2);"></div>
+            <div style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center; font-size: 12px; color: #d6d3d1;">AI生成10版脚本（并行）</div>
+            <div style="width: 2px; height: 16px; background: rgba(255,255,255,0.2);"></div>
+            <div style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center; font-size: 12px; color: #d6d3d1;">批量生成视频（并行）</div>
+            <div style="width: 2px; height: 16px; background: rgba(255,255,255,0.2);"></div>
+            <div style="display: flex; gap: 8px; width: 100%;">
+              <div style="flex: 1; padding: 8px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 6px; text-align: center; font-size: 11px; color: #4ade80;">通过 → 发布</div>
+              <div style="flex: 1; padding: 8px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 6px; text-align: center; font-size: 11px; color: #f87171;">不通过 → 重生成</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力03：批量处理引擎 -->
+<section class="tech-detail-section" style="background: #1c1917; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner">
+      <div>
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">03</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">批量处理引擎</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">电商SKU几百上千，一条一条处理根本不现实。批量上传、批量生成、批量导出，一次处理上百个商品图/视频。任务队列管理，断点续传，失败自动重试。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">批量上传 — 一次拖入100张商品图</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">任务队列 — 优先级调度，错峰处理</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">断点续传 — 中断后从断点继续，不重复</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">批量任务 · 实时进度</div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #d6d3d1;">商品图批量生成</span>
+            <span style="font-size: 12px; color: var(--orange-light); font-weight: 700;">87/120</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 20px; overflow: hidden;">
+            <div style="width: 72.5%; height: 100%; background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 100%); border-radius: 4px;"></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(34,197,94,0.08); border-radius: 6px;">
+              <span style="font-size: 11px; color: #4ade80;">SKU-001 白色连衣裙</span>
+              <span style="font-size: 10px; color: #4ade80;">✓ 完成</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(34,197,94,0.08); border-radius: 6px;">
+              <span style="font-size: 11px; color: #4ade80;">SKU-002 黑色西装</span>
+              <span style="font-size: 10px; color: #4ade80;">✓ 完成</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(234,88,12,0.1); border-radius: 6px;">
+              <span style="font-size: 11px; color: var(--orange-light);">SKU-087 蓝色卫衣</span>
+              <span style="font-size: 10px; color: var(--orange-light);">⟳ 生成中</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 6px;">
+              <span style="font-size: 11px; color: #78716c;">SKU-088 红色风衣</span>
+              <span style="font-size: 10px; color: #78716c;">待处理</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力04：质量控制系统 -->
+<section class="tech-detail-section" style="background: #292524; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner" style="direction: rtl;">
+      <div style="direction: ltr;">
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">04</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">质量控制系统</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">AI生成的内容不是100%可用。AI自动质检+人工复核混合模式，检测图片质量、文案合规、视频流畅度、品牌一致性。不合格自动重生成，确保交付物质量。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">图片质检 — 分辨率/构图/品牌元素检测</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">文案合规 — 广告法/极限词/虚假宣传检测</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">人工复核 — 关键内容人工终审，AI辅助标注</span>
+          </div>
+        </div>
+      </div>
+      <div style="direction: ltr;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">质检报告 · 自动检测结果</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="padding: 12px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 12px; color: #4ade80; font-weight: 600;">图片质量检测</span>
+                <span style="font-size: 11px; color: #4ade80;">通过 92/100</span>
+              </div>
+              <div style="font-size: 11px; color: #a8a29e;">分辨率达标 · 构图合理 · 品牌Logo清晰</div>
+            </div>
+            <div style="padding: 12px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 12px; color: #f87171; font-weight: 600;">文案合规检测</span>
+                <span style="font-size: 11px; color: #f87171;">不通过 · 2处问题</span>
+              </div>
+              <div style="font-size: 11px; color: #a8a29e;">检测到极限词"最" · 建议修改为"非常"</div>
+              <div style="font-size: 11px; color: #a8a29e;">检测到绝对化用语"第一" · 建议删除</div>
+            </div>
+            <div style="padding: 12px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 12px; color: #4ade80; font-weight: 600;">视频流畅度</span>
+                <span style="font-size: 11px; color: #4ade80;">通过 95/100</span>
+              </div>
+              <div style="font-size: 11px; color: #a8a29e;">帧率稳定 · 音画同步 · 无黑屏卡顿</div>
+            </div>
+            <div style="padding: 10px; background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px; text-align: center;">
+              <span style="font-size: 11px; color: var(--orange-light);">→ 自动触发：文案重生成（已修复2处问题）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力05：DeepSeek Harness -->
+<section class="tech-detail-section" style="background: #1c1917; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner">
+      <div>
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">05</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">DeepSeek Harness 开源底座</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">基于DeepSeek Harness开源Agent编排框架构建，技术透明可控，不是黑盒。工具调用、记忆管理、多模型路由、任务规划全部开源可审计。客户可自主扩展、自主部署。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">开源可审计 — 代码透明，无黑盒，无锁定</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">工具调用 — 标准化工具接口，自定义扩展</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">记忆管理 — 短期+长期记忆，上下文持久化</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">技术架构 · 分层设计</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="padding: 12px; background: rgba(234,88,12,0.15); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: var(--orange-light); font-weight: 700;">应用层</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">自媒体Agent / 数字人Agent / 电商Agent / 广告Agent</div>
+            </div>
+            <div style="text-align: center; font-size: 10px; color: #57534e;">↓</div>
+            <div style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: #d6d3d1; font-weight: 700;">编排层 · DeepSeek Harness</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">任务规划 / 工具调用 / 记忆管理 / 多模型路由</div>
+            </div>
+            <div style="text-align: center; font-size: 10px; color: #57534e;">↓</div>
+            <div style="padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: #a8a29e; font-weight: 700;">模型层</div>
+              <div style="font-size: 10px; color: #78716c; margin-top: 2px;">DeepSeek / 豆包 / 即梦 / 可灵 / 通义万相 / SD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力06：多渠道分发 -->
+<section class="tech-detail-section" style="background: #292524; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner" style="direction: rtl;">
+      <div style="direction: ltr;">
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">06</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">多渠道分发系统</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">一套内容，多平台适配。天猫/京东/抖音/小红书/快手/视频号/公众号/B站，自动适配各平台尺寸、格式、规范。最佳时段定时发布，一键同步，无需人工逐个上传。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">自动适配 — 各平台尺寸/格式/规范自动转换</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">定时发布 — AI分析各平台最佳时段，自动排期</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">一键同步 — 8大平台同时发布，状态实时回传</span>
+          </div>
+        </div>
+      </div>
+      <div style="direction: ltr;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">多平台分发 · 发布队列</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">🎵</div>
+              <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">抖音</div>
+              <div style="font-size: 10px; color: #4ade80; margin-top: 2px;">✓ 已发布 14:00</div>
+            </div>
+            <div style="padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">📕</div>
+              <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">小红书</div>
+              <div style="font-size: 10px; color: #4ade80; margin-top: 2px;">✓ 已发布 12:30</div>
+            </div>
+            <div style="padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">📹</div>
+              <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">视频号</div>
+              <div style="font-size: 10px; color: #4ade80; margin-top: 2px;">✓ 已发布 18:00</div>
+            </div>
+            <div style="padding: 10px; background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">⚡</div>
+              <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">快手</div>
+              <div style="font-size: 10px; color: var(--orange-light); margin-top: 2px;">⏰ 定时 20:00</div>
+            </div>
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">📱</div>
+              <div style="font-size: 11px; color: #78716c; font-weight: 600;">公众号</div>
+              <div style="font-size: 10px; color: #78716c; margin-top: 2px;">待排期</div>
+            </div>
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; text-align: center;">
+              <div style="font-size: 14px; margin-bottom: 4px;">📺</div>
+              <div style="font-size: 11px; color: #78716c; font-weight: 600;">B站</div>
+              <div style="font-size: 10px; color: #78716c; margin-top: 2px;">待排期</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力07：效果监控系统 -->
+<section class="tech-detail-section" style="background: #1c1917; color: var(--white); padding: 60px 0;">
+  <div class="container">
+    <div class="demo-inner">
+      <div>
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">07</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">效果监控与优化系统</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">Agent不是交付完就不管了。生成量、质量分、发布量、互动率、转化率全指标监控。AI自动识别低效内容，分析原因，生成优化建议。数据驱动持续迭代，效果越用越好。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">全指标监控 — 生成/质量/发布/互动/转化</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">AI归因分析 — 自动识别低效内容，分析原因</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">优化建议 — 自动生成下轮内容优化方向</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">效果看板 · 本周数据</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+              <div style="font-size: 20px; font-weight: 900; color: var(--white);">128</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">内容产出</div>
+            </div>
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+              <div style="font-size: 20px; font-weight: 900; color: #4ade80;">92%</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">质检通过率</div>
+            </div>
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+              <div style="font-size: 20px; font-weight: 900; color: var(--orange-light);">86w</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">总曝光</div>
+            </div>
+            <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+              <div style="font-size: 20px; font-weight: 900; color: #4ade80;">12.5%</div>
+              <div style="font-size: 10px; color: #a8a29e; margin-top: 2px;">平均互动率</div>
+            </div>
+          </div>
+          <div style="padding: 12px; background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--orange-light); font-weight: 700; margin-bottom: 6px;">AI优化建议</div>
+            <div style="font-size: 11px; color: #d6d3d1; line-height: 1.6;">检测到"产品测评类"内容互动率最高（18.2%），建议下周增加该类型占比至40%；"纯展示类"内容CTR偏低，建议增加钩子开头。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力08：私有化部署 -->
+<section class="tech-detail-section" style="background: #292524; color: var(--white); padding: 60px 0 80px;">
+  <div class="container">
+    <div class="demo-inner" style="direction: rtl;">
+      <div style="direction: ltr;">
+        <div style="font-size: 56px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; opacity: 0.3;">08</div>
+        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 16px; color: var(--white);">私有化部署</h3>
+        <p style="font-size: 15px; color: #a8a29e; line-height: 1.8; margin-bottom: 20px;">品牌商、大客户对数据安全有要求。支持客户自有服务器/云服务器私有化部署，素材、数据、模型全部在客户内网。不经过第三方，数据完全自主，满足合规要求。</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">数据自主 — 素材/数据/模型全部在客户内网</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">灵活部署 — 物理机/虚拟机/私有云/混合云</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <span style="width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0;"></span>
+            <span style="font-size: 13px; color: #d6d3d1;">合规安全 — 满足等保/数据安全法/行业合规</span>
+          </div>
+        </div>
+      </div>
+      <div style="direction: ltr;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px;">
+          <div style="font-size: 12px; color: #a8a29e; margin-bottom: 16px; font-weight: 600;">私有化部署架构</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="padding: 14px; background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.3); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: var(--orange-light); font-weight: 700;">客户内网 / 私有云</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center;">
+                <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">应用服务</div>
+                <div style="font-size: 9px; color: #78716c; margin-top: 2px;">Agent/工作流</div>
+              </div>
+              <div style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center;">
+                <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">数据存储</div>
+                <div style="font-size: 9px; color: #78716c; margin-top: 2px;">素材/日志/配置</div>
+              </div>
+              <div style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center;">
+                <div style="font-size: 11px; color: #d6d3d1; font-weight: 600;">模型推理</div>
+                <div style="font-size: 9px; color: #78716c; margin-top: 2px;">本地/API可选</div>
+              </div>
+            </div>
+            <div style="padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #4ade80; font-weight: 600;">数据不出内网 · 完全自主可控</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 为什么选择我们 -->
+<section class="tech-detail-section" style="background: var(--ink); color: var(--white); padding: 80px 0;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 48px;">
+      <div class="kicker" style="color: var(--orange-light);">Why WorkHogee</div>
       <h2 style="color: var(--white);">为什么选择我们交付</h2>
     </div>
     <div class="advantage-grid">
