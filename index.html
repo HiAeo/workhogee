@@ -1331,6 +1331,224 @@ img { max-width: 100%; display: block; }
   line-height: 1.6;
 }
 
+/* ===== 新增板块样式 ===== */
+/* 通讯工具连通 */
+.comm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.comm-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
+}
+.comm-card:hover {
+  background: var(--white);
+  border-color: var(--orange-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.comm-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  font-weight: 800;
+  font-size: 14px;
+}
+.comm-icon.wechat { background: linear-gradient(135deg, #07c160, #06ad56); }
+.comm-icon.wecom { background: linear-gradient(135deg, #2b7fff, #1a66e0); }
+.comm-icon.qq { background: linear-gradient(135deg, #12b7f5, #0ea5e0); }
+.comm-icon.feishu { background: linear-gradient(135deg, #3370ff, #2860e0); }
+.comm-icon.dingtalk { background: linear-gradient(135deg, #1677ff, #0e63d9); }
+.comm-icon.sms { background: linear-gradient(135deg, #ff6b35, #f75c25); }
+.comm-info { flex: 1; min-width: 0; }
+.comm-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.comm-desc { font-size: 10.5px; color: var(--ink-light); margin-top: 2px; }
+
+/* 技术底座 */
+.tech-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tech-layer {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.tech-layer-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.tech-layer-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tech-tag {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tech-tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.tech-tag.primary {
+  background: var(--orange-bg);
+  border-color: var(--orange-border);
+  color: var(--orange-deep);
+}
+.tech-tag.primary .dot { background: var(--orange); }
+
+/* 安全板块 */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.security-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.security-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--orange-bg);
+  color: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.security-content { flex: 1; }
+.security-title { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.security-desc { font-size: 10.5px; color: var(--ink-light); line-height: 1.5; }
+
+/* 多端协同 */
+.device-showcase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px 0;
+}
+.device-pc {
+  width: 280px;
+  background: var(--ink);
+  border-radius: 10px;
+  padding: 8px;
+  position: relative;
+}
+.device-pc-screen {
+  background: var(--paper);
+  border-radius: 4px;
+  height: 160px;
+  padding: 10px;
+  overflow: hidden;
+}
+.device-pc-bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  margin-bottom: 8px;
+  width: 60%;
+}
+.device-pc-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.device-pc-card {
+  background: var(--white);
+  border-radius: 4px;
+  height: 40px;
+  border: 1px solid var(--line);
+}
+.device-mobile {
+  width: 100px;
+  background: var(--ink);
+  border-radius: 16px;
+  padding: 6px;
+  position: relative;
+}
+.device-mobile-screen {
+  background: var(--paper);
+  border-radius: 10px;
+  height: 170px;
+  padding: 8px;
+  overflow: hidden;
+}
+.device-mobile-bar {
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  width: 50%;
+}
+.device-mobile-card {
+  background: var(--white);
+  border-radius: 4px;
+  height: 30px;
+  border: 1px solid var(--line);
+  margin-bottom: 5px;
+}
+.device-sync-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--orange);
+}
+.device-sync-line {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, var(--orange), var(--orange-light));
+  position: relative;
+}
+.device-sync-line::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--orange-light);
+}
+
 /* ===== 滚动揭示动画 ===== */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -2553,6 +2771,377 @@ img { max-width: 100%; display: block; }
     </div>
   </div>
 </section>
+  </div>
+</section>
+
+  </div>
+</section>
+
+<!-- ===== 板块7：全渠道通讯连通 ===== -->
+<section class="section" id="communication" style="background: var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">全渠道连通</span>
+      <h2>打通你常用的每一个通讯工具</h2>
+      <p>WorkHogee 不只是一个独立软件，而是深度融入你的工作流。重要消息即时推送，手机上就能查看关键数据，甚至远程操作 PC 端，让获客管理随时随地。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1.2fr 1fr; align-items: center;">
+      <div>
+        <div class="comm-grid">
+          <div class="comm-card">
+            <div class="comm-icon wechat">微</div>
+            <div class="comm-info">
+              <div class="comm-name">个人微信</div>
+              <div class="comm-desc">消息推送 · 数据查看</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon wecom">企</div>
+            <div class="comm-info">
+              <div class="comm-name">企业微信</div>
+              <div class="comm-desc">客户管理 · 协同跟进</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon qq">Q</div>
+            <div class="comm-info">
+              <div class="comm-name">QQ</div>
+              <div class="comm-desc">群消息 · 通知推送</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon feishu">飞</div>
+            <div class="comm-info">
+              <div class="comm-name">飞书</div>
+              <div class="comm-desc">审批流 · 数据报表</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon dingtalk">钉</div>
+            <div class="comm-info">
+              <div class="comm-name">钉钉</div>
+              <div class="comm-desc">工作通知 · 任务协同</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon sms">短</div>
+            <div class="comm-info">
+              <div class="comm-name">短信通知</div>
+              <div class="comm-desc">重要线索 · 即时提醒</div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--orange-bg); border: 1px solid var(--orange-border); border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" style="flex-shrink: 0; margin-top: 1px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--orange-deep); margin-bottom: 3px;">手机端远程操作 PC 端</div>
+            <div style="font-size: 11px; color: var(--ink-soft); line-height: 1.5;">不在电脑前也能管理获客。手机上查看实时数据、审批线索、回复客户，甚至远程唤醒 PC 端执行复杂任务，工作效率不打烊。</div>
+          </div>
+        </div>
+      </div>
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">微信 · WorkHogee 通知</span>
+        </div>
+        <div class="mockup-content">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: #16a34a; color: white; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">新线索</span>
+                <span style="font-size: 10px; color: #6b7280;">2分钟前</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px;">张明 · 科技有限公司</div>
+              <div style="font-size: 10.5px; color: var(--ink-soft); line-height: 1.4;">询问企业版定价，意向等级 A 级，已自动分配给销售李华</div>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <button style="background: var(--orange); color: white; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 600; cursor: pointer;">立即跟进</button>
+                <button style="background: white; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 600; cursor: pointer;">查看详情</button>
+              </div>
+            </div>
+            <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: var(--orange); color: white; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">日报</span>
+                <span style="font-size: 10px; color: #6b7280;">今天 08:00</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">9月14日获客日报</div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">156</div><div style="font-size: 9px; color: var(--ink-light);">对话</div></div>
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">28</div><div style="font-size: 9px; color: var(--ink-light);">线索</div></div>
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">5</div><div style="font-size: 9px; color: var(--ink-light);">成交</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块8：技术底座与模型 ===== -->
+<section class="section" id="technology" style="background: var(--paper);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">技术底座</span>
+      <h2>基于 DeepSeek Harness 开源打造</h2>
+      <p>我们不避讳技术底座，反而以此为荣。WorkHogee 基于 DeepSeek Harness 开源框架构建，支持接入多种主流大模型，技术透明、安全可控、持续迭代。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1fr 1.2fr; align-items: center;">
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">app.workhogee.com/settings/models</span>
+        </div>
+        <div class="mockup-content">
+          <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 10px;">模型配置中心</div>
+          <div class="tech-stack">
+            <div class="tech-layer">
+              <div class="tech-layer-label">默认模型 · 当前使用</div>
+              <div class="tech-layer-content">
+                <span class="tech-tag primary"><span class="dot"></span>DeepSeek V3</span>
+                <span class="tech-tag">上下文 128K</span>
+                <span class="tech-tag">响应 &lt;2s</span>
+              </div>
+            </div>
+            <div class="tech-layer">
+              <div class="tech-layer-label">支持接入的大模型</div>
+              <div class="tech-layer-content">
+                <span class="tech-tag"><span class="dot"></span>DeepSeek R1</span>
+                <span class="tech-tag"><span class="dot"></span>GPT-4o</span>
+                <span class="tech-tag"><span class="dot"></span>Claude 3.5</span>
+                <span class="tech-tag"><span class="dot"></span>文心一言</span>
+                <span class="tech-tag"><span class="dot"></span>通义千问</span>
+                <span class="tech-tag"><span class="dot"></span>智谱 GLM</span>
+                <span class="tech-tag"><span class="dot"></span>Kimi</span>
+              </div>
+            </div>
+            <div class="tech-layer">
+              <div class="tech-layer-label">开源框架与技术栈</div>
+              <div class="tech-layer-content">
+                <span class="tech-tag primary"><span class="dot"></span>DeepSeek Harness</span>
+                <span class="tech-tag">Node.js</span>
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Electron</span>
+                <span class="tech-tag">React Native</span>
+                <span class="tech-tag">PostgreSQL</span>
+                <span class="tech-tag">Redis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">开源底座，技术透明</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">基于 DeepSeek Harness 开源框架构建，核心逻辑可审计、可验证。不搞黑盒，让客户用得明白、用得放心。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">多模型支持，灵活切换</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">默认使用 DeepSeek V3，同时支持接入 GPT-4o、Claude、文心一言等主流大模型。根据任务类型自动选择最优模型，成本与效果兼得。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">持续迭代，紧跟前沿</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">开源社区的每一次进步都能快速融入产品。新模型发布、新能力涌现，WorkHogee 第一时间适配，让你的获客工具始终站在技术最前沿。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块9：安全与隐私 ===== -->
+<section class="section" id="security" style="background: var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">安全与隐私</span>
+      <h2>企业级安全，数据主权在你手中</h2>
+      <p>获客数据是企业的核心资产。WorkHogee 采用银行级加密技术，严格的数据权限管理，完整的合规认证体系，让你的客户数据安全可控。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1.2fr 1fr; align-items: center;">
+      <div class="security-grid">
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">端到端加密传输</div>
+            <div class="security-desc">TLS 1.3 加密传输，AES-256 静态加密，客户对话和线索数据全程加密保护</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">数据主权归客户</div>
+            <div class="security-desc">你的客户数据永远属于你，支持一键导出，随时可迁移，绝不用于训练模型</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">细粒度权限管理</div>
+            <div class="security-desc">管理员、销售、客服多角色权限隔离，数据访问全程留痕，操作可审计可追溯</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">合规认证齐全</div>
+            <div class="security-desc">符合《个人信息保护法》《数据安全法》，等保三级认证，ISO 27001 信息安全管理</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">数据自动备份</div>
+            <div class="security-desc">每日自动备份，异地容灾存储，数据保留期可自定义，误删可一键恢复</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">私有化部署可选</div>
+            <div class="security-desc">企业版支持私有化部署，数据完全存储在你的服务器，满足金融、医疗等强监管行业需求</div>
+          </div>
+        </div>
+      </div>
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">app.workhogee.com/security</span>
+        </div>
+        <div class="mockup-content">
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--orange-deep)); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">安全状态：全部通过</div>
+            <div style="font-size: 10.5px; color: var(--ink-light); margin-bottom: 16px;">最后检测：2026-09-14 08:00</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">传输加密</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">TLS 1.3</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">静态加密</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">AES-256</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">数据备份</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">每日自动</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">合规认证</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">等保三级</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块10：多端协同 ===== -->
+<section class="section" id="multi-device" style="background: var(--paper);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">多端协同</span>
+      <h2>PC、手机、网页，数据实时同步</h2>
+      <p>一个账号，三端通用。无论你在办公室用电脑，还是外出用手机，所有数据实时同步，获客管理不中断。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1fr 1fr; align-items: center;">
+      <div class="device-showcase">
+        <div class="device-pc">
+          <div class="device-pc-screen">
+            <div class="device-pc-bar"></div>
+            <div class="device-pc-content">
+              <div class="device-pc-card"></div>
+              <div class="device-pc-card"></div>
+              <div class="device-pc-card"></div>
+              <div class="device-pc-card"></div>
+            </div>
+          </div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 4px; font-weight: 600;">Windows / macOS</div>
+        </div>
+        <div class="device-sync-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <div class="device-sync-line"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div class="device-mobile">
+          <div class="device-mobile-screen">
+            <div class="device-mobile-bar"></div>
+            <div class="device-mobile-card"></div>
+            <div class="device-mobile-card"></div>
+            <div class="device-mobile-card"></div>
+            <div class="device-mobile-card"></div>
+          </div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 4px; font-weight: 600;">iOS / Android</div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">PC 客户端：功能最全</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">支持 Windows 和 macOS，完整功能体验。多窗口操作、批量处理、深度数据分析，是你的主力获客工作台。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">移动 APP：随时随地</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">支持 iOS 和 Android，外出见客户也能实时查看线索、回复消息、审批跟进。重要消息推送，不错过任何一个客户。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Web 网页版：即开即用</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">不用下载安装，浏览器打开就能用。适合临时使用、客户演示、跨设备办公，数据与客户端实时同步。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
