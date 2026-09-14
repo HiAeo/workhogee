@@ -6,6 +6,8 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { ImapFlow } = require('imapflow');
+const { simpleParser } = require('mailparser');
 
 class EmailReceiverService {
   constructor(emailConfigService, leadService, llmService, knowledgeBase, notificationService, config) {
@@ -78,45 +80,98 @@ class EmailReceiverService {
   }
 
   /**
-   * 从 IMAP 拉取新邮件（实际实现需要 imapflow 库）
+   * 从 IMAP 拉取新邮件（真实实现，使用 imapflow 库）
    */
   async _fetchFromIMAP(account) {
-    // 实际实现示例（需要安装 imapflow）：
-    /*
-    const { ImapFlow } = require('imapflow');
     const client = new ImapFlow({
       host: account.imapHost,
-      port: account.imapPort,
-      secure: account.imapSecure,
+      port: account.imapPort || 993,
+      secure: account.imapSecure !== false,
       auth: {
-        user: account.username,
+        user: account.username || account.email,
         pass: account.password
-      }
+      },
+      logger: false,
+      emitLogs: false
     });
 
-    await client.connect();
-    const mailbox = await client.getMailboxLock('INBOX');
-    const messages = [];
+    try {
+      await client.connect();
+      console.log(`[Email] IMAP 连接成功: ${account.email}`);
 
-    for await (const msg of client.fetch('1:*', { envelope: true, bodyStructure: true, source: true })) {
-      // 解析邮件内容
-      messages.push({
-        id: msg.uid,
-        from: msg.envelope.from?.[0]?.address,
-        fromName: msg.envelope.from?.[0]?.name,
-        to: msg.envelope.to?.map(t => t.address),
-        subject: msg.envelope.subject,
-        date: msg.envelope.date,
-        body: this._extractBody(msg)
-      });
+      const mailbox = await client.getMailboxLock('INBOX');
+      const messages = [];
+
+      try {
+        // 获取最近 50 封邮件（按 UID 倒序）
+        const status = await client.status('INBOX', { messages: true });
+        const total = status.messages;
+        const startUid = Math.max(1, total - 50);
+
+        for await (const msg of client.fetch(`${startUid}:*`, {
+          envelope: true,
+          bodyStructure: true,
+          source: true,
+          flags: true
+        })) {
+          // 跳过已读邮件（只处理未读邮件）
+          if (msg.flags && msg.flags.includes('\\Seen')) {
+            continue;
+          }
+
+          try {
+            // 解析邮件内容
+            const parsed = await simpleParser(msg.source);
+
+            const emailData = {
+              id: msg.uid,
+              messageId: msg.envelope.messageId || crypto.randomUUID(),
+              from: parsed.from?.text || msg.envelope.from?.[0]?.address,
+              fromName: parsed.from?.value?.[0]?.name || msg.envelope.from?.[0]?.name,
+              fromEmail: parsed.from?.value?.[0]?.address || msg.envelope.from?.[0]?.address,
+              to: parsed.to?.text || msg.envelope.to?.map(t => t.address).join(', '),
+              cc: parsed.cc?.text || '',
+              subject: parsed.subject || msg.envelope.subject || '(无主题)',
+              date: parsed.date || msg.envelope.date,
+              receivedAt: new Date().toISOString(),
+              bodyText: parsed.text || '',
+              bodyHtml: parsed.html || '',
+              attachments: (parsed.attachments || []).map(a => ({
+                filename: a.filename,
+                contentType: a.contentType,
+                size: a.size
+              })),
+              isRead: false,
+              isInquiry: false,
+              inquiryScore: 0,
+              leadId: null,
+              aiReplyDraft: null,
+              aiReplyStatus: 'pending'
+            };
+
+            messages.push(emailData);
+
+            // 标记为已读
+            await client.messageFlagsAdd(msg.uid, ['\\Seen']);
+          } catch (parseError) {
+            console.error(`[Email] 解析邮件失败 UID=${msg.uid}:`, parseError.message);
+          }
+        }
+      } finally {
+        mailbox.release();
+      }
+
+      await client.logout();
+      console.log(`[Email] 拉取完成: ${account.email}，新邮件 ${messages.length} 封`);
+      return messages;
+
+    } catch (error) {
+      console.error(`[Email] IMAP 连接失败 ${account.email}:`, error.message);
+      try {
+        await client.logout();
+      } catch (e) {}
+      throw new Error(`IMAP 连接失败: ${error.message}`);
     }
-
-    await client.logout();
-    return messages;
-    */
-
-    // 演示版本：返回空数组
-    return [];
   }
 
   /**
