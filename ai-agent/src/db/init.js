@@ -302,6 +302,64 @@ const TABLES = [
     user_agent TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
   )`,
+
+  // 出海专版：多语言话术模板
+  `CREATE TABLE IF NOT EXISTS i18n_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    scenario VARCHAR(100),
+    language VARCHAR(20) NOT NULL,
+    content TEXT NOT NULL,
+    variables JSONB DEFAULT '[]',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  )`,
+
+  // 出海专版：Cookie 同意记录
+  `CREATE TABLE IF NOT EXISTS compliance_consents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    visitor_id VARCHAR(255) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    source VARCHAR(50) DEFAULT 'cookie_banner',
+    ip VARCHAR(50),
+    user_agent TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )`,
+
+  // 出海专版：数据删除请求
+  `CREATE TABLE IF NOT EXISTS compliance_deletion_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    visitor_id VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'pending',
+    requested_at TIMESTAMPTZ DEFAULT NOW(),
+    completed_at TIMESTAMPTZ
+  )`,
+
+  // 出海专版：广告平台配置
+  `CREATE TABLE IF NOT EXISTS ad_platforms (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+    platform_type VARCHAR(20) NOT NULL,
+    config JSONB DEFAULT '{}',
+    status VARCHAR(20) DEFAULT 'active',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  )`,
+
+  // 出海专版：转化回传日志
+  `CREATE TABLE IF NOT EXISTS conversion_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+    platform_id UUID REFERENCES ad_platforms(id) ON DELETE SET NULL,
+    lead_id VARCHAR(255),
+    event_name VARCHAR(100),
+    event_time BIGINT,
+    status VARCHAR(30),
+    response JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )`,
 ];
 
 const INDEXES = [
