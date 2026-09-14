@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee 智能体交付 — 你描述需求，我们3天交付一个AI Agent</title>
-<meta name="description" content="WorkHogee智能体交付：医美咨询、教育顾问、家装报价、财税问答、出海多语言客服，5个真实交付案例，3天上线，持续运维。">
+<title>WorkHogee 智能体交付 — 3天交付一个能干活的AI Agent</title>
+<meta name="description" content="WorkHogee智能体交付：销售跟进、内容营销、邮件询盘、客户评价、数据分析，5个真实自动化Agent案例，3天上线，持续运维。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
@@ -21,6 +21,8 @@
   --line: #e7e0d4;
   --white: #ffffff;
   --green: #16a34a;
+  --red: #dc2626;
+  --blue: #2563eb;
   --shadow-sm: 0 1px 3px rgba(28,25,23,0.06);
   --shadow-md: 0 4px 16px rgba(28,25,23,0.08);
   --shadow-lg: 0 12px 40px rgba(28,25,23,0.12);
@@ -70,10 +72,6 @@ img { max-width: 100%; display: block; }
   content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%;
   background: radial-gradient(circle, rgba(234,88,12,0.2) 0%, transparent 70%); pointer-events: none;
 }
-.hero::after {
-  content: ''; position: absolute; bottom: 100px; left: -150px; width: 400px; height: 400px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%); pointer-events: none;
-}
 .hero-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -84,7 +82,7 @@ img { max-width: 100%; display: block; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero h1 { font-size: clamp(34px, 4.5vw, 48px); font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 20px; }
 .hero h1 .highlight { color: var(--orange-light); }
-.hero-sub { font-size: 17px; color: #d6d3d1; line-height: 1.7; margin-bottom: 32px; max-width: 500px; }
+.hero-sub { font-size: 17px; color: #d6d3d1; line-height: 1.7; margin-bottom: 32px; max-width: 520px; }
 .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: var(--white);
@@ -105,43 +103,33 @@ img { max-width: 100%; display: block; }
 .hero-stat .num { font-size: 30px; font-weight: 900; color: var(--orange-light); line-height: 1; }
 .hero-stat .label { font-size: 13px; color: #a8a29e; margin-top: 4px; }
 
-/* Hero右侧 - 真实Agent对话演示 */
+/* Hero右侧 - Agent工作流可视化 */
 .hero-visual { position: relative; }
-.hero-chat {
-  background: var(--white); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  overflow: hidden; transform: perspective(1000px) rotateY(-2deg) rotateX(1deg);
-  transition: transform 0.5s ease;
+.hero-flow {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 28px; backdrop-filter: blur(10px);
 }
-.hero-chat:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
-.chat-header {
-  display: flex; align-items: center; gap: 12px; padding: 16px 20px;
-  background: linear-gradient(135deg, var(--ink) 0%, #292524 100%); color: var(--white);
+.flow-title { font-size: 13px; color: #a8a29e; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.flow-title .live { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+.flow-steps { display: flex; flex-direction: column; gap: 0; }
+.flow-step {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06); position: relative;
 }
-.chat-avatar {
-  width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
-  display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+.flow-step:last-child { border-bottom: none; }
+.flow-step-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
-.chat-info { flex: 1; }
-.chat-name { font-size: 14px; font-weight: 700; }
-.chat-status { font-size: 11px; color: #a8a29e; display: flex; align-items: center; gap: 5px; }
-.chat-status .online { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
-.chat-body { padding: 20px; min-height: 320px; display: flex; flex-direction: column; gap: 12px; }
-.msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6; animation: msgIn 0.4s ease both; }
-@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.msg.user { align-self: flex-end; background: var(--orange); color: white; border-bottom-right-radius: 4px; }
-.msg.bot { align-self: flex-start; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
-.msg .typing { display: inline-flex; gap: 3px; padding: 4px 0; }
-.msg .typing span { width: 6px; height: 6px; background: var(--ink-muted); border-radius: 50%; animation: typing 1.2s infinite; }
-.msg .typing span:nth-child(2) { animation-delay: 0.2s; }
-.msg .typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
-.quick-replies { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.quick-reply {
-  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--orange);
-  color: var(--orange); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-  background: transparent;
+.flow-step-content { flex: 1; }
+.flow-step-name { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.flow-step-desc { font-size: 12px; color: #a8a29e; line-height: 1.5; }
+.flow-step-status {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
 }
-.quick-reply:hover { background: var(--orange); color: white; }
+.status-done { background: rgba(34,197,94,0.15); color: #4ade80; }
+.status-running { background: rgba(234,88,12,0.2); color: var(--orange-light); animation: pulse 1.5s infinite; }
+.status-pending { background: rgba(255,255,255,0.08); color: #78716c; }
 
 /* Section */
 .section { padding: 80px 0; }
@@ -180,31 +168,101 @@ img { max-width: 100%; display: block; }
 .demo-result .num { font-size: 28px; font-weight: 900; color: var(--orange); line-height: 1; }
 .demo-result .label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; max-width: 100px; }
 
-/* Demo右侧 - 聊天界面 */
-.demo-chat {
+/* Demo右侧 - 工作台界面模拟 */
+.demo-panel {
   background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
   border: 1px solid var(--line); overflow: hidden;
 }
-.demo-chat-header {
-  display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+.panel-header {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
   background: var(--paper); border-bottom: 1px solid var(--line);
 }
-.demo-chat-avatar {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
+.panel-dot { width: 10px; height: 10px; border-radius: 50%; }
+.panel-title { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-left: 8px; }
+.panel-body { padding: 16px; }
+
+/* 销售跟进面板 */
+.crm-list { display: flex; flex-direction: column; gap: 8px; }
+.crm-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--paper); border-radius: 10px; border: 1px solid var(--line);
 }
-.demo-chat-name { font-size: 13px; font-weight: 700; }
-.demo-chat-sub { font-size: 11px; color: var(--ink-muted); }
-.demo-chat-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; min-height: 280px; }
-.demo-msg { max-width: 88%; padding: 9px 13px; border-radius: 12px; font-size: 12.5px; line-height: 1.6; }
-.demo-msg.user { align-self: flex-end; background: var(--orange); color: white; border-bottom-right-radius: 3px; }
-.demo-msg.bot { align-self: flex-start; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
-.demo-msg.bot .emoji { margin-right: 2px; }
-.demo-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
-.demo-quick-btn {
-  padding: 5px 12px; border-radius: 16px; border: 1px solid var(--orange);
-  color: var(--orange); font-size: 11px; font-weight: 600; background: transparent; cursor: pointer;
+.crm-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.crm-info { flex: 1; min-width: 0; }
+.crm-name { font-size: 13px; font-weight: 700; }
+.crm-action { font-size: 11px; color: var(--ink-muted); }
+.crm-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
+.badge-auto { background: #dcfce7; color: #166534; }
+.badge-warm { background: #fef3c7; color: #92400e; }
+.badge-hot { background: #fee2e2; color: #991b1b; }
+.timeline { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.timeline-title { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 10px; }
+.timeline-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 11px; }
+.timeline-time { color: var(--ink-muted); flex-shrink: 0; width: 40px; }
+.timeline-text { color: var(--ink-soft); }
+.timeline-text .auto { color: var(--green); font-weight: 600; }
+
+/* 内容营销面板 */
+.content-editor { background: var(--paper); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--line); }
+.content-title-input { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.content-body { font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
+.content-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.content-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--orange-bg); color: var(--orange-deep); font-weight: 600; }
+.publish-queue { display: flex; flex-direction: column; gap: 6px; }
+.queue-item {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: var(--paper); border-radius: 8px; font-size: 11px; border: 1px solid var(--line);
 }
+.queue-platform { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.queue-text { flex: 1; color: var(--ink-soft); }
+.queue-status { font-size: 10px; font-weight: 700; }
+.status-published { color: var(--green); }
+.status-scheduled { color: var(--orange); }
+
+/* 邮件询盘面板 */
+.email-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.email-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
+}
+.email-from { font-size: 12px; font-weight: 700; flex: 1; }
+.email-subject { font-size: 11px; color: var(--ink-muted); }
+.email-cat { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
+.cat-new { background: #dbeafe; color: #1e40af; }
+.cat-price { background: #fef3c7; color: #92400e; }
+.cat-reply { background: #dcfce7; color: #166534; }
+.quote-box { background: var(--paper); border-radius: 10px; padding: 12px; border: 1px solid var(--line); }
+.quote-title { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 8px; }
+.quote-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.quote-row:last-child { border-bottom: none; font-weight: 700; color: var(--orange); }
+
+/* 客户评价面板 */
+.review-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.review-card {
+  background: var(--paper); border-radius: 10px; padding: 10px; border: 1px solid var(--line);
+}
+.review-stars { color: #f59e0b; font-size: 11px; margin-bottom: 4px; }
+.review-text { font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
+.review-from { font-size: 10px; color: var(--ink-muted); margin-top: 6px; }
+.alert-box { background: #fef2f2; border-radius: 10px; padding: 10px 12px; border: 1px solid #fecaca; display: flex; align-items: center; gap: 10px; }
+.alert-icon { font-size: 18px; }
+.alert-text { flex: 1; }
+.alert-title { font-size: 12px; font-weight: 700; color: #991b1b; }
+.alert-desc { font-size: 11px; color: #7f1d1d; }
+
+/* 数据分析面板 */
+.data-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; margin-bottom: 12px; padding-bottom: 20px; position: relative; }
+.data-bar { flex: 1; background: linear-gradient(180deg, var(--orange-light) 0%, var(--orange) 100%); border-radius: 4px 4px 0 0; position: relative; transition: all 0.3s; }
+.data-bar:hover { opacity: 0.8; }
+.data-bar-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--ink-muted); }
+.data-bar-value { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; color: var(--orange-deep); }
+.data-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.data-metric { background: var(--paper); border-radius: 8px; padding: 10px; border: 1px solid var(--line); }
+.data-metric-label { font-size: 10px; color: var(--ink-muted); margin-bottom: 4px; }
+.data-metric-value { font-size: 16px; font-weight: 900; color: var(--ink); }
+.data-metric-change { font-size: 10px; font-weight: 700; }
+.change-up { color: var(--green); }
+.change-down { color: var(--red); }
 
 /* 技术能力板块 */
 .tech-section { background: linear-gradient(180deg, var(--ink) 0%, #292524 100%); color: var(--white); }
@@ -255,6 +313,7 @@ img { max-width: 100%; display: block; }
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
   .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--paper); padding: 20px; gap: 16px; border-bottom: 1px solid var(--line); }
+  .review-wall { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -296,47 +355,68 @@ img { max-width: 100%; display: block; }
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
-          WorkHogee 智能体交付 · 真实案例
+          WorkHogee 智能体交付 · 不是聊天机器人，是数字员工
         </div>
-        <h1>你描述需求<br><span class="highlight">我们3天交付一个AI Agent</span></h1>
+        <h1>3天交付一个<br><span class="highlight">能自动干活的AI Agent</span></h1>
         <p class="hero-sub">
-          不用你招人、不用你学平台、不用你自己搭。医美、教育、家装、财税、出海——5个真实交付案例，看看我们帮客户解决了什么问题。
+          不是又一个问答客服。我们交付的是能自动执行任务的数字员工——自动跟进线索、自动发布内容、自动处理询盘、自动收集评价、自动生成报告。你睡觉的时候，它在干活。
         </p>
         <div class="hero-cta">
           <a href="#contact" class="btn-primary">
-            我也要一个
+            我也要一个数字员工
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
-          <a href="#demos" class="btn-ghost">看真实案例</a>
+          <a href="#demos" class="btn-ghost">看5个真实案例</a>
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><div class="num">3天</div><div class="label">从需求到上线</div></div>
-          <div class="hero-stat"><div class="num">5个</div><div class="label">真实交付案例</div></div>
-          <div class="hero-stat"><div class="num">8渠道</div><div class="label">一键部署覆盖</div></div>
+          <div class="hero-stat"><div class="num">5类</div><div class="label">自动化工作流</div></div>
+          <div class="hero-stat"><div class="num">24/7</div><div class="label">全天候自动运行</div></div>
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hero-chat">
-          <div class="chat-header">
-            <div class="chat-avatar">💉</div>
-            <div class="chat-info">
-              <div class="chat-name">星颜医美 · 智能咨询顾问</div>
-              <div class="chat-status"><span class="online"></span>在线 · 7×24小时接待</div>
-            </div>
-          </div>
-          <div class="chat-body" id="heroChat">
-            <div class="msg user" style="animation-delay:0.1s">你们那做个双眼皮多少钱啊？</div>
-            <div class="msg bot" style="animation-delay:0.6s">
-              您好呀~我们有多种双眼皮方案，埋线、全切、韩式三点都有，价格从3800到12800不等。方便问一下您是想要自然款还是明显一点的呢？我可以帮您推荐适合的方案😊
-            </div>
-            <div class="msg user" style="animation-delay:1.4s">自然一点的吧，不要太假</div>
-            <div class="msg bot" style="animation-delay:1.9s">
-              好的，那我推荐您考虑韩式三点或者埋线，恢复快、效果自然。我们这周末有主任面诊的名额，要不要帮您预约一个？到院可以免费设计方案哦~
-              <div class="quick-replies" style="margin-top:8px">
-                <span class="quick-reply">预约这周末</span>
-                <span class="quick-reply">先看看案例</span>
-                <span class="quick-reply">还有优惠吗</span>
+        <div class="hero-flow">
+          <div class="flow-title"><span class="live"></span>销售跟进Agent · 正在自动执行</div>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-icon" style="background:#dbeafe;">📥</div>
+              <div class="flow-step-content">
+                <div class="flow-step-name">新线索进入CRM</div>
+                <div class="flow-step-desc">来自官网表单 · 张总 · 深圳 · 制造业</div>
               </div>
+              <span class="flow-step-status status-done">完成</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-icon" style="background:#fef3c7;">🔍</div>
+              <div class="flow-step-content">
+                <div class="flow-step-name">自动富集客户画像</div>
+                <div class="flow-step-desc">公司规模200人 · 年营收5000万 · 近期招标3次</div>
+              </div>
+              <span class="flow-step-status status-done">完成</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-icon" style="background:#dcfce7;">✉️</div>
+              <div class="flow-step-content">
+                <div class="flow-step-name">自动发送首封跟进邮件</div>
+                <div class="flow-step-desc">个性化内容 · 附带行业案例 · 已送达并打开</div>
+              </div>
+              <span class="flow-step-status status-done">完成</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-icon" style="background:#fce7f3;">📱</div>
+              <div class="flow-step-content">
+                <div class="flow-step-name">客户点击链接 · 触发企微消息</div>
+                <div class="flow-step-desc">检测到查看报价单 · 自动推送产品资料</div>
+              </div>
+              <span class="flow-step-status status-running">执行中</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-icon" style="background:rgba(255,255,255,0.1);">📅</div>
+              <div class="flow-step-content">
+                <div class="flow-step-name">高意向 · 自动预约会议</div>
+                <div class="flow-step-desc">等待客户回复 · 48小时未回复将自动跟进</div>
+              </div>
+              <span class="flow-step-status status-pending">待触发</span>
             </div>
           </div>
         </div>
@@ -350,53 +430,81 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <div class="section-head">
       <div class="kicker">Real Cases</div>
-      <h2>5个真实交付的AI Agent</h2>
-      <p>每一个都解决了客户的真实痛点，每一个都在真实运行中产生效果</p>
+      <h2>5个正在自动运行的AI Agent</h2>
+      <p>每一个都在帮客户把"每周吃掉大量时间的手动工作"变成自动化流程，每一个都有可量化的效果</p>
     </div>
   </div>
 </section>
 
-<!-- Demo 1: 医美 -->
+<!-- Demo 1: 销售跟进Agent -->
 <section class="demo-section">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">💉 医美行业 · 官网+企微</div>
-        <h3 class="demo-title">医美机构智能咨询顾问</h3>
+        <div class="demo-tag">📊 销售自动化 · CRM+邮件+企微</div>
+        <h3 class="demo-title">销售线索自动跟进Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>夜间咨询无人接待，流失率高达60%；咨询师回答不标准，价格项目经常说错；新咨询师培训周期长，上手慢。</p>
+          <p>销售每天花3小时手动发跟进邮件，线索响应平均延迟4小时，30%的线索因为跟进不及时而流失；优秀销售离职后，客户跟进节奏全部断掉。</p>
         </div>
         <div class="demo-solution">
-          <div class="label">我们交付的Agent</div>
-          <p>7×24小时在线咨询顾问，懂全部项目价格和适应症，自动判断客户意向，高意向客户直接推送预约到店按钮，复杂问题一键转人工咨询师。</p>
+          <div class="label">Agent自动做什么</div>
+          <p>新线索进入CRM后，自动富集客户画像，按客户行为（打开邮件/点击链接/访问网站）触发个性化跟进动作，自动更新CRM状态，高意向线索自动推送销售并预约会议。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">60%↓</div><div class="label">夜间咨询流失率</div></div>
-          <div class="demo-result"><div class="num">40%↑</div><div class="label">预约到店率</div></div>
-          <div class="demo-result"><div class="num">24h</div><div class="label">全天候接待</div></div>
+          <div class="demo-result"><div class="num">4h→5m</div><div class="label">线索响应时间</div></div>
+          <div class="demo-result"><div class="num">30%↓</div><div class="label">线索流失率</div></div>
+          <div class="demo-result"><div class="num">3h/天</div><div class="label">销售节省时间</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-chat">
-          <div class="demo-chat-header">
-            <div class="demo-chat-avatar" style="background:#fef3c7;">💉</div>
-            <div>
-              <div class="demo-chat-name">星颜医美 · 咨询顾问</div>
-              <div class="demo-chat-sub">在线 · 已服务 1,284 位咨询者</div>
-            </div>
+        <div class="demo-panel">
+          <div class="panel-header">
+            <span class="panel-dot" style="background:#ef4444;"></span>
+            <span class="panel-dot" style="background:#f59e0b;"></span>
+            <span class="panel-dot" style="background:#22c55e;"></span>
+            <span class="panel-title">销售跟进Agent · 工作台</span>
           </div>
-          <div class="demo-chat-body">
-            <div class="demo-msg user">隆鼻多少钱？有风险吗</div>
-            <div class="demo-msg bot">
-              <span class="emoji">👃</span>您好！我们隆鼻有假体隆鼻和自体软骨隆鼻，假体从8800起，自体软骨2-5万不等。隆鼻是非常成熟的项目，我们主任有15年经验，案例超过3000例。方便问一下您是第一次做吗？我可以帮您预约主任面诊，免费设计方案~
+          <div class="panel-body">
+            <div class="crm-list">
+              <div class="crm-item">
+                <div class="crm-avatar" style="background:#dbeafe;">张</div>
+                <div class="crm-info">
+                  <div class="crm-name">张总 · 深圳制造</div>
+                  <div class="crm-action">Agent已发送3封跟进邮件</div>
+                </div>
+                <span class="crm-badge badge-hot">高意向</span>
+              </div>
+              <div class="crm-item">
+                <div class="crm-avatar" style="background:#dcfce7;">李</div>
+                <div class="crm-info">
+                  <div class="crm-name">李经理 · 上海贸易</div>
+                  <div class="crm-action">Agent自动预约了周四会议</div>
+                </div>
+                <span class="crm-badge badge-warm">跟进中</span>
+              </div>
+              <div class="crm-item">
+                <div class="crm-avatar" style="background:#fef3c7;">王</div>
+                <div class="crm-info">
+                  <div class="crm-name">王总 · 北京科技</div>
+                  <div class="crm-action">48小时未回复 · Agent已自动跟进</div>
+                </div>
+                <span class="crm-badge badge-auto">自动</span>
+              </div>
             </div>
-            <div class="demo-msg user">第一次，有点怕</div>
-            <div class="demo-msg bot">
-              理解您的担心，很多第一次做的客户都有这个顾虑。我们可以先安排您和主任面诊，看看您的基础条件，主任会给您详细讲解方案和风险，您再决定做不做。这周六下午还有名额，帮您预约上？
-              <div class="demo-quick" style="margin-top:6px">
-                <span class="demo-quick-btn">预约周六</span>
-                <span class="demo-quick-btn">看看案例</span>
+            <div class="timeline">
+              <div class="timeline-title">最近自动执行记录</div>
+              <div class="timeline-item">
+                <span class="timeline-time">14:32</span>
+                <span class="timeline-text"><span class="auto">✓ 自动</span> 向张总发送产品案例邮件</span>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-time">13:15</span>
+                <span class="timeline-text"><span class="auto">✓ 自动</span> 检测到李经理打开报价单，推送企微消息</span>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-time">11:08</span>
+                <span class="timeline-text"><span class="auto">✓ 自动</span> 王总48小时未回复，触发第2轮跟进</span>
               </div>
             </div>
           </div>
@@ -406,47 +514,66 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- Demo 2: 教育 -->
+<!-- Demo 2: 内容营销Agent -->
 <section class="demo-section reverse">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">📚 教育行业 · 企微</div>
-        <h3 class="demo-title">教育机构课程顾问Agent</h3>
+        <div class="demo-tag">📝 内容自动化 · 小红书+抖音+公众号</div>
+        <h3 class="demo-title">内容营销自动发布Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>线索进来后销售跟进不及时，平均响应时间2小时，很多家长等不及就找别家了；销售水平参差不齐，意向判断不准；优秀销售离职后客户流失严重。</p>
+          <p>内容创作耗时，一篇小红书笔记要2小时；多平台发布重复劳动，每个平台都要重新排版；评论回复不及时，互动率低；数据统计分散，不知道哪篇内容有效。</p>
         </div>
         <div class="demo-solution">
-          <div class="label">我们交付的Agent</div>
-          <p>线索进入企微后10秒内自动响应，自动询问孩子年级、成绩、薄弱模块，智能推荐课程，高意向线索自动标记并推送销售跟进，试听课预约一键完成。</p>
+          <div class="label">Agent自动做什么</div>
+          <p>根据产品和行业自动生成多平台内容，自动适配各平台格式和调性，定时发布到小红书/抖音/公众号，自动监控评论并回复，自动统计各平台数据生成周报。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">10秒</div><div class="label">线索平均响应时间</div></div>
-          <div class="demo-result"><div class="num">50%↑</div><div class="label">试听课预约率</div></div>
-          <div class="demo-result"><div class="num">2x</div><div class="label">销售人均效能</div></div>
+          <div class="demo-result"><div class="num">2h→10m</div><div class="label">单篇内容制作</div></div>
+          <div class="demo-result"><div class="num">3平台</div><div class="label">一键同步发布</div></div>
+          <div class="demo-result"><div class="num">2x</div><div class="label">内容产出效率</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-chat">
-          <div class="demo-chat-header">
-            <div class="demo-chat-avatar" style="background:#dbeafe;">📚</div>
-            <div>
-              <div class="demo-chat-name">学霸教育 · 课程顾问</div>
-              <div class="demo-chat-sub">在线 · 今日已跟进 86 条线索</div>
-            </div>
+        <div class="demo-panel">
+          <div class="panel-header">
+            <span class="panel-dot" style="background:#ef4444;"></span>
+            <span class="panel-dot" style="background:#f59e0b;"></span>
+            <span class="panel-dot" style="background:#22c55e;"></span>
+            <span class="panel-title">内容营销Agent · 编辑器</span>
           </div>
-          <div class="demo-chat-body">
-            <div class="demo-msg user">孩子初二，物理不太好</div>
-            <div class="demo-msg bot">
-              家长您好！初二物理是关键期，力学和电学是重点难点。方便问一下孩子目前物理大概多少分？主要是哪些模块比较薄弱呢？我帮您推荐适合的班型~
+          <div class="panel-body">
+            <div class="content-editor">
+              <div class="content-title-input">🔥 2026年中小企业必看的5个AI获客工具</div>
+              <div class="content-body">
+                姐妹们！做企业的一定要看这篇！今天给大家整理了5个亲测好用的AI获客工具，帮你把获客成本降一半...<br><br>
+                1️⃣ WorkHogee获客伙计 - 全渠道自动获客<br>
+                2️⃣ 巨量千策 - 广告投放优化<br>
+                ...
+              </div>
+              <div class="content-tags">
+                <span class="content-tag">#AI获客</span>
+                <span class="content-tag">#中小企业</span>
+                <span class="content-tag">#效率工具</span>
+                <span class="content-tag">#创业</span>
+              </div>
             </div>
-            <div class="demo-msg user">60多分，电学不太懂</div>
-            <div class="demo-msg bot">
-              了解了，电学是初二下的重点，也是中考占比最高的模块。我们有专门的物理电学冲刺班，8次课突破电学核心考点，每周六上午上课。下周六有试听课，要不要帮孩子预约一节？先感受一下老师的授课风格~
-              <div class="demo-quick" style="margin-top:6px">
-                <span class="demo-quick-btn">预约试听</span>
-                <span class="demo-quick-btn">了解课程价格</span>
+            <div class="publish-queue">
+              <div class="queue-item">
+                <div class="queue-platform" style="background:#fee2e2;">📕</div>
+                <span class="queue-text">小红书 · 已适配图文格式</span>
+                <span class="queue-status status-published">已发布</span>
+              </div>
+              <div class="queue-item">
+                <div class="queue-platform" style="background:#000;color:#fff;">🎵</div>
+                <span class="queue-text">抖音 · 已生成视频脚本</span>
+                <span class="queue-status status-scheduled">今日18:00</span>
+              </div>
+              <div class="queue-item">
+                <div class="queue-platform" style="background:#1c1917;color:#fff;">📱</div>
+                <span class="queue-text">公众号 · 已排版长文格式</span>
+                <span class="queue-status status-scheduled">明日09:00</span>
               </div>
             </div>
           </div>
@@ -456,52 +583,56 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- Demo 3: 家装 -->
+<!-- Demo 3: 邮件询盘Agent -->
 <section class="demo-section">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">🏠 家装行业 · 官网</div>
-        <h3 class="demo-title">家装公司智能报价Agent</h3>
+        <div class="demo-tag">📧 邮件自动化 · Gmail+Outlook+CRM</div>
+        <h3 class="demo-title">邮件询盘自动处理Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>客户问报价后，设计师要1天才能出初步报价，很多客户等不及就流失了；量房预约率低，设计师每天花大量时间回答重复的价格问题。</p>
+          <p>外贸询盘回复不及时，欧美客户夜间发的询盘要等第二天才回复，流失率高；报价单制作耗时，每个都要手动填；未回复客户无人跟进，30%的潜在客户就这样丢了。</p>
         </div>
         <div class="demo-solution">
-          <div class="label">我们交付的Agent</div>
-          <p>客户输入面积、户型、风格，10秒生成初步报价区间，自动推荐整装方案，高意向客户直接推送免费量房预约，设计师只需要跟进已经预约量房的精准客户。</p>
+          <div class="label">Agent自动做什么</div>
+          <p>7×24小时监控邮箱，自动分类询盘（产品咨询/价格询问/售后/垃圾），自动回复常见问题，根据产品价格表自动生成报价单，自动跟进未回复客户，自动同步到CRM。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">10秒</div><div class="label">报价生成时间</div></div>
-          <div class="demo-result"><div class="num">35%↑</div><div class="label">量房预约率</div></div>
-          <div class="demo-result"><div class="num">60%↓</div><div class="label">设计师重复咨询量</div></div>
+          <div class="demo-result"><div class="num">5分钟</div><div class="label">询盘平均响应</div></div>
+          <div class="demo-result"><div class="num">30%↑</div><div class="label">询盘转化率</div></div>
+          <div class="demo-result"><div class="num">80%</div><div class="label">常见问题自动回复</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-chat">
-          <div class="demo-chat-header">
-            <div class="demo-chat-avatar" style="background:#dcfce7;">🏠</div>
-            <div>
-              <div class="demo-chat-name">美家装饰 · 智能报价</div>
-              <div class="demo-chat-sub">在线 · 已生成 2,456 份报价</div>
-            </div>
+        <div class="demo-panel">
+          <div class="panel-header">
+            <span class="panel-dot" style="background:#ef4444;"></span>
+            <span class="panel-dot" style="background:#f59e0b;"></span>
+            <span class="panel-dot" style="background:#22c55e;"></span>
+            <span class="panel-title">邮件询盘Agent · 收件箱</span>
           </div>
-          <div class="demo-chat-body">
-            <div class="demo-msg user">120平装修大概多少钱？</div>
-            <div class="demo-msg bot">
-              您好！120平的房子，我们有三档方案：<br>
-              🏠 简约整装：10-13万（含设计+施工+主材）<br>
-              ✨ 品质整装：15-20万（升级主材+全屋定制）<br>
-              👑 高端定制：25万+（进口主材+智能家居）<br>
-              方便问一下您是毛坯还是旧房改造？喜欢什么风格呢？
-            </div>
-            <div class="demo-msg user">毛坯，北欧风</div>
-            <div class="demo-msg bot">
-              好的，毛坯房北欧风格，推荐您品质整装方案，大概15-18万，包含设计、施工、主材、全屋定制。我们可以免费上门量房出3D设计方案，您看这周末方便吗？我帮您预约首席设计师~
-              <div class="demo-quick" style="margin-top:6px">
-                <span class="demo-quick-btn">预约量房</span>
-                <span class="demo-quick-btn">看装修案例</span>
+          <div class="panel-body">
+            <div class="email-list">
+              <div class="email-item">
+                <div class="email-from">John Smith <span class="email-subject">· Price for 500 units</span></div>
+                <span class="email-cat cat-price">价格</span>
               </div>
+              <div class="email-item">
+                <div class="email-from">Maria Garcia <span class="email-subject">· Product catalog request</span></div>
+                <span class="email-cat cat-new">新询盘</span>
+              </div>
+              <div class="email-item">
+                <div class="email-from">David Lee <span class="email-subject">· Re: Quotation #2026-0915</span></div>
+                <span class="email-cat cat-reply">已回复</span>
+              </div>
+            </div>
+            <div class="quote-box">
+              <div class="quote-title">Agent自动生成的报价单 · Quotation #2026-0915</div>
+              <div class="quote-row"><span>Product A × 500 units</span><span>$2,500.00</span></div>
+              <div class="quote-row"><span>Product B × 200 units</span><span>$1,800.00</span></div>
+              <div class="quote-row"><span>Shipping (DHL Express)</span><span>$350.00</span></div>
+              <div class="quote-row"><span>Total (FOB Shenzhen)</span><span>$4,650.00</span></div>
             </div>
           </div>
         </div>
@@ -510,49 +641,63 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- Demo 4: 财税 -->
+<!-- Demo 4: 客户评价Agent -->
 <section class="demo-section reverse">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">💰 财税行业 · 飞书</div>
-        <h3 class="demo-title">财税公司智能问答Agent</h3>
+        <div class="demo-tag">⭐ 口碑自动化 · 短信+邮件+大众点评</div>
+        <h3 class="demo-title">客户评价自动收集Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>会计每天被重复的政策问题淹没，80%的问题是常见问题但每个都要人工回答；政策更新快，会计回答不一致容易出错；人均服务客户数上不去，扩张困难。</p>
+          <p>客户不愿意主动评价，好评收集难，大众点评评分上不去；差评发现不及时，一个差评可能影响几十个潜在客户；口碑数据分散在各个平台，不知道整体口碑状况。</p>
         </div>
         <div class="demo-solution">
-          <div class="label">我们交付的Agent</div>
-          <p>基于最新财税政策知识库，自动回答85%的常见问题，答案准确可溯源；复杂问题自动转专业会计并带上下文；申报期自动提醒客户，会计只需要处理复杂问题。</p>
+          <div class="label">Agent自动做什么</div>
+          <p>交易完成后自动触发评价请求（短信/邮件/企微），自动收集好评并同步到大众点评/小红书/官网展示，差评自动预警并通知负责人1小时内处理，自动生成月度口碑报告。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">85%</div><div class="label">常见问题自动回答率</div></div>
-          <div class="demo-result"><div class="num">3x</div><div class="label">会计人均服务客户数</div></div>
-          <div class="demo-result"><div class="num">0</div><div class="label">政策回答错误率</div></div>
+          <div class="demo-result"><div class="num">5x</div><div class="label">好评收集量</div></div>
+          <div class="demo-result"><div class="num">1h内</div><div class="label">差评响应时间</div></div>
+          <div class="demo-result"><div class="num">4.8→4.9</div><div class="label">大众点评评分</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-chat">
-          <div class="demo-chat-header">
-            <div class="demo-chat-avatar" style="background:#fef3c7;">💰</div>
-            <div>
-              <div class="demo-chat-name">恒信财税 · 智能顾问</div>
-              <div class="demo-chat-sub">在线 · 知识库已更新至2026年9月</div>
-            </div>
+        <div class="demo-panel">
+          <div class="panel-header">
+            <span class="panel-dot" style="background:#ef4444;"></span>
+            <span class="panel-dot" style="background:#f59e0b;"></span>
+            <span class="panel-dot" style="background:#22c55e;"></span>
+            <span class="panel-title">客户评价Agent · 口碑看板</span>
           </div>
-          <div class="demo-chat-body">
-            <div class="demo-msg user">小规模纳税人季度30万以下免增值税吗？</div>
-            <div class="demo-msg bot">
-              是的。根据财政部 税务总局公告2023年第19号，小规模纳税人发生增值税应税销售行为，合计月销售额未超过10万元（以1个季度为1个纳税期的，季度销售额未超过30万元）的，免征增值税。该政策执行至2027年12月31日。
-              <br><br>📎 政策依据：财政部 税务总局公告2023年第19号
+          <div class="panel-body">
+            <div class="review-wall">
+              <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">服务非常专业，响应速度快，强烈推荐！</div>
+                <div class="review-from">— 李女士 · 大众点评</div>
+              </div>
+              <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">第二次来了，效果一如既往的好，会继续支持。</div>
+                <div class="review-from">— 王先生 · 小红书</div>
+              </div>
+              <div class="review-card">
+                <div class="review-stars">★★★★☆</div>
+                <div class="review-text">整体不错，就是等待时间稍微长了一点。</div>
+                <div class="review-from">— 张女士 · 美团</div>
+              </div>
+              <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">性价比很高，朋友推荐来的，确实没失望。</div>
+                <div class="review-from">— 陈先生 · 官网</div>
+              </div>
             </div>
-            <div class="demo-msg user">那企业所得税呢？</div>
-            <div class="demo-msg bot">
-              小型微利企业年应纳税所得额不超过300万元的部分，减按25%计入应纳税所得额，按20%的税率缴纳企业所得税（实际税负5%）。需要同时满足：从业人数≤300人、资产总额≤5000万元、从事国家非限制和禁止行业。
-              <br><br>需要我帮您预约专业会计做进一步税务筹划吗？
-              <div class="demo-quick" style="margin-top:6px">
-                <span class="demo-quick-btn">预约会计</span>
-                <span class="demo-quick-btn">查询其他政策</span>
+            <div class="alert-box">
+              <span class="alert-icon">⚠️</span>
+              <div class="alert-text">
+                <div class="alert-title">差评预警 · 10分钟前</div>
+                <div class="alert-desc">大众点评新差评（2星）· 已自动通知店长张经理 · 待处理</div>
               </div>
             </div>
           </div>
@@ -562,47 +707,65 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- Demo 5: 出海 -->
+<!-- Demo 5: 数据分析Agent -->
 <section class="demo-section">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">🌍 出海企业 · 官网+WhatsApp</div>
-        <h3 class="demo-title">出海企业多语言客服Agent</h3>
+        <div class="demo-tag">📈 数据自动化 · 广告+CRM+客服</div>
+        <h3 class="demo-title">数据分析自动报告Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>欧美客户询盘经常在国内夜间到达，无人响应导致流失；多语言客服成本高，英语+西班牙语+法语客服团队养不起；询盘跟进不及时，转化率低。</p>
+          <p>数据分散在广告平台、CRM、客服系统，手动拉数据要2小时；周报制作重复劳动，每周都要花半天；异常发现不及时，广告费浪费了一周才发现；老板想看数据还要等运营整理。</p>
         </div>
         <div class="demo-solution">
-          <div class="label">我们交付的Agent</div>
-          <p>7×24小时多语言客服，支持英语、西班牙语、法语、德语等8种语言，自动回答产品问题、查询订单、处理退换货，高意向询盘自动标记并推送销售跟进，WhatsApp和官网同步接待。</p>
+          <div class="label">Agent自动做什么</div>
+          <p>自动从多个平台拉取数据并清洗整合，自动发现异常并实时预警，自动生成日报/周报/月报并发送给相关人员，自动给出优化建议，老板手机上随时可以看关键数据。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">60%↑</div><div class="label">询盘响应率</div></div>
-          <div class="demo-result"><div class="num">70%↓</div><div class="label">夜间询盘流失率</div></div>
-          <div class="demo-result"><div class="num">8种</div><div class="label">多语言自动接待</div></div>
+          <div class="demo-result"><div class="num">2h→0</div><div class="label">手动拉数据时间</div></div>
+          <div class="demo-result"><div class="num">实时</div><div class="label">异常发现预警</div></div>
+          <div class="demo-result"><div class="num">每周4h</div><div class="label">报告制作节省</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-chat">
-          <div class="demo-chat-header">
-            <div class="demo-chat-avatar" style="background:#dbeafe;">🌍</div>
-            <div>
-              <div class="demo-chat-name">GlobalStore · Support</div>
-              <div class="demo-chat-sub">Online · EN / ES / FR / DE / JA...</div>
-            </div>
+        <div class="demo-panel">
+          <div class="panel-header">
+            <span class="panel-dot" style="background:#ef4444;"></span>
+            <span class="panel-dot" style="background:#f59e0b;"></span>
+            <span class="panel-dot" style="background:#22c55e;"></span>
+            <span class="panel-title">数据分析Agent · 自动周报</span>
           </div>
-          <div class="demo-chat-body">
-            <div class="demo-msg user">Hi, do you ship to Germany? How long?</div>
-            <div class="demo-msg bot">
-              Hello! Yes, we ship to Germany 🇩🇪 Standard delivery takes 7-12 business days, express delivery 3-5 business days. Shipping is free for orders over €50. Would you like me to check the exact shipping cost for your order?
+          <div class="panel-body">
+            <div class="data-chart">
+              <div class="data-bar" style="height: 45%;"><span class="data-bar-value">¥8.2w</span><span class="data-bar-label">周一</span></div>
+              <div class="data-bar" style="height: 60%;"><span class="data-bar-value">¥10.5w</span><span class="data-bar-label">周二</span></div>
+              <div class="data-bar" style="height: 55%;"><span class="data-bar-value">¥9.8w</span><span class="data-bar-label">周三</span></div>
+              <div class="data-bar" style="height: 75%;"><span class="data-bar-value">¥13.2w</span><span class="data-bar-label">周四</span></div>
+              <div class="data-bar" style="height: 90%;"><span class="data-bar-value">¥15.8w</span><span class="data-bar-label">周五</span></div>
+              <div class="data-bar" style="height: 40%;"><span class="data-bar-value">¥7.1w</span><span class="data-bar-label">周六</span></div>
+              <div class="data-bar" style="height: 35%;"><span class="data-bar-value">¥6.3w</span><span class="data-bar-label">周日</span></div>
             </div>
-            <div class="demo-msg user">I want to return an item</div>
-            <div class="demo-msg bot">
-              I'm sorry to hear that! Returns are free within 30 days of delivery. Could you please provide your order number? I'll generate a return label for you immediately and guide you through the process.
-              <div class="demo-quick" style="margin-top:6px">
-                <span class="demo-quick-btn">Track Order</span>
-                <span class="demo-quick-btn">Talk to Human</span>
+            <div class="data-metrics">
+              <div class="data-metric">
+                <div class="data-metric-label">本周消耗</div>
+                <div class="data-metric-value">¥70.9w</div>
+                <div class="data-metric-change change-up">↑ 12.3% vs 上周</div>
+              </div>
+              <div class="data-metric">
+                <div class="data-metric-label">获客成本</div>
+                <div class="data-metric-value">¥128</div>
+                <div class="data-metric-change change-down">↓ 8.5% vs 上周</div>
+              </div>
+              <div class="data-metric">
+                <div class="data-metric-label">线索量</div>
+                <div class="data-metric-value">5,539</div>
+                <div class="data-metric-change change-up">↑ 22.1% vs 上周</div>
+              </div>
+              <div class="data-metric">
+                <div class="data-metric-label">转化率</div>
+                <div class="data-metric-value">3.2%</div>
+                <div class="data-metric-change change-up">↑ 0.4% vs 上周</div>
               </div>
             </div>
           </div>
@@ -617,8 +780,8 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <div class="section-head">
       <div class="kicker">Tech Stack</div>
-      <h2>我们用什么工具开发AI Agent</h2>
-      <p>不重复造轮子，站在巨人肩膀上——用最好的开源框架和AI模型，帮你做最好的交付</p>
+      <h2>我们用什么让Agent真正干活</h2>
+      <p>不只是聊天。工具调用、多系统对接、工作流编排、数据闭环——让Agent能真正执行任务，而不只是回答问题</p>
     </div>
     <div class="tech-grid">
       <div class="tech-card">
@@ -627,14 +790,19 @@ img { max-width: 100%; display: block; }
         <p>开源Agent编排框架，工具调用、记忆管理、多模型路由，技术透明可控，支持私有化部署</p>
       </div>
       <div class="tech-card">
-        <div class="t-icon">🧠</div>
-        <h4>多模型接入</h4>
-        <p>DeepSeek V3/R1、文心一言、通义千问、Kimi、Claude、GPT-4o，根据任务类型自动选择最优模型</p>
+        <div class="t-icon">🔌</div>
+        <h4>工具调用框架</h4>
+        <p>支持邮件、CRM、数据库、API、日历、企微、飞书等工具调用，让Agent能真正执行任务，不只是聊天</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">⚡</div>
-        <h4>VibeCoding开发</h4>
-        <p>自然语言→Agent代码/Prompt/工作流，AI完成80%开发工作，人工审核定制，效率提升10倍</p>
+        <h4>工作流编排</h4>
+        <p>多步骤工作流自动执行，条件分支、循环、等待、触发器，复杂业务流程也能自动化</p>
+      </div>
+      <div class="tech-card">
+        <div class="t-icon">🧠</div>
+        <h4>多模型接入</h4>
+        <p>DeepSeek V3/R1、文心一言、通义千问、Kimi、Claude、GPT-4o，根据任务类型自动选择最优模型</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">📚</div>
@@ -642,19 +810,14 @@ img { max-width: 100%; display: block; }
         <p>支持多格式文档上传，向量检索+语义匹配，让Agent懂你的业务知识，回答准确不胡编，可溯源</p>
       </div>
       <div class="tech-card">
-        <div class="t-icon">🔌</div>
-        <h4>工具调用框架</h4>
-        <p>支持邮件、数据库、API、日历、CRM等工具调用，让Agent能真正执行任务，不只是聊天</p>
-      </div>
-      <div class="tech-card">
         <div class="t-icon">🚀</div>
         <h4>多渠道部署</h4>
-        <p>官网、企微、飞书、钉钉、公众号、小程序、抖音、WhatsApp，一套Agent多渠道运行，一键部署</p>
+        <p>官网、企微、飞书、钉钉、公众号、小程序、抖音、WhatsApp、邮件，一套Agent多渠道运行</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">📊</div>
         <h4>效果监控系统</h4>
-        <p>对话量、解决率、转化率、满意度全指标监控，AI自动识别低质量对话，生成优化建议</p>
+        <p>执行量、成功率、转化率、节省时间全指标监控，AI自动识别低质量执行，生成优化建议</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">🔒</div>
@@ -671,7 +834,7 @@ img { max-width: 100%; display: block; }
       <div class="advantage-card">
         <div class="a-num">01</div>
         <h4>3天极速交付</h4>
-        <p>50+行业模板+VibeCoding AI开发，传统外包3个月的项目，我们3天交付。需求确认后第3天就能上线使用。</p>
+        <p>50+行业模板+VibeCoding AI开发，传统外包3个月的项目，我们3天交付。需求确认后第3天就能上线使用，边用边优化。</p>
       </div>
       <div class="advantage-card">
         <div class="a-num">02</div>
@@ -681,7 +844,7 @@ img { max-width: 100%; display: block; }
       <div class="advantage-card">
         <div class="a-num">03</div>
         <h4>交付完不是结束</h4>
-        <p>持续运维，效果监控+自动优化+定期报告。你能看到Agent每天帮你接了多少咨询、转化了多少客户，有问题随时找我们。</p>
+        <p>持续运维，效果监控+自动优化+定期报告。你能看到Agent每天帮你自动执行了多少任务、节省了多少时间、带来了多少转化，有问题随时找我们。</p>
       </div>
     </div>
   </div>
@@ -690,8 +853,8 @@ img { max-width: 100%; display: block; }
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="container">
-    <h2>你的业务，也需要一个这样的AI Agent</h2>
-    <p>描述你的需求，我们3天交付一个部署在官网、企微、飞书、钉钉上的AI Agent，持续运维优化。</p>
+    <h2>你的业务，也需要一个这样的数字员工</h2>
+    <p>描述你的需求，我们3天交付一个能自动干活的AI Agent，部署在你现有的系统上，持续运维优化。</p>
     <a href="mailto:910036590@qq.com?subject=WorkHogee智能体交付需求咨询" class="btn-primary">
       描述我的需求
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
