@@ -1,6 +1,116 @@
-// WorkHogee AI 获客伙计 - 管理后台前端逻辑 v0.2.0
+// WorkHogee AI 获客伙计 - 管理后台前端逻辑 v0.3.0
 
-const API_BASE = '/api';
+// API 基础地址配置
+// - 同域部署: 使用相对路径 '/api'
+// - 跨域部署: 设置 window.WORKHOGEE_API_BASE 或 localStorage 'api_base'
+const API_BASE = (function() {
+  if (typeof window !== 'undefined' && window.WORKHOGEE_API_BASE) {
+    return window.WORKHOGEE_API_BASE;
+  }
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('workhogee_api_base');
+    if (saved) return saved;
+  }
+  // 自动检测：如果页面是通过 file:// 打开的，使用 localhost
+  if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+    return 'http://localhost:3000/api';
+  }
+  return '/api';
+})();
+
+// 认证 Token 管理
+const Auth = {
+  getToken: function() {
+    return localStorage.getItem('workhogee_access_token');
+  },
+  setToken: function(token) {
+    localStorage.setItem('workhogee_access_token', token);
+  },
+  clearToken: function() {
+    localStorage.removeItem('workhogee_access_token');
+    localStorage.removeItem('workhogee_refresh_token');
+  },
+  isAuthenticated: function() {
+    return !!this.getToken();
+  },
+  getUser: function() {
+    try {
+      return JSON.parse(localStorage.getItem('workhogee_user') || 'null');
+    } catch (e) {
+      return null;
+    }
+  },
+  setUser: function(user) {
+    localStorage.setItem('workhogee_user', JSON.stringify(user));
+  }
+};
+
+// 统一 API 请求函数
+async function apiRequest(url, options = {}) {
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  // 合并配置
+  const finalOptions = { ...defaultOptions, ...options };
+  finalOptions.headers = { ...defaultOptions.headers, ...(options.headers || {}) };
+
+  // 添加认证 Token
+  const token = Auth.getToken();
+  if (token) {
+    finalOptions.headers['Authorization'] = 'Bearer ' + token;
+  }
+
+  try {
+    const res = await fetch(API_BASE + url, finalOptions);
+
+    // 处理 401 未授权
+    if (res.status === 401) {
+      Auth.clearToken();
+      // 如果有登录页面，跳转到登录页
+      if (typeof showLoginModal === 'function') {
+        showLoginModal();
+      }
+      throw new Error('登录已过期，请重新登录');
+    }
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || '请求失败 (HTTP ' + res.status + ')');
+    }
+
+    return data;
+  } catch (e) {
+    if (e.message === 'Failed to fetch' || e.message.includes('NetworkError')) {
+      throw new Error('网络连接失败，请检查后端服务是否启动');
+    }
+    throw e;
+  }
+}
+
+// 显示错误提示
+function showError(message) {
+  console.error('[WorkHogee] 错误:', message);
+  // 创建临时提示
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#ef4444;color:white;padding:12px 20px;border-radius:8px;z-index:10000;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:14px;max-width:400px;';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+// 显示成功提示
+function showSuccess(message) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#22c55e;color:white;padding:12px 20px;border-radius:8px;z-index:10000;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:14px;';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
 let currentPage = 1;
 let currentFilters = {};
 
@@ -1180,4 +1290,1058 @@ function getStatusText(status) {
 // 点击弹窗外部关闭
 document.getElementById('lead-modal').addEventListener('click', (e) => {
   if (e.target.id === 'lead-modal') closeLeadModal();
+});
+
+// ===== 对话记录功能 =====
+
+let currentConvPage = 1;
+const convPageSize = 20;
+
+async function loadConversations() {
+  const status = document.getElementById('conv-filter-status').value;
+  const source = document.getElementById('conv-filter-source').value;
+  const tbody = document.getElementById('conversations-table-body');
+
+  tbody.innerHTML = '<tr><td colspan="9" class="empty-state">加载中...</td></tr>';
+
+  try {
+    let url = API_BASE + '/conversations?page=' + currentConvPage + '&pageSize=' + convPageSize;
+    if (status) url += '&status=' + status;
+    if (source) url += '&source=' + source;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success && data.data && data.data.items) {
+      const items = data.data.items;
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state">暂无对话记录</td></tr>';
+      } else {
+        tbody.innerHTML = items.map(conv => `
+          <tr>
+            <td>${conv.id ? conv.id.substring(0, 8) : '-'}</td>
+            <td>${conv.customerName || conv.visitorName || '匿名访客'}</td>
+            <td>${getSourceText(conv.source)}</td>
+            <td>${conv.messageCount || 0}</td>
+            <td><span class="status-badge" style="background:${conv.status === 'active' ? '#dcfce7' : '#f5f5f4'};color:${conv.status === 'active' ? '#16a34a' : '#78716c'};">${conv.status === 'active' ? '进行中' : '已结束'}</span></td>
+            <td>${getIntentionBadge(conv.intentionLevel)}</td>
+            <td>${formatDateTime(conv.createdAt)}</td>
+            <td>${formatDateTime(conv.updatedAt)}</td>
+            <td><button class="btn btn-small" onclick="viewConversation('${conv.id}')">查看</button></td>
+          </tr>
+        `).join('');
+      }
+
+      // 分页
+      const total = data.data.total || 0;
+      const totalPages = Math.ceil(total / convPageSize);
+      renderConvPagination(totalPages);
+    } else {
+      tbody.innerHTML = '<tr><td colspan="9" class="empty-state">加载失败，请重试</td></tr>';
+    }
+  } catch (e) {
+    console.error('加载对话记录失败:', e);
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">加载失败: ' + e.message + '</td></tr>';
+  }
+}
+
+function renderConvPagination(totalPages) {
+  const container = document.getElementById('conv-pagination');
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn ${i === currentConvPage ? 'active' : ''}" onclick="currentConvPage=${i};loadConversations()">${i}</button>`;
+  }
+  container.innerHTML = html;
+}
+
+function getSourceText(source) {
+  const map = { widget: '网站浮窗', api: 'API', manual: '手动', email: '邮箱', wechat: '微信' };
+  return map[source] || source || '-';
+}
+
+function getIntentionBadge(level) {
+  if (!level) return '-';
+  const colors = { A: '#ef4444', B: '#f97316', C: '#94a3b8' };
+  return `<span style="color:${colors[level] || '#78716c'};font-weight:600;">${level}级</span>`;
+}
+
+async function viewConversation(id) {
+  const modal = document.getElementById('conversation-modal');
+  const body = document.getElementById('conversation-modal-body');
+
+  body.innerHTML = '<div class="empty-state">加载中...</div>';
+  modal.style.display = 'flex';
+
+  try {
+    const res = await fetch(API_BASE + '/conversations/' + id);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const conv = data.data;
+      const messages = conv.messages || [];
+
+      let html = `
+        <div style="margin-bottom:20px; padding:16px; background:#fafaf9; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span><strong>客户：</strong>${conv.customerName || '匿名访客'}</span>
+            <span><strong>来源：</strong>${getSourceText(conv.source)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span><strong>意向等级：</strong>${getIntentionBadge(conv.intentionLevel)}</span>
+            <span><strong>消息数：</strong>${messages.length}</span>
+          </div>
+        </div>
+        <div style="max-height:400px; overflow-y:auto;">
+      `;
+
+      if (messages.length === 0) {
+        html += '<div class="empty-state">暂无消息记录</div>';
+      } else {
+        messages.forEach(msg => {
+          const isUser = msg.role === 'user' || msg.sender === 'user';
+          html += `
+            <div class="chat-message ${isUser ? 'user' : 'assistant'}">
+              <div class="chat-bubble">
+                ${msg.content || msg.text || ''}
+                <div class="chat-time">${formatDateTime(msg.timestamp || msg.createdAt)}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      html += '</div>';
+      body.innerHTML = html;
+    } else {
+      body.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    body.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function closeConversationModal() {
+  document.getElementById('conversation-modal').style.display = 'none';
+}
+
+// ===== 邮箱渠道功能 =====
+
+// 邮箱账户管理
+async function loadEmailAccounts() {
+  const container = document.getElementById('email-accounts-list');
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    const res = await fetch(API_BASE + '/email/accounts');
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const accounts = data.data.items || data.data;
+      if (accounts.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无邮箱账户，点击右上角添加</div>';
+      } else {
+        container.innerHTML = accounts.map(acc => `
+          <div class="email-account-card">
+            <div class="email-account-info">
+              <h4>${acc.name || acc.email}</h4>
+              <p>${acc.email} · ${acc.imapHost}:${acc.imapPort}</p>
+              <div style="margin-top:8px; display:flex; gap:8px;">
+                <span class="profile-tag" style="background:${acc.autoReply ? '#dcfce7' : '#fef3c7'};color:${acc.autoReply ? '#16a34a' : '#d97706'};">自动回复: ${acc.autoReply ? '开启' : '关闭'}</span>
+                <span class="profile-tag" style="background:${acc.autoCreateLead ? '#dcfce7' : '#fef3c7'};color:${acc.autoCreateLead ? '#16a34a' : '#d97706'};">自动建线索: ${acc.autoCreateLead ? '开启' : '关闭'}</span>
+              </div>
+            </div>
+            <div class="email-account-status">
+              <span class="status-dot ${acc.active ? 'active' : 'inactive'}"></span>
+              <span style="font-size:13px;color:${acc.active ? '#16a34a' : '#dc2626'};">${acc.active ? '已连接' : '未连接'}</span>
+              <button class="btn btn-small" style="margin-left:12px;" onclick="deleteEmailAccount('${acc.id}')">删除</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function showAddEmailAccount() {
+  document.getElementById('email-account-modal').style.display = 'flex';
+}
+
+function closeEmailAccountModal() {
+  document.getElementById('email-account-modal').style.display = 'none';
+}
+
+async function testEmailConnection() {
+  const config = {
+    email: document.getElementById('ea-email').value,
+    username: document.getElementById('ea-username').value,
+    password: document.getElementById('ea-password').value,
+    imapHost: document.getElementById('ea-imap-host').value,
+    imapPort: parseInt(document.getElementById('ea-imap-port').value),
+    smtpHost: document.getElementById('ea-smtp-host').value,
+    smtpPort: parseInt(document.getElementById('ea-smtp-port').value)
+  };
+
+  showLoading('正在测试连接...');
+  try {
+    const res = await fetch(API_BASE + '/email/test-connection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config)
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('连接测试成功！');
+    } else {
+      alert('连接测试失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('连接测试失败: ' + e.message);
+  }
+}
+
+async function saveEmailAccount() {
+  const config = {
+    name: document.getElementById('ea-name').value,
+    email: document.getElementById('ea-email').value,
+    username: document.getElementById('ea-username').value,
+    password: document.getElementById('ea-password').value,
+    imapHost: document.getElementById('ea-imap-host').value,
+    imapPort: parseInt(document.getElementById('ea-imap-port').value),
+    smtpHost: document.getElementById('ea-smtp-host').value,
+    smtpPort: parseInt(document.getElementById('ea-smtp-port').value),
+    autoReply: document.getElementById('ea-auto-reply').checked,
+    autoCreateLead: document.getElementById('ea-auto-create-lead').checked
+  };
+
+  if (!config.name || !config.email || !config.password) {
+    alert('请填写必填项');
+    return;
+  }
+
+  showLoading('正在保存...');
+  try {
+    const res = await fetch(API_BASE + '/email/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config)
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('保存成功！');
+      closeEmailAccountModal();
+      loadEmailAccounts();
+    } else {
+      alert('保存失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('保存失败: ' + e.message);
+  }
+}
+
+async function deleteEmailAccount(id) {
+  if (!confirm('确定要删除这个邮箱账户吗？')) return;
+
+  try {
+    const res = await fetch(API_BASE + '/email/accounts/' + id, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      alert('删除成功');
+      loadEmailAccounts();
+    } else {
+      alert('删除失败');
+    }
+  } catch (e) {
+    alert('删除失败: ' + e.message);
+  }
+}
+
+// 收件箱
+async function loadEmails() {
+  const container = document.getElementById('email-inbox-list');
+  const type = document.getElementById('email-filter-type').value;
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    let url = API_BASE + '/email/inbox?page=1&pageSize=20';
+    if (type) url += '&type=' + type;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const emails = data.data.items || data.data;
+      if (emails.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无邮件</div>';
+      } else {
+        container.innerHTML = emails.map(email => `
+          <div class="email-item ${email.isInquiry ? 'inquiry' : ''}" onclick="viewEmail('${email.id}')">
+            <div class="email-item-header">
+              <span class="email-item-from">${email.from || email.fromName || '未知发件人'}</span>
+              <span class="email-item-time">${formatDateTime(email.receivedAt || email.date)}</span>
+            </div>
+            <div class="email-item-subject">${email.subject || '(无主题)'}</div>
+            <div class="email-item-badges">
+              ${email.isInquiry ? '<span class="profile-tag" style="background:#fff3e0;color:#ea580c;">询盘邮件</span>' : ''}
+              ${email.hasAutoReply ? '<span class="profile-tag" style="background:#dcfce7;color:#16a34a;">已自动回复</span>' : ''}
+              ${email.leadCreated ? '<span class="profile-tag" style="background:#dbeafe;color:#2563eb;">已创建线索</span>' : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+async function checkAllEmails() {
+  showLoading('正在检查新邮件...');
+  try {
+    const res = await fetch(API_BASE + '/email/check', { method: 'POST' });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('检查完成，发现 ' + (data.data?.newCount || 0) + ' 封新邮件');
+      loadEmails();
+    } else {
+      alert('检查失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('检查失败: ' + e.message);
+  }
+}
+
+async function viewEmail(id) {
+  const modal = document.getElementById('email-detail-modal');
+  const body = document.getElementById('email-detail-body');
+
+  body.innerHTML = '<div class="empty-state">加载中...</div>';
+  modal.style.display = 'flex';
+
+  try {
+    const res = await fetch(API_BASE + '/email/inbox/' + id);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const email = data.data;
+      body.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h3 style="margin-bottom:12px;">${email.subject || '(无主题)'}</h3>
+          <div style="color:#78716c; font-size:13px; margin-bottom:16px;">
+            <div><strong>发件人：</strong>${email.from || email.fromName || '未知'}</div>
+            <div><strong>收件时间：</strong>${formatDateTime(email.receivedAt || email.date)}</div>
+          </div>
+          ${email.isInquiry ? `
+          <div style="background:#fff3e0; padding:12px; border-radius:8px; margin-bottom:16px;">
+            <strong style="color:#ea580c;">AI 询盘分析</strong>
+            <p style="margin-top:8px; color:#78716c;">${email.inquiryAnalysis || '已识别为询盘邮件'}</p>
+            ${email.leadId ? `<p style="margin-top:8px;"><a href="#" onclick="viewLeadFromEmail('${email.leadId}');return false;" style="color:#ea580c;">查看关联线索 →</a></p>` : ''}
+          </div>
+          ` : ''}
+          <div style="border-top:1px solid #e7e5e4; padding-top:16px; line-height:1.8; color:#44403c;">
+            ${email.body || email.text || email.htmlText || '(无正文)'}
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:20px;">
+          <button class="btn btn-primary" onclick="generateEmailReply('${email.id}')">AI 生成回复</button>
+          <button class="btn" style="background:#f5f5f4;color:#1c1917;" onclick="closeEmailDetailModal()">关闭</button>
+        </div>
+      `;
+    } else {
+      body.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    body.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function closeEmailDetailModal() {
+  document.getElementById('email-detail-modal').style.display = 'none';
+}
+
+async function generateEmailReply(emailId) {
+  showLoading('AI 正在生成回复...');
+  try {
+    const res = await fetch(API_BASE + '/email/generate-reply/' + emailId, { method: 'POST' });
+    const data = await res.json();
+    hideLoading();
+    if (data.success && data.data) {
+      const reply = data.data.reply || data.data.content || '';
+      const body = document.getElementById('email-detail-body');
+      body.innerHTML += `
+        <div style="margin-top:20px; padding:16px; background:#f0fdf4; border-radius:8px; border-left:3px solid #16a34a;">
+          <strong style="color:#16a34a;">AI 生成的回复</strong>
+          <div style="margin-top:12px; white-space:pre-wrap; line-height:1.8;">${reply}</div>
+          <div style="margin-top:16px; display:flex; gap:8px;">
+            <button class="btn btn-primary" onclick="sendEmailReply('${emailId}')">发送回复</button>
+            <button class="btn" style="background:#f5f5f4;color:#1c1917;" onclick="saveAsDraft('${emailId}')">保存为草稿</button>
+          </div>
+        </div>
+      `;
+    } else {
+      alert('生成失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('生成失败: ' + e.message);
+  }
+}
+
+async function sendEmailReply(emailId) {
+  try {
+    const res = await fetch(API_BASE + '/email/send-reply/' + emailId, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert('回复已发送');
+      closeEmailDetailModal();
+      loadEmails();
+    } else {
+      alert('发送失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    alert('发送失败: ' + e.message);
+  }
+}
+
+async function saveAsDraft(emailId) {
+  try {
+    const res = await fetch(API_BASE + '/email/drafts/' + emailId, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert('已保存为草稿');
+    } else {
+      alert('保存失败');
+    }
+  } catch (e) {
+    alert('保存失败: ' + e.message);
+  }
+}
+
+// 草稿审核
+async function loadEmailDrafts() {
+  const container = document.getElementById('email-drafts-list');
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    const res = await fetch(API_BASE + '/email/drafts?page=1&pageSize=20');
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const drafts = data.data.items || data.data;
+      if (drafts.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无待审核草稿</div>';
+      } else {
+        container.innerHTML = drafts.map(draft => `
+          <div class="draft-card">
+            <div class="draft-card-header">
+              <span class="draft-card-to">收件人：${draft.to || draft.toEmail}</span>
+              <span style="font-size:12px;color:#a8a29e;">${formatDateTime(draft.createdAt)}</span>
+            </div>
+            <div class="draft-card-subject"><strong>主题：</strong>${draft.subject || '(无主题)'}</div>
+            <div style="font-size:13px;color:#78716c; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${draft.content || draft.body || ''}</div>
+            <div class="draft-card-actions">
+              <button class="btn btn-primary btn-small" onclick="approveDraft('${draft.id}')">审核通过并发送</button>
+              <button class="btn btn-small" style="background:#f5f5f4;color:#1c1917;" onclick="editDraft('${draft.id}')">编辑</button>
+              <button class="btn btn-small" style="background:#fef2f2;color:#dc2626;" onclick="rejectDraft('${draft.id}')">拒绝</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+async function approveDraft(id) {
+  try {
+    const res = await fetch(API_BASE + '/email/drafts/' + id + '/approve', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert('已审核通过并发送');
+      loadEmailDrafts();
+    } else {
+      alert('操作失败');
+    }
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+function editDraft(id) {
+  alert('编辑功能开发中');
+}
+
+async function rejectDraft(id) {
+  if (!confirm('确定拒绝这个草稿吗？')) return;
+  try {
+    const res = await fetch(API_BASE + '/email/drafts/' + id + '/reject', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert('已拒绝');
+      loadEmailDrafts();
+    } else {
+      alert('操作失败');
+    }
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+}
+
+// 已发送邮件
+async function loadSentEmails() {
+  const container = document.getElementById('email-sent-list');
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    const res = await fetch(API_BASE + '/email/sent?page=1&pageSize=20');
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const emails = data.data.items || data.data;
+      if (emails.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无已发送邮件</div>';
+      } else {
+        container.innerHTML = emails.map(email => `
+          <div class="email-item" onclick="viewEmail('${email.id}')">
+            <div class="email-item-header">
+              <span class="email-item-from">收件人：${email.to || email.toEmail}</span>
+              <span class="email-item-time">${formatDateTime(email.sentAt || email.createdAt)}</span>
+            </div>
+            <div class="email-item-subject">${email.subject || '(无主题)'}</div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+// 回复模板
+async function loadEmailTemplates() {
+  const container = document.getElementById('email-templates-list');
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    const res = await fetch(API_BASE + '/email/templates');
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const templates = data.data.items || data.data;
+      if (templates.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无回复模板</div>';
+      } else {
+        container.innerHTML = templates.map(tpl => `
+          <div class="knowledge-card">
+            <div class="knowledge-card-title">${tpl.name || tpl.title}</div>
+            <div class="knowledge-card-content">${tpl.content || ''}</div>
+            <div class="knowledge-card-meta">
+              <span>使用次数：${tpl.usageCount || 0}</span>
+              <span>更新时间：${formatDate(tpl.updatedAt || tpl.createdAt)}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function showAddEmailTemplate() {
+  alert('添加模板功能开发中');
+}
+
+// ===== 知识库功能 =====
+
+async function loadKnowledgeItems() {
+  const category = document.getElementById('kb-filter-category').value;
+  const search = document.getElementById('kb-search').value;
+  const tbody = document.getElementById('knowledge-table-body');
+
+  tbody.innerHTML = '<tr><td colspan="6" class="empty-state">加载中...</td></tr>';
+
+  try {
+    let url = API_BASE + '/knowledge?page=1&pageSize=20';
+    if (category) url += '&category=' + category;
+    if (search) url += '&search=' + encodeURIComponent(search);
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const items = data.data.items || data.data;
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无知识条目</td></tr>';
+      } else {
+        tbody.innerHTML = items.map(item => `
+          <tr>
+            <td><strong>${item.title}</strong></td>
+            <td>${getCategoryText(item.category)}</td>
+            <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.content || ''}</td>
+            <td>${item.usageCount || 0}</td>
+            <td>${formatDate(item.updatedAt || item.createdAt)}</td>
+            <td>
+              <button class="btn btn-small" onclick="viewKnowledgeItem('${item.id}')">查看</button>
+              <button class="btn btn-small" style="background:#fef2f2;color:#dc2626;" onclick="deleteKnowledgeItem('${item.id}')">删除</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 更新统计
+      if (data.data.stats) {
+        document.getElementById('kb-total').textContent = data.data.stats.total || 0;
+        document.getElementById('kb-product').textContent = data.data.stats.product || 0;
+        document.getElementById('kb-faq').textContent = data.data.stats.faq || 0;
+        document.getElementById('kb-script').textContent = data.data.stats.script || 0;
+      }
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">加载失败</td></tr>';
+    }
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">加载失败: ' + e.message + '</td></tr>';
+  }
+}
+
+function getCategoryText(category) {
+  const map = { product: '产品资料', faq: 'FAQ', script: '话术库', case: '客户案例', other: '其他' };
+  return map[category] || category || '-';
+}
+
+function showAddKnowledgeItem() {
+  document.getElementById('kb-title').value = '';
+  document.getElementById('kb-category').value = 'product';
+  document.getElementById('kb-content').value = '';
+  document.getElementById('kb-keywords').value = '';
+  document.getElementById('knowledge-modal').style.display = 'flex';
+}
+
+function closeKnowledgeModal() {
+  document.getElementById('knowledge-modal').style.display = 'none';
+}
+
+async function saveKnowledgeItem() {
+  const item = {
+    title: document.getElementById('kb-title').value,
+    category: document.getElementById('kb-category').value,
+    content: document.getElementById('kb-content').value,
+    keywords: document.getElementById('kb-keywords').value
+  };
+
+  if (!item.title || !item.content) {
+    alert('请填写标题和内容');
+    return;
+  }
+
+  showLoading('正在保存...');
+  try {
+    const res = await fetch(API_BASE + '/knowledge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('保存成功！');
+      closeKnowledgeModal();
+      loadKnowledgeItems();
+    } else {
+      alert('保存失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('保存失败: ' + e.message);
+  }
+}
+
+async function viewKnowledgeItem(id) {
+  try {
+    const res = await fetch(API_BASE + '/knowledge/' + id);
+    const data = await res.json();
+    if (data.success && data.data) {
+      const item = data.data;
+      alert('标题：' + item.title + '\n\n分类：' + getCategoryText(item.category) + '\n\n内容：\n' + item.content);
+    }
+  } catch (e) {
+    alert('查看失败: ' + e.message);
+  }
+}
+
+async function deleteKnowledgeItem(id) {
+  if (!confirm('确定要删除这条知识吗？')) return;
+  try {
+    const res = await fetch(API_BASE + '/knowledge/' + id, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      alert('删除成功');
+      loadKnowledgeItems();
+    } else {
+      alert('删除失败');
+    }
+  } catch (e) {
+    alert('删除失败: ' + e.message);
+  }
+}
+
+// ===== 日报周报功能 =====
+
+async function loadReports(type) {
+  const container = document.getElementById('reports-' + type + '-list');
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    const res = await fetch(API_BASE + '/reports?type=' + type + '&page=1&pageSize=20');
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const reports = data.data.items || data.data;
+      if (reports.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无' + (type === 'daily' ? '日报' : '周报') + '，点击上方按钮生成</div>';
+      } else {
+        container.innerHTML = reports.map(report => `
+          <div class="report-card" onclick="viewReport('${report.id}')">
+            <div class="report-card-header">
+              <span class="report-card-title">${report.title || (type === 'daily' ? '日报' : '周报') + ' - ' + formatDate(report.date || report.createdAt)}</span>
+              <span style="font-size:12px;color:#a8a29e;">${formatDateTime(report.createdAt)}</span>
+            </div>
+            <div class="report-card-summary">${report.summary || report.content?.substring(0, 100) || '点击查看详情'}</div>
+            <div class="report-card-stats">
+              <div class="report-stat">
+                <div class="report-stat-value">${report.stats?.newLeads || report.newLeads || 0}</div>
+                <div class="report-stat-label">新增线索</div>
+              </div>
+              <div class="report-stat">
+                <div class="report-stat-value">${report.stats?.converted || report.converted || 0}</div>
+                <div class="report-stat-label">已转化</div>
+              </div>
+              <div class="report-stat">
+                <div class="report-stat-value">${report.stats?.conversations || report.conversations || 0}</div>
+                <div class="report-stat-label">对话数</div>
+              </div>
+              <div class="report-stat">
+                <div class="report-stat-value">${report.stats?.emails || report.emails || 0}</div>
+                <div class="report-stat-label">邮件数</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+async function generateReport(type) {
+  showLoading('AI 正在生成' + (type === 'daily' ? '日报' : '周报') + '...');
+  try {
+    const res = await fetch(API_BASE + '/reports/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: type })
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('生成成功！');
+      loadReports(type);
+    } else {
+      alert('生成失败: ' + (data.message || '未知错误'));
+    }
+  } catch (e) {
+    hideLoading();
+    alert('生成失败: ' + e.message);
+  }
+}
+
+async function viewReport(id) {
+  const modal = document.getElementById('report-modal');
+  const body = document.getElementById('report-modal-body');
+
+  body.innerHTML = '<div class="empty-state">加载中...</div>';
+  modal.style.display = 'flex';
+
+  try {
+    const res = await fetch(API_BASE + '/reports/' + id);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const report = data.data;
+      body.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h2 style="margin-bottom:8px;">${report.title || '报告详情'}</h2>
+          <p style="color:#78716c; font-size:13px;">生成时间：${formatDateTime(report.createdAt)}</p>
+        </div>
+        ${report.stats ? `
+        <div class="stats-grid" style="margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-value">${report.stats.newLeads || 0}</div><div class="stat-label">新增线索</div></div>
+          <div class="stat-card"><div class="stat-value">${report.stats.converted || 0}</div><div class="stat-label">已转化</div></div>
+          <div class="stat-card"><div class="stat-value">${report.stats.conversations || 0}</div><div class="stat-label">对话数</div></div>
+          <div class="stat-card"><div class="stat-value">${report.stats.emails || 0}</div><div class="stat-label">邮件数</div></div>
+        </div>
+        ` : ''}
+        <div style="line-height:1.8; color:#44403c; white-space:pre-wrap;">${report.content || report.summary || '暂无详细内容'}</div>
+        ${report.aiSuggestions ? `
+        <div style="margin-top:20px; padding:16px; background:#fff3e0; border-radius:8px;">
+          <strong style="color:#ea580c;">AI 优化建议</strong>
+          <div style="margin-top:8px; line-height:1.8;">${report.aiSuggestions}</div>
+        </div>
+        ` : ''}
+      `;
+    } else {
+      body.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    body.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function closeReportModal() {
+  document.getElementById('report-modal').style.display = 'none';
+}
+
+// ===== 客户画像功能 =====
+
+async function loadProfiles() {
+  const container = document.getElementById('profiles-grid');
+  const intention = document.getElementById('profile-filter-intention').value;
+
+  container.innerHTML = '<div class="empty-state">加载中...</div>';
+
+  try {
+    let url = API_BASE + '/profiles?page=1&pageSize=20';
+    if (intention) url += '&intentionLevel=' + intention;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const profiles = data.data.items || data.data;
+      if (profiles.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无客户画像数据</div>';
+      } else {
+        container.innerHTML = profiles.map(profile => `
+          <div class="profile-card" onclick="viewProfile('${profile.id || profile.leadId}')">
+            <div class="profile-header">
+              <div class="profile-avatar">${(profile.name || profile.customerName || '?').charAt(0).toUpperCase()}</div>
+              <div class="profile-info">
+                <h4>${profile.name || profile.customerName || '未知客户'}</h4>
+                <p>${profile.phone || profile.email || profile.company || '-'}</p>
+              </div>
+            </div>
+            <div class="profile-tags">
+              ${profile.intentionLevel ? `<span class="profile-tag" style="background:#fff3e0;color:#ea580c;">意向：${profile.intentionLevel}级</span>` : ''}
+              ${profile.industry ? `<span class="profile-tag">${profile.industry}</span>` : ''}
+              ${profile.tags ? profile.tags.slice(0, 3).map(tag => `<span class="profile-tag">${tag}</span>`).join('') : ''}
+            </div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="profile-stat-value">${profile.conversationCount || 0}</div>
+                <div class="profile-stat-label">对话数</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">${profile.emailCount || 0}</div>
+                <div class="profile-stat-label">邮件数</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-value">${profile.followUpCount || 0}</div>
+                <div class="profile-stat-label">跟进次数</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+async function viewProfile(id) {
+  const modal = document.getElementById('profile-modal');
+  const body = document.getElementById('profile-modal-body');
+
+  body.innerHTML = '<div class="empty-state">加载中...</div>';
+  modal.style.display = 'flex';
+
+  try {
+    const res = await fetch(API_BASE + '/profiles/' + id);
+    const data = await res.json();
+
+    if (data.success && data.data) {
+      const profile = data.data;
+      body.innerHTML = `
+        <div style="margin-bottom:20px; display:flex; align-items:center; gap:16px;">
+          <div class="profile-avatar" style="width:64px; height:64px; font-size:24px;">${(profile.name || '?').charAt(0).toUpperCase()}</div>
+          <div>
+            <h3 style="margin-bottom:4px;">${profile.name || profile.customerName || '未知客户'}</h3>
+            <p style="color:#78716c; font-size:13px;">${profile.phone || ''} ${profile.email ? '· ' + profile.email : ''}</p>
+          </div>
+        </div>
+        <div class="profile-tags" style="margin-bottom:20px;">
+          ${profile.intentionLevel ? `<span class="profile-tag" style="background:#fff3e0;color:#ea580c;">意向：${profile.intentionLevel}级</span>` : ''}
+          ${profile.industry ? `<span class="profile-tag">行业：${profile.industry}</span>` : ''}
+          ${profile.company ? `<span class="profile-tag">公司：${profile.company}</span>` : ''}
+          ${profile.tags ? profile.tags.map(tag => `<span class="profile-tag">${tag}</span>`).join('') : ''}
+        </div>
+        ${profile.basicInfo ? `
+        <div style="margin-bottom:20px;">
+          <h4 style="margin-bottom:12px; color:#1c1917;">基本信息</h4>
+          <div style="background:#fafaf9; padding:16px; border-radius:8px; line-height:2;">
+            ${Object.entries(profile.basicInfo).map(([k, v]) => `<div><strong>${k}：</strong>${v}</div>`).join('')}
+          </div>
+        </div>
+        ` : ''}
+        ${profile.behaviorAnalysis ? `
+        <div style="margin-bottom:20px;">
+          <h4 style="margin-bottom:12px; color:#1c1917;">行为分析</h4>
+          <div style="background:#fafaf9; padding:16px; border-radius:8px; line-height:1.8;">${profile.behaviorAnalysis}</div>
+        </div>
+        ` : ''}
+        ${profile.aiSuggestions ? `
+        <div style="margin-bottom:20px;">
+          <h4 style="margin-bottom:12px; color:#ea580c;">AI 跟进建议</h4>
+          <div style="background:#fff3e0; padding:16px; border-radius:8px; line-height:1.8;">${profile.aiSuggestions}</div>
+        </div>
+        ` : ''}
+        <div style="display:flex; gap:8px; margin-top:20px;">
+          <button class="btn btn-primary" onclick="generateFollowUpForProfile('${id}')">生成跟进计划</button>
+          <button class="btn" style="background:#f5f5f4;color:#1c1917;" onclick="closeProfileModal()">关闭</button>
+        </div>
+      `;
+    } else {
+      body.innerHTML = '<div class="empty-state">加载失败</div>';
+    }
+  } catch (e) {
+    body.innerHTML = '<div class="empty-state">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-modal').style.display = 'none';
+}
+
+async function generateFollowUpForProfile(id) {
+  showLoading('AI 正在生成跟进计划...');
+  try {
+    const res = await fetch(API_BASE + '/nurture/followup-plan/' + id, { method: 'POST' });
+    const data = await res.json();
+    hideLoading();
+    if (data.success && data.data) {
+      alert('跟进计划已生成：\n\n' + (data.data.plan || data.data.content || ''));
+    } else {
+      alert('生成失败');
+    }
+  } catch (e) {
+    hideLoading();
+    alert('生成失败: ' + e.message);
+  }
+}
+
+// ===== 页面切换增强 =====
+
+// 重写 switchPage 函数，添加新页面的加载逻辑
+const originalSwitchPage = window.switchPage;
+window.switchPage = function(page) {
+  // 调用原始切换逻辑
+  if (originalSwitchPage) {
+    originalSwitchPage(page);
+  } else {
+    // 基础切换逻辑
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.toggle('active', p.id === 'page-' + page);
+    });
+    const titles = {
+      dashboard: '仪表盘', leads: '线索管理', conversations: '对话记录',
+      email: '邮箱渠道', knowledge: '知识库', reports: '日报周报',
+      profiles: '客户画像', content: '内容智造', nurture: '线索培育',
+      notifications: '通知中心', analytics: '数据分析', abtest: 'A/B测试', settings: '系统设置'
+    };
+    document.getElementById('page-title').textContent = titles[page] || page;
+  }
+
+  // 新页面加载逻辑
+  switch (page) {
+    case 'conversations':
+      loadConversations();
+      break;
+    case 'email':
+      loadEmailAccounts();
+      break;
+    case 'knowledge':
+      loadKnowledgeItems();
+      break;
+    case 'reports':
+      loadReports('daily');
+      break;
+    case 'profiles':
+      loadProfiles();
+      break;
+  }
+};
+
+// 内容标签切换
+document.querySelectorAll('.content-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const parent = this.closest('.page');
+    parent.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+    parent.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const panelId = 'panel-' + this.dataset.tab;
+    const panel = document.getElementById(panelId);
+    if (panel) panel.classList.add('active');
+
+    // 邮箱渠道子页面加载
+    if (this.dataset.tab === 'email-accounts') loadEmailAccounts();
+    if (this.dataset.tab === 'email-inbox') loadEmails();
+    if (this.dataset.tab === 'email-drafts') loadEmailDrafts();
+    if (this.dataset.tab === 'email-sent') loadSentEmails();
+    if (this.dataset.tab === 'email-templates') loadEmailTemplates();
+
+    // 日报周报子页面加载
+    if (this.dataset.tab === 'reports-daily') loadReports('daily');
+    if (this.dataset.tab === 'reports-weekly') loadReports('weekly');
+  });
+});
+
+// 弹窗外部点击关闭
+['conversation-modal', 'email-account-modal', 'email-detail-modal', 'knowledge-modal', 'report-modal', 'profile-modal'].forEach(id => {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target.id === id) modal.style.display = 'none';
+    });
+  }
 });
