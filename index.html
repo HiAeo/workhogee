@@ -831,9 +831,10 @@ img { max-width: 100%; display: block; }
 .footer-grid {
   display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px;
 }
-.footer-brand { display: flex; flex-direction: column; gap: 16px; }
-.footer-brand svg { height: 28px; width: auto; display: block; margin-left: 0; }
-.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; }
+.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }
+.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }
+.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; }
 .footer-col h5 { font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 16px; }
 .footer-col ul { list-style: none; }
 .footer-col li { margin-bottom: 10px; }
@@ -3727,6 +3728,7 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
+        <a href="/" aria-label="WorkHogee Home">
         <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
           <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
           <g transform="translate(-1.06 -28.16)">
@@ -3738,6 +3740,7 @@ img { max-width: 100%; display: block; }
             <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
           </g>
         </svg>
+        </a>
         <p>AI获客伙计，24小时主动干活。让中小企业也能用得起专属获客团队。</p>
       </div>
       <div class="footer-col">
