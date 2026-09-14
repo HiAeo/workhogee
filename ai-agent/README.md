@@ -1,8 +1,38 @@
-# WorkHogee AI 获客伙计 v0.3.0
+# WorkHogee AI 获客伙计 v0.5.0
 
 基于 DeepSeek Harness 理念构建的智能获客 Agent，帮助中小企业实现从流量到客户的全链路自动化获客。
 
-## v0.3.0 新增功能
+## v0.5.0 新增功能
+
+### 邮箱渠道全链路接入
+- **邮箱配置管理**：支持多邮箱账户配置，IMAP/SMTP 连接测试，自动回复开关
+- **邮件接收与询盘识别**：自动接收邮件，AI 识别询盘邮件，自动创建线索
+- **邮件自动回复与发送**：AI 生成个性化回复，草稿审核机制，已发送邮件管理
+- **回复模板管理**：常用回复模板，支持分类和使用统计
+
+### v0.4.0 新增功能
+
+### 主动学习引擎
+- **知识库服务**：产品资料/FAQ/话术库管理，AI 智能检索，使用次数统计
+- **文档管理**：产品资料的增删改查，分类管理，关键词检索
+- **FAQ 管理**：常见问题管理，AI 自动匹配答案
+- **话术库管理**：销售话术管理，按场景分类
+
+### 日报/周报自动生成
+- **自动生成报告**：基于线索/对话/邮件数据自动生成日报/周报
+- **关键指标统计**：新增线索/已转化/对话数/邮件数等核心指标
+- **AI 优化建议**：基于数据分析给出获客优化建议
+- **报告历史管理**：报告列表查看，详情展示
+
+### PC 客户端（Electron）
+- **桌面客户端**：基于 Electron 的跨平台桌面应用
+- **系统托盘**：最小化到托盘，后台运行
+- **桌面通知**：新线索/新邮件桌面通知
+- **自动更新**：支持应用自动更新（electron-updater）
+- **单实例锁**：防止多开
+- **启动器**：一键启动后端服务+客户端
+
+### v0.3.0 新增功能
 
 ### 企业级功能
 - **数据导出**：支持线索数据 CSV 导出，含 BOM 支持 Excel 中文
@@ -117,22 +147,89 @@ npm start
 ## API 文档
 
 ### 对话相关
-
+- `GET /api/conversations` - 获取对话记录列表（支持筛选和分页）
 - `POST /api/conversations` - 开始新对话
 - `POST /api/conversations/:id/messages` - 发送消息
 - `GET /api/conversations/:id` - 获取对话历史
 - `POST /api/conversations/:id/end` - 结束对话
 
 ### 线索相关
-
 - `GET /api/leads` - 获取线索列表（支持筛选和分页）
 - `GET /api/leads/:id` - 获取线索详情
+- `POST /api/leads` - 创建线索
 - `PUT /api/leads/:id` - 更新线索
 - `POST /api/leads/:id/convert` - 标记线索已转化
+- `GET /api/leads/to-followup` - 获取待跟进线索
 
-### 统计相关
+### 内容智造
+- `POST /api/content/xiaohongshu` - 生成小红书笔记
+- `POST /api/content/wechat` - 生成公众号文章
+- `POST /api/content/copy` - 生成营销文案
+- `POST /api/content/calendar` - 生成内容日历
 
+### 线索培育
+- `POST /api/nurture/followup-script` - 生成跟进话术
+- `POST /api/nurture/content` - 生成培育内容
+- `POST /api/nurture/followup-plan` - 生成跟进计划
+- `GET /api/nurture/pending` - 获取待跟进列表
+
+### 邮箱渠道
+- `GET /api/email/accounts` - 获取邮箱账户列表
+- `POST /api/email/accounts` - 添加邮箱账户
+- `GET /api/email/accounts/:id` - 获取邮箱账户详情
+- `PUT /api/email/accounts/:id` - 更新邮箱账户
+- `DELETE /api/email/accounts/:id` - 删除邮箱账户
+- `POST /api/email/accounts/:id/test` - 测试邮箱连接
+- `GET /api/email/receiver/emails` - 获取收件箱邮件
+- `GET /api/email/receiver/emails/:id` - 获取邮件详情
+- `POST /api/email/receiver/check-all` - 检查所有邮箱新邮件
+- `POST /api/email/sender/generate-reply/:emailId` - AI 生成邮件回复
+- `GET /api/email/sender/drafts` - 获取草稿列表
+- `POST /api/email/sender/drafts/:id/approve-send` - 审核通过并发送
+- `GET /api/email/sender/sent` - 获取已发送邮件
+- `GET /api/email/sender/templates` - 获取回复模板
+
+### 知识库
+- `GET /api/knowledge` - 获取知识库统一列表（支持分类和搜索）
+- `GET /api/knowledge/documents` - 获取产品资料列表
+- `POST /api/knowledge/documents` - 添加产品资料
+- `GET /api/knowledge/faqs` - 获取FAQ列表
+- `POST /api/knowledge/faqs` - 添加FAQ
+- `GET /api/knowledge/scripts` - 获取话术库列表
+- `POST /api/knowledge/scripts` - 添加话术
+- `POST /api/knowledge/reply` - AI 智能回复
+- `GET /api/knowledge/stats` - 获取知识库统计
+
+### 日报周报
+- `GET /api/reports` - 获取报告列表（支持类型筛选）
+- `GET /api/reports/:id` - 获取报告详情
+- `POST /api/reports/generate` - 生成日报/周报
+
+### 客户画像
+- `GET /api/profiles` - 获取客户画像列表（支持意向等级筛选）
+- `GET /api/profiles/:leadId` - 获取客户画像详情
+- `POST /api/profiles/:leadId/generate` - AI 生成客户画像
+- `PUT /api/profiles/:leadId` - 更新客户画像
+- `POST /api/profiles/:leadId/tags` - 添加标签
+- `DELETE /api/profiles/:leadId/tags/:tag` - 删除标签
+
+### 数据分析
 - `GET /api/stats` - 获取统计数据
+- `GET /api/analytics/dashboard` - 获取仪表盘数据
+- `GET /api/analytics/funnel` - 获取转化漏斗数据
+- `GET /api/analytics/trend` - 获取趋势数据
+- `GET /api/analytics/channels` - 获取渠道分析数据
+
+### 系统管理
+- `GET /api/health` - 健康检查
+- `GET /api/export/leads` - 导出线索数据
+- `GET /api/auth/keys` - 获取API Key列表
+- `POST /api/auth/keys` - 生成API Key
+- `DELETE /api/auth/keys/:id` - 撤销API Key
+- `GET /api/notifications` - 获取通知列表
+- `POST /api/notifications/:id/read` - 标记通知已读
+- `GET /api/abtest/tests` - 获取A/B测试列表
+- `POST /api/abtest/tests` - 创建A/B测试
 
 ## 项目结构
 
@@ -200,10 +297,23 @@ ai-agent/
 ## 技术栈
 
 - **后端**：Node.js + Express
-- **AI 模型**：DeepSeek API（后续支持多模型）
-- **前端**：原生 HTML/CSS/JS（后续可升级为 React/Vue）
+- **AI 模型**：DeepSeek API（deepseek-chat / deepseek-reasoner）
+- **Web 管理后台**：原生 HTML/CSS/JS（单页应用）
+- **PC 客户端**：Electron（支持 Windows/macOS/Linux）
+- **移动端 APP**：React Native + Expo（支持 iOS/Android）
 - **存储**：文件系统 JSON（后续可升级为 SQLite/PostgreSQL）
-- **Agent 框架**：后续深度集成 DeepSeek Harness
+- **Agent 框架**：DeepSeek Harness 理念（插件化架构）
+- **自动更新**：electron-updater（PC 客户端）
+
+## 多端产品矩阵
+
+| 产品 | 技术栈 | 状态 | 说明 |
+|------|--------|------|------|
+| Web 管理后台 | HTML/CSS/JS | ✅ 已完成 | 浏览器访问，功能最全 |
+| PC 客户端 | Electron | ✅ 已完成 | 桌面应用，托盘运行，桌面通知 |
+| 移动端 APP | React Native + Expo | ✅ 框架完成 | iOS/Android 双端，16个核心页面 |
+| 官网展示页 | HTML/CSS/JS | ✅ 已完成 | www.workhogee.com |
+| 可嵌入对话组件 | JS Widget | ✅ 已完成 | 一行代码嵌入客户官网 |
 
 ## 许可证
 
