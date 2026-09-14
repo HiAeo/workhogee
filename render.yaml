@@ -1,0 +1,46 @@
+# WorkHogee AI 获客伙计 - Render.com 部署配置
+# 参考：https://render.com/docs/infrastructure-as-code
+# 此文件放在仓库根目录，rootDir 指定后端应用所在目录
+
+services:
+  - type: web
+    name: workhogee-api
+    runtime: node
+    plan: starter
+    region: singapore
+    rootDir: ai-agent
+    buildCommand: npm install
+    startCommand: node src/app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_ENABLED
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: LLM_PROVIDER
+        value: deepseek
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://api.deepseek.com/v1
+      - key: LLM_MODEL
+        value: deepseek-chat
+    healthCheckPath: /api/health
+    autoDeploy: true
+    pullRequestPreviewsEnabled: false
+
+  # PostgreSQL 数据库（可选，需要付费计划）
+  # - type: postgres
+  #   name: workhogee-db
+  #   plan: starter
+  #   region: singapore
+  #   databaseName: workhogee
+  #   user: workhogee
+  #   ipAllowList: []
