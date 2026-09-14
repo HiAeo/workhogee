@@ -154,74 +154,142 @@ img { max-width: 100%; display: block; }
 .hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
 .hero-meta-item svg { width: 18px; height: 18px; color: var(--orange); }
 
-/* ===== Hero 右侧：GEO 获客闭环对比图 ===== */
+/* ===== Hero 右侧：GEO 伙计产品界面模拟图 ===== */
 .hero-visual { position: relative; }
-.compare-card {
+.geo-mockup {
   background: var(--white); border-radius: var(--radius-xl);
-  padding: 24px 20px 20px; box-shadow: 0 24px 60px rgba(28,25,23,0.14);
-  border: 1px solid var(--line); position: relative; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(28,25,23,0.14);
+  border: 1px solid var(--line); overflow: hidden;
+  position: relative;
 }
-.compare-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, #a8a29e 0%, #a8a29e 50%, var(--orange) 50%, var(--orange) 100%);
+.mockup-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; background: #fafaf9; border-bottom: 1px solid var(--line);
 }
-.compare-head {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot.r { background: #ef4444; }
+.mockup-dot.y { background: #f59e0b; }
+.mockup-dot.g { background: #22c55e; }
+.mockup-url {
+  margin-left: 12px; flex: 1; background: var(--white); border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 12px; font-size: 11px; color: var(--ink-muted);
+  font-family: 'SF Mono', 'Consolas', monospace;
 }
-.compare-head .col {
-  text-align: center; padding: 10px 8px; border-radius: 10px;
+.mockup-body {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  min-height: 320px;
 }
-.compare-head .col.old { background: #f5f5f4; border: 1px solid #e7e5e4; }
-.compare-head .col.new { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa; }
-.compare-head .col .label { font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.compare-head .col .name { font-size: 15px; font-weight: 800; margin-top: 2px; }
-.compare-head .col.old .name { color: #78716c; }
-.compare-head .col.new .name { color: var(--orange-deep); }
-.compare-body {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+.mockup-left {
+  padding: 16px; border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, #fafaf9 0%, var(--white) 100%);
 }
-.compare-col { display: flex; flex-direction: column; gap: 8px; }
-.cstep {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 600;
-  transition: all 0.3s;
+.mockup-right {
+  padding: 16px; background: var(--white);
+  display: flex; flex-direction: column;
 }
-.cstep .icon {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;
+.mockup-section-title {
+  font-size: 11px; font-weight: 700; color: var(--ink-muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
 }
-.compare-col.old .cstep { background: #fafaf9; border: 1px solid #f0eeeb; color: #78716c; }
-.compare-col.old .cstep .icon { background: #e7e5e4; color: #78716c; }
-.compare-col.old .cstep.done { background: #f5f5f4; border-color: #e7e5e4; color: #57534e; }
-.compare-col.old .cstep.done .icon { background: #d6d3d1; color: #57534e; }
-.compare-col.old .cstep.broken {
-  background: repeating-linear-gradient(45deg, #fafaf9, #fafaf9 6px, #f5f5f4 6px, #f5f5f4 12px);
-  border: 1px dashed #d6d3d1; color: #a8a29e; font-style: italic;
+.mockup-section-title .live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+  animation: pulse 2s infinite;
 }
-.compare-col.old .cstep.broken .icon { background: transparent; border: 2px dashed #d6d3d1; color: #a8a29e; }
-.compare-col.new .cstep { background: #fff7ed; border: 1px solid #fed7aa; color: var(--ink); }
-.compare-col.new .cstep .icon { background: var(--orange); color: white; }
-.compare-col.new .cstep.win { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); border-color: var(--orange-deep); color: white; }
-.compare-col.new .cstep.win .icon { background: rgba(255,255,255,0.25); color: white; }
-.compare-gap {
-  grid-column: 1 / -1; text-align: center; padding: 8px 0;
-  font-size: 12px; font-weight: 700; color: var(--orange-deep);
-  background: linear-gradient(90deg, transparent, rgba(234,88,12,0.08), transparent);
-  border-top: 1px dashed #fed7aa; border-bottom: 1px dashed #fed7aa;
-  margin: 4px 0;
-}
-.compare-gap .arrow { font-size: 14px; margin: 0 6px; }
-.compare-footer {
-  margin-top: 14px; padding: 12px 14px; background: var(--ink); border-radius: 10px;
+.engine-row {
   display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 0; border-bottom: 1px solid #f5f5f4; font-size: 12px;
 }
-.compare-footer .text { font-size: 12.5px; font-weight: 700; color: var(--paper); }
-.compare-footer .text .o { color: var(--orange-light); }
-.compare-footer .badge {
-  background: var(--orange); color: white; padding: 4px 10px; border-radius: 6px;
-  font-size: 11px; font-weight: 800;
+.engine-row:last-child { border-bottom: none; }
+.engine-name { font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.engine-rank { font-weight: 800; color: var(--orange); font-size: 13px; }
+.engine-rank.up { color: #16a34a; }
+.engine-rank.up::before { content: '↑ '; font-size: 10px; }
+.mockup-chart {
+  margin-top: 12px; height: 60px; position: relative;
+  background: linear-gradient(180deg, rgba(234,88,12,0.04) 0%, transparent 100%);
+  border-radius: 8px; overflow: hidden;
 }
+.mockup-chart svg { width: 100%; height: 100%; }
+.mockup-chart .chart-line {
+  stroke: var(--orange); stroke-width: 2; fill: none;
+  stroke-dasharray: 300; stroke-dashoffset: 300;
+  animation: drawLine 2s ease-out forwards;
+}
+.mockup-chart .chart-area {
+  fill: url(#chartGrad); opacity: 0;
+  animation: fadeIn 1s ease-out 1.5s forwards;
+}
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { to { opacity: 1; } }
 
+/* 右侧对话界面 */
+.chat-header {
+  display: flex; align-items: center; gap: 8px; padding-bottom: 10px;
+  border-bottom: 1px solid #f5f5f4; margin-bottom: 10px;
+}
+.chat-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 11px; font-weight: 800;
+}
+.chat-info .name { font-size: 12px; font-weight: 700; color: var(--ink); }
+.chat-info .status { font-size: 10px; color: #16a34a; display: flex; align-items: center; gap: 4px; }
+.chat-info .status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #16a34a; }
+.chat-messages { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.chat-msg {
+  max-width: 85%; padding: 8px 10px; border-radius: 10px;
+  font-size: 11px; line-height: 1.4; opacity: 0;
+  animation: msgIn 0.4s ease-out forwards;
+}
+@keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.chat-msg.user {
+  align-self: flex-end; background: var(--orange); color: white;
+  border-bottom-right-radius: 3px;
+}
+.chat-msg.bot {
+  align-self: flex-start; background: #f5f5f4; color: var(--ink);
+  border-bottom-left-radius: 3px;
+}
+.chat-msg .tag {
+  display: inline-block; background: rgba(255,255,255,0.2); padding: 1px 6px;
+  border-radius: 4px; font-size: 9px; font-weight: 700; margin-right: 4px;
+}
+.chat-msg.bot .tag { background: rgba(234,88,12,0.1); color: var(--orange-deep); }
+.chat-input {
+  margin-top: 10px; display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: #fafaf9; border: 1px solid var(--line);
+  border-radius: 8px; font-size: 11px; color: var(--ink-muted);
+}
+.chat-input .typing {
+  display: flex; gap: 3px; align-items: center;
+}
+.chat-input .typing span {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--orange);
+  animation: typing 1.2s infinite;
+}
+.chat-input .typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-input .typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+/* 底部成交回传条 */
+.mockup-footer {
+  grid-column: 1 / -1; padding: 10px 16px;
+  background: linear-gradient(90deg, var(--ink) 0%, #292524 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--line);
+}
+.mockup-footer .label { font-size: 11px; color: #a8a29e; font-weight: 600; }
+.mockup-footer .value { font-size: 12px; font-weight: 800; color: var(--orange-light); display: flex; align-items: center; gap: 6px; }
+.mockup-footer .value .sync {
+  width: 14px; height: 14px; border: 2px solid var(--orange-light);
+  border-top-color: transparent; border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 浮动数据卡片 */
 .hero-float-card {
   position: absolute; background: var(--white); border-radius: var(--radius-md);
   padding: 14px 18px; box-shadow: var(--shadow-lg); border: 1px solid var(--line);
@@ -229,6 +297,9 @@ img { max-width: 100%; display: block; }
 }
 .hero-float-card.card1 { top: -14px; left: -18px; animation-delay: 0s; }
 .hero-float-card.card2 { bottom: 24px; right: -12px; animation-delay: 1.6s; }
+.hero-float-card .label { font-size: 11px; color: var(--ink-muted); font-weight: 600; }
+.hero-float-card .value { font-size: 24px; font-weight: 900; color: var(--orange); line-height: 1.2; margin: 2px 0; }
+.hero-float-card .sub { font-size: 10px; color: var(--ink-muted); }
 .hero-float-card .label { font-size: 11px; color: var(--ink-muted); margin-bottom: 2px; }
 .hero-float-card .value { font-size: 20px; font-weight: 900; color: var(--orange); }
 .hero-float-card .sub { font-size: 11px; color: var(--green); margin-top: 2px; }
@@ -631,12 +702,9 @@ table.cmp .dim { color: var(--ink-muted); }
   .cap-desc { font-size: 15px; }
   .mock-annotation { display: none; }
   .overseas-compare { grid-template-columns: 1fr; }
-  .compare-body { grid-template-columns: 1fr; gap: 16px; }
-  .compare-col { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .compare-col .cstep { flex-direction: column; text-align: center; padding: 8px 6px; font-size: 10px; }
-  .compare-col .cstep .icon { width: 22px; height: 22px; font-size: 10px; }
-  .compare-gap { font-size: 11px; }
-  .compare-footer { flex-direction: column; gap: 8px; text-align: center; }
+  .mockup-body { grid-template-columns: 1fr; }
+  .mockup-left { border-right: none; border-bottom: 1px solid var(--line); }
+  .hero-float-card { display: none; }
 }
 @media (max-width: 640px) {
   .hero { padding: 110px 0 60px; }
@@ -644,7 +712,6 @@ table.cmp .dim { color: var(--ink-muted); }
   .cap-section { padding: 60px 0; }
   .feature-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-  .hero-float-card { display: none; }
   .cap-num { width: 38px; height: 38px; font-size: 16px; }
   .cap-title { font-size: 22px; }
   .cap-metrics { gap: 20px; }
@@ -657,9 +724,12 @@ table.cmp .dim { color: var(--ink-muted); }
   .overseas-engine { font-size: 11px; padding: 8px 12px; }
   .hero h1 { font-size: 28px; line-height: 1.3; }
   .hero-sub { font-size: 14px; }
-  .compare-head .col .name { font-size: 12px; }
-  .compare-col { grid-template-columns: 1fr; }
-  .compare-col .cstep { flex-direction: row; text-align: left; padding: 10px 12px; font-size: 12px; }
+  .geo-mockup { border-radius: 12px; }
+  .mockup-bar { padding: 10px 12px; }
+  .mockup-url { font-size: 10px; }
+  .mockup-left, .mockup-right { padding: 12px; }
+  .chat-msg { font-size: 10px; padding: 6px 8px; }
+  .mockup-footer { padding: 8px 12px; flex-direction: column; gap: 4px; text-align: center; }
 }
 </style>
 </head>
@@ -738,42 +808,99 @@ table.cmp .dim { color: var(--ink-muted); }
         </div>
       </div>
 
-      <!-- 右侧：GEO 获客闭环对比图 -->
+      <!-- 右侧：GEO 伙计产品界面模拟图 -->
       <div class="hero-visual">
-        <div class="compare-card">
-          <div class="compare-head">
-            <div class="col old">
-              <div class="label">普通GEO工具</div>
-              <div class="name">只到被看见</div>
+        <div class="geo-mockup">
+          <div class="mockup-bar">
+            <span class="mockup-dot r"></span>
+            <span class="mockup-dot y"></span>
+            <span class="mockup-dot g"></span>
+            <div class="mockup-url">app.workhogee.com/geo/dashboard</div>
+          </div>
+          <div class="mockup-body">
+            <!-- 左侧：GEO监测仪表盘 -->
+            <div class="mockup-left">
+              <div class="mockup-section-title">
+                <span class="live-dot"></span>
+                GEO 实时监测
+              </div>
+              <div class="engine-row">
+                <span class="engine-name">百度AI搜索</span>
+                <span class="engine-rank up">第2位</span>
+              </div>
+              <div class="engine-row">
+                <span class="engine-name">豆包</span>
+                <span class="engine-rank up">第1位</span>
+              </div>
+              <div class="engine-row">
+                <span class="engine-name">腾讯元宝</span>
+                <span class="engine-rank">第3位</span>
+              </div>
+              <div class="engine-row">
+                <span class="engine-name">Perplexity</span>
+                <span class="engine-rank up">第4位</span>
+              </div>
+              <div class="mockup-chart">
+                <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:0.2"/>
+                      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="chart-area" d="M0,50 L20,45 L40,48 L60,35 L80,38 L100,25 L120,28 L140,18 L160,22 L180,12 L200,8 L200,60 L0,60 Z"/>
+                  <path class="chart-line" d="M0,50 L20,45 L40,48 L60,35 L80,38 L100,25 L120,28 L140,18 L160,22 L180,12 L200,8"/>
+                </svg>
+              </div>
             </div>
-            <div class="col new">
-              <div class="label">WorkHogee GEO伙计</div>
-              <div class="name">追踪到成交</div>
+            <!-- 右侧：AI伙计承接对话 -->
+            <div class="mockup-right">
+              <div class="chat-header">
+                <div class="chat-avatar">伙</div>
+                <div class="chat-info">
+                  <div class="name">AI获客伙计</div>
+                  <div class="status">正在承接 GEO 流量</div>
+                </div>
+              </div>
+              <div class="chat-messages">
+                <div class="chat-msg user" style="animation-delay: 0.3s;">
+                  你们的SaaS怎么收费？
+                </div>
+                <div class="chat-msg bot" style="animation-delay: 0.8s;">
+                  <span class="tag">GEO来源</span>您好！我们按席位收费，标准版999元/月起，需要我帮您预约演示吗？
+                </div>
+                <div class="chat-msg user" style="animation-delay: 1.4s;">
+                  可以，明天下午
+                </div>
+                <div class="chat-msg bot" style="animation-delay: 1.9s;">
+                  <span class="tag">A类意向</span>已为您预约明天14:00产品演示，确认邮件已发送！
+                </div>
+              </div>
+              <div class="chat-input">
+                <span>伙计正在跟进...</span>
+                <div class="typing" style="margin-left:auto;">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+            <!-- 底部：成交回传条 -->
+            <div class="mockup-footer">
+              <span class="label">成交数据自动回传 → 反哺GEO内容策略</span>
+              <span class="value"><span class="sync"></span>今日回传 12 笔成交</span>
             </div>
           </div>
-          <div class="compare-body">
-            <div class="compare-col old">
-              <div class="cstep done"><div class="icon">✓</div>AI搜索提及监测</div>
-              <div class="cstep done"><div class="icon">✓</div>AI友好内容生成</div>
-              <div class="cstep broken"><div class="icon">?</div>落地页承接</div>
-              <div class="cstep broken"><div class="icon">?</div>线索转化跟进</div>
-              <div class="cstep broken"><div class="icon">?</div>成交数据回传</div>
-            </div>
-            <div class="compare-col new">
-              <div class="cstep"><div class="icon">1</div>AI搜索提及监测</div>
-              <div class="cstep"><div class="icon">2</div>AI友好内容生成</div>
-              <div class="cstep"><div class="icon">3</div>高转化落地页承接</div>
-              <div class="cstep"><div class="icon">4</div>AI伙计7×24承接</div>
-              <div class="cstep win"><div class="icon">5</div>成交数据自动回传</div>
-            </div>
-            <div class="compare-gap">
-              <span class="arrow">←</span> 差距就在最后三步 <span class="arrow">→</span>
-            </div>
-          </div>
-          <div class="compare-footer">
-            <div class="text">别人帮你<span class="o">被AI看见</span>，我们帮你<span class="o">把AI流量变成客户</span></div>
-            <div class="badge">闭环</div>
-          </div>
+        </div>
+
+        <!-- 浮动数据卡片 -->
+        <div class="hero-float-card card1">
+          <div class="label">AI搜索品牌提及量</div>
+          <div class="value">+240%</div>
+          <div class="sub">上线3周</div>
+        </div>
+        <div class="hero-float-card card2">
+          <div class="label">GEO线索转化率</div>
+          <div class="value">8.5%</div>
+          <div class="sub">高于行业均值3倍</div>
         </div>
       </div>
     </div>
