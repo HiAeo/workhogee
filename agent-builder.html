@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee 智能体交付 — 3天交付一个能干活的AI Agent</title>
-<meta name="description" content="WorkHogee智能体交付：销售跟进、内容营销、邮件询盘、客户评价、数据分析，5个真实自动化Agent案例，3天上线，持续运维。">
+<title>WorkHogee 智能体交付 — 3天交付一个AIGC工作流Agent</title>
+<meta name="description" content="WorkHogee智能体交付：商品图生产、带货视频、数字人直播、详情页生成、营销内容，5个AIGC工作流Agent，3天上线。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
@@ -103,7 +103,7 @@ img { max-width: 100%; display: block; }
 .hero-stat .num { font-size: 30px; font-weight: 900; color: var(--orange-light); line-height: 1; }
 .hero-stat .label { font-size: 13px; color: #a8a29e; margin-top: 4px; }
 
-/* Hero右侧 - Agent工作流可视化 */
+/* Hero右侧 - AIGC工作流可视化 */
 .hero-visual { position: relative; }
 .hero-flow {
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -168,101 +168,179 @@ img { max-width: 100%; display: block; }
 .demo-result .num { font-size: 28px; font-weight: 900; color: var(--orange); line-height: 1; }
 .demo-result .label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; max-width: 100px; }
 
-/* Demo右侧 - 工作台界面模拟 */
-.demo-panel {
+/* 幻灯片组件 */
+.slideshow {
   background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
-  border: 1px solid var(--line); overflow: hidden;
+  border: 1px solid var(--line); overflow: hidden; position: relative;
 }
-.panel-header {
-  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-  background: var(--paper); border-bottom: 1px solid var(--line);
+.slideshow-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--paper); border-bottom: 1px solid var(--line);
 }
-.panel-dot { width: 10px; height: 10px; border-radius: 50%; }
-.panel-title { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-left: 8px; }
-.panel-body { padding: 16px; }
+.slideshow-header-left { display: flex; align-items: center; gap: 8px; }
+.slideshow-dot { width: 10px; height: 10px; border-radius: 50%; }
+.slideshow-title { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-left: 8px; }
+.slideshow-step-label { font-size: 11px; font-weight: 700; color: var(--orange); background: var(--orange-bg); padding: 3px 10px; border-radius: 10px; }
+.slideshow-body { position: relative; min-height: 320px; overflow: hidden; }
+.slide {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  padding: 20px; opacity: 0; transform: translateX(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  display: flex; flex-direction: column;
+}
+.slide.active { opacity: 1; transform: translateX(0); z-index: 1; }
+.slide-label { font-size: 11px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.slide-desc { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; line-height: 1.6; }
+.slide-content { flex: 1; display: flex; align-items: center; justify-content: center; }
 
-/* 销售跟进面板 */
-.crm-list { display: flex; flex-direction: column; gap: 8px; }
-.crm-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+/* 幻灯片底部控制 */
+.slideshow-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: var(--paper); border-top: 1px solid var(--line);
+}
+.slideshow-dots { display: flex; gap: 6px; }
+.slideshow-dot-btn {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--line);
+  cursor: pointer; transition: all 0.3s; border: none; padding: 0;
+}
+.slideshow-dot-btn.active { background: var(--orange); width: 24px; border-radius: 4px; }
+.slideshow-progress { flex: 1; height: 3px; background: var(--line); border-radius: 2px; margin: 0 12px; overflow: hidden; }
+.slideshow-progress-bar { height: 100%; background: var(--orange); border-radius: 2px; transition: width 0.1s linear; }
+.slideshow-autoplay { font-size: 10px; color: var(--ink-muted); display: flex; align-items: center; gap: 4px; }
+.slideshow-autoplay .pulse { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+
+/* 幻灯片内容样式 */
+.upload-zone {
+  width: 100%; height: 180px; border: 2px dashed var(--line); border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--paper); transition: all 0.3s;
+}
+.upload-zone:hover { border-color: var(--orange); background: var(--orange-bg); }
+.upload-icon { font-size: 36px; margin-bottom: 8px; }
+.upload-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+.upload-hint { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+
+/* 图片网格 */
+.img-grid { display: grid; gap: 10px; width: 100%; }
+.img-grid-2 { grid-template-columns: 1fr 1fr; }
+.img-grid-4 { grid-template-columns: 1fr 1fr; gap: 8px; }
+.img-card {
+  border-radius: 10px; overflow: hidden; position: relative;
+  background: var(--paper); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100px;
+}
+.img-card .img-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(28,25,23,0.7); color: white; font-size: 10px;
+  padding: 4px 8px; text-align: center;
+}
+.img-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+
+/* 处理中动画 */
+.processing {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.processing-spinner {
+  width: 48px; height: 48px; border: 3px solid var(--line);
+  border-top-color: var(--orange); border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.processing-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+.processing-steps { display: flex; gap: 6px; }
+.processing-step {
+  font-size: 10px; padding: 3px 8px; border-radius: 10px;
+  background: var(--paper); border: 1px solid var(--line); color: var(--ink-muted);
+}
+.processing-step.done { background: #dcfce7; border-color: #86efac; color: #166534; }
+.processing-step.running { background: var(--orange-bg); border-color: #fdba74; color: var(--orange-deep); animation: pulse 1.5s infinite; }
+
+/* 文案界面 */
+.text-editor {
+  width: 100%; background: var(--paper); border-radius: 10px; border: 1px solid var(--line);
+  padding: 14px; font-size: 12px; line-height: 1.8; color: var(--ink-soft);
+  max-height: 200px; overflow: hidden;
+}
+.text-editor .title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.text-editor .highlight { background: #fef3c7; padding: 1px 4px; border-radius: 3px; }
+
+/* 视频界面 */
+.video-frame {
+  width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px;
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.video-frame .play-btn {
+  width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+}
+.video-frame .play-btn::after {
+  content: ''; width: 0; height: 0; border-left: 14px solid white;
+  border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px;
+}
+.video-frame .video-label {
+  position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6);
+  color: white; font-size: 10px; padding: 3px 8px; border-radius: 4px;
+}
+.video-frame .video-duration {
+  position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6);
+  color: white; font-size: 10px; padding: 3px 8px; border-radius: 4px;
+}
+
+/* 直播间界面 */
+.live-room {
+  width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 10px; height: 220px;
+}
+.live-video {
+  background: linear-gradient(135deg, #1c1917 0%, #44403c 100%); border-radius: 10px;
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.live-avatar {
+  width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  animation: breathe 2s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.live-badge {
+  position: absolute; top: 8px; left: 8px; background: var(--red); color: white;
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+  display: flex; align-items: center; gap: 4px;
+}
+.live-badge .dot { width: 6px; height: 6px; background: white; border-radius: 50%; animation: pulse 1s infinite; }
+.live-viewers { position: absolute; top: 8px; right: 8px; color: white; font-size: 10px; background: rgba(0,0,0,0.4); padding: 3px 8px; border-radius: 4px; }
+.live-comments {
   background: var(--paper); border-radius: 10px; border: 1px solid var(--line);
+  padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow: hidden;
 }
-.crm-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.crm-info { flex: 1; min-width: 0; }
-.crm-name { font-size: 13px; font-weight: 700; }
-.crm-action { font-size: 11px; color: var(--ink-muted); }
-.crm-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
-.badge-auto { background: #dcfce7; color: #166534; }
-.badge-warm { background: #fef3c7; color: #92400e; }
-.badge-hot { background: #fee2e2; color: #991b1b; }
-.timeline { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
-.timeline-title { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 10px; }
-.timeline-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 11px; }
-.timeline-time { color: var(--ink-muted); flex-shrink: 0; width: 40px; }
-.timeline-text { color: var(--ink-soft); }
-.timeline-text .auto { color: var(--green); font-weight: 600; }
+.live-comment { font-size: 10px; color: var(--ink-soft); line-height: 1.4; }
+.live-comment .user { color: var(--orange); font-weight: 700; }
+.live-comment.bot { color: var(--green); }
+.live-comment.bot .user { color: var(--green); }
 
-/* 内容营销面板 */
-.content-editor { background: var(--paper); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--line); }
-.content-title-input { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.content-body { font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
-.content-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
-.content-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--orange-bg); color: var(--orange-deep); font-weight: 600; }
-.publish-queue { display: flex; flex-direction: column; gap: 6px; }
-.queue-item {
-  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-  background: var(--paper); border-radius: 8px; font-size: 11px; border: 1px solid var(--line);
-}
-.queue-platform { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
-.queue-text { flex: 1; color: var(--ink-soft); }
-.queue-status { font-size: 10px; font-weight: 700; }
-.status-published { color: var(--green); }
-.status-scheduled { color: var(--orange); }
-
-/* 邮件询盘面板 */
-.email-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-.email-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+/* 数据看板 */
+.data-dashboard { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.data-card-mini {
   background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
+  padding: 10px; text-align: center;
 }
-.email-from { font-size: 12px; font-weight: 700; flex: 1; }
-.email-subject { font-size: 11px; color: var(--ink-muted); }
-.email-cat { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
-.cat-new { background: #dbeafe; color: #1e40af; }
-.cat-price { background: #fef3c7; color: #92400e; }
-.cat-reply { background: #dcfce7; color: #166534; }
-.quote-box { background: var(--paper); border-radius: 10px; padding: 12px; border: 1px solid var(--line); }
-.quote-title { font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 8px; }
-.quote-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--line); }
-.quote-row:last-child { border-bottom: none; font-weight: 700; color: var(--orange); }
-
-/* 客户评价面板 */
-.review-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.review-card {
-  background: var(--paper); border-radius: 10px; padding: 10px; border: 1px solid var(--line);
-}
-.review-stars { color: #f59e0b; font-size: 11px; margin-bottom: 4px; }
-.review-text { font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
-.review-from { font-size: 10px; color: var(--ink-muted); margin-top: 6px; }
-.alert-box { background: #fef2f2; border-radius: 10px; padding: 10px 12px; border: 1px solid #fecaca; display: flex; align-items: center; gap: 10px; }
-.alert-icon { font-size: 18px; }
-.alert-text { flex: 1; }
-.alert-title { font-size: 12px; font-weight: 700; color: #991b1b; }
-.alert-desc { font-size: 11px; color: #7f1d1d; }
-
-/* 数据分析面板 */
-.data-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; margin-bottom: 12px; padding-bottom: 20px; position: relative; }
-.data-bar { flex: 1; background: linear-gradient(180deg, var(--orange-light) 0%, var(--orange) 100%); border-radius: 4px 4px 0 0; position: relative; transition: all 0.3s; }
-.data-bar:hover { opacity: 0.8; }
-.data-bar-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--ink-muted); }
-.data-bar-value { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; color: var(--orange-deep); }
-.data-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.data-metric { background: var(--paper); border-radius: 8px; padding: 10px; border: 1px solid var(--line); }
-.data-metric-label { font-size: 10px; color: var(--ink-muted); margin-bottom: 4px; }
-.data-metric-value { font-size: 16px; font-weight: 900; color: var(--ink); }
-.data-metric-change { font-size: 10px; font-weight: 700; }
+.data-card-mini .label { font-size: 10px; color: var(--ink-muted); margin-bottom: 4px; }
+.data-card-mini .value { font-size: 18px; font-weight: 900; color: var(--ink); }
+.data-card-mini .change { font-size: 10px; font-weight: 700; }
 .change-up { color: var(--green); }
 .change-down { color: var(--red); }
+
+/* 多平台卡片 */
+.platform-cards { display: flex; gap: 8px; width: 100%; }
+.platform-card {
+  flex: 1; background: var(--paper); border-radius: 10px; border: 1px solid var(--line);
+  padding: 10px; text-align: center;
+}
+.platform-card .icon { font-size: 24px; margin-bottom: 6px; }
+.platform-card .name { font-size: 11px; font-weight: 700; color: var(--ink); }
+.platform-card .status { font-size: 9px; color: var(--green); margin-top: 4px; }
 
 /* 技术能力板块 */
 .tech-section { background: linear-gradient(180deg, var(--ink) 0%, #292524 100%); color: var(--white); }
@@ -313,7 +391,8 @@ img { max-width: 100%; display: block; }
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
   .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--paper); padding: 20px; gap: 16px; border-bottom: 1px solid var(--line); }
-  .review-wall { grid-template-columns: 1fr; }
+  .live-room { grid-template-columns: 1fr; }
+  .img-grid-4 { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
@@ -355,11 +434,11 @@ img { max-width: 100%; display: block; }
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
-          WorkHogee 智能体交付 · 不是聊天机器人，是数字员工
+          WorkHogee 智能体交付 · AIGC工作流自动化
         </div>
-        <h1>3天交付一个<br><span class="highlight">能自动干活的AI Agent</span></h1>
+        <h1>3天交付一个<br><span class="highlight">能自动干活的AIGC Agent</span></h1>
         <p class="hero-sub">
-          不是又一个问答客服。我们交付的是能自动执行任务的数字员工——自动跟进线索、自动发布内容、自动处理询盘、自动收集评价、自动生成报告。你睡觉的时候，它在干活。
+          不是聊天机器人，是一整套工作流自动化。上传一张衣服照片，Agent自动生成模特图、场景图、详情页；粘贴一个商品链接，Agent自动生成带货视频。你睡觉的时候，它在干活。
         </p>
         <div class="hero-cta">
           <a href="#contact" class="btn-primary">
@@ -370,51 +449,51 @@ img { max-width: 100%; display: block; }
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><div class="num">3天</div><div class="label">从需求到上线</div></div>
-          <div class="hero-stat"><div class="num">5类</div><div class="label">自动化工作流</div></div>
-          <div class="hero-stat"><div class="num">24/7</div><div class="label">全天候自动运行</div></div>
+          <div class="hero-stat"><div class="num">5类</div><div class="label">AIGC工作流</div></div>
+          <div class="hero-stat"><div class="num">90%↓</div><div class="label">人力成本</div></div>
         </div>
       </div>
       <div class="hero-visual">
         <div class="hero-flow">
-          <div class="flow-title"><span class="live"></span>销售跟进Agent · 正在自动执行</div>
+          <div class="flow-title"><span class="live"></span>商品图生产Agent · 正在自动执行</div>
           <div class="flow-steps">
             <div class="flow-step">
-              <div class="flow-step-icon" style="background:#dbeafe;">📥</div>
+              <div class="flow-step-icon" style="background:#dbeafe;">📤</div>
               <div class="flow-step-content">
-                <div class="flow-step-name">新线索进入CRM</div>
-                <div class="flow-step-desc">来自官网表单 · 张总 · 深圳 · 制造业</div>
+                <div class="flow-step-name">上传1张衣服平铺图</div>
+                <div class="flow-step-desc">用户上传 · 白色连衣裙 · 平铺拍摄</div>
               </div>
               <span class="flow-step-status status-done">完成</span>
             </div>
             <div class="flow-step">
-              <div class="flow-step-icon" style="background:#fef3c7;">🔍</div>
+              <div class="flow-step-icon" style="background:#fef3c7;">✂️</div>
               <div class="flow-step-content">
-                <div class="flow-step-name">自动富集客户画像</div>
-                <div class="flow-step-desc">公司规模200人 · 年营收5000万 · 近期招标3次</div>
+                <div class="flow-step-name">AI自动抠图+背景移除</div>
+                <div class="flow-step-desc">边缘检测 · 发丝级抠图 · 3秒完成</div>
               </div>
               <span class="flow-step-status status-done">完成</span>
             </div>
             <div class="flow-step">
-              <div class="flow-step-icon" style="background:#dcfce7;">✉️</div>
+              <div class="flow-step-icon" style="background:#dcfce7;">🖼️</div>
               <div class="flow-step-content">
-                <div class="flow-step-name">自动发送首封跟进邮件</div>
-                <div class="flow-step-desc">个性化内容 · 附带行业案例 · 已送达并打开</div>
+                <div class="flow-step-name">生成白底图+场景图</div>
+                <div class="flow-step-desc">电商标准白底 · 北欧客厅场景 · 光影自然</div>
               </div>
               <span class="flow-step-status status-done">完成</span>
             </div>
             <div class="flow-step">
-              <div class="flow-step-icon" style="background:#fce7f3;">📱</div>
+              <div class="flow-step-icon" style="background:#fce7f3;">👗</div>
               <div class="flow-step-content">
-                <div class="flow-step-name">客户点击链接 · 触发企微消息</div>
-                <div class="flow-step-desc">检测到查看报价单 · 自动推送产品资料</div>
+                <div class="flow-step-name">生成多人种模特上身图</div>
+                <div class="flow-step-desc">亚洲/欧美/非裔模特 · 多身材比例 · 姿势自然</div>
               </div>
               <span class="flow-step-status status-running">执行中</span>
             </div>
             <div class="flow-step">
-              <div class="flow-step-icon" style="background:rgba(255,255,255,0.1);">📅</div>
+              <div class="flow-step-icon" style="background:rgba(255,255,255,0.1);">📦</div>
               <div class="flow-step-content">
-                <div class="flow-step-name">高意向 · 自动预约会议</div>
-                <div class="flow-step-desc">等待客户回复 · 48小时未回复将自动跟进</div>
+                <div class="flow-step-name">批量导出+直接上架</div>
+                <div class="flow-step-desc">天猫/京东/抖音多尺寸 · 一键打包下载</div>
               </div>
               <span class="flow-step-status status-pending">待触发</span>
             </div>
@@ -430,83 +509,116 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <div class="section-head">
       <div class="kicker">Real Cases</div>
-      <h2>5个正在自动运行的AI Agent</h2>
-      <p>每一个都在帮客户把"每周吃掉大量时间的手动工作"变成自动化流程，每一个都有可量化的效果</p>
+      <h2>5个正在自动运行的AIGC工作流Agent</h2>
+      <p>每个demo自动播放完整工作流：从输入→AI处理→中间结果→最终交付物，鼠标悬停可暂停</p>
     </div>
   </div>
 </section>
 
-<!-- Demo 1: 销售跟进Agent -->
+<!-- Demo 1: 商品图批量生产Agent -->
 <section class="demo-section">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">📊 销售自动化 · CRM+邮件+企微</div>
-        <h3 class="demo-title">销售线索自动跟进Agent</h3>
+        <div class="demo-tag">👗 电商视觉 · 商品图+虚拟模特</div>
+        <h3 class="demo-title">电商商品图批量生产Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>销售每天花3小时手动发跟进邮件，线索响应平均延迟4小时，30%的线索因为跟进不及时而流失；优秀销售离职后，客户跟进节奏全部断掉。</p>
+          <p>拍摄成本高：一个款几百到上千，月上几十款就是几万；模特排期、天气、场地限制，上新速度慢；SKU动辄数百上千，人工拍摄根本跟不上。</p>
         </div>
         <div class="demo-solution">
           <div class="label">Agent自动做什么</div>
-          <p>新线索进入CRM后，自动富集客户画像，按客户行为（打开邮件/点击链接/访问网站）触发个性化跟进动作，自动更新CRM状态，高意向线索自动推送销售并预约会议。</p>
+          <p>上传1张实拍图（平铺/挂拍/人台），自动抠图→生成白底图/场景图/模特上身图→多人种多身材适配→批量处理→直接上架，全程无需人工。</p>
         </div>
         <div class="demo-results">
-          <div class="demo-result"><div class="num">4h→5m</div><div class="label">线索响应时间</div></div>
-          <div class="demo-result"><div class="num">30%↓</div><div class="label">线索流失率</div></div>
-          <div class="demo-result"><div class="num">3h/天</div><div class="label">销售节省时间</div></div>
+          <div class="demo-result"><div class="num">5000→80</div><div class="label">单款制作成本</div></div>
+          <div class="demo-result"><div class="num">5天→3秒</div><div class="label">制作周期</div></div>
+          <div class="demo-result"><div class="num">90%↑</div><div class="label">效率提升</div></div>
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-panel">
-          <div class="panel-header">
-            <span class="panel-dot" style="background:#ef4444;"></span>
-            <span class="panel-dot" style="background:#f59e0b;"></span>
-            <span class="panel-dot" style="background:#22c55e;"></span>
-            <span class="panel-title">销售跟进Agent · 工作台</span>
+        <div class="slideshow" data-slideshow>
+          <div class="slideshow-header">
+            <div class="slideshow-header-left">
+              <span class="slideshow-dot" style="background:#ef4444;"></span>
+              <span class="slideshow-dot" style="background:#f59e0b;"></span>
+              <span class="slideshow-dot" style="background:#22c55e;"></span>
+              <span class="slideshow-title">商品图生产Agent · 工作流</span>
+            </div>
+            <span class="slideshow-step-label" data-step-label>步骤 1/4</span>
           </div>
-          <div class="panel-body">
-            <div class="crm-list">
-              <div class="crm-item">
-                <div class="crm-avatar" style="background:#dbeafe;">张</div>
-                <div class="crm-info">
-                  <div class="crm-name">张总 · 深圳制造</div>
-                  <div class="crm-action">Agent已发送3封跟进邮件</div>
+          <div class="slideshow-body">
+            <div class="slide active">
+              <div class="slide-label">步骤 1 · 输入</div>
+              <div class="slide-desc">上传1张衣服平铺图，支持JPG/PNG，单张或批量</div>
+              <div class="slide-content">
+                <div class="upload-zone">
+                  <div class="upload-icon">👗</div>
+                  <div class="upload-text">拖拽或点击上传衣服实拍图</div>
+                  <div class="upload-hint">支持平铺/挂拍/人台图 · 单张或批量上传</div>
                 </div>
-                <span class="crm-badge badge-hot">高意向</span>
-              </div>
-              <div class="crm-item">
-                <div class="crm-avatar" style="background:#dcfce7;">李</div>
-                <div class="crm-info">
-                  <div class="crm-name">李经理 · 上海贸易</div>
-                  <div class="crm-action">Agent自动预约了周四会议</div>
-                </div>
-                <span class="crm-badge badge-warm">跟进中</span>
-              </div>
-              <div class="crm-item">
-                <div class="crm-avatar" style="background:#fef3c7;">王</div>
-                <div class="crm-info">
-                  <div class="crm-name">王总 · 北京科技</div>
-                  <div class="crm-action">48小时未回复 · Agent已自动跟进</div>
-                </div>
-                <span class="crm-badge badge-auto">自动</span>
               </div>
             </div>
-            <div class="timeline">
-              <div class="timeline-title">最近自动执行记录</div>
-              <div class="timeline-item">
-                <span class="timeline-time">14:32</span>
-                <span class="timeline-text"><span class="auto">✓ 自动</span> 向张总发送产品案例邮件</span>
-              </div>
-              <div class="timeline-item">
-                <span class="timeline-time">13:15</span>
-                <span class="timeline-text"><span class="auto">✓ 自动</span> 检测到李经理打开报价单，推送企微消息</span>
-              </div>
-              <div class="timeline-item">
-                <span class="timeline-time">11:08</span>
-                <span class="timeline-text"><span class="auto">✓ 自动</span> 王总48小时未回复，触发第2轮跟进</span>
+            <div class="slide">
+              <div class="slide-label">步骤 2 · AI处理</div>
+              <div class="slide-desc">AI自动抠图+背景移除，发丝级边缘检测</div>
+              <div class="slide-content">
+                <div class="processing">
+                  <div class="processing-spinner"></div>
+                  <div class="processing-text">AI正在抠图处理中...</div>
+                  <div class="processing-steps">
+                    <span class="processing-step done">边缘检测</span>
+                    <span class="processing-step running">背景移除</span>
+                    <span class="processing-step">细节优化</span>
+                  </div>
+                </div>
               </div>
             </div>
+            <div class="slide">
+              <div class="slide-label">步骤 3 · 中间结果</div>
+              <div class="slide-desc">生成电商标准白底图+多场景图，光影自然</div>
+              <div class="slide-content">
+                <div class="img-grid img-grid-2" style="width:100%;">
+                  <div class="img-card" style="min-height:120px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#fff 0%,#f5f5f4 100%);">👗</div>
+                    <span class="img-label">白底图 · 电商标准</span>
+                  </div>
+                  <div class="img-card" style="min-height:120px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);">🛋️</div>
+                    <span class="img-label">场景图 · 北欧客厅</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 4 · 最终交付物</div>
+              <div class="slide-desc">生成多人种模特上身图，批量导出直接上架</div>
+              <div class="slide-content">
+                <div class="img-grid img-grid-4" style="width:100%;">
+                  <div class="img-card" style="min-height:90px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#fce7f3 0%,#fbcfe8 100%);">👩</div>
+                    <span class="img-label">亚洲模特</span>
+                  </div>
+                  <div class="img-card" style="min-height:90px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);">👱‍♀️</div>
+                    <span class="img-label">欧美模特</span>
+                  </div>
+                  <div class="img-card" style="min-height:90px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);">👩🏾</div>
+                    <span class="img-label">非裔模特</span>
+                  </div>
+                  <div class="img-card" style="min-height:90px;">
+                    <div class="img-placeholder" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);">📦</div>
+                    <span class="img-label">批量导出</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slideshow-footer">
+            <div class="slideshow-dots" data-dots></div>
+            <div class="slideshow-progress"><div class="slideshow-progress-bar" data-progress></div></div>
+            <div class="slideshow-autoplay"><span class="pulse"></span>自动播放</div>
           </div>
         </div>
       </div>
@@ -514,20 +626,383 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- Demo 2: 内容营销Agent -->
+<!-- Demo 2: 带货视频生产Agent -->
 <section class="demo-section reverse">
   <div class="container">
     <div class="demo-inner">
       <div class="demo-content">
-        <div class="demo-tag">📝 内容自动化 · 小红书+抖音+公众号</div>
-        <h3 class="demo-title">内容营销自动发布Agent</h3>
+        <div class="demo-tag">🎬 视频生产 · 商品链接转带货视频</div>
+        <h3 class="demo-title">AI商品带货视频生产Agent</h3>
         <div class="demo-pain">
           <div class="label">客户痛点</div>
-          <p>内容创作耗时，一篇小红书笔记要2小时；多平台发布重复劳动，每个平台都要重新排版；评论回复不及时，互动率低；数据统计分散，不知道哪篇内容有效。</p>
+          <p>视频拍摄剪辑成本高，一条带货视频几千块；上新速度慢，测款来不及；多平台分发重复劳动，不会剪辑；抖音/快手/视频号每个平台格式不同。</p>
         </div>
         <div class="demo-solution">
           <div class="label">Agent自动做什么</div>
-          <p>根据产品和行业自动生成多平台内容，自动适配各平台格式和调性，定时发布到小红书/抖音/公众号，自动监控评论并回复，自动统计各平台数据生成周报。</p>
+          <p>粘贴商品链接/图片，自动解析商品卖点→生成视频脚本→图生视频/数字人口播→自动加字幕配音→生成多平台版本→一键分发，5分钟出片。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">5分钟</div><div class="label">商品链接转视频</div></div>
+          <div class="demo-result"><div class="num">3平台</div><div class="label">一键同步分发</div></div>
+          <div class="demo-result"><div class="num">80%↓</div><div class="label">视频制作成本</div></div>
+        </div>
+      </div>
+      <div class="demo-visual">
+        <div class="slideshow" data-slideshow>
+          <div class="slideshow-header">
+            <div class="slideshow-header-left">
+              <span class="slideshow-dot" style="background:#ef4444;"></span>
+              <span class="slideshow-dot" style="background:#f59e0b;"></span>
+              <span class="slideshow-dot" style="background:#22c55e;"></span>
+              <span class="slideshow-title">带货视频Agent · 工作流</span>
+            </div>
+            <span class="slideshow-step-label" data-step-label>步骤 1/4</span>
+          </div>
+          <div class="slideshow-body">
+            <div class="slide active">
+              <div class="slide-label">步骤 1 · 输入</div>
+              <div class="slide-desc">粘贴商品链接或上传商品图片，支持淘宝/京东/抖音</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <div style="flex:1;padding:10px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-size:12px;color:var(--ink-muted);">https://item.taobao.com/item.htm?id=...</div>
+                    <div style="padding:10px 16px;background:var(--orange);color:white;border-radius:8px;font-size:12px;font-weight:700;">解析</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <div class="img-card" style="flex:1;min-height:80px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);">📦</div></div>
+                    <div class="img-card" style="flex:1;min-height:80px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);">📦</div></div>
+                    <div class="img-card" style="flex:1;min-height:80px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);">📦</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 2 · AI处理</div>
+              <div class="slide-desc">自动解析商品卖点，生成视频脚本和分镜</div>
+              <div class="slide-content">
+                <div class="text-editor" style="width:100%;">
+                  <div class="title">🎬 视频脚本 · 自动生成</div>
+                  <div><span class="highlight">【开场3秒】</span>姐妹们！这个保温杯我真的吹爆！</div>
+                  <div><span class="highlight">【卖点展示】</span>316不锈钢内胆，24小时保温，颜值在线</div>
+                  <div><span class="highlight">【使用场景】</span>上班带咖啡，出门带温水，学生党必备</div>
+                  <div><span class="highlight">【逼单促转化】</span>今天直播间下单立减50，还送杯套！</div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 3 · 中间结果</div>
+              <div class="slide-desc">图生视频+数字人口播，自动加字幕配音</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div class="video-frame">
+                    <div class="play-btn"></div>
+                    <span class="video-label">数字人口播 · 商品展示</span>
+                    <span class="video-duration">00:30</span>
+                  </div>
+                  <div style="display:flex;gap:6px;margin-top:10px;">
+                    <span class="processing-step done">图生视频</span>
+                    <span class="processing-step done">数字人口播</span>
+                    <span class="processing-step done">自动字幕</span>
+                    <span class="processing-step done">AI配音</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 4 · 最终交付物</div>
+              <div class="slide-desc">生成抖音/快手/视频号多平台版本，一键分发</div>
+              <div class="slide-content">
+                <div class="platform-cards" style="width:100%;">
+                  <div class="platform-card">
+                    <div class="icon">🎵</div>
+                    <div class="name">抖音</div>
+                    <div class="status">✓ 9:16 已生成</div>
+                  </div>
+                  <div class="platform-card">
+                    <div class="icon">⚡</div>
+                    <div class="name">快手</div>
+                    <div class="status">✓ 9:16 已生成</div>
+                  </div>
+                  <div class="platform-card">
+                    <div class="icon">📹</div>
+                    <div class="name">视频号</div>
+                    <div class="status">✓ 16:9 已生成</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slideshow-footer">
+            <div class="slideshow-dots" data-dots></div>
+            <div class="slideshow-progress"><div class="slideshow-progress-bar" data-progress></div></div>
+            <div class="slideshow-autoplay"><span class="pulse"></span>自动播放</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo 3: 数字人直播Agent -->
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">📺 直播自动化 · 数字人24小时开播</div>
+        <h3 class="demo-title">AI数字人直播Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>真人主播成本高：平均1.2万元/月/人；直播时长有限，夜间/凌晨无人开播；主播离职风险，培养成本高；中小商家请不起专业主播团队。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">Agent自动做什么</div>
+          <p>创建数字人形象→上传商品库→自动开播（24小时）→自动讲解商品→自动回复评论→自动逼单促转化→自动切片生成短视频分发。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">24h</div><div class="label">全天候自动开播</div></div>
+          <div class="demo-result"><div class="num">70%↓</div><div class="label">人力成本</div></div>
+          <div class="demo-result"><div class="num">3-4x</div><div class="label">直播时长提升</div></div>
+        </div>
+      </div>
+      <div class="demo-visual">
+        <div class="slideshow" data-slideshow>
+          <div class="slideshow-header">
+            <div class="slideshow-header-left">
+              <span class="slideshow-dot" style="background:#ef4444;"></span>
+              <span class="slideshow-dot" style="background:#f59e0b;"></span>
+              <span class="slideshow-dot" style="background:#22c55e;"></span>
+              <span class="slideshow-title">数字人直播Agent · 工作流</span>
+            </div>
+            <span class="slideshow-step-label" data-step-label>步骤 1/4</span>
+          </div>
+          <div class="slideshow-body">
+            <div class="slide active">
+              <div class="slide-label">步骤 1 · 输入</div>
+              <div class="slide-desc">创建数字人形象，上传商品库和话术脚本</div>
+              <div class="slide-content">
+                <div style="width:100%;display:flex;gap:10px;">
+                  <div style="flex:1;text-align:center;">
+                    <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--orange) 0%,var(--orange-deep) 100%);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:32px;">👩</div>
+                    <div style="font-size:11px;font-weight:700;">数字人A</div>
+                    <div style="font-size:10px;color:var(--ink-muted);">甜美型</div>
+                  </div>
+                  <div style="flex:1;text-align:center;">
+                    <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:32px;">👨</div>
+                    <div style="font-size:11px;font-weight:700;">数字人B</div>
+                    <div style="font-size:10px;color:var(--ink-muted);">专业型</div>
+                  </div>
+                  <div style="flex:1;text-align:center;">
+                    <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:32px;">👩‍🦰</div>
+                    <div style="font-size:11px;font-weight:700;">数字人C</div>
+                    <div style="font-size:10px;color:var(--ink-muted);">活力型</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 2 · AI处理</div>
+              <div class="slide-desc">自动开播，数字人自动讲解商品，实时互动</div>
+              <div class="slide-content">
+                <div class="live-room" style="width:100%;">
+                  <div class="live-video">
+                    <div class="live-badge"><span class="dot"></span>直播中</div>
+                    <div class="live-viewers">👁 1,284人</div>
+                    <div class="live-avatar">👩</div>
+                  </div>
+                  <div class="live-comments">
+                    <div class="live-comment"><span class="user">用户A：</span>这个多少钱？</div>
+                    <div class="live-comment bot"><span class="user">主播：</span>亲爱的，今天直播间特价99元，还送运费险哦~</div>
+                    <div class="live-comment"><span class="user">用户B：</span>有优惠吗</div>
+                    <div class="live-comment bot"><span class="user">主播：</span>有的！下单立减20，点击下方小黄车~</div>
+                    <div class="live-comment"><span class="user">用户C：</span>已拍！</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 3 · 中间结果</div>
+              <div class="slide-desc">自动回复评论，智能逼单，实时数据监控</div>
+              <div class="slide-content">
+                <div class="data-dashboard" style="width:100%;">
+                  <div class="data-card-mini">
+                    <div class="label">观看人数</div>
+                    <div class="value">1,284</div>
+                    <div class="change change-up">↑ 23%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">互动率</div>
+                    <div class="value">18.5%</div>
+                    <div class="change change-up">↑ 5.2%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">商品点击</div>
+                    <div class="value">342</div>
+                    <div class="change change-up">↑ 12%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">成交订单</div>
+                    <div class="value">86</div>
+                    <div class="change change-up">↑ 31%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 4 · 最终交付物</div>
+              <div class="slide-desc">直播结束自动生成数据报告，自动切片分发短视频</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <div class="img-card" style="flex:1;min-height:70px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);">📊</div><span class="img-label">直播数据报告</span></div>
+                    <div class="img-card" style="flex:1;min-height:70px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);">🎬</div><span class="img-label">高光切片×12</span></div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <span class="processing-step done">抖音切片已分发</span>
+                    <span class="processing-step done">快手切片已分发</span>
+                    <span class="processing-step done">数据报告已生成</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slideshow-footer">
+            <div class="slideshow-dots" data-dots></div>
+            <div class="slideshow-progress"><div class="slideshow-progress-bar" data-progress></div></div>
+            <div class="slideshow-autoplay"><span class="pulse"></span>自动播放</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo 4: 详情页生成Agent -->
+<section class="demo-section reverse">
+  <div class="container">
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">📝 文案生产 · 详情页+营销文案自动生成</div>
+        <h3 class="demo-title">AI详情页/营销文案生产Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>详情页制作耗时，设计师+文案配合成本高；文案同质化严重，转化率低；天猫/小红书/公众号每个平台格式和风格不同；上新几百个SKU，详情页根本做不过来。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">Agent自动做什么</div>
+          <p>上传产品信息/图片，自动分析卖点→生成详情页文案→自动排版（首屏海报+结构图+痛点对比+信任背书）→生成多平台版本→A/B测试变体。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">18min→1min</div><div class="label">单SKU文案</div></div>
+          <div class="demo-result"><div class="num">3平台</div><div class="label">自动适配格式</div></div>
+          <div class="demo-result"><div class="num">85%↓</div><div class="label">文案制作成本</div></div>
+        </div>
+      </div>
+      <div class="demo-visual">
+        <div class="slideshow" data-slideshow>
+          <div class="slideshow-header">
+            <div class="slideshow-header-left">
+              <span class="slideshow-dot" style="background:#ef4444;"></span>
+              <span class="slideshow-dot" style="background:#f59e0b;"></span>
+              <span class="slideshow-dot" style="background:#22c55e;"></span>
+              <span class="slideshow-title">详情页生成Agent · 工作流</span>
+            </div>
+            <span class="slideshow-step-label" data-step-label>步骤 1/4</span>
+          </div>
+          <div class="slideshow-body">
+            <div class="slide active">
+              <div class="slide-label">步骤 1 · 输入</div>
+              <div class="slide-desc">上传产品信息和图片，填写核心卖点关键词</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div style="padding:10px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-size:12px;margin-bottom:10px;">
+                    <div style="font-weight:700;margin-bottom:4px;">产品：智能保温杯</div>
+                    <div style="color:var(--ink-soft);">卖点：316不锈钢、24h保温、颜值高、学生党/上班族必备</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <div class="img-card" style="flex:1;min-height:70px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);">🥤</div></div>
+                    <div class="img-card" style="flex:1;min-height:70px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);">📐</div></div>
+                    <div class="img-card" style="flex:1;min-height:70px;"><div class="img-placeholder" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);">🎨</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 2 · AI处理</div>
+              <div class="slide-desc">自动分析卖点，生成详情页文案和结构</div>
+              <div class="slide-content">
+                <div class="text-editor" style="width:100%;max-height:220px;">
+                  <div class="title">📋 详情页文案 · 自动生成</div>
+                  <div><span class="highlight">【首屏海报】</span>24小时保温，一口都是热的</div>
+                  <div><span class="highlight">【痛点对比】</span>普通杯3小时凉透 vs 我们24小时保温</div>
+                  <div><span class="highlight">【产品结构】</span>316不锈钢内胆·真空隔热层·防滑底座</div>
+                  <div><span class="highlight">【使用场景】</span>上班咖啡·出门温水·学生热饮</div>
+                  <div><span class="highlight">【信任背书】</span>10万+好评·30天无理由退换</div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 3 · 中间结果</div>
+              <div class="slide-desc">自动排版详情页模块，首屏+结构图+对比图</div>
+              <div class="slide-content">
+                <div style="width:100%;display:flex;flex-direction:column;gap:8px;">
+                  <div style="padding:12px;background:linear-gradient(135deg,var(--ink) 0%,#44403c 100%);border-radius:8px;color:white;text-align:center;font-size:12px;font-weight:700;">首屏海报 · 24h保温</div>
+                  <div style="display:flex;gap:8px;">
+                    <div style="flex:1;padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:8px;text-align:center;font-size:11px;">📐 产品结构图</div>
+                    <div style="flex:1;padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:8px;text-align:center;font-size:11px;">⚖️ 痛点对比图</div>
+                  </div>
+                  <div style="padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:8px;text-align:center;font-size:11px;">⭐ 信任背书 + 用户好评</div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-label">步骤 4 · 最终交付物</div>
+              <div class="slide-desc">生成天猫/小红书/公众号多平台版本，支持A/B测试</div>
+              <div class="slide-content">
+                <div class="platform-cards" style="width:100%;">
+                  <div class="platform-card">
+                    <div class="icon">🛒</div>
+                    <div class="name">天猫详情页</div>
+                    <div class="status">✓ 长图版</div>
+                  </div>
+                  <div class="platform-card">
+                    <div class="icon">📕</div>
+                    <div class="name">小红书种草</div>
+                    <div class="status">✓ 笔记版</div>
+                  </div>
+                  <div class="platform-card">
+                    <div class="icon">📱</div>
+                    <div class="name">公众号长文</div>
+                    <div class="status">✓ 文章版</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slideshow-footer">
+            <div class="slideshow-dots" data-dots></div>
+            <div class="slideshow-progress"><div class="slideshow-progress-bar" data-progress></div></div>
+            <div class="slideshow-autoplay"><span class="pulse"></span>自动播放</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo 5: 全渠道营销内容Agent -->
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">📢 内容营销 · 小红书+抖音+公众号全渠道</div>
+        <h3 class="demo-title">AI全渠道营销内容生产Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>内容创作耗时，一篇小红书笔记2小时；多平台发布重复劳动，每个平台重新排版；不会写文案，不知道什么内容能火；评论回复不及时，互动率低；数据统计分散。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">Agent自动做什么</div>
+          <p>输入产品/行业，自动生成多平台内容（小红书种草/抖音脚本/公众号长文）→自动适配各平台格式→定时发布→自动回复评论→自动统计数据生成周报。</p>
         </div>
         <div class="demo-results">
           <div class="demo-result"><div class="num">2h→10m</div><div class="label">单篇内容制作</div></div>
@@ -536,238 +1011,107 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
       <div class="demo-visual">
-        <div class="demo-panel">
-          <div class="panel-header">
-            <span class="panel-dot" style="background:#ef4444;"></span>
-            <span class="panel-dot" style="background:#f59e0b;"></span>
-            <span class="panel-dot" style="background:#22c55e;"></span>
-            <span class="panel-title">内容营销Agent · 编辑器</span>
+        <div class="slideshow" data-slideshow>
+          <div class="slideshow-header">
+            <div class="slideshow-header-left">
+              <span class="slideshow-dot" style="background:#ef4444;"></span>
+              <span class="slideshow-dot" style="background:#f59e0b;"></span>
+              <span class="slideshow-dot" style="background:#22c55e;"></span>
+              <span class="slideshow-title">营销内容Agent · 工作流</span>
+            </div>
+            <span class="slideshow-step-label" data-step-label>步骤 1/4</span>
           </div>
-          <div class="panel-body">
-            <div class="content-editor">
-              <div class="content-title-input">🔥 2026年中小企业必看的5个AI获客工具</div>
-              <div class="content-body">
-                姐妹们！做企业的一定要看这篇！今天给大家整理了5个亲测好用的AI获客工具，帮你把获客成本降一半...<br><br>
-                1️⃣ WorkHogee获客伙计 - 全渠道自动获客<br>
-                2️⃣ 巨量千策 - 广告投放优化<br>
-                ...
-              </div>
-              <div class="content-tags">
-                <span class="content-tag">#AI获客</span>
-                <span class="content-tag">#中小企业</span>
-                <span class="content-tag">#效率工具</span>
-                <span class="content-tag">#创业</span>
+          <div class="slideshow-body">
+            <div class="slide active">
+              <div class="slide-label">步骤 1 · 输入</div>
+              <div class="slide-desc">输入产品/行业关键词，选择目标平台</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div style="padding:10px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-size:12px;margin-bottom:10px;">
+                    <div style="font-weight:700;margin-bottom:4px;">主题：AI获客工具推荐</div>
+                    <div style="color:var(--ink-soft);">目标：中小企业主 · 风格：干货种草</div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <span class="processing-step done">📕 小红书</span>
+                    <span class="processing-step done">🎵 抖音</span>
+                    <span class="processing-step done">📱 公众号</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="publish-queue">
-              <div class="queue-item">
-                <div class="queue-platform" style="background:#fee2e2;">📕</div>
-                <span class="queue-text">小红书 · 已适配图文格式</span>
-                <span class="queue-status status-published">已发布</span>
-              </div>
-              <div class="queue-item">
-                <div class="queue-platform" style="background:#000;color:#fff;">🎵</div>
-                <span class="queue-text">抖音 · 已生成视频脚本</span>
-                <span class="queue-status status-scheduled">今日18:00</span>
-              </div>
-              <div class="queue-item">
-                <div class="queue-platform" style="background:#1c1917;color:#fff;">📱</div>
-                <span class="queue-text">公众号 · 已排版长文格式</span>
-                <span class="queue-status status-scheduled">明日09:00</span>
+            <div class="slide">
+              <div class="slide-label">步骤 2 · AI处理</div>
+              <div class="slide-desc">自动生成多平台内容，适配各平台风格和格式</div>
+              <div class="slide-content">
+                <div class="text-editor" style="width:100%;max-height:220px;">
+                  <div class="title">📕 小红书笔记 · 自动生成</div>
+                  <div><span class="highlight">【标题】</span>中小企业主必看！5个AI获客工具帮你把成本降一半</div>
+                  <div><span class="highlight">【正文】</span>姐妹们！做企业的一定要看这篇！今天给大家整理了5个亲测好用的AI获客工具...</div>
+                  <div><span class="highlight">【标签】</span>#AI获客 #中小企业 #效率工具 #创业 #干货分享</div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Demo 3: 邮件询盘Agent -->
-<section class="demo-section">
-  <div class="container">
-    <div class="demo-inner">
-      <div class="demo-content">
-        <div class="demo-tag">📧 邮件自动化 · Gmail+Outlook+CRM</div>
-        <h3 class="demo-title">邮件询盘自动处理Agent</h3>
-        <div class="demo-pain">
-          <div class="label">客户痛点</div>
-          <p>外贸询盘回复不及时，欧美客户夜间发的询盘要等第二天才回复，流失率高；报价单制作耗时，每个都要手动填；未回复客户无人跟进，30%的潜在客户就这样丢了。</p>
-        </div>
-        <div class="demo-solution">
-          <div class="label">Agent自动做什么</div>
-          <p>7×24小时监控邮箱，自动分类询盘（产品咨询/价格询问/售后/垃圾），自动回复常见问题，根据产品价格表自动生成报价单，自动跟进未回复客户，自动同步到CRM。</p>
-        </div>
-        <div class="demo-results">
-          <div class="demo-result"><div class="num">5分钟</div><div class="label">询盘平均响应</div></div>
-          <div class="demo-result"><div class="num">30%↑</div><div class="label">询盘转化率</div></div>
-          <div class="demo-result"><div class="num">80%</div><div class="label">常见问题自动回复</div></div>
-        </div>
-      </div>
-      <div class="demo-visual">
-        <div class="demo-panel">
-          <div class="panel-header">
-            <span class="panel-dot" style="background:#ef4444;"></span>
-            <span class="panel-dot" style="background:#f59e0b;"></span>
-            <span class="panel-dot" style="background:#22c55e;"></span>
-            <span class="panel-title">邮件询盘Agent · 收件箱</span>
-          </div>
-          <div class="panel-body">
-            <div class="email-list">
-              <div class="email-item">
-                <div class="email-from">John Smith <span class="email-subject">· Price for 500 units</span></div>
-                <span class="email-cat cat-price">价格</span>
-              </div>
-              <div class="email-item">
-                <div class="email-from">Maria Garcia <span class="email-subject">· Product catalog request</span></div>
-                <span class="email-cat cat-new">新询盘</span>
-              </div>
-              <div class="email-item">
-                <div class="email-from">David Lee <span class="email-subject">· Re: Quotation #2026-0915</span></div>
-                <span class="email-cat cat-reply">已回复</span>
+            <div class="slide">
+              <div class="slide-label">步骤 3 · 中间结果</div>
+              <div class="slide-desc">定时发布到各平台，自动回复评论互动</div>
+              <div class="slide-content">
+                <div style="width:100%;">
+                  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;">
+                      <span style="font-size:16px;">📕</span>
+                      <span style="flex:1;font-size:11px;">小红书笔记 · 已发布</span>
+                      <span style="font-size:10px;color:var(--green);font-weight:700;">14:00</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;">
+                      <span style="font-size:16px;">🎵</span>
+                      <span style="flex:1;font-size:11px;">抖音短视频 · 已发布</span>
+                      <span style="font-size:10px;color:var(--green);font-weight:700;">15:00</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;">
+                      <span style="font-size:16px;">📱</span>
+                      <span style="flex:1;font-size:11px;">公众号长文 · 定时中</span>
+                      <span style="font-size:10px;color:var(--orange);font-weight:700;">18:00</span>
+                    </div>
+                  </div>
+                  <div style="padding:8px 12px;background:#dcfce7;border:1px solid #86efac;border-radius:8px;font-size:11px;color:#166534;">
+                    💬 已自动回复 23 条评论 · 互动率 15.2%
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="quote-box">
-              <div class="quote-title">Agent自动生成的报价单 · Quotation #2026-0915</div>
-              <div class="quote-row"><span>Product A × 500 units</span><span>$2,500.00</span></div>
-              <div class="quote-row"><span>Product B × 200 units</span><span>$1,800.00</span></div>
-              <div class="quote-row"><span>Shipping (DHL Express)</span><span>$350.00</span></div>
-              <div class="quote-row"><span>Total (FOB Shenzhen)</span><span>$4,650.00</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Demo 4: 客户评价Agent -->
-<section class="demo-section reverse">
-  <div class="container">
-    <div class="demo-inner">
-      <div class="demo-content">
-        <div class="demo-tag">⭐ 口碑自动化 · 短信+邮件+大众点评</div>
-        <h3 class="demo-title">客户评价自动收集Agent</h3>
-        <div class="demo-pain">
-          <div class="label">客户痛点</div>
-          <p>客户不愿意主动评价，好评收集难，大众点评评分上不去；差评发现不及时，一个差评可能影响几十个潜在客户；口碑数据分散在各个平台，不知道整体口碑状况。</p>
-        </div>
-        <div class="demo-solution">
-          <div class="label">Agent自动做什么</div>
-          <p>交易完成后自动触发评价请求（短信/邮件/企微），自动收集好评并同步到大众点评/小红书/官网展示，差评自动预警并通知负责人1小时内处理，自动生成月度口碑报告。</p>
-        </div>
-        <div class="demo-results">
-          <div class="demo-result"><div class="num">5x</div><div class="label">好评收集量</div></div>
-          <div class="demo-result"><div class="num">1h内</div><div class="label">差评响应时间</div></div>
-          <div class="demo-result"><div class="num">4.8→4.9</div><div class="label">大众点评评分</div></div>
-        </div>
-      </div>
-      <div class="demo-visual">
-        <div class="demo-panel">
-          <div class="panel-header">
-            <span class="panel-dot" style="background:#ef4444;"></span>
-            <span class="panel-dot" style="background:#f59e0b;"></span>
-            <span class="panel-dot" style="background:#22c55e;"></span>
-            <span class="panel-title">客户评价Agent · 口碑看板</span>
-          </div>
-          <div class="panel-body">
-            <div class="review-wall">
-              <div class="review-card">
-                <div class="review-stars">★★★★★</div>
-                <div class="review-text">服务非常专业，响应速度快，强烈推荐！</div>
-                <div class="review-from">— 李女士 · 大众点评</div>
-              </div>
-              <div class="review-card">
-                <div class="review-stars">★★★★★</div>
-                <div class="review-text">第二次来了，效果一如既往的好，会继续支持。</div>
-                <div class="review-from">— 王先生 · 小红书</div>
-              </div>
-              <div class="review-card">
-                <div class="review-stars">★★★★☆</div>
-                <div class="review-text">整体不错，就是等待时间稍微长了一点。</div>
-                <div class="review-from">— 张女士 · 美团</div>
-              </div>
-              <div class="review-card">
-                <div class="review-stars">★★★★★</div>
-                <div class="review-text">性价比很高，朋友推荐来的，确实没失望。</div>
-                <div class="review-from">— 陈先生 · 官网</div>
-              </div>
-            </div>
-            <div class="alert-box">
-              <span class="alert-icon">⚠️</span>
-              <div class="alert-text">
-                <div class="alert-title">差评预警 · 10分钟前</div>
-                <div class="alert-desc">大众点评新差评（2星）· 已自动通知店长张经理 · 待处理</div>
+            <div class="slide">
+              <div class="slide-label">步骤 4 · 最终交付物</div>
+              <div class="slide-desc">自动统计各平台数据，生成周报和优化建议</div>
+              <div class="slide-content">
+                <div class="data-dashboard" style="width:100%;">
+                  <div class="data-card-mini">
+                    <div class="label">总曝光</div>
+                    <div class="value">12.8w</div>
+                    <div class="change change-up">↑ 28%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">总互动</div>
+                    <div class="value">3,421</div>
+                    <div class="change change-up">↑ 15%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">涨粉</div>
+                    <div class="value">286</div>
+                    <div class="change change-up">↑ 42%</div>
+                  </div>
+                  <div class="data-card-mini">
+                    <div class="label">引流线索</div>
+                    <div class="value">94</div>
+                    <div class="change change-up">↑ 31%</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Demo 5: 数据分析Agent -->
-<section class="demo-section">
-  <div class="container">
-    <div class="demo-inner">
-      <div class="demo-content">
-        <div class="demo-tag">📈 数据自动化 · 广告+CRM+客服</div>
-        <h3 class="demo-title">数据分析自动报告Agent</h3>
-        <div class="demo-pain">
-          <div class="label">客户痛点</div>
-          <p>数据分散在广告平台、CRM、客服系统，手动拉数据要2小时；周报制作重复劳动，每周都要花半天；异常发现不及时，广告费浪费了一周才发现；老板想看数据还要等运营整理。</p>
-        </div>
-        <div class="demo-solution">
-          <div class="label">Agent自动做什么</div>
-          <p>自动从多个平台拉取数据并清洗整合，自动发现异常并实时预警，自动生成日报/周报/月报并发送给相关人员，自动给出优化建议，老板手机上随时可以看关键数据。</p>
-        </div>
-        <div class="demo-results">
-          <div class="demo-result"><div class="num">2h→0</div><div class="label">手动拉数据时间</div></div>
-          <div class="demo-result"><div class="num">实时</div><div class="label">异常发现预警</div></div>
-          <div class="demo-result"><div class="num">每周4h</div><div class="label">报告制作节省</div></div>
-        </div>
-      </div>
-      <div class="demo-visual">
-        <div class="demo-panel">
-          <div class="panel-header">
-            <span class="panel-dot" style="background:#ef4444;"></span>
-            <span class="panel-dot" style="background:#f59e0b;"></span>
-            <span class="panel-dot" style="background:#22c55e;"></span>
-            <span class="panel-title">数据分析Agent · 自动周报</span>
-          </div>
-          <div class="panel-body">
-            <div class="data-chart">
-              <div class="data-bar" style="height: 45%;"><span class="data-bar-value">¥8.2w</span><span class="data-bar-label">周一</span></div>
-              <div class="data-bar" style="height: 60%;"><span class="data-bar-value">¥10.5w</span><span class="data-bar-label">周二</span></div>
-              <div class="data-bar" style="height: 55%;"><span class="data-bar-value">¥9.8w</span><span class="data-bar-label">周三</span></div>
-              <div class="data-bar" style="height: 75%;"><span class="data-bar-value">¥13.2w</span><span class="data-bar-label">周四</span></div>
-              <div class="data-bar" style="height: 90%;"><span class="data-bar-value">¥15.8w</span><span class="data-bar-label">周五</span></div>
-              <div class="data-bar" style="height: 40%;"><span class="data-bar-value">¥7.1w</span><span class="data-bar-label">周六</span></div>
-              <div class="data-bar" style="height: 35%;"><span class="data-bar-value">¥6.3w</span><span class="data-bar-label">周日</span></div>
-            </div>
-            <div class="data-metrics">
-              <div class="data-metric">
-                <div class="data-metric-label">本周消耗</div>
-                <div class="data-metric-value">¥70.9w</div>
-                <div class="data-metric-change change-up">↑ 12.3% vs 上周</div>
-              </div>
-              <div class="data-metric">
-                <div class="data-metric-label">获客成本</div>
-                <div class="data-metric-value">¥128</div>
-                <div class="data-metric-change change-down">↓ 8.5% vs 上周</div>
-              </div>
-              <div class="data-metric">
-                <div class="data-metric-label">线索量</div>
-                <div class="data-metric-value">5,539</div>
-                <div class="data-metric-change change-up">↑ 22.1% vs 上周</div>
-              </div>
-              <div class="data-metric">
-                <div class="data-metric-label">转化率</div>
-                <div class="data-metric-value">3.2%</div>
-                <div class="data-metric-change change-up">↑ 0.4% vs 上周</div>
-              </div>
-            </div>
+          <div class="slideshow-footer">
+            <div class="slideshow-dots" data-dots></div>
+            <div class="slideshow-progress"><div class="slideshow-progress-bar" data-progress></div></div>
+            <div class="slideshow-autoplay"><span class="pulse"></span>自动播放</div>
           </div>
         </div>
       </div>
@@ -780,49 +1124,49 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <div class="section-head">
       <div class="kicker">Tech Stack</div>
-      <h2>我们用什么让Agent真正干活</h2>
-      <p>不只是聊天。工具调用、多系统对接、工作流编排、数据闭环——让Agent能真正执行任务，而不只是回答问题</p>
+      <h2>我们用什么让AIGC工作流真正跑起来</h2>
+      <p>不只是调用一个API。模型编排、工作流自动化、批量处理、质量控制——一整套技术栈确保Agent稳定高效运行</p>
     </div>
     <div class="tech-grid">
+      <div class="tech-card">
+        <div class="t-icon">🎨</div>
+        <h4>多模型接入</h4>
+        <p>即梦/可灵/通义万相/Midjourney/SD，根据任务类型自动选择最优模型，文生图/图生图/文生视频全覆盖</p>
+      </div>
+      <div class="tech-card">
+        <div class="t-icon">⚡</div>
+        <h4>工作流编排</h4>
+        <p>多步骤工作流自动执行，条件分支、循环、批量处理，复杂AIGC流程也能自动化，无需人工干预</p>
+      </div>
+      <div class="tech-card">
+        <div class="t-icon">📦</div>
+        <h4>批量处理引擎</h4>
+        <p>支持批量上传、批量生成、批量导出，SKU再多也不怕，一次处理上百个商品图/视频</p>
+      </div>
+      <div class="tech-card">
+        <div class="t-icon">✅</div>
+        <h4>质量控制系统</h4>
+        <p>AI自动质检+人工复核混合模式，检测图片质量、文案合规、视频流畅度，不合格自动重生成</p>
+      </div>
       <div class="tech-card">
         <div class="t-icon">🔧</div>
         <h4>DeepSeek Harness</h4>
         <p>开源Agent编排框架，工具调用、记忆管理、多模型路由，技术透明可控，支持私有化部署</p>
       </div>
       <div class="tech-card">
-        <div class="t-icon">🔌</div>
-        <h4>工具调用框架</h4>
-        <p>支持邮件、CRM、数据库、API、日历、企微、飞书等工具调用，让Agent能真正执行任务，不只是聊天</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">⚡</div>
-        <h4>工作流编排</h4>
-        <p>多步骤工作流自动执行，条件分支、循环、等待、触发器，复杂业务流程也能自动化</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">🧠</div>
-        <h4>多模型接入</h4>
-        <p>DeepSeek V3/R1、文心一言、通义千问、Kimi、Claude、GPT-4o，根据任务类型自动选择最优模型</p>
-      </div>
-      <div class="tech-card">
-        <div class="t-icon">📚</div>
-        <h4>知识库RAG</h4>
-        <p>支持多格式文档上传，向量检索+语义匹配，让Agent懂你的业务知识，回答准确不胡编，可溯源</p>
-      </div>
-      <div class="tech-card">
         <div class="t-icon">🚀</div>
-        <h4>多渠道部署</h4>
-        <p>官网、企微、飞书、钉钉、公众号、小程序、抖音、WhatsApp、邮件，一套Agent多渠道运行</p>
+        <h4>多渠道分发</h4>
+        <p>天猫/京东/抖音/小红书/快手/视频号/公众号，一套内容多平台适配，一键分发，自动同步</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">📊</div>
         <h4>效果监控系统</h4>
-        <p>执行量、成功率、转化率、节省时间全指标监控，AI自动识别低质量执行，生成优化建议</p>
+        <p>生成量、质量分、发布量、互动率、转化率全指标监控，AI自动识别低效内容，生成优化建议</p>
       </div>
       <div class="tech-card">
         <div class="t-icon">🔒</div>
         <h4>私有化部署</h4>
-        <p>支持客户服务器/云服务器私有化部署，数据完全自主，满足金融、医疗等行业合规要求</p>
+        <p>支持客户服务器/云服务器私有化部署，素材和数据完全自主，满足品牌商合规要求</p>
       </div>
     </div>
 
@@ -834,17 +1178,17 @@ img { max-width: 100%; display: block; }
       <div class="advantage-card">
         <div class="a-num">01</div>
         <h4>3天极速交付</h4>
-        <p>50+行业模板+VibeCoding AI开发，传统外包3个月的项目，我们3天交付。需求确认后第3天就能上线使用，边用边优化。</p>
+        <p>50+AIGC工作流模板+VibeCoding AI开发，传统外包3个月的项目，我们3天交付。需求确认后第3天就能上线使用，边用边优化。</p>
       </div>
       <div class="advantage-card">
         <div class="a-num">02</div>
-        <h4>懂业务，不是纯技术</h4>
-        <p>团队有10年互联网广告和企业服务经验，懂客户、懂销售、懂业务流程。我们不只是写代码，而是帮你分析业务、设计方案、确保Agent真正解决问题。</p>
+        <h4>懂电商，不是纯技术</h4>
+        <p>团队有10年互联网广告和电商服务经验，懂平台规则、懂流量、懂转化。我们不只是写代码，而是帮你设计真正能提升ROI的AIGC工作流。</p>
       </div>
       <div class="advantage-card">
         <div class="a-num">03</div>
         <h4>交付完不是结束</h4>
-        <p>持续运维，效果监控+自动优化+定期报告。你能看到Agent每天帮你自动执行了多少任务、节省了多少时间、带来了多少转化，有问题随时找我们。</p>
+        <p>持续运维，模型更新+效果监控+自动优化+定期报告。你能看到Agent每天帮你生成了多少素材、节省了多少成本、带来了多少转化。</p>
       </div>
     </div>
   </div>
@@ -853,8 +1197,8 @@ img { max-width: 100%; display: block; }
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="container">
-    <h2>你的业务，也需要一个这样的数字员工</h2>
-    <p>描述你的需求，我们3天交付一个能自动干活的AI Agent，部署在你现有的系统上，持续运维优化。</p>
+    <h2>你的业务，也需要一个这样的AIGC数字员工</h2>
+    <p>描述你的需求，我们3天交付一个能自动干活的AIGC工作流Agent，部署在你现有的系统上，持续运维优化。</p>
     <a href="mailto:910036590@qq.com?subject=WorkHogee智能体交付需求咨询" class="btn-primary">
       描述我的需求
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -896,15 +1240,20 @@ img { max-width: 100%; display: block; }
 </footer>
 
 <script>
+// 导航滚动效果
 window.addEventListener('scroll', function() {
   var nav = document.getElementById('nav');
   if (window.scrollY > 20) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
 });
+
+// 移动端菜单
 var navToggle = document.getElementById('navToggle');
 var navLinks = document.getElementById('navLinks');
 if (navToggle && navLinks) {
   navToggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
 }
+
+// 平滑滚动
 document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
   anchor.addEventListener('click', function(e) {
     var target = document.querySelector(this.getAttribute('href'));
@@ -915,6 +1264,71 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     }
   });
 });
+
+// 幻灯片自动播放
+(function() {
+  var slideshows = document.querySelectorAll('[data-slideshow]');
+  slideshows.forEach(function(ss) {
+    var slides = ss.querySelectorAll('.slide');
+    var dotsContainer = ss.querySelector('[data-dots]');
+    var progressBar = ss.querySelector('[data-progress]');
+    var stepLabel = ss.querySelector('[data-step-label]');
+    var current = 0;
+    var total = slides.length;
+    var interval = 5000; // 5秒切换
+    var startTime = Date.now();
+    var paused = false;
+
+    // 创建圆点
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('button');
+      dot.className = 'slideshow-dot-btn' + (i === 0 ? ' active' : '');
+      dot.setAttribute('data-index', i);
+      dot.addEventListener('click', function() {
+        goTo(parseInt(this.getAttribute('data-index')));
+        resetTimer();
+      });
+      dotsContainer.appendChild(dot);
+    }
+
+    function goTo(index) {
+      slides[current].classList.remove('active');
+      dotsContainer.children[current].classList.remove('active');
+      current = index;
+      slides[current].classList.add('active');
+      dotsContainer.children[current].classList.add('active');
+      if (stepLabel) stepLabel.textContent = '步骤 ' + (current + 1) + '/' + total;
+      startTime = Date.now();
+    }
+
+    function next() {
+      goTo((current + 1) % total);
+    }
+
+    function resetTimer() {
+      startTime = Date.now();
+    }
+
+    // 进度条动画
+    function updateProgress() {
+      if (!paused) {
+        var elapsed = Date.now() - startTime;
+        var percent = Math.min((elapsed / interval) * 100, 100);
+        if (progressBar) progressBar.style.width = percent + '%';
+        if (elapsed >= interval) {
+          next();
+        }
+      }
+      requestAnimationFrame(updateProgress);
+    }
+
+    // 鼠标悬停暂停
+    ss.addEventListener('mouseenter', function() { paused = true; });
+    ss.addEventListener('mouseleave', function() { paused = false; startTime = Date.now(); });
+
+    updateProgress();
+  });
+})();
 </script>
 
 </body>
