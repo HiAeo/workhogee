@@ -154,51 +154,73 @@ img { max-width: 100%; display: block; }
 .hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
 .hero-meta-item svg { width: 18px; height: 18px; color: var(--orange); }
 
-/* ===== Hero 右侧：GEO 获客闭环示意图（纯 HTML+CSS） ===== */
+/* ===== Hero 右侧：GEO 获客闭环对比图 ===== */
 .hero-visual { position: relative; }
-.loop-card {
-  background: var(--ink); border-radius: var(--radius-xl);
-  padding: 26px 24px 22px; box-shadow: var(--shadow-lg); border: 1px solid #37322c;
-  position: relative; overflow: hidden;
+.compare-card {
+  background: var(--white); border-radius: var(--radius-xl);
+  padding: 24px 20px 20px; box-shadow: 0 24px 60px rgba(28,25,23,0.14);
+  border: 1px solid var(--line); position: relative; overflow: hidden;
 }
-.loop-card::before {
-  content: ''; position: absolute; top: -120px; right: -80px; width: 260px; height: 260px;
-  border-radius: 50%; background: radial-gradient(circle, rgba(234,88,12,0.22) 0%, transparent 70%);
-  pointer-events: none;
+.compare-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, #a8a29e 0%, #a8a29e 50%, var(--orange) 50%, var(--orange) 100%);
 }
-.loop-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; position: relative; }
-.loop-head .lt { font-size: 15px; font-weight: 800; color: var(--paper); }
-.loop-head .live {
-  margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; color: #4ade80;
+.compare-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;
 }
-.loop-head .live .d { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
-.loop-step {
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px; padding: 12px 14px; position: relative;
+.compare-head .col {
+  text-align: center; padding: 10px 8px; border-radius: 10px;
+}
+.compare-head .col.old { background: #f5f5f4; border: 1px solid #e7e5e4; }
+.compare-head .col.new { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa; }
+.compare-head .col .label { font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.compare-head .col .name { font-size: 15px; font-weight: 800; margin-top: 2px; }
+.compare-head .col.old .name { color: #78716c; }
+.compare-head .col.new .name { color: var(--orange-deep); }
+.compare-body {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.compare-col { display: flex; flex-direction: column; gap: 8px; }
+.cstep {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 600;
   transition: all 0.3s;
 }
-.loop-step:hover { background: rgba(255,255,255,0.09); border-color: rgba(251,146,60,0.5); }
-.loop-step .n {
-  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(234,88,12,0.2); color: var(--orange-light);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 13px;
+.cstep .icon {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;
 }
-.loop-step .st { font-size: 14px; font-weight: 700; color: var(--paper); line-height: 1.3; }
-.loop-step .sd { font-size: 11px; color: #a9a196; margin-top: 2px; }
-.loop-step.loop-end { border-color: var(--orange); background: rgba(234,88,12,0.18); }
-.loop-step.loop-end .n { background: var(--orange); color: var(--white); }
-.loop-connector { display: flex; flex-direction: column; align-items: center; padding: 3px 0; }
-.loop-connector .bar { width: 2px; height: 12px; background: linear-gradient(180deg, var(--orange), var(--orange-light)); }
-.loop-connector svg { width: 14px; height: 14px; color: var(--orange-light); margin-top: -2px; }
-.loop-return {
-  margin-top: 14px; text-align: center; font-size: 11.5px; color: var(--orange-light);
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  border-top: 1px dashed rgba(251,146,60,0.3); padding-top: 12px;
+.compare-col.old .cstep { background: #fafaf9; border: 1px solid #f0eeeb; color: #78716c; }
+.compare-col.old .cstep .icon { background: #e7e5e4; color: #78716c; }
+.compare-col.old .cstep.done { background: #f5f5f4; border-color: #e7e5e4; color: #57534e; }
+.compare-col.old .cstep.done .icon { background: #d6d3d1; color: #57534e; }
+.compare-col.old .cstep.broken {
+  background: repeating-linear-gradient(45deg, #fafaf9, #fafaf9 6px, #f5f5f4 6px, #f5f5f4 12px);
+  border: 1px dashed #d6d3d1; color: #a8a29e; font-style: italic;
 }
-.loop-return svg { width: 14px; height: 14px; }
+.compare-col.old .cstep.broken .icon { background: transparent; border: 2px dashed #d6d3d1; color: #a8a29e; }
+.compare-col.new .cstep { background: #fff7ed; border: 1px solid #fed7aa; color: var(--ink); }
+.compare-col.new .cstep .icon { background: var(--orange); color: white; }
+.compare-col.new .cstep.win { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); border-color: var(--orange-deep); color: white; }
+.compare-col.new .cstep.win .icon { background: rgba(255,255,255,0.25); color: white; }
+.compare-gap {
+  grid-column: 1 / -1; text-align: center; padding: 8px 0;
+  font-size: 12px; font-weight: 700; color: var(--orange-deep);
+  background: linear-gradient(90deg, transparent, rgba(234,88,12,0.08), transparent);
+  border-top: 1px dashed #fed7aa; border-bottom: 1px dashed #fed7aa;
+  margin: 4px 0;
+}
+.compare-gap .arrow { font-size: 14px; margin: 0 6px; }
+.compare-footer {
+  margin-top: 14px; padding: 12px 14px; background: var(--ink); border-radius: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.compare-footer .text { font-size: 12.5px; font-weight: 700; color: var(--paper); }
+.compare-footer .text .o { color: var(--orange-light); }
+.compare-footer .badge {
+  background: var(--orange); color: white; padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 800;
+}
 
 .hero-float-card {
   position: absolute; background: var(--white); border-radius: var(--radius-md);
@@ -609,6 +631,12 @@ table.cmp .dim { color: var(--ink-muted); }
   .cap-desc { font-size: 15px; }
   .mock-annotation { display: none; }
   .overseas-compare { grid-template-columns: 1fr; }
+  .compare-body { grid-template-columns: 1fr; gap: 16px; }
+  .compare-col { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .compare-col .cstep { flex-direction: column; text-align: center; padding: 8px 6px; font-size: 10px; }
+  .compare-col .cstep .icon { width: 22px; height: 22px; font-size: 10px; }
+  .compare-gap { font-size: 11px; }
+  .compare-footer { flex-direction: column; gap: 8px; text-align: center; }
 }
 @media (max-width: 640px) {
   .hero { padding: 110px 0 60px; }
@@ -627,6 +655,11 @@ table.cmp .dim { color: var(--ink-muted); }
   .gen-tab { font-size: 11px; padding: 5px 10px; }
   .overseas-engines { gap: 8px; }
   .overseas-engine { font-size: 11px; padding: 8px 12px; }
+  .hero h1 { font-size: 28px; line-height: 1.3; }
+  .hero-sub { font-size: 14px; }
+  .compare-head .col .name { font-size: 12px; }
+  .compare-col { grid-template-columns: 1fr; }
+  .compare-col .cstep { flex-direction: row; text-align: left; padding: 10px 12px; font-size: 12px; }
 }
 </style>
 </head>
@@ -674,11 +707,11 @@ table.cmp .dim { color: var(--ink-muted); }
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
-          <span>🔥 GEO获客闭环伙计 · 全新上线</span>
+          <span>GEO获客闭环伙计 · 不是又一个监测工具</span>
         </div>
-        <h1>让AI搜索成为你的<span class="highlight">获客渠道</span></h1>
-        <p class="hero-sub">WorkHogee GEO伙计特别版——从AI搜索品牌提及监测，到AI友好内容生成，再到高转化落地页和伙计承接，打造GEO种草→伙计承接→成交回传的完整获客闭环。</p>
-        <p class="hero-note">不做纯监测看板，做真正带来客户的GEO获客系统</p>
+        <h1>GEO的<span class="highlight">最后一公里</span><br>把AI推荐变成真实客户</h1>
+        <p class="hero-sub">市面上的GEO工具只做到"被AI看见"就断了。WorkHogee GEO伙计打通从AI搜索推荐→高转化落地页→7×24智能承接→成交数据回传的完整闭环，让每一次AI推荐都能追踪到成交。</p>
+        <p class="hero-note">不做纯监测看板，做真正带来客户的GEO获客闭环系统</p>
         <div class="hero-cta">
           <a href="#start" class="btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -705,53 +738,42 @@ table.cmp .dim { color: var(--ink-muted); }
         </div>
       </div>
 
-      <!-- 右侧：GEO 获客闭环示意图（纯 HTML+CSS） -->
+      <!-- 右侧：GEO 获客闭环对比图 -->
       <div class="hero-visual">
-        <div class="loop-card">
-          <div class="loop-head">
-            <span class="lt">GEO 获客闭环</span>
-            <span class="live"><span class="d"></span>实时</span>
+        <div class="compare-card">
+          <div class="compare-head">
+            <div class="col old">
+              <div class="label">普通GEO工具</div>
+              <div class="name">只到被看见</div>
+            </div>
+            <div class="col new">
+              <div class="label">WorkHogee GEO伙计</div>
+              <div class="name">追踪到成交</div>
+            </div>
           </div>
-          <div class="loop-step">
-            <div class="n">1</div>
-            <div><div class="st">AI搜索提及监测</div><div class="sd">百度 / 豆包 / 元宝 / Perplexity…</div></div>
+          <div class="compare-body">
+            <div class="compare-col old">
+              <div class="cstep done"><div class="icon">✓</div>AI搜索提及监测</div>
+              <div class="cstep done"><div class="icon">✓</div>AI友好内容生成</div>
+              <div class="cstep broken"><div class="icon">?</div>落地页承接</div>
+              <div class="cstep broken"><div class="icon">?</div>线索转化跟进</div>
+              <div class="cstep broken"><div class="icon">?</div>成交数据回传</div>
+            </div>
+            <div class="compare-col new">
+              <div class="cstep"><div class="icon">1</div>AI搜索提及监测</div>
+              <div class="cstep"><div class="icon">2</div>AI友好内容生成</div>
+              <div class="cstep"><div class="icon">3</div>高转化落地页承接</div>
+              <div class="cstep"><div class="icon">4</div>AI伙计7×24承接</div>
+              <div class="cstep win"><div class="icon">5</div>成交数据自动回传</div>
+            </div>
+            <div class="compare-gap">
+              <span class="arrow">←</span> 差距就在最后三步 <span class="arrow">→</span>
+            </div>
           </div>
-          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-          <div class="loop-step">
-            <div class="n">2</div>
-            <div><div class="st">AI友好内容种草</div><div class="sd">E-E-A-T 原则，批量生成</div></div>
+          <div class="compare-footer">
+            <div class="text">别人帮你<span class="o">被AI看见</span>，我们帮你<span class="o">把AI流量变成客户</span></div>
+            <div class="badge">闭环</div>
           </div>
-          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-          <div class="loop-step">
-            <div class="n">3</div>
-            <div><div class="st">高转化落地页承接</div><div class="sd">为GEO流量定制，支持A/B测试</div></div>
-          </div>
-          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-          <div class="loop-step">
-            <div class="n">4</div>
-            <div><div class="st">AI伙计承接转化</div><div class="sd">7×24 秒级答疑与促单</div></div>
-          </div>
-          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-          <div class="loop-step loop-end">
-            <div class="n">5</div>
-            <div><div class="st">成交数据自动回传</div><div class="sd">反哺内容策略，持续优化</div></div>
-          </div>
-          <div class="loop-return">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-            闭环回传 · 持续优化
-          </div>
-        </div>
-
-        <!-- 浮动数据卡片 -->
-        <div class="hero-float-card card1">
-          <div class="label">AI搜索品牌提及量</div>
-          <div class="value">+240%</div>
-          <div class="sub">上线3周</div>
-        </div>
-        <div class="hero-float-card card2">
-          <div class="label">GEO流量转化率</div>
-          <div class="value">8.5%</div>
-          <div class="sub">高于行业均值</div>
         </div>
       </div>
     </div>
