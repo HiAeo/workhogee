@@ -1842,7 +1842,7 @@ img { max-width: 100%; display: block; }
   .hero-visual { order: -1; }
   .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
   .cap-grid { grid-template-columns: repeat(2, 1fr); }
-  .channel-showcase { grid-template-columns: 1fr; gap: 40px; }
+  .channel-showcase { grid-template-columns: 1fr !important; gap: 30px !important; }
   .platform-grid { grid-template-columns: 1fr; }
   .workflow-steps { grid-template-columns: repeat(2, 1fr); gap: 30px; }
   .workflow-steps::before { display: none; }
@@ -1859,6 +1859,26 @@ img { max-width: 100%; display: block; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
   .panel-grid { grid-template-columns: 1fr; }
   .panel-stats { grid-template-columns: repeat(2, 1fr); }
+  /* 通讯工具网格：移动端2列 */
+  .comm-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .comm-card { padding: 12px; gap: 10px; }
+  .comm-icon { width: 40px; height: 40px; }
+  .comm-icon img { width: 28px; height: 28px; }
+  .comm-name { font-size: 12px; }
+  .comm-desc { font-size: 10px; }
+  /* 大模型网格：移动端3列 */
+  .model-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .model-item { padding: 8px 6px; }
+  .model-item img { width: 24px; height: 24px; }
+  .model-item span { font-size: 9px; }
+  /* 多端协同：移动端上下排列，设备缩小 */
+  .device-showcase { flex-direction: column; gap: 30px; }
+  .device-sync-arrow { flex-direction: row; }
+  .device-sync-line { width: 50px; height: 2px; }
+  .device-pc { width: 100%; max-width: 340px; }
+  .device-pc-screen { height: 220px; }
+  .device-mobile { width: 160px; }
+  .device-mobile-screen { height: 260px; }
 }
 @media (max-width: 640px) {
   .hero { padding: 110px 0 60px; }
@@ -1874,6 +1894,23 @@ img { max-width: 100%; display: block; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .hero-float-card { display: none; }
   .panel-stats { grid-template-columns: 1fr 1fr; }
+  /* 通讯工具网格：小屏2列 */
+  .comm-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .comm-card { padding: 10px; gap: 8px; }
+  .comm-icon { width: 36px; height: 36px; }
+  .comm-icon img { width: 24px; height: 24px; }
+  .comm-name { font-size: 11px; }
+  .comm-desc { font-size: 9px; }
+  /* 大模型网格：小屏3列 */
+  .model-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .model-item { padding: 6px 4px; }
+  .model-item img { width: 20px; height: 20px; }
+  .model-item span { font-size: 8px; }
+  /* 多端协同：小屏设备进一步缩小 */
+  .device-pc { max-width: 300px; }
+  .device-pc-screen { height: 200px; }
+  .device-mobile { width: 140px; }
+  .device-mobile-screen { height: 230px; }
 }
 </style>
 </head>
