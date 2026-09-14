@@ -8,6 +8,94 @@ const router = express.Router();
 module.exports = function(services) {
   const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService } = services;
 
+  // ===== 用户认证 API =====
+
+  /**
+   * 用户注册
+   * POST /api/auth/register
+   */
+  router.post('/auth/register', async (req, res) => {
+    try {
+      const { email, password, name } = req.body;
+      const result = await authService.register({ email, password, name });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 用户登录
+   * POST /api/auth/login
+   */
+  router.post('/auth/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const result = await authService.login(email, password);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(401).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 刷新 Token
+   * POST /api/auth/refresh
+   */
+  router.post('/auth/refresh', async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+      const result = await authService.refreshToken(refreshToken);
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(401).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 用户登出
+   * POST /api/auth/logout
+   */
+  router.post('/auth/logout', async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+      await authService.logout(refreshToken);
+      res.json({ success: true, message: '已登出' });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取当前用户信息
+   * GET /api/auth/me
+   */
+  router.get('/auth/me', authService.userAuthMiddleware(true), async (req, res) => {
+    try {
+      const user = await authService.userModel.findById(req.userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: '用户不存在' });
+      }
+      res.json({ success: true, data: user });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 修改密码
+   * POST /api/auth/change-password
+   */
+  router.post('/auth/change-password', authService.userAuthMiddleware(true), async (req, res) => {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      await authService.changePassword(req.userId, oldPassword, newPassword);
+      res.json({ success: true, message: '密码修改成功' });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
   // ===== 对话相关 API =====
 
   /**
@@ -54,6 +142,44 @@ module.exports = function(services) {
       });
     } catch (e) {
       res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取对话记录列表
+   * GET /api/conversations
+   */
+  router.get('/conversations', (req, res) => {
+    try {
+      const { page = 1, pageSize = 20, status, source } = req.query;
+      const allConversations = conversationStorage.list({ status });
+
+      let filtered = allConversations;
+      if (source) {
+        filtered = filtered.filter(c => c.source === source);
+      }
+
+      const total = filtered.length;
+      const start = (page - 1) * pageSize;
+      const items = filtered.slice(start, start + parseInt(pageSize)).map(c => ({
+        id: c.id,
+        leadId: c.leadId,
+        customerName: c.customerName || c.visitorName || '匿名访客',
+        source: c.source,
+        messageCount: c.messageCount || 0,
+        status: c.status || 'ended',
+        intentionLevel: c.intentionLevel,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt || c.createdAt
+      }));
+
+      res.json({
+        success: true,
+        data: { items, total, page: parseInt(page), pageSize: parseInt(pageSize) }
+      });
+    } catch (error) {
+      console.error('获取对话列表失败:', error);
+      res.status(500).json({ success: false, error: error.message });
     }
   });
 
@@ -852,6 +978,56 @@ module.exports = function(services) {
   // ===== 客户画像 API =====
 
   /**
+   * 获取客户画像列表
+   * GET /api/profiles
+   */
+  router.get('/profiles', (req, res) => {
+    try {
+      const { page = 1, pageSize = 20, intentionLevel } = req.query;
+
+      // 从线索存储中获取所有线索，并生成画像摘要
+      const allLeads = leadStorage.getAll ? leadStorage.getAll() : [];
+
+      let filtered = allLeads;
+      if (intentionLevel) {
+        filtered = filtered.filter(lead => lead.intentionLevel === intentionLevel);
+      }
+
+      // 按创建时间倒序
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      const total = filtered.length;
+      const start = (page - 1) * pageSize;
+      const items = filtered.slice(start, start + parseInt(pageSize)).map(lead => ({
+        id: lead.id,
+        leadId: lead.id,
+        name: lead.name || lead.customerName || '未知客户',
+        phone: lead.phone,
+        email: lead.email,
+        company: lead.company,
+        industry: lead.industry,
+        intentionLevel: lead.intentionLevel,
+        status: lead.status,
+        source: lead.source,
+        tags: lead.tags || [],
+        conversationCount: lead.conversationCount || 0,
+        emailCount: lead.emailCount || 0,
+        followUpCount: lead.followUpCount || 0,
+        createdAt: lead.createdAt,
+        updatedAt: lead.updatedAt || lead.createdAt
+      }));
+
+      res.json({
+        success: true,
+        data: { items, total, page: parseInt(page), pageSize: parseInt(pageSize) }
+      });
+    } catch (error) {
+      console.error('获取客户画像列表失败:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  /**
    * 生成客户画像
    * POST /api/profiles/:leadId/generate
    */
@@ -955,6 +1131,71 @@ module.exports = function(services) {
   });
 
   // ===== 知识库 API =====
+
+  /**
+   * 获取知识库统一列表
+   * GET /api/knowledge
+   */
+  router.get('/knowledge', (req, res) => {
+    try {
+      const { page = 1, pageSize = 20, category, search } = req.query;
+
+      // 从各类知识库中获取数据
+      const documents = knowledgeBase.listDocuments ? knowledgeBase.listDocuments() : [];
+      const faqs = knowledgeBase.listFAQs ? knowledgeBase.listFAQs() : [];
+      const scripts = knowledgeBase.listScripts ? knowledgeBase.listScripts() : [];
+
+      let allItems = [
+        ...(documents || []).map(d => ({ ...d, category: 'product', type: 'document' })),
+        ...(faqs || []).map(f => ({ ...f, category: 'faq', type: 'faq' })),
+        ...(scripts || []).map(s => ({ ...s, category: 'script', type: 'script' }))
+      ];
+
+      // 分类筛选
+      if (category) {
+        allItems = allItems.filter(item => item.category === category);
+      }
+
+      // 搜索筛选
+      if (search) {
+        const keyword = search.toLowerCase();
+        allItems = allItems.filter(item =>
+          (item.title || item.question || '').toLowerCase().includes(keyword) ||
+          (item.content || item.answer || '').toLowerCase().includes(keyword)
+        );
+      }
+
+      // 统计
+      const stats = {
+        total: allItems.length,
+        product: allItems.filter(i => i.category === 'product').length,
+        faq: allItems.filter(i => i.category === 'faq').length,
+        script: allItems.filter(i => i.category === 'script').length
+      };
+
+      // 分页
+      const total = allItems.length;
+      const start = (page - 1) * pageSize;
+      const items = allItems.slice(start, start + parseInt(pageSize)).map(item => ({
+        id: item.id,
+        title: item.title || item.question || '无标题',
+        category: item.category,
+        content: item.content || item.answer || '',
+        keywords: item.keywords || [],
+        usageCount: item.usageCount || 0,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt || item.createdAt
+      }));
+
+      res.json({
+        success: true,
+        data: { items, total, stats, page: parseInt(page), pageSize: parseInt(pageSize) }
+      });
+    } catch (error) {
+      console.error('获取知识库列表失败:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
 
   // --- 产品资料 ---
   router.get('/knowledge/documents', (req, res) => {
