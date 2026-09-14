@@ -537,7 +537,8 @@ img { max-width: 100%; display: block; }
   transition: all 0.3s;
 }
 .overseas-engine:hover { background: rgba(234,88,12,0.2); border-color: var(--orange); transform: translateY(-2px); }
-.overseas-engine .flag { font-size: 16px; }
+.overseas-engine .flag { font-size: 16px; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; }
+.overseas-engine .flag img { width: 100%; height: 100%; object-fit: contain; }
 .overseas-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
 .overseas-col { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 18px; }
 .overseas-col h5 { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--paper); }
@@ -1230,12 +1231,12 @@ table.cmp .dim { color: var(--ink-muted); }
         <h2 class="cap-title">海外版<span class="o">GEO专版</span><br>国内厂商做不深的海外模型</h2>
         <p class="cap-desc">国内GEO厂商大多聚焦豆包、DeepSeek、文心一言等国内平台，对海外AI模型的涉猎深度普遍不足。而中国出海企业的目标客户，恰恰主要使用ChatGPT、Perplexity、Claude、Gemini等海外AI搜索引擎。WorkHogee出海版GEO专门针对海外模型深度优化，帮你在海外用户的AI搜索中被看见、被推荐。</p>
         <div class="overseas-engines">
-          <span class="overseas-engine"><span class="flag">🤖</span>ChatGPT</span>
-          <span class="overseas-engine"><span class="flag">🔍</span>Perplexity</span>
-          <span class="overseas-engine"><span class="flag">🧠</span>Claude</span>
-          <span class="overseas-engine"><span class="flag">💎</span>Gemini</span>
-          <span class="overseas-engine"><span class="flag">🦆</span>DuckDuckGo AI</span>
-          <span class="overseas-engine"><span class="flag">🇺🇸</span>Microsoft Copilot</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-openai.svg" alt="ChatGPT"></span>ChatGPT</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-perplexity.svg" alt="Perplexity"></span>Perplexity</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-claude.svg" alt="Claude"></span>Claude</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-gemini.svg" alt="Gemini"></span>Gemini</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-duckduckgo.webp" alt="DuckDuckGo AI"></span>DuckDuckGo AI</span>
+          <span class="overseas-engine"><span class="flag"><img src="assets/logo-copilot.svg" alt="Microsoft Copilot"></span>Microsoft Copilot</span>
         </div>
         <div class="cap-metrics">
           <div class="cap-metric"><div class="num">6+</div><div class="label">海外AI引擎覆盖</div></div>
