@@ -847,6 +847,490 @@ img { max-width: 100%; display: block; }
 .footer-links a { font-size: 12.5px; color: #7c7468; }
 .footer-links a:hover { color: var(--orange-light); }
 
+/* ===== 专业产品界面样式 ===== */
+.product-mockup {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(28,25,23,0.12);
+  border: 1px solid var(--line);
+}
+.mockup-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f7f5;
+  border-bottom: 1px solid var(--line);
+}
+.mockup-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.mockup-dot.red { background: #ff5f57; }
+.mockup-dot.yellow { background: #febc2e; }
+.mockup-dot.green { background: #28c840; }
+.mockup-url {
+  flex: 1;
+  background: white;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--ink-light);
+  margin-left: 8px;
+  border: 1px solid var(--line);
+}
+.mockup-content {
+  padding: 16px;
+  background: white;
+}
+
+/* 卡通头像 */
+.avatar-cartoon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-cartoon::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.avatar-saas { background: linear-gradient(135deg, #667eea, #764ba2); }
+.avatar-trade { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.avatar-beauty { background: linear-gradient(135deg, #fa709a, #fee140); }
+.avatar-edu { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.avatar-fitness { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.avatar-data { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+/* 数据看板样式 */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.dash-card {
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+}
+.dash-card-label {
+  font-size: 10px;
+  color: var(--ink-light);
+  margin-bottom: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.dash-card-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.dash-card-change {
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.dash-card-change.up { color: #16a34a; }
+.dash-card-change.down { color: #dc2626; }
+
+/* 迷你图表 */
+.mini-chart {
+  height: 50px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding-top: 8px;
+}
+.mini-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--orange-light), var(--orange));
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+/* 线索列表 */
+.lead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lead-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--paper);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.lead-info {
+  flex: 1;
+  min-width: 0;
+}
+.lead-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lead-meta {
+  font-size: 10px;
+  color: var(--ink-light);
+  margin-top: 1px;
+}
+.lead-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.lead-badge.hot { background: #fef2f2; color: #dc2626; }
+.lead-badge.warm { background: #fff7ed; color: #ea580c; }
+.lead-badge.cold { background: #f5f5f4; color: #78716c; }
+
+/* 邮件界面 */
+.email-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.email-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.email-subject {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  flex: 1;
+}
+.email-body {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.email-ai-draft {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+.email-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 6px;
+}
+.email-ai-text {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* 小红书界面 */
+.xhs-interface {
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.xhs-post {
+  background: white;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.xhs-post-image {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.xhs-post-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.3));
+}
+.xhs-post-title {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  right: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 1;
+  line-height: 1.3;
+}
+.xhs-post-body {
+  padding: 8px 10px;
+}
+.xhs-post-text {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.xhs-post-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.xhs-post-tag {
+  font-size: 9px;
+  color: #1331ef;
+  background: #f0f2ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.xhs-comment {
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.xhs-comment-content {
+  flex: 1;
+}
+.xhs-comment-user {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.xhs-comment-text {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.xhs-ai-reply {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 4px;
+  font-size: 10.5px;
+  color: var(--orange-deep);
+  line-height: 1.4;
+}
+
+/* SOP跟进界面 */
+.sop-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sop-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sop-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.sop-step-content {
+  flex: 1;
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+}
+.sop-step-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.sop-step-desc {
+  font-size: 10px;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+.sop-step-status {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
+}
+.sop-step-status.done { background: #f0fdf4; color: #16a34a; }
+.sop-step-status.doing { background: #fff7ed; color: #ea580c; }
+.sop-step-status.pending { background: #f5f5f4; color: #78716c; }
+
+/* 内容生成界面 */
+.content-gen-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.content-input {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.content-gen-btn {
+  align-self: flex-start;
+  background: var(--orange);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.content-result {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.content-result-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.content-result-body {
+  padding: 10px 12px;
+}
+.content-result-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.content-result-text {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.content-result-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* 数据复盘界面 */
+.report-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.report-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.report-date {
+  font-size: 10px;
+  color: var(--ink-light);
+}
+.report-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.report-stat {
+  text-align: center;
+  padding: 8px;
+  background: var(--paper);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.report-stat-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.report-stat-label {
+  font-size: 9px;
+  color: var(--ink-light);
+  margin-top: 2px;
+}
+.report-insight {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.report-insight-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 6px;
+}
+.report-insight-text {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
 /* ===== 滚动揭示动画 ===== */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -1581,12 +2065,12 @@ img { max-width: 100%; display: block; }
       <div class="feature-content reveal">
         <div class="feature-num">01</div>
         <h3>官网智能客服</h3>
-        <p>一行代码嵌入你的官网，AI伙计7×24小时自动接待访客。不只是回答常见问题，而是基于你的产品知识库，专业解答客户疑问，识别高意向客户，自动收集线索并引导预约。</p>
+        <p>一行代码嵌入你的官网，AI伙计7×24小时自动接待访客。基于产品知识库专业解答，实时识别高意向客户，自动收集线索并推送至销售工作台，让每一个访客都不流失。</p>
         <ul class="feature-points">
-          <li>基于产品知识库的专业问答，不是通用闲聊</li>
-          <li>自动识别客户意向等级，高意向客户优先推送</li>
-          <li>对话中自动收集客户联系方式，形成线索</li>
-          <li>7×24小时在线，凌晨和节假日也不漏接</li>
+          <li>基于产品知识库的专业问答，支持多轮对话深度沟通</li>
+          <li>AI实时识别客户意向等级，高意向客户自动标记推送</li>
+          <li>对话中智能收集联系方式，自动形成结构化线索</li>
+          <li>7×24小时在线，凌晨和节假日也不漏接任何咨询</li>
         </ul>
         <span class="feature-tag">24小时在线 · 线索自动收集</span>
       </div>
@@ -1601,21 +2085,64 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="12">0</div>
           <div class="ann-sub">较昨日 +28%</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">your-website.com — 在线咨询</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">app.workhogee.com/dashboard</span>
           </div>
-          <div class="mock-body" style="background: #fafaf9;">
-            <div class="chat-area" id="chat-demo-1">
-              <div class="chat-bubble user" style="animation-delay: 0.2s;">你好，请问这个产品怎么收费？</div>
-              <div class="chat-bubble ai" style="animation-delay: 0.8s;">您好！我们提供灵活的定价方案：基础版免费使用，专业版¥299/月，企业版定制报价。请问您是个人使用还是企业团队呢？</div>
-              <div class="chat-bubble user" style="animation-delay: 1.6s;">我们是一家10人的装修公司</div>
-              <div class="chat-bubble ai" style="animation-delay: 2.2s;">装修行业非常适合！我们的专业版支持官网客服、邮箱回复、小红书评论回复全渠道覆盖，10人团队每月仅需¥299。方便留个联系方式吗？我给您发一份详细的行业方案和免费试用邀请～</div>
-              <div class="typing-indicator" style="animation-delay: 3s;" id="typing-1">
-                <span></span><span></span><span></span>
+          <div class="mockup-content">
+            <div class="dashboard-grid">
+              <div class="dash-card">
+                <div class="dash-card-label">今日对话</div>
+                <div class="dash-card-value">156</div>
+                <div class="dash-card-change up">↑ 12.5%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">新增线索</div>
+                <div class="dash-card-value">28</div>
+                <div class="dash-card-change up">↑ 28.0%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">高意向(A级)</div>
+                <div class="dash-card-value">12</div>
+                <div class="dash-card-change up">↑ 8.3%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">已转化</div>
+                <div class="dash-card-value">5</div>
+                <div class="dash-card-change up">↑ 25.0%</div>
+              </div>
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              实时线索看板
+            </div>
+            <div class="lead-list">
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-saas">张</div>
+                <div class="lead-info">
+                  <div class="lead-name">张明 · 科技有限公司</div>
+                  <div class="lead-meta">询问企业版定价 · 来自官网 · 2分钟前</div>
+                </div>
+                <span class="lead-badge hot">A级</span>
+              </div>
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-trade">李</div>
+                <div class="lead-info">
+                  <div class="lead-name">李华 · 跨境电商</div>
+                  <div class="lead-meta">咨询API接入 · 来自官网 · 8分钟前</div>
+                </div>
+                <span class="lead-badge warm">B级</span>
+              </div>
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-beauty">王</div>
+                <div class="lead-info">
+                  <div class="lead-name">王芳 · 美妆品牌</div>
+                  <div class="lead-meta">了解功能演示 · 来自官网 · 15分钟前</div>
+                </div>
+                <span class="lead-badge warm">B级</span>
               </div>
             </div>
           </div>
@@ -1632,12 +2159,12 @@ img { max-width: 100%; display: block; }
       <div class="feature-content reveal">
         <div class="feature-num">02</div>
         <h3>邮箱自动回复</h3>
-        <p>打通企业邮箱，新询盘邮件进来后，AI自动识别客户需求和意向等级，基于你的产品资料和历史话术，生成专业的回复草稿。你只需审核确认，一键发送，再也不怕漏回邮件或回复不及时。</p>
+        <p>打通企业邮箱，新询盘邮件进来后，AI自动识别客户需求和意向等级，基于产品资料和历史话术生成专业回复草稿。支持多语言自动翻译，外贸客户也能秒回，再也不怕漏回邮件或回复不及时。</p>
         <ul class="feature-points">
-          <li>自动识别询盘邮件，区分垃圾邮件和真实客户</li>
-          <li>AI生成专业回复草稿，基于你的产品资料定制</li>
-          <li>审核后一键发送，也可设置低意向邮件自动回复</li>
-          <li>所有邮件往来自动记录，形成客户沟通档案</li>
+          <li>自动识别询盘邮件，智能区分垃圾邮件和真实客户</li>
+          <li>AI生成专业回复草稿，基于产品资料和历史话术定制</li>
+          <li>支持多语言自动翻译，外贸客户也能秒回</li>
+          <li>所有邮件往来自动记录，形成完整客户沟通档案</li>
         </ul>
         <span class="feature-tag">询盘不漏 · 回复效率提升3倍</span>
       </div>
@@ -1652,30 +2179,34 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="5">0</div>
           <div class="ann-sub">分钟，从2小时降到5分钟</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">企业邮箱 — 收件箱</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">mail.workhogee.com/inbox</span>
           </div>
-          <div class="mock-body">
-            <div class="email-list">
-              <div class="email-item unread">
-                <div class="email-avatar">李</div>
-                <div class="email-info">
-                  <div class="email-from">李先生 <span style="color: #dc2626; font-size: 10px; margin-left: 6px;">新询盘</span></div>
-                  <div class="email-subject">询问办公室装修报价和工期</div>
-                  <div class="email-preview">你好，我们公司有一套300平的办公室需要装修，想了解一下报价和大概工期...</div>
+          <div class="mockup-content">
+            <div class="email-interface">
+              <div class="email-header">
+                <div class="avatar-cartoon avatar-trade">J</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 700; color: var(--ink);">John Smith <span style="color: #dc2626; font-size: 9px; margin-left: 6px; background: #fef2f2; padding: 1px 6px; border-radius: 8px;">新询盘</span></div>
+                  <div style="font-size: 10px; color: var(--ink-light);">john.smith@usatrading.com · 美国 · 3分钟前</div>
                 </div>
+                <span class="lead-badge hot">A级</span>
               </div>
-              <div class="email-reply-box" id="email-reply-demo">
-                <div class="email-reply-label">
+              <div class="email-subject">Re: Inquiry about Wholesale LED Lighting Products</div>
+              <div class="email-body">
+                Hi, I'm interested in your LED panel lights. We're a distributor in California, looking for 500 units monthly. Could you send me your catalog, MOQ, and best FOB price? Also, do you offer OEM branding? Thanks.
+              </div>
+              <div class="email-ai-draft">
+                <div class="email-ai-label">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                  AI 已生成回复草稿（点击可编辑）
+                  AI 已生成回复草稿（英文）· 点击可编辑
                 </div>
-                <div class="email-reply-text">
-                  李先生您好！感谢您的咨询。300平办公室装修我们非常有经验，根据您的需求，初步报价在15-25万之间（具体取决于装修档次和材料选择），工期约45-60天。方便的话留个电话，我们安排设计师免费上门量房并出详细方案和报价～
+                <div class="email-ai-text">
+                  Hi John, thanks for your inquiry! We're glad to hear about your interest in our LED panel lights. For 500 units monthly, we can offer FOB Shenzhen price at $12.50/unit (MOQ 200pcs). OEM branding is available with your logo. I've attached our full catalog and spec sheet. Would you be available for a quick call this week to discuss details? Best regards.
                 </div>
               </div>
             </div>
@@ -1693,7 +2224,7 @@ img { max-width: 100%; display: block; }
       <div class="feature-content reveal">
         <div class="feature-num">03</div>
         <h3>社媒评论回复</h3>
-        <p>授权小红书、抖音账号，有人留言或咨询时，AI自动识别评论内容和意向等级，基于你的产品资料生成专业回复。不错过任何一个潜在客户，评论区就是你的获客入口，24小时自动维护账号活跃度。</p>
+        <p>授权小红书、抖音账号，有人留言或咨询时，AI自动识别评论内容和意向等级，基于产品资料生成专业回复。不错过任何一个潜在客户，评论区就是你的获客入口，24小时自动维护账号活跃度。</p>
         <ul class="feature-points">
           <li>自动识别评论中的咨询意向，区分灌水和真实客户</li>
           <li>基于产品资料生成专业回复，不是模板化套话</li>
@@ -1713,40 +2244,48 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="8">0</div>
           <div class="ann-sub">转化率 17%</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">小红书 — 评论管理</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">social.workhogee.com/xiaohongshu</span>
           </div>
-          <div class="mock-body">
-            <div class="social-post">
-              <div class="social-post-header">
-                <div class="social-avatar"></div>
-                <div class="social-username">你的装修账号 · 2小时前</div>
-              </div>
-              <div class="social-post-content">
-                分享一套刚完工的现代简约风办公室装修，300平只用了45天，客户非常满意！有装修需求的朋友可以私信咨询～
-              </div>
-              <div class="social-comments">
-                <div class="comment-item">
-                  <div class="comment-avatar"></div>
-                  <div class="comment-content">
-                    <div class="comment-user">小美同学</div>
-                    <div class="comment-text">请问100平的店铺装修大概多少钱？</div>
-                    <div class="comment-ai-reply" id="comment-reply-demo">
-                      <span class="comment-ai-badge">AI回复</span>
-                      您好！100平店铺装修根据档次不同，报价大概在5-12万之间，工期约25-35天。方便说一下店铺类型和所在城市吗？我给您发一份详细的报价参考～
-                    </div>
+          <div class="mockup-content">
+            <div class="xhs-interface">
+              <div class="xhs-post">
+                <div class="xhs-post-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                  <div class="xhs-post-title">敏感肌换季护肤攻略｜这5个成分一定要避开</div>
+                </div>
+                <div class="xhs-post-body">
+                  <div class="xhs-post-text">换季敏感肌又开始作妖了？整理了5个敏感肌一定要避开的成分，以及3个修护好物推荐，最后附敏感肌护肤步骤～</div>
+                  <div class="xhs-post-tags">
+                    <span class="xhs-post-tag">#敏感肌护肤</span>
+                    <span class="xhs-post-tag">#换季护肤</span>
+                    <span class="xhs-post-tag">#成分党</span>
+                    <span class="xhs-post-tag">#护肤攻略</span>
                   </div>
                 </div>
-                <div class="comment-item">
-                  <div class="comment-avatar"></div>
-                  <div class="comment-content">
-                    <div class="comment-user">装修小白</div>
-                    <div class="comment-text">效果不错，收藏了</div>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin: 10px 0 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                评论管理（AI自动回复）
+              </div>
+              <div class="xhs-comment">
+                <div class="avatar-cartoon avatar-beauty">小</div>
+                <div class="xhs-comment-content">
+                  <div class="xhs-comment-user">小美的护肤日记 <span style="color: #dc2626; font-size: 9px; margin-left: 4px; background: #fef2f2; padding: 1px 5px; border-radius: 6px;">高意向</span></div>
+                  <div class="xhs-comment-text">请问敏感肌可以用烟酰胺吗？你们家的修护精华多少钱？</div>
+                  <div class="xhs-ai-reply">
+                    <span style="font-weight: 700; color: var(--orange);">AI回复：</span>敏感肌可以用低浓度烟酰胺（2-3%），建议先建立耐受～我们的修护精华198元/30ml，含神经酰胺和B5，专门针对敏感肌修护，现在下单还送小样试用装哦！
                   </div>
+                </div>
+              </div>
+              <div class="xhs-comment">
+                <div class="avatar-cartoon avatar-fitness">护</div>
+                <div class="xhs-comment-content">
+                  <div class="xhs-comment-user">护肤小白</div>
+                  <div class="xhs-comment-text">收藏了，正好需要！</div>
                 </div>
               </div>
             </div>
@@ -1764,7 +2303,7 @@ img { max-width: 100%; display: block; }
       <div class="feature-content reveal">
         <div class="feature-num">04</div>
         <h3>线索智能跟进</h3>
-        <p>客户加微或留资后，自动进入SOP跟进流程。AI根据客户意向等级、行为数据和行业特征，个性化推送跟进内容和话术，自动提醒销售跟进时机，把潜在客户一步步培育成成交客户，不再让线索躺在通讯录里发霉。</p>
+        <p>客户留资后自动进入SOP跟进流程。AI根据客户意向等级、行为数据和行业特征，个性化推送跟进内容和话术，自动提醒销售跟进时机，把潜在客户一步步培育成成交客户，不再让线索躺在通讯录里发霉。</p>
         <ul class="feature-points">
           <li>自动按意向等级分级，A/B/C级客户不同跟进策略</li>
           <li>个性化SOP跟进流程，不是群发模板消息</li>
@@ -1784,59 +2323,65 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="40">0</div>
           <div class="ann-sub">%，平均从30天到18天</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">线索管理 — 智能跟进</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">app.workhogee.com/leads/nurture</span>
           </div>
-          <div class="mock-body">
-            <div class="lead-card">
-              <div class="lead-header">
-                <div class="lead-name">王女士 · 二手房改造</div>
-                <span class="lead-grade a">A级</span>
+          <div class="mockup-content">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line);">
+              <div class="avatar-cartoon avatar-edu">李</div>
+              <div style="flex: 1;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink);">李同学 · 雅思备考</div>
+                <div style="font-size: 10px; color: var(--ink-light);">目标7分 · 计划3个月内考试 · 来自官网留资</div>
               </div>
-              <div class="sop-steps" id="sop-demo">
-                <div class="sop-step done">
-                  <span class="step-dot">✓</span>
-                  <span>第1天：发送欢迎消息+产品资料</span>
-                </div>
-                <div class="sop-step done">
-                  <span class="step-dot">✓</span>
-                  <span>第3天：推送案例+客户评价</span>
-                </div>
-                <div class="sop-step current">
-                  <span class="step-dot">3</span>
-                  <span>第5天：电话跟进+邀约到店（AI已生成话术）</span>
-                </div>
-                <div class="sop-step pending">
-                  <span class="step-dot">4</span>
-                  <span>第7天：发送报价方案</span>
-                </div>
-                <div class="sop-step pending">
-                  <span class="step-dot">5</span>
-                  <span>第10天：促单跟进</span>
-                </div>
-              </div>
+              <span class="lead-badge hot">A级</span>
             </div>
-            <div class="lead-card" style="opacity: 0.7;">
-              <div class="lead-header">
-                <div class="lead-name">张先生 · 新房装修</div>
-                <span class="lead-grade b">B级</span>
+            <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              智能SOP跟进流程
+            </div>
+            <div class="sop-interface">
+              <div class="sop-step">
+                <div class="sop-step-num">1</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第1天：发送欢迎消息+备考资料包</div>
+                  <div class="sop-step-desc">AI已自动发送个性化欢迎语和雅思备考资料包，包含词汇表、听力技巧、写作模板</div>
+                  <span class="sop-step-status done">已完成</span>
+                </div>
               </div>
-              <div class="sop-steps">
-                <div class="sop-step done">
-                  <span class="step-dot">✓</span>
-                  <span>第1天：发送欢迎消息</span>
+              <div class="sop-step">
+                <div class="sop-step-num">2</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第3天：推送学员案例+课程介绍</div>
+                  <div class="sop-step-desc">根据客户目标分数，推送相似基础学员的提分案例和对应课程介绍</div>
+                  <span class="sop-step-status done">已完成</span>
                 </div>
-                <div class="sop-step current">
-                  <span class="step-dot">2</span>
-                  <span>第3天：推送装修风格参考</span>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">3</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第5天：电话跟进+邀约试听（AI已生成话术）</div>
+                  <div class="sop-step-desc">检测到客户打开了课程介绍邮件，AI自动生成个性化电话话术，建议今天下午跟进</div>
+                  <span class="sop-step-status doing">进行中</span>
                 </div>
-                <div class="sop-step pending">
-                  <span class="step-dot">3</span>
-                  <span>第7天：电话跟进</span>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">4</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第7天：发送试听课程链接+优惠方案</div>
+                  <div class="sop-step-desc">根据电话沟通结果，自动发送对应级别的试听课程链接和限时优惠方案</div>
+                  <span class="sop-step-status pending">待执行</span>
+                </div>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">5</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第10天：促单跟进+报名引导</div>
+                  <div class="sop-step-desc">试听后根据反馈，AI生成促单话术，引导客户完成报名缴费</div>
+                  <span class="sop-step-status pending">待执行</span>
                 </div>
               </div>
             </div>
@@ -1874,62 +2419,46 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="8">0</div>
           <div class="ann-sub">%，高于行业平均3%</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">内容工坊 — 小红书笔记生成</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">content.workhogee.com/generate</span>
           </div>
-          <div class="mock-body">
-            <div class="gen-input-area">
-              <div class="gen-input-label">输入需求</div>
-              <div class="gen-input-text">写一篇关于办公室装修避坑的小红书笔记，目标客户是中小企业主，突出我们公司的专业度和性价比</div>
-            </div>
-            <button class="gen-btn" id="gen-btn-demo">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-              AI 生成笔记
-            </button>
-            <div class="gen-result" id="gen-result-demo">
-              <div class="xhs-card">
-                <div class="xhs-card-header">
-                  <div class="xhs-logo">小红书</div>
-                  <div class="xhs-app-name">小红书 · 笔记预览</div>
+          <div class="mockup-content">
+            <div class="content-gen-interface">
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                输入需求
+              </div>
+              <div class="content-input">
+                写一篇关于新手健身入门的小红书笔记，目标客户是25-35岁上班族女性，突出我们健身房的专业私教和小班课优势，风格要亲切实用
+              </div>
+              <button class="content-gen-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
+                AI 生成笔记
+              </button>
+              <div class="content-result">
+                <div class="content-result-header">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff2442" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M8 10h8M8 14h5"/></svg>
+                  小红书 · 笔记预览
                 </div>
-                <div class="xhs-card-body">
-                  <div class="xhs-cover">
-                    <div class="xhs-cover-text">办公室装修避坑指南<br>老板必看的5个关键点</div>
+                <div class="content-result-body">
+                  <div class="xhs-post-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); height: 100px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <div style="color: white; font-size: 14px; font-weight: 800; text-align: center; line-height: 1.4; z-index: 1;">新手健身入门<br>上班族女生必看</div>
+                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 2px 8px; border-radius: 10px; color: white; font-size: 9px; font-weight: 700;">健身干货</div>
                   </div>
-                  <div class="xhs-title">办公室装修避坑指南｜老板必看的5个关键点，看完省10万！</div>
-                  <div class="xhs-content">
-                    作为一家装过100+办公室的装修公司，今天给各位老板分享办公室装修最容易踩的5个坑，看完至少省10万！1️⃣ 水电改造不规范，后期返工成本翻倍 2️⃣ 隔音没做好，会议室变广播室 3️⃣ 灯光设计随便搞，员工天天眼疲劳 4️⃣ 收纳空间不够，办公室越住越乱 5️⃣ 找游击队装修，售后找不到人...
+                  <div class="content-result-title">新手健身入门｜上班族女生必看的5个关键点，少走半年弯路！</div>
+                  <div class="content-result-text">
+                    作为一名带过500+学员的健身教练，今天给各位上班族姐妹分享新手健身最容易踩的5个坑，看完至少少走半年弯路！1️⃣ 一上来就猛练，第二天全身酸痛放弃 2️⃣ 只做有氧不练力量，越减越松垮 3️⃣ 饮食不控制，练完一顿火锅白练 4️⃣ 动作不标准，练了半天没效果还受伤 5️⃣ 一个人瞎练，没有计划没有反馈...
                   </div>
-                  <div class="xhs-tags">
-                    <span class="xhs-tag">#办公室装修</span>
-                    <span class="xhs-tag">#装修避坑</span>
-                    <span class="xhs-tag">#中小企业</span>
-                    <span class="xhs-tag">#装修干货</span>
-                    <span class="xhs-tag">#办公室设计</span>
-                  </div>
-                  <div class="xhs-footer">
-                    <div class="xhs-author">
-                      <div class="xhs-avatar">装</div>
-                      <div class="xhs-author-name">装修老司机</div>
-                    </div>
-                    <div class="xhs-actions">
-                      <div class="xhs-action">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        2.3k
-                      </div>
-                      <div class="xhs-action">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        856
-                      </div>
-                      <div class="xhs-action">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        342
-                      </div>
-                    </div>
+                  <div class="content-result-tags">
+                    <span class="xhs-post-tag">#新手健身</span>
+                    <span class="xhs-post-tag">#健身入门</span>
+                    <span class="xhs-post-tag">#上班族健身</span>
+                    <span class="xhs-post-tag">#女生健身</span>
+                    <span class="xhs-post-tag">#健身干货</span>
                   </div>
                 </div>
               </div>
@@ -1968,59 +2497,62 @@ img { max-width: 100%; display: block; }
           <div class="ann-value" data-count="99">0</div>
           <div class="ann-sub">%，自动统计无遗漏</div>
         </div>
-        <div class="mock-window">
-          <div class="mock-header">
-            <span class="mock-dot red"></span>
-            <span class="mock-dot yellow"></span>
-            <span class="mock-dot green"></span>
-            <span class="mock-title">获客日报 — 2026年9月14日</span>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">report.workhogee.com/daily</span>
           </div>
-          <div class="mock-body">
-            <div class="report-header">
-              <div class="report-title">每日获客日报</div>
-              <div class="report-date">2026.09.14 周一</div>
-            </div>
-            <div class="report-stats">
-              <div class="report-stat">
-                <div class="stat-num" data-count="156">0</div>
-                <div class="stat-label">总对话</div>
+          <div class="mockup-content">
+            <div class="report-interface">
+              <div class="report-header">
+                <div class="report-title">每日获客日报</div>
+                <div class="report-date">2026.09.14 周一</div>
               </div>
-              <div class="report-stat">
-                <div class="stat-num" data-count="28">0</div>
-                <div class="stat-label">新增线索</div>
+              <div class="report-stats-row">
+                <div class="report-stat">
+                  <div class="report-stat-num">156</div>
+                  <div class="report-stat-label">总对话</div>
+                </div>
+                <div class="report-stat">
+                  <div class="report-stat-num">28</div>
+                  <div class="report-stat-label">新增线索</div>
+                </div>
+                <div class="report-stat">
+                  <div class="report-stat-num">5</div>
+                  <div class="report-stat-label">成交</div>
+                </div>
               </div>
-              <div class="report-stat">
-                <div class="stat-num" data-count="3">0</div>
-                <div class="stat-label">成交</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                近7天线索趋势
               </div>
-            </div>
-            <div class="report-section">
-              <div class="report-section-title">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                今日新增A级线索
+              <div class="mini-chart">
+                <div class="mini-bar" style="height: 40%;"></div>
+                <div class="mini-bar" style="height: 55%;"></div>
+                <div class="mini-bar" style="height: 45%;"></div>
+                <div class="mini-bar" style="height: 70%;"></div>
+                <div class="mini-bar" style="height: 60%;"></div>
+                <div class="mini-bar" style="height: 85%;"></div>
+                <div class="mini-bar" style="height: 100%; background: linear-gradient(180deg, var(--orange), var(--orange-deep));"></div>
               </div>
-              <div class="report-item">王女士 · 二手房改造 · 官网渠道 · 已分配给李销售</div>
-              <div class="report-item">刘总 · 500平办公室 · 邮箱询盘 · 已发送报价方案</div>
-            </div>
-            <div class="report-section">
-              <div class="report-section-title">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                待跟进提醒（5条超期）
+              <div class="report-insight" style="margin-top: 12px;">
+                <div class="report-insight-label">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+                  AI 洞察建议
+                </div>
+                <div class="report-insight-text">
+                  本周小红书渠道线索量环比增长42%，建议增加内容发布频率；官网渠道转化率下降15%，可能与落地页加载速度有关，建议检查优化；A级线索跟进及时率92%，继续保持。
+                </div>
               </div>
-              <div class="report-item">张先生 · 新房装修 · 超期2天未跟进</div>
-              <div class="report-item">陈女士 · 店铺装修 · 超期1天未跟进</div>
-            </div>
-            <div class="ai-insight">
-              <div class="ai-insight-title">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
-                AI 洞察建议
-              </div>
-              <div class="ai-insight-text">本周小红书渠道线索量环比增长42%，建议增加小红书内容发布频率；官网渠道转化率下降15%，可能与落地页加载速度有关，建议检查优化。</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
   </div>
 </section>
 
