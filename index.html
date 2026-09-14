@@ -3999,14 +3999,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 })();
 </script>
 
-<!-- WorkHogee AI 获客伙计 - 对话浮窗组件（内测版） -->
+<!-- WorkHogee AI 获客伙计 - 对话浮窗组件 -->
 <script src="widget.js"></script>
 <script>
-  // 初始化对话浮窗
-  // 本地测试用 localhost:3000，部署到公网后需修改为实际后端地址
+  // 自动检测 API 地址
+  // - 本地开发: http://localhost:3000
+  // - 生产环境: https://api.workhogee.com
+  function getApiUrl() {
+    var hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '') {
+      return 'http://localhost:3000';
+    }
+    // 生产环境使用 api.workhogee.com
+    return 'https://api.workhogee.com';
+  }
+
   if (typeof WorkHogeeWidget !== 'undefined') {
     WorkHogeeWidget.init({
-      apiUrl: 'http://localhost:3000',
+      apiUrl: getApiUrl(),
       position: 'bottom-right',
       primaryColor: '#ea580c',
       secondaryColor: '#1c1917',
