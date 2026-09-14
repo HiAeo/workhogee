@@ -267,6 +267,195 @@ img { max-width: 100%; display: block; }
 .feature-card h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 8px; line-height: 1.35; }
 .feature-card > p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
 
+/* ===== 核心能力深度展开板块 ===== */
+.cap-section { padding: 90px 0; position: relative; }
+.cap-section.alt { background: var(--white); }
+.cap-section.overseas { background: linear-gradient(135deg, #1c1917 0%, #292524 100%); color: var(--paper); }
+.cap-row {
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: center;
+}
+.cap-row.reverse { grid-template-columns: 1.1fr 1fr; }
+.cap-row.reverse .cap-text { order: 2; }
+.cap-row.reverse .cap-visual { order: 1; }
+.cap-text { position: relative; z-index: 1; }
+.cap-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  color: var(--white); font-size: 18px; font-weight: 800;
+  margin-bottom: 20px; box-shadow: 0 4px 14px rgba(234,88,12,0.3);
+}
+.cap-section.overseas .cap-num { background: linear-gradient(135deg, var(--orange-light), var(--orange)); }
+.cap-title { font-size: 30px; font-weight: 800; line-height: 1.25; margin-bottom: 16px; letter-spacing: -0.01em; }
+.cap-title .o { color: var(--orange); }
+.cap-section.overseas .cap-title .o { color: var(--orange-light); }
+.cap-desc { font-size: 16px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 24px; }
+.cap-section.overseas .cap-desc { color: #a9a196; }
+.cap-features { list-style: none; margin-bottom: 28px; }
+.cap-features li {
+  font-size: 14.5px; color: var(--ink); padding: 8px 0 8px 28px; position: relative;
+  line-height: 1.6; font-weight: 500;
+}
+.cap-section.overseas .cap-features li { color: var(--paper); }
+.cap-features li::before {
+  content: ''; position: absolute; left: 0; top: 15px; width: 18px; height: 18px;
+  background: var(--orange); border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size: 12px; background-repeat: no-repeat; background-position: center;
+}
+.cap-metrics { display: flex; gap: 32px; flex-wrap: wrap; }
+.cap-metric { text-align: left; }
+.cap-metric .num { font-size: 32px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 4px; }
+.cap-section.overseas .cap-metric .num { color: var(--orange-light); }
+.cap-metric .label { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
+.cap-section.overseas .cap-metric .label { color: #78716c; }
+
+/* 模拟界面窗口 */
+.cap-visual { position: relative; }
+.mock-window {
+  background: var(--white); border-radius: 16px; box-shadow: 0 20px 60px rgba(28,25,23,0.15);
+  overflow: hidden; border: 1px solid var(--line);
+  transition: transform 0.4s cubic-bezier(.22,.61,.36,1), box-shadow 0.4s;
+}
+.cap-visual:hover .mock-window { transform: translateY(-6px) scale(1.01); box-shadow: 0 30px 80px rgba(28,25,23,0.2); }
+.mock-header {
+  background: #f5f0e8; padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.mock-dot { width: 12px; height: 12px; border-radius: 50%; }
+.mock-dot.r { background: #ef4444; }
+.mock-dot.y { background: #eab308; }
+.mock-dot.g { background: #22c55e; }
+.mock-title { font-size: 12px; color: var(--ink-muted); margin-left: 8px; font-weight: 500; }
+.mock-body { padding: 20px; }
+.mock-annotation {
+  position: absolute; background: var(--ink); color: var(--paper); padding: 6px 12px;
+  border-radius: 8px; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(28,25,23,0.2); z-index: 2;
+  opacity: 0; transform: translateY(6px); transition: all 0.4s 0.15s;
+}
+.cap-visual:hover .mock-annotation { opacity: 1; transform: translateY(0); }
+.mock-annotation::after {
+  content: ''; position: absolute; width: 0; height: 0;
+  border: 5px solid transparent;
+}
+.mock-annotation.left::after { right: -10px; top: 50%; transform: translateY(-50%); border-left-color: var(--ink); }
+.mock-annotation.right::after { left: -10px; top: 50%; transform: translateY(-50%); border-right-color: var(--ink); }
+.mock-annotation.top::after { bottom: -10px; left: 50%; transform: translateX(-50%); border-top-color: var(--ink); }
+
+/* 监测仪表盘模拟 */
+.monitor-engines { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.engine-badge {
+  padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+.engine-badge .status { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.monitor-chart { height: 120px; position: relative; margin-bottom: 14px; }
+.monitor-bars { display: flex; align-items: flex-end; gap: 6px; height: 100%; }
+.monitor-bar {
+  flex: 1; background: linear-gradient(180deg, var(--orange) 0%, var(--orange-light) 100%);
+  border-radius: 4px 4px 0 0; transition: height 0.6s ease;
+}
+.monitor-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.monitor-stat { background: var(--paper); padding: 10px; border-radius: 8px; text-align: center; }
+.monitor-stat .v { font-size: 18px; font-weight: 800; color: var(--ink); }
+.monitor-stat .l { font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; }
+
+/* 内容生成器模拟 */
+.gen-toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.gen-tab {
+  padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  background: var(--paper); color: var(--ink-soft); border: 1px solid var(--line);
+  cursor: pointer; transition: all 0.2s;
+}
+.gen-tab.active { background: var(--orange); color: var(--white); border-color: var(--orange); }
+.gen-input {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 12px;
+  min-height: 44px;
+}
+.gen-output {
+  background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 14px;
+  font-size: 12.5px; line-height: 1.7; color: var(--ink);
+}
+.gen-output .title { font-weight: 700; color: var(--orange-deep); margin-bottom: 6px; font-size: 13px; }
+.gen-score {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  background: var(--green); color: white; padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 700;
+}
+
+/* 落地页模拟 */
+.landing-preview {
+  background: linear-gradient(135deg, #1c1917 0%, #292524 100%); border-radius: 12px;
+  padding: 24px; text-align: center; color: var(--paper); margin-bottom: 12px;
+}
+.landing-preview h4 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.landing-preview p { font-size: 12px; color: #a9a196; margin-bottom: 14px; }
+.landing-btn {
+  display: inline-block; background: var(--orange); color: white; padding: 8px 24px;
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+}
+.ab-toggle { display: flex; gap: 8px; align-items: center; }
+.ab-version {
+  padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  background: var(--paper); border: 1px solid var(--line); color: var(--ink-soft);
+}
+.ab-version.win { background: var(--orange); color: white; border-color: var(--orange); }
+.ab-rate { font-size: 11px; color: var(--ink-muted); margin-left: auto; }
+
+/* 伙计承接模拟 */
+.chat-window { background: var(--paper); border-radius: 12px; padding: 14px; min-height: 180px; }
+.chat-msg { margin-bottom: 10px; display: flex; gap: 8px; }
+.chat-msg.bot { justify-content: flex-start; }
+.chat-msg.user { justify-content: flex-end; }
+.chat-bubble {
+  max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 12px; line-height: 1.6;
+}
+.chat-msg.bot .chat-bubble { background: var(--white); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.chat-msg.user .chat-bubble { background: var(--orange); color: white; border-bottom-right-radius: 4px; }
+.chat-avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 800;
+  flex-shrink: 0;
+}
+.chat-status { font-size: 10.5px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.chat-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+/* 周报模拟 */
+.report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.report-title { font-size: 14px; font-weight: 800; color: var(--ink); }
+.report-date { font-size: 11px; color: var(--ink-muted); }
+.report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+.report-card { background: var(--paper); padding: 12px; border-radius: 10px; border-left: 3px solid var(--orange); }
+.report-card .v { font-size: 20px; font-weight: 800; color: var(--ink); }
+.report-card .v.up { color: var(--green); }
+.report-card .l { font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; }
+.report-chart { height: 60px; display: flex; align-items: flex-end; gap: 4px; }
+.report-line { flex: 1; background: linear-gradient(180deg, var(--orange-light), var(--orange)); border-radius: 2px; }
+
+/* 海外版专门板块 */
+.overseas-engines { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.overseas-engine {
+  padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  color: var(--paper); display: flex; align-items: center; gap: 8px;
+  transition: all 0.3s;
+}
+.overseas-engine:hover { background: rgba(234,88,12,0.2); border-color: var(--orange); transform: translateY(-2px); }
+.overseas-engine .flag { font-size: 16px; }
+.overseas-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+.overseas-col { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 18px; }
+.overseas-col h5 { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--paper); }
+.overseas-col h5.domestic { color: #a9a196; }
+.overseas-col h5.workhogee { color: var(--orange-light); }
+.overseas-col ul { list-style: none; }
+.overseas-col li { font-size: 12px; color: #a9a196; padding: 4px 0; padding-left: 16px; position: relative; }
+.overseas-col li::before { content: '·'; position: absolute; left: 0; color: #78716c; }
+.overseas-col.workhogee-col li { color: var(--paper); }
+.overseas-col.workhogee-col li::before { color: var(--orange-light); content: '✓'; font-weight: 700; }
+
 /* ===== 表格通用 ===== */
 .table-wrap { overflow-x:auto; border-radius: var(--radius-lg); border: 1px solid var(--line); box-shadow: var(--shadow-sm); background: var(--white); }
 table.cmp { border-collapse: collapse; width: 100%; min-width: 620px; }
@@ -413,13 +602,31 @@ table.cmp .dim { color: var(--ink-muted); }
   .aud-grid { grid-template-columns: 1fr; }
   .case-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  .cap-row { grid-template-columns: 1fr; gap: 40px; }
+  .cap-row.reverse .cap-text { order: 1; }
+  .cap-row.reverse .cap-visual { order: 2; }
+  .cap-title { font-size: 24px; }
+  .cap-desc { font-size: 15px; }
+  .mock-annotation { display: none; }
+  .overseas-compare { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .hero { padding: 110px 0 60px; }
   .section { padding: 70px 0; }
+  .cap-section { padding: 60px 0; }
   .feature-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .hero-float-card { display: none; }
+  .cap-num { width: 38px; height: 38px; font-size: 16px; }
+  .cap-title { font-size: 22px; }
+  .cap-metrics { gap: 20px; }
+  .cap-metric .num { font-size: 26px; }
+  .monitor-engines { gap: 6px; }
+  .engine-badge { font-size: 10px; padding: 4px 8px; }
+  .gen-toolbar { gap: 6px; }
+  .gen-tab { font-size: 11px; padding: 5px 10px; }
+  .overseas-engines { gap: 8px; }
+  .overseas-engine { font-size: 11px; padding: 8px 12px; }
 }
 </style>
 </head>
@@ -444,7 +651,7 @@ table.cmp .dim { color: var(--ink-muted); }
     </a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html">首页</a>
-      <a href="#features">功能</a>
+      <a href="#feature-monitor">功能</a>
       <!-- 当前页：GEO专版（高亮，不跳转） -->
       <a href="#" class="active" onclick="return false;">
         <svg class="nav-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -477,7 +684,7 @@ table.cmp .dim { color: var(--ink-muted); }
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             立即开启GEO获客
           </a>
-          <a href="#features" class="btn-secondary">
+          <a href="#feature-monitor" class="btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             查看功能演示
           </a>
@@ -592,49 +799,326 @@ table.cmp .dim { color: var(--ink-muted); }
   </div>
 </section>
 
-<!-- ===== 3. 核心能力区 ===== -->
-<section class="section" id="features" style="background:var(--white);">
+<!-- ===== 3. 核心能力深度展开 ===== -->
+
+<!-- 能力01：多引擎GEO监测 -->
+<section class="cap-section" id="feature-monitor">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">核心能力</span>
-      <h2>GEO获客闭环，五大核心能力</h2>
-      <p>从被AI看见，到被AI推荐，再到把流量变成客户——一站式打通。</p>
+    <div class="cap-row">
+      <div class="cap-text reveal">
+        <div class="cap-num">01</div>
+        <h2 class="cap-title">多引擎<span class="o">GEO监测</span><br>AI搜索时代的品牌雷达</h2>
+        <p class="cap-desc">当用户越来越多地向AI提问而非搜索关键词，你的品牌是否被AI看见、被如何描述、排在第几位，直接决定了获客入口的生死。WorkHogee同时监测国内外主流AI搜索引擎，7×24小时追踪品牌提及、排名变化和舆论情感。</p>
+        <ul class="cap-features">
+          <li>覆盖百度AI搜索、豆包、腾讯元宝、360智脑、Perplexity、ChatGPT等6+引擎</li>
+          <li>品牌词、行业词、竞品词三类关键词分组监测，排名变化实时预警</li>
+          <li>AI回答内容自动抓取，正面/负面/中性情感分析，负面提及即时告警</li>
+          <li>历史趋势数据留存，品牌AI搜索可见度月度对比，优化效果可量化</li>
+        </ul>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">6+</div><div class="label">AI搜索引擎覆盖</div></div>
+          <div class="cap-metric"><div class="num">24h</div><div class="label">全自动监测</div></div>
+          <div class="cap-metric"><div class="num">≤5min</div><div class="label">负面提及告警</div></div>
+        </div>
+      </div>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="mock-window">
+          <div class="mock-header">
+            <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+            <span class="mock-title">WorkHogee GEO监测仪表盘</span>
+          </div>
+          <div class="mock-body">
+            <div class="monitor-engines">
+              <span class="engine-badge" style="background:#e0f2fe;color:#0369a1;"><span class="status"></span>百度AI</span>
+              <span class="engine-badge" style="background:#fef3c7;color:#92400e;"><span class="status"></span>豆包</span>
+              <span class="engine-badge" style="background:#dcfce7;color:#166534;"><span class="status"></span>元宝</span>
+              <span class="engine-badge" style="background:#fce7f3;color:#9d174d;"><span class="status"></span>360</span>
+              <span class="engine-badge" style="background:#ede9fe;color:#5b21b6;"><span class="status"></span>Perplexity</span>
+              <span class="engine-badge" style="background:#f1f5f9;color:#334155;"><span class="status"></span>ChatGPT</span>
+            </div>
+            <div class="monitor-chart">
+              <div class="monitor-bars">
+                <div class="monitor-bar" style="height:45%"></div>
+                <div class="monitor-bar" style="height:62%"></div>
+                <div class="monitor-bar" style="height:55%"></div>
+                <div class="monitor-bar" style="height:78%"></div>
+                <div class="monitor-bar" style="height:70%"></div>
+                <div class="monitor-bar" style="height:88%"></div>
+                <div class="monitor-bar" style="height:82%"></div>
+                <div class="monitor-bar" style="height:95%"></div>
+              </div>
+            </div>
+            <div class="monitor-stats">
+              <div class="monitor-stat"><div class="v" style="color:var(--green)">+23%</div><div class="l">提及量周环比</div></div>
+              <div class="monitor-stat"><div class="v">#2</div><div class="l">行业词平均排名</div></div>
+              <div class="monitor-stat"><div class="v" style="color:var(--green)">94%</div><div class="l">正面提及占比</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-annotation left" style="top:30%;left:-140px;">6大引擎同时在线监测</div>
+        <div class="mock-annotation right" style="bottom:25%;right:-120px;">排名趋势可视化</div>
+      </div>
     </div>
-    <div class="feature-grid">
-      <div class="feature-card reveal">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+  </div>
+</section>
+
+<!-- 能力02：AI友好内容生成 -->
+<section class="cap-section alt" id="feature-content">
+  <div class="container">
+    <div class="cap-row reverse">
+      <div class="cap-text reveal">
+        <div class="cap-num">02</div>
+        <h2 class="cap-title">AI友好<span class="o">内容生成器</span><br>让AI愿意引用你的内容</h2>
+        <p class="cap-desc">传统SEO内容是写给搜索引擎爬虫看的，GEO内容是写给AI大模型看的。AI在回答用户问题时，更倾向于引用结构清晰、事实准确、实体关联丰富的内容。WorkHogee基于DeepSeek Harness，批量生成符合E-E-A-T原则的AI搜索友好内容。</p>
+        <ul class="cap-features">
+          <li>支持文章、问答、产品描述、FAQ、品牌简介等5+内容类型一键生成</li>
+          <li>内置E-E-A-T评分体系，生成内容自动评估AI友好度并给出优化建议</li>
+          <li>结构化数据自动嵌入（Schema.org标记），提升AI抓取和引用概率</li>
+          <li>实体关联网络构建，自动关联行业概念、竞品对比、使用场景</li>
+          <li>多语言内容生成，一次输入同步输出中英日韩等多语种版本</li>
+        </ul>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">5+</div><div class="label">内容类型</div></div>
+          <div class="cap-metric"><div class="num">3x</div><div class="label">内容生产效率</div></div>
+          <div class="cap-metric"><div class="num">8+</div><div class="label">多语言支持</div></div>
         </div>
-        <h3>多引擎GEO监测</h3>
-        <p>百度/豆包/元宝/360/Perplexity/ChatGPT 全平台品牌提及与排名监测。</p>
       </div>
-      <div class="feature-card reveal reveal-d1">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="mock-window">
+          <div class="mock-header">
+            <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+            <span class="mock-title">GEO内容生成器 — DeepSeek Harness驱动</span>
+          </div>
+          <div class="mock-body">
+            <div class="gen-toolbar">
+              <span class="gen-tab active">行业文章</span>
+              <span class="gen-tab">问答FAQ</span>
+              <span class="gen-tab">产品描述</span>
+              <span class="gen-tab">品牌简介</span>
+            </div>
+            <div class="gen-input">输入主题：2026年中小企业AI获客趋势分析，目标受众：年营收500-5000万企业主，字数：1500字</div>
+            <div class="gen-output">
+              <div class="title">2026年中小企业AI获客趋势：从工具到智能体的跃迁</div>
+              随着大模型技术的成熟，中小企业的获客方式正在发生根本性变化。传统的"买流量→等咨询"模式正在被"AI主动找客户→智能体自动跟进"的新模式取代……<br><br>
+              <strong>核心趋势一：AI搜索成为新入口</strong> — 超过60%的用户开始使用AI搜索引擎获取购买决策信息，GEO（生成式引擎优化）正在取代传统SEO……
+              <div class="gen-score">✓ E-E-A-T评分：92/100 优秀</div>
+            </div>
+          </div>
         </div>
-        <h3>AI友好内容生成</h3>
-        <p>基于 DeepSeek Harness，批量生成符合 E-E-A-T 原则的AI搜索友好内容。</p>
+        <div class="mock-annotation left" style="top:20%;left:-130px;">5种内容类型切换</div>
+        <div class="mock-annotation right" style="bottom:20%;right:-110px;">E-E-A-T智能评分</div>
       </div>
-      <div class="feature-card reveal reveal-d2">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 能力03：归因落地页 -->
+<section class="cap-section" id="feature-landing">
+  <div class="container">
+    <div class="cap-row">
+      <div class="cap-text reveal">
+        <div class="cap-num">03</div>
+        <h2 class="cap-title">GEO专属<span class="o">归因落地页</span><br>把AI流量变成真实线索</h2>
+        <p class="cap-desc">GEO带来的流量和搜索广告流量有本质区别：用户是被AI"推荐"过来的，带着更高的信任度但也更模糊的需求。普通落地页无法承接这类流量。WorkHogee为GEO流量定制高转化落地页，独立归因，A/B测试持续优化，让每一个从AI搜索来的访客都留下线索。</p>
+        <ul class="cap-features">
+          <li>GEO专属落地页模板，针对AI推荐流量的心理特征设计转化路径</li>
+          <li>URL参数自动识别流量来源（哪个AI引擎、哪个关键词、哪条回答）</li>
+          <li>内置A/B测试引擎，标题、文案、表单、CTA多变量测试自动选优</li>
+          <li>落地页与AI获客伙计无缝打通，访客进入即触发智能承接对话</li>
+          <li>转化数据实时回传，形成"AI推荐→落地页→留资→成交"完整归因链</li>
+        </ul>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">3.2x</div><div class="label">GEO流量转化率</div></div>
+          <div class="cap-metric"><div class="num">A/B</div><div class="label">多变量测试</div></div>
+          <div class="cap-metric"><div class="num">100%</div><div class="label">来源可归因</div></div>
         </div>
-        <h3>归因落地页</h3>
-        <p>为GEO流量定制的高转化落地页，独立归因，支持 A/B 测试持续优化。</p>
       </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="mock-window">
+          <div class="mock-header">
+            <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+            <span class="mock-title">GEO落地页编辑器 — A/B测试中</span>
+          </div>
+          <div class="mock-body">
+            <div class="landing-preview">
+              <h4>AI时代的获客新方式</h4>
+              <p>让AI搜索成为你的免费获客渠道，WorkHogee帮你被AI看见、被AI推荐</p>
+              <span class="landing-btn">免费获取GEO诊断报告</span>
+            </div>
+            <div class="ab-toggle">
+              <span class="ab-version">版本A</span>
+              <span class="ab-version win">版本B ✓</span>
+              <span class="ab-rate">B版转化率高 47%</span>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:10.5px;background:#f0fdf4;color:#166534;padding:4px 8px;border-radius:6px;font-weight:600;">来源：豆包</span>
+              <span style="font-size:10.5px;background:#f0fdf4;color:#166534;padding:4px 8px;border-radius:6px;font-weight:600;">关键词：AI获客工具</span>
+              <span style="font-size:10.5px;background:#fef3c7;color:#92400e;padding:4px 8px;border-radius:6px;font-weight:600;">停留：2分18秒</span>
+            </div>
+          </div>
         </div>
-        <h3>伙计承接转化</h3>
-        <p>GEO流量进入后，由AI获客伙计 7×24 小时承接、答疑、促单。</p>
+        <div class="mock-annotation left" style="top:25%;left:-120px;">GEO专属高转化模板</div>
+        <div class="mock-annotation right" style="bottom:30%;right:-100px;">A/B自动选优</div>
       </div>
-      <div class="feature-card reveal reveal-d1">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 能力04：伙计承接转化 -->
+<section class="cap-section alt" id="feature-capture">
+  <div class="container">
+    <div class="cap-row reverse">
+      <div class="cap-text reveal">
+        <div class="cap-num">04</div>
+        <h2 class="cap-title">伙计<span class="o">承接转化</span><br>GEO流量的最后一公里</h2>
+        <p class="cap-desc">这是WorkHogee与所有纯GEO工具的本质区别。别人只帮你"被AI看见"，WorkHogee还帮你"把看见变成客户"。GEO流量进入落地页的瞬间，AI获客伙计立即启动7×24小时智能承接——答疑、筛选、促单、留资，不让任何一个潜在客户溜走。</p>
+        <ul class="cap-features">
+          <li>GEO流量进入即触发智能对话，根据AI推荐来源定制开场话术</li>
+          <li>7×24小时无人值守承接，支持多轮对话、意图识别、需求挖掘</li>
+          <li>自动资格筛选（预算、决策周期、匹配度），高意向线索实时推送销售</li>
+          <li>对话数据自动沉淀客户画像，反哺GEO内容优化和落地页迭代</li>
+          <li>成交结果结构化回传广告平台，形成"GEO→承接→成交→优化"数据飞轮</li>
+        </ul>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">7×24</div><div class="label">无人值守承接</div></div>
+          <div class="cap-metric"><div class="num">3.5x</div><div class="label">线索转化率提升</div></div>
+          <div class="cap-metric"><div class="num">0</div><div class="label">潜在客户流失</div></div>
         </div>
-        <h3>自动周报</h3>
-        <p>GEO效果 + 获客转化数据自动汇总，一键推送到微信/邮箱，老板一眼看懂。</p>
+      </div>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="mock-window">
+          <div class="mock-header">
+            <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+            <span class="mock-title">AI获客伙计 — 正在承接GEO流量</span>
+          </div>
+          <div class="mock-body">
+            <div class="chat-window">
+              <div class="chat-msg bot">
+                <div class="chat-avatar">W</div>
+                <div class="chat-bubble">您好！我是WorkHogee AI获客伙计，看到您从豆包搜索"AI获客工具"过来，想了解一下您目前的获客方式主要是哪些渠道呢？</div>
+              </div>
+              <div class="chat-msg user">
+                <div class="chat-bubble">主要是百度竞价和抖音，成本越来越高了</div>
+              </div>
+              <div class="chat-msg bot">
+                <div class="chat-avatar">W</div>
+                <div class="chat-bubble">理解！竞价成本逐年上涨是行业普遍痛点。我们很多客户在保留竞价的同时，用GEO布局AI搜索免费流量，平均能降低30%的获客成本。方便问一下您公司的年营收规模和行业吗？我帮您做个免费的GEO诊断。</div>
+              </div>
+              <div class="chat-status"><span class="dot"></span> 已识别高意向线索，推送销售跟进</div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-annotation left" style="top:20%;left:-130px;">根据来源定制话术</div>
+        <div class="mock-annotation right" style="bottom:15%;right:-110px;">高意向自动推送</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 能力05：自动周报 -->
+<section class="cap-section" id="feature-report">
+  <div class="container">
+    <div class="cap-row">
+      <div class="cap-text reveal">
+        <div class="cap-num">05</div>
+        <h2 class="cap-title">GEO效果<span class="o">自动周报</span><br>老板一眼看懂的获客账单</h2>
+        <p class="cap-desc">GEO效果不能只看"被AI提及了多少次"，更要看"带来了多少线索、多少成交、ROI是多少"。WorkHogee自动汇总GEO监测数据+落地页转化数据+伙计承接数据+成交回传数据，一键生成老板看得懂的周报，自动推送到微信/邮箱。</p>
+        <ul class="cap-features">
+          <li>自动汇总6大引擎提及量、排名变化、情感分布，趋势一目了然</li>
+          <li>GEO流量→落地页访问→留资→成交的完整转化漏斗，每一环转化率清晰</li>
+          <li>与竞价/信息流等付费渠道ROI对比，GEO的降本增效效果可量化</li>
+          <li>周报自动生成HTML/PDF，一键推送到企业微信/个人微信/邮箱</li>
+          <li>异常数据自动预警（排名暴跌、负面提及激增、转化率异常下降）</li>
+        </ul>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">1键</div><div class="label">自动生成推送</div></div>
+          <div class="cap-metric"><div class="num">4层</div><div class="label">转化漏斗归因</div></div>
+          <div class="cap-metric"><div class="num">实时</div><div class="label">异常数据预警</div></div>
+        </div>
+      </div>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="mock-window">
+          <div class="mock-header">
+            <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+            <span class="mock-title">GEO效果周报 — 2026年第37周</span>
+          </div>
+          <div class="mock-body">
+            <div class="report-header">
+              <span class="report-title">本周GEO获客效果总览</span>
+              <span class="report-date">2026.09.08 - 09.14</span>
+            </div>
+            <div class="report-grid">
+              <div class="report-card"><div class="v up">+28%</div><div class="l">AI搜索提及量</div></div>
+              <div class="report-card"><div class="v up">+15%</div><div class="l">GEO落地页访问</div></div>
+              <div class="report-card"><div class="v up">+42%</div><div class="l">有效线索数</div></div>
+              <div class="report-card"><div class="v up">-31%</div><div class="l">综合获客成本</div></div>
+            </div>
+            <div class="report-chart">
+              <div class="report-line" style="height:40%"></div>
+              <div class="report-line" style="height:55%"></div>
+              <div class="report-line" style="height:48%"></div>
+              <div class="report-line" style="height:68%"></div>
+              <div class="report-line" style="height:75%"></div>
+              <div class="report-line" style="height:82%"></div>
+              <div class="report-line" style="height:95%"></div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:var(--ink-muted);text-align:center;">GEO线索量周趋势（连续7周增长）</div>
+          </div>
+        </div>
+        <div class="mock-annotation left" style="top:25%;left:-120px;">4大核心指标</div>
+        <div class="mock-annotation right" style="bottom:20%;right:-100px;">自动推送微信/邮箱</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 能力06：海外版GEO专门板块 -->
+<section class="cap-section overseas" id="feature-overseas">
+  <div class="container">
+    <div class="cap-row">
+      <div class="cap-text reveal">
+        <div class="cap-num">06</div>
+        <h2 class="cap-title">海外版<span class="o">GEO专版</span><br>国内厂商做不深的海外模型</h2>
+        <p class="cap-desc">国内GEO厂商大多聚焦豆包、DeepSeek、文心一言等国内平台，对海外AI模型的涉猎深度普遍不足。而中国出海企业的目标客户，恰恰主要使用ChatGPT、Perplexity、Claude、Gemini等海外AI搜索引擎。WorkHogee出海版GEO专门针对海外模型深度优化，帮你在海外用户的AI搜索中被看见、被推荐。</p>
+        <div class="overseas-engines">
+          <span class="overseas-engine"><span class="flag">🤖</span>ChatGPT</span>
+          <span class="overseas-engine"><span class="flag">🔍</span>Perplexity</span>
+          <span class="overseas-engine"><span class="flag">🧠</span>Claude</span>
+          <span class="overseas-engine"><span class="flag">💎</span>Gemini</span>
+          <span class="overseas-engine"><span class="flag">🦆</span>DuckDuckGo AI</span>
+          <span class="overseas-engine"><span class="flag">🇺🇸</span>Microsoft Copilot</span>
+        </div>
+        <div class="cap-metrics">
+          <div class="cap-metric"><div class="num">6+</div><div class="label">海外AI引擎覆盖</div></div>
+          <div class="cap-metric"><div class="num">12+</div><div class="label">多语言内容</div></div>
+          <div class="cap-metric"><div class="num">GDPR</div><div class="label">合规数据处理</div></div>
+        </div>
+      </div>
+      <div class="cap-visual reveal reveal-d1">
+        <div class="overseas-compare">
+          <div class="overseas-col">
+            <h5 class="domestic">国内GEO厂商（普遍现状）</h5>
+            <ul>
+              <li>主要覆盖国内模型（豆包/DeepSeek/文心）</li>
+              <li>海外模型仅做基础提及监测，无深度优化</li>
+              <li>内容生成以中文为主，英文内容质量一般</li>
+              <li>不了解海外用户搜索习惯和文化语境</li>
+              <li>缺乏GDPR/CCPA等海外合规数据处理能力</li>
+              <li>无法与海外广告平台（Meta/Google）回传打通</li>
+            </ul>
+          </div>
+          <div class="overseas-col workhogee-col">
+            <h5 class="workhogee">WorkHogee出海版GEO</h5>
+            <ul>
+              <li>6+海外AI引擎深度监测和排名优化</li>
+              <li>针对海外模型的引用机制定制内容策略</li>
+              <li>12+语种原生质量内容生成，符合当地语境</li>
+              <li>内置海外消费者购买决策路径分析</li>
+              <li>GDPR/CCPA合规，AES-256加密，数据可删除</li>
+              <li>与Meta CAPI/Google Ads成交回传无缝打通</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -873,7 +1357,7 @@ table.cmp .dim { color: var(--ink-muted); }
       <div class="footer-col">
         <h5>产品</h5>
         <ul>
-          <li><a href="#features">核心能力</a></li>
+          <li><a href="#feature-monitor">核心能力</a></li>
           <li><a href="#comparison">能力对比</a></li>
           <li><a href="#audience">适用客户</a></li>
           <li><a href="global.html">出海专版</a></li>
