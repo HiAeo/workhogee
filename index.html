@@ -694,6 +694,77 @@ img { max-width: 100%; display: block; }
   border-radius: 4px; font-size: 10px; color: var(--orange-deep); font-weight: 600;
 }
 
+/* 小红书笔记卡片样式 */
+.xhs-card {
+  background: white; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.xhs-card-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-bottom: 1px solid #f5f5f5;
+}
+.xhs-logo {
+  width: 22px; height: 22px; background: #ff2442; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 10px; font-weight: 800; font-style: italic;
+  flex-shrink: 0;
+}
+.xhs-app-name { font-size: 12px; font-weight: 700; color: #333; }
+.xhs-card-body { padding: 12px; }
+.xhs-cover {
+  width: 100%; height: 140px; border-radius: 8px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 50%, #ff6348 100%);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px; position: relative; overflow: hidden;
+}
+.xhs-cover::before {
+  content: ''; position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  animation: xhs-shine 3s ease-in-out infinite;
+}
+@keyframes xhs-shine {
+  0%, 100% { transform: translate(-30%, -30%); }
+  50% { transform: translate(30%, 30%); }
+}
+.xhs-cover-text {
+  color: white; font-size: 15px; font-weight: 800; text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 1; padding: 0 20px;
+  line-height: 1.4;
+}
+.xhs-title {
+  font-size: 13px; font-weight: 700; color: #333; line-height: 1.4;
+  margin-bottom: 8px;
+}
+.xhs-content {
+  font-size: 11px; color: #666; line-height: 1.6; margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xhs-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.xhs-tag {
+  font-size: 10px; color: #1331ef; background: #f0f2ff;
+  padding: 2px 6px; border-radius: 4px; font-weight: 500;
+}
+.xhs-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 8px; border-top: 1px solid #f5f5f5;
+}
+.xhs-author { display: flex; align-items: center; gap: 6px; }
+.xhs-avatar {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ffa502);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 9px; font-weight: 700;
+}
+.xhs-author-name { font-size: 10px; color: #999; }
+.xhs-actions { display: flex; gap: 12px; }
+.xhs-action {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 10px; color: #999;
+}
+.xhs-action svg { width: 12px; height: 12px; }
+
 /* 日报样式 */
 .report-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -1820,25 +1891,47 @@ img { max-width: 100%; display: block; }
               AI 生成笔记
             </button>
             <div class="gen-result" id="gen-result-demo">
-              <div class="gen-result-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
-                办公室装修避坑指南｜老板必看的5个关键点
-              </div>
-              <div class="gen-result-body">
-                作为一家装过100+办公室的装修公司，今天给各位老板分享办公室装修最容易踩的5个坑，看完至少省10万！<br><br>
-                1️⃣ 水电改造不规范，后期返工成本翻倍<br>
-                2️⃣ 隔音没做好，会议室变广播室<br>
-                3️⃣ 灯光设计随便搞，员工天天眼疲劳<br>
-                4️⃣ 收纳空间不够，办公室越住越乱<br>
-                5️⃣ 找游击队装修，售后找不到人<br><br>
-                我们公司专注办公室装修10年，提供设计+施工+售后一站式服务，免费上门量房出方案，有需要的老板可以私信咨询～
-              </div>
-              <div class="gen-tags">
-                <span class="gen-tag">#办公室装修</span>
-                <span class="gen-tag">#装修避坑</span>
-                <span class="gen-tag">#中小企业</span>
-                <span class="gen-tag">#装修干货</span>
-                <span class="gen-tag">#办公室设计</span>
+              <div class="xhs-card">
+                <div class="xhs-card-header">
+                  <div class="xhs-logo">小红书</div>
+                  <div class="xhs-app-name">小红书 · 笔记预览</div>
+                </div>
+                <div class="xhs-card-body">
+                  <div class="xhs-cover">
+                    <div class="xhs-cover-text">办公室装修避坑指南<br>老板必看的5个关键点</div>
+                  </div>
+                  <div class="xhs-title">办公室装修避坑指南｜老板必看的5个关键点，看完省10万！</div>
+                  <div class="xhs-content">
+                    作为一家装过100+办公室的装修公司，今天给各位老板分享办公室装修最容易踩的5个坑，看完至少省10万！1️⃣ 水电改造不规范，后期返工成本翻倍 2️⃣ 隔音没做好，会议室变广播室 3️⃣ 灯光设计随便搞，员工天天眼疲劳 4️⃣ 收纳空间不够，办公室越住越乱 5️⃣ 找游击队装修，售后找不到人...
+                  </div>
+                  <div class="xhs-tags">
+                    <span class="xhs-tag">#办公室装修</span>
+                    <span class="xhs-tag">#装修避坑</span>
+                    <span class="xhs-tag">#中小企业</span>
+                    <span class="xhs-tag">#装修干货</span>
+                    <span class="xhs-tag">#办公室设计</span>
+                  </div>
+                  <div class="xhs-footer">
+                    <div class="xhs-author">
+                      <div class="xhs-avatar">装</div>
+                      <div class="xhs-author-name">装修老司机</div>
+                    </div>
+                    <div class="xhs-actions">
+                      <div class="xhs-action">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        2.3k
+                      </div>
+                      <div class="xhs-action">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        856
+                      </div>
+                      <div class="xhs-action">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        342
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2100,12 +2193,13 @@ loopChatDemo('chat-demo-1', 'typing-1', 12000);
 const genBtn = document.getElementById('gen-btn-demo');
 const genResult = document.getElementById('gen-result-demo');
 if (genBtn && genResult) {
-  genResult.style.opacity = '0';
-  genResult.style.transform = 'translateY(10px)';
+  genResult.style.opacity = '1';
+  genResult.style.transform = 'translateY(0)';
   genResult.style.transition = 'all 0.5s ease';
   genBtn.addEventListener('click', () => {
     genBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="50 20"/></svg> 生成中...';
     genBtn.disabled = true;
+    genResult.style.opacity = '0.3';
     setTimeout(() => {
       genResult.style.opacity = '1';
       genResult.style.transform = 'translateY(0)';
