@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee GEO伙计特别版 — 让AI搜索成为你的获客渠道</title>
+<meta name="description" content="WorkHogee GEO伙计特别版：从AI搜索品牌提及监测，到AI友好内容生成、高转化落地页与伙计承接，打造GEO种草→伙计承接→成交回传的完整获客闭环。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<style>
+/* ===== 设计令牌（与 global.html 完全一致） ===== */
+:root {
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-muted: #a8a29e;
+  --orange: #ea580c;
+  --orange-deep: #c2410c;
+  --orange-light: #fb923c;
+  --paper: #faf8f4;
+  --sand: #f0e9db;
+  --line: #e7e0d4;
+  --white: #ffffff;
+  --green: #16a34a;
+  --shadow-sm: 0 1px 3px rgba(28,25,23,0.06);
+  --shadow-md: 0 4px 16px rgba(28,25,23,0.08);
+  --shadow-lg: 0 12px 40px rgba(28,25,23,0.12);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--paper); color: var(--ink); line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ===== 导航栏 ===== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(250,248,244,0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent; transition: all 0.3s ease;
+}
+.nav.scrolled { background: rgba(250,248,244,0.95); border-bottom-color: var(--line); box-shadow: var(--shadow-sm); }
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { height: 28px; width: auto; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 15px; color: var(--ink-soft); font-weight: 500;
+  transition: color 0.2s; position: relative;
+}
+.nav-links a:hover { color: var(--orange); }
+.nav-links a.active { color: var(--orange); font-weight: 600; }
+.nav-links a.active::after {
+  content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px;
+  background: var(--orange); border-radius: 2px;
+}
+.nav-links a .nav-bolt { width: 16px; height: 16px; vertical-align: -2px; margin-right: 4px; color: var(--orange); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink); color: var(--paper) !important;
+  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;
+  font-weight: 600 !important; transition: all 0.25s;
+}
+.nav-cta:hover { background: var(--orange); transform: translateY(-1px); color: var(--white) !important; }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
+.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }
+
+/* ===== Hero 区域 ===== */
+.hero {
+  padding: 140px 0 80px;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -260px; left: -200px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: grid; grid-template-columns: 1.05fr 1fr; gap: 60px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); border: 1px solid var(--line);
+  padding: 8px 16px; border-radius: 100px; font-size: 13px;
+  color: var(--ink-soft); margin-bottom: 24px; box-shadow: var(--shadow-sm);
+}
+.hero-badge .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.hero h1 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 900; line-height: 1.12;
+  letter-spacing: -0.02em; margin-bottom: 20px; color: var(--ink);
+}
+.hero h1 .highlight { color: var(--orange); position: relative; }
+.hero h1 .highlight::after {
+  content: ''; position: absolute; left: 0; bottom: 4px; width: 100%; height: 8px;
+  background: rgba(234,88,12,0.18); z-index: -1; border-radius: 4px;
+}
+.hero-sub { font-size: 18px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 12px; max-width: 540px; }
+.hero-note { font-size: 14px; color: var(--ink-muted); margin-bottom: 32px; max-width: 540px; }
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--orange); color: var(--white);
+  padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(234,88,12,0.3); cursor: pointer; border: none;
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.btn-primary:hover {
+  background: var(--orange-deep); transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 28px rgba(234,88,12,0.45);
+}
+.btn-primary:hover::after { left: 100%; }
+.btn-primary:active { transform: translateY(-1px) scale(1.01); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); color: var(--ink); border: 2px solid var(--line);
+  padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+}
+.btn-secondary:hover {
+  border-color: var(--orange); color: var(--orange);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(234,88,12,0.2);
+  background: rgba(234,88,12,0.03);
+}
+.btn-secondary:active { transform: translateY(-1px) scale(1.01); }
+.hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+.hero-meta-item svg { width: 18px; height: 18px; color: var(--orange); }
+
+/* ===== Hero 右侧：GEO 获客闭环示意图（纯 HTML+CSS） ===== */
+.hero-visual { position: relative; }
+.loop-card {
+  background: var(--ink); border-radius: var(--radius-xl);
+  padding: 26px 24px 22px; box-shadow: var(--shadow-lg); border: 1px solid #37322c;
+  position: relative; overflow: hidden;
+}
+.loop-card::before {
+  content: ''; position: absolute; top: -120px; right: -80px; width: 260px; height: 260px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(234,88,12,0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+.loop-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; position: relative; }
+.loop-head .lt { font-size: 15px; font-weight: 800; color: var(--paper); }
+.loop-head .live {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; color: #4ade80;
+}
+.loop-head .live .d { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+.loop-step {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 12px 14px; position: relative;
+  transition: all 0.3s;
+}
+.loop-step:hover { background: rgba(255,255,255,0.09); border-color: rgba(251,146,60,0.5); }
+.loop-step .n {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(234,88,12,0.2); color: var(--orange-light);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px;
+}
+.loop-step .st { font-size: 14px; font-weight: 700; color: var(--paper); line-height: 1.3; }
+.loop-step .sd { font-size: 11px; color: #a9a196; margin-top: 2px; }
+.loop-step.loop-end { border-color: var(--orange); background: rgba(234,88,12,0.18); }
+.loop-step.loop-end .n { background: var(--orange); color: var(--white); }
+.loop-connector { display: flex; flex-direction: column; align-items: center; padding: 3px 0; }
+.loop-connector .bar { width: 2px; height: 12px; background: linear-gradient(180deg, var(--orange), var(--orange-light)); }
+.loop-connector svg { width: 14px; height: 14px; color: var(--orange-light); margin-top: -2px; }
+.loop-return {
+  margin-top: 14px; text-align: center; font-size: 11.5px; color: var(--orange-light);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  border-top: 1px dashed rgba(251,146,60,0.3); padding-top: 12px;
+}
+.loop-return svg { width: 14px; height: 14px; }
+
+.hero-float-card {
+  position: absolute; background: var(--white); border-radius: var(--radius-md);
+  padding: 14px 18px; box-shadow: var(--shadow-lg); border: 1px solid var(--line);
+  animation: floatY 5s ease-in-out infinite;
+}
+.hero-float-card.card1 { top: -14px; left: -18px; animation-delay: 0s; }
+.hero-float-card.card2 { bottom: 24px; right: -12px; animation-delay: 1.6s; }
+.hero-float-card .label { font-size: 11px; color: var(--ink-muted); margin-bottom: 2px; }
+.hero-float-card .value { font-size: 20px; font-weight: 900; color: var(--orange); }
+.hero-float-card .sub { font-size: 11px; color: var(--green); margin-top: 2px; }
+@keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+/* ===== 通用板块 ===== */
+.section { padding: 100px 0; }
+.section-head { text-align: center; max-width: 760px; margin: 0 auto 60px; }
+.section-kicker {
+  display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange);
+  letter-spacing: 0.08em; margin-bottom: 14px;
+}
+.section-head h2 {
+  font-size: clamp(28px, 3.5vw, 40px); font-weight: 900; line-height: 1.22;
+  letter-spacing: -0.01em; margin-bottom: 16px; color: var(--ink);
+}
+.section-head p { font-size: 17px; color: var(--ink-soft); line-height: 1.7; }
+.section-head .note { font-size: 14px; color: var(--ink-muted); margin-top: 10px; }
+
+/* ===== 痛点区（4 张） ===== */
+.pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.pain-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 36px 30px; transition: all 0.35s cubic-bezier(.22,.61,.36,1);
+  position: relative; overflow: hidden;
+}
+.pain-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--orange); transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease;
+}
+.pain-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+.pain-card:hover::before { transform: scaleX(1); }
+.pain-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  display: flex; align-items: center; justify-content: center; color: var(--white); margin-bottom: 22px;
+}
+.pain-icon svg { width: 28px; height: 28px; }
+.pain-card h3 { font-size: 19px; font-weight: 800; margin-bottom: 8px; line-height: 1.4; }
+.pain-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; }
+
+/* ===== 核心能力（5 张卡片） ===== */
+.feature-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+.feature-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 30px 22px; transition: all 0.35s cubic-bezier(.22,.61,.36,1);
+  position: relative; overflow: hidden; border-top: 3px solid transparent;
+  display: flex; flex-direction: column;
+}
+.feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-top-color: var(--orange); }
+.feature-icon {
+  width: 50px; height: 50px; border-radius: 14px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa; display: flex; align-items: center; justify-content: center;
+  color: var(--orange); margin-bottom: 18px;
+}
+.feature-icon svg { width: 26px; height: 26px; }
+.feature-card h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 8px; line-height: 1.35; }
+.feature-card > p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+
+/* ===== 表格通用 ===== */
+.table-wrap { overflow-x:auto; border-radius: var(--radius-lg); border: 1px solid var(--line); box-shadow: var(--shadow-sm); background: var(--white); }
+table.cmp { border-collapse: collapse; width: 100%; min-width: 620px; }
+table.cmp th, table.cmp td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+table.cmp th { background: var(--sand); font-weight: 700; color: var(--ink); font-size: 13.5px; letter-spacing: 0.02em; }
+table.cmp td { color: var(--ink-soft); }
+table.cmp tr:last-child td { border-bottom: none; }
+table.cmp tbody tr:hover { background: var(--paper); }
+table.cmp .win { background: #fff7ed; }
+table.cmp th.win { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: var(--white); }
+table.cmp .win strong { color: var(--orange-deep); }
+table.cmp .dim { color: var(--ink-muted); }
+.check { color: var(--green); font-weight: 800; font-size: 16px; }
+.cross { color: var(--ink-muted); font-weight: 700; font-size: 16px; }
+.cmp-note {
+  margin-top: 24px; text-align: center; font-size: 15px; font-weight: 600;
+  background: var(--ink); color: var(--paper); padding: 18px 24px; border-radius: var(--radius-md);
+}
+.cmp-note .o { color: var(--orange-light); }
+
+/* ===== 适用客户（2 列） ===== */
+.aud-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.aud-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 40px 36px; transition: all 0.35s cubic-bezier(.22,.61,.36,1);
+  position: relative; overflow: hidden;
+}
+.aud-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+.aud-icon {
+  width: 60px; height: 60px; border-radius: 16px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa; display: flex; align-items: center; justify-content: center;
+  color: var(--orange); margin-bottom: 22px;
+}
+.aud-icon svg { width: 30px; height: 30px; }
+.aud-card h3 { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+.aud-card .aud-tag { font-size: 13px; color: var(--orange-deep); font-weight: 600; margin-bottom: 14px; }
+.aud-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 16px; }
+.aud-list { list-style: none; }
+.aud-list li { font-size: 13.5px; color: var(--ink-soft); padding: 5px 0; padding-left: 22px; position: relative; }
+.aud-list li::before {
+  content: ''; position: absolute; left: 0; top: 11px; width: 14px; height: 2px;
+  background: var(--orange); border-radius: 1px;
+}
+
+/* ===== 客户证言区（深色） ===== */
+.cases { background: var(--ink); color: var(--paper); }
+.cases .section-head h2 { color: var(--paper); }
+.cases .section-head p { color: #a9a196; }
+.case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.case-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 34px 30px; transition: all 0.35s;
+  display: flex; flex-direction: column;
+}
+.case-card:hover { background: rgba(255,255,255,0.08); border-color: var(--orange); transform: translateY(-4px); }
+.case-quote-mark { font-size: 44px; line-height: 1; color: var(--orange-light); font-family: Georgia, serif; margin-bottom: 8px; }
+.case-tag {
+  display: inline-block; align-self: flex-start; padding: 4px 12px; border-radius: 100px; font-size: 11.5px; font-weight: 700;
+  background: rgba(234,88,12,0.18); color: var(--orange-light); margin-bottom: 16px; letter-spacing: 0.03em;
+}
+.case-card blockquote { font-size: 15px; color: #e7e5e4; line-height: 1.7; margin-bottom: 18px; flex: 1; }
+.case-card .who { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; }
+.case-card .who .name { font-size: 14px; font-weight: 700; color: var(--paper); }
+.case-card .who .role { font-size: 12.5px; color: #a9a196; margin-top: 2px; }
+
+/* ===== FAQ 手风琴 ===== */
+.faq-list { max-width: 820px; margin: 0 auto; }
+.faq-item {
+  border: 1px solid var(--line); border-radius: var(--radius-md); margin-bottom: 12px;
+  overflow: hidden; background: var(--white); transition: all 0.25s;
+}
+.faq-item.open { border-color: var(--orange); box-shadow: var(--shadow-md); }
+.faq-question {
+  padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; font-weight: 600; font-size: 16px; color: var(--ink); gap: 16px;
+}
+.faq-question .chev { width: 20px; height: 20px; flex-shrink: 0; color: var(--orange); transition: transform 0.3s; }
+.faq-item.open .faq-question .chev { transform: rotate(180deg); }
+.faq-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.3s ease; }
+.faq-item.open .faq-answer { padding: 0 24px 22px; max-height: 600px; }
+.faq-answer p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; }
+
+/* ===== 底部 CTA ===== */
+.cta-band {
+  background: var(--ink); color: var(--paper); text-align: center;
+  padding: 110px 0; position: relative; overflow: hidden;
+}
+.cta-band::before {
+  content: ''; position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.18) 0%, transparent 70%); pointer-events: none;
+}
+.cta-band h2 {
+  font-size: clamp(32px, 4.5vw, 50px); font-weight: 900; line-height: 1.15;
+  letter-spacing: -0.02em; margin-bottom: 18px; position: relative;
+}
+.cta-band h2 .o { color: var(--orange-light); }
+.cta-band p { font-size: 18px; color: #d6d3d1; margin-bottom: 36px; position: relative; }
+.cta-band .hero-cta { justify-content: center; margin-bottom: 0; position: relative; }
+.cta-perks { position: relative; margin-top: 22px; font-size: 13.5px; color: #a9a196; }
+
+/* ===== Footer ===== */
+.footer { background: var(--ink); color: #a9a196; padding: 60px 0 30px; border-top: 1px solid #37322c; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px; }
+.footer-brand { display: flex; flex-direction: column; gap: 16px; }
+.footer-brand svg { height: 28px; width: auto; display: block; }
+.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; }
+.footer-col h5 { font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 16px; }
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a { font-size: 13.5px; color: #a9a196; transition: color 0.2s; }
+.footer-col a:hover { color: var(--orange-light); }
+.footer-bottom {
+  border-top: 1px solid #37322c; padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 12.5px; color: #7c7468; }
+.footer-rocket { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: #7c7468; }
+.footer-rocket svg { width: 14px; height: 14px; color: var(--orange-light); }
+
+/* ===== 滚动揭示动画 ===== */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 1080px) {
+  .feature-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 968px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-links.open {
+    display: flex !important; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0;
+    background: var(--paper); padding: 20px; border-bottom: 1px solid var(--line); gap: 18px; align-items: flex-start;
+  }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { order: -1; }
+  .pain-grid { grid-template-columns: 1fr; gap: 20px; }
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .aud-grid { grid-template-columns: 1fr; }
+  .case-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+}
+@media (max-width: 640px) {
+  .hero { padding: 110px 0 60px; }
+  .section { padding: 70px 0; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .hero-float-card { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 导航栏 ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <!-- 内联 logo SVG（与 global.html 一致） -->
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">首页</a>
+      <a href="#features">功能</a>
+      <!-- 当前页：GEO专版（高亮，不跳转） -->
+      <a href="#" class="active" onclick="return false;">
+        <svg class="nav-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        GEO专版
+      </a>
+      <a href="global.html">出海专版</a>
+      <a href="#faq">文档</a>
+      <a class="nav-cta" href="#start">免费试用</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== 1. Hero 区 ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span>🔥 GEO获客闭环伙计 · 全新上线</span>
+        </div>
+        <h1>让AI搜索成为你的<span class="highlight">获客渠道</span></h1>
+        <p class="hero-sub">WorkHogee GEO伙计特别版——从AI搜索品牌提及监测，到AI友好内容生成，再到高转化落地页和伙计承接，打造GEO种草→伙计承接→成交回传的完整获客闭环。</p>
+        <p class="hero-note">不做纯监测看板，做真正带来客户的GEO获客系统</p>
+        <div class="hero-cta">
+          <a href="#start" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            立即开启GEO获客
+          </a>
+          <a href="#features" class="btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            查看功能演示
+          </a>
+        </div>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            5分钟接入
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            无需技术团队
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            7×24伙计在线
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：GEO 获客闭环示意图（纯 HTML+CSS） -->
+      <div class="hero-visual">
+        <div class="loop-card">
+          <div class="loop-head">
+            <span class="lt">GEO 获客闭环</span>
+            <span class="live"><span class="d"></span>实时</span>
+          </div>
+          <div class="loop-step">
+            <div class="n">1</div>
+            <div><div class="st">AI搜索提及监测</div><div class="sd">百度 / 豆包 / 元宝 / Perplexity…</div></div>
+          </div>
+          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="loop-step">
+            <div class="n">2</div>
+            <div><div class="st">AI友好内容种草</div><div class="sd">E-E-A-T 原则，批量生成</div></div>
+          </div>
+          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="loop-step">
+            <div class="n">3</div>
+            <div><div class="st">高转化落地页承接</div><div class="sd">为GEO流量定制，支持A/B测试</div></div>
+          </div>
+          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="loop-step">
+            <div class="n">4</div>
+            <div><div class="st">AI伙计承接转化</div><div class="sd">7×24 秒级答疑与促单</div></div>
+          </div>
+          <div class="loop-connector"><span class="bar"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="loop-step loop-end">
+            <div class="n">5</div>
+            <div><div class="st">成交数据自动回传</div><div class="sd">反哺内容策略，持续优化</div></div>
+          </div>
+          <div class="loop-return">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            闭环回传 · 持续优化
+          </div>
+        </div>
+
+        <!-- 浮动数据卡片 -->
+        <div class="hero-float-card card1">
+          <div class="label">AI搜索品牌提及量</div>
+          <div class="value">+240%</div>
+          <div class="sub">上线3周</div>
+        </div>
+        <div class="hero-float-card card2">
+          <div class="label">GEO流量转化率</div>
+          <div class="value">8.5%</div>
+          <div class="sub">高于行业均值</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. 痛点区 ===== -->
+<section class="section" id="pain">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">为什么需要 GEO</span>
+      <h2>AI搜索正在重塑获客方式</h2>
+      <p>用户不再翻页点击，而是直接问AI。你的获客方式，该升级了。</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+        <h3>用户不再点击搜索结果，而是直接问AI</h3>
+        <p>传统SEO依赖的点击流量持续下滑，用户在对话框里直接获得答案，不再进入你的网站。</p>
+      </div>
+      <div class="pain-card reveal reveal-d1">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
+        </div>
+        <h3>品牌在AI搜索中"查无此人"</h3>
+        <p>用户提问时，AI推荐的全是竞品，你却完全缺席——明明有实力，却在AI回答里消失。</p>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <h3>GEO工具只做监测，不带来客户</h3>
+        <p>看得到提及量在涨，却看不到这些流量变成咨询和订单——监测看板很美，生意没有变化。</p>
+      </div>
+      <div class="pain-card reveal reveal-d1">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>内容团队不懂AI搜索偏好</h3>
+        <p>写了大量文章，AI却从不引用。不懂E-E-A-T与大模型引用逻辑，内容投入石沉大海。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. 核心能力区 ===== -->
+<section class="section" id="features" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">核心能力</span>
+      <h2>GEO获客闭环，五大核心能力</h2>
+      <p>从被AI看见，到被AI推荐，再到把流量变成客户——一站式打通。</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+        <h3>多引擎GEO监测</h3>
+        <p>百度/豆包/元宝/360/Perplexity/ChatGPT 全平台品牌提及与排名监测。</p>
+      </div>
+      <div class="feature-card reveal reveal-d1">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>AI友好内容生成</h3>
+        <p>基于 DeepSeek Harness，批量生成符合 E-E-A-T 原则的AI搜索友好内容。</p>
+      </div>
+      <div class="feature-card reveal reveal-d2">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+        <h3>归因落地页</h3>
+        <p>为GEO流量定制的高转化落地页，独立归因，支持 A/B 测试持续优化。</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>伙计承接转化</h3>
+        <p>GEO流量进入后，由AI获客伙计 7×24 小时承接、答疑、促单。</p>
+      </div>
+      <div class="feature-card reveal reveal-d1">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        </div>
+        <h3>自动周报</h3>
+        <p>GEO效果 + 获客转化数据自动汇总，一键推送到微信/邮箱，老板一眼看懂。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 对比区 ===== -->
+<section class="section" id="comparison">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">核心差异</span>
+      <h2>不做监测看板，做获客闭环</h2>
+      <p>同样叫GEO，WorkHogee 把监测、内容、落地、承接、回传连成一条获客生产线。</p>
+    </div>
+    <div class="table-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th>能力对比</th>
+            <th class="win">WorkHogee GEO伙计</th>
+            <th>传统GEO工具</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>品牌提及监测</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="check">✓</span></td></tr>
+          <tr><td>多引擎排名追踪</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="check">✓</span></td></tr>
+          <tr><td>AI友好内容生成</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="cross">✗</span></td></tr>
+          <tr><td>高转化归因落地页</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="cross">✗</span></td></tr>
+          <tr><td>AI伙计 7×24 承接转化</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="cross">✗</span></td></tr>
+          <tr><td>成交数据自动回传</td><td class="win"><span class="check">✓</span></td><td class="dim"><span class="cross">✗</span></td></tr>
+          <tr><td>产品定位</td><td class="win"><strong>获客闭环</strong></td><td class="dim">监测看板</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cmp-note reveal">别人只告诉你<span class="o">"AI有没有提到你"</span>，我们帮你把<span class="o">"被提到"变成"找上门"</span></div>
+  </div>
+</section>
+
+<!-- ===== 5. 适用客户 ===== -->
+<section class="section" id="audience" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">适用客户</span>
+      <h2>谁需要 GEO 伙计？</h2>
+      <p>无论你服务本地客户，还是把货卖向全球，AI搜索都是下一个流量洼地。</p>
+    </div>
+    <div class="aud-grid">
+      <div class="aud-card reveal">
+        <div class="aud-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9"/><path d="M9 21V13h6v8"/></svg>
+        </div>
+        <h3>本地 / 连锁中小企业</h3>
+        <div class="aud-tag">餐饮 · 教培 · 医美 · 家装 · 健身</div>
+        <p>让本地客户在AI搜索"附近哪家好"时，优先看到你。</p>
+        <ul class="aud-list">
+          <li>覆盖豆包/元宝等本地生活问答场景</li>
+          <li>门店口碑与案例内容自动种草</li>
+          <li>伙计在线承接，引导到店/留资</li>
+        </ul>
+      </div>
+      <div class="aud-card reveal reveal-d1">
+        <div class="aud-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>中国出海 DTC 卖家</h3>
+        <div class="aud-tag">独立站 · 亚马逊卖家</div>
+        <p>在海外AI搜索中建立品牌认知，获取不依赖投流的精准自然流量。</p>
+        <ul class="aud-list">
+          <li>覆盖 Perplexity / ChatGPT / Google AI</li>
+          <li>英文/多语种E-E-A-T内容批量生产</li>
+          <li>落地页 + 多语言伙计承接海外询盘</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. 客户证言区 ===== -->
+<section class="section cases" id="cases">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">客户怎么说</span>
+      <h2>从"查无此人"到"AI首推"</h2>
+      <p>以下为典型客户使用效果（虚拟示例，仅供参考）。</p>
+    </div>
+    <div class="case-grid">
+      <div class="case-card reveal">
+        <div class="case-quote-mark">“</div>
+        <span class="case-tag">连锁餐饮</span>
+        <blockquote>上线3周，AI搜索品牌提及量增长240%，到店咨询量提升35%——以前用户问AI"附近哪家火锅好"根本没我们，现在经常被首条推荐。</blockquote>
+        <div class="who">
+          <div class="name">某连锁餐饮品牌</div>
+          <div class="role">区域 12 家门店 · 本地获客</div>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-d1">
+        <div class="case-quote-mark">“</div>
+        <span class="case-tag">DTC 独立站</span>
+        <blockquote>GEO内容被 Perplexity 引用后，独立站自然流量月增1.2万，转化率做到8.5%，比投流便宜太多，而且流量是持续的。</blockquote>
+        <div class="who">
+          <div class="name">某 DTC 独立站卖家</div>
+          <div class="role">家居品类 · 北美市场</div>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-d2">
+        <div class="case-quote-mark">“</div>
+        <span class="case-tag">教培机构</span>
+        <blockquote>从"查无此人"到AI搜索首条推荐，线索成本下降60%。伙计还自动接住了晚上来的咨询，一个都没漏。</blockquote>
+        <div class="who">
+          <div class="name">某教培机构</div>
+          <div class="role">K12 课外辅导 · 城市校区</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. FAQ 区 ===== -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">常见问题</span>
+      <h2>常见问题</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>GEO 和 SEO 有什么区别？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>SEO 面向传统搜索引擎的网页排名，目标是让用户"点进你的网站"；GEO（生成式引擎优化）面向AI问答，目标是让AI在回答用户提问时"引用并推荐你"。用户行为从"翻页点击"变成"直接问AI"，GEO 正是为这种新行为而生。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>支持哪些 AI 搜索引擎？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>国内覆盖百度、豆包、腾讯元宝、360 AI 等；海外覆盖 Perplexity、ChatGPT、Google AI Overviews 等。新引擎上线后会持续接入。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>内容生成会重复吗？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>不会。系统基于你上传的品牌资料、产品知识与真实案例生成，并遵循 E-E-A-T 原则，每篇内容都结合不同选题与角度，内置原创度检测，避免重复与低质堆砌。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>落地页可以用自己的域名吗？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>可以。GEO 归因落地页支持绑定你自己的子域名（如 geo.yourbrand.com），也可使用我们提供的二级域名，一键切换，不影响主站。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>如何与现有获客伙计配合？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>GEO伙计特别版与你已有的获客伙计共用同一套知识库与接待体系。GEO流量进入落地页后，直接由伙计承接，线索自动进入统一收件箱，无需重复配置。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>数据安全吗？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>传输与存储全程加密，数据仅用于你的GEO优化与获客分析，不会用于训练公共模型。数据保留周期可由你自行设置，随时可导出或删除。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>需要技术团队接入吗？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>不需要。注册后按向导上传品牌资料、绑定域名即可，全程约 5 分钟，无需写代码或对接开发。</p>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-question">
+          <span>多久能看到效果？</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          <p>提及监测与伙计承接上线当天即可用；内容被AI引用通常在 2–4 周内开始显现，多数客户在 3–6 周看到品牌提及量与咨询量的明显增长。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. 底部 CTA 区 ===== -->
+<section class="cta-band" id="start">
+  <div class="container">
+    <h2 class="reveal">准备好开启 <span class="o">GEO获客</span> 了吗？</h2>
+    <p class="reveal reveal-d1">立即接入 WorkHogee GEO伙计，让AI搜索成为你的稳定获客渠道。</p>
+    <div class="hero-cta reveal reveal-d2">
+      <a href="mailto:hello@workhogee.com" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        免费开始使用
+      </a>
+    </div>
+    <div class="cta-perks reveal reveal-d3">无需信用卡 · 5分钟接入 · 随时取消</div>
+  </div>
+</section>
+
+<!-- ===== 9. Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html">
+          <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+            <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
+            <g transform="translate(-1.06 -28.16)">
+              <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+              <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+              <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+              <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+              <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+              <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+            </g>
+          </svg>
+        </a>
+        <p><a href="index.html" style="color:var(--orange-light);font-weight:600;">WorkHogee</a> —— 让AI搜索成为你的稳定获客渠道，GEO种草→伙计承接→成交回传完整闭环。</p>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+        <ul>
+          <li><a href="#features">核心能力</a></li>
+          <li><a href="#comparison">能力对比</a></li>
+          <li><a href="#audience">适用客户</a></li>
+          <li><a href="global.html">出海专版</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="#cases">客户案例</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#pain">为什么需要GEO</a></li>
+          <li><a href="#start">接入指南</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>联系我们</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="mailto:hello@workhogee.com">预约演示</a></li>
+          <li><a href="index.html">返回首页</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 WorkHogee. All rights reserved.</div>
+      <div class="footer-rocket">
+        让 AI 搜索替你获客
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 导航栏滚动效果
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 20) { nav.classList.add('scrolled'); }
+  else { nav.classList.remove('scrolled'); }
+});
+
+// 移动端汉堡菜单
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+
+// 滚动揭示动画
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+revealElements.forEach(el => revealObserver.observe(el));
+
+// FAQ 手风琴
+document.querySelectorAll('.faq-item').forEach(item => {
+  const q = item.querySelector('.faq-question');
+  q.addEventListener('click', () => {
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) { item.classList.add('open'); }
+  });
+});
+</script>
+</body>
+</html>
