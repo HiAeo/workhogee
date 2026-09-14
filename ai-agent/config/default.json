@@ -23,6 +23,16 @@
     "statuses": ["new", "following", "interested", "converted", "lost"],
     "storagePath": "./data/leads"
   },
+  "compliance": {
+    "dataRetentionDays": 90,
+    "cookieBannerEnabled": true,
+    "encryptionKey": "workhogee-default-key-change-in-production",
+    "privacyPolicyUrl": ""
+  },
+  "i18n": {
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "es", "fr", "de", "ja", "ko", "pt", "ar"]
+  },
   "conversation": {
     "storagePath": "./data/conversations",
     "maxHistory": 20
