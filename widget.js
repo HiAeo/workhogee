@@ -102,7 +102,7 @@
   }
 
   /**
-   * 生成机器人头 SVG
+   * 生成机器人头 SVG（黑白色，在橙色背景上清晰可见）
    */
   function createRobotSVG() {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -112,24 +112,24 @@
     svg.setAttribute('class', 'workhogee-robot-svg');
     svg.innerHTML = `
       <!-- 天线 -->
-      <line x1="32" y1="8" x2="32" y2="16" stroke="${CONFIG.primaryColor}" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="32" cy="6" r="4" fill="${CONFIG.secondaryColor}" class="robot-antenna-dot"/>
-      <!-- 头部 -->
-      <rect x="12" y="16" width="40" height="36" rx="12" fill="${CONFIG.primaryColor}" class="robot-head"/>
-      <!-- 耳朵 -->
-      <rect x="8" y="28" width="4" height="12" rx="2" fill="${CONFIG.primaryDark}"/>
-      <rect x="52" y="28" width="4" height="12" rx="2" fill="${CONFIG.primaryDark}"/>
-      <!-- 眼睛白底 -->
-      <circle cx="24" cy="32" r="5.5" fill="white"/>
-      <circle cx="40" cy="32" r="5.5" fill="white"/>
-      <!-- 瞳孔 -->
-      <circle cx="24" cy="32" r="2.8" fill="${CONFIG.secondaryColor}" class="robot-pupil robot-pupil-left"/>
-      <circle cx="40" cy="32" r="2.8" fill="${CONFIG.secondaryColor}" class="robot-pupil robot-pupil-right"/>
-      <!-- 嘴巴 -->
-      <rect x="25" y="43" width="14" height="4" rx="2" fill="white" class="robot-mouth"/>
-      <!-- 脸颊高光 -->
-      <circle cx="18" cy="40" r="2" fill="${CONFIG.primaryDark}" opacity="0.4"/>
-      <circle cx="46" cy="40" r="2" fill="${CONFIG.primaryDark}" opacity="0.4"/>
+      <line x1="32" y1="8" x2="32" y2="16" stroke="#1c1917" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="32" cy="6" r="4" fill="#1c1917" class="robot-antenna-dot"/>
+      <!-- 头部（白色） -->
+      <rect x="12" y="16" width="40" height="36" rx="12" fill="#ffffff" class="robot-head" stroke="#1c1917" stroke-width="1.5"/>
+      <!-- 耳朵（深灰） -->
+      <rect x="8" y="28" width="4" height="12" rx="2" fill="#1c1917"/>
+      <rect x="52" y="28" width="4" height="12" rx="2" fill="#1c1917"/>
+      <!-- 眼睛（深灰眼眶） -->
+      <circle cx="24" cy="32" r="6" fill="#1c1917"/>
+      <circle cx="40" cy="32" r="6" fill="#1c1917"/>
+      <!-- 瞳孔（白色高光） -->
+      <circle cx="25" cy="31" r="2.2" fill="#ffffff" class="robot-pupil robot-pupil-left"/>
+      <circle cx="41" cy="31" r="2.2" fill="#ffffff" class="robot-pupil robot-pupil-right"/>
+      <!-- 嘴巴（深灰） -->
+      <rect x="24" y="43" width="16" height="4" rx="2" fill="#1c1917" class="robot-mouth"/>
+      <!-- 脸颊（浅灰） -->
+      <circle cx="18" cy="40" r="2" fill="#d6d3d1"/>
+      <circle cx="46" cy="40" r="2" fill="#d6d3d1"/>
     `;
     return svg;
   }
@@ -137,6 +137,13 @@
   // ===== 初始化 =====
 
   function init(options = {}) {
+    // 单例检查：避免重复创建
+    if (window.__workhogee_widget_initialized) {
+      console.log('[WorkHogee] 已初始化，跳过重复创建');
+      return;
+    }
+    window.__workhogee_widget_initialized = true;
+
     Object.assign(CONFIG, options);
     if (!CONFIG.apiUrl) {
       CONFIG.apiUrl = detectApiUrl();
@@ -599,10 +606,12 @@
         <div class="header-left">
           <div class="header-robot">
             <svg viewBox="0 0 64 64" width="24" height="24">
-              <rect x="12" y="16" width="40" height="36" rx="12" fill="white"/>
-              <circle cx="24" cy="32" r="4" fill="${CONFIG.primaryColor}"/>
-              <circle cx="40" cy="32" r="4" fill="${CONFIG.primaryColor}"/>
-              <rect x="25" y="43" width="14" height="3" rx="1.5" fill="${CONFIG.primaryColor}"/>
+              <rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="white" stroke-width="1.5"/>
+              <circle cx="24" cy="32" r="5" fill="#1c1917"/>
+              <circle cx="40" cy="32" r="5" fill="#1c1917"/>
+              <circle cx="25" cy="31" r="1.8" fill="white"/>
+              <circle cx="41" cy="31" r="1.8" fill="white"/>
+              <rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/>
             </svg>
           </div>
           <div>
@@ -770,6 +779,7 @@
   function startMouseFollow() {
     if (state.mouseFollowActive) return;
     state.mouseFollowActive = true;
+    state.isPaused = false;
     widgetButton.classList.add('following');
 
     // 初始位置
@@ -781,34 +791,53 @@
     function followLoop() {
       if (!state.mouseFollowActive || state.isOpen) return;
 
-      // 目标位置（鼠标右下方偏移，避免完全遮挡鼠标）
-      const targetX = state.mouseX + 20;
-      const targetY = state.mouseY + 20;
+      // 计算机器人当前中心位置
+      const btnRect = widgetButton.getBoundingClientRect();
+      const btnCenterX = btnRect.left + btnRect.width / 2;
+      const btnCenterY = btnRect.top + btnRect.height / 2;
 
-      // 限制在视口内
-      const maxX = window.innerWidth - 80;
-      const maxY = window.innerHeight - 80;
-      const clampedX = Math.max(10, Math.min(maxX, targetX));
-      const clampedY = Math.max(10, Math.min(maxY, targetY));
+      // 计算鼠标与机器人的距离
+      const dx = state.mouseX - btnCenterX;
+      const dy = state.mouseY - btnCenterY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-      widgetButton.style.left = clampedX + 'px';
-      widgetButton.style.top = clampedY + 'px';
-      widgetButton.style.bottom = 'auto';
-      widgetButton.style.right = 'auto';
+      // 如果鼠标接近机器人（120px内），暂停跟随，让用户可以点击
+      if (distance < 120) {
+        state.isPaused = true;
+        widgetButton.style.transform = 'scale(1.08)';
+      } else {
+        state.isPaused = false;
+        widgetButton.style.transform = '';
 
-      // 同步气泡位置
-      if (proactiveBubble && proactiveBubble.classList.contains('show')) {
-        proactiveBubble.style.left = (clampedX - 200) + 'px';
-        proactiveBubble.style.top = (clampedY - 70) + 'px';
-        proactiveBubble.style.bottom = 'auto';
-        proactiveBubble.style.right = 'auto';
+        // 目标位置（鼠标右下方偏移，避免完全遮挡鼠标）
+        const targetX = state.mouseX + 24;
+        const targetY = state.mouseY + 24;
+
+        // 限制在视口内
+        const maxX = window.innerWidth - 80;
+        const maxY = window.innerHeight - 80;
+        const clampedX = Math.max(10, Math.min(maxX, targetX));
+        const clampedY = Math.max(10, Math.min(maxY, targetY));
+
+        widgetButton.style.left = clampedX + 'px';
+        widgetButton.style.top = clampedY + 'px';
+        widgetButton.style.bottom = 'auto';
+        widgetButton.style.right = 'auto';
+
+        // 同步气泡位置
+        if (proactiveBubble && proactiveBubble.classList.contains('show')) {
+          proactiveBubble.style.left = (clampedX - 210) + 'px';
+          proactiveBubble.style.top = (clampedY - 75) + 'px';
+          proactiveBubble.style.bottom = 'auto';
+          proactiveBubble.style.right = 'auto';
+        }
       }
 
       requestAnimationFrame(followLoop);
     }
 
     requestAnimationFrame(followLoop);
-    console.log('[WorkHogee] 鼠标跟随已启动');
+    console.log('[WorkHogee] 鼠标跟随已启动（接近120px自动暂停）');
   }
 
   function stopMouseFollow() {
@@ -942,7 +971,7 @@
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
       if (msg.role === 'assistant') {
-        avatar.innerHTML = '<svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white"/><circle cx="24" cy="32" r="4" fill="' + CONFIG.primaryColor + '"/><circle cx="40" cy="32" r="4" fill="' + CONFIG.primaryColor + '"/></svg>';
+        avatar.innerHTML = '<svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="#1c1917" stroke-width="2"/><circle cx="24" cy="32" r="5" fill="#1c1917"/><circle cx="40" cy="32" r="5" fill="#1c1917"/><circle cx="25" cy="31" r="1.8" fill="white"/><circle cx="41" cy="31" r="1.8" fill="white"/><rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/></svg>';
       }
 
       const bubble = document.createElement('div');
@@ -970,7 +999,7 @@
     typingEl.id = 'workhogee-typing-indicator';
     typingEl.innerHTML = `
       <div class="avatar">
-        <svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white"/><circle cx="24" cy="32" r="4" fill="${CONFIG.primaryColor}"/><circle cx="40" cy="32" r="4" fill="${CONFIG.primaryColor}"/></svg>
+        <svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="#1c1917" stroke-width="2"/><circle cx="24" cy="32" r="5" fill="#1c1917"/><circle cx="40" cy="32" r="5" fill="#1c1917"/><circle cx="25" cy="31" r="1.8" fill="white"/><circle cx="41" cy="31" r="1.8" fill="white"/><rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/></svg>
       </div>
       <div class="bubble"><div class="workhogee-typing"><span></span><span></span><span></span></div></div>
     `;
