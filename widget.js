@@ -1,19 +1,12 @@
 /**
- * WorkHogee AI 获客伙计 - 可嵌入网站对话组件（主动介入版）
- *
- * 功能特性：
- * 1. 机器人头图标（SVG动画：眨眼、说话、跟随鼠标）
- * 2. 30秒后启动鼠标跟随（平滑跟随）
- * 3. 主动弹出引导对话框（定时触发）
- * 4. 完整的对话功能（与后端API对接）
+ * WorkHogee AI 获客伙计 - 可嵌入网站对话组件（简洁版）
  *
  * 使用方法：
  * 1. 在网站中引入此脚本：<script src="https://www.workhogee.com/widget.js"></script>
  * 2. 配置 API 地址（可选，默认自动检测）：
  *    <script>
  *      window.WORKHOGEE_CONFIG = {
- *        apiUrl: 'https://api.workhogee.com',
- *        primaryColor: '#ea580c'
+ *        apiUrl: 'https://api.workhogee.com'
  *      };
  *    </script>
  */
@@ -32,19 +25,7 @@
     buttonText: 'WorkHogee AI 获客顾问',
     source: 'website',
     autoInit: true,
-    showConnectionStatus: true,
-    // 主动交互配置
-    mouseFollowDelay: 30000,      // 30秒后启动鼠标跟随
-    mouseFollowEnabled: true,       // 是否启用鼠标跟随
-    proactiveMessages: [             // 主动弹窗消息列表
-      '您好！有什么我可以帮您的吗？',
-      '想了解 AI 如何帮您自动获客吗？问我吧！',
-      '停留这么久，一定有问题想了解吧？随时问我~',
-      '我是您的 AI 获客顾问，24小时在线，有问题随时问！',
-      '需要了解产品功能、价格或使用方法吗？我可以为您解答~'
-    ],
-    proactiveInterval: 45000,       // 主动弹窗间隔（45秒）
-    proactiveMaxCount: 3             // 最多主动弹窗次数
+    showConnectionStatus: true
   };
 
   // ===== 状态 =====
@@ -55,20 +36,7 @@
     isConnected: false,
     messages: [],
     retryCount: 0,
-    maxRetries: 3,
-    // 主动交互状态
-    mouseFollowActive: false,
-    mouseX: 0,
-    mouseY: 0,
-    buttonX: 0,
-    buttonY: 0,
-    proactiveCount: 0,
-    proactiveTimer: null,
-    followTimer: null,
-    isDragging: false,
-    // 动画状态
-    blinkTimer: null,
-    talkTimer: null
+    maxRetries: 3
   };
 
   // ===== DOM 元素 =====
@@ -78,8 +46,6 @@
   let inputField = null;
   let sendButton = null;
   let statusIndicator = null;
-  let robotSvg = null;
-  let proactiveBubble = null;
 
   // ===== 工具函数 =====
 
@@ -101,43 +67,10 @@
     return 'https://api.workhogee.com';
   }
 
-  /**
-   * 生成机器人头 SVG（黑白色，在橙色背景上清晰可见）
-   */
-  function createRobotSVG() {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 64 64');
-    svg.setAttribute('width', '36');
-    svg.setAttribute('height', '36');
-    svg.setAttribute('class', 'workhogee-robot-svg');
-    svg.innerHTML = `
-      <!-- 天线 -->
-      <line x1="32" y1="8" x2="32" y2="16" stroke="#1c1917" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="32" cy="6" r="4" fill="#1c1917" class="robot-antenna-dot"/>
-      <!-- 头部（白色） -->
-      <rect x="12" y="16" width="40" height="36" rx="12" fill="#ffffff" class="robot-head" stroke="#1c1917" stroke-width="1.5"/>
-      <!-- 耳朵（深灰） -->
-      <rect x="8" y="28" width="4" height="12" rx="2" fill="#1c1917"/>
-      <rect x="52" y="28" width="4" height="12" rx="2" fill="#1c1917"/>
-      <!-- 眼睛（深灰眼眶） -->
-      <circle cx="24" cy="32" r="6" fill="#1c1917"/>
-      <circle cx="40" cy="32" r="6" fill="#1c1917"/>
-      <!-- 瞳孔（白色高光） -->
-      <circle cx="25" cy="31" r="2.2" fill="#ffffff" class="robot-pupil robot-pupil-left"/>
-      <circle cx="41" cy="31" r="2.2" fill="#ffffff" class="robot-pupil robot-pupil-right"/>
-      <!-- 嘴巴（深灰） -->
-      <rect x="24" y="43" width="16" height="4" rx="2" fill="#1c1917" class="robot-mouth"/>
-      <!-- 脸颊（浅灰） -->
-      <circle cx="18" cy="40" r="2" fill="#d6d3d1"/>
-      <circle cx="46" cy="40" r="2" fill="#d6d3d1"/>
-    `;
-    return svg;
-  }
-
   // ===== 初始化 =====
 
   function init(options = {}) {
-    // 单例检查：避免重复创建
+    // 单例检查
     if (window.__workhogee_widget_initialized) {
       console.log('[WorkHogee] 已初始化，跳过重复创建');
       return;
@@ -153,7 +86,6 @@
     createWidget();
     checkConnection();
     loadConversation();
-    startProactiveInteraction();
   }
 
   // ===== 连接状态 =====
@@ -198,8 +130,8 @@
         position: fixed;
         bottom: 24px;
         right: 24px;
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
         background: ${CONFIG.primaryColor};
         color: white;
@@ -211,17 +143,11 @@
         justify-content: center;
         z-index: 9999;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        will-change: transform, left, top, bottom, right;
+        font-size: 24px;
       }
       .workhogee-widget-button:hover {
-        transform: scale(1.12);
+        transform: scale(1.1);
         box-shadow: 0 6px 24px rgba(234, 88, 12, 0.55);
-      }
-      .workhogee-widget-button.following {
-        transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                    top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                    transform 0.2s ease,
-                    box-shadow 0.2s ease;
       }
       .workhogee-widget-button .connection-dot {
         position: absolute;
@@ -234,100 +160,11 @@
         border: 2px solid white;
         z-index: 2;
       }
-      .workhogee-robot-svg {
-        animation: workhogee-robot-breathe 3s ease-in-out infinite;
-      }
-      @keyframes workhogee-robot-breathe {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-      .robot-pupil {
-        transition: cx 0.15s ease, cy 0.15s ease;
-      }
-      .robot-mouth {
-        transition: height 0.1s ease, y 0.1s ease;
-      }
-      .robot-mouth.talking {
-        animation: workhogee-talk 0.3s ease-in-out infinite;
-      }
-      @keyframes workhogee-talk {
-        0%, 100% { height: 4px; y: 43px; }
-        50% { height: 7px; y: 41.5px; }
-      }
-      .robot-antenna-dot {
-        animation: workhogee-antenna-pulse 2s ease-in-out infinite;
-      }
-      @keyframes workhogee-antenna-pulse {
-        0%, 100% { opacity: 1; r: 4; }
-        50% { opacity: 0.6; r: 5; }
-      }
-
-      /* 主动弹窗气泡 */
-      .workhogee-proactive-bubble {
-        position: fixed;
-        bottom: 96px;
-        right: 24px;
-        max-width: 260px;
-        background: white;
-        border-radius: 16px;
-        border-bottom-right-radius: 4px;
-        padding: 14px 18px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-        z-index: 9998;
-        display: none;
-        animation: workhogee-bubble-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        cursor: pointer;
-      }
-      .workhogee-proactive-bubble.show {
-        display: block;
-      }
-      .workhogee-proactive-bubble .bubble-text {
-        font-size: 14px;
-        color: ${CONFIG.secondaryColor};
-        line-height: 1.5;
-        margin: 0;
-      }
-      .workhogee-proactive-bubble .bubble-close {
-        position: absolute;
-        top: 6px;
-        right: 10px;
-        background: none;
-        border: none;
-        color: #94a3b8;
-        font-size: 16px;
-        cursor: pointer;
-        padding: 2px 6px;
-        line-height: 1;
-        opacity: 0;
-        transition: opacity 0.2s;
-      }
-      .workhogee-proactive-bubble:hover .bubble-close {
-        opacity: 1;
-      }
-      .workhogee-proactive-bubble::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        right: 20px;
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-top: 8px solid white;
-      }
-      @keyframes workhogee-bubble-in {
-        from { opacity: 0; transform: translateY(10px) scale(0.9); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-      }
-      @keyframes workhogee-bubble-out {
-        from { opacity: 1; transform: translateY(0) scale(1); }
-        to { opacity: 0; transform: translateY(10px) scale(0.9); }
-      }
 
       /* 对话面板 */
       .workhogee-widget-panel {
         position: fixed;
-        bottom: 96px;
+        bottom: 92px;
         right: 24px;
         width: 380px;
         height: 520px;
@@ -354,20 +191,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-      }
-      .workhogee-widget-header .header-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .workhogee-widget-header .header-robot {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
       .workhogee-widget-header .title {
         font-weight: 600;
@@ -455,9 +278,11 @@
         justify-content: center;
         flex-shrink: 0;
         margin: 0 8px;
+        font-size: 14px;
       }
       .workhogee-message.assistant .avatar {
         background: ${CONFIG.primaryColor};
+        color: white;
         order: 0;
       }
       .workhogee-message.user .avatar {
@@ -554,70 +379,28 @@
           right: 16px;
           height: 70vh;
         }
-        .workhogee-proactive-bubble {
-          max-width: 220px;
-          right: 16px;
-        }
       }
     `;
     document.head.appendChild(style);
 
-    // 创建浮动按钮（机器人头）
+    // 创建浮动按钮
     widgetButton = document.createElement('button');
     widgetButton.className = 'workhogee-widget-button';
+    widgetButton.innerHTML = '💬<span class="connection-dot"></span>';
     widgetButton.title = CONFIG.buttonText;
     widgetButton.setAttribute('aria-label', CONFIG.buttonText);
-
-    // 创建机器人 SVG
-    robotSvg = createRobotSVG();
-    widgetButton.appendChild(robotSvg);
-
-    // 连接状态点
-    const dot = document.createElement('span');
-    dot.className = 'connection-dot';
-    widgetButton.appendChild(dot);
-    statusIndicator = dot;
-
-    widgetButton.onclick = handleButtonClick;
+    widgetButton.onclick = toggleWidget;
     document.body.appendChild(widgetButton);
-
-    // 创建主动弹窗气泡
-    proactiveBubble = document.createElement('div');
-    proactiveBubble.className = 'workhogee-proactive-bubble';
-    proactiveBubble.innerHTML = `
-      <button class="bubble-close" aria-label="关闭">×</button>
-      <p class="bubble-text"></p>
-    `;
-    proactiveBubble.onclick = function(e) {
-      if (e.target.classList.contains('bubble-close')) {
-        hideProactiveBubble();
-      } else {
-        openWidget();
-        hideProactiveBubble();
-      }
-    };
-    document.body.appendChild(proactiveBubble);
+    statusIndicator = widgetButton.querySelector('.connection-dot');
 
     // 创建对话面板
     widgetPanel = document.createElement('div');
     widgetPanel.className = 'workhogee-widget-panel';
     widgetPanel.innerHTML = `
       <div class="workhogee-widget-header">
-        <div class="header-left">
-          <div class="header-robot">
-            <svg viewBox="0 0 64 64" width="24" height="24">
-              <rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="white" stroke-width="1.5"/>
-              <circle cx="24" cy="32" r="5" fill="#1c1917"/>
-              <circle cx="40" cy="32" r="5" fill="#1c1917"/>
-              <circle cx="25" cy="31" r="1.8" fill="white"/>
-              <circle cx="41" cy="31" r="1.8" fill="white"/>
-              <rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/>
-            </svg>
-          </div>
-          <div>
-            <div class="title">WorkHogee AI 获客伙计</div>
-            <div class="subtitle"><span class="status-dot"></span><span id="workhogee-status-text">24小时在线 · 智能接待</span></div>
-          </div>
+        <div>
+          <div class="title">WorkHogee AI 获客伙计</div>
+          <div class="subtitle"><span class="status-dot"></span><span id="workhogee-status-text">24小时在线 · 智能接待</span></div>
         </div>
         <button class="close-btn" aria-label="关闭">×</button>
       </div>
@@ -643,222 +426,6 @@
     inputField.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendMessage();
     });
-
-    // 启动机器人动画
-    startRobotAnimations();
-
-    // 跟踪鼠标位置（用于瞳孔跟随）
-    document.addEventListener('mousemove', handleMouseMove);
-  }
-
-  // ===== 机器人动画 =====
-
-  function startRobotAnimations() {
-    // 眨眼动画（随机间隔 3-6 秒）
-    function blink() {
-      const pupils = robotSvg.querySelectorAll('.robot-pupil');
-      pupils.forEach(p => {
-        p.setAttribute('ry', '0.3');
-      });
-      setTimeout(() => {
-        pupils.forEach(p => {
-          p.setAttribute('ry', '1');
-        });
-        setTimeout(blink, 3000 + Math.random() * 3000);
-      }, 150);
-    }
-    setTimeout(blink, 2000);
-  }
-
-  function startTalkingAnimation() {
-    const mouth = robotSvg.querySelector('.robot-mouth');
-    if (mouth) {
-      mouth.classList.add('talking');
-    }
-  }
-
-  function stopTalkingAnimation() {
-    const mouth = robotSvg.querySelector('.robot-mouth');
-    if (mouth) {
-      mouth.classList.remove('talking');
-    }
-  }
-
-  // ===== 鼠标交互 =====
-
-  function handleMouseMove(e) {
-    state.mouseX = e.clientX;
-    state.mouseY = e.clientY;
-
-    // 瞳孔跟随鼠标（轻微移动）
-    if (robotSvg) {
-      const buttonRect = widgetButton.getBoundingClientRect();
-      const centerX = buttonRect.left + buttonRect.width / 2;
-      const centerY = buttonRect.top + buttonRect.height / 2;
-      const dx = (state.mouseX - centerX) / window.innerWidth;
-      const dy = (state.mouseY - centerY) / window.innerHeight;
-      const moveX = Math.max(-1.5, Math.min(1.5, dx * 4));
-      const moveY = Math.max(-1.5, Math.min(1.5, dy * 4));
-
-      const leftPupil = robotSvg.querySelector('.robot-pupil-left');
-      const rightPupil = robotSvg.querySelector('.robot-pupil-right');
-      if (leftPupil) leftPupil.setAttribute('cx', 24 + moveX);
-      if (rightPupil) rightPupil.setAttribute('cx', 40 + moveX);
-      if (leftPupil) leftPupil.setAttribute('cy', 32 + moveY);
-      if (rightPupil) rightPupil.setAttribute('cy', 32 + moveY);
-    }
-  }
-
-  function handleButtonClick(e) {
-    // 如果正在跟随鼠标，点击后停止跟随
-    if (state.mouseFollowActive) {
-      stopMouseFollow();
-    }
-    toggleWidget();
-  }
-
-  // ===== 主动交互 =====
-
-  function startProactiveInteraction() {
-    // 30秒后启动鼠标跟随
-    state.followTimer = setTimeout(() => {
-      if (CONFIG.mouseFollowEnabled && !state.isOpen) {
-        startMouseFollow();
-      }
-    }, CONFIG.mouseFollowDelay);
-
-    // 定时主动弹窗
-    scheduleProactiveMessage();
-  }
-
-  function scheduleProactiveMessage() {
-    if (state.proactiveCount >= CONFIG.proactiveMaxCount) return;
-
-    state.proactiveTimer = setTimeout(() => {
-      if (!state.isOpen && state.proactiveCount < CONFIG.proactiveMaxCount) {
-        showProactiveMessage();
-        scheduleProactiveMessage();
-      }
-    }, CONFIG.proactiveInterval);
-  }
-
-  function showProactiveMessage() {
-    if (!proactiveBubble) return;
-
-    const messages = CONFIG.proactiveMessages;
-    const msg = messages[state.proactiveCount % messages.length];
-    state.proactiveCount++;
-
-    const textEl = proactiveBubble.querySelector('.bubble-text');
-    if (textEl) textEl.textContent = msg;
-
-    proactiveBubble.classList.add('show');
-
-    // 机器人说话动画
-    startTalkingAnimation();
-    setTimeout(stopTalkingAnimation, 2000);
-
-    // 8秒后自动隐藏
-    setTimeout(() => {
-      hideProactiveBubble();
-    }, 8000);
-  }
-
-  function hideProactiveBubble() {
-    if (!proactiveBubble) return;
-    proactiveBubble.style.animation = 'workhogee-bubble-out 0.3s ease forwards';
-    setTimeout(() => {
-      proactiveBubble.classList.remove('show');
-      proactiveBubble.style.animation = '';
-    }, 300);
-    stopTalkingAnimation();
-  }
-
-  // ===== 鼠标跟随 =====
-
-  function startMouseFollow() {
-    if (state.mouseFollowActive) return;
-    state.mouseFollowActive = true;
-    state.isPaused = false;
-    widgetButton.classList.add('following');
-
-    // 初始位置
-    const rect = widgetButton.getBoundingClientRect();
-    state.buttonX = rect.left;
-    state.buttonY = rect.top;
-
-    // 平滑跟随动画
-    function followLoop() {
-      if (!state.mouseFollowActive || state.isOpen) return;
-
-      // 计算机器人当前中心位置
-      const btnRect = widgetButton.getBoundingClientRect();
-      const btnCenterX = btnRect.left + btnRect.width / 2;
-      const btnCenterY = btnRect.top + btnRect.height / 2;
-
-      // 计算鼠标与机器人的距离
-      const dx = state.mouseX - btnCenterX;
-      const dy = state.mouseY - btnCenterY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      // 如果鼠标接近机器人（120px内），暂停跟随，让用户可以点击
-      if (distance < 120) {
-        state.isPaused = true;
-        widgetButton.style.transform = 'scale(1.08)';
-      } else {
-        state.isPaused = false;
-        widgetButton.style.transform = '';
-
-        // 目标位置（鼠标右下方偏移，避免完全遮挡鼠标）
-        const targetX = state.mouseX + 24;
-        const targetY = state.mouseY + 24;
-
-        // 限制在视口内
-        const maxX = window.innerWidth - 80;
-        const maxY = window.innerHeight - 80;
-        const clampedX = Math.max(10, Math.min(maxX, targetX));
-        const clampedY = Math.max(10, Math.min(maxY, targetY));
-
-        widgetButton.style.left = clampedX + 'px';
-        widgetButton.style.top = clampedY + 'px';
-        widgetButton.style.bottom = 'auto';
-        widgetButton.style.right = 'auto';
-
-        // 同步气泡位置
-        if (proactiveBubble && proactiveBubble.classList.contains('show')) {
-          proactiveBubble.style.left = (clampedX - 210) + 'px';
-          proactiveBubble.style.top = (clampedY - 75) + 'px';
-          proactiveBubble.style.bottom = 'auto';
-          proactiveBubble.style.right = 'auto';
-        }
-      }
-
-      requestAnimationFrame(followLoop);
-    }
-
-    requestAnimationFrame(followLoop);
-    console.log('[WorkHogee] 鼠标跟随已启动（接近120px自动暂停）');
-  }
-
-  function stopMouseFollow() {
-    state.mouseFollowActive = false;
-    widgetButton.classList.remove('following');
-
-    // 回到原位
-    widgetButton.style.left = '';
-    widgetButton.style.top = '';
-    widgetButton.style.bottom = '24px';
-    widgetButton.style.right = '24px';
-
-    // 气泡回到原位
-    if (proactiveBubble) {
-      proactiveBubble.style.left = '';
-      proactiveBubble.style.top = '';
-      proactiveBubble.style.bottom = '96px';
-      proactiveBubble.style.right = '24px';
-    }
-
-    console.log('[WorkHogee] 鼠标跟随已停止');
   }
 
   // ===== 对话功能 =====
@@ -942,8 +509,6 @@
     if (!widgetPanel) return;
     state.isOpen = true;
     widgetPanel.classList.add('open');
-    hideProactiveBubble();
-    stopMouseFollow();
     setTimeout(() => {
       if (inputField) inputField.focus();
     }, 300);
@@ -970,9 +535,7 @@
 
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
-      if (msg.role === 'assistant') {
-        avatar.innerHTML = '<svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="#1c1917" stroke-width="2"/><circle cx="24" cy="32" r="5" fill="#1c1917"/><circle cx="40" cy="32" r="5" fill="#1c1917"/><circle cx="25" cy="31" r="1.8" fill="white"/><circle cx="41" cy="31" r="1.8" fill="white"/><rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/></svg>';
-      }
+      avatar.textContent = msg.role === 'assistant' ? '🤖' : '👤';
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
@@ -998,22 +561,16 @@
     typingEl.className = 'workhogee-message assistant';
     typingEl.id = 'workhogee-typing-indicator';
     typingEl.innerHTML = `
-      <div class="avatar">
-        <svg viewBox="0 0 64 64" width="18" height="18"><rect x="12" y="16" width="40" height="36" rx="12" fill="white" stroke="#1c1917" stroke-width="2"/><circle cx="24" cy="32" r="5" fill="#1c1917"/><circle cx="40" cy="32" r="5" fill="#1c1917"/><circle cx="25" cy="31" r="1.8" fill="white"/><circle cx="41" cy="31" r="1.8" fill="white"/><rect x="24" y="43" width="16" height="3.5" rx="1.75" fill="#1c1917"/></svg>
-      </div>
+      <div class="avatar">🤖</div>
       <div class="bubble"><div class="workhogee-typing"><span></span><span></span><span></span></div></div>
     `;
     messagesContainer.appendChild(typingEl);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-    // 机器人说话动画
-    startTalkingAnimation();
   }
 
   function hideTypingIndicator() {
     const indicator = document.getElementById('workhogee-typing-indicator');
     if (indicator) indicator.remove();
-    stopTalkingAnimation();
   }
 
   async function sendMessage() {
@@ -1060,11 +617,9 @@
     close: closeWidget,
     reconnect: reconnect,
     destroy: function() {
-      if (state.followTimer) clearTimeout(state.followTimer);
-      if (state.proactiveTimer) clearTimeout(state.proactiveTimer);
       if (widgetButton) widgetButton.remove();
       if (widgetPanel) widgetPanel.remove();
-      if (proactiveBubble) proactiveBubble.remove();
+      window.__workhogee_widget_initialized = false;
     }
   };
 
