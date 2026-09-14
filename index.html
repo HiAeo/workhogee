@@ -1462,68 +1462,294 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
   padding: 20px 0;
 }
 .device-pc {
-  width: 280px;
+  width: 320px;
   background: var(--ink);
-  border-radius: 10px;
-  padding: 8px;
+  border-radius: 12px;
+  padding: 10px;
   position: relative;
+  box-shadow: 0 20px 40px rgba(28,25,23,0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.device-pc:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 56px rgba(28,25,23,0.2);
 }
 .device-pc-screen {
   background: var(--paper);
-  border-radius: 4px;
-  height: 160px;
-  padding: 10px;
+  border-radius: 6px;
+  height: 200px;
   overflow: hidden;
-}
-.device-pc-bar {
-  height: 6px;
-  background: var(--line);
-  border-radius: 3px;
-  margin-bottom: 8px;
-  width: 60%;
-}
-.device-pc-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-.device-pc-card {
-  background: var(--white);
-  border-radius: 4px;
-  height: 40px;
-  border: 1px solid var(--line);
-}
-.device-mobile {
-  width: 100px;
-  background: var(--ink);
-  border-radius: 16px;
-  padding: 6px;
   position: relative;
 }
-.device-mobile-screen {
-  background: var(--paper);
-  border-radius: 10px;
-  height: 170px;
+.device-pc-topbar {
+  height: 22px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+}
+.device-pc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.device-pc-body {
+  display: flex;
+  height: calc(100% - 22px);
+}
+.device-pc-sidebar {
+  width: 50px;
+  background: var(--ink);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.device-pc-nav-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a9a196;
+  transition: all 0.3s;
+}
+.device-pc-nav-item.active {
+  background: var(--orange);
+  color: white;
+}
+.device-pc-main {
+  flex: 1;
   padding: 8px;
   overflow: hidden;
 }
-.device-mobile-bar {
-  height: 4px;
-  background: var(--line);
-  border-radius: 2px;
-  margin-bottom: 6px;
-  width: 50%;
+.device-pc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
 }
-.device-mobile-card {
+.device-pc-stat {
   background: var(--white);
   border-radius: 4px;
-  height: 30px;
+  padding: 6px 8px;
   border: 1px solid var(--line);
-  margin-bottom: 5px;
+}
+.device-pc-stat-num {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--orange);
+  line-height: 1.2;
+}
+.device-pc-stat-label {
+  font-size: 8px;
+  color: var(--ink-light);
+  margin-top: 2px;
+}
+.device-pc-list {
+  background: var(--white);
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  padding: 6px;
+}
+.device-pc-list-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.device-pc-list-item:last-child {
+  border-bottom: none;
+}
+.device-pc-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.device-pc-list-info {
+  flex: 1;
+  min-width: 0;
+}
+.device-pc-list-name {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-pc-list-desc {
+  font-size: 7px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-pc-badge {
+  font-size: 6px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.device-mobile {
+  width: 130px;
+  background: var(--ink);
+  border-radius: 20px;
+  padding: 8px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(28,25,23,0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.device-mobile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 56px rgba(28,25,23,0.2);
+}
+.device-mobile-screen {
+  background: var(--paper);
+  border-radius: 14px;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+.device-mobile-notch {
+  width: 40px;
+  height: 4px;
+  background: var(--ink);
+  border-radius: 2px;
+  margin: 6px auto 4px;
+}
+.device-mobile-header {
+  padding: 4px 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.device-mobile-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.device-mobile-badge {
+  background: var(--orange);
+  color: white;
+  font-size: 7px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  min-width: 14px;
+  text-align: center;
+}
+.device-mobile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+.device-mobile-stat {
+  background: var(--white);
+  border-radius: 4px;
+  padding: 5px 6px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.device-mobile-stat-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.device-mobile-stat-label {
+  font-size: 6px;
+  color: var(--ink-light);
+  margin-top: 1px;
+}
+.device-mobile-msg-list {
+  padding: 0 8px;
+}
+.device-mobile-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line);
+}
+.device-mobile-msg:last-child {
+  border-bottom: none;
+}
+.device-mobile-msg-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.device-mobile-msg-content {
+  flex: 1;
+  min-width: 0;
+}
+.device-mobile-msg-name {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+}
+.device-mobile-msg-time {
+  font-size: 6px;
+  color: var(--ink-light);
+  font-weight: 400;
+}
+.device-mobile-msg-text {
+  font-size: 7px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.device-mobile-tabbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.device-mobile-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: var(--ink-light);
+  font-size: 6px;
+}
+.device-mobile-tab.active {
+  color: var(--orange);
 }
 .device-sync-arrow {
   display: flex;
@@ -1531,12 +1757,33 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 8px;
   color: var(--orange);
+  animation: syncPulse 2s ease-in-out infinite;
+}
+@keyframes syncPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 .device-sync-line {
   width: 2px;
-  height: 40px;
+  height: 50px;
   background: linear-gradient(180deg, var(--orange), var(--orange-light));
   position: relative;
+  overflow: hidden;
+}
+.device-sync-line::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.8), transparent);
+  animation: syncFlow 1.5s linear infinite;
+}
+@keyframes syncFlow {
+  0% { top: -20px; }
+  100% { top: 100%; }
+}
 }
 .device-sync-line::after {
   content: '';
@@ -3194,30 +3441,152 @@ img { max-width: 100%; display: block; }
       <div class="device-showcase">
         <div class="device-pc">
           <div class="device-pc-screen">
-            <div class="device-pc-bar"></div>
-            <div class="device-pc-content">
-              <div class="device-pc-card"></div>
-              <div class="device-pc-card"></div>
-              <div class="device-pc-card"></div>
-              <div class="device-pc-card"></div>
+            <div class="device-pc-topbar">
+              <span class="device-pc-dot" style="background:#ff5f57;"></span>
+              <span class="device-pc-dot" style="background:#febc2e;"></span>
+              <span class="device-pc-dot" style="background:#28c840;"></span>
+              <span style="color:#a9a196; font-size:7px; margin-left:8px;">WorkHogee - 数据仪表盘</span>
+            </div>
+            <div class="device-pc-body">
+              <div class="device-pc-sidebar">
+                <div class="device-pc-nav-item active">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+              </div>
+              <div class="device-pc-main">
+                <div class="device-pc-stats">
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" id="pcStat1">156</div>
+                    <div class="device-pc-stat-label">今日对话</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" id="pcStat2">28</div>
+                    <div class="device-pc-stat-label">新增线索</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" style="color:#16a34a;">98.7%</div>
+                    <div class="device-pc-stat-label">响应率</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" style="color:#16a34a;">5</div>
+                    <div class="device-pc-stat-label">今日成交</div>
+                  </div>
+                </div>
+                <div class="device-pc-list">
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c);">张</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">张先生 · 新房装修</div>
+                      <div class="device-pc-list-desc">来自官网 · 2分钟前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#fef3c7; color:#d97706;">A级</span>
+                  </div>
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#ec4899,#db2777);">李</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">李女士 · 医美咨询</div>
+                      <div class="device-pc-list-desc">来自小红书 · 15分钟前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#dbeafe; color:#2563eb;">B级</span>
+                  </div>
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">王</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">王总 · 企业采购</div>
+                      <div class="device-pc-list-desc">来自抖音 · 1小时前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#dcfce7; color:#16a34a;">已成交</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 4px; font-weight: 600;">Windows / macOS</div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 6px; font-weight: 600;">Windows / macOS</div>
         </div>
         <div class="device-sync-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
           <div class="device-sync-line"></div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         </div>
         <div class="device-mobile">
           <div class="device-mobile-screen">
-            <div class="device-mobile-bar"></div>
-            <div class="device-mobile-card"></div>
-            <div class="device-mobile-card"></div>
-            <div class="device-mobile-card"></div>
-            <div class="device-mobile-card"></div>
+            <div class="device-mobile-notch"></div>
+            <div class="device-mobile-header">
+              <span class="device-mobile-title">WorkHogee</span>
+              <span class="device-mobile-badge">3</span>
+            </div>
+            <div class="device-mobile-stats">
+              <div class="device-mobile-stat">
+                <div class="device-mobile-stat-num" id="mobileStat1">156</div>
+                <div class="device-mobile-stat-label">对话</div>
+              </div>
+              <div class="device-mobile-stat">
+                <div class="device-mobile-stat-num" id="mobileStat2">28</div>
+                <div class="device-mobile-stat-label">线索</div>
+              </div>
+            </div>
+            <div class="device-mobile-msg-list">
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c);">张</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">张先生 <span class="device-mobile-msg-time">2分钟</span></div>
+                  <div class="device-mobile-msg-text">请问报价单能发我吗？</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#ec4899,#db2777);">李</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">李女士 <span class="device-mobile-msg-time">15分钟</span></div>
+                  <div class="device-mobile-msg-text">AI已自动回复，待确认</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">王</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">王总 <span class="device-mobile-msg-time">1小时</span></div>
+                  <div class="device-mobile-msg-text">已完成签约，恭喜！</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">系</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">系统通知 <span class="device-mobile-msg-time">今天</span></div>
+                  <div class="device-mobile-msg-text">今日获客日报已生成</div>
+                </div>
+              </div>
+            </div>
+            <div class="device-mobile-tabbar">
+              <div class="device-mobile-tab active">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>首页</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <span>线索</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>消息</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>我的</span>
+              </div>
+            </div>
           </div>
-          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 4px; font-weight: 600;">iOS / Android</div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 6px; font-weight: 600;">iOS / Android</div>
         </div>
       </div>
       <div>
@@ -3490,6 +3859,70 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+// 多端协同 - 数据实时同步动画
+(function() {
+  const pcStat1 = document.getElementById('pcStat1');
+  const pcStat2 = document.getElementById('pcStat2');
+  const mobileStat1 = document.getElementById('mobileStat1');
+  const mobileStat2 = document.getElementById('mobileStat2');
+  
+  if (!pcStat1 || !mobileStat1) return;
+  
+  let baseDialog = 156;
+  let baseLead = 28;
+  
+  function updateStats() {
+    // 随机增加数据，模拟实时获客
+    baseDialog += Math.floor(Math.random() * 3);
+    if (Math.random() > 0.6) baseLead += 1;
+    
+    // PC 和手机端数据同步更新
+    pcStat1.textContent = baseDialog;
+    pcStat2.textContent = baseLead;
+    mobileStat1.textContent = baseDialog;
+    mobileStat2.textContent = baseLead;
+    
+    // 添加闪烁动画
+    [pcStat1, pcStat2, mobileStat1, mobileStat2].forEach(el => {
+      el.style.transition = 'color 0.3s';
+      el.style.color = '#16a34a';
+      setTimeout(() => { el.style.color = ''; }, 500);
+    });
+  }
+  
+  // 每5秒更新一次数据
+  setInterval(updateStats, 5000);
+  
+  // 设备 hover 时的微交互
+  document.querySelectorAll('.device-pc, .device-mobile').forEach(device => {
+    device.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-6px) scale(1.02)';
+    });
+    device.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+})();
+
+// 滚动揭示动画增强
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    observer.observe(el);
+  });
+})();
 </script>
 
 <!-- WorkHogee AI 获客伙计 - 对话浮窗组件（内测版） -->
