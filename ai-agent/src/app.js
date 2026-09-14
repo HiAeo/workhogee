@@ -14,6 +14,11 @@ const fs = require('fs');
 const configPath = path.join(__dirname, '../config/default.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
+// 初始化数据库
+const db = require('./db');
+const { initDatabase } = require('./db/init');
+db.init(config.database);
+
 // 初始化核心服务
 const LLMService = require('./services/llm');
 const LeadStorageService = require('./services/leadService');
@@ -41,6 +46,7 @@ const ReportService = require('./services/reportService');
 const EmailConfigService = require('./services/emailConfigService');
 const EmailReceiverService = require('./services/emailReceiverService');
 const EmailSenderService = require('./services/emailSenderService');
+const WebSocketService = require('./services/websocketService');
 
 const smartIntake = new SmartIntakeSkill(llmService, leadStorage, conversationStorage, config.business);
 const contentCreator = new ContentCreatorSkill(llmService, config.business);
@@ -130,6 +136,16 @@ const PORT = config.server.port || 3000;
 const HOST = config.server.host || 'localhost';
 
 async function startServer() {
+  // 初始化数据库（如果启用）
+  if (db.isEnabled()) {
+    try {
+      await initDatabase();
+      console.log('[DB] 数据库表初始化完成');
+    } catch (e) {
+      console.error('[DB] 数据库表初始化失败:', e.message);
+    }
+  }
+
   // 初始化 DSH 插件
   try {
     await pluginManager.init(config, services);
@@ -137,15 +153,17 @@ async function startServer() {
     console.error('[DSH] 插件系统初始化失败:', e.message);
   }
 
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log('');
     console.log('========================================');
-    console.log('  WorkHogee AI 获客伙计 v0.2.0');
+    console.log('  WorkHogee AI 获客伙计 v0.3.0');
     console.log('========================================');
     console.log('');
     console.log('  管理后台: http://' + HOST + ':' + PORT);
     console.log('  API 文档: http://' + HOST + ':' + PORT + '/api/health');
     console.log('  插件状态: http://' + HOST + ':' + PORT + '/api/dsh/plugins');
+    console.log('  WebSocket: ws://' + HOST + ':' + PORT + '/ws');
+    console.log('  数据库: ' + (db.isEnabled() ? 'PostgreSQL 已连接' : 'JSON 文件存储'));
     console.log('');
     console.log('  核心能力:');
     console.log('    ✓ 智能对话承接');
@@ -164,6 +182,18 @@ async function startServer() {
     console.log('  基于 DeepSeek Harness 理念构建');
     console.log('  插件化架构，支持能力扩展');
     console.log('');
+  });
+
+  // 初始化 WebSocket 服务
+  const websocketService = new WebSocketService(server, config.websocket || {});
+  services.websocket = websocketService;
+
+  // WebSocket 状态 API
+  app.get('/api/websocket/stats', (req, res) => {
+    res.json({
+      success: true,
+      data: websocketService.getStats()
+    });
   });
 }
 
