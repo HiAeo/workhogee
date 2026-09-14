@@ -8,6 +8,144 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+/**
+ * 简单的 TF-IDF 向量化器（用于语义检索，无需外部 API）
+ */
+class SimpleVectorizer {
+  constructor() {
+    this.vocabulary = new Map(); // 词 -> 索引
+    this.idf = new Map(); // 词 -> IDF 值
+    this.docCount = 0;
+    this.docVectors = []; // 文档向量
+  }
+
+  /**
+   * 分词（简单的中英文分词）
+   */
+  tokenize(text) {
+    if (!text) return [];
+    // 英文按空格和标点分词，中文按字符分词
+    const tokens = [];
+    const englishWords = text.toLowerCase().match(/[a-z0-9]+/g) || [];
+    tokens.push(...englishWords);
+    // 中文按 2-gram 分词
+    const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || [];
+    for (let i = 0; i < chineseChars.length - 1; i++) {
+      tokens.push(chineseChars[i] + chineseChars[i + 1]);
+    }
+    return tokens.filter(t => t.length > 1);
+  }
+
+  /**
+   * 计算词频（TF）
+   */
+  computeTF(tokens) {
+    const tf = new Map();
+    tokens.forEach(token => {
+      tf.set(token, (tf.get(token) || 0) + 1);
+    });
+    return tf;
+  }
+
+  /**
+   * 添加文档到语料库
+   */
+  addDocument(text) {
+    const tokens = this.tokenize(text);
+    const tf = this.computeTF(tokens);
+
+    // 更新词汇表
+    tf.forEach((count, token) => {
+      if (!this.vocabulary.has(token)) {
+        this.vocabulary.set(token, this.vocabulary.size);
+      }
+    });
+
+    this.docCount++;
+    this.docVectors.push({ text, tokens, tf });
+    return this.docVectors.length - 1;
+  }
+
+  /**
+   * 计算 IDF（逆文档频率）
+   */
+  computeIDF() {
+    this.idf.clear();
+    this.vocabulary.forEach((index, token) => {
+      let docFreq = 0;
+      this.docVectors.forEach(doc => {
+        if (doc.tf.has(token)) docFreq++;
+      });
+      this.idf.set(token, Math.log((this.docCount + 1) / (docFreq + 1)) + 1);
+    });
+  }
+
+  /**
+   * 将文本转换为 TF-IDF 向量
+   */
+  vectorize(text) {
+    const tokens = this.tokenize(text);
+    const tf = this.computeTF(tokens);
+    const vector = new Map();
+
+    tf.forEach((count, token) => {
+      if (this.vocabulary.has(token)) {
+        const idf = this.idf.get(token) || 1;
+        vector.set(this.vocabulary.get(token), count * idf);
+      }
+    });
+
+    return vector;
+  }
+
+  /**
+   * 计算余弦相似度
+   */
+  cosineSimilarity(vec1, vec2) {
+    let dotProduct = 0;
+    let norm1 = 0;
+    let norm2 = 0;
+
+    vec1.forEach((value, index) => {
+      norm1 += value * value;
+      if (vec2.has(index)) {
+        dotProduct += value * vec2.get(index);
+      }
+    });
+
+    vec2.forEach(value => {
+      norm2 += value * value;
+    });
+
+    if (norm1 === 0 || norm2 === 0) return 0;
+    return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+  }
+
+  /**
+   * 搜索最相似的文档
+   */
+  search(query, topK = 5) {
+    if (this.docVectors.length === 0) return [];
+
+    // 确保 IDF 已计算
+    if (this.idf.size === 0) {
+      this.computeIDF();
+    }
+
+    const queryVector = this.vectorize(query);
+    const scored = this.docVectors.map((doc, index) => {
+      const docVector = this.vectorize(doc.text);
+      const similarity = this.cosineSimilarity(queryVector, docVector);
+      return { index, text: doc.text, similarity };
+    });
+
+    return scored
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, topK)
+      .filter(s => s.similarity > 0.05); // 过滤低相似度结果
+  }
+}
+
 class KnowledgeBaseService {
   constructor(llmService, config) {
     this.llmService = llmService;
@@ -20,6 +158,10 @@ class KnowledgeBaseService {
     this.faqs = [];
     this.scripts = [];
     this._loadAll();
+
+    // RAG 向量化器
+    this.vectorizer = new SimpleVectorizer();
+    this._buildVectorIndex();
   }
 
   _ensureDirs() {
@@ -36,6 +178,80 @@ class KnowledgeBaseService {
     this._loadDocuments();
     this._loadFAQs();
     this._loadScripts();
+  }
+
+  /**
+   * 构建向量索引（RAG）
+   */
+  _buildVectorIndex() {
+    this.vectorizer = new SimpleVectorizer();
+
+    // 将所有文档、FAQ、话术添加到向量化器
+    this.documents.forEach(doc => {
+      this.vectorizer.addDocument(`${doc.title} ${doc.content}`);
+    });
+
+    this.faqs.forEach(faq => {
+      this.vectorizer.addDocument(`${faq.question} ${faq.answer}`);
+    });
+
+    this.scripts.forEach(script => {
+      this.vectorizer.addDocument(`${script.title} ${script.content}`);
+    });
+
+    // 计算 IDF
+    this.vectorizer.computeIDF();
+
+    console.log(`[KnowledgeBase] 向量索引构建完成，共 ${this.vectorizer.docCount} 个文档，${this.vectorizer.vocabulary.size} 个词汇`);
+  }
+
+  /**
+   * 重新构建向量索引（在添加/删除文档后调用）
+   */
+  _rebuildVectorIndex() {
+    this._buildVectorIndex();
+  }
+
+  /**
+   * 语义搜索（RAG）
+   * @param {string} query - 查询文本
+   * @param {number} topK - 返回结果数量
+   * @returns {Array} 搜索结果，包含类型、内容、相似度
+   */
+  semanticSearch(query, topK = 5) {
+    if (!query || this.vectorizer.docCount === 0) return [];
+
+    const results = this.vectorizer.search(query, topK * 2); // 多取一些，后面去重和分类
+
+    // 将搜索结果映射回原始文档
+    const enrichedResults = [];
+    const allContent = [
+      ...this.documents.map(d => ({ type: 'document', ...d })),
+      ...this.faqs.map(f => ({ type: 'faq', ...f })),
+      ...this.scripts.map(s => ({ type: 'script', ...s }))
+    ];
+
+    results.forEach(result => {
+      // 找到匹配的原始文档
+      const matched = allContent.find(item => {
+        const itemText = `${item.title || item.question || ''} ${item.content || item.answer || ''}`;
+        return itemText === result.text || itemText.includes(result.text.substring(0, 50));
+      });
+
+      if (matched) {
+        enrichedResults.push({
+          type: matched.type,
+          id: matched.id,
+          title: matched.title || matched.question,
+          content: matched.content || matched.answer,
+          similarity: result.similarity,
+          category: matched.category,
+          tags: matched.tags
+        });
+      }
+    });
+
+    return enrichedResults.slice(0, topK);
   }
 
   _loadDocuments() {
@@ -338,17 +554,26 @@ class KnowledgeBaseService {
   // ===== 智能回复（基于知识库） =====
 
   /**
-   * 基于知识库生成智能回复
+   * 基于知识库生成智能回复（RAG增强版）
    */
   async generateKnowledgeReply(query, context = {}) {
-    // 1. 搜索匹配的 FAQ
-    const matchedFAQs = this.searchFAQs(query, 3);
+    // 1. 语义搜索（RAG）- 获取最相关的知识库内容
+    const semanticResults = this.semanticSearch(query, 5);
 
-    // 2. 搜索相关文档
-    const relatedDocs = this.listDocuments(null, query).slice(0, 3);
+    // 2. 按类型分类
+    const matchedFAQs = semanticResults.filter(r => r.type === 'faq').slice(0, 3);
+    const relatedDocs = semanticResults.filter(r => r.type === 'document').slice(0, 2);
+    const recommendedScript = semanticResults.find(r => r.type === 'script') ||
+      this.recommendScript('general', query);
 
-    // 3. 推荐话术
-    const recommendedScript = this.recommendScript('general', query);
+    // 3. 如果语义搜索结果不足，回退到关键词搜索
+    if (semanticResults.length === 0) {
+      console.log('[KnowledgeBase] 语义搜索无结果，回退到关键词搜索');
+      const keywordFAQs = this.searchFAQs(query, 3);
+      const keywordDocs = this.listDocuments(null, query).slice(0, 2);
+      matchedFAQs.push(...keywordFAQs.map(f => ({ type: 'faq', ...f, similarity: 0.5 })));
+      relatedDocs.push(...keywordDocs.map(d => ({ type: 'document', ...d, similarity: 0.5 })));
+    }
 
     // 4. 构建知识库上下文
     let knowledgeContext = '';
@@ -356,19 +581,22 @@ class KnowledgeBaseService {
     if (matchedFAQs.length > 0) {
       knowledgeContext += '\n\n【常见问题参考】\n';
       matchedFAQs.forEach((faq, i) => {
-        knowledgeContext += `${i + 1}. Q: ${faq.question}\n   A: ${faq.answer}\n`;
+        const sim = faq.similarity ? ` (相似度: ${(faq.similarity * 100).toFixed(1)}%)` : '';
+        knowledgeContext += `${i + 1}. Q: ${faq.question || faq.title}\n   A: ${faq.answer || faq.content}${sim}\n`;
       });
     }
 
     if (relatedDocs.length > 0) {
       knowledgeContext += '\n\n【产品资料参考】\n';
       relatedDocs.forEach((doc, i) => {
-        knowledgeContext += `${i + 1}. ${doc.title}: ${doc.content.substring(0, 200)}...\n`;
+        const sim = doc.similarity ? ` (相似度: ${(doc.similarity * 100).toFixed(1)}%)` : '';
+        const content = (doc.content || '').substring(0, 300);
+        knowledgeContext += `${i + 1}. ${doc.title}: ${content}${sim}\n`;
       });
     }
 
     if (recommendedScript) {
-      knowledgeContext += `\n\n【推荐话术】\n${recommendedScript.content}`;
+      knowledgeContext += `\n\n【推荐话术】\n${recommendedScript.content || recommendedScript.title}`;
     }
 
     // 5. 调用 LLM 生成回复
@@ -380,6 +608,7 @@ class KnowledgeBaseService {
 3. 回答简洁专业，不超过200字
 4. 适当引导留资或预约
 5. 不要编造知识库中没有的信息
+6. 参考内容按相似度排序，优先使用高相似度内容
 
 ${knowledgeContext}`;
 
@@ -392,25 +621,28 @@ ${knowledgeContext}`;
       return {
         reply,
         sources: {
-          faqs: matchedFAQs.map(f => ({ id: f.id, question: f.question })),
-          documents: relatedDocs.map(d => ({ id: d.id, title: d.title })),
+          faqs: matchedFAQs.map(f => ({ id: f.id, question: f.question || f.title, similarity: f.similarity })),
+          documents: relatedDocs.map(d => ({ id: d.id, title: d.title, similarity: d.similarity })),
           script: recommendedScript ? { id: recommendedScript.id, title: recommendedScript.title } : null
         },
-        knowledgeUsed: matchedFAQs.length > 0 || relatedDocs.length > 0
+        knowledgeUsed: matchedFAQs.length > 0 || relatedDocs.length > 0,
+        searchMethod: semanticResults.length > 0 ? 'semantic' : 'keyword'
       };
     } catch (e) {
       // LLM 失败时返回 FAQ 直接匹配
       if (matchedFAQs.length > 0) {
         return {
-          reply: matchedFAQs[0].answer,
-          sources: { faqs: [{ id: matchedFAQs[0].id, question: matchedFAQs[0].question }], documents: [], script: null },
-          knowledgeUsed: true
+          reply: matchedFAQs[0].answer || matchedFAQs[0].content,
+          sources: { faqs: [{ id: matchedFAQs[0].id, question: matchedFAQs[0].question || matchedFAQs[0].title }], documents: [], script: null },
+          knowledgeUsed: true,
+          searchMethod: 'fallback'
         };
       }
       return {
         reply: '感谢您的咨询，我正在学习更多关于我们产品的知识。您的问题已记录，我们的顾问会尽快与您联系。请问方便留下您的联系方式吗？',
         sources: { faqs: [], documents: [], script: null },
-        knowledgeUsed: false
+        knowledgeUsed: false,
+        searchMethod: 'none'
       };
     }
   }
