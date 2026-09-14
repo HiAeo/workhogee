@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee 智能体交付 — 3天交付一个AI Agent</title>
-<meta name="description" content="WorkHogee自研智能体开发伙计交付系统，7步标准化流程，3天交付一个能用的AI Agent。客服、销售、营销、运营、行业定制，装在官网、企微、飞书、钉钉。">
+<title>WorkHogee 智能体交付 — 你描述需求，我们3天交付一个AI Agent</title>
+<meta name="description" content="WorkHogee智能体交付：医美咨询、教育顾问、家装报价、财税问答、出海多语言客服，5个真实交付案例，3天上线，持续运维。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
@@ -15,6 +15,7 @@
   --orange: #ea580c;
   --orange-deep: #c2410c;
   --orange-light: #fb923c;
+  --orange-bg: #fff7ed;
   --paper: #faf8f4;
   --sand: #f0e9db;
   --line: #e7e0d4;
@@ -60,66 +61,87 @@ img { max-width: 100%; display: block; }
 .nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }
 
 /* Hero */
-.hero { padding: 140px 0 80px; background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%); position: relative; overflow: hidden; }
+.hero {
+  padding: 140px 0 80px;
+  background: linear-gradient(180deg, var(--ink) 0%, #292524 60%, var(--paper) 100%);
+  position: relative; overflow: hidden; color: var(--white);
+}
 .hero::before {
-  content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 70%); pointer-events: none;
+  content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.2) 0%, transparent 70%); pointer-events: none;
 }
-.hero-inner { display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+.hero::after {
+  content: ''; position: absolute; bottom: 100px; left: -150px; width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%); pointer-events: none;
+}
+.hero-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
 .hero-badge {
-  display: inline-flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--line);
-  padding: 8px 16px; border-radius: 100px; font-size: 13px; color: var(--ink-soft); margin-bottom: 24px; box-shadow: var(--shadow-sm);
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(234,88,12,0.15); border: 1px solid rgba(234,88,12,0.3);
+  padding: 8px 16px; border-radius: 100px; font-size: 13px; color: var(--orange-light); margin-bottom: 24px;
 }
-.hero-badge .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+.hero-badge .dot { width: 8px; height: 8px; background: var(--orange-light); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-.hero h1 { font-size: clamp(36px, 5vw, 52px); font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 20px; }
-.hero h1 .highlight { color: var(--orange); position: relative; }
-.hero h1 .highlight::after { content: ''; position: absolute; left: 0; bottom: 4px; width: 100%; height: 8px; background: rgba(234,88,12,0.18); z-index: -1; border-radius: 4px; }
-.hero-sub { font-size: 18px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 36px; max-width: 540px; }
-.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+.hero h1 { font-size: clamp(34px, 4.5vw, 48px); font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 20px; }
+.hero h1 .highlight { color: var(--orange-light); }
+.hero-sub { font-size: 17px; color: #d6d3d1; line-height: 1.7; margin-bottom: 32px; max-width: 500px; }
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: var(--white);
   padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 700;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 14px rgba(234,88,12,0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 14px rgba(234,88,12,0.4);
   position: relative; overflow: hidden;
 }
 .btn-primary::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
-.btn-primary:hover { background: var(--orange-deep); transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 28px rgba(234,88,12,0.45); }
+.btn-primary:hover { background: var(--orange-deep); transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 28px rgba(234,88,12,0.5); }
 .btn-primary:hover::after { left: 100%; }
-.btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px; background: var(--white); color: var(--ink); border: 2px solid var(--line);
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.2);
   padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; transition: all 0.25s;
 }
-.btn-secondary:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 24px rgba(234,88,12,0.2); }
-.hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
-.hero-stat .num { font-size: 32px; font-weight: 900; color: var(--orange); line-height: 1; }
-.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 4px; }
+.btn-ghost:hover { border-color: var(--orange-light); color: var(--orange-light); background: rgba(234,88,12,0.1); }
+.hero-stats { display: flex; gap: 36px; flex-wrap: wrap; }
+.hero-stat .num { font-size: 30px; font-weight: 900; color: var(--orange-light); line-height: 1; }
+.hero-stat .label { font-size: 13px; color: #a8a29e; margin-top: 4px; }
 
-/* Hero右侧 - 交付系统工作台模拟 */
+/* Hero右侧 - 真实Agent对话演示 */
 .hero-visual { position: relative; }
-.hero-mockup {
-  background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
-  border: 1px solid var(--line); overflow: hidden;
-  transform: perspective(1000px) rotateY(-3deg) rotateX(2deg); transition: transform 0.5s ease;
+.hero-chat {
+  background: var(--white); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  overflow: hidden; transform: perspective(1000px) rotateY(-2deg) rotateX(1deg);
+  transition: transform 0.5s ease;
 }
-.hero-mockup:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
-.mockup-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--paper); border-bottom: 1px solid var(--line); }
-.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
-.mockup-dot.r { background: #ef4444; } .mockup-dot.y { background: #f59e0b; } .mockup-dot.g { background: #22c55e; }
-.mockup-title { font-size: 12px; color: var(--ink-muted); margin-left: 8px; }
-.mockup-body { padding: 16px; }
-.mockup-project { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; margin-bottom: 8px; transition: all 0.3s; }
-.mockup-project:hover { background: var(--paper); }
-.mockup-project .pj-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.mockup-project .pj-info { flex: 1; min-width: 0; }
-.mockup-project .pj-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-.mockup-project .pj-meta { font-size: 11px; color: var(--ink-muted); }
-.mockup-project .pj-status { font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
-.status-done { background: #dcfce7; color: #166534; }
-.status-doing { background: #ffedd5; color: var(--orange-deep); }
-.status-todo { background: #f5f5f4; color: var(--ink-muted); }
-.mockup-progress { height: 4px; background: var(--line); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-.mockup-progress-bar { height: 100%; background: var(--orange); border-radius: 2px; transition: width 1s ease; }
+.hero-chat:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+.chat-header {
+  display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+  background: linear-gradient(135deg, var(--ink) 0%, #292524 100%); color: var(--white);
+}
+.chat-avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.chat-info { flex: 1; }
+.chat-name { font-size: 14px; font-weight: 700; }
+.chat-status { font-size: 11px; color: #a8a29e; display: flex; align-items: center; gap: 5px; }
+.chat-status .online { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+.chat-body { padding: 20px; min-height: 320px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6; animation: msgIn 0.4s ease both; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg.user { align-self: flex-end; background: var(--orange); color: white; border-bottom-right-radius: 4px; }
+.msg.bot { align-self: flex-start; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg .typing { display: inline-flex; gap: 3px; padding: 4px 0; }
+.msg .typing span { width: 6px; height: 6px; background: var(--ink-muted); border-radius: 50%; animation: typing 1.2s infinite; }
+.msg .typing span:nth-child(2) { animation-delay: 0.2s; }
+.msg .typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+.quick-replies { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.quick-reply {
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--orange);
+  color: var(--orange); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  background: transparent;
+}
+.quick-reply:hover { background: var(--orange); color: white; }
 
 /* Section */
 .section { padding: 80px 0; }
@@ -129,70 +151,89 @@ img { max-width: 100%; display: block; }
 .section-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; line-height: 1.2; margin-bottom: 16px; letter-spacing: -0.01em; }
 .section-head p { font-size: 17px; color: var(--ink-soft); max-width: 640px; margin: 0 auto; line-height: 1.7; }
 
-/* 对比 */
-.pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.pain-card { padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--line); transition: all 0.3s; }
-.pain-card.bad { background: #fef2f2; border-color: #fecaca; }
-.pain-card.good { background: #f0fdf4; border-color: #bbf7d0; }
-.pain-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-.pain-card.bad h3 { color: #991b1b; }
-.pain-card.good h3 { color: #166534; }
-.pain-card ul { list-style: none; }
-.pain-card li { font-size: 15px; padding: 10px 0; padding-left: 28px; position: relative; color: var(--ink-soft); border-bottom: 1px solid rgba(0,0,0,0.05); }
-.pain-card li:last-child { border-bottom: none; }
-.pain-card.bad li::before { content: '✕'; position: absolute; left: 0; color: #ef4444; font-weight: 800; }
-.pain-card.good li::before { content: '✓'; position: absolute; left: 0; color: #22c55e; font-weight: 800; }
-
-/* 交付流程时间轴 */
-.timeline-3d { position: relative; max-width: 900px; margin: 0 auto; }
-.timeline-3d::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--orange) 0%, var(--orange-light) 100%); transform: translateX(-50%); }
-.tl-item { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; margin-bottom: 28px; align-items: center; }
-.tl-item:nth-child(odd) .tl-content { text-align: right; padding-right: 32px; }
-.tl-item:nth-child(even) .tl-content { grid-column: 3; text-align: left; padding-left: 32px; }
-.tl-dot { grid-column: 2; width: 48px; height: 48px; border-radius: 50%; background: var(--white); border: 3px solid var(--orange); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: var(--orange); box-shadow: 0 4px 12px rgba(234,88,12,0.25); z-index: 1; justify-self: center; }
-.tl-content h4 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-.tl-content .tl-day { font-size: 12px; font-weight: 700; color: var(--orange); margin-bottom: 4px; }
-.tl-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
-
-/* 交付引擎模块 */
-.engine-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.engine-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; transition: all 0.3s; }
-.engine-card:hover { border-color: var(--orange); box-shadow: 0 8px 30px rgba(234,88,12,0.1); transform: translateY(-4px); }
-.engine-icon { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 18px; }
-.engine-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
-.engine-card p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
-.engine-card .engine-tag { display: inline-block; margin-top: 12px; font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #ffedd5; color: var(--orange-deep); font-weight: 600; }
-
-/* 内部系统说明条 */
-.internal-note {
-  background: linear-gradient(135deg, var(--ink) 0%, #292524 100%); color: var(--white);
-  border-radius: var(--radius-lg); padding: 28px 32px; margin: 0 auto 48px; max-width: 900px;
-  display: flex; align-items: center; gap: 20px;
+/* Demo案例板块 */
+.demo-section { padding: 80px 0; }
+.demo-section:nth-child(odd) { background: var(--white); }
+.demo-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.demo-section.reverse .demo-inner { direction: rtl; }
+.demo-section.reverse .demo-inner > * { direction: ltr; }
+.demo-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--orange-bg); border: 1px solid #fed7aa; color: var(--orange-deep);
+  padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 16px;
 }
-.internal-note .note-icon { font-size: 32px; flex-shrink: 0; }
-.internal-note h4 { font-size: 16px; font-weight: 800; margin-bottom: 4px; color: var(--orange-light); }
-.internal-note p { font-size: 14px; color: #d6d3d1; line-height: 1.6; }
+.demo-title { font-size: clamp(24px, 3vw, 32px); font-weight: 900; line-height: 1.3; margin-bottom: 16px; }
+.demo-pain {
+  background: #fef2f2; border-left: 3px solid #ef4444; padding: 14px 18px;
+  border-radius: 0 10px 10px 0; margin-bottom: 16px;
+}
+.demo-pain .label { font-size: 12px; font-weight: 700; color: #991b1b; margin-bottom: 4px; }
+.demo-pain p { font-size: 14px; color: #7f1d1d; line-height: 1.6; }
+.demo-solution {
+  background: #f0fdf4; border-left: 3px solid #22c55e; padding: 14px 18px;
+  border-radius: 0 10px 10px 0; margin-bottom: 20px;
+}
+.demo-solution .label { font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px; }
+.demo-solution p { font-size: 14px; color: #14532d; line-height: 1.6; }
+.demo-results { display: flex; gap: 24px; flex-wrap: wrap; }
+.demo-result { text-align: center; }
+.demo-result .num { font-size: 28px; font-weight: 900; color: var(--orange); line-height: 1; }
+.demo-result .label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; max-width: 100px; }
 
-/* 质量保障 */
-.quality-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.quality-card { text-align: center; padding: 28px 20px; background: var(--paper); border-radius: var(--radius-lg); border: 1px solid var(--line); transition: all 0.3s; }
-.quality-card:hover { border-color: var(--orange); transform: translateY(-3px); }
-.quality-card .q-icon { font-size: 32px; margin-bottom: 12px; }
-.quality-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
-.quality-card p { font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+/* Demo右侧 - 聊天界面 */
+.demo-chat {
+  background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line); overflow: hidden;
+}
+.demo-chat-header {
+  display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+  background: var(--paper); border-bottom: 1px solid var(--line);
+}
+.demo-chat-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.demo-chat-name { font-size: 13px; font-weight: 700; }
+.demo-chat-sub { font-size: 11px; color: var(--ink-muted); }
+.demo-chat-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; min-height: 280px; }
+.demo-msg { max-width: 88%; padding: 9px 13px; border-radius: 12px; font-size: 12.5px; line-height: 1.6; }
+.demo-msg.user { align-self: flex-end; background: var(--orange); color: white; border-bottom-right-radius: 3px; }
+.demo-msg.bot { align-self: flex-start; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+.demo-msg.bot .emoji { margin-right: 2px; }
+.demo-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.demo-quick-btn {
+  padding: 5px 12px; border-radius: 16px; border: 1px solid var(--orange);
+  color: var(--orange); font-size: 11px; font-weight: 600; background: transparent; cursor: pointer;
+}
 
-/* Agent类型 */
-.agent-types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.agent-type { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 24px 20px; text-align: center; transition: all 0.3s; }
-.agent-type:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(234,88,12,0.12); }
-.agent-type .at-icon { font-size: 32px; margin-bottom: 12px; }
-.agent-type h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
-.agent-type p { font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
+/* 技术能力板块 */
+.tech-section { background: linear-gradient(180deg, var(--ink) 0%, #292524 100%); color: var(--white); }
+.tech-section .section-head h2 { color: var(--white); }
+.tech-section .section-head p { color: #a8a29e; }
+.tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 48px; }
+.tech-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md); padding: 24px; transition: all 0.3s;
+}
+.tech-card:hover { background: rgba(234,88,12,0.1); border-color: var(--orange); transform: translateY(-3px); }
+.tech-card .t-icon { font-size: 28px; margin-bottom: 12px; }
+.tech-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: var(--orange-light); }
+.tech-card p { font-size: 13px; color: #a8a29e; line-height: 1.6; }
+
+.advantage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.advantage-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md); padding: 28px; transition: all 0.3s;
+}
+.advantage-card:hover { border-color: var(--orange); background: rgba(234,88,12,0.08); }
+.advantage-card .a-num { font-size: 36px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 12px; }
+.advantage-card h4 { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: var(--white); }
+.advantage-card p { font-size: 13px; color: #a8a29e; line-height: 1.6; }
 
 /* CTA */
-.cta-section { padding: 80px 0; background: linear-gradient(135deg, var(--ink) 0%, #292524 100%); text-align: center; color: var(--white); }
+.cta-section { padding: 80px 0; background: var(--paper); text-align: center; }
 .cta-section h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; margin-bottom: 16px; }
-.cta-section p { font-size: 17px; color: #a8a29e; max-width: 560px; margin: 0 auto 32px; line-height: 1.7; }
+.cta-section p { font-size: 17px; color: var(--ink-soft); max-width: 560px; margin: 0 auto 32px; line-height: 1.7; }
 .cta-section .btn-primary { font-size: 18px; padding: 16px 40px; }
 
 /* Footer */
@@ -207,19 +248,13 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-  .pain-grid { grid-template-columns: 1fr; }
-  .engine-grid { grid-template-columns: 1fr; }
-  .agent-types { grid-template-columns: repeat(2, 1fr); }
-  .quality-grid { grid-template-columns: repeat(2, 1fr); }
+  .demo-inner, .demo-section.reverse .demo-inner { grid-template-columns: 1fr; direction: ltr; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .advantage-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
-  .timeline-3d::before { left: 24px; }
-  .tl-item { grid-template-columns: 48px 1fr; }
-  .tl-item .tl-dot { grid-column: 1; }
-  .tl-item .tl-content, .tl-item:nth-child(even) .tl-content { grid-column: 2; text-align: left; padding-left: 20px; padding-right: 0; }
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
   .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--paper); padding: 20px; gap: 16px; border-bottom: 1px solid var(--line); }
-  .internal-note { flex-direction: column; text-align: center; }
 }
 </style>
 </head>
@@ -261,69 +296,47 @@ img { max-width: 100%; display: block; }
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
-          WorkHogee 智能体交付能力
+          WorkHogee 智能体交付 · 真实案例
         </div>
-        <h1>3天交付一个<br><span class="highlight">能用的AI Agent</span></h1>
+        <h1>你描述需求<br><span class="highlight">我们3天交付一个AI Agent</span></h1>
         <p class="hero-sub">
-          我们自研<strong>智能体开发伙计</strong>交付系统，把AI Agent的开发流程标准化、产品化。你描述业务需求，我们3天交付一个部署在官网、企微、飞书、钉钉上的Agent，持续运维优化。
+          不用你招人、不用你学平台、不用你自己搭。医美、教育、家装、财税、出海——5个真实交付案例，看看我们帮客户解决了什么问题。
         </p>
         <div class="hero-cta">
           <a href="#contact" class="btn-primary">
-            描述我的需求
+            我也要一个
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
-          <a href="#process" class="btn-secondary">看看交付流程</a>
+          <a href="#demos" class="btn-ghost">看真实案例</a>
         </div>
         <div class="hero-stats">
-          <div class="hero-stat"><div class="num">3天</div><div class="label">基础Agent交付周期</div></div>
-          <div class="hero-stat"><div class="num">7步</div><div class="label">标准化交付流程</div></div>
+          <div class="hero-stat"><div class="num">3天</div><div class="label">从需求到上线</div></div>
+          <div class="hero-stat"><div class="num">5个</div><div class="label">真实交付案例</div></div>
           <div class="hero-stat"><div class="num">8渠道</div><div class="label">一键部署覆盖</div></div>
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hero-mockup">
-          <div class="mockup-header">
-            <span class="mockup-dot r"></span>
-            <span class="mockup-dot y"></span>
-            <span class="mockup-dot g"></span>
-            <span class="mockup-title">智能体开发伙计 · 交付工作台</span>
+        <div class="hero-chat">
+          <div class="chat-header">
+            <div class="chat-avatar">💉</div>
+            <div class="chat-info">
+              <div class="chat-name">星颜医美 · 智能咨询顾问</div>
+              <div class="chat-status"><span class="online"></span>在线 · 7×24小时接待</div>
+            </div>
           </div>
-          <div class="mockup-body">
-            <div class="mockup-project">
-              <div class="pj-icon" style="background:#fef3c7;">🏥</div>
-              <div class="pj-info">
-                <div class="pj-name">医美机构 · 官网咨询Agent</div>
-                <div class="pj-meta">客服类 · 官网+企微 · 第3天</div>
-                <div class="mockup-progress"><div class="mockup-progress-bar" style="width:85%"></div></div>
-              </div>
-              <span class="pj-status status-doing">部署中</span>
+          <div class="chat-body" id="heroChat">
+            <div class="msg user" style="animation-delay:0.1s">你们那做个双眼皮多少钱啊？</div>
+            <div class="msg bot" style="animation-delay:0.6s">
+              您好呀~我们有多种双眼皮方案，埋线、全切、韩式三点都有，价格从3800到12800不等。方便问一下您是想要自然款还是明显一点的呢？我可以帮您推荐适合的方案😊
             </div>
-            <div class="mockup-project">
-              <div class="pj-icon" style="background:#dbeafe;">📚</div>
-              <div class="pj-info">
-                <div class="pj-name">教育机构 · 课程顾问Agent</div>
-                <div class="pj-meta">销售类 · 企微 · 第2天</div>
-                <div class="mockup-progress"><div class="mockup-progress-bar" style="width:60%"></div></div>
+            <div class="msg user" style="animation-delay:1.4s">自然一点的吧，不要太假</div>
+            <div class="msg bot" style="animation-delay:1.9s">
+              好的，那我推荐您考虑韩式三点或者埋线，恢复快、效果自然。我们这周末有主任面诊的名额，要不要帮您预约一个？到院可以免费设计方案哦~
+              <div class="quick-replies" style="margin-top:8px">
+                <span class="quick-reply">预约这周末</span>
+                <span class="quick-reply">先看看案例</span>
+                <span class="quick-reply">还有优惠吗</span>
               </div>
-              <span class="pj-status status-doing">开发中</span>
-            </div>
-            <div class="mockup-project">
-              <div class="pj-icon" style="background:#dcfce7;">🏠</div>
-              <div class="pj-info">
-                <div class="pj-name">家装公司 · 报价生成Agent</div>
-                <div class="pj-meta">营销类 · 官网 · 已交付</div>
-                <div class="mockup-progress"><div class="mockup-progress-bar" style="width:100%"></div></div>
-              </div>
-              <span class="pj-status status-done">已交付</span>
-            </div>
-            <div class="mockup-project">
-              <div class="pj-icon" style="background:#f5f5f4;">💰</div>
-              <div class="pj-info">
-                <div class="pj-name">财税公司 · 智能问答Agent</div>
-                <div class="pj-meta">行业定制 · 飞书 · 待启动</div>
-                <div class="mockup-progress"><div class="mockup-progress-bar" style="width:10%"></div></div>
-              </div>
-              <span class="pj-status status-todo">待启动</span>
             </div>
           </div>
         </div>
@@ -332,255 +345,343 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- 对比 -->
-<section class="section" id="compare">
+<!-- Demo案例标题 -->
+<section class="section" id="demos" style="padding-bottom: 20px;">
   <div class="container">
     <div class="section-head">
-      <div class="kicker">The Difference</div>
-      <h2>传统AI交付 vs WorkHogee交付</h2>
-      <p>同样是做一个AI Agent，为什么我们能做到3天、1/10的成本？</p>
+      <div class="kicker">Real Cases</div>
+      <h2>5个真实交付的AI Agent</h2>
+      <p>每一个都解决了客户的真实痛点，每一个都在真实运行中产生效果</p>
     </div>
-    <div class="pain-grid">
-      <div class="pain-card bad">
-        <h3>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          传统外包/自己搞
-        </h3>
-        <ul>
-          <li>需求沟通反复，方案不清晰，来回扯皮</li>
-          <li>从零开发，3个月起，10万起，等不起也花不起</li>
-          <li>用Coze/Dify自己搭，但没有技术团队，搭不出来</li>
-          <li>部署到企微/官网/飞书太复杂，API对接搞不定</li>
-          <li>交付完就没人管了，出了问题找不到人</li>
-          <li>效果差不知道怎么优化，Prompt调不好</li>
-        </ul>
+  </div>
+</section>
+
+<!-- Demo 1: 医美 -->
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">💉 医美行业 · 官网+企微</div>
+        <h3 class="demo-title">医美机构智能咨询顾问</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>夜间咨询无人接待，流失率高达60%；咨询师回答不标准，价格项目经常说错；新咨询师培训周期长，上手慢。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">我们交付的Agent</div>
+          <p>7×24小时在线咨询顾问，懂全部项目价格和适应症，自动判断客户意向，高意向客户直接推送预约到店按钮，复杂问题一键转人工咨询师。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">60%↓</div><div class="label">夜间咨询流失率</div></div>
+          <div class="demo-result"><div class="num">40%↑</div><div class="label">预约到店率</div></div>
+          <div class="demo-result"><div class="num">24h</div><div class="label">全天候接待</div></div>
+        </div>
       </div>
-      <div class="pain-card good">
-        <h3>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          WorkHogee智能体交付
-        </h3>
-        <ul>
-          <li>AI辅助需求诊断，1小时输出方案和ROI预估</li>
-          <li>50+行业模板+VibeCoding AI开发，3天交付，成本1/10</li>
-          <li>不用你学平台、不用你招人，描述需求就行</li>
-          <li>一键部署到8大渠道，所有API对接我们搞定</li>
-          <li>持续运维，效果监控+自动优化+定期报告</li>
-          <li>效果可量化，AI自动识别低质量对话并优化Prompt</li>
-        </ul>
+      <div class="demo-visual">
+        <div class="demo-chat">
+          <div class="demo-chat-header">
+            <div class="demo-chat-avatar" style="background:#fef3c7;">💉</div>
+            <div>
+              <div class="demo-chat-name">星颜医美 · 咨询顾问</div>
+              <div class="demo-chat-sub">在线 · 已服务 1,284 位咨询者</div>
+            </div>
+          </div>
+          <div class="demo-chat-body">
+            <div class="demo-msg user">隆鼻多少钱？有风险吗</div>
+            <div class="demo-msg bot">
+              <span class="emoji">👃</span>您好！我们隆鼻有假体隆鼻和自体软骨隆鼻，假体从8800起，自体软骨2-5万不等。隆鼻是非常成熟的项目，我们主任有15年经验，案例超过3000例。方便问一下您是第一次做吗？我可以帮您预约主任面诊，免费设计方案~
+            </div>
+            <div class="demo-msg user">第一次，有点怕</div>
+            <div class="demo-msg bot">
+              理解您的担心，很多第一次做的客户都有这个顾虑。我们可以先安排您和主任面诊，看看您的基础条件，主任会给您详细讲解方案和风险，您再决定做不做。这周六下午还有名额，帮您预约上？
+              <div class="demo-quick" style="margin-top:6px">
+                <span class="demo-quick-btn">预约周六</span>
+                <span class="demo-quick-btn">看看案例</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 7步交付流程 -->
-<section class="section" id="process">
+<!-- Demo 2: 教育 -->
+<section class="demo-section reverse">
   <div class="container">
-    <div class="section-head">
-      <div class="kicker">Delivery Process</div>
-      <h2>7步标准化交付流程</h2>
-      <p>每一步都有确认节点和QA检查，客户全程可见，质量可控</p>
-    </div>
-    <div class="timeline-3d">
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第1天 · 上午</div>
-          <h4>需求诊断</h4>
-          <p>AI对话式需求采集，梳理业务流程中哪些环节可以用AI提效，输出需求文档和ROI预估</p>
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">📚 教育行业 · 企微</div>
+        <h3 class="demo-title">教育机构课程顾问Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>线索进来后销售跟进不及时，平均响应时间2小时，很多家长等不及就找别家了；销售水平参差不齐，意向判断不准；优秀销售离职后客户流失严重。</p>
         </div>
-        <div class="tl-dot">1</div>
+        <div class="demo-solution">
+          <div class="label">我们交付的Agent</div>
+          <p>线索进入企微后10秒内自动响应，自动询问孩子年级、成绩、薄弱模块，智能推荐课程，高意向线索自动标记并推送销售跟进，试听课预约一键完成。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">10秒</div><div class="label">线索平均响应时间</div></div>
+          <div class="demo-result"><div class="num">50%↑</div><div class="label">试听课预约率</div></div>
+          <div class="demo-result"><div class="num">2x</div><div class="label">销售人均效能</div></div>
+        </div>
       </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第1天 · 下午</div>
-          <h4>方案确认</h4>
-          <p>输出详细方案：功能清单、部署渠道、预期效果、交付时间。你确认后才进入开发</p>
+      <div class="demo-visual">
+        <div class="demo-chat">
+          <div class="demo-chat-header">
+            <div class="demo-chat-avatar" style="background:#dbeafe;">📚</div>
+            <div>
+              <div class="demo-chat-name">学霸教育 · 课程顾问</div>
+              <div class="demo-chat-sub">在线 · 今日已跟进 86 条线索</div>
+            </div>
+          </div>
+          <div class="demo-chat-body">
+            <div class="demo-msg user">孩子初二，物理不太好</div>
+            <div class="demo-msg bot">
+              家长您好！初二物理是关键期，力学和电学是重点难点。方便问一下孩子目前物理大概多少分？主要是哪些模块比较薄弱呢？我帮您推荐适合的班型~
+            </div>
+            <div class="demo-msg user">60多分，电学不太懂</div>
+            <div class="demo-msg bot">
+              了解了，电学是初二下的重点，也是中考占比最高的模块。我们有专门的物理电学冲刺班，8次课突破电学核心考点，每周六上午上课。下周六有试听课，要不要帮孩子预约一节？先感受一下老师的授课风格~
+              <div class="demo-quick" style="margin-top:6px">
+                <span class="demo-quick-btn">预约试听</span>
+                <span class="demo-quick-btn">了解课程价格</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="tl-dot">2</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第2天 · 全天</div>
-          <h4>AI快速开发</h4>
-          <p>基于DeepSeek Harness + VibeCoding，AI自动生成Agent代码、Prompt、工作流、知识库配置，人工审核定制</p>
-        </div>
-        <div class="tl-dot">3</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第2天 · 晚上</div>
-          <h4>内部测试QA</h4>
-          <p>AI自动QA检测+人工复核，测试对话质量、工具调用、知识库检索、多渠道响应，发现问题立即修复</p>
-        </div>
-        <div class="tl-dot">4</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第3天 · 上午</div>
-          <h4>多渠道部署</h4>
-          <p>一键部署到你选择的渠道：官网浮窗、企业微信、飞书、钉钉、微信公众号、小程序、抖音、API接口</p>
-        </div>
-        <div class="tl-dot">5</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">第3天 · 下午</div>
-          <h4>客户验收</h4>
-          <p>你亲自测试Agent效果，我们现场演示答疑。不满意当场调整，直到满意。交付完整文档和使用指南</p>
-        </div>
-        <div class="tl-dot">6</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-content">
-          <div class="tl-day">交付后 · 持续</div>
-          <h4>运维优化</h4>
-          <p>持续监控对话量、解决率、转化率、满意度，AI自动优化Prompt，每周/每月效果报告，有问题随时找我们</p>
-        </div>
-        <div class="tl-dot">7</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 智能体开发伙计 - 内部交付引擎 -->
-<section class="section" id="engine">
+<!-- Demo 3: 家装 -->
+<section class="demo-section">
   <div class="container">
-    <div class="section-head">
-      <div class="kicker">Our Delivery Engine</div>
-      <h2>智能体开发伙计 — 我们的交付引擎</h2>
-      <p>这是WorkHogee自研的内部交付管理系统，不对外销售。它让我们的交付效率提升10倍，质量稳定可控。你拿到的是最终交付的Agent，不是这个工具。</p>
-    </div>
-
-    <div class="internal-note">
-      <div class="note-icon">🔧</div>
-      <div>
-        <h4>内部生产工具，不对外销售</h4>
-        <p>智能体开发伙计是WorkHogee的交付生产线，类似建筑公司的施工管理系统。你买的是建好的房子（AI Agent），不是施工工具。</p>
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">🏠 家装行业 · 官网</div>
+        <h3 class="demo-title">家装公司智能报价Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>客户问报价后，设计师要1天才能出初步报价，很多客户等不及就流失了；量房预约率低，设计师每天花大量时间回答重复的价格问题。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">我们交付的Agent</div>
+          <p>客户输入面积、户型、风格，10秒生成初步报价区间，自动推荐整装方案，高意向客户直接推送免费量房预约，设计师只需要跟进已经预约量房的精准客户。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">10秒</div><div class="label">报价生成时间</div></div>
+          <div class="demo-result"><div class="num">35%↑</div><div class="label">量房预约率</div></div>
+          <div class="demo-result"><div class="num">60%↓</div><div class="label">设计师重复咨询量</div></div>
+        </div>
       </div>
-    </div>
-
-    <div class="engine-grid">
-      <div class="engine-card">
-        <div class="engine-icon">👥</div>
-        <h3>客户与需求管理</h3>
-        <p>统一管理所有客户信息、需求文档、合同、交付状态。每个客户一个专属工作台，历史交付记录全留存。</p>
-        <span class="engine-tag">客户管理</span>
-      </div>
-      <div class="engine-card">
-        <div class="engine-icon">🔍</div>
-        <h3>AI需求诊断</h3>
-        <p>对话式需求采集，AI自动识别业务场景中的AI提效点，输出需求文档、功能清单和ROI预估，1小时出方案。</p>
-        <span class="engine-tag">需求诊断</span>
-      </div>
-      <div class="engine-card">
-        <div class="engine-icon">📦</div>
-        <h3>Agent模板库</h3>
-        <p>50+行业模板和功能模块，客服、销售、营销、运营、医美、教育、家装、财税等，70%需求直接套用，快速组装。</p>
-        <span class="engine-tag">模板库</span>
-      </div>
-      <div class="engine-card">
-        <div class="engine-icon">⚡</div>
-        <h3>VibeCoding AI开发</h3>
-        <p>基于DeepSeek Harness，自然语言→Agent代码/Prompt/工作流/知识库配置，AI完成80%开发工作，人工审核定制。</p>
-        <span class="engine-tag">AI开发</span>
-      </div>
-      <div class="engine-card">
-        <div class="engine-icon">✅</div>
-        <h3>测试与QA体系</h3>
-        <p>自动化测试+质量检查清单，AI检测对话质量、工具调用、知识库检索、多渠道响应，不把bug留给客户。</p>
-        <span class="engine-tag">QA测试</span>
-      </div>
-      <div class="engine-card">
-        <div class="engine-icon">🚀</div>
-        <h3>部署与运维监控</h3>
-        <p>一键部署到8大渠道，所有API对接自动化。已交付Agent的运行状态、效果数据实时监控，AI自动优化建议。</p>
-        <span class="engine-tag">部署运维</span>
+      <div class="demo-visual">
+        <div class="demo-chat">
+          <div class="demo-chat-header">
+            <div class="demo-chat-avatar" style="background:#dcfce7;">🏠</div>
+            <div>
+              <div class="demo-chat-name">美家装饰 · 智能报价</div>
+              <div class="demo-chat-sub">在线 · 已生成 2,456 份报价</div>
+            </div>
+          </div>
+          <div class="demo-chat-body">
+            <div class="demo-msg user">120平装修大概多少钱？</div>
+            <div class="demo-msg bot">
+              您好！120平的房子，我们有三档方案：<br>
+              🏠 简约整装：10-13万（含设计+施工+主材）<br>
+              ✨ 品质整装：15-20万（升级主材+全屋定制）<br>
+              👑 高端定制：25万+（进口主材+智能家居）<br>
+              方便问一下您是毛坯还是旧房改造？喜欢什么风格呢？
+            </div>
+            <div class="demo-msg user">毛坯，北欧风</div>
+            <div class="demo-msg bot">
+              好的，毛坯房北欧风格，推荐您品质整装方案，大概15-18万，包含设计、施工、主材、全屋定制。我们可以免费上门量房出3D设计方案，您看这周末方便吗？我帮您预约首席设计师~
+              <div class="demo-quick" style="margin-top:6px">
+                <span class="demo-quick-btn">预约量房</span>
+                <span class="demo-quick-btn">看装修案例</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 质量保障 -->
-<section class="section" id="quality">
+<!-- Demo 4: 财税 -->
+<section class="demo-section reverse">
   <div class="container">
-    <div class="section-head">
-      <div class="kicker">Quality Assurance</div>
-      <h2>交付质量保障体系</h2>
-      <p>不是交付完就结束，而是从需求到运维全流程质量可控</p>
-    </div>
-    <div class="quality-grid">
-      <div class="quality-card">
-        <div class="q-icon">📋</div>
-        <h4>需求确认制</h4>
-        <p>方案必须客户签字确认后才进入开发，不做无用功，需求变更有记录</p>
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">💰 财税行业 · 飞书</div>
+        <h3 class="demo-title">财税公司智能问答Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>会计每天被重复的政策问题淹没，80%的问题是常见问题但每个都要人工回答；政策更新快，会计回答不一致容易出错；人均服务客户数上不去，扩张困难。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">我们交付的Agent</div>
+          <p>基于最新财税政策知识库，自动回答85%的常见问题，答案准确可溯源；复杂问题自动转专业会计并带上下文；申报期自动提醒客户，会计只需要处理复杂问题。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">85%</div><div class="label">常见问题自动回答率</div></div>
+          <div class="demo-result"><div class="num">3x</div><div class="label">会计人均服务客户数</div></div>
+          <div class="demo-result"><div class="num">0</div><div class="label">政策回答错误率</div></div>
+        </div>
       </div>
-      <div class="quality-card">
-        <div class="q-icon">🔬</div>
-        <h4>双重QA检测</h4>
-        <p>AI自动检测+人工复核，对话质量、工具调用、知识库、多渠道全覆盖</p>
-      </div>
-      <div class="quality-card">
-        <div class="q-icon">📊</div>
-        <h4>效果可量化</h4>
-        <p>对话量、解决率、转化率、满意度全指标监控，每周/每月效果报告</p>
-      </div>
-      <div class="quality-card">
-        <div class="q-icon">🔄</div>
-        <h4>持续优化</h4>
-        <p>AI自动识别低质量对话，生成Prompt优化建议，持续迭代提升效果</p>
+      <div class="demo-visual">
+        <div class="demo-chat">
+          <div class="demo-chat-header">
+            <div class="demo-chat-avatar" style="background:#fef3c7;">💰</div>
+            <div>
+              <div class="demo-chat-name">恒信财税 · 智能顾问</div>
+              <div class="demo-chat-sub">在线 · 知识库已更新至2026年9月</div>
+            </div>
+          </div>
+          <div class="demo-chat-body">
+            <div class="demo-msg user">小规模纳税人季度30万以下免增值税吗？</div>
+            <div class="demo-msg bot">
+              是的。根据财政部 税务总局公告2023年第19号，小规模纳税人发生增值税应税销售行为，合计月销售额未超过10万元（以1个季度为1个纳税期的，季度销售额未超过30万元）的，免征增值税。该政策执行至2027年12月31日。
+              <br><br>📎 政策依据：财政部 税务总局公告2023年第19号
+            </div>
+            <div class="demo-msg user">那企业所得税呢？</div>
+            <div class="demo-msg bot">
+              小型微利企业年应纳税所得额不超过300万元的部分，减按25%计入应纳税所得额，按20%的税率缴纳企业所得税（实际税负5%）。需要同时满足：从业人数≤300人、资产总额≤5000万元、从事国家非限制和禁止行业。
+              <br><br>需要我帮您预约专业会计做进一步税务筹划吗？
+              <div class="demo-quick" style="margin-top:6px">
+                <span class="demo-quick-btn">预约会计</span>
+                <span class="demo-quick-btn">查询其他政策</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 能交付的Agent类型 -->
-<section class="section" id="types">
+<!-- Demo 5: 出海 -->
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-inner">
+      <div class="demo-content">
+        <div class="demo-tag">🌍 出海企业 · 官网+WhatsApp</div>
+        <h3 class="demo-title">出海企业多语言客服Agent</h3>
+        <div class="demo-pain">
+          <div class="label">客户痛点</div>
+          <p>欧美客户询盘经常在国内夜间到达，无人响应导致流失；多语言客服成本高，英语+西班牙语+法语客服团队养不起；询盘跟进不及时，转化率低。</p>
+        </div>
+        <div class="demo-solution">
+          <div class="label">我们交付的Agent</div>
+          <p>7×24小时多语言客服，支持英语、西班牙语、法语、德语等8种语言，自动回答产品问题、查询订单、处理退换货，高意向询盘自动标记并推送销售跟进，WhatsApp和官网同步接待。</p>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><div class="num">60%↑</div><div class="label">询盘响应率</div></div>
+          <div class="demo-result"><div class="num">70%↓</div><div class="label">夜间询盘流失率</div></div>
+          <div class="demo-result"><div class="num">8种</div><div class="label">多语言自动接待</div></div>
+        </div>
+      </div>
+      <div class="demo-visual">
+        <div class="demo-chat">
+          <div class="demo-chat-header">
+            <div class="demo-chat-avatar" style="background:#dbeafe;">🌍</div>
+            <div>
+              <div class="demo-chat-name">GlobalStore · Support</div>
+              <div class="demo-chat-sub">Online · EN / ES / FR / DE / JA...</div>
+            </div>
+          </div>
+          <div class="demo-chat-body">
+            <div class="demo-msg user">Hi, do you ship to Germany? How long?</div>
+            <div class="demo-msg bot">
+              Hello! Yes, we ship to Germany 🇩🇪 Standard delivery takes 7-12 business days, express delivery 3-5 business days. Shipping is free for orders over €50. Would you like me to check the exact shipping cost for your order?
+            </div>
+            <div class="demo-msg user">I want to return an item</div>
+            <div class="demo-msg bot">
+              I'm sorry to hear that! Returns are free within 30 days of delivery. Could you please provide your order number? I'll generate a return label for you immediately and guide you through the process.
+              <div class="demo-quick" style="margin-top:6px">
+                <span class="demo-quick-btn">Track Order</span>
+                <span class="demo-quick-btn">Talk to Human</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术能力 -->
+<section class="section tech-section">
   <div class="container">
     <div class="section-head">
-      <div class="kicker">What We Deliver</div>
-      <h2>我们能交付的AI Agent类型</h2>
-      <p>覆盖客服、销售、营销、运营、行业定制等全场景，也支持完全定制</p>
+      <div class="kicker">Tech Stack</div>
+      <h2>我们用什么工具开发AI Agent</h2>
+      <p>不重复造轮子，站在巨人肩膀上——用最好的开源框架和AI模型，帮你做最好的交付</p>
     </div>
-    <div class="agent-types">
-      <div class="agent-type">
-        <div class="at-icon">💬</div>
-        <h4>客服类Agent</h4>
-        <p>7×24小时在线客服，自动回答常见问题，复杂问题转人工</p>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="t-icon">🔧</div>
+        <h4>DeepSeek Harness</h4>
+        <p>开源Agent编排框架，工具调用、记忆管理、多模型路由，技术透明可控，支持私有化部署</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">📈</div>
-        <h4>销售类Agent</h4>
-        <p>自动跟进线索、识别意向客户、生成报价、预约到店</p>
+      <div class="tech-card">
+        <div class="t-icon">🧠</div>
+        <h4>多模型接入</h4>
+        <p>DeepSeek V3/R1、文心一言、通义千问、Kimi、Claude、GPT-4o，根据任务类型自动选择最优模型</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">📝</div>
-        <h4>营销类Agent</h4>
-        <p>自动生成营销内容、管理社媒账号、分析营销效果</p>
+      <div class="tech-card">
+        <div class="t-icon">⚡</div>
+        <h4>VibeCoding开发</h4>
+        <p>自然语言→Agent代码/Prompt/工作流，AI完成80%开发工作，人工审核定制，效率提升10倍</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">⚙️</div>
-        <h4>运营类Agent</h4>
-        <p>日报周报自动生成、数据报表统计、会议纪要与待办提取</p>
+      <div class="tech-card">
+        <div class="t-icon">📚</div>
+        <h4>知识库RAG</h4>
+        <p>支持多格式文档上传，向量检索+语义匹配，让Agent懂你的业务知识，回答准确不胡编，可溯源</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">🏥</div>
-        <h4>医美咨询Agent</h4>
-        <p>项目价格咨询、预约到店、术后跟进，咨询转化率提升40%</p>
+      <div class="tech-card">
+        <div class="t-icon">🔌</div>
+        <h4>工具调用框架</h4>
+        <p>支持邮件、数据库、API、日历、CRM等工具调用，让Agent能真正执行任务，不只是聊天</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">📚</div>
-        <h4>教育顾问Agent</h4>
-        <p>课程推荐、线索跟进、预约试听、学情分析，销售人效翻倍</p>
+      <div class="tech-card">
+        <div class="t-icon">🚀</div>
+        <h4>多渠道部署</h4>
+        <p>官网、企微、飞书、钉钉、公众号、小程序、抖音、WhatsApp，一套Agent多渠道运行，一键部署</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">🏠</div>
-        <h4>家装报价Agent</h4>
-        <p>自动量房预约、方案推荐、报价生成，线索响应10秒内</p>
+      <div class="tech-card">
+        <div class="t-icon">📊</div>
+        <h4>效果监控系统</h4>
+        <p>对话量、解决率、转化率、满意度全指标监控，AI自动识别低质量对话，生成优化建议</p>
       </div>
-      <div class="agent-type">
-        <div class="at-icon">💰</div>
-        <h4>财税问答Agent</h4>
-        <p>政策问答、申报提醒、票据处理，7×24小时专业解答</p>
+      <div class="tech-card">
+        <div class="t-icon">🔒</div>
+        <h4>私有化部署</h4>
+        <p>支持客户服务器/云服务器私有化部署，数据完全自主，满足金融、医疗等行业合规要求</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top: 64px; margin-bottom: 40px;">
+      <div class="kicker">Why WorkHogee</div>
+      <h2 style="color: var(--white);">为什么选择我们交付</h2>
+    </div>
+    <div class="advantage-grid">
+      <div class="advantage-card">
+        <div class="a-num">01</div>
+        <h4>3天极速交付</h4>
+        <p>50+行业模板+VibeCoding AI开发，传统外包3个月的项目，我们3天交付。需求确认后第3天就能上线使用。</p>
+      </div>
+      <div class="advantage-card">
+        <div class="a-num">02</div>
+        <h4>懂业务，不是纯技术</h4>
+        <p>团队有10年互联网广告和企业服务经验，懂客户、懂销售、懂业务流程。我们不只是写代码，而是帮你分析业务、设计方案、确保Agent真正解决问题。</p>
+      </div>
+      <div class="advantage-card">
+        <div class="a-num">03</div>
+        <h4>交付完不是结束</h4>
+        <p>持续运维，效果监控+自动优化+定期报告。你能看到Agent每天帮你接了多少咨询、转化了多少客户，有问题随时找我们。</p>
       </div>
     </div>
   </div>
@@ -589,13 +690,13 @@ img { max-width: 100%; display: block; }
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="container">
-    <h2>描述你的需求，3天拿到你的AI Agent</h2>
-    <p>不用你招人、不用你学平台、不用你自己搭。告诉我们你想让AI帮你做什么，剩下的交给WorkHogee智能体交付系统。</p>
+    <h2>你的业务，也需要一个这样的AI Agent</h2>
+    <p>描述你的需求，我们3天交付一个部署在官网、企微、飞书、钉钉上的AI Agent，持续运维优化。</p>
     <a href="mailto:910036590@qq.com?subject=WorkHogee智能体交付需求咨询" class="btn-primary">
       描述我的需求
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
-    <p style="margin-top: 20px; font-size: 14px; color: #78716c;">或直接联系：910036590@qq.com · 我们会在24小时内回复</p>
+    <p style="margin-top: 20px; font-size: 14px; color: var(--ink-muted);">或直接联系：910036590@qq.com · 我们会在24小时内回复</p>
   </div>
 </section>
 
