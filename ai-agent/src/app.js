@@ -47,6 +47,10 @@ const EmailConfigService = require('./services/emailConfigService');
 const EmailReceiverService = require('./services/emailReceiverService');
 const EmailSenderService = require('./services/emailSenderService');
 const WebSocketService = require('./services/websocketService');
+// 出海专版服务
+const I18nService = require('./services/i18nService');
+const ComplianceService = require('./services/complianceService');
+const AdConversionService = require('./services/adConversionService');
 
 const smartIntake = new SmartIntakeSkill(llmService, leadStorage, conversationStorage, config.business);
 const contentCreator = new ContentCreatorSkill(llmService, config.business);
@@ -65,6 +69,10 @@ const reportService = new ReportService(leadStorage, conversationStorage, notifi
 const emailConfigService = new EmailConfigService(config);
 const emailReceiverService = new EmailReceiverService(emailConfigService, leadStorage, llmService, knowledgeBase, notificationService, config);
 const emailSenderService = new EmailSenderService(emailConfigService, emailReceiverService, knowledgeBase, llmService, config);
+// 出海专版服务实例化
+const i18nService = new I18nService(config);
+const complianceService = new ComplianceService(config);
+const adConversionService = new AdConversionService(config, leadStorage);
 
 // 服务集合
 const services = {
@@ -87,7 +95,10 @@ const services = {
   reportService,
   emailConfigService,
   emailReceiverService,
-  emailSenderService
+  emailSenderService,
+  i18nService,
+  complianceService,
+  adConversionService
 };
 
 // 初始化 DSH 插件系统
