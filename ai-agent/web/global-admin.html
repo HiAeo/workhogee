@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee Global - 出海专版管理后台</title>
+<style>
+/* ============================================================
+   WorkHogee Global Admin - 出海专版管理后台
+   配色：墨黑 #1c1917 + 橙 #ea580c + 纸色 #faf8f4
+   纯原生 HTML/CSS/JS，无外部依赖
+   ============================================================ */
+
+:root {
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-light: #78716c;
+  --orange: #ea580c;
+  --orange-deep: #c2410c;
+  --orange-light: #fb923c;
+  --orange-bg: #fff7ed;
+  --orange-border: #fed7aa;
+  --paper: #faf8f4;
+  --line: #e7e5e4;
+  --white: #ffffff;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --warning: #ca8a04;
+  --warning-bg: #fefce8;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --info: #2563eb;
+  --info-bg: #eff6ff;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px rgba(28,25,23,0.04);
+  --shadow-md: 0 2px 8px rgba(28,25,23,0.06);
+  --shadow-lg: 0 8px 24px rgba(28,25,23,0.08);
+  --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========== 侧边栏 ========== */
+.sidebar {
+  width: 240px;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0; top: 0;
+  z-index: 100;
+}
+.logo {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logo-title { font-size: 16px; font-weight: 800; color: #fff; }
+.logo-title .accent { color: var(--orange); }
+.logo-sub { font-size: 11px; color: #a8a29e; margin-top: 4px; }
+
+.nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+.nav::-webkit-scrollbar { width: 4px; }
+.nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  margin: 2px 12px;
+  border-radius: var(--radius-md);
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-item.active {
+  background: rgba(234,88,12,0.15);
+  color: var(--orange-light);
+  font-weight: 600;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 20px;
+  background: var(--orange);
+  border-radius: 0 2px 2px 0;
+}
+.nav-item { position: relative; }
+.nav-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.nav-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px;
+  color: #78716c;
+}
+.lang-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.lang-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  color: #a8a29e;
+  cursor: pointer;
+  font-size: 12px;
+  border: none;
+  transition: var(--transition);
+}
+.lang-btn.active { background: var(--orange); color: #fff; }
+.footer-links { display: flex; flex-direction: column; gap: 6px; }
+.footer-links a { color: #a8a29e; text-decoration: none; font-size: 12px; }
+.footer-links a:hover { color: #fff; }
+
+/* ========== 主内容区 ========== */
+.main {
+  flex: 1;
+  margin-left: 240px;
+  padding: 32px;
+  min-width: 0;
+}
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.page-title { font-size: 24px; font-weight: 800; }
+.page-desc { font-size: 13px; color: var(--ink-light); margin-top: 4px; }
+
+/* ========== 统计卡片 ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+}
+.stat-label { font-size: 13px; color: var(--ink-light); }
+.stat-number { font-size: 32px; font-weight: 800; margin-top: 8px; }
+.stat-trend { font-size: 12px; margin-top: 8px; }
+.trend-up { color: var(--success); }
+.trend-down { color: var(--danger); }
+
+/* ========== 卡片容器 ========== */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+
+/* ========== 条形图 ========== */
+.bar-chart { display: flex; flex-direction: column; gap: 12px; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-label { width: 60px; font-size: 13px; font-weight: 600; }
+.bar-track { flex: 1; height: 24px; background: #f5f5f4; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; color: #fff; font-size: 11px; font-weight: 600; transition: width 0.5s; }
+.bar-a { background: #dc2626; }
+.bar-b { background: var(--orange); }
+.bar-c { background: #78716c; }
+
+/* ========== 表格 ========== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th {
+  text-align: left;
+  padding: 12px 16px;
+  background: #fafaf9;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+}
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f5f5f4;
+}
+tr:hover td { background: #fafaf9; }
+
+/* ========== 标签 ========== */
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tag-A { background: #fef2f2; color: #dc2626; }
+.tag-B { background: var(--orange-bg); color: var(--orange-deep); }
+.tag-C { background: #f5f5f4; color: #57534e; }
+.tag-success { background: var(--success-bg); color: var(--success); }
+.tag-warning { background: var(--warning-bg); color: var(--warning); }
+.tag-danger { background: var(--danger-bg); color: var(--danger); }
+.tag-info { background: var(--info-bg); color: var(--info); }
+.tag-gray { background: #f5f5f4; color: #57534e; }
+
+/* ========== 按钮 ========== */
+.btn {
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { background: var(--orange-deep); }
+.btn-secondary { background: #fff; color: var(--ink); border: 1px solid #d6d3d1; }
+.btn-secondary:hover { background: #fafaf9; }
+.btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; }
+.btn-danger:hover { background: #fee2e2; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ========== 表单 ========== */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink-soft); }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d6d3d1;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  transition: var(--transition);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(234,88,12,0.1);
+}
+.form-textarea { resize: vertical; min-height: 100px; font-family: 'Consolas', monospace; }
+.form-hint { font-size: 12px; color: var(--ink-light); margin-top: 4px; }
+.input-group { display: flex; gap: 8px; }
+.input-group .form-input { flex: 1; }
+
+/* ========== 开关组件 ========== */
+.switch {
+  position: relative;
+  width: 48px; height: 26px;
+  background: #d6d3d1;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.switch.on { background: var(--orange); }
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.switch.on::after { transform: translateX(22px); }
+
+/* ========== 模态框 ========== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  box-shadow: var(--shadow-lg);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+
+/* ========== 平台卡片 ========== */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.platform-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 2px solid var(--line);
+  transition: var(--transition);
+  position: relative;
+}
+.platform-card.active {
+  border-color: var(--orange);
+  background: var(--orange-bg);
+}
+.platform-card.coming-soon { opacity: 0.7; }
+.platform-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.platform-status { font-size: 12px; margin-top: 8px; }
+.badge-soon {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: #f5f5f4;
+  color: #57534e;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.platform-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.icon-meta { background: #1877f2; }
+.icon-google { background: #4285f4; }
+.icon-tiktok { background: #000; }
+
+/* ========== 筛选栏 ========== */
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-bar .form-select, .filter-bar .form-input {
+  width: auto;
+  min-width: 140px;
+}
+.filter-bar .search-box { flex: 1; min-width: 200px; }
+
+/* ========== 模板卡片网格 ========== */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.template-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition);
+}
+.template-card:hover { box-shadow: var(--shadow-md); }
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.template-name { font-size: 15px; font-weight: 700; }
+.template-preview {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 12px 0;
+  padding: 12px;
+  background: #fafaf9;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+  max-height: 80px;
+  overflow: hidden;
+}
+.var-highlight {
+  background: var(--orange-bg);
+  color: var(--orange-deep);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+}
+.template-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.template-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f5f5f4;
+}
+
+/* ========== 合规设置行 ========== */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f4;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-info { flex: 1; }
+.setting-title { font-size: 14px; font-weight: 600; }
+.setting-desc { font-size: 12px; color: var(--ink-light); margin-top: 4px; }
+
+/* ========== 分页 ========== */
+.pagination {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+.page-btn {
+  padding: 6px 12px;
+  border: 1px solid #d6d3d1;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+.page-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+/* ========== 响应式 ========== */
+@media (max-width: 1200px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .platform-grid { grid-template-columns: 1fr; }
+  .template-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 侧边栏 ============ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">WorkHogee <span class="accent">Global</span></div>
+    <div class="logo-sub">出海专版管理后台</div>
+  </div>
+  <nav class="nav">
+    <a class="nav-item active" data-page="dashboard">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+      <span data-i18n="nav.dashboard">概览</span>
+    </a>
+    <a class="nav-item" data-page="platforms">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+      <span data-i18n="nav.platforms">广告平台</span>
+    </a>
+    <a class="nav-item" data-page="leads">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+      <span data-i18n="nav.leads">线索管理</span>
+    </a>
+    <a class="nav-item" data-page="templates">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+      <span data-i18n="nav.templates">话术模板</span>
+    </a>
+    <a class="nav-item" data-page="compliance">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      <span data-i18n="nav.compliance">合规设置</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="en">English</button>
+    </div>
+    <div class="footer-links">
+      <a href="#" data-i18n="footer.backDomestic">返回国内版</a>
+      <a href="#" data-i18n="footer.logout">退出登录</a>
+    </div>
+    <div style="margin-top:8px;">v0.1.0 global</div>
+  </div>
+</aside>
+
+<!-- ============ 主内容区 ============ -->
+<main class="main">
+
+  <!-- ========== 页面1：Dashboard ========== -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" data-i18n="dashboard.title">概览</h1>
+        <div class="page-desc" data-i18n="dashboard.subtitle">海外市场实时数据概览</div>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="dashboard.todayLeads">今日询盘数</div>
+        <div class="stat-number">128</div>
+        <div class="stat-trend trend-up">+12.5% <span data-i18n="dashboard.vsYesterday">较昨日</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="dashboard.highIntent">高意向线索数</div>
+        <div class="stat-number">34</div>
+        <div class="stat-trend trend-up">+8.3% <span data-i18n="dashboard.vsYesterday">较昨日</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="dashboard.dealsClosed">已成交数</div>
+        <div class="stat-number">7</div>
+        <div class="stat-trend trend-down">-2 <span data-i18n="dashboard.vsYesterday">较昨日</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="dashboard.pixelSuccess">回传成功率</div>
+        <div class="stat-number">97.2%</div>
+        <div class="stat-trend trend-up">+1.1% <span data-i18n="dashboard.vsYesterday">较昨日</span></div>
+      </div>
+    </div>
+
+    <!-- 意向等级分布 -->
+    <div class="card">
+      <div class="card-title" data-i18n="dashboard.intentDist">意向等级分布（近7天）</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">A 级</div>
+          <div class="bar-track"><div class="bar-fill bar-a" style="width:22%">34</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">B 级</div>
+          <div class="bar-track"><div class="bar-fill bar-b" style="width:45%">68</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">C 级</div>
+          <div class="bar-track"><div class="bar-fill bar-c" style="width:33%">50</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最近回传日志 -->
+    <div class="card">
+      <div class="card-title" data-i18n="dashboard.recentLogs">最近转化回传日志</div>
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="log.platform">平台</th>
+            <th data-i18n="log.event">事件</th>
+            <th data-i18n="log.status">状态</th>
+            <th data-i18n="log.time">时间</th>
+          </tr>
+        </thead>
+        <tbody id="log-table-body">
+          <!-- JS 渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== 页面2：Ad Platforms ========== -->
+  <div class="page" id="page-platforms">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" data-i18n="platforms.title">广告平台配置</h1>
+        <div class="page-desc" data-i18n="platforms.subtitle">管理 Meta / Google / TikTok 广告平台接入</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-add-platform')" data-i18n="platforms.addBtn">+ 添加平台</button>
+    </div>
+
+    <!-- 平台卡片 -->
+    <div class="platform-grid">
+      <div class="platform-card active">
+        <div class="platform-icon icon-meta">M</div>
+        <div class="platform-name">Meta</div>
+        <div style="font-size:12px;color:var(--ink-light);" data-i18n="platforms.metaDesc">Facebook / Instagram Conversions API</div>
+        <div class="platform-status"><span class="tag tag-success" data-i18n="platforms.enabled">已启用</span></div>
+      </div>
+      <div class="platform-card coming-soon">
+        <span class="badge-soon" data-i18n="platforms.soon">Coming Soon</span>
+        <div class="platform-icon icon-google">G</div>
+        <div class="platform-name">Google Ads</div>
+        <div style="font-size:12px;color:var(--ink-light);" data-i18n="platforms.googleDesc">Google Ads API 转化回传</div>
+        <div class="platform-status"><span class="tag tag-gray" data-i18n="platforms.disabled">未配置</span></div>
+      </div>
+      <div class="platform-card coming-soon">
+        <span class="badge-soon" data-i18n="platforms.soon">Coming Soon</span>
+        <div class="platform-icon icon-tiktok">T</div>
+        <div class="platform-name">TikTok</div>
+        <div style="font-size:12px;color:var(--ink-light);" data-i18n="platforms.tiktokDesc">TikTok Events API</div>
+        <div class="platform-status"><span class="tag tag-gray" data-i18n="platforms.disabled">未配置</span></div>
+      </div>
+    </div>
+
+    <!-- Meta 配置表单 -->
+    <div class="card">
+      <div class="card-title">Meta 配置</div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="platforms.pixelId">Pixel ID</label>
+        <input type="text" class="form-input" value="1234567890123456" id="meta-pixel-id">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="platforms.accessToken">Access Token</label>
+        <div class="input-group">
+          <input type="password" class="form-input" value="EAABxxxxxxxxxxxxxxxxxxxxxx" id="meta-access-token">
+          <button class="btn btn-secondary btn-sm" onclick="toggleTokenVisibility()" data-i18n="platforms.toggleVis">显示</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="btn btn-primary" onclick="testMetaConnection()" data-i18n="platforms.testConn">测试连接</button>
+        <span id="conn-status" style="font-size:13px;color:var(--success);" data-i18n="platforms.connected">已连接</span>
+      </div>
+    </div>
+
+    <!-- 已配置平台列表 -->
+    <div class="card">
+      <div class="card-title" data-i18n="platforms.configuredList">已配置平台列表</div>
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="platforms.colName">平台名称</th>
+            <th data-i18n="platforms.colType">类型</th>
+            <th data-i18n="platforms.colStatus">状态</th>
+            <th data-i18n="platforms.colTime">配置时间</th>
+            <th data-i18n="platforms.colAction">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Meta</td>
+            <td>CAPI</td>
+            <td><span class="tag tag-success" data-i18n="platforms.enabled">已启用</span></td>
+            <td>2026-09-10 14:30</td>
+            <td>
+              <button class="btn btn-secondary btn-sm" data-i18n="platforms.edit">编辑</button>
+              <button class="btn btn-secondary btn-sm" data-i18n="platforms.test">测试</button>
+              <button class="btn btn-danger btn-sm" data-i18n="platforms.delete">删除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== 页面3：Leads ========== -->
+  <div class="page" id="page-leads">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" data-i18n="leads.title">线索管理</h1>
+        <div class="page-desc" data-i18n="leads.subtitle">管理海外询盘线索，支持成交标记与广告回传</div>
+      </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <select class="form-select" id="filter-intent">
+        <option value="" data-i18n="leads.allIntents">全部意向</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+      <select class="form-select" id="filter-status">
+        <option value="" data-i18n="leads.allStatus">全部状态</option>
+        <option value="new" data-i18n="leads.statusNew">新线索</option>
+        <option value="following" data-i18n="leads.statusFollowing">跟进中</option>
+        <option value="won" data-i18n="leads.statusWon">已成交</option>
+        <option value="lost" data-i18n="leads.statusLost">已流失</option>
+      </select>
+      <select class="form-select">
+        <option data-i18n="leads.allSources">全部来源</option>
+        <option>Meta Ads</option>
+        <option>Google Ads</option>
+        <option>TikTok Ads</option>
+        <option>Organic</option>
+      </select>
+      <input type="text" class="form-input search-box" placeholder="Search...">
+      <select class="form-select">
+        <option data-i18n="leads.last7d">近7天</option>
+        <option data-i18n="leads.last30d">近30天</option>
+        <option data-i18n="leads.last90d">近90天</option>
+      </select>
+    </div>
+
+    <!-- 线索表格 -->
+    <div class="card" style="padding:0;">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="leads.colCustomer">客户名</th>
+            <th data-i18n="leads.colEmail">邮箱</th>
+            <th data-i18n="leads.colCompany">公司</th>
+            <th data-i18n="leads.colCountry">国家</th>
+            <th data-i18n="leads.colIntent">意向</th>
+            <th data-i18n="leads.colStatus">状态</th>
+            <th data-i18n="leads.colSource">来源</th>
+            <th data-i18n="leads.colPixel">回传状态</th>
+            <th data-i18n="leads.colAction">操作</th>
+          </tr>
+        </thead>
+        <tbody id="leads-table-body">
+          <!-- JS 渲染 -->
+        </tbody>
+      </table>
+      <div class="pagination">
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn" data-i18n="leads.next">下一页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 页面4：Templates ========== -->
+  <div class="page" id="page-templates">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" data-i18n="templates.title">多语言话术模板</h1>
+        <div class="page-desc" data-i18n="templates.subtitle">管理海外客户自动回复话术，支持变量插入</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-template')" data-i18n="templates.newBtn">+ 新建模板</button>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <select class="form-select">
+        <option data-i18n="templates.allLang">全部语言</option>
+        <option>English</option>
+        <option>Español</option>
+        <option>Français</option>
+        <option>Deutsch</option>
+        <option>日本語</option>
+        <option>한국어</option>
+        <option>Português</option>
+        <option>العربية</option>
+      </select>
+      <select class="form-select">
+        <option data-i18n="templates.allScene">全部场景</option>
+        <option data-i18n="templates.sceneGreeting">首次问候</option>
+        <option data-i18n="templates.sceneFollowup">跟进回访</option>
+        <option data-i18n="templates.sceneClosing">成交跟进</option>
+        <option data-i18n="templates.sceneFaq">FAQ 回复</option>
+      </select>
+      <input type="text" class="form-input search-box" placeholder="Search templates...">
+    </div>
+
+    <!-- 模板卡片网格 -->
+    <div class="template-grid" id="template-grid">
+      <!-- JS 渲染 -->
+    </div>
+  </div>
+
+  <!-- ========== 页面5：Compliance ========== -->
+  <div class="page" id="page-compliance">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" data-i18n="compliance.title">合规设置</h1>
+        <div class="page-desc" data-i18n="compliance.subtitle">GDPR / CCPA 数据合规配置</div>
+      </div>
+    </div>
+
+    <!-- Cookie 横幅 -->
+    <div class="card">
+      <div class="card-title" data-i18n="compliance.cookieTitle">Cookie 横幅设置</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.cookieEnable">启用 Cookie 横幅</div>
+          <div class="setting-desc" data-i18n="compliance.cookieEnableDesc">海外访客首次访问时弹出同意横幅</div>
+        </div>
+        <div class="switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="compliance.cookieTextEN">横幅文案 (English)</label>
+        <textarea class="form-textarea">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="compliance.policyUrl">隐私政策链接</label>
+        <input type="text" class="form-input" value="https://www.workhogee.com/privacy">
+      </div>
+      <button class="btn btn-primary" onclick="showToast('已保存')" data-i18n="compliance.save">保存</button>
+    </div>
+
+    <!-- 数据保留 -->
+    <div class="card">
+      <div class="card-title" data-i18n="compliance.retentionTitle">数据保留设置</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.retentionDays">保留天数</div>
+          <div class="setting-desc" data-i18n="compliance.retentionDaysDesc">超过该天数的访客数据将被自动清理</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <input type="number" class="form-input" value="90" style="width:80px;">
+          <span data-i18n="compliance.days">天</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.autoClean">自动清理</div>
+          <div class="setting-desc" data-i18n="compliance.autoCleanDesc">每天凌晨自动执行清理任务</div>
+        </div>
+        <div class="switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <button class="btn btn-secondary" onclick="showToast('已触发手动清理','success')" data-i18n="compliance.cleanNow">立即清理</button>
+    </div>
+
+    <!-- 数据删除请求 -->
+    <div class="card">
+      <div class="card-title" data-i18n="compliance.deletionTitle">数据删除请求</div>
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="compliance.colVisitor">访客 ID</th>
+            <th data-i18n="compliance.colEmail">邮箱</th>
+            <th data-i18n="compliance.colTime">请求时间</th>
+            <th data-i18n="compliance.colStatus">状态</th>
+            <th data-i18n="compliance.colAction">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>vst_8f3a2b</td>
+            <td>john.doe@example.com</td>
+            <td>2026-09-12 10:23</td>
+            <td><span class="tag tag-warning" data-i18n="compliance.pending">待处理</span></td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('已处理删除请求','success')" data-i18n="compliance.process">处理</button></td>
+          </tr>
+          <tr>
+            <td>vst_2c9d4e</td>
+            <td>jane.smith@test.io</td>
+            <td>2026-09-11 16:45</td>
+            <td><span class="tag tag-success" data-i18n="compliance.done">已完成</span></td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PII 脱敏 -->
+    <div class="card">
+      <div class="card-title" data-i18n="compliance.piiTitle">PII 脱敏设置</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.piiEnable">启用 PII 脱敏</div>
+          <div class="setting-desc" data-i18n="compliance.piiEnableDesc">日志和报表中自动隐藏敏感字段</div>
+        </div>
+        <div class="switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.piiEmail">邮箱脱敏</div>
+        </div>
+        <div class="switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.piiPhone">电话脱敏</div>
+        </div>
+        <div class="switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.piiName">姓名脱敏</div>
+        </div>
+        <div class="switch" onclick="toggleSwitch(this)"></div>
+      </div>
+    </div>
+
+    <!-- 加密设置 -->
+    <div class="card">
+      <div class="card-title" data-i18n="compliance.encTitle">加密设置</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title" data-i18n="compliance.encStatus">加密密钥状态</div>
+          <div class="setting-desc" data-i18n="compliance.encStatusDesc">用于 PII 数据静态加密 (AES-256)</div>
+        </div>
+        <span class="tag tag-success" data-i18n="compliance.encReady">已配置</span>
+      </div>
+      <button class="btn btn-danger" onclick="confirmRegenerateKey()" data-i18n="compliance.regenKey">重新生成密钥</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============ 模态框：添加平台 ============ -->
+<div class="modal-overlay" id="modal-add-platform">
+  <div class="modal">
+    <div class="modal-title" data-i18n="platforms.addTitle">添加广告平台</div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="platforms.chooseType">选择平台类型</label>
+      <select class="form-select">
+        <option>Meta (Facebook / Instagram)</option>
+        <option>Google Ads</option>
+        <option>TikTok</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="platforms.pixelId">Pixel ID</label>
+      <input type="text" class="form-input" placeholder="Pixel ID">
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="platforms.accessToken">Access Token</label>
+      <input type="password" class="form-input" placeholder="Access Token">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-platform')" data-i18n="common.cancel">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-platform');showToast('已添加平台','success')" data-i18n="common.confirm">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 模态框：新建模板 ============ -->
+<div class="modal-overlay" id="modal-new-template">
+  <div class="modal">
+    <div class="modal-title" data-i18n="templates.newTitle">新建话术模板</div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="templates.tplName">模板名称</label>
+      <input type="text" class="form-input" placeholder="e.g. EN_Greeting_LeadForm">
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="templates.tplScene">场景</label>
+      <select class="form-select">
+        <option data-i18n="templates.sceneGreeting">首次问候</option>
+        <option data-i18n="templates.sceneFollowup">跟进回访</option>
+        <option data-i18n="templates.sceneClosing">成交跟进</option>
+        <option data-i18n="templates.sceneFaq">FAQ 回复</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="templates.tplLang">语言</label>
+      <select class="form-select">
+        <option>English</option>
+        <option>Español</option>
+        <option>Français</option>
+        <option>Deutsch</option>
+        <option>日本語</option>
+        <option>한국어</option>
+        <option>Português</option>
+        <option>العربية</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="templates.tplContent">模板内容（支持变量 {{variable}}）</label>
+      <textarea class="form-textarea" id="template-content-input" placeholder="Hi {{customer_name}}, thanks for reaching out..."></textarea>
+      <div class="form-hint" data-i18n="templates.varHint">变量将自动检测并高亮</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-template')" data-i18n="common.cancel">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-new-template');showToast('模板已创建','success')" data-i18n="common.create">创建</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 模态框：标记成交 ============ -->
+<div class="modal-overlay" id="modal-convert">
+  <div class="modal">
+    <div class="modal-title" data-i18n="leads.convertTitle">标记成交</div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="leads.dealAmount">成交金额</label>
+      <input type="number" class="form-input" placeholder="0.00" step="0.01">
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="leads.currency">货币</label>
+      <select class="form-select">
+        <option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="leads.orderId">订单号</label>
+      <input type="text" class="form-input" placeholder="Order ID">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-convert')" data-i18n="common.cancel">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-convert');showToast('已触发广告回传','success')" data-i18n="leads.confirmConvert">确认并回传</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast 容器 -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   WorkHogee Global Admin - 主逻辑
+   纯原生 JS，所有数据为模拟数据，API 调用位置用注释预留
+   ============================================================ */
+
+/* ========== 双语字典 ========== */
+const I18N = {
+  zh: {
+    'nav.dashboard': '概览', 'nav.platforms': '广告平台', 'nav.leads': '线索管理',
+    'nav.templates': '话术模板', 'nav.compliance': '合规设置',
+    'footer.backDomestic': '返回国内版', 'footer.logout': '退出登录',
+    'dashboard.title': '概览', 'dashboard.subtitle': '海外市场实时数据概览',
+    'dashboard.todayLeads': '今日询盘数', 'dashboard.highIntent': '高意向线索数',
+    'dashboard.dealsClosed': '已成交数', 'dashboard.pixelSuccess': '回传成功率',
+    'dashboard.vsYesterday': '较昨日', 'dashboard.intentDist': '意向等级分布（近7天）',
+    'dashboard.recentLogs': '最近转化回传日志',
+    'log.platform': '平台', 'log.event': '事件', 'log.status': '状态', 'log.time': '时间',
+    'platforms.title': '广告平台配置', 'platforms.subtitle': '管理 Meta / Google / TikTok 广告平台接入',
+    'platforms.addBtn': '+ 添加平台', 'platforms.metaDesc': 'Facebook / Instagram Conversions API',
+    'platforms.googleDesc': 'Google Ads API 转化回传', 'platforms.tiktokDesc': 'TikTok Events API',
+    'platforms.enabled': '已启用', 'platforms.disabled': '未配置', 'platforms.soon': 'Coming Soon',
+    'platforms.pixelId': 'Pixel ID', 'platforms.accessToken': 'Access Token',
+    'platforms.toggleVis': '显示', 'platforms.testConn': '测试连接', 'platforms.connected': '已连接',
+    'platforms.configuredList': '已配置平台列表',
+    'platforms.colName': '平台名称', 'platforms.colType': '类型', 'platforms.colStatus': '状态',
+    'platforms.colTime': '配置时间', 'platforms.colAction': '操作',
+    'platforms.edit': '编辑', 'platforms.test': '测试', 'platforms.delete': '删除',
+    'platforms.addTitle': '添加广告平台', 'platforms.chooseType': '选择平台类型',
+    'leads.title': '线索管理', 'leads.subtitle': '管理海外询盘线索，支持成交标记与广告回传',
+    'leads.allIntents': '全部意向', 'leads.allStatus': '全部状态',
+    'leads.statusNew': '新线索', 'leads.statusFollowing': '跟进中', 'leads.statusWon': '已成交', 'leads.statusLost': '已流失',
+    'leads.allSources': '全部来源', 'leads.last7d': '近7天', 'leads.last30d': '近30天', 'leads.last90d': '近90天',
+    'leads.colCustomer': '客户名', 'leads.colEmail': '邮箱', 'leads.colCompany': '公司',
+    'leads.colCountry': '国家', 'leads.colIntent': '意向', 'leads.colStatus': '状态',
+    'leads.colSource': '来源', 'leads.colPixel': '回传状态', 'leads.colAction': '操作',
+    'leads.next': '下一页', 'leads.convertTitle': '标记成交',
+    'leads.dealAmount': '成交金额', 'leads.currency': '货币', 'leads.orderId': '订单号',
+    'leads.confirmConvert': '确认并回传',
+    'templates.title': '多语言话术模板', 'templates.subtitle': '管理海外客户自动回复话术，支持变量插入',
+    'templates.newBtn': '+ 新建模板', 'templates.allLang': '全部语言', 'templates.allScene': '全部场景',
+    'templates.sceneGreeting': '首次问候', 'templates.sceneFollowup': '跟进回访',
+    'templates.sceneClosing': '成交跟进', 'templates.sceneFaq': 'FAQ 回复',
+    'templates.newTitle': '新建话术模板', 'templates.tplName': '模板名称',
+    'templates.tplScene': '场景', 'templates.tplLang': '语言', 'templates.tplContent': '模板内容（支持变量 {{variable}}）',
+    'templates.varHint': '变量将自动检测并高亮',
+    'compliance.title': '合规设置', 'compliance.subtitle': 'GDPR / CCPA 数据合规配置',
+    'compliance.cookieTitle': 'Cookie 横幅设置', 'compliance.cookieEnable': '启用 Cookie 横幅',
+    'compliance.cookieEnableDesc': '海外访客首次访问时弹出同意横幅',
+    'compliance.cookieTextEN': '横幅文案 (English)', 'compliance.policyUrl': '隐私政策链接',
+    'compliance.save': '保存',
+    'compliance.retentionTitle': '数据保留设置', 'compliance.retentionDays': '保留天数',
+    'compliance.retentionDaysDesc': '超过该天数的访客数据将被自动清理',
+    'compliance.days': '天', 'compliance.autoClean': '自动清理',
+    'compliance.autoCleanDesc': '每天凌晨自动执行清理任务', 'compliance.cleanNow': '立即清理',
+    'compliance.deletionTitle': '数据删除请求',
+    'compliance.colVisitor': '访客 ID', 'compliance.colEmail': '邮箱', 'compliance.colTime': '请求时间',
+    'compliance.colStatus': '状态', 'compliance.colAction': '操作',
+    'compliance.pending': '待处理', 'compliance.done': '已完成', 'compliance.process': '处理',
+    'compliance.piiTitle': 'PII 脱敏设置', 'compliance.piiEnable': '启用 PII 脱敏',
+    'compliance.piiEnableDesc': '日志和报表中自动隐藏敏感字段',
+    'compliance.piiEmail': '邮箱脱敏', 'compliance.piiPhone': '电话脱敏', 'compliance.piiName': '姓名脱敏',
+    'compliance.encTitle': '加密设置', 'compliance.encStatus': '加密密钥状态',
+    'compliance.encStatusDesc': '用于 PII 数据静态加密 (AES-256)',
+    'compliance.encReady': '已配置', 'compliance.regenKey': '重新生成密钥',
+    'common.cancel': '取消', 'common.confirm': '确认', 'common.create': '创建'
+  },
+  en: {
+    'nav.dashboard': 'Dashboard', 'nav.platforms': 'Ad Platforms', 'nav.leads': 'Leads',
+    'nav.templates': 'Templates', 'nav.compliance': 'Compliance',
+    'footer.backDomestic': 'Back to CN', 'footer.logout': 'Sign out',
+    'dashboard.title': 'Dashboard', 'dashboard.subtitle': 'Overseas market overview',
+    'dashboard.todayLeads': "Today's Inquiries", 'dashboard.highIntent': 'High-Intent Leads',
+    'dashboard.dealsClosed': 'Deals Closed', 'dashboard.pixelSuccess': 'Pixel Success Rate',
+    'dashboard.vsYesterday': 'vs yesterday', 'dashboard.intentDist': 'Intent Distribution (7d)',
+    'dashboard.recentLogs': 'Recent Conversion Logs',
+    'log.platform': 'Platform', 'log.event': 'Event', 'log.status': 'Status', 'log.time': 'Time',
+    'platforms.title': 'Ad Platforms', 'platforms.subtitle': 'Manage Meta / Google / TikTok integrations',
+    'platforms.addBtn': '+ Add Platform', 'platforms.metaDesc': 'Facebook / Instagram Conversions API',
+    'platforms.googleDesc': 'Google Ads API Conversion Upload', 'platforms.tiktokDesc': 'TikTok Events API',
+    'platforms.enabled': 'Enabled', 'platforms.disabled': 'Not Configured', 'platforms.soon': 'Coming Soon',
+    'platforms.pixelId': 'Pixel ID', 'platforms.accessToken': 'Access Token',
+    'platforms.toggleVis': 'Show', 'platforms.testConn': 'Test Connection', 'platforms.connected': 'Connected',
+    'platforms.configuredList': 'Configured Platforms',
+    'platforms.colName': 'Platform', 'platforms.colType': 'Type', 'platforms.colStatus': 'Status',
+    'platforms.colTime': 'Configured At', 'platforms.colAction': 'Actions',
+    'platforms.edit': 'Edit', 'platforms.test': 'Test', 'platforms.delete': 'Delete',
+    'platforms.addTitle': 'Add Ad Platform', 'platforms.chooseType': 'Choose Platform Type',
+    'leads.title': 'Leads', 'leads.subtitle': 'Manage overseas inquiries, mark conversions & sync pixels',
+    'leads.allIntents': 'All Intents', 'leads.allStatus': 'All Statuses',
+    'leads.statusNew': 'New', 'leads.statusFollowing': 'Following Up', 'leads.statusWon': 'Won', 'leads.statusLost': 'Lost',
+    'leads.allSources': 'All Sources', 'leads.last7d': 'Last 7 days', 'leads.last30d': 'Last 30 days', 'leads.last90d': 'Last 90 days',
+    'leads.colCustomer': 'Customer', 'leads.colEmail': 'Email', 'leads.colCompany': 'Company',
+    'leads.colCountry': 'Country', 'leads.colIntent': 'Intent', 'leads.colStatus': 'Status',
+    'leads.colSource': 'Source', 'leads.colPixel': 'Pixel Status', 'leads.colAction': 'Actions',
+    'leads.next': 'Next', 'leads.convertTitle': 'Mark as Won',
+    'leads.dealAmount': 'Deal Amount', 'leads.currency': 'Currency', 'leads.orderId': 'Order ID',
+    'leads.confirmConvert': 'Confirm & Sync',
+    'templates.title': 'I18N Message Templates', 'templates.subtitle': 'Auto-reply templates with variable support',
+    'templates.newBtn': '+ New Template', 'templates.allLang': 'All Languages', 'templates.allScene': 'All Scenes',
+    'templates.sceneGreeting': 'First Greeting', 'templates.sceneFollowup': 'Follow-up',
+    'templates.sceneClosing': 'Closing', 'templates.sceneFaq': 'FAQ Reply',
+    'templates.newTitle': 'New Template', 'templates.tplName': 'Template Name',
+    'templates.tplScene': 'Scene', 'templates.tplLang': 'Language', 'templates.tplContent': 'Content (use {{variable}})',
+    'templates.varHint': 'Variables will be auto-detected and highlighted',
+    'compliance.title': 'Compliance', 'compliance.subtitle': 'GDPR / CCPA data compliance settings',
+    'compliance.cookieTitle': 'Cookie Banner', 'compliance.cookieEnable': 'Enable Cookie Banner',
+    'compliance.cookieEnableDesc': 'Show consent banner to overseas visitors on first visit',
+    'compliance.cookieTextEN': 'Banner Text (English)', 'compliance.policyUrl': 'Privacy Policy URL',
+    'compliance.save': 'Save',
+    'compliance.retentionTitle': 'Data Retention', 'compliance.retentionDays': 'Retention Days',
+    'compliance.retentionDaysDesc': 'Visitor data older than this will be purged',
+    'compliance.days': 'days', 'compliance.autoClean': 'Auto Cleanup',
+    'compliance.autoCleanDesc': 'Run cleanup daily at midnight', 'compliance.cleanNow': 'Clean Now',
+    'compliance.deletionTitle': 'Data Deletion Requests',
+    'compliance.colVisitor': 'Visitor ID', 'compliance.colEmail': 'Email', 'compliance.colTime': 'Requested At',
+    'compliance.colStatus': 'Status', 'compliance.colAction': 'Action',
+    'compliance.pending': 'Pending', 'compliance.done': 'Completed', 'compliance.process': 'Process',
+    'compliance.piiTitle': 'PII Masking', 'compliance.piiEnable': 'Enable PII Masking',
+    'compliance.piiEnableDesc': 'Auto-mask sensitive fields in logs and reports',
+    'compliance.piiEmail': 'Email', 'compliance.piiPhone': 'Phone', 'compliance.piiName': 'Name',
+    'compliance.encTitle': 'Encryption', 'compliance.encStatus': 'Encryption Key Status',
+    'compliance.encStatusDesc': 'AES-256 at-rest encryption for PII',
+    'compliance.encReady': 'Configured', 'compliance.regenKey': 'Regenerate Key',
+    'common.cancel': 'Cancel', 'common.confirm': 'Confirm', 'common.create': 'Create'
+  }
+};
+
+let currentLang = 'zh';
+
+/* ========== 页面切换 ========== */
+document.querySelectorAll('.nav-item').forEach(function (item) {
+  item.addEventListener('click', function (e) {
+    e.preventDefault();
+    var page = this.getAttribute('data-page');
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+    this.classList.add('active');
+    document.getElementById('page-' + page).classList.add('active');
+  });
+});
+
+/* ========== 语言切换 ========== */
+document.querySelectorAll('.lang-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    currentLang = this.getAttribute('data-lang');
+    document.querySelectorAll('.lang-btn').forEach(function (b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    applyI18n();
+  });
+});
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    var key = el.getAttribute('data-i18n');
+    if (I18N[currentLang][key]) {
+      el.textContent = I18N[currentLang][key];
+    }
+  });
+}
+
+/* ========== 模态框 ========== */
+function openModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+// 点击遮罩关闭
+document.querySelectorAll('.modal-overlay').forEach(function (ov) {
+  ov.addEventListener('click', function (e) {
+    if (e.target === ov) ov.classList.remove('show');
+  });
+});
+
+/* ========== 开关组件 ========== */
+function toggleSwitch(el) {
+  el.classList.toggle('on');
+}
+
+/* ========== Token 显示/隐藏 ========== */
+function toggleTokenVisibility() {
+  var input = document.getElementById('meta-access-token');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+/* ========== 测试 Meta 连接 ========== */
+function testMetaConnection() {
+  // TODO: 预留 API 调用位置
+  // fetch('/api/ad-platforms/meta/test', { method: 'POST', ... })
+  showToast('连接测试成功', 'success');
+}
+
+/* ========== Toast 提示 ========== */
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(function () { t.classList.remove('show'); }, 2500);
+}
+
+/* ========== 重新生成密钥确认 ========== */
+function confirmRegenerateKey() {
+  if (confirm('重新生成密钥将导致旧加密数据无法解密，确定继续吗？')) {
+    showToast('密钥已重新生成', 'success');
+  }
+}
+
+/* ========== 模拟数据渲染 ========== */
+
+// Dashboard 回传日志
+var mockLogs = [
+  { platform: 'Meta', event: 'Lead', status: 'success', time: '2026-09-14 10:23' },
+  { platform: 'Meta', event: 'Purchase', status: 'success', time: '2026-09-14 09:45' },
+  { platform: 'TikTok', event: 'Lead', status: 'failed', time: '2026-09-14 09:12' },
+  { platform: 'Meta', event: 'CompleteRegistration', status: 'success', time: '2026-09-14 08:30' },
+  { platform: 'Meta', event: 'Lead', status: 'pending', time: '2026-09-14 08:15' }
+];
+
+function renderLogs() {
+  var tbody = document.getElementById('log-table-body');
+  tbody.innerHTML = mockLogs.map(function (l) {
+    var tag = l.status === 'success' ? 'tag-success' : (l.status === 'failed' ? 'tag-danger' : 'tag-warning');
+    var label = l.status === 'success' ? (currentLang === 'zh' ? '成功' : 'Success')
+              : l.status === 'failed' ? (currentLang === 'zh' ? '失败' : 'Failed')
+              : (currentLang === 'zh' ? '待回传' : 'Pending');
+    return '<tr><td>' + l.platform + '</td><td>' + l.event + '</td><td><span class="tag ' + tag + '">' + label + '</span></td><td>' + l.time + '</td></tr>';
+  }).join('');
+}
+
+// Leads 模拟数据
+var mockLeads = [
+  { name: 'John Miller', email: 'john@acme.io', company: 'Acme Corp', country: 'US', intent: 'A', status: 'following', source: 'Meta Ads', pixel: 'success' },
+  { name: 'Sophie Laurent', email: 'sophie@blue.fr', company: 'Blue SAS', country: 'FR', intent: 'B', status: 'new', source: 'Google Ads', pixel: 'pending' },
+  { name: 'Kenji Tanaka', email: 'kenji@jp.co.jp', company: 'Tanaka Inc', country: 'JP', intent: 'A', status: 'won', source: 'Meta Ads', pixel: 'success' },
+  { name: 'Maria Garcia', email: 'maria@es.es', company: 'Grupo Garcia', country: 'ES', intent: 'C', status: 'lost', source: 'TikTok Ads', pixel: 'failed' },
+  { name: 'David Schmidt', email: 'david@de.de', company: 'Schmidt GmbH', country: 'DE', intent: 'B', status: 'following', source: 'Organic', pixel: 'pending' },
+  { name: 'Emma Brown', email: 'emma@uk.co.uk', company: 'Brown Ltd', country: 'GB', intent: 'A', status: 'new', source: 'Meta Ads', pixel: 'pending' }
+];
+
+function renderLeads() {
+  var tbody = document.getElementById('leads-table-body');
+  tbody.innerHTML = mockLeads.map(function (l, i) {
+    var intentTag = 'tag-' + l.intent;
+    var statusMap = {
+      new: (currentLang === 'zh' ? '新线索' : 'New'),
+      following: (currentLang === 'zh' ? '跟进中' : 'Following'),
+      won: (currentLang === 'zh' ? '已成交' : 'Won'),
+      lost: (currentLang === 'zh' ? '已流失' : 'Lost')
+    };
+    var pixelTag = l.pixel === 'success' ? 'tag-success' : (l.pixel === 'failed' ? 'tag-danger' : 'tag-warning');
+    var pixelLabel = l.pixel === 'success' ? (currentLang === 'zh' ? '成功' : 'Success')
+                   : l.pixel === 'failed' ? (currentLang === 'zh' ? '失败' : 'Failed')
+                   : (currentLang === 'zh' ? '待回传' : 'Pending');
+    var statusColor = l.status === 'won' ? 'tag-success' : (l.status === 'lost' ? 'tag-gray' : (l.status === 'following' ? 'tag-info' : 'tag-warning'));
+    return '<tr>' +
+      '<td>' + l.name + '</td>' +
+      '<td>' + l.email + '</td>' +
+      '<td>' + l.company + '</td>' +
+      '<td>' + l.country + '</td>' +
+      '<td><span class="tag ' + intentTag + '">' + l.intent + '</span></td>' +
+      '<td><span class="tag ' + statusColor + '">' + statusMap[l.status] + '</span></td>' +
+      '<td>' + l.source + '</td>' +
+      '<td><span class="tag ' + pixelTag + '">' + pixelLabel + '</span></td>' +
+      '<td>' +
+        (l.status !== 'won' ? '<button class="btn btn-primary btn-sm" onclick="openModal(\'modal-convert\')">' + (currentLang === 'zh' ? '标记成交' : 'Mark Won') + '</button>' : '') +
+        ' <button class="btn btn-secondary btn-sm">' + (currentLang === 'zh' ? '详情' : 'View') + '</button>' +
+      '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+// Templates 模拟数据
+var mockTemplates = [
+  { name: 'EN_Greeting_LeadForm', scene: 'Greeting', lang: 'EN', content: 'Hi {{customer_name}}, thanks for reaching out to WorkHogee. Our team will get back to you within 24 hours.' },
+  { name: 'ES_Seguimiento', scene: 'Follow-up', lang: 'ES', content: 'Hola {{customer_name}}, quería saber si tienes más preguntas sobre {{product_name}}.' },
+  { name: 'DE_Abschluss', scene: 'Closing', lang: 'DE', content: 'Hallo {{customer_name}}, vielen Dank für Ihr Vertrauen. Ihre Bestellung {{order_id}} wurde bestätigt.' },
+  { name: 'JP_FAQ_Preis', scene: 'FAQ', lang: 'JP', content: '{{customer_name}}様、料金プランについてご説明します...' },
+  { name: 'FR_Salutation', scene: 'Greeting', lang: 'FR', content: 'Bonjour {{customer_name}}, merci de nous avoir contactés. Nous vous répondrons rapidement.' },
+  { name: 'KR_Followup', scene: 'Follow-up', lang: 'KR', content: '{{customer_name}}님, 저희 제품에 대해 더 궁금하신 점이 있으신가요?' }
+];
+
+function renderTemplates() {
+  var grid = document.getElementById('template-grid');
+  grid.innerHTML = mockTemplates.map(function (t) {
+    // 变量高亮
+    var preview = t.content.replace(/\{\{(\w+)\}\}/g, '<span class="var-highlight">{{$1}}</span>');
+    return '<div class="template-card">' +
+      '<div class="template-header">' +
+        '<div class="template-name">' + t.name + '</div>' +
+        '<span class="tag tag-info">' + t.lang + '</span>' +
+      '</div>' +
+      '<span class="tag tag-gray">' + t.scene + '</span>' +
+      '<div class="template-preview">' + preview + '</div>' +
+      '<div class="template-actions">' +
+        '<button class="btn btn-secondary btn-sm">' + (currentLang === 'zh' ? '编辑' : 'Edit') + '</button>' +
+        '<button class="btn btn-secondary btn-sm">' + (currentLang === 'zh' ? '复制' : 'Duplicate') + '</button>' +
+        '<button class="btn btn-danger btn-sm">' + (currentLang === 'zh' ? '删除' : 'Delete') + '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ========== 初始化渲染 ========== */
+renderLogs();
+renderLeads();
+renderTemplates();
+applyI18n();
+</script>
+
+</body>
+</html>
