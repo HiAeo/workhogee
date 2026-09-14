@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = function(services) {
-  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService, i18nService, complianceService, adConversionService } = services;
+  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService, i18nService, complianceService, adConversionService, geoMonitorService, geoContentService, geoLandingService, geoReportService } = services;
 
   // ===== 用户认证 API =====
 
@@ -2186,6 +2186,550 @@ module.exports = function(services) {
     try {
       const result = await adConversionService.convertLeadAndSend(req.params.id, req.body || {});
       res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== GEO 伙计特别版：监测 API =====
+  // 统一前缀 /api/geo/monitor/
+
+  /**
+   * 获取监测关键词列表
+   * GET /api/geo/monitor/keywords?group=brand
+   */
+  router.get('/geo/monitor/keywords', (req, res) => {
+    try {
+      const list = geoMonitorService.listKeywords({ group: req.query.group });
+      res.json({ success: true, data: list });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 添加监测关键词
+   * POST /api/geo/monitor/keywords  body: { keyword, group?, note? }
+   */
+  router.post('/geo/monitor/keywords', (req, res) => {
+    try {
+      const { keyword, group, note } = req.body || {};
+      if (!keyword || !String(keyword).trim()) {
+        return res.status(400).json({ success: false, error: 'keyword 不能为空' });
+      }
+      const item = geoMonitorService.addKeyword({ keyword, group, note });
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除监测关键词
+   * DELETE /api/geo/monitor/keywords/:id
+   */
+  router.delete('/geo/monitor/keywords/:id', (req, res) => {
+    try {
+      const ok = geoMonitorService.removeKeyword(req.params.id);
+      res.json({ success: ok, message: ok ? '已删除' : '关键词不存在或删除失败' });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动触发一次监测
+   * POST /api/geo/monitor/run  body: { keywordIds?: [], engines?: [] }
+   */
+  router.post('/geo/monitor/run', (req, res) => {
+    try {
+      const result = geoMonitorService.runMonitor(req.body || {});
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取品牌提及记录
+   * GET /api/geo/monitor/mentions?engine=doubao&sentiment=positive&keyword=xxx&days=7
+   */
+  router.get('/geo/monitor/mentions', (req, res) => {
+    try {
+      const filters = {
+        engine: req.query.engine,
+        sentiment: req.query.sentiment,
+        days: req.query.days
+      };
+      let list = geoMonitorService.getMentions(filters);
+      // service 仅支持按 keywordId 过滤，这里额外支持按关键词字符串模糊筛选
+      if (req.query.keyword) {
+        const kw = String(req.query.keyword).toLowerCase();
+        list = list.filter((m) => m.keyword && String(m.keyword).toLowerCase().includes(kw));
+      }
+      res.json({ success: true, data: list });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取排名历史
+   * GET /api/geo/monitor/rankings?engine=doubao&days=30&keywordId=xxx
+   */
+  router.get('/geo/monitor/rankings', (req, res) => {
+    try {
+      const list = geoMonitorService.getRankings({
+        engine: req.query.engine,
+        keywordId: req.query.keywordId,
+        days: req.query.days
+      });
+      res.json({ success: true, data: list });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取趋势数据（按天聚合）
+   * GET /api/geo/monitor/trends?days=30
+   */
+  router.get('/geo/monitor/trends', (req, res) => {
+    try {
+      const days = parseInt(req.query.days) || 30;
+      const trend = geoMonitorService.getTrends(days);
+      res.json({ success: true, data: trend });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取仪表盘统计数据
+   * GET /api/geo/monitor/stats
+   */
+  router.get('/geo/monitor/stats', (req, res) => {
+    try {
+      const stats = geoMonitorService.getDashboardStats();
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== GEO 伙计特别版：内容 API =====
+  // 统一前缀 /api/geo/content/
+  // 集成点：生成后可调用 complianceService.maskPII 做隐私脱敏；
+  //        多语言场景可调用 i18nService.translate 翻译正文。
+
+  /**
+   * 生成单篇 GEO 内容
+   * POST /api/geo/content/generate  body: { type, topic, keywords?, language?, extra? }
+   */
+  router.post('/geo/content/generate', async (req, res) => {
+    try {
+      const { type, topic, keywords, language, extra } = req.body || {};
+      if (!topic || !String(topic).trim()) {
+        return res.status(400).json({ success: false, error: 'topic 不能为空' });
+      }
+      const item = await geoContentService.generateContent({ type, topic, keywords, language, extra });
+
+      // 可选集成：内容生成后做隐私脱敏（best-effort，不影响主流程）
+      if (item && item.content && typeof complianceService.maskPII === 'function') {
+        try { item.content = complianceService.maskPII(item.content); } catch (_) { /* 忽略脱敏失败 */ }
+      }
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 批量生成 GEO 内容
+   * POST /api/geo/content/batch  body: { type, topics: [], keywords?, language? }
+   */
+  router.post('/geo/content/batch', async (req, res) => {
+    try {
+      const { type, topics, keywords, language } = req.body || {};
+      if (!Array.isArray(topics) || !topics.length) {
+        return res.status(400).json({ success: false, error: 'topics 不能为空' });
+      }
+      const results = await geoContentService.generateBatch({ type, topics, keywords, language });
+      res.json({ success: true, data: results });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 内容优化建议
+   * POST /api/geo/content/optimize  body: { content, type?, keywords? }
+   */
+  router.post('/geo/content/optimize', async (req, res) => {
+    try {
+      const { content, type, keywords } = req.body || {};
+      if (!content || !String(content).trim()) {
+        return res.status(400).json({ success: false, error: 'content 不能为空' });
+      }
+      const result = await geoContentService.optimizeContent({ content, type, keywords });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 内容模板列表（静态路由必须在 /:id 之前注册）
+   * GET /api/geo/content/templates
+   */
+  router.get('/geo/content/templates', (req, res) => {
+    try {
+      const templates = geoContentService.getContentTemplates();
+      res.json({ success: true, data: templates });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 内容列表
+   * GET /api/geo/content/list?type=article&language=zh&page=1&pageSize=20
+   */
+  router.get('/geo/content/list', (req, res) => {
+    try {
+      const result = geoContentService.listContents({
+        type: req.query.type,
+        language: req.query.language,
+        page: req.query.page,
+        pageSize: req.query.pageSize
+      });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取单篇内容（须在 /list、/templates 之后注册）
+   * GET /api/geo/content/:id
+   */
+  router.get('/geo/content/:id', (req, res) => {
+    try {
+      const item = geoContentService.getContent(req.params.id);
+      if (!item) {
+        return res.status(404).json({ success: false, error: '内容不存在' });
+      }
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除内容
+   * DELETE /api/geo/content/:id
+   */
+  router.delete('/geo/content/:id', (req, res) => {
+    try {
+      const ok = geoContentService.deleteContent(req.params.id);
+      res.json({ success: ok, message: ok ? '已删除' : '内容不存在或删除失败' });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== GEO 伙计特别版：落地页 API =====
+  // 统一前缀 /api/geo/landing/
+  // 集成点：转化时可调用 leadStorage.create 落库线索，并通知 notificationService.notifyNewLead；
+  //        成交后可调用 adConversionService 回传广告平台。
+
+  /**
+   * 落地页列表（静态路由须在 /:id 之前注册）
+   * GET /api/geo/landing/list
+   */
+  router.get('/geo/landing/list', (req, res) => {
+    try {
+      const list = geoLandingService.listLandings();
+      res.json({ success: true, data: list });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建落地页
+   * POST /api/geo/landing/create  body: { name, slug?, hero?, socialProof?, cta?, faqs? }
+   */
+  router.post('/geo/landing/create', (req, res) => {
+    try {
+      const { name, slug, hero, socialProof, cta, faqs } = req.body || {};
+      if (!name || !String(name).trim()) {
+        return res.status(400).json({ success: false, error: 'name 不能为空' });
+      }
+      const item = geoLandingService.createLanding({ name, slug, hero, socialProof, cta, faqs });
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建 A/B 测试
+   * POST /api/geo/landing/abtest  body: { landingId, name?, variants? }
+   */
+  router.post('/geo/landing/abtest', (req, res) => {
+    try {
+      const { landingId, name, variants } = req.body || {};
+      if (!landingId) {
+        return res.status(400).json({ success: false, error: 'landingId 不能为空' });
+      }
+      const item = geoLandingService.createABTest({ landingId, name, variants });
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 落地页统计（静态路由须在 /:id 之前注册）
+   * GET /api/geo/landing/stats?landingId=xxx
+   */
+  router.get('/geo/landing/stats', (req, res) => {
+    try {
+      const stats = geoLandingService.getLandingStats(req.query.landingId);
+      res.json({ success: true, data: stats });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取落地页详情（须在静态路由之后注册）
+   * GET /api/geo/landing/:id
+   */
+  router.get('/geo/landing/:id', (req, res) => {
+    try {
+      const item = geoLandingService.getLanding(req.params.id);
+      if (!item) {
+        return res.status(404).json({ success: false, error: '落地页不存在' });
+      }
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新落地页
+   * PUT /api/geo/landing/:id
+   */
+  router.put('/geo/landing/:id', (req, res) => {
+    try {
+      const item = geoLandingService.updateLanding(req.params.id, req.body || {});
+      if (!item) {
+        return res.status(404).json({ success: false, error: '落地页不存在' });
+      }
+      res.json({ success: true, data: item });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除落地页
+   * DELETE /api/geo/landing/:id
+   */
+  router.delete('/geo/landing/:id', (req, res) => {
+    try {
+      const ok = geoLandingService.deleteLanding(req.params.id);
+      res.json({ success: ok, message: ok ? '已删除' : '落地页不存在或删除失败' });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 记录落地页访问（含 GEO 来源解析）
+   * POST /api/geo/landing/:id/visit  body: { params?: {}, abTestId? }
+   */
+  router.post('/geo/landing/:id/visit', (req, res) => {
+    try {
+      const { params, abTestId } = req.body || {};
+      const visit = geoLandingService.recordVisit({
+        landingId: req.params.id,
+        params: params || req.query || {},
+        abTestId,
+        userAgent: req.headers['user-agent'] || ''
+      });
+      res.json({ success: true, data: visit });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 记录落地页转化（留资）
+   * POST /api/geo/landing/:id/conversion  body: { visitId, leadId?, remark? }
+   */
+  router.post('/geo/landing/:id/conversion', async (req, res) => {
+    try {
+      const { visitId, leadId, remark } = req.body || {};
+      if (!visitId) {
+        return res.status(400).json({ success: false, error: 'visitId 不能为空' });
+      }
+      const visit = geoLandingService.recordConversion(visitId, { leadId, remark });
+      if (!visit) {
+        return res.status(404).json({ success: false, error: '访问记录不存在' });
+      }
+
+      // 可选集成：转化即留资，写入统一线索库并触发新线索通知（best-effort）
+      if (typeof leadStorage.create === 'function') {
+        try {
+          const saved = leadStorage.create({
+            source: 'geo',
+            sourceDetail: (visit.source && {
+              engine: visit.source.geo_engine,
+              keyword: visit.source.geo_keyword,
+              utmSource: visit.source.utm_source,
+              landingId: visit.landingId,
+              variantId: visit.variantId
+            }) || {},
+            remark: remark || '',
+            landedAt: visit.visitedAt
+          });
+          visit.syncedLeadId = saved && saved.id ? saved.id : (leadId || null);
+        } catch (err) {
+          console.error('[GEO路由] 同步线索失败(已忽略):', err.message);
+        }
+      }
+      // 可选集成：新线索到达后推送通知（best-effort）
+      if (typeof notificationService.notifyNewLead === 'function') {
+        try { await notificationService.notifyNewLead(visit); } catch (_) { /* 忽略通知失败 */ }
+      }
+      // 可选集成：若该访问后续判定为成交，可在此调用 adConversionService.convertLeadAndSend 回传广告平台
+
+      res.json({ success: true, data: visit });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取 A/B 测试结果
+   * GET /api/geo/landing/:id/abtest-results
+   */
+  router.get('/geo/landing/:id/abtest-results', (req, res) => {
+    try {
+      const result = geoLandingService.getABTestResults(req.params.id);
+      if (!result) {
+        return res.status(404).json({ success: false, error: 'A/B 测试不存在' });
+      }
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== GEO 伙计特别版：周报 API =====
+  // 统一前缀 /api/geo/report/
+  // 集成点：推送周报时可调用 notificationService 发送邮件/企微通知。
+
+  /**
+   * 生成 GEO 周报
+   * POST /api/geo/report/generate  body: { date?, weekStart?, weekEnd? }
+   */
+  router.post('/geo/report/generate', (req, res) => {
+    try {
+      const result = geoReportService.generateWeeklyReport(req.body || {});
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 周报列表（静态路由须在 /:id 之前注册）
+   * GET /api/geo/report/list
+   */
+  router.get('/geo/report/list', (req, res) => {
+    try {
+      const list = geoReportService.listReports();
+      res.json({ success: true, data: list });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取周报原始数据（不含渲染 HTML）
+   * GET /api/geo/report/data?weekStart=2026-09-07&weekEnd=2026-09-13
+   */
+  router.get('/geo/report/data', (req, res) => {
+    try {
+      let start;
+      let end;
+      if (req.query.weekStart && req.query.weekEnd) {
+        start = new Date(req.query.weekStart);
+        end = new Date(req.query.weekEnd);
+      } else {
+        // 默认本周一 ~ 本周日
+        const d = new Date(req.query.date || Date.now());
+        const day = d.getDay() === 0 ? 7 : d.getDay();
+        start = new Date(d); start.setDate(d.getDate() - day + 1); start.setHours(0, 0, 0, 0);
+        end = new Date(start); end.setDate(start.getDate() + 6); end.setHours(23, 59, 59, 999);
+      }
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ success: false, error: 'weekStart/weekEnd 日期格式无效' });
+      }
+      const data = geoReportService.getReportData(start, end);
+      res.json({ success: true, data });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取转化漏斗数据（静态路由须在 /:id 之前注册）
+   * GET /api/geo/report/funnel
+   */
+  router.get('/geo/report/funnel', (req, res) => {
+    try {
+      const funnel = geoReportService.getConversionFunnel();
+      res.json({ success: true, data: funnel });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取周报内容（:id 即文件名，须在静态路由之后注册）
+   * GET /api/geo/report/:id
+   */
+  router.get('/geo/report/:id', (req, res) => {
+    try {
+      const html = geoReportService.getReport(req.params.id);
+      if (!html) {
+        return res.status(404).json({ success: false, error: '周报不存在' });
+      }
+      res.json({ success: true, data: { filename: req.params.id, html } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 推送周报
+   * POST /api/geo/report/:id/send  body: { channel?, to? }
+   */
+  router.post('/geo/report/:id/send', (req, res) => {
+    try {
+      const { channel, to } = req.body || {};
+      const record = geoReportService.sendReport(req.params.id, { channel, to });
+      // 可选集成：周报推送后调用 notificationService 发出通知（best-effort）
+      if (typeof notificationService.notifyNewLead === 'function') {
+        try { /* 预留：按 channel 调用对应通知通道 */ } catch (_) { /* 忽略 */ }
+      }
+      res.json({ success: true, data: record });
     } catch (e) {
       res.status(400).json({ success: false, error: e.message });
     }
