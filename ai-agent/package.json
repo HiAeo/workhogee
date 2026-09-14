@@ -1,19 +1,40 @@
 {
   "name": "workhogee-ai-agent",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "WorkHogee AI 获客伙计 - 基于 DeepSeek Harness 的智能获客 Agent",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
-    "test": "node tests/test.js"
+    "prod": "NODE_ENV=production node src/app.js",
+    "test": "node tests/test.js",
+    "db:init": "node src/db/init.js",
+    "docker:build": "docker build -t workhogee-api .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down"
   },
-  "keywords": ["ai", "agent", "lead-generation", "workhogee", "deepseek-harness"],
+  "keywords": [
+    "ai",
+    "agent",
+    "lead-generation",
+    "workhogee",
+    "deepseek-harness"
+  ],
   "author": "WorkHogee",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
-    "express": "^4.18.2",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0"
+    "express": "^4.18.2",
+    "imapflow": "^2.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "mailparser": "^3.9.26",
+    "nodemailer": "^10.0.9",
+    "pg": "^8.23.0",
+    "uuid": "^9.0.0",
+    "ws": "^8.21.3"
   }
 }
