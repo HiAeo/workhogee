@@ -131,9 +131,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../web/index.html'));
 });
 
-// 启动服务器
-const PORT = config.server.port || 3000;
-const HOST = config.server.host || 'localhost';
+// 启动服务器（优先读取环境变量，适配 Railway/Render/Docker 等平台）
+const PORT = process.env.PORT || config.server.port || 3000;
+const HOST = process.env.HOST || config.server.host || '0.0.0.0';
 
 async function startServer() {
   // 初始化数据库（如果启用）
