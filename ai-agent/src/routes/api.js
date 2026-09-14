@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = function(services) {
-  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService } = services;
+  const { smartIntake, leadStorage, conversationStorage, contentCreator, leadNurture, exportService, authService, notificationService, analyticsService, abTestService, tenantService, logger, cache, profileService, knowledgeBase, reportService, emailConfigService, emailReceiverService, emailSenderService, i18nService, complianceService, adConversionService } = services;
 
   // ===== 用户认证 API =====
 
@@ -1850,6 +1850,345 @@ module.exports = function(services) {
         timestamp: new Date().toISOString()
       }
     });
+  });
+
+  // ===== 出海专版：多语言 API =====
+
+  /**
+   * 获取支持的语言列表
+   * GET /api/i18n/languages
+   */
+  router.get('/i18n/languages', (req, res) => {
+    try {
+      res.json({ success: true, data: i18nService.getLanguages() });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 检测访客语言
+   * POST /api/i18n/detect  body: {browserLang, ip}
+   */
+  router.post('/i18n/detect', async (req, res) => {
+    try {
+      const { browserLang, ip } = req.body || {};
+      const lang = await i18nService.detectLanguage(browserLang, ip);
+      res.json({ success: true, data: { language: lang } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 文本翻译（DeepSeek）
+   * POST /api/i18n/translate  body: {text, from, to}
+   */
+  router.post('/i18n/translate', async (req, res) => {
+    try {
+      const { text, from, to } = req.body || {};
+      const result = await i18nService.translate(text, from || 'auto', to || 'en');
+      res.json({ success: true, data: { translatedText: result } });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 话术模板列表
+   * GET /api/i18n/templates?language=en&scenario=general&page=1&pageSize=20
+   */
+  router.get('/i18n/templates', (req, res) => {
+    try {
+      const result = i18nService.listTemplates({
+        language: req.query.language,
+        scenario: req.query.scenario,
+        page: req.query.page,
+        pageSize: req.query.pageSize
+      });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建话术模板
+   * POST /api/i18n/templates  body: {name, scenario, language, content, variables}
+   */
+  router.post('/i18n/templates', (req, res) => {
+    try {
+      const template = i18nService.createTemplate(req.body || {});
+      res.json({ success: true, data: template });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新话术模板
+   * PUT /api/i18n/templates/:id
+   */
+  router.put('/i18n/templates/:id', (req, res) => {
+    try {
+      const template = i18nService.updateTemplate(req.params.id, req.body || {});
+      if (!template) {
+        return res.status(404).json({ success: false, error: '模板不存在' });
+      }
+      res.json({ success: true, data: template });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除话术模板
+   * DELETE /api/i18n/templates/:id
+   */
+  router.delete('/i18n/templates/:id', (req, res) => {
+    try {
+      const ok = i18nService.deleteTemplate(req.params.id);
+      res.json({ success: ok, message: ok ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取管理后台 UI 文案字典
+   * GET /api/i18n/ui-dict?lang=zh
+   */
+  router.get('/i18n/ui-dict', (req, res) => {
+    try {
+      const dict = i18nService.getUIDict(req.query.lang || 'en');
+      res.json({ success: true, data: dict });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 出海专版：合规 API =====
+
+  /**
+   * 获取合规设置
+   * GET /api/compliance/settings
+   */
+  router.get('/compliance/settings', (req, res) => {
+    try {
+      res.json({ success: true, data: complianceService.getSettings() });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新合规设置
+   * PUT /api/compliance/settings  body: {dataRetentionDays, cookieBannerEnabled, privacyPolicyUrl}
+   */
+  router.put('/compliance/settings', (req, res) => {
+    try {
+      const settings = complianceService.updateSettings(req.body || {});
+      res.json({ success: true, data: settings });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 记录 Cookie 同意/拒绝
+   * POST /api/compliance/consent  body: {visitorId, action, source, ip, userAgent}
+   */
+  router.post('/compliance/consent', (req, res) => {
+    try {
+      const record = complianceService.recordConsent(req.body || {});
+      res.json({ success: true, data: record });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 查询访客同意状态
+   * GET /api/compliance/consent/:visitorId
+   */
+  router.get('/compliance/consent/:visitorId', (req, res) => {
+    try {
+      const record = complianceService.getConsent(req.params.visitorId);
+      res.json({ success: true, data: record });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 创建数据删除请求
+   * POST /api/compliance/data-deletion  body: {visitorId, email, reason}
+   */
+  router.post('/compliance/data-deletion', (req, res) => {
+    try {
+      const request = complianceService.createDeletionRequest(req.body || {});
+      res.json({ success: true, data: request });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 查询删除请求状态
+   * GET /api/compliance/data-deletion/:id
+   */
+  router.get('/compliance/data-deletion/:id', (req, res) => {
+    try {
+      const request = complianceService.getDeletionRequest(req.params.id);
+      if (!request) {
+        return res.status(404).json({ success: false, error: '删除请求不存在' });
+      }
+      res.json({ success: true, data: request });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动触发过期对话数据清理
+   * POST /api/compliance/cleanup-expired
+   */
+  router.post('/compliance/cleanup-expired', (req, res) => {
+    try {
+      const result = complianceService.cleanupExpired();
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== 出海专版：广告转化回传 API =====
+
+  /**
+   * 列出已配置的广告平台
+   * GET /api/ad-platforms
+   */
+  router.get('/ad-platforms', (req, res) => {
+    try {
+      res.json({ success: true, data: adConversionService.listPlatforms() });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 添加广告平台配置
+   * POST /api/ad-platforms  body: {platformType, config}
+   */
+  router.post('/ad-platforms', (req, res) => {
+    try {
+      const platform = adConversionService.createPlatform(req.body || {});
+      res.json({ success: true, data: platform });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 获取单个平台配置（敏感字段掩码）
+   * GET /api/ad-platforms/:id
+   */
+  router.get('/ad-platforms/:id', (req, res) => {
+    try {
+      const platform = adConversionService.getPlatform(req.params.id);
+      if (!platform) {
+        return res.status(404).json({ success: false, error: '平台配置不存在' });
+      }
+      res.json({ success: true, data: platform });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 更新平台配置
+   * PUT /api/ad-platforms/:id
+   */
+  router.put('/ad-platforms/:id', (req, res) => {
+    try {
+      const platform = adConversionService.updatePlatform(req.params.id, req.body || {});
+      if (!platform) {
+        return res.status(404).json({ success: false, error: '平台配置不存在' });
+      }
+      res.json({ success: true, data: platform });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 删除平台配置
+   * DELETE /api/ad-platforms/:id
+   */
+  router.delete('/ad-platforms/:id', (req, res) => {
+    try {
+      const ok = adConversionService.deletePlatform(req.params.id);
+      res.json({ success: ok, message: ok ? '已删除' : '删除失败' });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 测试平台连接（发送测试事件）
+   * POST /api/ad-platforms/:id/test
+   */
+  router.post('/ad-platforms/:id/test', async (req, res) => {
+    try {
+      const result = await adConversionService.testPlatform(req.params.id);
+      res.json({ success: result.success, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 回传日志列表
+   * GET /api/conversion-logs?platform=meta&status=success&page=1&pageSize=20
+   */
+  router.get('/conversion-logs', (req, res) => {
+    try {
+      const result = adConversionService.listLogs({
+        platform: req.query.platform,
+        status: req.query.status,
+        page: req.query.page,
+        pageSize: req.query.pageSize
+      });
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 手动触发转化回传
+   * POST /api/conversions/send  body: {leadId, eventName, value, currency, orderId}
+   */
+  router.post('/conversions/send', async (req, res) => {
+    try {
+      const result = await adConversionService.sendConversion(req.body || {});
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  /**
+   * 标记线索成交并自动回传广告平台
+   * POST /api/leads/:id/convert-with-conversion  body: {value, currency, orderId}
+   */
+  router.post('/leads/:id/convert-with-conversion', async (req, res) => {
+    try {
+      const result = await adConversionService.convertLeadAndSend(req.params.id, req.body || {});
+      res.json({ success: true, data: result });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
   });
 
   return router;
