@@ -52,6 +52,12 @@ const I18nService = require('./services/i18nService');
 const ComplianceService = require('./services/complianceService');
 const AdConversionService = require('./services/adConversionService');
 
+// GEO伙计特别版服务
+const GeoMonitorService = require('./services/geoMonitorService');
+const GeoContentService = require('./services/geoContentService');
+const GeoLandingService = require('./services/geoLandingService');
+const GeoReportService = require('./services/geoReportService');
+
 const smartIntake = new SmartIntakeSkill(llmService, leadStorage, conversationStorage, config.business);
 const contentCreator = new ContentCreatorSkill(llmService, config.business);
 const leadNurture = new LeadNurtureSkill(llmService, leadStorage, config.business);
@@ -73,6 +79,12 @@ const emailSenderService = new EmailSenderService(emailConfigService, emailRecei
 const i18nService = new I18nService(config);
 const complianceService = new ComplianceService(config);
 const adConversionService = new AdConversionService(config, leadStorage);
+
+// GEO伙计特别版服务实例化
+const geoMonitorService = new GeoMonitorService(config);
+const geoContentService = new GeoContentService(config);
+const geoLandingService = new GeoLandingService(config);
+const geoReportService = new GeoReportService(config);
 
 // 服务集合
 const services = {
@@ -98,7 +110,11 @@ const services = {
   emailSenderService,
   i18nService,
   complianceService,
-  adConversionService
+  adConversionService,
+  geoMonitorService,
+  geoContentService,
+  geoLandingService,
+  geoReportService
 };
 
 // 初始化 DSH 插件系统
