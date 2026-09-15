@@ -1083,8 +1083,11 @@ function generateImage() {
     }
   }, 500);
   
-  // 将图片转为base64（去掉前缀）
-  const base64Data = beforeImg.src.split(',')[1];
+  // 图片转为data URL格式（火山引擎要求 data:image/xxx;base64,xxx 格式）
+  var imageData = beforeImg.src;
+  if (imageData.indexOf('data:') !== 0) {
+    imageData = 'data:image/jpeg;base64,' + imageData;
+  }
   
   // 行业提示词库（前端直接调用火山引擎API）
   var INDUSTRY_PROMPTS = {
@@ -1110,7 +1113,7 @@ function generateImage() {
     body: JSON.stringify({
       model: 'ep-m-20260915134242-p4rpr',
       prompt: prompt,
-      image: base64Data,
+      image: imageData,
       size: '1024x1024',
       response_format: 'url'
     })
