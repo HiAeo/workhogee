@@ -316,7 +316,7 @@ img { max-width: 100%; display: block; }
 .security-badge { font-size: 11px; color: var(--green); font-weight: 700; background: rgba(22,163,74,0.1); padding: 4px 10px; border-radius: 6px; }
 .security-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
 .security-item { background: var(--paper); border-radius: 10px; padding: 14px; text-align: center; }
-.security-icon { font-size: 24px; margin-bottom: 6px; }
+.security-icon { font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--ink); letter-spacing: 0.5px; }
 .security-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
 .security-desc { font-size: 10px; color: var(--ink-muted); }
 .security-log { background: var(--paper); border-radius: 10px; padding: 12px; }
@@ -340,7 +340,8 @@ img { max-width: 100%; display: block; }
 .scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.1); border-color: rgba(234,88,12,0.3); }
 .scenario-icon {
   width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 800; color: var(--ink);
 }
 .scenario-icon.food { background: rgba(234,88,12,0.1); }
 .scenario-icon.home { background: rgba(139,92,246,0.1); }
@@ -568,7 +569,7 @@ img { max-width: 100%; display: block; }
           </div>
         </div>
         <div class="platform-action">
-          <button class="btn-platform">⚡ 一键发布到4个平台</button>
+          <button class="btn-platform">一键发布到4个平台</button>
         </div>
       </div>
     </div>
@@ -735,22 +736,22 @@ img { max-width: 100%; display: block; }
         </div>
         <div class="security-grid">
           <div class="security-item">
-            <div class="security-icon">🔒</div>
+            <div class="security-icon">TLS</div>
             <div class="security-name">传输加密</div>
             <div class="security-desc">TLS 1.3</div>
           </div>
           <div class="security-item">
-            <div class="security-icon">🛡️</div>
+            <div class="security-icon">AES</div>
             <div class="security-name">存储加密</div>
             <div class="security-desc">AES-256</div>
           </div>
           <div class="security-item">
-            <div class="security-icon">🚫</div>
+            <div class="security-icon">NO</div>
             <div class="security-name">不训练</div>
             <div class="security-desc">数据隔离</div>
           </div>
           <div class="security-item">
-            <div class="security-icon">📋</div>
+            <div class="security-icon">III</div>
             <div class="security-name">等保三级</div>
             <div class="security-desc">合规认证</div>
           </div>
@@ -775,7 +776,7 @@ img { max-width: 100%; display: block; }
     </div>
     <div class="scenarios-grid">
       <div class="scenario-card">
-        <div class="scenario-icon food">🍜</div>
+        <div class="scenario-icon food">餐</div>
         <div class="scenario-content">
           <h3>餐饮版 · 已上线</h3>
           <p>24节气氛围词库、5种菜品风格模板、美团/饿了么尺寸规范。从家常菜到高端料理，每道菜都能拍出食欲感。</p>
@@ -788,7 +789,7 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
       <div class="scenario-card">
-        <div class="scenario-icon home">🏠</div>
+        <div class="scenario-icon home">居</div>
         <div class="scenario-content">
           <h3>家居/饰品版 · 已上线</h3>
           <p>北欧、侘寂、中古、法式、奶油风等8种风格描述词，原木/陶瓷/玻璃/金属材质光影模板。一张白底图，秒变杂志级场景图。</p>
@@ -801,7 +802,7 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
       <div class="scenario-card">
-        <div class="scenario-icon car">🚗</div>
+        <div class="scenario-icon car">车</div>
         <div class="scenario-content">
           <h3>车行版 · 即将上线</h3>
           <p>二手车实拍图一键生成展厅效果图，4S店级布光、专业角度、品牌背景。不用租展厅，不用请摄影师，手机拍的也能卖出好价钱。</p>
@@ -813,7 +814,7 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
       <div class="scenario-card">
-        <div class="scenario-icon deco">🏗️</div>
+        <div class="scenario-icon deco">装</div>
         <div class="scenario-content">
           <h3>装修版 · 即将上线</h3>
           <p>毛坯房实拍一键生成装修效果图，北欧/现代/中式等多种风格，家具摆放、灯光氛围自动匹配。签单率提升，客户一眼就懂。</p>
