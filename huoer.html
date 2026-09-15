@@ -1086,30 +1086,62 @@ function generateImage() {
   // 将图片转为base64（去掉前缀）
   const base64Data = beforeImg.src.split(',')[1];
   
-  // 调用后端API
-  const apiUrl = 'https://workhogee.vercel.app/api/generate';
+  // 行业提示词库（前端直接调用火山引擎API）
+  var INDUSTRY_PROMPTS = {
+    drink: '将这张饮品图片放置在ins风咖啡店场景中，暖光照明，木质桌面，背景有咖啡店氛围虚化，专业美食摄影风格，高清细节，保持饮品本身完全不变',
+    food: '将这张菜品图片放置在中式餐厅暖光场景中，木质餐桌，热气腾腾的氛围，专业美食摄影风格，暖色调，高清细节，保持菜品本身完全不变',
+    home: '将这张家居产品图片放置在侘寂风场景中，米白色墙面，原木边几，亚麻布料，干花装饰，自然光从侧面照入，专业产品摄影风格，保持产品本身完全不变',
+    beauty: '将这张美妆产品图片放置在大理石高级美妆台场景中，柔和漫射光，背景有高级感虚化，专业美妆摄影风格，保持产品本身完全不变',
+    cloth: '将这张服装产品图片放置在城市街头穿搭场景中，自然光，街拍风格，专业服装摄影，保持服装本身完全不变',
+    '3c': '将这张3C产品图片放置在极简科技桌面场景中，冷色调照明，深色背景，专业产品摄影风格，保持产品本身完全不变'
+  };
+  
+  // 直接调用火山引擎图像生成API
+  var apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
+  var apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');
+  var prompt = INDUSTRY_PROMPTS[currentIndustry] || INDUSTRY_PROMPTS.food;
   
   fetch(apiUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
     body: JSON.stringify({
+      model: 'doubao-seedream-4-5-251128',
+      prompt: prompt,
       image: base64Data,
-      industry: currentIndustry,
-      style: currentStyle
+      size: '1024x1024',
+      response_format: 'url'
     })
   })
-  .then(function(response) { return response.json(); })
+  .then(function(response) {
+    return response.text().then(function(text) {
+      try { return JSON.parse(text); }
+      catch(e) { return { _rawError: text, _status: response.status }; }
+    });
+  })
   .then(function(data) {
     clearInterval(mockInterval);
     progressFill.style.width = '100%';
     
-    if (data.success && data.url) {
+    if (data._rawError) {
+      // API返回非JSON错误
+      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:12px;color:#dc2626;max-width:100%;word-break:break-all;text-align:left;padding:0 16px;">API错误(' + data._status + '): ' + data._rawError + '</div></div>';
+      progressText.textContent = 'API调用失败，请检查推理接入点是否创建';
+      btn.classList.remove('generating');
+      isGenerating = false;
+      return;
+    }
+    
+    if (data.data && data.data[0] && data.data[0].url) {
       // 生成成功：显示真正的AI生成图片
-      resultZone.innerHTML = '<img src="' + data.url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';
+      resultZone.innerHTML = '<img src="' + data.data[0].url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';
       progressText.textContent = '生成完成！Seedream 4.5 真实AI生成，点击图片可下载';
     } else {
       // 生成失败
-      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + (data.error || '未知错误') + '</div></div>';
+      var errMsg = (data.error && data.error.message) ? data.error.message : JSON.stringify(data);
+      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + errMsg + '</div></div>';
       progressText.textContent = '生成失败，请重试';
     }
     
