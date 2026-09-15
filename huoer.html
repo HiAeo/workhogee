@@ -523,18 +523,18 @@ body::after {
     </div>
     <div class="hero-demo" id="demo">
       <div class="demo-header">
-        <div class="demo-title">实时演示 · 台灯场景图生成</div>
+        <div class="demo-title">实时演示 · 奶茶场景图生成</div>
         <div class="demo-badge">AI处理中</div>
       </div>
       <div class="demo-compare">
         <div class="demo-img-wrap">
-          <img src="images/lamp-white.jpg" alt="手机实拍原图">
+          <img src="images/drink-milktea-white.jpg" alt="手机实拍原图">
           <div class="demo-img-label">手机实拍 · 白底素图</div>
         </div>
         <div class="demo-arrow">→</div>
         <div class="demo-img-wrap">
-          <img src="images/lamp-wabi-sabi.jpg" alt="AI生成成品">
-          <div class="demo-img-label">AI生成 · 侘寂风场景</div>
+          <img src="images/drink-milktea-pro.jpg" alt="AI生成成品">
+          <div class="demo-img-label">AI生成 · ins风咖啡店</div>
         </div>
       </div>
       <div class="demo-progress">
@@ -564,10 +564,12 @@ body::after {
     </div>
     <div class="live-demo-card">
       <div class="demo-toolbar">
-        <button class="demo-industry-btn active" data-industry="food" onclick="switchIndustry('food')">餐饮版</button>
+        <button class="demo-industry-btn active" data-industry="drink" onclick="switchIndustry('drink')">饮品版</button>
+        <button class="demo-industry-btn" data-industry="food" onclick="switchIndustry('food')">餐饮版</button>
         <button class="demo-industry-btn" data-industry="home" onclick="switchIndustry('home')">家居版</button>
-        <button class="demo-industry-btn" data-industry="car" onclick="switchIndustry('car')">车行版</button>
-        <button class="demo-industry-btn" data-industry="deco" onclick="switchIndustry('deco')">装修版</button>
+        <button class="demo-industry-btn" data-industry="beauty" onclick="switchIndustry('beauty')">美妆版</button>
+        <button class="demo-industry-btn" data-industry="cloth" onclick="switchIndustry('cloth')">服装版</button>
+        <button class="demo-industry-btn" data-industry="3c" onclick="switchIndustry('3c')">3C版</button>
         <div class="demo-style-slider">
           <span class="demo-style-label">风格强度</span>
           <input type="range" id="styleSlider" min="1" max="5" value="3" oninput="updateStyle(this.value)">
@@ -576,7 +578,7 @@ body::after {
       </div>
       <div class="demo-workspace">
         <div class="demo-upload-zone" id="uploadZone" onclick="triggerUpload()">
-          <img id="beforeImg" src="images/dish-gongbaoji-white.jpg" alt="原图">
+          <img id="beforeImg" src="images/drink-milktea-white.jpg" alt="原图">
         </div>
         <button class="demo-generate-btn" id="generateBtn" onclick="generateImage()">
           <span>生成效果图</span>
@@ -643,18 +645,18 @@ body::after {
     <div class="feature-visual">
       <div class="compare-card">
         <div class="compare-header">
-          <span class="compare-label">前后对比 · 台灯场景图</span>
+          <span class="compare-label">前后对比 · 香水场景图</span>
           <span class="compare-time">耗时 20秒</span>
         </div>
         <div class="compare-body">
           <div class="compare-side">
-            <div class="compare-img"><img src="images/lamp-white.jpg" alt="原图"></div>
+            <div class="compare-img"><img src="images/beauty-perfume-white.jpg" alt="原图"></div>
             <div class="compare-caption">手机实拍 · 白底素图</div>
           </div>
           <div class="compare-arrow">→</div>
           <div class="compare-side">
-            <div class="compare-img after"><img src="images/lamp-wabi-sabi.jpg" alt="成品"></div>
-            <div class="compare-caption">AI生成 · 侘寂风场景</div>
+            <div class="compare-img after"><img src="images/beauty-perfume-pro.jpg" alt="成品"></div>
+            <div class="compare-caption">AI生成 · 高级香氛场景</div>
           </div>
         </div>
         <div class="compare-footer">
@@ -890,12 +892,14 @@ body::after {
 <script>
 // 在线体验台数据
 const demoData = {
-  food: { before: 'images/dish-gongbaoji-white.jpg', after: 'images/dish-gongbaoji-pro.jpg', label: '宫保鸡丁 · 专业美食摄影' },
-  home: { before: 'images/lamp-white.jpg', after: 'images/lamp-wabi-sabi.jpg', label: '台灯 · 侘寂风场景' },
-  car: { before: 'images/car-suv-white.jpg', after: 'images/car-suv-showroom.jpg', label: 'SUV · 4S店展厅' },
-  deco: { before: 'images/room-raw.jpg', after: 'images/room-nordic.jpg', label: '毛坯房 · 北欧风装修' }
+  drink: { before: 'images/drink-milktea-white.jpg', after: 'images/drink-milktea-pro.jpg', label: '珍珠奶茶 · ins风咖啡店' },
+  food: { before: 'images/dish-hongshaorou-white.jpg', after: 'images/dish-hongshaorou-pro.jpg', label: '红烧肉 · 中式餐厅' },
+  home: { before: 'images/home-vase-white.jpg', after: 'images/home-vase-pro.jpg', label: '陶瓷花瓶 · 侘寂风家居' },
+  beauty: { before: 'images/beauty-lipstick-white.jpg', after: 'images/beauty-lipstick-pro.jpg', label: '口红 · 高级美妆台' },
+  cloth: { before: 'images/cloth-tshirt-white.jpg', after: 'images/cloth-tshirt-pro.jpg', label: '白T恤 · 街头穿搭' },
+  '3c': { before: 'images/3c-earphone-white.jpg', after: 'images/3c-earphone-pro.jpg', label: '无线耳机 · 科技桌面' }
 };
-let currentIndustry = 'food';
+let currentIndustry = 'drink';
 let isGenerating = false;
 
 function switchIndustry(industry) {
