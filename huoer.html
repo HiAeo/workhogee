@@ -1029,6 +1029,36 @@ function updateStyle(value) {
 
 function generateImage() {
   if (isGenerating) return;
+  
+  const beforeImg = document.getElementById('beforeImg');
+  const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');
+  
+  if (!userUploaded) {
+    // 未上传图片：显示预设成品图（演示模式）
+    isGenerating = true;
+    const btn = document.getElementById('generateBtn');
+    btn.classList.remove('done');
+    btn.classList.add('generating');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const resultZone = document.getElementById('resultZone');
+    progressBar.style.display = 'block';
+    progressText.style.display = 'block';
+    progressFill.style.width = '0%';
+    resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">演示模式...</div></div>';
+    setTimeout(function() {
+      const data = demoData[currentIndustry];
+      resultZone.innerHTML = '<img src="' + data.after + '" alt="成品"><div class="demo-result-label">' + data.label + '（演示图）</div>';
+      progressText.textContent = '演示完成！上传自己的图片体验真实AI生成';
+      btn.classList.remove('generating');
+      btn.classList.add('done');
+      isGenerating = false;
+    }, 1500);
+    return;
+  }
+  
+  // 用户上传了图片：调用真正的后端API
   isGenerating = true;
   const btn = document.getElementById('generateBtn');
   btn.classList.remove('done');
@@ -1042,51 +1072,58 @@ function generateImage() {
   progressBar.style.display = 'block';
   progressText.style.display = 'block';
   progressFill.style.width = '0%';
-  resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">AI生成中...</div></div>';
+  resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">AI生成中，请稍候...</div></div>';
   
-  const steps = [
-    { progress: 20, text: '① 图像识别中... 3s', delay: 600 },
-    { progress: 45, text: '② 行业提示词匹配... 5s', delay: 1200 },
-    { progress: 75, text: '③ Seedream 4.5 生成中... 10s', delay: 1800 },
-    { progress: 100, text: '④ 质量校验完成... 2s', delay: 2400 }
-  ];
-  
-  let stepIndex = 0;
-  function runStep() {
-    if (stepIndex < steps.length) {
-      progressFill.style.width = steps[stepIndex].progress + '%';
-      progressText.textContent = steps[stepIndex].text;
-      stepIndex++;
-      setTimeout(runStep, steps[stepIndex - 1].delay);
-    } else {
-      // 显示结果
-      const beforeImg = document.getElementById('beforeImg');
-      const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');
-      if (userUploaded) {
-        // 用户上传了图片：用CSS滤镜模拟AI生成的专业效果
-        const industryFilters = {
-          drink: 'sepia(0.12) saturate(1.35) contrast(1.12) brightness(1.06)',
-          food: 'sepia(0.18) saturate(1.4) contrast(1.15) brightness(1.05)',
-          home: 'sepia(0.1) saturate(1.15) contrast(1.05) brightness(1.08)',
-          beauty: 'saturate(1.2) contrast(1.2) brightness(1.05)',
-          cloth: 'saturate(1.1) contrast(1.1) brightness(1.05)',
-          '3c': 'saturate(1.15) contrast(1.25) brightness(1.03)'
-        };
-        const filter = industryFilters[currentIndustry] || industryFilters.food;
-        resultZone.innerHTML = '<img src="' + beforeImg.src + '" alt="成品" style="filter:' + filter + '"><div class="demo-result-label">AI优化 · ' + demoData[currentIndustry].label + '</div>';
-        progressText.textContent = '生成完成！已应用' + ['极淡','清淡','中等','浓郁','极致'][currentStyle] + '风格强度';
-      } else {
-        // 未上传图片：显示预设成品图
-        const data = demoData[currentIndustry];
-        resultZone.innerHTML = '<img src="' + data.after + '" alt="成品" style="filter:' + styleFilters[currentStyle] + '"><div class="demo-result-label">' + data.label + '</div>';
-        progressText.textContent = '生成完成！耗时 20秒 · 风格强度：' + ['极淡','清淡','中等','浓郁','极致'][currentStyle];
-      }
-      btn.classList.remove('generating');
-      btn.classList.add('done');
-      isGenerating = false;
+  // 模拟进度（API调用是异步的，用模拟进度提升体验）
+  let mockProgress = 0;
+  const mockInterval = setInterval(function() {
+    if (mockProgress < 85) {
+      mockProgress += Math.random() * 8;
+      progressFill.style.width = Math.min(mockProgress, 85) + '%';
     }
-  }
-  runStep();
+  }, 500);
+  
+  // 将图片转为base64（去掉前缀）
+  const base64Data = beforeImg.src.split(',')[1];
+  
+  // 调用后端API
+  const apiUrl = 'https://workhogee.vercel.app/api/generate';
+  
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      image: base64Data,
+      industry: currentIndustry,
+      style: currentStyle
+    })
+  })
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    clearInterval(mockInterval);
+    progressFill.style.width = '100%';
+    
+    if (data.success && data.url) {
+      // 生成成功：显示真正的AI生成图片
+      resultZone.innerHTML = '<img src="' + data.url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';
+      progressText.textContent = '生成完成！Seedream 4.5 真实AI生成，点击图片可下载';
+    } else {
+      // 生成失败
+      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + (data.error || '未知错误') + '</div></div>';
+      progressText.textContent = '生成失败，请重试';
+    }
+    
+    btn.classList.remove('generating');
+    btn.classList.add('done');
+    isGenerating = false;
+  })
+  .catch(function(error) {
+    clearInterval(mockInterval);
+    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">网络错误：' + error.message + '</div></div>';
+    progressText.textContent = '网络错误，请检查连接后重试';
+    btn.classList.remove('generating');
+    isGenerating = false;
+  });
 }
 
 function handleFileUpload(event) {
