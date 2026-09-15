@@ -17,7 +17,6 @@
   --line: #e7e5e4;
   --white: #ffffff;
   --green: #16a34a;
-  --blue: #2563eb;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -38,11 +37,11 @@ body {
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo-text { font-size: 20px; font-weight: 700; color: var(--ink); }
+.nav-logo-text { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
 .nav-logo-text span { color: var(--orange); }
 .nav-logo-sub { font-size: 11px; color: var(--ink-3); margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--line); }
 .nav-links { display: flex; align-items: center; gap: 28px; }
-.nav-links a { color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+.nav-links a { color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
 .nav-links a:hover { color: var(--orange); }
 .nav-links a.active { color: var(--orange); font-weight: 600; }
 .nav-cta {
@@ -53,7 +52,8 @@ body {
 .nav-cta:hover { background: var(--orange); transform: translateY(-1px); }
 
 /* Hero */
-.hero { padding: 80px 0 60px; text-align: center; }
+.hero { padding: 80px 0 60px; }
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
   background: rgba(234,88,12,0.1); color: var(--orange);
@@ -63,21 +63,21 @@ body {
 .hero-badge .dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero h1 {
-  font-size: 52px; font-weight: 800; line-height: 1.2; margin-bottom: 20px;
+  font-size: 48px; font-weight: 800; line-height: 1.15; margin-bottom: 20px;
   letter-spacing: -1px;
 }
 .hero h1 .highlight { color: var(--orange); }
 .hero-slogan {
-  font-size: 22px; color: var(--ink-2); font-weight: 500; margin-bottom: 16px;
+  font-size: 20px; color: var(--ink-2); font-weight: 500; margin-bottom: 12px;
 }
 .hero-slogan-2 {
-  font-size: 18px; color: var(--ink-3); margin-bottom: 32px;
+  font-size: 16px; color: var(--ink-3); margin-bottom: 32px; line-height: 1.8;
 }
-.hero-cta { display: flex; gap: 16px; justify-content: center; margin-bottom: 48px; }
+.hero-cta { display: flex; gap: 16px; margin-bottom: 32px; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--orange); color: var(--white);
-  padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600;
+  padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
   text-decoration: none; border: none; cursor: pointer;
   transition: all 0.2s;
 }
@@ -85,141 +85,162 @@ body {
 .btn-secondary {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--white); color: var(--ink);
-  padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600;
+  padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
   text-decoration: none; border: 1px solid var(--line); cursor: pointer;
   transition: all 0.2s;
 }
 .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+.hero-meta { display: flex; gap: 24px; }
+.hero-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-3); }
+.hero-meta-item svg { width: 16px; height: 16px; color: var(--green); }
+
+/* Hero Visual */
+.hero-visual { position: relative; }
+.hero-product {
+  background: var(--white); border-radius: 16px; padding: 24px;
+  border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  position: relative; overflow: hidden;
+}
+.hero-product-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 20px;
+}
+.hero-product-title { font-size: 14px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.hero-product-title .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+.hero-product-badge { font-size: 11px; color: var(--orange); background: rgba(234,88,12,0.1); padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+.hero-product-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hero-upload-box {
+  border: 2px dashed var(--line); border-radius: 12px; padding: 24px 16px;
+  text-align: center; background: var(--paper-2); transition: all 0.3s;
+}
+.hero-upload-box:hover { border-color: var(--orange); background: rgba(234,88,12,0.03); }
+.hero-upload-box svg { width: 32px; height: 32px; color: var(--ink-3); margin-bottom: 10px; }
+.hero-upload-box p { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; }
+.hero-upload-box .upload-btn {
+  display: inline-block; padding: 6px 14px; background: var(--ink); color: var(--white);
+  border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;
+}
+.hero-result-box {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5); border-radius: 12px;
+  padding: 20px 16px; text-align: center; position: relative;
+}
+.hero-result-img {
+  width: 100%; height: 100px; background: var(--white); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+  font-size: 32px; position: relative; overflow: hidden;
+}
+.hero-result-img::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+.hero-result-box p { font-size: 11px; color: var(--ink-2); font-weight: 600; margin-bottom: 6px; }
+.hero-result-tags { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+.hero-result-tag { font-size: 9px; padding: 2px 6px; background: rgba(22,163,74,0.1); color: var(--green); border-radius: 8px; font-weight: 600; }
+
+.hero-float-card {
+  position: absolute; background: var(--white); border-radius: 12px;
+  padding: 14px 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  border: 1px solid var(--line); animation: float 3s ease-in-out infinite;
+}
+.hero-float-card.card1 { top: -20px; right: -20px; animation-delay: 0s; }
+.hero-float-card.card2 { bottom: -20px; left: -20px; animation-delay: 1.5s; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.hero-float-card .label { font-size: 11px; color: var(--ink-3); margin-bottom: 4px; }
+.hero-float-card .value { font-size: 22px; font-weight: 800; color: var(--orange); }
+.hero-float-card .sub { font-size: 10px; color: var(--green); margin-top: 2px; }
 
 /* 行业版本切换 */
-.version-switch {
-  display: flex; justify-content: center; gap: 12px; margin-bottom: 48px;
-}
+.version-section { padding: 40px 0; background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.version-switch { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .version-tab {
-  padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  padding: 10px 24px; border-radius: 10px; font-size: 14px; font-weight: 600;
   cursor: pointer; border: 1px solid var(--line); background: var(--white);
-  color: var(--ink-2); transition: all 0.2s;
+  color: var(--ink-2); transition: all 0.2s; display: flex; align-items: center; gap: 8px;
 }
-.version-tab.active {
-  background: var(--ink); color: var(--white); border-color: var(--ink);
-}
+.version-tab svg { width: 16px; height: 16px; }
+.version-tab.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
 .version-tab:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
-.version-tab .coming-soon { font-size: 10px; color: var(--ink-3); margin-left: 6px; }
+.version-tab .coming-soon { font-size: 10px; color: var(--ink-3); background: var(--paper-2); padding: 2px 8px; border-radius: 8px; }
 
-/* 在线操作界面 */
-.demo-section { padding: 60px 0; background: var(--white); }
-.demo-title { text-align: center; margin-bottom: 40px; }
-.demo-title h2 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
-.demo-title p { color: var(--ink-3); font-size: 16px; }
+/* 通用section */
+.section { padding: 80px 0; }
+.section-head { text-align: center; margin-bottom: 48px; }
+.section-kicker { display: inline-block; font-size: 13px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.section-head h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+.section-head p { color: var(--ink-3); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.8; }
 
-.demo-interface {
-  background: var(--paper-2); border-radius: 16px; padding: 32px;
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+/* 三步流程 */
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.step-card {
+  background: var(--white); border-radius: 16px; padding: 32px;
+  border: 1px solid var(--line); transition: all 0.3s; position: relative;
 }
-.demo-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px; }
-.demo-step {
-  background: var(--white); border-radius: 12px; padding: 24px;
-  border: 1px solid var(--line); text-align: center;
+.step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.step-num {
+  width: 40px; height: 40px; background: var(--ink); color: var(--white);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; margin-bottom: 20px;
 }
-.demo-step-num {
-  width: 32px; height: 32px; background: var(--orange); color: var(--white);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 14px; margin: 0 auto 12px;
-}
-.demo-step h4 { font-size: 16px; margin-bottom: 8px; }
-.demo-step p { font-size: 13px; color: var(--ink-3); }
-
-.demo-workspace {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-}
-.demo-upload, .demo-result {
-  background: var(--white); border-radius: 12px; padding: 24px;
-  border: 2px dashed var(--line); min-height: 320px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.demo-upload { border-color: var(--orange); background: rgba(234,88,12,0.02); }
-.demo-upload-icon { font-size: 48px; margin-bottom: 16px; }
-.demo-upload h4 { font-size: 18px; margin-bottom: 8px; color: var(--ink); }
-.demo-upload p { font-size: 14px; color: var(--ink-3); text-align: center; }
-.demo-upload .upload-btn {
-  margin-top: 16px; padding: 10px 24px; background: var(--orange); color: var(--white);
-  border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
-  border: none; transition: all 0.2s;
-}
-.demo-upload .upload-btn:hover { background: var(--orange-dark); }
-.demo-result { border-style: solid; border-color: var(--line); }
-.demo-result-placeholder {
-  width: 200px; height: 200px; background: linear-gradient(135deg, #fef3c7, #fed7aa);
-  border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px; font-size: 48px;
-}
-.demo-result h4 { font-size: 16px; margin-bottom: 8px; }
-.demo-result p { font-size: 13px; color: var(--ink-3); }
-.demo-result .result-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
-.demo-result .result-tag {
-  padding: 4px 10px; background: rgba(22,163,74,0.1); color: var(--green);
-  border-radius: 12px; font-size: 11px; font-weight: 600;
-}
+.step-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+.step-card p { font-size: 14px; color: var(--ink-3); line-height: 1.8; }
 
 /* 功能特性 */
-.features { padding: 80px 0; }
-.section-title { text-align: center; margin-bottom: 48px; }
-.section-title h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
-.section-title p { color: var(--ink-3); font-size: 16px; max-width: 600px; margin: 0 auto; }
+.features { background: var(--white); }
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .feature-card {
-  background: var(--white); border-radius: 16px; padding: 32px;
+  background: var(--paper); border-radius: 16px; padding: 32px;
   border: 1px solid var(--line); transition: all 0.3s;
 }
-.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--orange); }
 .feature-icon {
-  width: 56px; height: 56px; background: rgba(234,88,12,0.1); border-radius: 14px;
-  display: flex; align-items: center; justify-content: center; font-size: 28px;
-  margin-bottom: 20px;
+  width: 48px; height: 48px; background: rgba(234,88,12,0.1); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
 }
-.feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-.feature-card p { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+.feature-icon svg { width: 24px; height: 24px; color: var(--orange); }
+.feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.feature-card p { font-size: 14px; color: var(--ink-3); line-height: 1.8; }
 
 /* 行业场景 */
-.industries { padding: 80px 0; background: var(--white); }
 .industries-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .industry-card {
-  background: var(--paper); border-radius: 12px; padding: 28px 20px;
+  background: var(--white); border-radius: 12px; padding: 28px 20px;
   text-align: center; border: 1px solid var(--line); transition: all 0.3s;
 }
 .industry-card:hover { border-color: var(--orange); transform: translateY(-2px); }
-.industry-card .industry-icon { font-size: 36px; margin-bottom: 12px; }
-.industry-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.industry-icon { width: 44px; height: 44px; margin: 0 auto 12px; background: var(--paper-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.industry-icon svg { width: 22px; height: 22px; color: var(--ink-2); }
+.industry-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
 .industry-card p { font-size: 12px; color: var(--ink-3); }
-.industry-card.available { border-color: var(--orange); background: rgba(234,88,12,0.03); }
-.industry-card.available .badge {
-  display: inline-block; background: var(--orange); color: var(--white);
-  padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
-  margin-bottom: 8px;
+.industry-card.available { border-color: var(--orange); background: rgba(234,88,12,0.02); }
+.industry-card.available .industry-icon { background: rgba(234,88,12,0.1); }
+.industry-card.available .industry-icon svg { color: var(--orange); }
+.industry-card .badge {
+  display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  margin-bottom: 10px;
 }
-.industry-card.coming .badge {
-  display: inline-block; background: var(--ink-3); color: var(--white);
-  padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
-  margin-bottom: 8px;
-}
+.industry-card .badge.available { background: var(--orange); color: var(--white); }
+.industry-card .badge.coming { background: var(--ink-3); color: var(--white); }
+.industry-card .badge.plan { background: var(--paper-2); color: var(--ink-3); }
 
 /* 使用方式 */
-.usage { padding: 80px 0; }
+.usage { background: var(--white); }
 .usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .usage-card {
-  background: var(--white); border-radius: 16px; padding: 40px;
+  background: var(--paper); border-radius: 16px; padding: 40px;
   border: 1px solid var(--line);
 }
-.usage-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-.usage-card h3 .icon { font-size: 28px; }
+.usage-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.usage-card h3 .icon { width: 36px; height: 36px; background: rgba(234,88,12,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.usage-card h3 .icon svg { width: 18px; height: 18px; color: var(--orange); }
 .usage-card p { font-size: 15px; color: var(--ink-2); margin-bottom: 24px; line-height: 1.8; }
-.usage-card ul { list-style: none; margin-bottom: 24px; }
+.usage-card ul { list-style: none; margin-bottom: 28px; }
 .usage-card ul li {
   padding: 8px 0; font-size: 14px; color: var(--ink-2);
   display: flex; align-items: center; gap: 10px;
 }
-.usage-card ul li::before { content: "✓"; color: var(--green); font-weight: 700; }
+.usage-card ul li svg { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }
 .usage-card .btn { width: 100%; justify-content: center; }
 
 /* CTA */
@@ -229,26 +250,23 @@ body {
 .cta-section h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
 .cta-section h2 span { color: var(--orange); }
 .cta-section p { font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
-.cta-section .btn-primary { font-size: 18px; padding: 16px 40px; }
+.cta-section .btn-primary { font-size: 17px; padding: 16px 40px; }
 
 /* 页脚 */
-.footer { padding: 48px 0; background: var(--paper-2); border-top: 1px solid var(--line); }
+.footer { padding: 40px 0; background: var(--paper-2); border-top: 1px solid var(--line); }
 .footer-inner { display: flex; justify-content: space-between; align-items: center; }
 .footer-logo { font-size: 18px; font-weight: 700; color: var(--ink); }
 .footer-logo span { color: var(--orange); }
 .footer-text { font-size: 13px; color: var(--ink-3); }
 
 /* 响应式 */
-@media (max-width: 768px) {
-  .container { padding: 0 20px; }
-  .nav-links { display: none; }
-  .hero h1 { font-size: 32px; }
-  .hero-slogan { font-size: 18px; }
-  .demo-steps { grid-template-columns: 1fr; }
-  .demo-workspace { grid-template-columns: 1fr; }
-  .features-grid { grid-template-columns: 1fr; }
+@media (max-width: 968px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero h1 { font-size: 36px; }
+  .steps-grid, .features-grid { grid-template-columns: 1fr; }
   .industries-grid { grid-template-columns: 1fr 1fr; }
   .usage-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
 }
 </style>
 </head>
@@ -263,7 +281,7 @@ body {
         <span class="nav-logo-sub">活儿伙计</span>
       </a>
       <div class="nav-links">
-        <a href="/" >首页</a>
+        <a href="/">首页</a>
         <a href="/huoer.html" class="active">活儿伙计</a>
         <a href="/geo.html">GEO伙计</a>
         <a href="/global.html">出海伙计</a>
@@ -277,180 +295,262 @@ body {
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      <span>WorkHogee · 活儿伙计 · 在线版已上线</span>
-    </div>
-    <h1>小商家的<span class="highlight">AI工作流伙计</span></h1>
-    <p class="hero-slogan">你有活儿，喊伙计。</p>
-    <p class="hero-slogan-2">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
-    <div class="hero-cta">
-      <a href="#demo" class="btn-primary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        在线体验
-      </a>
-      <a href="#usage" class="btn-secondary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载客户端
-      </a>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span>WorkHogee · 活儿伙计 · 在线版已上线</span>
+        </div>
+        <h1>小商家的<span class="highlight">AI工作流伙计</span></h1>
+        <p class="hero-slogan">你有活儿，喊伙计。</p>
+        <p class="hero-slogan-2">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。</p>
+        <div class="hero-cta">
+          <a href="#demo" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            在线体验
+          </a>
+          <a href="#usage" class="btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            下载客户端
+          </a>
+        </div>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            免费版每月10张
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            20秒极速出图
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            直接上架平台
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-product">
+          <div class="hero-product-header">
+            <div class="hero-product-title">
+              <span class="status-dot"></span>
+              活儿伙计 · 在线工作台
+            </div>
+            <div class="hero-product-badge">餐饮版</div>
+          </div>
+          <div class="hero-product-body">
+            <div class="hero-upload-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p>上传你的原图</p>
+              <span class="upload-btn">选择图片</span>
+            </div>
+            <div class="hero-result-box">
+              <div class="hero-result-img">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <p>AI生成专业图</p>
+              <div class="hero-result-tags">
+                <span class="hero-result-tag">800×800</span>
+                <span class="hero-result-tag">无水印</span>
+                <span class="hero-result-tag">可上架</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-float-card card1">
+          <div class="label">生成耗时</div>
+          <div class="value">18s</div>
+          <div class="sub">比人工快90%</div>
+        </div>
+        <div class="hero-float-card card2">
+          <div class="label">本月已生成</div>
+          <div class="value">1,286张</div>
+          <div class="sub">↑ 持续增长中</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- 行业版本切换 -->
-<section style="padding: 0 0 40px;">
+<section class="version-section" id="demo">
   <div class="container">
     <div class="version-switch">
-      <div class="version-tab active" onclick="switchVersion('food')">🍜 餐饮版</div>
-      <div class="version-tab active" onclick="switchVersion('home')">🏠 家居/饰品版</div>
-      <div class="version-tab" onclick="switchVersion('car')">🚗 车行版 <span class="coming-soon">即将推出</span></div>
-      <div class="version-tab" onclick="switchVersion('deco')">🎨 装修版 <span class="coming-soon">即将推出</span></div>
+      <div class="version-tab active" onclick="switchVersion('food', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        餐饮版
+      </div>
+      <div class="version-tab active" onclick="switchVersion('home', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        家居/饰品版
+      </div>
+      <div class="version-tab" onclick="switchVersion('car', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+        车行版
+        <span class="coming-soon">即将推出</span>
+      </div>
+      <div class="version-tab" onclick="switchVersion('deco', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        装修版
+        <span class="coming-soon">即将推出</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- 在线操作界面演示 -->
-<section class="demo-section" id="demo">
+<!-- 三步出图 -->
+<section class="section">
   <div class="container">
-    <div class="demo-title">
+    <div class="section-head">
+      <span class="section-kicker">使用流程</span>
       <h2>三步出图，就是这么简单</h2>
-      <p>上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图</p>
+      <p>不用学设计，不用调参数，上传一张图，行业大脑帮你搞定一切</p>
     </div>
-    <div class="demo-interface">
-      <div class="demo-steps">
-        <div class="demo-step">
-          <div class="demo-step-num">1</div>
-          <h4>上传原图</h4>
-          <p>手机拍的菜品图、商品图，直接上传</p>
-        </div>
-        <div class="demo-step">
-          <div class="demo-step-num">2</div>
-          <h4>选择场景</h4>
-          <p>行业大脑自动匹配风格、角度、氛围</p>
-        </div>
-        <div class="demo-step">
-          <div class="demo-step-num">3</div>
-          <h4>获取专业图</h4>
-          <p>20秒生成，直接上架美团/淘宝/小红书</p>
-        </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>上传原图</h3>
+        <p>手机拍的菜品图、商品图，直接上传。支持JPG/PNG/WEBP格式，最大10MB，不用修图不用调色。</p>
       </div>
-      <div class="demo-workspace">
-        <div class="demo-upload">
-          <div class="demo-upload-icon">📸</div>
-          <h4>上传你的原图</h4>
-          <p>支持 JPG / PNG / WEBP<br>最大 10MB</p>
-          <button class="upload-btn" onclick="alert('在线版即将开放上传功能，敬请期待！')">选择图片上传</button>
-        </div>
-        <div class="demo-result">
-          <div class="demo-result-placeholder">🍽️</div>
-          <h4>AI生成的专业图</h4>
-          <p>精致摆盘 · 45°俯拍 · 暖光氛围</p>
-          <div class="result-tags">
-            <span class="result-tag">✓ 800×800 美团尺寸</span>
-            <span class="result-tag">✓ 可直接上架</span>
-            <span class="result-tag">✓ 无水印</span>
-          </div>
-        </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>选择场景</h3>
+        <p>选择行业版本和风格需求，行业大脑自动匹配拍摄角度、氛围词、平台尺寸，比你更懂怎么拍才好看。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>获取专业图</h3>
+        <p>20秒生成专业级商品图，自动适配美团800×800、淘宝主图、小红书3:4等尺寸，直接上架不用再改。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- 功能特性 -->
-<section class="features">
+<section class="section features">
   <div class="container">
-    <div class="section-title">
+    <div class="section-head">
+      <span class="section-kicker">核心能力</span>
       <h2>为什么选择活儿伙计</h2>
       <p>不是简单的AI画图，而是懂行业、懂平台、懂商家的工作流伙计</p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">🧠</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+        </div>
         <h3>行业大脑</h3>
         <p>内置餐饮、家居等行业知识库，包含二十四节气氛围词、拍摄角度规范、平台尺寸标准，比通用AI更懂你的行业。</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">⚡</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
         <h3>20秒出图</h3>
         <p>基于火山引擎Seedream 4.5模型，图生图模式20秒交付，比找设计师快100倍，比自己拍省90%成本。</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📱</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
         <h3>直接上架</h3>
-        <p>自动适配美团800×800、淘宝主图、小红书3:4等平台尺寸，生成即可用，不用再裁剪调整。</p>
+        <p>自动适配美团800×800、淘宝主图、小红书3:4等平台尺寸，生成即可用，不用再裁剪调整，一键发布多平台。</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">💰</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
         <h3>按张计费</h3>
-        <p>订阅制+按出图量扣费，免费版每月10张，专业版每月500张，用多少付多少，小商家也用得起。</p>
+        <p>订阅制+按出图量扣费，免费版每月10张，专业版每月500张，用多少付多少，小商家也用得起，没有隐藏费用。</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🔄</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
         <h3>批量处理</h3>
-        <p>支持批量上传多张图片，行业大脑统一处理风格，菜单更新、新品上架一次搞定，不用一张张调。</p>
+        <p>支持批量上传多张图片，行业大脑统一处理风格，菜单更新、新品上架一次搞定，不用一张张调，效率提升10倍。</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🔒</div>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
         <h3>数据安全</h3>
-        <p>基于飞书多维表格构建任务队列，企业级数据安全保障，你的图片和数据只属于你。</p>
+        <p>基于飞书多维表格构建任务队列，企业级数据安全保障，你的图片和数据只属于你，不会被用于训练或泄露。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- 行业场景 -->
-<section class="industries">
+<section class="section">
   <div class="container">
-    <div class="section-title">
-      <h2>覆盖更多行业场景</h2>
+    <div class="section-head">
+      <span class="section-kicker">行业覆盖</span>
+      <h2>更多行业场景，陆续推出</h2>
       <p>餐饮、家居已上线，车行、装修、服装、美业陆续推出，你有活儿，喊伙计</p>
     </div>
     <div class="industries-grid">
       <div class="industry-card available">
-        <span class="badge">已上线</span>
-        <div class="industry-icon">🍜</div>
+        <span class="badge available">已上线</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
         <h4>餐饮版</h4>
         <p>菜品图、菜单图、美团饿了么上架图</p>
       </div>
       <div class="industry-card available">
-        <span class="badge">已上线</span>
-        <div class="industry-icon">🏠</div>
+        <span class="badge available">已上线</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
         <h4>家居/饰品版</h4>
         <p>商品场景图、淘宝主图、小红书种草图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">即将推出</span>
-        <div class="industry-icon">🚗</div>
+      <div class="industry-card">
+        <span class="badge coming">即将推出</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+        </div>
         <h4>车行版</h4>
         <p>二手车展厅效果图、4S店宣传图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">即将推出</span>
-        <div class="industry-icon">🎨</div>
+      <div class="industry-card">
+        <span class="badge coming">即将推出</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        </div>
         <h4>装修版</h4>
         <p>毛坯房效果图、装修案例展示图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">规划中</span>
-        <div class="industry-icon">👗</div>
+      <div class="industry-card">
+        <span class="badge plan">规划中</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+        </div>
         <h4>服装版</h4>
         <p>AI模特试穿、场景搭配图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">规划中</span>
-        <div class="industry-icon">💇</div>
+      <div class="industry-card">
+        <span class="badge plan">规划中</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><path d="M10 21h4"/></svg>
+        </div>
         <h4>美业版</h4>
         <p>发型效果图、美甲款式图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">规划中</span>
-        <div class="industry-icon">🏋️</div>
+      <div class="industry-card">
+        <span class="badge plan">规划中</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M21 21l-4.35-4.35"/><path d="M2 2l4.35 4.35"/><path d="M2 22l4.35-4.35"/><path d="M22 2l-4.35 4.35"/></svg>
+        </div>
         <h4>健身版</h4>
         <p>健身效果对比图、课程宣传图</p>
       </div>
-      <div class="industry-card coming">
-        <span class="badge">规划中</span>
-        <div class="industry-icon">🎂</div>
+      <div class="industry-card">
+        <span class="badge plan">规划中</span>
+        <div class="industry-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
+        </div>
         <h4>烘焙版</h4>
         <p>蛋糕效果图、甜品展示图</p>
       </div>
@@ -459,32 +559,43 @@ body {
 </section>
 
 <!-- 使用方式 -->
-<section class="usage" id="usage">
+<section class="section usage" id="usage">
   <div class="container">
-    <div class="section-title">
+    <div class="section-head">
+      <span class="section-kicker">使用方式</span>
       <h2>两种使用方式，随你选</h2>
-      <p>在线直接完成交付，也可以下载客户端离线使用</p>
+      <p>在线直接完成交付，也可以下载客户端离线使用，怎么方便怎么来</p>
     </div>
     <div class="usage-grid">
       <div class="usage-card">
-        <h3><span class="icon">🌐</span> 在线版</h3>
-        <p>打开浏览器就能用，不用下载安装，适合偶尔出图、快速交付的商家。</p>
+        <h3>
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
+          在线版
+        </h3>
+        <p>打开浏览器就能用，不用下载安装，适合偶尔出图、快速交付的商家。随时随地，有网就能用。</p>
         <ul>
-          <li>无需下载，打开即用</li>
-          <li>支持Windows/Mac/手机浏览器</li>
-          <li>任务自动保存，随时查看</li>
-          <li>免费版每月10张体验</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>无需下载，打开即用</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持Windows/Mac/手机浏览器</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>任务自动保存，随时查看</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>免费版每月10张体验</li>
         </ul>
         <a href="#demo" class="btn-primary btn" style="display: flex;">立即在线体验</a>
       </div>
       <div class="usage-card">
-        <h3><span class="icon">💻</span> 客户端版</h3>
-        <p>下载安装到电脑，支持批量处理、离线任务队列，适合高频出图的专业商家。</p>
+        <h3>
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </span>
+          客户端版
+        </h3>
+        <p>下载安装到电脑，支持批量处理、离线任务队列，适合高频出图的专业商家，效率更高更稳定。</p>
         <ul>
-          <li>支持Windows / macOS双系统</li>
-          <li>批量上传，后台自动处理</li>
-          <li>本地历史记录，快速复用</li>
-          <li>专业版/企业版优先体验新功能</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持Windows / macOS双系统</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>批量上传，后台自动处理</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>本地历史记录，快速复用</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>专业版/企业版优先体验新功能</li>
         </ul>
         <a href="/#platforms" class="btn-secondary btn" style="display: flex;">下载客户端</a>
       </div>
@@ -515,23 +626,17 @@ body {
 </footer>
 
 <script>
-function switchVersion(version) {
+function switchVersion(version, element) {
   const tabs = document.querySelectorAll('.version-tab');
-  tabs.forEach(tab => tab.classList.remove('active'));
-  event.target.classList.add('active');
+  const comingVersions = ['car', 'deco'];
   
-  const versionNames = {
-    food: '餐饮版',
-    home: '家居/饰品版',
-    car: '车行版',
-    deco: '装修版'
-  };
-  
-  if (version === 'car' || version === 'deco') {
-    alert(versionNames[version] + ' 即将推出，敬请期待！');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    document.querySelector('.version-tab').classList.add('active');
+  if (comingVersions.includes(version)) {
+    alert('该版本即将推出，敬请期待！');
+    return;
   }
+  
+  tabs.forEach(tab => tab.classList.remove('active'));
+  element.classList.add('active');
 }
 </script>
 
