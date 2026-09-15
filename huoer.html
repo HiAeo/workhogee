@@ -362,114 +362,166 @@ img { max-width: 100%; display: block; }
 .step-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
 .step-card p { font-size: 15px; color: var(--ink-soft); line-height: 1.8; }
 
-/* ===== 核心能力展开板块 ===== */
-.capability-section { padding: 80px 0; overflow: hidden; }
+/* ===== 核心能力展开板块（首页级别设计） ===== */
+.capability-section { padding: 90px 0; position: relative; overflow: hidden; }
 .capability-section:nth-child(odd) { background: var(--white); }
 .capability-section:nth-child(even) { background: var(--paper); }
-.capability-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.capability-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
+}
 .capability-section:nth-child(even) .capability-inner { direction: rtl; }
-.capability-section:nth-child(even) .capability-text,
-.capability-section:nth-child(even) .capability-visual { direction: ltr; }
-.capability-num { font-size: 64px; font-weight: 900; color: var(--orange); opacity: 0.15; line-height: 1; margin-bottom: 8px; font-family: 'Trebuchet MS', sans-serif; }
-.capability-text h2 { font-size: 32px; font-weight: 800; margin-bottom: 16px; line-height: 1.3; }
-.capability-text > p { font-size: 16px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 28px; }
-.capability-points { list-style: none; }
-.capability-points li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; font-size: 15px; color: var(--ink); border-bottom: 1px solid var(--line); }
-.capability-points li:last-child { border-bottom: none; }
-.capability-points li svg { width: 20px; height: 20px; color: var(--orange); flex-shrink: 0; margin-top: 2px; }
-.capability-visual { position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; }
+.capability-section:nth-child(even) .capability-inner > * { direction: ltr; }
+.capability-text .capability-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--orange) 0%, #c2410c 100%);
+  color: white; font-size: 16px; font-weight: 800; margin-bottom: 16px;
+}
+.capability-text h2 { font-size: 30px; font-weight: 800; margin-bottom: 14px; line-height: 1.25; }
+.capability-text > p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 24px; }
+.capability-points { list-style: none; margin-bottom: 24px; }
+.capability-points li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; font-size: 14px; color: var(--ink);
+}
+.capability-points li::before {
+  content: ''; flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px;
+  background: #dcfce7; border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center;
+}
+.capability-tag {
+  display: inline-block; padding: 6px 14px; background: #fff7ed; color: #c2410c;
+  font-size: 13px; font-weight: 600; border-radius: 20px; border: 1px solid #fed7aa;
+}
 
-/* 示意图通用容器 */
-.visual-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--line); box-shadow: var(--shadow-lg); padding: 28px; width: 100%; max-width: 440px; position: relative; overflow: hidden; }
-.visual-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--orange), var(--orange-light)); }
+/* 示意图容器 */
+.capability-visual { position: relative; }
+.mock-window {
+  background: white; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.12), 0 4px 12px rgba(28,25,23,0.06);
+  border: 1px solid var(--line);
+}
+.mock-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; background: #fafaf9; border-bottom: 1px solid var(--line);
+}
+.mock-dot { width: 12px; height: 12px; border-radius: 50%; }
+.mock-dot.red { background: #ef4444; }
+.mock-dot.yellow { background: #f59e0b; }
+.mock-dot.green { background: #22c55e; }
+.mock-title { margin-left: 8px; font-size: 12px; color: #78716c; font-weight: 500; }
+.mock-body { padding: 20px; min-height: 320px; }
 
-/* 行业大脑示意图 */
-.brain-visual { text-align: center; }
-.brain-center { width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, var(--orange), var(--orange-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; animation: brainPulse 3s ease-in-out infinite; }
-@keyframes brainPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(234,88,12,0.4); } 50% { box-shadow: 0 0 0 20px rgba(234,88,12,0); } }
-.brain-center svg { width: 36px; height: 36px; color: white; }
-.brain-nodes { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-.brain-node { padding: 8px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--ink-soft); animation: nodeFloat 3s ease-in-out infinite; }
-.brain-node:nth-child(2) { animation-delay: 0.3s; }
-.brain-node:nth-child(3) { animation-delay: 0.6s; }
-.brain-node:nth-child(4) { animation-delay: 0.9s; }
-.brain-node:nth-child(5) { animation-delay: 1.2s; }
-@keyframes nodeFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-.brain-lines { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; pointer-events: none; }
+/* 浮动标注卡片 */
+.annotation-card {
+  position: absolute; background: white; border-radius: 14px;
+  padding: 14px 18px; box-shadow: 0 8px 30px rgba(28,25,23,0.12);
+  border: 1px solid var(--line); z-index: 5;
+  animation: floatCard 3s ease-in-out infinite;
+}
+.annotation-card .ann-label { font-size: 12px; color: #78716c; font-weight: 500; margin-bottom: 4px; }
+.annotation-card .ann-value { font-size: 24px; font-weight: 800; color: var(--orange); line-height: 1.1; }
+.annotation-card .ann-sub { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 2px; }
+.annotation-card.top-left { top: -20px; left: -20px; }
+.annotation-card.top-right { top: -20px; right: -20px; }
+.annotation-card.bottom-left { bottom: -20px; left: -20px; }
+.annotation-card.bottom-right { bottom: -20px; right: -20px; }
+@keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-/* 20秒出图示意图 */
-.speed-visual { text-align: center; }
-.speed-timer { font-size: 72px; font-weight: 900; color: var(--orange); font-family: 'Trebuchet MS', sans-serif; line-height: 1; margin-bottom: 8px; }
-.speed-timer span { font-size: 24px; color: var(--ink-muted); font-weight: 400; }
-.speed-bar { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 20px 0; }
-.speed-bar-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 4px; animation: speedFill 3s ease-in-out infinite; }
-@keyframes speedFill { 0% { width: 0%; } 80% { width: 100%; } 100% { width: 100%; } }
-.speed-compare { display: flex; justify-content: space-around; margin-top: 20px; }
-.speed-compare-item { text-align: center; }
-.speed-compare-item .val { font-size: 28px; font-weight: 800; }
-.speed-compare-item .val.orange { color: var(--orange); }
-.speed-compare-item .val.gray { color: var(--ink-muted); text-decoration: line-through; }
-.speed-compare-item .label { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+/* 数据卡片网格 */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.dash-card {
+  background: var(--paper); border-radius: 10px; padding: 14px;
+  border: 1px solid var(--line);
+}
+.dash-card-label { font-size: 11px; color: var(--ink-muted); margin-bottom: 4px; }
+.dash-card-value { font-size: 22px; font-weight: 800; color: var(--ink); }
+.dash-card-change { font-size: 11px; font-weight: 600; margin-top: 2px; }
+.dash-card-change.up { color: #16a34a; }
+.dash-card-change.down { color: #ef4444; }
 
-/* 直接上架示意图 */
-.platform-visual { text-align: center; }
-.platform-main-img { width: 120px; height: 120px; margin: 0 auto 16px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 48px; }
-.platform-arrows { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
-.platform-arrows svg { width: 20px; height: 20px; color: var(--orange); animation: arrowBounce 1.5s ease-in-out infinite; }
-@keyframes arrowBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
-.platform-targets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.platform-target { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; transition: all 0.3s; }
-.platform-target:hover { border-color: var(--orange); transform: translateY(-2px); }
-.platform-target .pt-icon { width: 32px; height: 32px; margin: 0 auto 6px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; }
-.platform-target .pt-name { font-size: 11px; font-weight: 600; color: var(--ink); }
-.platform-target .pt-size { font-size: 10px; color: var(--ink-muted); }
+/* 进度条 */
+.progress-row { margin-bottom: 12px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.progress-label span:last-child { font-weight: 700; color: var(--orange); }
+.progress-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 4px; transition: width 1.5s ease; }
 
-/* 按张计费示意图 */
-.pricing-visual { text-align: center; }
-.pricing-plans { display: flex; gap: 12px; justify-content: center; }
-.pricing-plan { flex: 1; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 20px 12px; text-align: center; transition: all 0.3s; position: relative; }
-.pricing-plan.highlight { border-color: var(--orange); background: rgba(234,88,12,0.04); transform: scale(1.05); }
-.pricing-plan.highlight::before { content: '推荐'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--orange); color: white; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
-.pricing-plan .pp-name { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-.pricing-plan .pp-price { font-size: 28px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
-.pricing-plan .pp-price span { font-size: 12px; color: var(--ink-muted); font-weight: 400; }
-.pricing-plan .pp-count { font-size: 11px; color: var(--ink-soft); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
-
-/* 批量处理示意图 */
-.batch-visual { text-align: center; }
-.batch-queue { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.batch-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); transition: all 0.3s; }
-.batch-item.processing { border-color: var(--orange); background: rgba(234,88,12,0.05); }
-.batch-item.done { opacity: 0.6; }
-.batch-thumb { width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0; }
-.batch-info { flex: 1; text-align: left; }
-.batch-info .bi-name { font-size: 12px; font-weight: 600; }
-.batch-info .bi-status { font-size: 10px; color: var(--ink-muted); }
-.batch-item.processing .bi-status { color: var(--orange); }
-.batch-item.done .bi-status { color: var(--green); }
-.batch-spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin 1s linear infinite; }
+/* 任务列表 */
+.task-list { display: flex; flex-direction: column; gap: 8px; }
+.task-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
+}
+.task-thumb { width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0; }
+.task-info { flex: 1; min-width: 0; }
+.task-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.task-status { font-size: 10px; color: var(--ink-muted); }
+.task-item.processing { border-color: var(--orange); background: rgba(234,88,12,0.04); }
+.task-item.processing .task-status { color: var(--orange); }
+.task-item.done .task-status { color: var(--green); }
+.task-spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.batch-check { width: 16px; height: 16px; color: var(--green); }
-.batch-summary { display: flex; justify-content: space-around; padding-top: 12px; border-top: 1px solid var(--line); }
-.batch-summary .bs-item { text-align: center; }
-.batch-summary .bs-val { font-size: 20px; font-weight: 800; color: var(--orange); }
-.batch-summary .bs-label { font-size: 10px; color: var(--ink-muted); }
 
-/* 数据安全示意图 */
-.security-visual { text-align: center; }
-.security-shield { width: 100px; height: 100px; margin: 0 auto 20px; position: relative; }
-.security-shield svg { width: 100%; height: 100%; color: var(--orange); animation: shieldGlow 3s ease-in-out infinite; }
-@keyframes shieldGlow { 0%,100% { filter: drop-shadow(0 0 0 rgba(234,88,12,0)); } 50% { filter: drop-shadow(0 0 12px rgba(234,88,12,0.5)); } }
-.security-features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.security-feature { display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--paper); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--ink-soft); }
-.security-feature svg { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }
+/* 词库卡片 */
+.kb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kb-card {
+  background: var(--paper); border-radius: 8px; padding: 12px;
+  border: 1px solid var(--line); transition: all 0.3s;
+  opacity: 0; animation: kbCardIn 0.4s ease forwards;
+}
+.kb-card:nth-child(1) { animation-delay: 0.1s; }
+.kb-card:nth-child(2) { animation-delay: 0.2s; }
+.kb-card:nth-child(3) { animation-delay: 0.3s; }
+.kb-card:nth-child(4) { animation-delay: 0.4s; }
+@keyframes kbCardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.kb-card-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.kb-card-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+.kb-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.kb-tag { font-size: 10px; padding: 2px 8px; background: white; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-soft); }
+
+/* 平台发布 */
+.platform-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.platform-item {
+  flex: 1; text-align: center; padding: 12px 8px; background: var(--paper);
+  border: 1px solid var(--line); border-radius: 8px; transition: all 0.3s;
+}
+.platform-item.active { border-color: var(--orange); background: rgba(234,88,12,0.05); }
+.platform-icon { width: 28px; height: 28px; margin: 0 auto 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; }
+.platform-name { font-size: 11px; font-weight: 600; }
+.platform-size { font-size: 9px; color: var(--ink-muted); }
+
+/* 柱状图 */
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 8px; margin-bottom: 8px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar { width: 100%; max-width: 32px; background: linear-gradient(180deg, var(--orange), var(--orange-light)); border-radius: 4px 4px 0 0; transition: height 1s ease; min-height: 4px; }
+.bar-label { font-size: 10px; color: var(--ink-muted); }
+
+/* 安全指标 */
+.security-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.security-item {
+  display: flex; align-items: center; gap: 10px; padding: 12px;
+  background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
+}
+.security-icon { width: 32px; height: 32px; border-radius: 8px; background: #dcfce7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.security-icon svg { width: 16px; height: 16px; color: var(--green); }
+.security-text { font-size: 12px; font-weight: 600; }
+.security-text small { display: block; font-size: 10px; color: var(--ink-muted); font-weight: 400; }
+
+/* 入场动画 */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
 
 /* 响应式 */
 @media (max-width: 900px) {
   .capability-inner { grid-template-columns: 1fr; gap: 40px; }
   .capability-section:nth-child(even) .capability-inner { direction: ltr; }
-  .capability-num { font-size: 48px; }
   .capability-text h2 { font-size: 26px; }
+  .annotation-card { position: static; margin-bottom: 12px; display: inline-block; }
 }
 
 /* ===== 行业场景 ===== */
@@ -1009,19 +1061,76 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>知识库持续更新，行业越用越准</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card brain-visual">
-        <div class="brain-center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">行业词库总量</div>
+        <div class="ann-value" data-count="2400">0</div>
+        <div class="ann-sub">持续更新中</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">风格匹配准确率</div>
+        <div class="ann-value">96%</div>
+        <div class="ann-sub">远超通用AI</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/knowledge</span>
         </div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:4px;">行业大脑</div>
-        <div style="font-size:12px;color:var(--ink-muted);margin-bottom:16px;">持续学习 · 越用越准</div>
-        <div class="brain-nodes">
-          <div class="brain-node">🍜 餐饮词库</div>
-          <div class="brain-node">🏠 家居风格</div>
-          <div class="brain-node">📐 平台尺寸</div>
-          <div class="brain-node">🎨 拍摄规范</div>
-          <div class="brain-node">📅 节气氛围</div>
+        <div class="mock-body">
+          <div style="display:flex;gap:16px;">
+            <div style="width:120px;flex-shrink:0;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:10px;">行业分类</div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <div style="padding:8px 10px;background:rgba(234,88,12,0.08);border-radius:6px;font-size:12px;font-weight:600;color:var(--orange);border-left:2px solid var(--orange);">🍜 餐饮</div>
+                <div style="padding:8px 10px;font-size:12px;color:var(--ink-soft);border-radius:6px;">🏠 家居饰品</div>
+                <div style="padding:8px 10px;font-size:12px;color:var(--ink-muted);border-radius:6px;">🚗 车行</div>
+                <div style="padding:8px 10px;font-size:12px;color:var(--ink-muted);border-radius:6px;">🎨 装修</div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+                <span>餐饮知识库 · 词库卡片</span>
+                <span style="font-size:10px;color:var(--green);font-weight:600;">● 已同步</span>
+              </div>
+              <div class="kb-grid">
+                <div class="kb-card">
+                  <div class="kb-card-title"><span class="dot"></span>节气氛围词</div>
+                  <div class="kb-card-tags">
+                    <span class="kb-tag">立冬·暖光</span>
+                    <span class="kb-tag">夏至·清凉</span>
+                    <span class="kb-tag">中秋·团圆</span>
+                  </div>
+                </div>
+                <div class="kb-card">
+                  <div class="kb-card-title"><span class="dot"></span>拍摄角度规范</div>
+                  <div class="kb-card-tags">
+                    <span class="kb-tag">45°俯拍</span>
+                    <span class="kb-tag">暖光</span>
+                    <span class="kb-tag">居中构图</span>
+                  </div>
+                </div>
+                <div class="kb-card">
+                  <div class="kb-card-title"><span class="dot"></span>菜品风格模板</div>
+                  <div class="kb-card-tags">
+                    <span class="kb-tag">家常菜</span>
+                    <span class="kb-tag">精致摆盘</span>
+                    <span class="kb-tag">居酒屋</span>
+                  </div>
+                </div>
+                <div class="kb-card">
+                  <div class="kb-card-title"><span class="dot"></span>平台尺寸标准</div>
+                  <div class="kb-card-tags">
+                    <span class="kb-tag">美团800²</span>
+                    <span class="kb-tag">小红书3:4</span>
+                    <span class="kb-tag">抖音9:16</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1042,23 +1151,51 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>不满意一键重生成，直到满意为止</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card speed-visual">
-        <div class="speed-timer">20<span>秒</span></div>
-        <div style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;">平均出图时间</div>
-        <div class="speed-bar"><div class="speed-bar-fill"></div></div>
-        <div class="speed-compare">
-          <div class="speed-compare-item">
-            <div class="val orange">20s</div>
-            <div class="label">活儿伙计</div>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">平均出图耗时</div>
+        <div class="ann-value">20<span style="font-size:14px;">秒</span></div>
+        <div class="ann-sub">比设计师快100倍</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">今日已出图</div>
+        <div class="ann-value" data-count="1286">0</div>
+        <div class="ann-sub">张 · 稳定运行</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/generate</span>
+        </div>
+        <div class="mock-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">上传原图</div>
+              <div style="aspect-ratio:1;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px;">🍜</div>
+              <div style="font-size:11px;color:var(--ink-muted);text-align:center;">红烧肉_原图.jpg</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">AI生成结果</div>
+              <div style="aspect-ratio:1;background:linear-gradient(135deg,#fed7aa,#fdba74);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px;position:relative;overflow:hidden;">
+                🍖
+                <div style="position:absolute;top:6px;right:6px;background:var(--green);color:white;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;">已完成</div>
+              </div>
+              <div style="font-size:11px;color:var(--orange);text-align:center;font-weight:600;">精致摆盘 · 暖光 · 45°俯拍</div>
+            </div>
           </div>
-          <div class="speed-compare-item">
-            <div class="val gray">3天</div>
-            <div class="label">传统设计师</div>
-          </div>
-          <div class="speed-compare-item">
-            <div class="val gray">2小时</div>
-            <div class="label">自己拍摄</div>
+          <div style="margin-top:16px;">
+            <div class="progress-row">
+              <div class="progress-label"><span>Seedream 4.5 处理进度</span><span>100%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink-muted);margin-top:8px;">
+              <span>① 图像识别 3s</span>
+              <span>② 提示词匹配 5s</span>
+              <span>③ AI生成 10s</span>
+              <span>④ 质量校验 2s</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1080,31 +1217,71 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>一次生成，多平台尺寸自动适配，一键下载</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card platform-visual">
-        <div class="platform-main-img">🍜</div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px;">一张原图</div>
-        <div class="platform-arrows">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">已适配平台</div>
+        <div class="ann-value">8+</div>
+        <div class="ann-sub">持续增加中</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">一键发布耗时</div>
+        <div class="ann-value">&lt;10s</div>
+        <div class="ann-sub">多平台同步</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/publish</span>
         </div>
-        <div class="platform-targets">
-          <div class="platform-target">
-            <div class="pt-icon" style="background:#ffc107;">美</div>
-            <div class="pt-name">美团</div>
-            <div class="pt-size">800×800</div>
+        <div class="mock-body">
+          <div style="font-size:12px;font-weight:700;margin-bottom:12px;">选择发布平台</div>
+          <div class="platform-row">
+            <div class="platform-item active">
+              <div class="platform-icon" style="background:#ffc107;">美</div>
+              <div class="platform-name">美团</div>
+              <div class="platform-size">800×800</div>
+            </div>
+            <div class="platform-item active">
+              <div class="platform-icon" style="background:#ff6a00;">淘</div>
+              <div class="platform-name">淘宝</div>
+              <div class="platform-size">800×800</div>
+            </div>
+            <div class="platform-item active">
+              <div class="platform-icon" style="background:#fe2c55;">红</div>
+              <div class="platform-name">小红书</div>
+              <div class="platform-size">3:4</div>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon" style="background:#000;">抖</div>
+              <div class="platform-name">抖音</div>
+              <div class="platform-size">9:16</div>
+            </div>
           </div>
-          <div class="platform-target">
-            <div class="pt-icon" style="background:#ff6a00;">淘</div>
-            <div class="pt-name">淘宝</div>
-            <div class="pt-size">800×800</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div style="text-align:center;">
+              <div style="aspect-ratio:1;background:linear-gradient(135deg,#fed7aa,#fdba74);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px;">🍖</div>
+              <div style="font-size:9px;color:var(--ink-muted);">美团 1:1</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="aspect-ratio:1;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px;">🍖</div>
+              <div style="font-size:9px;color:var(--ink-muted);">淘宝 1:1</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="aspect-ratio:0.75;background:linear-gradient(135deg,#fecaca,#fca5a5);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px;">🍖</div>
+              <div style="font-size:9px;color:var(--ink-muted);">小红书 3:4</div>
+            </div>
           </div>
-          <div class="platform-target">
-            <div class="pt-icon" style="background:#fe2c55;">红</div>
-            <div class="pt-name">小红书</div>
-            <div class="pt-size">3:4</div>
+          <div style="display:flex;gap:8px;">
+            <button style="flex:1;padding:10px;background:var(--orange);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+              ⚡ 一键发布到3个平台
+            </button>
+            <button style="padding:10px 16px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
+              全部下载
+            </button>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--ink-muted);margin-top:14px;">自动适配 · 生成即可用 · 一键多平台发布</div>
       </div>
     </div>
   </div>
@@ -1124,27 +1301,61 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>用多少付多少，没有隐藏费用，随时升级降级</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card pricing-visual">
-        <div style="font-size:15px;font-weight:700;margin-bottom:20px;">灵活计费方案</div>
-        <div class="pricing-plans">
-          <div class="pricing-plan">
-            <div class="pp-name">免费版</div>
-            <div class="pp-price">¥0<span>/月</span></div>
-            <div class="pp-count">10张/月</div>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">单张平均成本</div>
+        <div class="ann-value">¥0.2</div>
+        <div class="ann-sub">比设计师省95%</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">本月已节省</div>
+        <div class="ann-value" data-count="3200">0</div>
+        <div class="ann-sub">元 · 对比外包</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/billing</span>
+        </div>
+        <div class="mock-body">
+          <div class="dash-grid">
+            <div class="dash-card">
+              <div class="dash-card-label">本月用量</div>
+              <div class="dash-card-value">328<span style="font-size:12px;color:var(--ink-muted);">/500张</span></div>
+              <div class="dash-card-change up">↑ 专业版</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">本月消费</div>
+              <div class="dash-card-value">¥99</div>
+              <div class="dash-card-change up">订阅制</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">单张成本</div>
+              <div class="dash-card-value" style="color:var(--orange);">¥0.30</div>
+              <div class="dash-card-change up">↓ 比上月低12%</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">剩余额度</div>
+              <div class="dash-card-value">172张</div>
+              <div class="dash-card-change up">可用至月底</div>
+            </div>
           </div>
-          <div class="pricing-plan highlight">
-            <div class="pp-name">专业版</div>
-            <div class="pp-price">¥99<span>/月</span></div>
-            <div class="pp-count">500张/月</div>
+          <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">近6个月出图量趋势</div>
+          <div class="bar-chart">
+            <div class="bar-col"><div class="bar" style="height:40%;"></div><div class="bar-label">4月</div></div>
+            <div class="bar-col"><div class="bar" style="height:55%;"></div><div class="bar-label">5月</div></div>
+            <div class="bar-col"><div class="bar" style="height:48%;"></div><div class="bar-label">6月</div></div>
+            <div class="bar-col"><div class="bar" style="height:70%;"></div><div class="bar-label">7月</div></div>
+            <div class="bar-col"><div class="bar" style="height:85%;"></div><div class="bar-label">8月</div></div>
+            <div class="bar-col"><div class="bar" style="height:65%;"></div><div class="bar-label">9月</div></div>
           </div>
-          <div class="pricing-plan">
-            <div class="pp-name">企业版</div>
-            <div class="pp-price">¥499<span>/月</span></div>
-            <div class="pp-count">不限量</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line);">
+            <span style="font-size:11px;color:var(--ink-soft);">当前套餐：专业版 ¥99/月</span>
+            <span style="font-size:11px;color:var(--orange);font-weight:700;cursor:pointer;">升级企业版 →</span>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--ink-muted);margin-top:16px;">平均每张不到0.2元 · 比设计师省95%</div>
       </div>
     </div>
   </div>
@@ -1164,46 +1375,79 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>效率提升10倍，菜单更新从一天变10分钟</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card batch-visual">
-        <div style="font-size:14px;font-weight:700;margin-bottom:14px;text-align:left;">批量任务队列</div>
-        <div class="batch-queue">
-          <div class="batch-item done">
-            <div class="batch-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a);"></div>
-            <div class="batch-info">
-              <div class="bi-name">红烧肉.jpg</div>
-              <div class="bi-status">已完成</div>
-            </div>
-            <svg class="batch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-          <div class="batch-item done">
-            <div class="batch-thumb" style="background:linear-gradient(135deg,#dbeafe,#93c5fd);"></div>
-            <div class="batch-info">
-              <div class="bi-name">清蒸鲈鱼.jpg</div>
-              <div class="bi-status">已完成</div>
-            </div>
-            <svg class="batch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-          <div class="batch-item processing">
-            <div class="batch-thumb" style="background:linear-gradient(135deg,#dcfce7,#86efac);"></div>
-            <div class="batch-info">
-              <div class="bi-name">宫保鸡丁.jpg</div>
-              <div class="bi-status">处理中... 15秒</div>
-            </div>
-            <div class="batch-spinner"></div>
-          </div>
-          <div class="batch-item">
-            <div class="batch-thumb" style="background:var(--line);"></div>
-            <div class="batch-info">
-              <div class="bi-name">麻婆豆腐.jpg</div>
-              <div class="bi-status">排队中</div>
-            </div>
-          </div>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">单次批量上限</div>
+        <div class="ann-value">500</div>
+        <div class="ann-sub">张 · 企业版</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">效率提升</div>
+        <div class="ann-value">10x</div>
+        <div class="ann-sub">对比单张处理</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/batch</span>
         </div>
-        <div class="batch-summary">
-          <div class="bs-item"><div class="bs-val">12</div><div class="bs-label">已完成</div></div>
-          <div class="bs-item"><div class="bs-val">1</div><div class="bs-label">处理中</div></div>
-          <div class="bs-item"><div class="bs-val">7</div><div class="bs-label">排队中</div></div>
+        <div class="mock-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;">批量任务 · 秋季菜单更新</div>
+            <div style="font-size:10px;padding:3px 10px;background:rgba(234,88,12,0.1);color:var(--orange);border-radius:10px;font-weight:600;">处理中</div>
+          </div>
+          <div class="progress-row" style="margin-bottom:14px;">
+            <div class="progress-label"><span>整体进度</span><span>12/20 张</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div>
+          </div>
+          <div class="task-list">
+            <div class="task-item done">
+              <div class="task-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a);"></div>
+              <div class="task-info">
+                <div class="task-name">红烧肉.jpg</div>
+                <div class="task-status">已完成 · 精致摆盘</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <div class="task-item done">
+              <div class="task-thumb" style="background:linear-gradient(135deg,#dbeafe,#93c5fd);"></div>
+              <div class="task-info">
+                <div class="task-name">清蒸鲈鱼.jpg</div>
+                <div class="task-status">已完成 · 日式居酒屋</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <div class="task-item processing">
+              <div class="task-thumb" style="background:linear-gradient(135deg,#dcfce7,#86efac);"></div>
+              <div class="task-info">
+                <div class="task-name">宫保鸡丁.jpg</div>
+                <div class="task-status">AI生成中... 15秒</div>
+              </div>
+              <div class="task-spinner"></div>
+            </div>
+            <div class="task-item">
+              <div class="task-thumb" style="background:var(--line);"></div>
+              <div class="task-info">
+                <div class="task-name">麻婆豆腐.jpg</div>
+                <div class="task-status">排队中 · 预计2分钟</div>
+              </div>
+            </div>
+            <div class="task-item">
+              <div class="task-thumb" style="background:var(--line);"></div>
+              <div class="task-info">
+                <div class="task-name">糖醋排骨.jpg</div>
+                <div class="task-status">排队中 · 预计3分钟</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-around;padding-top:12px;margin-top:12px;border-top:1px solid var(--line);">
+            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--green);">10</div><div style="font-size:10px;color:var(--ink-muted);">已完成</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--orange);">2</div><div style="font-size:10px;color:var(--ink-muted);">处理中</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--ink-muted);">8</div><div style="font-size:10px;color:var(--ink-muted);">排队中</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--ink);">0</div><div style="font-size:10px;color:var(--ink-muted);">失败</div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1224,25 +1468,77 @@ img { max-width: 100%; display: block; }
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持数据导出和账户注销，数据完全可控</li>
       </ul>
     </div>
-    <div class="capability-visual">
-      <div class="visual-card security-visual">
-        <div class="security-shield">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    <div class="capability-visual reveal reveal-d1">
+      <div class="annotation-card top-left">
+        <div class="ann-label">加密等级</div>
+        <div class="ann-value">AES-256</div>
+        <div class="ann-sub">企业级加密</div>
+      </div>
+      <div class="annotation-card bottom-right">
+        <div class="ann-label">数据泄露事件</div>
+        <div class="ann-value">0</div>
+        <div class="ann-sub">零事故记录</div>
+      </div>
+      <div class="mock-window">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">app.workhogee.com/security</span>
         </div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:4px;">企业级数据安全</div>
-        <div style="font-size:12px;color:var(--ink-muted);margin-bottom:20px;">字节跳动安全架构 · 数据加密存储</div>
-        <div class="security-features">
-          <div class="security-feature">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>HTTPS加密传输
+        <div class="mock-body">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:14px;background:linear-gradient(135deg,rgba(22,163,74,0.08),rgba(22,163,74,0.02));border-radius:10px;border:1px solid rgba(22,163,74,0.2);">
+            <div style="width:44px;height:44px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#16a34a;">安全状态：全部正常</div>
+              <div style="font-size:11px;color:var(--ink-muted);">最后安全扫描：2分钟前 · 全部通过</div>
+            </div>
           </div>
-          <div class="security-feature">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>数据加密存储
+          <div class="security-grid" style="margin-bottom:14px;">
+            <div class="security-item">
+              <div class="security-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div class="security-text">传输加密<small>HTTPS / TLS 1.3</small></div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              </div>
+              <div class="security-text">存储加密<small>AES-256 位加密</small></div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="security-text">权限隔离<small>多租户数据隔离</small></div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div class="security-text">审计日志<small>全操作可追溯</small></div>
+            </div>
           </div>
-          <div class="security-feature">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>不用于模型训练
-          </div>
-          <div class="security-feature">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持数据导出
+          <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">近期安全事件</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
+              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
+              <span style="color:var(--ink-soft);">每日安全扫描完成 · 无异常</span>
+              <span style="color:var(--ink-muted);margin-left:auto;">2分钟前</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
+              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
+              <span style="color:var(--ink-soft);">数据备份完成 · 已同步至异地</span>
+              <span style="color:var(--ink-muted);margin-left:auto;">1小时前</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
+              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
+              <span style="color:var(--ink-soft);">权限审计通过 · 0个异常账号</span>
+              <span style="color:var(--ink-muted);margin-left:auto;">昨天</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1481,6 +1777,41 @@ navToggle.addEventListener('click', () => {
   navLinks.style.padding = '20px';
   navLinks.style.borderBottom = '1px solid var(--line)';
 });
+
+// 滚动入场动画
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// 数字滚动动画
+function animateCount(el) {
+  const target = parseInt(el.getAttribute('data-count'), 10);
+  const duration = 1500;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(eased * target).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCount(entry.target);
+      countObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
 
 function switchVersion(version, element) {
   const tabs = document.querySelectorAll('.version-tab');
