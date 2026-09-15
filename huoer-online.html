@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee · 在线生图版 — 浏览器直接用，免下载</title>
+<style>
+:root {
+  --orange: #ea580c;
+  --orange-light: #fb923c;
+  --orange-dark: #c2410c;
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-muted: #a8a29e;
+  --paper: #faf8f4;
+  --sand: #f5f0e8;
+  --white: #ffffff;
+  --line: #e7e5e4;
+  --green: #16a34a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--ink); background: var(--white); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* 导航 */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { height: 28px; width: auto; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-size: 14px; color: var(--ink-soft); font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--orange); }
+.nav-links a.active { color: var(--orange); font-weight: 700; }
+.nav-user { display: flex; align-items: center; gap: 10px; }
+.nav-credits { font-size: 12px; color: var(--ink-soft); font-weight: 600; }
+.nav-credits strong { color: var(--orange); }
+.nav-login-btn { padding: 8px 20px; background: var(--ink); color: white; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.nav-login-btn:hover { background: var(--orange); }
+.nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* Hero */
+.online-hero { padding: 120px 0 40px; background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%); }
+.online-hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; text-align: center; }
+.online-hero-tag { display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid var(--line); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 20px; }
+.online-hero-tag .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; }
+.online-hero h1 { font-size: 42px; font-weight: 900; line-height: 1.2; letter-spacing: -1px; margin-bottom: 16px; }
+.online-hero h1 .highlight { color: var(--orange); }
+.online-hero p { font-size: 16px; color: var(--ink-soft); max-width: 560px; margin: 0 auto; line-height: 1.8; }
+.online-hero-stats { display: flex; justify-content: center; gap: 48px; margin-top: 32px; }
+.online-stat .num { font-size: 28px; font-weight: 900; color: var(--ink); }
+.online-stat .num span { color: var(--orange); }
+.online-stat .label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+
+/* 工作台 */
+.online-workbench { padding: 40px 0 80px; background: var(--paper); }
+.online-wb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.online-wb-container { background: white; border-radius: 20px; box-shadow: 0 8px 40px rgba(28,25,23,0.06); overflow: hidden; }
+
+/* 工作台顶部 */
+.owb-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--ink); color: white; }
+.owb-topbar-left { display: flex; align-items: center; gap: 16px; }
+.owb-logo { display: flex; align-items: center; gap: 8px; }
+.owb-logo-mark { width: 26px; height: 26px; background: var(--orange); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
+.owb-logo-text { font-size: 13px; font-weight: 700; }
+.owb-version { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.08); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+.owb-topbar-right { display: flex; align-items: center; gap: 16px; }
+.owb-credits { font-size: 12px; color: rgba(255,255,255,0.7); }
+.owb-credits strong { color: #fbbf24; font-weight: 700; }
+.owb-buy-btn { padding: 6px 14px; background: var(--orange); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.owb-buy-btn:hover { background: var(--orange-dark); }
+
+/* 工作台主体 */
+.owb-main { display: grid; grid-template-columns: 180px 1fr 240px; min-height: 520px; }
+.owb-sidebar { border-right: 1px solid var(--line); padding: 16px 0; }
+.owb-sidebar-section { padding: 0 12px 16px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.owb-sidebar-title { font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px; }
+.owb-version-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; font-size: 12px; }
+.owb-version-item:hover { background: var(--paper); }
+.owb-version-item.active { background: rgba(234,88,12,0.08); color: var(--orange); font-weight: 700; }
+.owb-history-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; color: var(--ink-muted); font-size: 10px; text-align: center; }
+
+/* 中央工作区 */
+.owb-center { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.owb-stage { display: none; flex: 1; }
+.owb-stage.active { display: flex; flex-direction: column; }
+
+/* 上传区 */
+.owb-upload-zone { flex: 1; border: 2px dashed var(--line); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.25s; background: var(--paper); }
+.owb-upload-zone:hover, .owb-upload-zone.dragover { border-color: var(--orange); background: rgba(234,88,12,0.03); }
+.owb-upload-icon { color: var(--orange); opacity: 0.7; }
+.owb-upload-title { font-size: 16px; font-weight: 700; }
+.owb-upload-desc { font-size: 12px; color: var(--ink-muted); text-align: center; line-height: 1.6; }
+.owb-upload-samples { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+.owb-sample-btn { padding: 5px 12px; background: white; border: 1px solid var(--line); border-radius: 16px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+.owb-sample-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* 生图中 */
+.owb-processing-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; flex: 1; }
+.owb-processing-preview { position: relative; width: 140px; height: 140px; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+.owb-processing-preview img { width: 100%; height: 100%; object-fit: cover; }
+.owb-processing-overlay { position: absolute; inset: 0; background: rgba(28,25,23,0.5); display: flex; align-items: center; justify-content: center; }
+.owb-spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--orange); border-radius: 50%; animation: owbSpin 0.8s linear infinite; }
+@keyframes owbSpin { to { transform: rotate(360deg); } }
+.owb-processing-text { text-align: center; }
+.owb-processing-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.owb-processing-sub { font-size: 12px; color: var(--ink-muted); }
+.owb-progress-bar { width: 280px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.owb-progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange-light), var(--orange)); border-radius: 3px; width: 0%; transition: width 0.3s ease; }
+
+/* 结果区 */
+.owb-result-compare { flex: 1; min-height: 240px; }
+.owb-compare-container { position: relative; width: 100%; height: 100%; min-height: 240px; border-radius: 12px; overflow: hidden; user-select: none; cursor: ew-resize; }
+.owb-compare-original, .owb-compare-generated { position: absolute; inset: 0; }
+.owb-compare-original img, .owb-compare-generated img { width: 100%; height: 100%; object-fit: cover; }
+.owb-compare-generated { clip-path: inset(0 0 0 50%); }
+.owb-compare-label { position: absolute; top: 10px; left: 10px; padding: 4px 10px; background: rgba(28,25,23,0.7); color: white; font-size: 10px; font-weight: 600; border-radius: 5px; z-index: 5; }
+.owb-compare-label-gen { left: auto; right: 10px; background: rgba(234,88,12,0.85); }
+.owb-compare-slider { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: white; z-index: 10; transform: translateX(-50%); box-shadow: 0 0 12px rgba(0,0,0,0.3); }
+.owb-compare-handle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--ink); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+.owb-sizes-section { border-top: 1px solid var(--line); padding-top: 14px; }
+.owb-sizes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.owb-sizes-title { font-size: 12px; font-weight: 700; }
+.owb-download-all { padding: 5px 12px; background: var(--ink); color: white; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.owb-download-all:hover { background: var(--orange); }
+.owb-sizes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.owb-size-card { background: var(--paper); border-radius: 8px; overflow: hidden; border: 1px solid var(--line); transition: all 0.2s; }
+.owb-size-card:hover { border-color: var(--orange); }
+.owb-size-preview { background: white; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+.owb-size-preview img { width: 100%; height: 100%; object-fit: cover; }
+.owb-size-info { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-top: 1px solid var(--line); }
+.owb-size-name { font-size: 10px; font-weight: 600; }
+.owb-size-dl { padding: 2px 6px; background: transparent; border: 1px solid var(--line); border-radius: 4px; font-size: 9px; cursor: pointer; transition: all 0.15s; }
+.owb-size-dl:hover { border-color: var(--orange); color: var(--orange); }
+
+.owb-actions { display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+.owb-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; }
+.owb-action-secondary { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+.owb-action-secondary:hover { border-color: var(--orange); color: var(--orange); }
+.owb-action-primary { background: var(--orange); color: white; margin-left: auto; }
+.owb-action-primary:hover { background: var(--orange-dark); box-shadow: 0 4px 16px rgba(234,88,12,0.3); }
+
+/* 右侧面板 */
+.owb-panel { border-left: 1px solid var(--line); padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+.owb-panel-section { background: var(--paper); border-radius: 10px; overflow: hidden; }
+.owb-panel-title { display: flex; align-items: center; gap: 6px; padding: 10px 12px; font-size: 11px; font-weight: 700; border-bottom: 1px solid var(--line); background: white; }
+.owb-panel-title svg { color: var(--orange); width: 14px; height: 14px; }
+.owb-panel-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+.owb-form-item { display: flex; flex-direction: column; gap: 6px; }
+.owb-form-label { font-size: 10px; font-weight: 600; color: var(--ink-muted); }
+.owb-slider-wrap { display: flex; align-items: center; gap: 8px; }
+.owb-range { flex: 1; -webkit-appearance: none; height: 4px; background: var(--line); border-radius: 2px; outline: none; }
+.owb-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+.owb-range-value { font-size: 11px; font-weight: 700; color: var(--orange); min-width: 30px; text-align: right; }
+.owb-style-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.owb-style-tag { padding: 4px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; font-size: 10px; cursor: pointer; transition: all 0.15s; }
+.owb-style-tag:hover { border-color: var(--orange); }
+.owb-style-tag.active { background: var(--orange); border-color: var(--orange); color: white; font-weight: 600; }
+.owb-textarea { width: 100%; min-height: 50px; padding: 6px 8px; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 10px; resize: vertical; font-family: inherit; outline: none; }
+.owb-textarea:focus { border-color: var(--orange); }
+.owb-size-checks { display: flex; flex-direction: column; gap: 5px; }
+.owb-size-check { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
+.owb-size-check:hover { border-color: var(--orange); }
+.owb-size-check.active { border-color: var(--orange); background: rgba(234,88,12,0.04); }
+.owb-size-check input { accent-color: var(--orange); }
+.owb-segmented { display: flex; background: white; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.owb-seg-btn { flex: 1; padding: 5px 2px; background: transparent; border: none; font-size: 10px; color: var(--ink-muted); cursor: pointer; transition: all 0.15s; border-right: 1px solid var(--line); }
+.owb-seg-btn:last-child { border-right: none; }
+.owb-seg-btn.active { background: var(--orange); color: white; font-weight: 600; }
+.owb-publish-platforms { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.owb-pub-platform { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; font-size: 10px; }
+.owb-pub-name { font-weight: 600; }
+.owb-pub-status { font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 8px; }
+.owb-pub-unbound { background: rgba(239,68,68,0.1); color: #ef4444; }
+.owb-pub-bound { background: rgba(34,197,94,0.1); color: #22c55e; }
+.owb-bind-btn { width: 100%; padding: 7px; background: var(--ink); color: white; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.owb-bind-btn:hover { background: var(--orange); }
+
+/* 底部队列 */
+.owb-queue { background: white; border: 1px solid var(--line); border-top: none; border-radius: 0 0 16px 16px; overflow: hidden; }
+.owb-queue-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: var(--paper); border-bottom: 1px solid var(--line); }
+.owb-queue-left { display: flex; align-items: center; gap: 8px; }
+.owb-queue-title { font-size: 11px; font-weight: 700; }
+.owb-queue-count { font-size: 10px; color: var(--ink-muted); }
+.owb-queue-right { display: flex; align-items: center; gap: 8px; }
+.owb-feishu-status { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--ink-muted); }
+.owb-feishu-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+.owb-queue-toggle { width: 22px; height: 22px; background: transparent; border: none; cursor: pointer; color: var(--ink-muted); display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+.owb-queue-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.owb-queue-body.expanded { max-height: 180px; }
+.owb-queue-empty { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; color: var(--ink-muted); font-size: 11px; }
+
+/* 弹窗通用 */
+.modal-overlay { position: fixed; inset: 0; background: rgba(28,25,23,0.6); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 24px; }
+.modal-overlay.show { display: flex; }
+.modal { background: white; border-radius: 20px; max-width: 440px; width: 100%; padding: 36px; position: relative; animation: modalIn 0.3s ease; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; background: var(--paper); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); transition: all 0.2s; }
+.modal-close:hover { background: var(--line); color: var(--ink); }
+.modal h3 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
+.modal p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 24px; }
+
+/* 登录弹窗 */
+.login-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--line); }
+.login-tab { flex: 1; padding: 12px; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+.login-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.login-form { display: flex; flex-direction: column; gap: 14px; }
+.login-input { padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.2s; font-family: inherit; }
+.login-input:focus { border-color: var(--orange); }
+.login-btn { padding: 14px; background: var(--orange); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.login-btn:hover { background: var(--orange-dark); }
+.login-hint { text-align: center; font-size: 12px; color: var(--ink-muted); margin-top: 16px; }
+.login-hint a { color: var(--orange); font-weight: 600; }
+
+/* 购买弹窗 */
+.packages { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.package-card { display: flex; align-items: center; gap: 16px; padding: 18px; border: 2px solid var(--line); border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+.package-card:hover { border-color: var(--orange-light); }
+.package-card.selected { border-color: var(--orange); background: rgba(234,88,12,0.04); }
+.package-card.selected .package-check { background: var(--orange); border-color: var(--orange); }
+.package-card.selected .package-check svg { opacity: 1; }
+.package-check { width: 22px; height: 22px; border: 2px solid var(--line); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+.package-check svg { width: 12px; height: 12px; color: white; opacity: 0; transition: opacity 0.2s; }
+.package-info { flex: 1; }
+.package-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.package-desc { font-size: 12px; color: var(--ink-muted); }
+.package-price { text-align: right; }
+.package-price .num { font-size: 22px; font-weight: 900; color: var(--ink); }
+.package-price .num span { font-size: 12px; color: var(--ink-muted); font-weight: 500; }
+.package-price .per { font-size: 10px; color: var(--ink-muted); }
+.pay-btn { width: 100%; padding: 14px; background: var(--orange); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.pay-btn:hover { background: var(--orange-dark); }
+.pay-hint { text-align: center; font-size: 11px; color: var(--ink-muted); margin-top: 12px; }
+
+/* 页脚 */
+.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 48px 0 24px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 36px; }
+.footer-brand { display: flex; flex-direction: column; gap: 12px; }
+.footer-brand svg { height: 26px; width: auto; }
+.footer-brand p { font-size: 13px; line-height: 1.7; max-width: 260px; color: rgba(255,255,255,0.45); }
+.footer-col h4 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--orange-light); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 11px; color: rgba(255,255,255,0.35); }
+
+@media (max-width: 900px) {
+  .owb-main { grid-template-columns: 1fr; }
+  .owb-sidebar, .owb-panel { display: none; }
+  .online-hero h1 { font-size: 32px; }
+  .online-hero-stats { gap: 24px; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#1c1917">Work</text>
+        <text x="58" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#ea580c">Hogee</text>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="global.html">出海伙计</a>
+      <a href="geo.html">GEO伙计</a>
+      <a href="huoer.html" class="active">生图伙计</a>
+    </div>
+    <div class="nav-user">
+      <span class="nav-credits">剩余 <strong id="navCredits">10</strong> 张</span>
+      <button class="nav-login-btn" id="navLoginBtn" onclick="openLogin()">登录</button>
+      <div class="nav-avatar" id="navAvatar" style="display:none;" onclick="logout()">U</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="online-hero">
+  <div class="online-hero-inner">
+    <div class="online-hero-tag"><span class="dot"></span>在线生图版 · 免下载 · 浏览器直接用</div>
+    <h1>打开浏览器，<span class="highlight">立刻开始生图</span></h1>
+    <p>无需下载安装，打开网页即可使用完整生图工作流。注册即送 10 张免费额度，按量购买，不用不花钱。</p>
+    <div class="online-hero-stats">
+      <div class="online-stat"><div class="num"><span>10</span>张</div><div class="label">注册免费额度</div></div>
+      <div class="online-stat"><div class="num"><span>5</span>大</div><div class="label">行业版本</div></div>
+      <div class="online-stat"><div class="num"><span>20</span>秒</div><div class="label">平均出图速度</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 工作台 -->
+<section class="online-workbench">
+  <div class="online-wb-inner">
+    <div class="online-wb-container">
+      <!-- 顶部工具栏 -->
+      <div class="owb-topbar">
+        <div class="owb-topbar-left">
+          <div class="owb-logo"><div class="owb-logo-mark">W</div><span class="owb-logo-text">WorkHogee</span></div>
+          <div class="owb-version" id="owbVersionBtn">
+            <span id="owbVersionText">电商通用版</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="owb-topbar-right">
+          <span class="owb-credits">剩余 <strong id="owbCredits">10</strong> 张</span>
+          <button class="owb-buy-btn" onclick="openPurchase()">购买额度</button>
+        </div>
+      </div>
+
+      <!-- 主体三栏 -->
+      <div class="owb-main">
+        <!-- 左侧边栏 -->
+        <div class="owb-sidebar">
+          <div class="owb-sidebar-section">
+            <div class="owb-sidebar-title">行业版本</div>
+            <div class="owb-version-item active" data-version="ecommerce" onclick="setVersion('ecommerce')">🛒 电商通用版</div>
+            <div class="owb-version-item" data-version="xianyu" onclick="setVersion('xianyu')">🐟 闲鱼专版</div>
+            <div class="owb-version-item" data-version="food" onclick="setVersion('food')">🍜 餐饮专版</div>
+            <div class="owb-version-item" data-version="cloth" onclick="setVersion('cloth')">👕 服装专版</div>
+            <div class="owb-version-item" data-version="global" onclick="setVersion('global')">🌍 外贸专版</div>
+          </div>
+          <div class="owb-sidebar-section">
+            <div class="owb-sidebar-title">任务历史</div>
+            <div class="owb-history-empty" id="owbHistoryEmpty">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>暂无任务</span>
+            </div>
+            <div id="owbHistoryList"></div>
+          </div>
+        </div>
+
+        <!-- 中央工作区 -->
+        <div class="owb-center">
+          <!-- 上传阶段 -->
+          <div class="owb-stage owb-stage-upload active" id="owbStageUpload">
+            <div class="owb-upload-zone" id="owbUploadZone">
+              <input type="file" id="owbFileInput" accept="image/*" hidden>
+              <div class="owb-upload-icon">
+                <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="owb-upload-title">拖拽图片到这里，或点击上传</div>
+              <div class="owb-upload-desc">支持 JPG / PNG / WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
+              <div class="owb-upload-samples">
+                <span style="font-size:11px;color:var(--ink-muted);">试试示例：</span>
+                <button class="owb-sample-btn" onclick="loadSample('3c')">3C耳机</button>
+                <button class="owb-sample-btn" onclick="loadSample('food')">红烧肉</button>
+                <button class="owb-sample-btn" onclick="loadSample('home')">家居花瓶</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 生图中阶段 -->
+          <div class="owb-stage owb-stage-processing" id="owbStageProcessing">
+            <div class="owb-processing-wrap">
+              <div class="owb-processing-preview">
+                <img id="owbProcessingImg" src="" alt="">
+                <div class="owb-processing-overlay"><div class="owb-spinner"></div></div>
+              </div>
+              <div class="owb-processing-text">
+                <div class="owb-processing-title" id="owbProcessingTitle">AI 正在识别图片...</div>
+                <div class="owb-processing-sub" id="owbProcessingSub">预计 15 秒完成</div>
+              </div>
+              <div class="owb-progress-bar"><div class="owb-progress-fill" id="owbProgressFill"></div></div>
+              <button class="owb-action-secondary owb-action-btn" onclick="cancelGeneration()" style="padding:8px 20px;font-size:12px;">取消</button>
+            </div>
+          </div>
+
+          <!-- 结果阶段 -->
+          <div class="owb-stage owb-stage-result" id="owbStageResult">
+            <div class="owb-result-compare">
+              <div class="owb-compare-container" id="owbCompareContainer">
+                <div class="owb-compare-original">
+                  <img id="owbOriginalImg" src="" alt="原图">
+                  <span class="owb-compare-label">原图</span>
+                </div>
+                <div class="owb-compare-generated" id="owbCompareGenerated">
+                  <img id="owbGeneratedImg" src="" alt="成品">
+                  <span class="owb-compare-label owb-compare-label-gen">AI 成品</span>
+                </div>
+                <div class="owb-compare-slider" id="owbCompareSlider">
+                  <div class="owb-compare-handle">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" transform="translate(12 0)"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="owb-sizes-section">
+              <div class="owb-sizes-header">
+                <span class="owb-sizes-title">多平台尺寸适配</span>
+                <button class="owb-download-all" onclick="downloadAll()">全部下载</button>
+              </div>
+              <div class="owb-sizes-grid" id="owbSizesGrid">
+                <div class="owb-size-card"><div class="owb-size-preview"><span style="font-size:9px;color:var(--ink-muted);">800×800</span></div><div class="owb-size-info"><span class="owb-size-name">淘宝主图</span><button class="owb-size-dl" onclick="downloadSize('淘宝主图',800,800)">下载</button></div></div>
+                <div class="owb-size-card"><div class="owb-size-preview"><span style="font-size:9px;color:var(--ink-muted);">800×800</span></div><div class="owb-size-info"><span class="owb-size-name">美团菜品</span><button class="owb-size-dl" onclick="downloadSize('美团菜品',800,800)">下载</button></div></div>
+                <div class="owb-size-card"><div class="owb-size-preview"><span style="font-size:9px;color:var(--ink-muted);">1080×1440</span></div><div class="owb-size-info"><span class="owb-size-name">小红书</span><button class="owb-size-dl" onclick="downloadSize('小红书',1080,1440)">下载</button></div></div>
+                <div class="owb-size-card"><div class="owb-size-preview"><span style="font-size:9px;color:var(--ink-muted);">1080×1920</span></div><div class="owb-size-info"><span class="owb-size-name">抖音</span><button class="owb-size-dl" onclick="downloadSize('抖音',1080,1920)">下载</button></div></div>
+              </div>
+            </div>
+            <div class="owb-actions">
+              <button class="owb-action-btn owb-action-secondary" onclick="regenerate()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                重新生成
+              </button>
+              <button class="owb-action-btn owb-action-primary" onclick="downloadOriginal()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                下载成品图
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧参数面板 -->
+        <div class="owb-panel">
+          <div class="owb-panel-section">
+            <div class="owb-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>风格设置</div>
+            <div class="owb-panel-body">
+              <div class="owb-form-item">
+                <label class="owb-form-label">风格强度</label>
+                <div class="owb-slider-wrap">
+                  <input type="range" class="owb-range" min="0" max="100" value="60" id="owbStyleStrength" oninput="document.getElementById('owbStrengthVal').textContent=this.value+'%'">
+                  <span class="owb-range-value" id="owbStrengthVal">60%</span>
+                </div>
+              </div>
+              <div class="owb-form-item">
+                <label class="owb-form-label">参考风格</label>
+                <div class="owb-style-tags">
+                  <span class="owb-style-tag active">极简电商</span>
+                  <span class="owb-style-tag">高级质感</span>
+                  <span class="owb-style-tag">日系清新</span>
+                  <span class="owb-style-tag">复古胶片</span>
+                  <span class="owb-style-tag">国潮</span>
+                </div>
+              </div>
+              <div class="owb-form-item">
+                <label class="owb-form-label">自定义提示词</label>
+                <textarea class="owb-textarea" placeholder="输入额外的风格描述..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="owb-panel-section">
+            <div class="owb-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>尺寸适配</div>
+            <div class="owb-panel-body">
+              <div class="owb-size-checks">
+                <label class="owb-size-check active"><input type="checkbox" checked> 淘宝主图 800×800</label>
+                <label class="owb-size-check active"><input type="checkbox" checked> 美团菜品 800×800</label>
+                <label class="owb-size-check"><input type="checkbox"> 小红书 1080×1440</label>
+                <label class="owb-size-check"><input type="checkbox"> 抖音 1080×1920</label>
+              </div>
+            </div>
+          </div>
+          <div class="owb-panel-section">
+            <div class="owb-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>高级参数</div>
+            <div class="owb-panel-body">
+              <div class="owb-form-item">
+                <label class="owb-form-label">输出质量</label>
+                <div class="owb-segmented">
+                  <button class="owb-seg-btn">标准</button>
+                  <button class="owb-seg-btn active">高清</button>
+                  <button class="owb-seg-btn">超清</button>
+                </div>
+              </div>
+              <div class="owb-form-item">
+                <label class="owb-form-label">生成模型</label>
+                <div class="owb-segmented">
+                  <button class="owb-seg-btn active">Seedream 4.5</button>
+                  <button class="owb-seg-btn">Seedream 5.0</button>
+                </div>
+              </div>
+              <div class="owb-form-item">
+                <label class="owb-form-label">生成数量</label>
+                <div class="owb-segmented">
+                  <button class="owb-seg-btn active">1张</button>
+                  <button class="owb-seg-btn">2张</button>
+                  <button class="owb-seg-btn">4张</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="owb-panel-section">
+            <div class="owb-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>一键上架</div>
+            <div class="owb-panel-body">
+              <div class="owb-publish-platforms">
+                <div class="owb-pub-platform"><span class="owb-pub-name">淘宝</span><span class="owb-pub-status owb-pub-unbound">未绑定</span></div>
+                <div class="owb-pub-platform"><span class="owb-pub-name">美团</span><span class="owb-pub-status owb-pub-unbound">未绑定</span></div>
+                <div class="owb-pub-platform"><span class="owb-pub-name">小红书</span><span class="owb-pub-status owb-pub-unbound">未绑定</span></div>
+                <div class="owb-pub-platform"><span class="owb-pub-name">抖音</span><span class="owb-pub-status owb-pub-unbound">未绑定</span></div>
+                <div class="owb-pub-platform"><span class="owb-pub-name">拼多多</span><span class="owb-pub-status owb-pub-unbound">未绑定</span></div>
+              </div>
+              <button class="owb-bind-btn">绑定平台账号</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部队列 -->
+      <div class="owb-queue">
+        <div class="owb-queue-header">
+          <div class="owb-queue-left">
+            <span class="owb-queue-title">任务队列</span>
+            <span class="owb-queue-count" id="owbQueueCount">0 个任务</span>
+          </div>
+          <div class="owb-queue-right">
+            <span class="owb-feishu-status"><span class="owb-feishu-dot"></span>飞书多维表格已同步</span>
+            <button class="owb-queue-toggle" onclick="toggleQueue()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="owb-queue-body" id="owbQueueBody">
+          <div class="owb-queue-empty">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>暂无任务，上传图片开始生成</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 登录弹窗 -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLogin()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3>登录 WorkHogee</h3>
+    <p>登录后即可使用完整生图功能，新用户赠送 10 张免费额度。</p>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('login')">登录</div>
+      <div class="login-tab" onclick="switchLoginTab('register')">注册</div>
+    </div>
+    <div class="login-form" id="loginForm">
+      <input type="text" class="login-input" placeholder="手机号 / 邮箱" id="loginAccount">
+      <input type="password" class="login-input" placeholder="密码" id="loginPassword">
+      <button class="login-btn" onclick="doLogin()">登录并开始生图</button>
+    </div>
+    <div class="login-form" id="registerForm" style="display:none;">
+      <input type="text" class="login-input" placeholder="手机号" id="regPhone">
+      <input type="text" class="login-input" placeholder="验证码" id="regCode">
+      <input type="password" class="login-input" placeholder="设置密码" id="regPassword">
+      <button class="login-btn" onclick="doRegister()">注册并领取 10 张免费额度</button>
+    </div>
+    <div class="login-hint">登录即表示同意 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a></div>
+  </div>
+</div>
+
+<!-- 购买弹窗 -->
+<div class="modal-overlay" id="purchaseModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePurchase()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3>购买生图额度</h3>
+    <p>按量购买，不用不花钱。额度永久有效，用完再买。</p>
+    <div class="packages">
+      <div class="package-card selected" onclick="selectPackage(this, 10, 9.9)">
+        <div class="package-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="package-info">
+          <div class="package-name">10 张体验包</div>
+          <div class="package-desc">适合偶尔使用，平均 0.99 元/张</div>
+        </div>
+        <div class="package-price"><div class="num">¥9.9</div><div class="per">约0.99元/张</div></div>
+      </div>
+      <div class="package-card" onclick="selectPackage(this, 30, 24.9)">
+        <div class="package-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="package-info">
+          <div class="package-name">30 张超值包</div>
+          <div class="package-desc">适合小商家日常，平均 0.83 元/张</div>
+        </div>
+        <div class="package-price"><div class="num">¥24.9</div><div class="per">约0.83元/张</div></div>
+      </div>
+      <div class="package-card" onclick="selectPackage(this, 50, 34.9)">
+        <div class="package-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="package-info">
+          <div class="package-name">50 张畅享包</div>
+          <div class="package-desc">适合高频使用，平均 0.70 元/张，最划算</div>
+        </div>
+        <div class="package-price"><div class="num">¥34.9</div><div class="per">约0.70元/张</div></div>
+      </div>
+    </div>
+    <button class="pay-btn" onclick="doPurchase()">立即支付</button>
+    <div class="pay-hint">支付后额度立即到账，支持微信 / 支付宝</div>
+  </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#ffffff">Work</text>
+          <text x="58" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#ea580c">Hogee</text>
+        </svg>
+        <p>小商家的 AI 工作流伙计。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。</p>
+      </div>
+      <div class="footer-col">
+        <h4>产品</h4>
+        <a href="index.html">AI获客伙计</a>
+        <a href="global.html">出海伙计</a>
+        <a href="geo.html">GEO伙计</a>
+        <a href="huoer.html">生图伙计</a>
+      </div>
+      <div class="footer-col">
+        <h4>资源</h4>
+        <a href="#">帮助中心</a>
+        <a href="#">API文档</a>
+        <a href="#">行业知识库</a>
+        <a href="#">更新日志</a>
+      </div>
+      <div class="footer-col">
+        <h4>关于</h4>
+        <a href="#">关于我们</a>
+        <a href="#">服务条款</a>
+        <a href="#">隐私政策</a>
+        <a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 WorkHogee. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===== 在线生图版核心逻辑 =====
+const FREE_LIMIT = 10;
+let state = {
+  isLoggedIn: localStorage.getItem('workhogee_online_logged') === '1',
+  credits: parseInt(localStorage.getItem('workhogee_online_credits') || FREE_LIMIT.toString()),
+  currentVersion: 'ecommerce',
+  uploadedImage: null,
+  generatedImage: null,
+  isProcessing: false,
+  tasks: [],
+  selectedPackage: { count: 10, price: 9.9 }
+};
+
+const versionNames = { ecommerce: '电商通用版', xianyu: '闲鱼专版', food: '餐饮专版', cloth: '服装专版', global: '外贸专版' };
+
+function $(s) { return document.querySelector(s); }
+function $$(s) { return Array.from(document.querySelectorAll(s)); }
+
+function updateCredits() {
+  const navC = $('#navCredits');
+  const owbC = $('#owbCredits');
+  if (navC) navC.textContent = state.credits;
+  if (owbC) owbC.textContent = state.credits;
+  localStorage.setItem('workhogee_online_credits', state.credits.toString());
+}
+
+function updateLoginUI() {
+  const loginBtn = $('#navLoginBtn');
+  const avatar = $('#navAvatar');
+  if (state.isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (avatar) avatar.style.display = 'flex';
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (avatar) avatar.style.display = 'none';
+  }
+}
+
+function switchStage(name) {
+  $$('.owb-stage').forEach(s => s.classList.remove('active'));
+  const stage = $('#owbStage' + name.charAt(0).toUpperCase() + name.slice(1));
+  if (stage) stage.classList.add('active');
+}
+
+function setVersion(v) {
+  state.currentVersion = v;
+  $$('.owb-version-item').forEach(item => item.classList.toggle('active', item.dataset.version === v));
+  const text = $('#owbVersionText');
+  if (text) text.textContent = versionNames[v];
+}
+
+// 上传
+function initUpload() {
+  const zone = $('#owbUploadZone');
+  const input = $('#owbFileInput');
+  if (!zone || !input) return;
+  zone.addEventListener('click', () => {
+    if (!checkLogin()) return;
+    input.click();
+  });
+  input.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  document.addEventListener('paste', e => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) handleFile(file);
+        break;
+      }
+    }
+  });
+}
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) { alert('请上传图片文件'); return; }
+  const reader = new FileReader();
+  reader.onload = e => { state.uploadedImage = e.target.result; startGeneration(); };
+  reader.readAsDataURL(file);
+}
+
+function loadSample(sample) {
+  if (!checkLogin()) return;
+  const samples = { '3c': 'images/3c-earphone.jpg', 'food': 'images/food-hongshaorou.jpg', 'home': 'images/home-vase.jpg' };
+  state.uploadedImage = samples[sample] || samples['3c'];
+  startGeneration();
+}
+
+function checkLogin() {
+  if (!state.isLoggedIn) {
+    openLogin();
+    return false;
+  }
+  if (state.credits <= 0) {
+    openPurchase();
+    return false;
+  }
+  return true;
+}
+
+// 生图
+function startGeneration() {
+  if (state.isProcessing) return;
+  if (state.credits <= 0) { openPurchase(); return; }
+  state.isProcessing = true;
+  switchStage('processing');
+  const previewImg = $('#owbProcessingImg');
+  if (previewImg && state.uploadedImage) previewImg.src = state.uploadedImage;
+
+  const steps = [
+    { title: 'AI 正在识别图片...', sub: '分析主体、材质与颜色', duration: 2000, pct: 20 },
+    { title: '调用行业生图知识库...', sub: '匹配最佳风格与构图', duration: 2500, pct: 45 },
+    { title: 'Seedream 大模型生成中...', sub: '预计 12 秒完成', duration: 12000, pct: 90 },
+    { title: '生成完成！', sub: '正在优化输出...', duration: 1000, pct: 100 }
+  ];
+  let stepIdx = 0;
+  function runStep() {
+    if (stepIdx >= steps.length) { finishGeneration(); return; }
+    const step = steps[stepIdx];
+    const title = $('#owbProcessingTitle');
+    const sub = $('#owbProcessingSub');
+    const fill = $('#owbProgressFill');
+    if (title) title.textContent = step.title;
+    if (sub) sub.textContent = step.sub;
+    if (fill) { fill.style.transition = 'width ' + step.duration + 'ms linear'; fill.style.width = step.pct + '%'; }
+    stepIdx++;
+    setTimeout(runStep, step.duration);
+  }
+  runStep();
+}
+
+function cancelGeneration() {
+  state.isProcessing = false;
+  switchStage('upload');
+}
+
+async function finishGeneration() {
+  state.isProcessing = false;
+  state.credits--;
+  updateCredits();
+  try {
+    state.generatedImage = await callAPI();
+  } catch(e) {
+    console.warn('API失败:', e);
+    state.generatedImage = state.uploadedImage;
+  }
+  const origImg = $('#owbOriginalImg');
+  const genImg = $('#owbGeneratedImg');
+  if (origImg) origImg.src = state.uploadedImage;
+  if (genImg) genImg.src = state.generatedImage;
+  // 更新尺寸预览图
+  $$('.owb-size-preview').forEach(p => {
+    const placeholder = p.querySelector('span');
+    if (placeholder) placeholder.remove();
+    if (!p.querySelector('img')) {
+      const img = document.createElement('img');
+      img.src = state.generatedImage;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      p.appendChild(img);
+    }
+  });
+  addTask(state.generatedImage);
+  switchStage('result');
+}
+
+async function callAPI() {
+  const apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');
+  const endpoint = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
+  let imageBase64 = state.uploadedImage;
+  if (state.uploadedImage && !state.uploadedImage.startsWith('data:')) {
+    try {
+      const resp = await fetch(state.uploadedImage);
+      const blob = await resp.blob();
+      imageBase64 = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch(e) {}
+  }
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+    body: JSON.stringify({
+      model: 'ep-m-20260915134242-p4rpr',
+      prompt: '专业电商商品图，' + versionNames[state.currentVersion] + '适配，高质量，专业布光，干净背景',
+      image: imageBase64,
+      size: '2048x2048',
+      response_format: 'b64_json'
+    })
+  });
+  const data = await resp.json();
+  if (data.data && data.data[0] && data.data[0].b64_json) {
+    return 'data:image/jpeg;base64,' + data.data[0].b64_json;
+  }
+  throw new Error('API错误');
+}
+
+function regenerate() {
+  if (state.uploadedImage && checkLogin()) startGeneration();
+}
+
+// 对比滑块
+function initCompare() {
+  const container = $('#owbCompareContainer');
+  const slider = $('#owbCompareSlider');
+  const generated = $('.owb-compare-generated');
+  if (!container || !slider || !generated) return;
+  let dragging = false;
+  function setPos(x) {
+    const rect = container.getBoundingClientRect();
+    let pct = ((x - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    slider.style.left = pct + '%';
+    generated.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+  }
+  slider.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+  container.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
+  document.addEventListener('mousemove', e => { if (dragging) setPos(e.clientX); });
+  document.addEventListener('mouseup', () => { dragging = false; });
+  slider.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); });
+  container.addEventListener('touchstart', e => { dragging = true; setPos(e.touches[0].clientX); });
+  document.addEventListener('touchmove', e => { if (dragging) setPos(e.touches[0].clientX); });
+  document.addEventListener('touchend', () => { dragging = false; });
+}
+
+// 下载
+function resizeImage(dataUrl, w, h) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(w / img.width, h / img.height);
+      const sw = w / scale, sh = h / scale;
+      const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.92));
+    };
+    img.src = dataUrl;
+  });
+}
+
+function downloadImage(dataUrl, filename) {
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+async function downloadSize(name, w, h) {
+  if (!state.generatedImage) return;
+  const resized = await resizeImage(state.generatedImage, w, h);
+  downloadImage(resized, 'workhogee-' + name + '-' + w + 'x' + h + '.jpg');
+}
+
+function downloadOriginal() {
+  if (state.generatedImage) downloadImage(state.generatedImage, 'workhogee-generated.jpg');
+}
+
+async function downloadAll() {
+  if (!state.generatedImage) return;
+  const sizes = [['淘宝主图',800,800],['美团菜品',800,800],['小红书',1080,1440],['抖音',1080,1920]];
+  for (const [name, w, h] of sizes) {
+    const resized = await resizeImage(state.generatedImage, w, h);
+    downloadImage(resized, 'workhogee-' + name + '-' + w + 'x' + h + '.jpg');
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+
+// 任务队列
+function addTask(img) {
+  const task = { id: Date.now(), version: versionNames[state.currentVersion], image: img, time: new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'}) };
+  state.tasks.unshift(task);
+  const empty = $('#owbHistoryEmpty');
+  if (empty) empty.style.display = 'none';
+  const list = $('#owbHistoryList');
+  if (list) {
+    const item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;';
+    item.innerHTML = '<img src="' + img + '" style="width:32px;height:32px;object-fit:cover;border-radius:4px;"><div style="flex:1;min-width:0;"><div style="font-size:10px;font-weight:600;">' + task.version + '</div><div style="font-size:9px;color:var(--ink-muted);">' + task.time + '</div></div>';
+    list.insertBefore(item, list.firstChild);
+  }
+  const count = $('#owbQueueCount');
+  if (count) count.textContent = state.tasks.length + ' 个任务';
+}
+
+function toggleQueue() {
+  const body = $('#owbQueueBody');
+  if (body) body.classList.toggle('expanded');
+}
+
+// 风格标签和分段控件
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('owb-style-tag')) {
+    $$('.owb-style-tag').forEach(t => t.classList.remove('active'));
+    e.target.classList.add('active');
+  }
+  if (e.target.classList.contains('owb-seg-btn')) {
+    const parent = e.target.parentElement;
+    $$('.owb-seg-btn', parent).forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+  }
+  if (e.target.classList.contains('owb-size-check')) {
+    e.target.classList.toggle('active');
+    const input = e.target.querySelector('input');
+    if (input) input.checked = e.target.classList.contains('active');
+  }
+});
+
+// 登录/注册
+function openLogin() { $('#loginModal').classList.add('show'); }
+function closeLogin() { $('#loginModal').classList.remove('show'); }
+function switchLoginTab(tab) {
+  $$('.login-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  $('#loginForm').style.display = tab === 'login' ? 'flex' : 'none';
+  $('#registerForm').style.display = tab === 'register' ? 'flex' : 'none';
+}
+function doLogin() {
+  const account = $('#loginAccount').value;
+  if (!account) { alert('请输入手机号或邮箱'); return; }
+  state.isLoggedIn = true;
+  localStorage.setItem('workhogee_online_logged', '1');
+  updateLoginUI();
+  closeLogin();
+  alert('登录成功！已赠送 ' + FREE_LIMIT + ' 张免费额度');
+}
+function doRegister() {
+  const phone = $('#regPhone').value;
+  if (!phone) { alert('请输入手机号'); return; }
+  state.isLoggedIn = true;
+  state.credits = FREE_LIMIT;
+  localStorage.setItem('workhogee_online_logged', '1');
+  localStorage.setItem('workhogee_online_credits', FREE_LIMIT.toString());
+  updateLoginUI();
+  updateCredits();
+  closeLogin();
+  alert('注册成功！已赠送 ' + FREE_LIMIT + ' 张免费额度');
+}
+function logout() {
+  if (confirm('确定退出登录吗？')) {
+    state.isLoggedIn = false;
+    localStorage.removeItem('workhogee_online_logged');
+    updateLoginUI();
+  }
+}
+
+// 购买
+function openPurchase() {
+  if (!state.isLoggedIn) { openLogin(); return; }
+  $('#purchaseModal').classList.add('show');
+}
+function closePurchase() { $('#purchaseModal').classList.remove('show'); }
+function selectPackage(el, count, price) {
+  $$('.package-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedPackage = { count, price };
+}
+function doPurchase() {
+  const { count, price } = state.selectedPackage;
+  alert('支付 ¥' + price + ' 购买 ' + count + ' 张额度（演示模式，实际接入支付后生效）');
+  state.credits += count;
+  updateCredits();
+  closePurchase();
+}
+
+// 点击遮罩关闭弹窗
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
+
+// 初始化
+updateCredits();
+updateLoginUI();
+initUpload();
+initCompare();
+</script>
+</body>
+</html>
