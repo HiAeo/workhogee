@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee · 活儿伙计 - 小商家的AI工作流伙计</title>
+<style>
+:root {
+  --orange: #ea580c;
+  --orange-light: #fb923c;
+  --orange-dark: #c2410c;
+  --ink: #1c1917;
+  --ink-2: #44403c;
+  --ink-3: #78716c;
+  --paper: #faf8f4;
+  --paper-2: #f5f5f4;
+  --line: #e7e5e4;
+  --white: #ffffff;
+  --green: #16a34a;
+  --blue: #2563eb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+/* 导航栏 */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,248,244,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-text { font-size: 20px; font-weight: 700; color: var(--ink); }
+.nav-logo-text span { color: var(--orange); }
+.nav-logo-sub { font-size: 11px; color: var(--ink-3); margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--line); }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--orange); }
+.nav-links a.active { color: var(--orange); font-weight: 600; }
+.nav-cta {
+  background: var(--ink); color: var(--white) !important;
+  padding: 8px 20px; border-radius: 8px; font-weight: 600 !important;
+  transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }
+
+/* Hero */
+.hero { padding: 80px 0 60px; text-align: center; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(234,88,12,0.1); color: var(--orange);
+  padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  margin-bottom: 24px;
+}
+.hero-badge .dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.hero h1 {
+  font-size: 52px; font-weight: 800; line-height: 1.2; margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+.hero h1 .highlight { color: var(--orange); }
+.hero-slogan {
+  font-size: 22px; color: var(--ink-2); font-weight: 500; margin-bottom: 16px;
+}
+.hero-slogan-2 {
+  font-size: 18px; color: var(--ink-3); margin-bottom: 32px;
+}
+.hero-cta { display: flex; gap: 16px; justify-content: center; margin-bottom: 48px; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--orange); color: var(--white);
+  padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); color: var(--ink);
+  padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600;
+  text-decoration: none; border: 1px solid var(--line); cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+/* 行业版本切换 */
+.version-switch {
+  display: flex; justify-content: center; gap: 12px; margin-bottom: 48px;
+}
+.version-tab {
+  padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--line); background: var(--white);
+  color: var(--ink-2); transition: all 0.2s;
+}
+.version-tab.active {
+  background: var(--ink); color: var(--white); border-color: var(--ink);
+}
+.version-tab:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
+.version-tab .coming-soon { font-size: 10px; color: var(--ink-3); margin-left: 6px; }
+
+/* 在线操作界面 */
+.demo-section { padding: 60px 0; background: var(--white); }
+.demo-title { text-align: center; margin-bottom: 40px; }
+.demo-title h2 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+.demo-title p { color: var(--ink-3); font-size: 16px; }
+
+.demo-interface {
+  background: var(--paper-2); border-radius: 16px; padding: 32px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.demo-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.demo-step {
+  background: var(--white); border-radius: 12px; padding: 24px;
+  border: 1px solid var(--line); text-align: center;
+}
+.demo-step-num {
+  width: 32px; height: 32px; background: var(--orange); color: var(--white);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; margin: 0 auto 12px;
+}
+.demo-step h4 { font-size: 16px; margin-bottom: 8px; }
+.demo-step p { font-size: 13px; color: var(--ink-3); }
+
+.demo-workspace {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+.demo-upload, .demo-result {
+  background: var(--white); border-radius: 12px; padding: 24px;
+  border: 2px dashed var(--line); min-height: 320px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.demo-upload { border-color: var(--orange); background: rgba(234,88,12,0.02); }
+.demo-upload-icon { font-size: 48px; margin-bottom: 16px; }
+.demo-upload h4 { font-size: 18px; margin-bottom: 8px; color: var(--ink); }
+.demo-upload p { font-size: 14px; color: var(--ink-3); text-align: center; }
+.demo-upload .upload-btn {
+  margin-top: 16px; padding: 10px 24px; background: var(--orange); color: var(--white);
+  border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+  border: none; transition: all 0.2s;
+}
+.demo-upload .upload-btn:hover { background: var(--orange-dark); }
+.demo-result { border-style: solid; border-color: var(--line); }
+.demo-result-placeholder {
+  width: 200px; height: 200px; background: linear-gradient(135deg, #fef3c7, #fed7aa);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; font-size: 48px;
+}
+.demo-result h4 { font-size: 16px; margin-bottom: 8px; }
+.demo-result p { font-size: 13px; color: var(--ink-3); }
+.demo-result .result-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+.demo-result .result-tag {
+  padding: 4px 10px; background: rgba(22,163,74,0.1); color: var(--green);
+  border-radius: 12px; font-size: 11px; font-weight: 600;
+}
+
+/* 功能特性 */
+.features { padding: 80px 0; }
+.section-title { text-align: center; margin-bottom: 48px; }
+.section-title h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+.section-title p { color: var(--ink-3); font-size: 16px; max-width: 600px; margin: 0 auto; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.feature-card {
+  background: var(--white); border-radius: 16px; padding: 32px;
+  border: 1px solid var(--line); transition: all 0.3s;
+}
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.feature-icon {
+  width: 56px; height: 56px; background: rgba(234,88,12,0.1); border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  margin-bottom: 20px;
+}
+.feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+.feature-card p { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+
+/* 行业场景 */
+.industries { padding: 80px 0; background: var(--white); }
+.industries-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.industry-card {
+  background: var(--paper); border-radius: 12px; padding: 28px 20px;
+  text-align: center; border: 1px solid var(--line); transition: all 0.3s;
+}
+.industry-card:hover { border-color: var(--orange); transform: translateY(-2px); }
+.industry-card .industry-icon { font-size: 36px; margin-bottom: 12px; }
+.industry-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.industry-card p { font-size: 12px; color: var(--ink-3); }
+.industry-card.available { border-color: var(--orange); background: rgba(234,88,12,0.03); }
+.industry-card.available .badge {
+  display: inline-block; background: var(--orange); color: var(--white);
+  padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  margin-bottom: 8px;
+}
+.industry-card.coming .badge {
+  display: inline-block; background: var(--ink-3); color: var(--white);
+  padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* 使用方式 */
+.usage { padding: 80px 0; }
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.usage-card {
+  background: var(--white); border-radius: 16px; padding: 40px;
+  border: 1px solid var(--line);
+}
+.usage-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.usage-card h3 .icon { font-size: 28px; }
+.usage-card p { font-size: 15px; color: var(--ink-2); margin-bottom: 24px; line-height: 1.8; }
+.usage-card ul { list-style: none; margin-bottom: 24px; }
+.usage-card ul li {
+  padding: 8px 0; font-size: 14px; color: var(--ink-2);
+  display: flex; align-items: center; gap: 10px;
+}
+.usage-card ul li::before { content: "✓"; color: var(--green); font-weight: 700; }
+.usage-card .btn { width: 100%; justify-content: center; }
+
+/* CTA */
+.cta-section {
+  padding: 80px 0; background: var(--ink); color: var(--white); text-align: center;
+}
+.cta-section h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
+.cta-section h2 span { color: var(--orange); }
+.cta-section p { font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
+.cta-section .btn-primary { font-size: 18px; padding: 16px 40px; }
+
+/* 页脚 */
+.footer { padding: 48px 0; background: var(--paper-2); border-top: 1px solid var(--line); }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; }
+.footer-logo { font-size: 18px; font-weight: 700; color: var(--ink); }
+.footer-logo span { color: var(--orange); }
+.footer-text { font-size: 13px; color: var(--ink-3); }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero h1 { font-size: 32px; }
+  .hero-slogan { font-size: 18px; }
+  .demo-steps { grid-template-columns: 1fr; }
+  .demo-workspace { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .industries-grid { grid-template-columns: 1fr 1fr; }
+  .usage-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-text">Work<span>Hogee</span></span>
+        <span class="nav-logo-sub">活儿伙计</span>
+      </a>
+      <div class="nav-links">
+        <a href="/" >首页</a>
+        <a href="/huoer.html" class="active">活儿伙计</a>
+        <a href="/geo.html">GEO伙计</a>
+        <a href="/global.html">出海伙计</a>
+        <a href="//www.workhogee.com/admin/" target="_blank">管理后台</a>
+        <a href="#usage" class="nav-cta">立即使用</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      <span>WorkHogee · 活儿伙计 · 在线版已上线</span>
+    </div>
+    <h1>小商家的<span class="highlight">AI工作流伙计</span></h1>
+    <p class="hero-slogan">你有活儿，喊伙计。</p>
+    <p class="hero-slogan-2">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
+    <div class="hero-cta">
+      <a href="#demo" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        在线体验
+      </a>
+      <a href="#usage" class="btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载客户端
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 行业版本切换 -->
+<section style="padding: 0 0 40px;">
+  <div class="container">
+    <div class="version-switch">
+      <div class="version-tab active" onclick="switchVersion('food')">🍜 餐饮版</div>
+      <div class="version-tab active" onclick="switchVersion('home')">🏠 家居/饰品版</div>
+      <div class="version-tab" onclick="switchVersion('car')">🚗 车行版 <span class="coming-soon">即将推出</span></div>
+      <div class="version-tab" onclick="switchVersion('deco')">🎨 装修版 <span class="coming-soon">即将推出</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 在线操作界面演示 -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <div class="demo-title">
+      <h2>三步出图，就是这么简单</h2>
+      <p>上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图</p>
+    </div>
+    <div class="demo-interface">
+      <div class="demo-steps">
+        <div class="demo-step">
+          <div class="demo-step-num">1</div>
+          <h4>上传原图</h4>
+          <p>手机拍的菜品图、商品图，直接上传</p>
+        </div>
+        <div class="demo-step">
+          <div class="demo-step-num">2</div>
+          <h4>选择场景</h4>
+          <p>行业大脑自动匹配风格、角度、氛围</p>
+        </div>
+        <div class="demo-step">
+          <div class="demo-step-num">3</div>
+          <h4>获取专业图</h4>
+          <p>20秒生成，直接上架美团/淘宝/小红书</p>
+        </div>
+      </div>
+      <div class="demo-workspace">
+        <div class="demo-upload">
+          <div class="demo-upload-icon">📸</div>
+          <h4>上传你的原图</h4>
+          <p>支持 JPG / PNG / WEBP<br>最大 10MB</p>
+          <button class="upload-btn" onclick="alert('在线版即将开放上传功能，敬请期待！')">选择图片上传</button>
+        </div>
+        <div class="demo-result">
+          <div class="demo-result-placeholder">🍽️</div>
+          <h4>AI生成的专业图</h4>
+          <p>精致摆盘 · 45°俯拍 · 暖光氛围</p>
+          <div class="result-tags">
+            <span class="result-tag">✓ 800×800 美团尺寸</span>
+            <span class="result-tag">✓ 可直接上架</span>
+            <span class="result-tag">✓ 无水印</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能特性 -->
+<section class="features">
+  <div class="container">
+    <div class="section-title">
+      <h2>为什么选择活儿伙计</h2>
+      <p>不是简单的AI画图，而是懂行业、懂平台、懂商家的工作流伙计</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>行业大脑</h3>
+        <p>内置餐饮、家居等行业知识库，包含二十四节气氛围词、拍摄角度规范、平台尺寸标准，比通用AI更懂你的行业。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>20秒出图</h3>
+        <p>基于火山引擎Seedream 4.5模型，图生图模式20秒交付，比找设计师快100倍，比自己拍省90%成本。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>直接上架</h3>
+        <p>自动适配美团800×800、淘宝主图、小红书3:4等平台尺寸，生成即可用，不用再裁剪调整。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>按张计费</h3>
+        <p>订阅制+按出图量扣费，免费版每月10张，专业版每月500张，用多少付多少，小商家也用得起。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>批量处理</h3>
+        <p>支持批量上传多张图片，行业大脑统一处理风格，菜单更新、新品上架一次搞定，不用一张张调。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>数据安全</h3>
+        <p>基于飞书多维表格构建任务队列，企业级数据安全保障，你的图片和数据只属于你。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 行业场景 -->
+<section class="industries">
+  <div class="container">
+    <div class="section-title">
+      <h2>覆盖更多行业场景</h2>
+      <p>餐饮、家居已上线，车行、装修、服装、美业陆续推出，你有活儿，喊伙计</p>
+    </div>
+    <div class="industries-grid">
+      <div class="industry-card available">
+        <span class="badge">已上线</span>
+        <div class="industry-icon">🍜</div>
+        <h4>餐饮版</h4>
+        <p>菜品图、菜单图、美团饿了么上架图</p>
+      </div>
+      <div class="industry-card available">
+        <span class="badge">已上线</span>
+        <div class="industry-icon">🏠</div>
+        <h4>家居/饰品版</h4>
+        <p>商品场景图、淘宝主图、小红书种草图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">即将推出</span>
+        <div class="industry-icon">🚗</div>
+        <h4>车行版</h4>
+        <p>二手车展厅效果图、4S店宣传图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">即将推出</span>
+        <div class="industry-icon">🎨</div>
+        <h4>装修版</h4>
+        <p>毛坯房效果图、装修案例展示图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">规划中</span>
+        <div class="industry-icon">👗</div>
+        <h4>服装版</h4>
+        <p>AI模特试穿、场景搭配图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">规划中</span>
+        <div class="industry-icon">💇</div>
+        <h4>美业版</h4>
+        <p>发型效果图、美甲款式图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">规划中</span>
+        <div class="industry-icon">🏋️</div>
+        <h4>健身版</h4>
+        <p>健身效果对比图、课程宣传图</p>
+      </div>
+      <div class="industry-card coming">
+        <span class="badge">规划中</span>
+        <div class="industry-icon">🎂</div>
+        <h4>烘焙版</h4>
+        <p>蛋糕效果图、甜品展示图</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 使用方式 -->
+<section class="usage" id="usage">
+  <div class="container">
+    <div class="section-title">
+      <h2>两种使用方式，随你选</h2>
+      <p>在线直接完成交付，也可以下载客户端离线使用</p>
+    </div>
+    <div class="usage-grid">
+      <div class="usage-card">
+        <h3><span class="icon">🌐</span> 在线版</h3>
+        <p>打开浏览器就能用，不用下载安装，适合偶尔出图、快速交付的商家。</p>
+        <ul>
+          <li>无需下载，打开即用</li>
+          <li>支持Windows/Mac/手机浏览器</li>
+          <li>任务自动保存，随时查看</li>
+          <li>免费版每月10张体验</li>
+        </ul>
+        <a href="#demo" class="btn-primary btn" style="display: flex;">立即在线体验</a>
+      </div>
+      <div class="usage-card">
+        <h3><span class="icon">💻</span> 客户端版</h3>
+        <p>下载安装到电脑，支持批量处理、离线任务队列，适合高频出图的专业商家。</p>
+        <ul>
+          <li>支持Windows / macOS双系统</li>
+          <li>批量上传，后台自动处理</li>
+          <li>本地历史记录，快速复用</li>
+          <li>专业版/企业版优先体验新功能</li>
+        </ul>
+        <a href="/#platforms" class="btn-secondary btn" style="display: flex;">下载客户端</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>你有活儿，<span>喊伙计</span></h2>
+    <p>一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
+    <a href="#demo" class="btn-primary">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      现在就开始
+    </a>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Work<span>Hogee</span> · 活儿伙计</div>
+      <div class="footer-text">© 2026 WorkHogee. 小商家的AI工作流伙计.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchVersion(version) {
+  const tabs = document.querySelectorAll('.version-tab');
+  tabs.forEach(tab => tab.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const versionNames = {
+    food: '餐饮版',
+    home: '家居/饰品版',
+    car: '车行版',
+    deco: '装修版'
+  };
+  
+  if (version === 'car' || version === 'deco') {
+    alert(versionNames[version] + ' 即将推出，敬请期待！');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    document.querySelector('.version-tab').classList.add('active');
+  }
+}
+</script>
+
+</body>
+</html>
