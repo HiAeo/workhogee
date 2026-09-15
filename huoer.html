@@ -13,6 +13,7 @@
   --ink-soft: #57534e;
   --ink-muted: #a8a29e;
   --paper: #faf8f4;
+  --sand: #f5f0e8;
   --white: #ffffff;
   --line: #e7e5e4;
   --green: #16a34a;
@@ -27,389 +28,376 @@ body {
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 
-/* ===== 导航 ===== */
+/* ===== 导航（与首页一致） ===== */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.88); backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line);
 }
 .nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 32px;
-  display: flex; align-items: center; justify-content: space-between; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;
 }
-.nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-.nav-logo span { color: var(--orange); }
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a { font-size: 14px; color: var(--ink-soft); font-weight: 500; transition: color 0.2s; }
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { height: 28px; width: auto; }
+.nav-links { display: flex; align-items: center; gap: 36px; }
+.nav-links a {
+  font-size: 15px; color: var(--ink-soft); font-weight: 500;
+  transition: color 0.2s; position: relative;
+}
 .nav-links a:hover { color: var(--orange); }
 .nav-cta {
-  background: var(--orange); color: white !important; padding: 8px 20px;
-  border-radius: 8px; font-weight: 600 !important; transition: all 0.2s !important;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink); color: var(--paper) !important;
+  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;
+  font-weight: 600 !important; transition: all 0.25s;
 }
-.nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }
+.nav-product-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 14px; color: var(--ink-soft); font-weight: 500;
+  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;
+}
+.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }
+.nav-product-link.active {
+  background: var(--orange); color: var(--white) !important;
+  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);
+}
+.nav-product-link.active:hover { background: var(--orange-light); }
+.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
+.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }
 
 /* ===== Hero ===== */
 .hero {
-  padding: 140px 0 80px; background: var(--paper);
+  padding: 140px 0 100px;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);
   position: relative; overflow: hidden;
 }
 .hero::before {
   content: ''; position: absolute; top: -200px; right: -200px;
-  width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.08) 0%, transparent 70%);
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 65%);
 }
 .hero-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
   display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
   position: relative; z-index: 1;
 }
 .hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
   background: white; border: 1px solid var(--line); border-radius: 100px;
-  padding: 6px 16px; font-size: 13px; font-weight: 600; color: var(--ink-soft);
-  margin-bottom: 24px;
+  padding: 7px 18px; font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 28px;
 }
 .hero-tag .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero h1 {
-  font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px;
-  margin-bottom: 20px;
+  font-size: 56px; font-weight: 900; line-height: 1.1; letter-spacing: -2px;
+  margin-bottom: 24px;
 }
-.hero h1 .highlight { color: var(--orange); position: relative; }
-.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 36px; max-width: 480px; }
-.hero-buttons { display: flex; gap: 16px; margin-bottom: 48px; }
+.hero h1 .highlight { color: var(--orange); }
+.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 40px; max-width: 500px; }
+.hero-buttons { display: flex; gap: 16px; margin-bottom: 56px; }
 .btn-primary {
-  background: var(--orange); color: white; padding: 16px 32px;
+  background: var(--orange); color: white; padding: 16px 36px;
   border-radius: 12px; font-size: 16px; font-weight: 700; border: none;
   cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
 }
 .btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
 .btn-secondary {
-  background: white; color: var(--ink); padding: 16px 32px;
+  background: white; color: var(--ink); padding: 16px 36px;
   border-radius: 12px; font-size: 16px; font-weight: 600; border: 1px solid var(--line);
   cursor: pointer; transition: all 0.2s;
 }
 .btn-secondary:hover { border-color: var(--ink); }
-.hero-stats { display: flex; gap: 40px; }
-.hero-stat .num { font-size: 32px; font-weight: 800; color: var(--ink); }
+.hero-stats { display: flex; gap: 48px; }
+.hero-stat .num { font-size: 36px; font-weight: 900; color: var(--ink); line-height: 1; }
 .hero-stat .num span { color: var(--orange); }
-.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }
 
-/* Hero 实时演示 */
+/* Hero 实时演示卡片 */
 .hero-demo {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.1); border: 1px solid var(--line);
+  background: white; border-radius: 24px; padding: 28px;
+  box-shadow: 0 30px 80px rgba(28,25,23,0.12); border: 1px solid var(--line);
 }
 .demo-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
 }
-.demo-title { font-size: 14px; font-weight: 700; }
+.demo-title { font-size: 15px; font-weight: 700; }
 .demo-badge {
   background: rgba(234,88,12,0.1); color: var(--orange);
-  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px;
+  display: flex; align-items: center; gap: 6px;
 }
+.demo-badge::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }
 .demo-compare {
   display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 .demo-img-wrap {
-  aspect-ratio: 1; border-radius: 12px; overflow: hidden; position: relative;
+  aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;
 }
 .demo-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 .demo-img-label {
   position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,0.7));
-  padding: 20px 10px 8px; color: white; font-size: 11px; font-weight: 600; text-align: center;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75));
+  padding: 24px 12px 10px; color: white; font-size: 12px; font-weight: 600; text-align: center;
 }
 .demo-arrow {
-  width: 40px; height: 40px; background: var(--orange); border-radius: 50%;
+  width: 44px; height: 44px; background: var(--orange); border-radius: 50%;
   display: flex; align-items: center; justify-content: center; color: white;
-  font-size: 18px; font-weight: 800; box-shadow: 0 4px 12px rgba(234,88,12,0.3);
+  font-size: 20px; font-weight: 900; box-shadow: 0 6px 16px rgba(234,88,12,0.35);
   animation: arrowBounce 2s infinite;
 }
-@keyframes arrowBounce { 0%,100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+@keyframes arrowBounce { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
 .demo-progress {
-  background: var(--paper); border-radius: 10px; padding: 14px 16px;
+  background: var(--paper); border-radius: 12px; padding: 16px 18px;
 }
 .demo-progress-label {
-  display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;
+  display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; font-weight: 600;
 }
-.demo-progress-label span:last-child { color: var(--orange); font-weight: 700; }
-.demo-progress-bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.demo-progress-label span:last-child { color: var(--orange); }
+.demo-progress-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
 .demo-progress-fill {
   height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));
-  border-radius: 3px; width: 100%; animation: progressFill 3s ease-in-out infinite;
+  border-radius: 4px; width: 100%; animation: progressFill 3.5s ease-in-out infinite;
 }
-@keyframes progressFill { 0% { width: 0%; } 30% { width: 40%; } 60% { width: 75%; } 100% { width: 100%; } }
-.demo-steps { display: flex; justify-content: space-between; margin-top: 10px; font-size: 10px; color: var(--ink-muted); }
+@keyframes progressFill { 0% { width: 0%; } 25% { width: 35%; } 50% { width: 65%; } 75% { width: 85%; } 100% { width: 100%; } }
+.demo-steps { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--ink-muted); }
 
-/* ===== 痛点场景 ===== */
+/* ===== 痛点 ===== */
 .pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }
 .pain::before {
-  content: ''; position: absolute; top: 50%; left: -100px; transform: translateY(-50%);
-  width: 400px; height: 400px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%);
+  content: ''; position: absolute; top: 50%; left: -150px; transform: translateY(-50%);
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 65%);
 }
-.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
-.pain-header { text-align: center; margin-bottom: 60px; }
-.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 2px; margin-bottom: 16px; }
-.pain h2 { font-size: 40px; font-weight: 800; line-height: 1.3; max-width: 700px; margin: 0 auto; }
-.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+.pain-header { text-align: center; margin-bottom: 64px; }
+.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 3px; margin-bottom: 20px; }
+.pain h2 { font-size: 42px; font-weight: 900; line-height: 1.3; max-width: 700px; margin: 0 auto; letter-spacing: -1px; }
+.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
 .pain-card {
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px; padding: 32px; transition: all 0.3s;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 40px 32px; transition: all 0.3s;
 }
-.pain-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-4px); border-color: rgba(234,88,12,0.3); }
-.pain-num { font-size: 48px; font-weight: 900; color: var(--orange); opacity: 0.6; margin-bottom: 16px; line-height: 1; }
-.pain-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-.pain-card p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.8; }
-.pain-card .cost { font-size: 28px; font-weight: 800; color: #ef4444; margin-top: 16px; }
-.pain-card .cost span { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 400; }
+.pain-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-6px); border-color: rgba(234,88,12,0.3); }
+.pain-num { font-size: 56px; font-weight: 900; color: var(--orange); opacity: 0.5; margin-bottom: 20px; line-height: 1; letter-spacing: -2px; }
+.pain-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+.pain-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.9; margin-bottom: 24px; }
+.pain-card .cost { font-size: 36px; font-weight: 900; color: #ef4444; line-height: 1; }
+.pain-card .cost span { font-size: 15px; color: rgba(255,255,255,0.4); font-weight: 400; margin-left: 4px; }
 
 /* ===== 核心能力通用 ===== */
-.feature { padding: 100px 0; background: var(--white); }
+.feature { padding: 120px 0; background: var(--white); }
 .feature-alt { background: var(--paper); }
 .feature-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 32px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
 }
 .feature-inner.reverse { direction: rtl; }
 .feature-inner.reverse > * { direction: ltr; }
 .feature-num {
   font-size: 14px; font-weight: 800; color: var(--orange);
-  letter-spacing: 3px; margin-bottom: 16px;
+  letter-spacing: 4px; margin-bottom: 20px;
 }
-.feature-title { font-size: 36px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; letter-spacing: -0.5px; }
+.feature-title { font-size: 40px; font-weight: 900; line-height: 1.2; margin-bottom: 24px; letter-spacing: -1px; }
 .feature-title .highlight { color: var(--orange); }
-.feature-desc { font-size: 16px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 32px; }
-.feature-points { display: flex; flex-direction: column; gap: 16px; }
-.feature-point { display: flex; gap: 12px; align-items: flex-start; }
+.feature-desc { font-size: 17px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 36px; }
+.feature-points { display: flex; flex-direction: column; gap: 18px; }
+.feature-point { display: flex; gap: 14px; align-items: flex-start; }
 .point-icon {
-  width: 24px; height: 24px; background: rgba(234,88,12,0.1); color: var(--orange);
+  width: 26px; height: 26px; background: rgba(234,88,12,0.1); color: var(--orange);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 800; flex-shrink: 0; margin-top: 2px;
+  font-size: 14px; font-weight: 900; flex-shrink: 0; margin-top: 2px;
 }
-.feature-point div { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+.feature-point div { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
 .feature-point strong { color: var(--ink); font-weight: 700; }
 
-/* 对比卡片 */
+/* 核心能力1：对比卡片 */
 .compare-card {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+  background: white; border-radius: 24px; padding: 32px;
+  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);
 }
-.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.compare-label { font-size: 14px; font-weight: 700; }
-.compare-time { font-size: 12px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 4px 12px; border-radius: 6px; }
-.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 20px; }
-.compare-img { aspect-ratio: 1; border-radius: 12px; overflow: hidden; }
+.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.compare-label { font-size: 16px; font-weight: 700; }
+.compare-time { font-size: 13px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 6px 14px; border-radius: 8px; }
+.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 28px; }
+.compare-img { aspect-ratio: 1; border-radius: 16px; overflow: hidden; }
 .compare-img img { width: 100%; height: 100%; object-fit: cover; }
-.compare-img.after { box-shadow: 0 8px 24px rgba(234,88,12,0.15); }
-.compare-caption { text-align: center; font-size: 11px; color: var(--ink-muted); margin-top: 8px; }
-.compare-arrow { font-size: 20px; color: var(--orange); font-weight: 800; }
-.compare-footer { display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid var(--line); }
+.compare-img.after { box-shadow: 0 12px 32px rgba(234,88,12,0.18); }
+.compare-caption { text-align: center; font-size: 12px; color: var(--ink-muted); margin-top: 10px; font-weight: 500; }
+.compare-arrow { font-size: 24px; color: var(--orange); font-weight: 900; }
+.compare-footer { display: flex; justify-content: space-around; padding-top: 24px; border-top: 1px solid var(--line); }
 .compare-metric { text-align: center; }
-.metric-num { display: block; font-size: 20px; font-weight: 800; color: var(--ink); }
-.metric-label { font-size: 11px; color: var(--ink-muted); }
+.metric-num { display: block; font-size: 24px; font-weight: 900; color: var(--ink); }
+.metric-label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
 
-/* 平台展示 */
+/* 核心能力2：平台展示 */
 .platform-showcase {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+  background: white; border-radius: 24px; padding: 32px;
+  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);
 }
-.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-.platform-item { text-align: center; }
-.platform-img { aspect-ratio: 1; border-radius: 10px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.platform-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.platform-title { font-size: 16px; font-weight: 700; }
+.platform-count { font-size: 13px; color: var(--orange); font-weight: 700; }
+.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.platform-item { text-align: center; transition: transform 0.2s; }
+.platform-item:hover { transform: translateY(-4px); }
+.platform-img { aspect-ratio: 1; border-radius: 14px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0,0,0,0.1); position: relative; }
 .platform-img img { width: 100%; height: 100%; object-fit: cover; }
-.platform-name { font-size: 12px; font-weight: 700; }
-.platform-size { font-size: 10px; color: var(--ink-muted); }
+.platform-tag {
+  position: absolute; top: 8px; left: 8px; color: white;
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+}
+.platform-tag.meituan { background: rgba(255,193,7,0.95); color: #333; }
+.platform-tag.taobao { background: rgba(255,106,0,0.95); }
+.platform-tag.xhs { background: rgba(254,44,85,0.95); }
+.platform-tag.douyin { background: rgba(0,0,0,0.8); }
+.platform-name { font-size: 13px; font-weight: 700; }
+.platform-size { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
 .platform-action { text-align: center; }
 .btn-platform {
-  background: var(--orange); color: white; padding: 12px 28px;
-  border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+  background: var(--orange); color: white; padding: 14px 32px;
+  border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
   cursor: pointer; transition: all 0.2s; width: 100%;
 }
-.btn-platform:hover { background: var(--orange-dark); }
+.btn-platform:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(234,88,12,0.3); }
 
-/* 知识库卡片 */
-.kb-card {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+/* 更多能力 */
+.more { padding: 100px 0; background: var(--paper); }
+.more-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.more-header { text-align: center; margin-bottom: 56px; }
+.more-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }
+.more h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+.more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.more-card {
+  background: white; border-radius: 16px; padding: 28px 24px;
+  border: 1px solid var(--line); transition: all 0.3s;
 }
-.kb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.kb-title { font-size: 14px; font-weight: 700; }
-.kb-count { font-size: 11px; color: var(--ink-muted); }
-.kb-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.kb-tab {
-  padding: 6px 14px; border: 1px solid var(--line); background: var(--paper);
-  border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
-  transition: all 0.2s; color: var(--ink-soft);
+.more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }
+.more-icon {
+  width: 44px; height: 44px; border-radius: 12px; background: rgba(234,88,12,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: var(--orange); margin-bottom: 16px;
 }
-.kb-tab.active { background: var(--orange); color: white; border-color: var(--orange); }
-.kb-tab.disabled { opacity: 0.4; cursor: not-allowed; }
-.kb-content { display: flex; flex-direction: column; gap: 10px; }
-.kb-item {
-  background: var(--paper); border-radius: 10px; padding: 14px 16px;
-  border-left: 3px solid var(--orange);
-}
-.kb-item-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-.kb-item-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+.more-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+.more-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.8; }
 
-/* 批量处理卡片 */
-.batch-card {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
-}
-.batch-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.batch-title { font-size: 14px; font-weight: 700; }
-.batch-status { font-size: 12px; color: var(--orange); font-weight: 700; }
-.batch-stats { display: flex; gap: 16px; margin-bottom: 16px; }
-.batch-stat { flex: 1; background: var(--paper); border-radius: 10px; padding: 12px; text-align: center; }
-.batch-num { display: block; font-size: 24px; font-weight: 800; color: var(--ink); }
-.batch-label { font-size: 11px; color: var(--ink-muted); }
-.batch-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-.batch-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--paper); border-radius: 10px; }
-.batch-thumb { width: 40px; height: 40px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-.batch-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.batch-info { flex: 1; }
-.batch-name { font-size: 12px; font-weight: 600; }
-.batch-result { font-size: 11px; color: var(--ink-muted); }
-.batch-state { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
-.batch-state.done { color: var(--green); }
-.batch-state.processing { color: var(--orange); }
-.spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.batch-footer { text-align: center; font-size: 12px; color: var(--ink-muted); padding-top: 12px; border-top: 1px solid var(--line); }
-
-/* 成本对比卡片 */
-.cost-card {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
-}
-.cost-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.cost-title { font-size: 14px; font-weight: 700; }
-.cost-subtitle { font-size: 12px; color: var(--ink-muted); }
-.cost-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; margin-bottom: 16px; }
-.cost-side { border-radius: 12px; padding: 16px; text-align: center; }
-.cost-side.old { background: var(--paper); border: 1px solid var(--line); }
-.cost-side.new { background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.2); }
-.cost-side-label { font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; }
-.cost-side-num { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-.cost-side.old .cost-side-num { color: #999; text-decoration: line-through; }
-.cost-side.new .cost-side-num { color: var(--orange); }
-.cost-side-item { font-size: 11px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 4px; }
-.cost-vs { display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--ink-muted); }
-.cost-saving {
-  background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  border-radius: 12px; padding: 16px; text-align: center; color: white;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-}
-.saving-num { font-size: 28px; font-weight: 900; }
-.saving-percent { font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; }
-
-/* 安全中心卡片 */
-.security-card {
-  background: white; border-radius: 20px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
-}
-.security-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.security-title { font-size: 14px; font-weight: 700; }
-.security-badge { font-size: 11px; color: var(--green); font-weight: 700; background: rgba(22,163,74,0.1); padding: 4px 10px; border-radius: 6px; }
-.security-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-.security-item { background: var(--paper); border-radius: 10px; padding: 14px; text-align: center; }
-.security-icon { font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--ink); letter-spacing: 0.5px; }
-.security-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
-.security-desc { font-size: 10px; color: var(--ink-muted); }
-.security-log { background: var(--paper); border-radius: 10px; padding: 12px; }
-.log-item { display: flex; gap: 12px; padding: 6px 0; font-size: 11px; color: var(--ink-soft); border-bottom: 1px solid var(--line); }
-.log-item:last-child { border-bottom: none; }
-.log-time { color: var(--ink-muted); flex-shrink: 0; width: 90px; }
-
-/* ===== 行业场景 ===== */
-.scenarios { padding: 100px 0; background: var(--paper); }
-.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-.scenarios-header { text-align: center; margin-bottom: 60px; }
-.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 2px; margin-bottom: 16px; }
-.scenarios h2 { font-size: 36px; font-weight: 800; margin-bottom: 16px; }
-.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 600px; margin: 0 auto; }
+/* 行业场景 */
+.scenarios { padding: 100px 0; background: var(--white); }
+.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.scenarios-header { text-align: center; margin-bottom: 56px; }
+.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }
+.scenarios h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 500px; margin: 12px auto 0; }
 .scenarios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 .scenario-card {
-  background: white; border-radius: 20px; padding: 32px;
+  background: var(--paper); border-radius: 20px; padding: 32px;
   border: 1px solid var(--line); transition: all 0.3s;
   display: flex; gap: 24px; align-items: flex-start;
 }
-.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.1); border-color: rgba(234,88,12,0.3); }
+.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }
 .scenario-icon {
-  width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 800; color: var(--ink);
+  font-size: 22px; font-weight: 800; color: var(--ink);
 }
-.scenario-icon.food { background: rgba(234,88,12,0.1); }
-.scenario-icon.home { background: rgba(139,92,246,0.1); }
-.scenario-icon.car { background: rgba(59,130,246,0.1); }
-.scenario-icon.deco { background: rgba(16,185,129,0.1); }
-.scenario-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.scenario-icon.food { background: rgba(234,88,12,0.1); color: var(--orange); }
+.scenario-icon.home { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+.scenario-icon.car { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.scenario-icon.deco { background: rgba(16,185,129,0.1); color: #10b981; }
+.scenario-content h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
 .scenario-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }
 .scenario-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-.scenario-tag { font-size: 11px; color: var(--ink-muted); background: var(--paper); padding: 4px 10px; border-radius: 6px; }
+.scenario-tag { font-size: 11px; color: var(--ink-muted); background: white; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); }
+.scenario-soon { font-size: 11px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.08); padding: 3px 8px; border-radius: 6px; margin-left: 8px; }
 
-/* ===== CTA ===== */
-.cta { padding: 100px 0; background: var(--ink); position: relative; overflow: hidden; }
+/* CTA */
+.cta { padding: 120px 0; background: var(--ink); position: relative; overflow: hidden; }
 .cta::before {
   content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 800px; height: 800px; border-radius: 50%;
+  width: 900px; height: 900px; border-radius: 50%;
   background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 60%);
 }
-.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 32px; text-align: center; position: relative; z-index: 1; }
-.cta h2 { font-size: 44px; font-weight: 800; color: white; line-height: 1.3; margin-bottom: 20px; }
+.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; text-align: center; position: relative; z-index: 1; }
+.cta h2 { font-size: 48px; font-weight: 900; color: white; line-height: 1.2; margin-bottom: 24px; letter-spacing: -2px; }
 .cta h2 .highlight { color: var(--orange-light); }
-.cta p { font-size: 18px; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.8; }
+.cta p { font-size: 19px; color: rgba(255,255,255,0.6); margin-bottom: 48px; line-height: 1.8; }
 .cta-buttons { display: flex; gap: 16px; justify-content: center; }
-.cta .btn-primary { font-size: 18px; padding: 18px 40px; }
-.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 40px; }
+.cta .btn-primary { font-size: 18px; padding: 18px 44px; }
+.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 44px; }
 .cta .btn-secondary:hover { border-color: white; }
 
-/* ===== 页脚 ===== */
-.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.1); padding: 60px 0 30px; }
-.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.footer-brand .footer-logo { font-size: 24px; font-weight: 800; color: white; margin-bottom: 12px; }
+/* 页脚 */
+.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 60px 0 30px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-brand .footer-logo { font-size: 22px; font-weight: 800; color: white; margin-bottom: 14px; }
 .footer-brand .footer-logo span { color: var(--orange); }
-.footer-brand p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.8; }
-.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 16px; }
-.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 10px; transition: color 0.2s; }
+.footer-brand p { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.9; }
+.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 18px; }
+.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 12px; transition: color 0.2s; }
 .footer-col a:hover { color: var(--orange-light); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
-.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.4); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.35); }
 .footer-links { display: flex; gap: 24px; }
-.footer-links a { font-size: 12px; color: rgba(255,255,255,0.4); }
+.footer-links a { font-size: 12px; color: rgba(255,255,255,0.35); }
 
 /* 响应式 */
 @media (max-width: 900px) {
-  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 40px; }
-  .hero h1 { font-size: 36px; }
-  .feature-title { font-size: 28px; }
+  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 48px; }
+  .hero h1 { font-size: 40px; }
+  .feature-title { font-size: 30px; }
+  .pain h2, .more h2, .scenarios h2 { font-size: 28px; }
   .pain-cards, .scenarios-grid { grid-template-columns: 1fr; }
+  .more-grid { grid-template-columns: repeat(2, 1fr); }
   .platform-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .hero-stats { gap: 28px; }
+  .cta h2 { font-size: 32px; }
 }
 </style>
 </head>
 <body>
 
-<!-- 导航 -->
-<nav class="nav">
+<!-- 导航（与首页一致） -->
+<header class="nav" id="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo"><span>Work</span>Hogee</a>
-    <div class="nav-links">
-      <a href="#features">核心能力</a>
-      <a href="#scenarios">行业场景</a>
-      <a href="#pricing">价格方案</a>
-      <a href="huoer-dynamic.html">图片动态化</a>
-      <a href="index.html" class="nav-cta">免费下载</a>
-    </div>
+    <a href="/index.html" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/huoer.html" class="nav-product-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>活儿伙计
+      </a>
+      <a href="/geo.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计
+      </a>
+      <a href="/global.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计
+      </a>
+      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
+      <a class="nav-cta" href="#download">免费下载</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-</nav>
+</header>
 
 <!-- Hero -->
 <section class="hero">
@@ -419,7 +407,7 @@ img { max-width: 100%; display: block; }
       <h1>你有活儿，<br><span class="highlight">喊伙计</span>。</h1>
       <p class="hero-desc">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张手机实拍，20秒变成能直接上架的专业商品图。</p>
       <div class="hero-buttons">
-        <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">立即体验 →</button>
+        <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">立即体验</button>
         <button class="btn-secondary">观看演示</button>
       </div>
       <div class="hero-stats">
@@ -461,7 +449,7 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- 痛点场景 -->
+<!-- 痛点 -->
 <section class="pain">
   <div class="pain-inner">
     <div class="pain-header">
@@ -473,7 +461,7 @@ img { max-width: 100%; display: block; }
         <div class="pain-num">01</div>
         <h3>拍图难</h3>
         <p>没有专业摄影棚，没有补光灯，手机拍出来的图要么光线暗、要么背景乱，自己都看不上，更别说吸引客户下单。</p>
-        <div class="cost">平均3小时<span>/组图</span></div>
+        <div class="cost">3小时<span>/组图</span></div>
       </div>
       <div class="pain-card">
         <div class="pain-num">02</div>
@@ -495,7 +483,7 @@ img { max-width: 100%; display: block; }
 <section class="feature" id="features">
   <div class="feature-inner">
     <div class="feature-text">
-      <div class="feature-num">01</div>
+      <div class="feature-num">核心能力 01</div>
       <h2 class="feature-title">20秒，<span class="highlight">一张专业图</span></h2>
       <p class="feature-desc">不用学PS，不用找设计师。上传一张手机实拍，AI自动识别产品、匹配行业风格、生成专业场景图。从"能看"到"能卖"，只需要20秒。</p>
       <div class="feature-points">
@@ -507,7 +495,7 @@ img { max-width: 100%; display: block; }
     <div class="feature-visual">
       <div class="compare-card">
         <div class="compare-header">
-          <span class="compare-label">前后对比</span>
+          <span class="compare-label">前后对比 · 花瓶场景图</span>
           <span class="compare-time">耗时 20秒</span>
         </div>
         <div class="compare-body">
@@ -531,11 +519,11 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- 核心能力2：直接上架 -->
+<!-- 核心能力2：全平台上架 -->
 <section class="feature feature-alt">
   <div class="feature-inner reverse">
     <div class="feature-text">
-      <div class="feature-num">02</div>
+      <div class="feature-num">核心能力 02</div>
       <h2 class="feature-title">一次生成，<span class="highlight">全平台直接上架</span></h2>
       <p class="feature-desc">美团要800×800，淘宝要白底主图，小红书要3:4，抖音要9:16。活儿伙计自动适配所有平台尺寸和规范，一次生成，一键发布，不用再一张一张裁。</p>
       <div class="feature-points">
@@ -546,25 +534,41 @@ img { max-width: 100%; display: block; }
     </div>
     <div class="feature-visual">
       <div class="platform-showcase">
+        <div class="platform-header">
+          <span class="platform-title">各平台自动适配效果</span>
+          <span class="platform-count">4个平台 · 一次生成</span>
+        </div>
         <div class="platform-grid">
-          <div class="platform-item meituan">
-            <div class="platform-img"><img src="images/dish-hongshaorou.jpg" alt="美团"></div>
-            <div class="platform-name">美团</div>
-            <div class="platform-size">800×800</div>
+          <div class="platform-item">
+            <div class="platform-img">
+              <img src="images/dish-hongshaorou.jpg" alt="美团">
+              <span class="platform-tag meituan">美团</span>
+            </div>
+            <div class="platform-name">餐饮菜品</div>
+            <div class="platform-size">800×800 1:1</div>
           </div>
-          <div class="platform-item taobao">
-            <div class="platform-img"><img src="images/taobao-vase-white.jpg" alt="淘宝"></div>
-            <div class="platform-name">淘宝</div>
+          <div class="platform-item">
+            <div class="platform-img">
+              <img src="images/taobao-vase-white.jpg" alt="淘宝">
+              <span class="platform-tag taobao">淘宝</span>
+            </div>
+            <div class="platform-name">电商商品</div>
             <div class="platform-size">白底主图</div>
           </div>
-          <div class="platform-item xiaohongshu">
-            <div class="platform-img"><img src="images/after-vase.jpg" alt="小红书"></div>
-            <div class="platform-name">小红书</div>
+          <div class="platform-item">
+            <div class="platform-img">
+              <img src="images/after-vase.jpg" alt="小红书">
+              <span class="platform-tag xhs">小红书</span>
+            </div>
+            <div class="platform-name">家居种草</div>
             <div class="platform-size">3:4 竖版</div>
           </div>
-          <div class="platform-item douyin">
-            <div class="platform-img"><img src="images/douyin-hongshaorou-cover.jpg" alt="抖音"></div>
-            <div class="platform-name">抖音</div>
+          <div class="platform-item">
+            <div class="platform-img">
+              <img src="images/douyin-hongshaorou-cover.jpg" alt="抖音">
+              <span class="platform-tag douyin">抖音</span>
+            </div>
+            <div class="platform-name">美食视频</div>
             <div class="platform-size">9:16 封面</div>
           </div>
         </div>
@@ -576,203 +580,45 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- 核心能力3：行业大脑 -->
-<section class="feature">
-  <div class="feature-inner">
-    <div class="feature-text">
-      <div class="feature-num">03</div>
-      <h2 class="feature-title">每个行业，<span class="highlight">都有一个专属大脑</span></h2>
-      <p class="feature-desc">不是通用AI随便生成。活儿伙计内置行业知识库——餐饮有24节气氛围词库、拍摄角度规范；家居有8种风格描述词、材质光影模板。每个行业的"好图标准"，都已经内置好了。</p>
-      <div class="feature-points">
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>餐饮知识包</strong> — 24节气氛围词、5种菜品风格、美团/饿了么尺寸规范</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>家居知识包</strong> — 北欧/侘寂/中古/法式等8种风格、材质光影模板</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>持续扩展</strong> — 车行、装修、服装、美妆，更多行业大脑陆续上线</div></div>
-      </div>
+<!-- 更多能力 -->
+<section class="more">
+  <div class="more-inner">
+    <div class="more-header">
+      <div class="more-tag">更多能力</div>
+      <h2>不只是出图，是完整的工作流</h2>
     </div>
-    <div class="feature-visual">
-      <div class="kb-card">
-        <div class="kb-header">
-          <span class="kb-title">行业知识库</span>
-          <span class="kb-count">2个行业 · 500+词条</span>
-        </div>
-        <div class="kb-tabs">
-          <button class="kb-tab active">餐饮版</button>
-          <button class="kb-tab">家居/饰品版</button>
-          <button class="kb-tab disabled">车行版 即将</button>
-          <button class="kb-tab disabled">装修版 即将</button>
-        </div>
-        <div class="kb-content">
-          <div class="kb-item">
-            <div class="kb-item-title">立冬·饺子氛围词</div>
-            <div class="kb-item-desc">暖光、木质餐桌、热气腾腾、白瓷盘、醋碟、筷子</div>
-          </div>
-          <div class="kb-item">
-            <div class="kb-item-title">菜品拍摄角度规范</div>
-            <div class="kb-item-desc">45°俯拍为主、暖光色温3200K、留白30%</div>
-          </div>
-          <div class="kb-item">
-            <div class="kb-item-title">5种菜品风格模板</div>
-            <div class="kb-item-desc">家常菜、精致摆盘、日式居酒屋、街头小吃、高端料理</div>
-          </div>
-          <div class="kb-item">
-            <div class="kb-item-title">平台尺寸规范</div>
-            <div class="kb-item-desc">美团800×800、饿了么800×800、抖音9:16封面</div>
-          </div>
-        </div>
+    <div class="more-grid">
+      <div class="more-card">
+        <div class="more-icon">KB</div>
+        <h3>行业大脑</h3>
+        <p>餐饮24节气氛围词、家居8种风格模板，每个行业的"好图标准"都内置好了。</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- 核心能力4：批量处理 -->
-<section class="feature feature-alt">
-  <div class="feature-inner reverse">
-    <div class="feature-text">
-      <div class="feature-num">04</div>
-      <h2 class="feature-title">50张图，<span class="highlight">一杯咖啡的时间</span></h2>
-      <p class="feature-desc">新品上架，一次要处理几十上百张图？活儿伙计支持批量上传、批量生成、批量发布。50张图，从上传到全部生成完成，只需要一杯咖啡的时间。</p>
-      <div class="feature-points">
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>批量上传</strong> — 一次拖入50张，自动排队处理</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>并行生成</strong> — 多任务同时处理，不用一张一张等</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>进度实时</strong> — 每张图的处理状态实时可见，完成自动通知</div></div>
+      <div class="more-card">
+        <div class="more-icon">50+</div>
+        <h3>批量处理</h3>
+        <p>一次拖入50张，自动排队并行生成，一杯咖啡的时间全部搞定。</p>
       </div>
-    </div>
-    <div class="feature-visual">
-      <div class="batch-card">
-        <div class="batch-header">
-          <span class="batch-title">批量任务队列</span>
-          <span class="batch-status">处理中 3/50</span>
-        </div>
-        <div class="batch-stats">
-          <div class="batch-stat"><span class="batch-num">47</span><span class="batch-label">已完成</span></div>
-          <div class="batch-stat"><span class="batch-num">3</span><span class="batch-label">处理中</span></div>
-          <div class="batch-stat"><span class="batch-num">0</span><span class="batch-label">失败</span></div>
-        </div>
-        <div class="batch-list">
-          <div class="batch-item done">
-            <div class="batch-thumb"><img src="images/before-vase.jpg" alt=""></div>
-            <div class="batch-info"><div class="batch-name">花瓶_001.jpg</div><div class="batch-result">侘寂风场景 · 已完成</div></div>
-            <div class="batch-state done">✓</div>
-          </div>
-          <div class="batch-item done">
-            <div class="batch-thumb"><img src="images/dish-hongshaorou.jpg" alt=""></div>
-            <div class="batch-info"><div class="batch-name">红烧肉_主图.jpg</div><div class="batch-result">精致摆盘 · 已完成</div></div>
-            <div class="batch-state done">✓</div>
-          </div>
-          <div class="batch-item processing">
-            <div class="batch-thumb"><img src="images/taobao-vase-white.jpg" alt=""></div>
-            <div class="batch-info"><div class="batch-name">花瓶_淘宝版.jpg</div><div class="batch-result">白底主图 · 生成中 65%</div></div>
-            <div class="batch-state processing"><div class="spinner"></div></div>
-          </div>
-        </div>
-        <div class="batch-footer">预计剩余时间：2分30秒</div>
+      <div class="more-card">
+        <div class="more-icon">¥</div>
+        <h3>按张计费</h3>
+        <p>用一张算一张，没有年费、没有最低消费，额度永久有效。</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- 核心能力5：按张计费 -->
-<section class="feature">
-  <div class="feature-inner">
-    <div class="feature-text">
-      <div class="feature-num">05</div>
-      <h2 class="feature-title">按张计费，<span class="highlight">用多少花多少</span></h2>
-      <p class="feature-desc">不搞年费套路，不搞最低消费。用一张算一张的钱，没用完的额度永久有效。小商家一个月可能只用几十张，那就只付几十张的钱。</p>
-      <div class="feature-points">
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>按张计费</strong> — 用一张算一张，没有年费、没有最低消费</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>额度永久有效</strong> — 买的额度不会过期，什么时候用都行</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>成本透明</strong> — 每张图的消耗清晰可见，不花糊涂账</div></div>
-      </div>
-    </div>
-    <div class="feature-visual">
-      <div class="cost-card">
-        <div class="cost-header">
-          <span class="cost-title">成本对比</span>
-          <span class="cost-subtitle">每月100张图</span>
-        </div>
-        <div class="cost-compare">
-          <div class="cost-side old">
-            <div class="cost-side-label">传统方式</div>
-            <div class="cost-side-num">¥10,000</div>
-            <div class="cost-side-item">设计师 ¥100/张 × 100张</div>
-            <div class="cost-side-item">沟通返工时间 不计</div>
-          </div>
-          <div class="cost-vs">VS</div>
-          <div class="cost-side new">
-            <div class="cost-side-label">活儿伙计</div>
-            <div class="cost-side-num">¥99</div>
-            <div class="cost-side-item">按张计费 ¥0.99/张 × 100张</div>
-            <div class="cost-side-item">20秒出图 不用等</div>
-          </div>
-        </div>
-        <div class="cost-saving">
-          <span>每月节省</span>
-          <span class="saving-num">¥9,901</span>
-          <span class="saving-percent">省99%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 核心能力6：数据安全 -->
-<section class="feature feature-alt">
-  <div class="feature-inner reverse">
-    <div class="feature-text">
-      <div class="feature-num">06</div>
-      <h2 class="feature-title">你的图，<span class="highlight">只有你能看</span></h2>
-      <p class="feature-desc">上传的每一张图、生成的每一个结果，都只属于你。我们不会用你的图片训练模型，不会分享给第三方，不会在任何地方展示。数据加密存储，随时可以删除。</p>
-      <div class="feature-points">
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>不训练模型</strong> — 你的图片不会被用于训练任何AI模型</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>加密存储</strong> — 数据传输和存储全程加密，符合等保要求</div></div>
-        <div class="feature-point"><div class="point-icon">✓</div><div><strong>随时删除</strong> — 一键清空所有数据，不留任何痕迹</div></div>
-      </div>
-    </div>
-    <div class="feature-visual">
-      <div class="security-card">
-        <div class="security-header">
-          <span class="security-title">安全中心</span>
-          <span class="security-badge">已启用</span>
-        </div>
-        <div class="security-grid">
-          <div class="security-item">
-            <div class="security-icon">TLS</div>
-            <div class="security-name">传输加密</div>
-            <div class="security-desc">TLS 1.3</div>
-          </div>
-          <div class="security-item">
-            <div class="security-icon">AES</div>
-            <div class="security-name">存储加密</div>
-            <div class="security-desc">AES-256</div>
-          </div>
-          <div class="security-item">
-            <div class="security-icon">NO</div>
-            <div class="security-name">不训练</div>
-            <div class="security-desc">数据隔离</div>
-          </div>
-          <div class="security-item">
-            <div class="security-icon">III</div>
-            <div class="security-name">等保三级</div>
-            <div class="security-desc">合规认证</div>
-          </div>
-        </div>
-        <div class="security-log">
-          <div class="log-item"><span class="log-time">今天 14:32</span><span>上传图片 12 张 · 已加密存储</span></div>
-          <div class="log-item"><span class="log-time">今天 14:30</span><span>生成图片 12 张 · 仅本人可见</span></div>
-          <div class="log-item"><span class="log-time">昨天 18:05</span><span>删除历史图片 50 张 · 已彻底清除</span></div>
-        </div>
+      <div class="more-card">
+        <div class="more-icon">SSL</div>
+        <h3>数据安全</h3>
+        <p>你的图只有你能看，不训练模型、不分享第三方，随时可删除。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- 行业场景 -->
-<section class="scenarios" id="scenarios">
+<section class="scenarios">
   <div class="scenarios-inner">
     <div class="scenarios-header">
       <div class="scenarios-tag">覆盖行业</div>
       <h2>哪个行业，都有专属伙计</h2>
-      <p class="scenarios-desc">不止餐饮和家居，更多行业大脑正在陆续上线。每个行业的"好图标准"，我们都帮你内置好了。</p>
+      <p class="scenarios-desc">不止餐饮和家居，更多行业大脑正在陆续上线。</p>
     </div>
     <div class="scenarios-grid">
       <div class="scenario-card">
@@ -784,7 +630,7 @@ img { max-width: 100%; display: block; }
             <span class="scenario-tag">美团外卖</span>
             <span class="scenario-tag">饿了么</span>
             <span class="scenario-tag">抖音团购</span>
-            <span class="scenario-tag">小红书种草</span>
+            <span class="scenario-tag">小红书</span>
           </div>
         </div>
       </div>
@@ -792,7 +638,7 @@ img { max-width: 100%; display: block; }
         <div class="scenario-icon home">居</div>
         <div class="scenario-content">
           <h3>家居/饰品版 · 已上线</h3>
-          <p>北欧、侘寂、中古、法式、奶油风等8种风格描述词，原木/陶瓷/玻璃/金属材质光影模板。一张白底图，秒变杂志级场景图。</p>
+          <p>北欧、侘寂、中古、法式、奶油风等8种风格描述词，材质光影模板。一张白底图，秒变杂志级场景图。</p>
           <div class="scenario-tags">
             <span class="scenario-tag">淘宝电商</span>
             <span class="scenario-tag">小红书</span>
@@ -804,8 +650,8 @@ img { max-width: 100%; display: block; }
       <div class="scenario-card">
         <div class="scenario-icon car">车</div>
         <div class="scenario-content">
-          <h3>车行版 · 即将上线</h3>
-          <p>二手车实拍图一键生成展厅效果图，4S店级布光、专业角度、品牌背景。不用租展厅，不用请摄影师，手机拍的也能卖出好价钱。</p>
+          <h3>车行版<span class="scenario-soon">即将上线</span></h3>
+          <p>二手车实拍图一键生成展厅效果图，4S店级布光、专业角度。不用租展厅，不用请摄影师，手机拍的也能卖出好价钱。</p>
           <div class="scenario-tags">
             <span class="scenario-tag">瓜子二手车</span>
             <span class="scenario-tag">懂车帝</span>
@@ -816,8 +662,8 @@ img { max-width: 100%; display: block; }
       <div class="scenario-card">
         <div class="scenario-icon deco">装</div>
         <div class="scenario-content">
-          <h3>装修版 · 即将上线</h3>
-          <p>毛坯房实拍一键生成装修效果图，北欧/现代/中式等多种风格，家具摆放、灯光氛围自动匹配。签单率提升，客户一眼就懂。</p>
+          <h3>装修版<span class="scenario-soon">即将上线</span></h3>
+          <p>毛坯房实拍一键生成装修效果图，北欧/现代/中式等多种风格，家具摆放、灯光氛围自动匹配。签单率提升。</p>
           <div class="scenario-tags">
             <span class="scenario-tag">土巴兔</span>
             <span class="scenario-tag">齐家网</span>
@@ -830,12 +676,12 @@ img { max-width: 100%; display: block; }
 </section>
 
 <!-- CTA -->
-<section class="cta" id="pricing">
+<section class="cta" id="download">
   <div class="cta-inner">
     <h2>你有活儿，<span class="highlight">现在就喊伙计</span>。</h2>
     <p>下载WorkHogee客户端，免费体验全部功能。第一张图，20秒后见。</p>
     <div class="cta-buttons">
-      <button class="btn-primary">免费下载 →</button>
+      <button class="btn-primary">免费下载</button>
       <button class="btn-secondary">在线体验</button>
     </div>
   </div>
@@ -851,14 +697,14 @@ img { max-width: 100%; display: block; }
       </div>
       <div class="footer-col">
         <h4>产品</h4>
-        <a href="index.html">AI获客伙计</a>
-        <a href="huoer.html">活儿伙计</a>
-        <a href="geo.html">GEO伙计</a>
-        <a href="global.html">出海伙计</a>
+        <a href="/index.html">AI获客伙计</a>
+        <a href="/huoer.html">活儿伙计</a>
+        <a href="/geo.html">GEO伙计</a>
+        <a href="/global.html">出海伙计</a>
       </div>
       <div class="footer-col">
         <h4>资源</h4>
-        <a href="huoer-dynamic.html">图片动态化</a>
+        <a href="/huoer-dynamic.html">图片动态化</a>
         <a href="#">使用文档</a>
         <a href="#">常见问题</a>
         <a href="#">更新日志</a>
