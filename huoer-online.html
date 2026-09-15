@@ -823,7 +823,7 @@ async function callAPI() {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
     body: JSON.stringify({
       model: 'ep-m-20260915134242-p4rpr',
-      prompt: '专业电商商品图，' + versionNames[state.currentVersion] + '适配，高质量，专业布光，干净背景',
+      prompt: '专业电商商品摄影图，严格保留原图商品主体的形状颜色细节完全不变，仅替换背景为专业电商场景，搭配商业级布光氛围，' + versionNames[state.currentVersion] + '风格，高分辨率商业摄影质感，适合直接上架',
       image: imageBase64,
       size: '2048x2048',
       response_format: 'b64_json'
