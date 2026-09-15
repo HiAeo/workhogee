@@ -347,7 +347,85 @@ img { max-width: 100%; display: block; }
 .footer-links a { font-size: 12.5px; color: #7c7468; }
 .footer-links a:hover { color: var(--orange-light); }
 
-/* ===== 响应式 ===== */
+/* ===== 在线工作台演示 ===== */
+.workspace-demo { padding: 60px 0 80px; background: var(--white); }
+.workspace-demo-title { text-align: center; margin-bottom: 36px; }
+.workspace-demo-title h3 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+.workspace-demo-title p { color: var(--ink-soft); font-size: 15px; }
+.workspace-panel {
+  background: var(--paper); border-radius: var(--radius-lg); padding: 32px;
+  border: 1px solid var(--line); box-shadow: var(--shadow-md);
+}
+.workspace-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 28px;
+}
+.workspace-panel-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
+.workspace-panel-title .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+.workspace-panel-badge { font-size: 12px; color: var(--orange); background: rgba(234,88,12,0.1); padding: 5px 14px; border-radius: 12px; font-weight: 700; }
+.workspace-panel-body { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 20px; align-items: center; }
+.workspace-arrow { display: flex; align-items: center; justify-content: center; }
+.workspace-arrow svg { width: 32px; height: 32px; color: var(--orange); animation: arrowMove 1.5s ease-in-out infinite; }
+@keyframes arrowMove { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+.workspace-upload-area, .workspace-result-area {
+  background: var(--white); border-radius: var(--radius-md); padding: 28px;
+  text-align: center; border: 2px dashed var(--line); min-height: 280px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.workspace-result-area { border-style: solid; border-color: var(--orange); background: linear-gradient(135deg, #fff7ed, #ffedd5); }
+.workspace-upload-area svg { width: 48px; height: 48px; color: var(--ink-muted); margin-bottom: 16px; }
+.workspace-upload-area h4 { font-size: 18px; margin-bottom: 8px; }
+.workspace-upload-area p { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+.workspace-upload-btn {
+  padding: 10px 24px; background: var(--ink); color: var(--white);
+  border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; transition: all 0.2s;
+}
+.workspace-upload-btn:hover { background: var(--orange); }
+.workspace-result-img {
+  width: 160px; height: 160px; background: var(--white); border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.workspace-result-img::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 2s infinite;
+}
+.workspace-result-img svg { width: 56px; height: 56px; color: var(--orange); }
+.workspace-result-area h4 { font-size: 16px; margin-bottom: 6px; }
+.workspace-result-area p { font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; }
+.workspace-result-tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.workspace-result-tag { font-size: 10px; padding: 3px 8px; background: rgba(22,163,74,0.1); color: var(--green); border-radius: 10px; font-weight: 700; }
+.workspace-version-content { display: none; }
+.workspace-version-content.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== 下载区域 ===== */
+.download-section { padding: 80px 0; background: var(--paper); }
+.download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.download-card {
+  background: var(--white); border-radius: var(--radius-lg); padding: 40px;
+  border: 1px solid var(--line); text-align: center; transition: all 0.3s;
+}
+.download-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+.download-card-icon {
+  width: 72px; height: 72px; margin: 0 auto 24px; background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(234,88,12,0.3);
+}
+.download-card-icon svg { width: 36px; height: 36px; color: var(--white); }
+.download-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.download-card p { font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.7; }
+.download-card .btn { width: 100%; justify-content: center; }
+.download-card .version-info { font-size: 12px; color: var(--ink-muted); margin-top: 16px; }
+
+/* ===== 响应式补充 ===== */
+@media (max-width: 968px) {
+  .workspace-panel-body { grid-template-columns: 1fr; }
+  .workspace-arrow { transform: rotate(90deg); }
+  .download-grid { grid-template-columns: 1fr; }
+}
 @media (max-width: 968px) {
   .hero-inner { grid-template-columns: 1fr; gap: 48px; }
   .hero h1 { font-size: 38px; }
@@ -410,11 +488,11 @@ img { max-width: 100%; display: block; }
         <p class="hero-slogan">你有活儿，喊伙计。</p>
         <p class="hero-sub">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。餐饮、家居、车行、装修……你有活儿，喊伙计。</p>
         <div class="hero-cta">
-          <a href="#demo" class="btn-primary">
+          <a href="#workspace" class="btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             在线体验
           </a>
-          <a href="#usage" class="btn-secondary">
+          <a href="#download" class="btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             下载客户端
           </a>
@@ -485,7 +563,7 @@ img { max-width: 100%; display: block; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         餐饮版
       </div>
-      <div class="version-tab active" onclick="switchVersion('home', this)">
+      <div class="version-tab" onclick="switchVersion('home', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         家居/饰品版
       </div>
@@ -498,6 +576,88 @@ img { max-width: 100%; display: block; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
         装修版
         <span class="coming-soon">即将推出</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 在线工作台演示 ===== -->
+<section class="workspace-demo" id="workspace">
+  <div class="container">
+    <div class="workspace-demo-title">
+      <h3>在线工作台 · 实时演示</h3>
+      <p>选择上方行业版本，查看不同场景的AI出图效果</p>
+    </div>
+
+    <!-- 餐饮版演示 -->
+    <div class="workspace-version-content active" id="version-food">
+      <div class="workspace-panel">
+        <div class="workspace-panel-header">
+          <div class="workspace-panel-title">
+            <span class="status-dot"></span>
+            活儿伙计 · 餐饮版在线工作台
+          </div>
+          <div class="workspace-panel-badge">餐饮版</div>
+        </div>
+        <div class="workspace-panel-body">
+          <div class="workspace-upload-area">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <h4>上传菜品原图</h4>
+            <p>手机拍的红烧肉，不用修图直接上传</p>
+            <button class="workspace-upload-btn" onclick="alert('在线版即将开放真实上传功能，敬请期待！')">选择图片上传</button>
+          </div>
+          <div class="workspace-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+          <div class="workspace-result-area">
+            <div class="workspace-result-img">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
+            </div>
+            <h4>精致摆盘红烧肉</h4>
+            <p>45°俯拍 · 暖光氛围 · 白色圆盘</p>
+            <div class="workspace-result-tags">
+              <span class="workspace-result-tag">800×800 美团尺寸</span>
+              <span class="workspace-result-tag">无水印</span>
+              <span class="workspace-result-tag">可直接上架</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 家居/饰品版演示 -->
+    <div class="workspace-version-content" id="version-home">
+      <div class="workspace-panel">
+        <div class="workspace-panel-header">
+          <div class="workspace-panel-title">
+            <span class="status-dot"></span>
+            活儿伙计 · 家居/饰品版在线工作台
+          </div>
+          <div class="workspace-panel-badge">家居/饰品版</div>
+        </div>
+        <div class="workspace-panel-body">
+          <div class="workspace-upload-area">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <h4>上传商品原图</h4>
+            <p>白底陶瓷花瓶，直接上传生成场景图</p>
+            <button class="workspace-upload-btn" onclick="alert('在线版即将开放真实上传功能，敬请期待！')">选择图片上传</button>
+          </div>
+          <div class="workspace-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+          <div class="workspace-result-area">
+            <div class="workspace-result-img">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h4>侘寂风场景图</h4>
+            <p>原木桌面 · 亚麻背景 · 自然光氛围</p>
+            <div class="workspace-result-tags">
+              <span class="workspace-result-tag">800×800 淘宝主图</span>
+              <span class="workspace-result-tag">3:4 小红书</span>
+              <span class="workspace-result-tag">可直接上架</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -702,7 +862,44 @@ img { max-width: 100%; display: block; }
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>本地历史记录，快速复用</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>专业版/企业版优先体验新功能</li>
         </ul>
-        <a href="/#platforms" class="btn-secondary btn" style="display: flex;">下载客户端</a>
+        <a href="#download" class="btn-secondary btn" style="display: flex;">前往下载</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 下载区域 ===== -->
+<section class="download-section" id="download">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-kicker">客户端下载</span>
+      <h2>下载活儿伙计客户端</h2>
+      <p>支持Windows和macOS双系统，批量处理更高效，后台自动出图</p>
+    </div>
+    <div class="download-grid">
+      <div class="download-card">
+        <div class="download-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Windows 版</h3>
+        <p>支持Windows 10/11系统，64位操作系统，一键安装即用，适合大多数商家</p>
+        <button class="btn-primary" onclick="alert('Windows客户端即将发布，敬请期待！')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载 Windows 版
+        </button>
+        <div class="version-info">v1.0.0 · 约 85MB · 2026年9月更新</div>
+      </div>
+      <div class="download-card">
+        <div class="download-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
+        </div>
+        <h3>macOS 版</h3>
+        <p>支持Apple Silicon和Intel芯片，macOS 12及以上系统，Mac用户专属优化</p>
+        <button class="btn-primary" onclick="alert('macOS客户端即将发布，敬请期待！')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载 macOS 版
+        </button>
+        <div class="version-info">v1.0.0 · 约 92MB · 2026年9月更新</div>
       </div>
     </div>
   </div>
@@ -713,7 +910,7 @@ img { max-width: 100%; display: block; }
   <div class="container">
     <h2>你有活儿，<span>喊伙计</span></h2>
     <p>一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
-    <a href="#demo" class="btn-primary">
+    <a href="#workspace" class="btn-primary">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       现在就开始
     </a>
@@ -811,14 +1008,31 @@ navToggle.addEventListener('click', () => {
 function switchVersion(version, element) {
   const tabs = document.querySelectorAll('.version-tab');
   const comingVersions = ['car', 'deco'];
+  const availableVersions = ['food', 'home'];
   
   if (comingVersions.includes(version)) {
     alert('该版本即将推出，敬请期待！');
     return;
   }
   
+  // 切换tab的active状态
   tabs.forEach(tab => tab.classList.remove('active'));
   element.classList.add('active');
+  
+  // 切换工作台演示内容
+  document.querySelectorAll('.workspace-version-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  const targetContent = document.getElementById('version-' + version);
+  if (targetContent) {
+    targetContent.classList.add('active');
+  }
+  
+  // 平滑滚动到工作台演示区域
+  const workspaceSection = document.getElementById('workspace');
+  if (workspaceSection) {
+    workspaceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 </script>
 
