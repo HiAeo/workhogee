@@ -430,6 +430,31 @@ img { max-width: 100%; display: block; }
 .annotation-card.bottom-right { bottom: -20px; right: -20px; }
 @keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
+/* 成品图光影流动动态化效果 */
+.dynamic-image-wrap { position: relative; overflow: hidden; border-radius: 8px; }
+.dynamic-image-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dynamic-image-wrap::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0.1) 55%, transparent 70%);
+  background-size: 250% 100%;
+  animation: lightSweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes lightSweep {
+  0% { background-position: 150% 0; }
+  50% { background-position: -50% 0; }
+  100% { background-position: -50% 0; }
+}
+.dynamic-badge {
+  position: absolute; top: 6px; right: 6px; z-index: 2;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: white; font-size: 10px; font-weight: 700; padding: 3px 10px;
+  border-radius: 10px; box-shadow: 0 2px 8px rgba(234,88,12,0.4);
+  display: flex; align-items: center; gap: 4px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
 /* 数据卡片网格 */
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .dash-card {
@@ -1185,12 +1210,12 @@ img { max-width: 100%; display: block; }
             </div>
             <div>
               <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">AI生成成品</div>
-              <div style="aspect-ratio:1;border-radius:8px;overflow:hidden;margin-bottom:10px;position:relative;box-shadow:0 4px 16px rgba(234,88,12,0.2);">
-                <img src="images/after-vase.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
-                <div style="position:absolute;top:6px;right:6px;background:var(--green);color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;">AI生成</div>
-                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.75));padding:24px 10px 8px;color:white;font-size:10px;font-weight:600;">侘寂风 · 自然光 · 专业构图</div>
+              <div class="dynamic-image-wrap" style="aspect-ratio:1;margin-bottom:10px;box-shadow:0 4px 16px rgba(234,88,12,0.2);">
+                <img src="images/after-vase.jpg">
+                <div class="dynamic-badge">✨ 一键动态化</div>
+                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.75));padding:24px 10px 8px;color:white;font-size:10px;font-weight:600;z-index:1;">侘寂风 · 自然光 · 专业构图</div>
               </div>
-              <div style="font-size:10px;color:var(--orange);text-align:center;font-weight:700;">侘寂风场景 · 直接上架</div>
+              <div style="font-size:10px;color:var(--orange);text-align:center;font-weight:700;">侘寂风场景 · 支持动态化 · 直接上架</div>
             </div>
           </div>
           <div style="margin-top:16px;">
@@ -1203,6 +1228,10 @@ img { max-width: 100%; display: block; }
               <span>② 提示词匹配 5s</span>
               <span>③ AI生成 10s</span>
               <span>④ 质量校验 2s</span>
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:8px;">
+              <span style="font-size:10px;font-weight:700;color:var(--orange);">✨ 成品图支持一键动态化：</span>
+              <span style="font-size:10px;color:var(--ink-soft);">光影流动 · 热气蒸汽 · 缓慢推拉 · 粒子飘散</span>
             </div>
           </div>
         </div>
