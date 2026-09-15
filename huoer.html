@@ -473,6 +473,10 @@ img { max-width: 100%; display: block; }
 .workspace-demo-title { text-align: center; margin-bottom: 36px; }
 .workspace-demo-title h3 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
 .workspace-demo-title p { color: var(--ink-soft); font-size: 15px; }
+/* 演示区域内的版本切换 */
+.version-switch-inline { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--line); text-align: center; }
+.version-switch-label { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin-bottom: 16px; }
+.version-switch-inline .version-switch { justify-content: center; }
 .workspace-panel {
   background: var(--paper); border-radius: var(--radius-lg); padding: 32px;
   border: 1px solid var(--line); box-shadow: var(--shadow-md);
@@ -690,31 +694,6 @@ img { max-width: 100%; display: block; }
 </section>
 
 <!-- ===== 行业版本切换 ===== -->
-<section class="version-section" id="demo">
-  <div class="container">
-    <div class="version-switch">
-      <div class="version-tab active" onclick="switchVersion('food', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        餐饮版
-      </div>
-      <div class="version-tab" onclick="switchVersion('home', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        家居/饰品版
-      </div>
-      <div class="version-tab" onclick="switchVersion('car', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
-        车行版
-        <span class="coming-soon">即将推出</span>
-      </div>
-      <div class="version-tab" onclick="switchVersion('deco', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-        装修版
-        <span class="coming-soon">即将推出</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== 在线工作台演示 ===== -->
 <section class="workspace-demo" id="workspace">
   <div class="container">
@@ -790,6 +769,30 @@ img { max-width: 100%; display: block; }
               <span class="workspace-result-tag">3:4 小红书</span>
               <span class="workspace-result-tag">可直接上架</span>
             </div>
+          </div>
+        </div>
+      </div>
+      <!-- 行业版本切换（移到演示区域下方，便于随时切换） -->
+      <div class="version-switch-inline">
+        <div class="version-switch-label">切换行业版本查看实时效果：</div>
+        <div class="version-switch">
+          <div class="version-tab active" onclick="switchVersion('food', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            餐饮版
+          </div>
+          <div class="version-tab" onclick="switchVersion('home', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            家居/饰品版
+          </div>
+          <div class="version-tab" onclick="switchVersion('car', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+            车行版
+            <span class="coming-soon">即将推出</span>
+          </div>
+          <div class="version-tab" onclick="switchVersion('deco', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            装修版
+            <span class="coming-soon">即将推出</span>
           </div>
         </div>
       </div>
@@ -1160,12 +1163,6 @@ function switchVersion(version, element) {
   const targetContent = document.getElementById('version-' + version);
   if (targetContent) {
     targetContent.classList.add('active');
-  }
-  
-  // 平滑滚动到工作台演示区域
-  const workspaceSection = document.getElementById('workspace');
-  if (workspaceSection) {
-    workspaceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 </script>
