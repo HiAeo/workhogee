@@ -135,94 +135,173 @@ img { max-width: 100%; display: block; }
 .hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
 .hero-meta-item svg { width: 18px; height: 18px; color: var(--green); }
 
-/* Hero Visual - 简洁产品窗口风格 */
+/* Hero Visual - 形象化产品概念表达 */
 .hero-visual { position: relative; }
-.hero-mockup {
-  background: var(--white); border-radius: 16px; overflow: hidden;
-  box-shadow: 0 25px 60px -15px rgba(28,25,23,0.25), 0 0 0 1px rgba(28,25,23,0.06);
+.hero-concept {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 20px 0;
+}
+/* 原图卡片 */
+.concept-before {
+  width: 42%; position: relative; z-index: 1;
+  transform: rotate(-4deg);
+  transition: transform 0.4s ease;
+}
+.hero-concept:hover .concept-before { transform: rotate(-6deg) translateY(-4px); }
+.concept-before-card {
+  background: var(--white); border-radius: 14px; padding: 10px;
+  box-shadow: 0 15px 40px -10px rgba(28,25,23,0.2);
+  border: 1px solid var(--line);
+}
+.concept-before-img {
+  width: 100%; aspect-ratio: 1; border-radius: 10px;
+  background: linear-gradient(135deg, #e7e5e4, #d6d3d1);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.concept-before-img::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.03) 8px, rgba(0,0,0,0.03) 16px);
+}
+.concept-before-img .dish-raw {
+  width: 55%; height: 55%; background: linear-gradient(135deg, #a8a29e, #78716c);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+}
+.concept-before-img .dish-raw::after {
+  content: ''; position: absolute; inset: 15%;
+  background: linear-gradient(135deg, #92400e, #78350f); border-radius: 50%;
+  opacity: 0.7;
+}
+.concept-before-label {
+  text-align: center; padding: 8px 4px 4px;
+}
+.concept-before-label .tag {
+  display: inline-block; font-size: 10px; font-weight: 700; color: var(--ink-muted);
+  background: var(--sand); padding: 3px 10px; border-radius: 8px;
+}
+.concept-before-label p { font-size: 11px; color: var(--ink-soft); margin-top: 5px; }
+
+/* AI魔法中心 */
+.concept-magic {
+  width: 16%; display: flex; flex-direction: column; align-items: center;
+  position: relative; z-index: 2; margin: 0 -3%;
+}
+.magic-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(234,88,12,0.4), 0 0 0 6px rgba(234,88,12,0.1);
+  position: relative;
+  animation: magicPulse 2s ease-in-out infinite;
+}
+@keyframes magicPulse {
+  0%,100% { box-shadow: 0 8px 24px rgba(234,88,12,0.4), 0 0 0 6px rgba(234,88,12,0.1); }
+  50% { box-shadow: 0 8px 32px rgba(234,88,12,0.55), 0 0 0 12px rgba(234,88,12,0.06); }
+}
+.magic-circle svg { width: 32px; height: 32px; color: var(--white); }
+.magic-sparkles {
+  position: absolute; width: 100%; height: 100%; pointer-events: none;
+}
+.magic-sparkles span {
+  position: absolute; width: 6px; height: 6px; background: var(--orange);
+  border-radius: 50%; opacity: 0;
+}
+.magic-sparkles span:nth-child(1) { top: -8px; left: 50%; animation: sparkle 1.8s ease-in-out infinite; }
+.magic-sparkles span:nth-child(2) { top: 50%; right: -10px; animation: sparkle 1.8s ease-in-out 0.3s infinite; }
+.magic-sparkles span:nth-child(3) { bottom: -8px; left: 50%; animation: sparkle 1.8s ease-in-out 0.6s infinite; }
+.magic-sparkles span:nth-child(4) { top: 50%; left: -10px; animation: sparkle 1.8s ease-in-out 0.9s infinite; }
+@keyframes sparkle {
+  0%,100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.magic-label {
+  margin-top: 12px; font-size: 11px; font-weight: 800; color: var(--orange);
+  background: rgba(234,88,12,0.1); padding: 4px 12px; border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+.magic-arrows {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 100%; display: flex; justify-content: space-between; pointer-events: none;
+}
+.magic-arrows svg { width: 20px; height: 20px; color: var(--orange); opacity: 0.5; }
+
+/* 成品图卡片 */
+.concept-after {
+  width: 42%; position: relative; z-index: 1;
+  transform: rotate(4deg);
+  transition: transform 0.4s ease;
+}
+.hero-concept:hover .concept-after { transform: rotate(6deg) translateY(-4px); }
+.concept-after-card {
+  background: var(--white); border-radius: 14px; padding: 10px;
+  box-shadow: 0 20px 50px -10px rgba(234,88,12,0.25);
+  border: 2px solid var(--orange);
   position: relative;
 }
-.mockup-window-bar {
-  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-  background: linear-gradient(180deg, #f5f3ef, #ebe8e2); border-bottom: 1px solid var(--line);
+.concept-after-card::before {
+  content: 'AI 生成'; position: absolute; top: -10px; right: 12px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: var(--white); font-size: 9px; font-weight: 800; padding: 3px 10px;
+  border-radius: 8px; letter-spacing: 0.5px; z-index: 3;
 }
-.mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
-.mockup-dot.red { background: #ff5f57; }
-.mockup-dot.yellow { background: #febc2e; }
-.mockup-dot.green { background: #28c840; }
-.mockup-window-title {
-  flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: var(--ink-soft);
-  margin-right: 40px;
+.concept-after-img {
+  width: 100%; aspect-ratio: 1; border-radius: 10px;
+  background: linear-gradient(135deg, #1c1917, #292524);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
 }
-.mockup-body { padding: 24px; }
-.mockup-flow { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 12px; align-items: center; }
-.mockup-upload-card {
-  background: var(--paper); border: 2px dashed var(--line); border-radius: 12px;
-  padding: 24px 16px; text-align: center; transition: all 0.3s;
+.concept-after-img::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(234,88,12,0.15), transparent 60%);
 }
-.mockup-upload-card:hover { border-color: var(--orange); background: rgba(234,88,12,0.03); }
-.mockup-upload-icon {
-  width: 48px; height: 48px; background: var(--sand); border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+.concept-after-img .dish-pro {
+  width: 60%; height: 60%; background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  box-shadow: 0 8px 30px rgba(254,215,170,0.3);
 }
-.mockup-upload-icon svg { width: 24px; height: 24px; color: var(--ink-soft); }
-.mockup-upload-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-.mockup-upload-card p { font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
-.mockup-upload-btn {
-  display: inline-block; padding: 7px 18px; background: var(--ink); color: var(--white);
-  border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+.concept-after-img .dish-pro::after {
+  content: ''; position: absolute; inset: 18%;
+  background: linear-gradient(135deg, #ea580c, #c2410c); border-radius: 50%;
 }
-.mockup-upload-btn:hover { background: var(--orange); }
-.mockup-thumb {
-  display: inline-block; margin-top: 12px; width: 56px; height: 56px;
-  background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
-  border: 2px solid var(--white); box-shadow: var(--shadow-sm);
+.concept-after-img .dish-pro::before {
+  content: ''; position: absolute; inset: 8%;
+  border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; z-index: 2;
 }
-.mockup-arrow { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; }
-.mockup-arrow svg { width: 28px; height: 28px; color: var(--orange); animation: arrowMove 1.5s ease-in-out infinite; }
-@keyframes arrowMove { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-.mockup-arrow .ai-label { font-size: 9px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 2px 8px; border-radius: 8px; }
-.mockup-result-card {
-  background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 2px solid var(--orange);
-  border-radius: 12px; padding: 24px 16px; text-align: center; position: relative;
+.concept-after-img .steam {
+  position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 2;
 }
-.mockup-result-img {
-  width: 80px; height: 80px; background: var(--white); border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
-  box-shadow: 0 4px 12px rgba(234,88,12,0.15); position: relative; overflow: hidden;
+.concept-after-img .steam span {
+  width: 4px; height: 20px; background: rgba(255,255,255,0.3);
+  border-radius: 4px; animation: steam 2s ease-in-out infinite;
 }
-.mockup-result-img::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
-  animation: shimmer 2s infinite;
+.concept-after-img .steam span:nth-child(2) { animation-delay: 0.3s; }
+.concept-after-img .steam span:nth-child(3) { animation-delay: 0.6s; }
+@keyframes steam {
+  0%,100% { opacity: 0; transform: translateY(0) scaleY(1); }
+  50% { opacity: 1; transform: translateY(-8px) scaleY(1.3); }
 }
-@keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-.mockup-result-img svg { width: 36px; height: 36px; color: var(--orange); }
-.mockup-result-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.mockup-result-card p { font-size: 11px; color: var(--ink-soft); margin-bottom: 10px; }
-.mockup-result-tags { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
-.mockup-result-tag { font-size: 10px; padding: 3px 8px; background: rgba(22,163,74,0.12); color: var(--green); border-radius: 8px; font-weight: 700; }
-.mockup-progress {
-  margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(234,88,12,0.15);
-  display: flex; align-items: center; gap: 10px;
+.concept-after-label {
+  text-align: center; padding: 8px 4px 4px;
 }
-.mockup-progress .progress-label { font-size: 10px; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
-.mockup-progress-bar { flex: 1; height: 5px; background: rgba(234,88,12,0.15); border-radius: 3px; overflow: hidden; }
-.mockup-progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 3px; width: 75%; animation: progressPulse 2s ease-in-out infinite; }
-@keyframes progressPulse { 0%,100% { width: 60%; } 50% { width: 88%; } }
-.mockup-progress .progress-percent { font-size: 11px; font-weight: 800; color: var(--orange); }
+.concept-after-label .tag {
+  display: inline-block; font-size: 10px; font-weight: 800; color: var(--orange);
+  background: rgba(234,88,12,0.1); padding: 3px 10px; border-radius: 8px;
+}
+.concept-after-label p { font-size: 11px; color: var(--ink); font-weight: 600; margin-top: 5px; }
 
 .hero-float-card {
   position: absolute; background: var(--white); border-radius: 14px; padding: 14px 18px;
   box-shadow: 0 12px 32px -8px rgba(28,25,23,0.18), 0 0 0 1px rgba(28,25,23,0.05);
-  z-index: 2;
+  z-index: 5;
 }
 .hero-float-card .label { font-size: 11px; color: var(--ink-soft); font-weight: 600; margin-bottom: 4px; }
 .hero-float-card .value { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
 .hero-float-card .sub { font-size: 11px; color: var(--green); margin-top: 4px; font-weight: 600; }
-.hero-float-card.card1 { top: -14px; right: -8px; animation: float1 4s ease-in-out infinite; }
-.hero-float-card.card2 { bottom: 16px; left: -16px; animation: float2 4.5s ease-in-out infinite; }
+.hero-float-card.card1 { top: 0px; right: -10px; animation: float1 4s ease-in-out infinite; }
+.hero-float-card.card2 { bottom: 10px; left: -10px; animation: float2 4.5s ease-in-out infinite; }
 @keyframes float1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes float2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
 
@@ -542,47 +621,40 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hero-mockup">
-          <div class="mockup-window-bar">
-            <div class="mockup-dot red"></div>
-            <div class="mockup-dot yellow"></div>
-            <div class="mockup-dot green"></div>
-            <div class="mockup-window-title">活儿伙计 · AI图像工作流</div>
-          </div>
-          <div class="mockup-body">
-            <div class="mockup-flow">
-              <div class="mockup-upload-card">
-                <div class="mockup-upload-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                </div>
-                <h4>上传原图</h4>
-                <p>手机拍的菜品/商品图<br>不用修图直接上传</p>
-                <span class="mockup-upload-btn">选择图片</span>
-                <div class="mockup-thumb">🍜</div>
+        <div class="hero-concept">
+          <!-- 原图 -->
+          <div class="concept-before">
+            <div class="concept-before-card">
+              <div class="concept-before-img">
+                <div class="dish-raw"></div>
               </div>
-              <div class="mockup-arrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                <span class="ai-label">AI 生成</span>
-              </div>
-              <div class="mockup-result-card">
-                <div class="mockup-result-img">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <h4>专业级成品图</h4>
-                <p>精致摆盘 · 暖光氛围<br>行业大脑自动优化</p>
-                <div class="mockup-result-tags">
-                  <span class="mockup-result-tag">800×800</span>
-                  <span class="mockup-result-tag">无水印</span>
-                  <span class="mockup-result-tag">可上架</span>
-                </div>
+              <div class="concept-before-label">
+                <span class="tag">手机实拍</span>
+                <p>光线暗 · 无摆盘 · 不敢上架</p>
               </div>
             </div>
-            <div class="mockup-progress">
-              <span class="progress-label">AI处理中</span>
-              <div class="mockup-progress-bar">
-                <div class="mockup-progress-fill"></div>
+          </div>
+          <!-- AI魔法 -->
+          <div class="concept-magic">
+            <div class="magic-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <div class="magic-sparkles">
+                <span></span><span></span><span></span><span></span>
               </div>
-              <span class="progress-percent">75%</span>
+            </div>
+            <div class="magic-label">AI 行业大脑</div>
+          </div>
+          <!-- 成品图 -->
+          <div class="concept-after">
+            <div class="concept-after-card">
+              <div class="concept-after-img">
+                <div class="steam"><span></span><span></span><span></span></div>
+                <div class="dish-pro"></div>
+              </div>
+              <div class="concept-after-label">
+                <span class="tag">专业级成品</span>
+                <p>精致摆盘 · 暖光氛围 · 直接上架</p>
+              </div>
             </div>
           </div>
         </div>
