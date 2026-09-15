@@ -116,55 +116,60 @@ img { max-width: 100%; display: block; }
 .hero-stat .num span { color: var(--orange); }
 .hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }
 
-/* Hero 实时演示卡片 */
-.hero-demo {
-  background: white; border-radius: 24px; padding: 28px;
-  box-shadow: 0 30px 80px rgba(28,25,23,0.12); border: 1px solid var(--line);
+/* Hero 自动播放幻灯片 */
+.hero-slideshow {
+  background: var(--ink); border-radius: 24px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(28,25,23,0.18); position: relative;
 }
-.demo-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
+.slides-container { position: relative; width: 100%; padding-top: 80%; }
+.slide {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0; transition: opacity 0.5s ease; display: flex; flex-direction: column;
 }
-.demo-title { font-size: 15px; font-weight: 700; }
-.demo-badge {
-  background: rgba(234,88,12,0.1); color: var(--orange);
-  font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px;
+.slide.active { opacity: 1; }
+.slide-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; flex-shrink: 0;
+}
+.slide-industry { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.5px; }
+.slide-status {
+  font-size: 11px; font-weight: 700; color: var(--orange);
+  background: rgba(234,88,12,0.15); padding: 5px 12px; border-radius: 6px;
   display: flex; align-items: center; gap: 6px;
 }
-.demo-badge::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }
-.demo-compare {
-  display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;
-  margin-bottom: 24px;
+.slide-status::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }
+.slide-body {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 0 24px 24px; gap: 16px;
 }
-.demo-img-wrap {
-  aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;
+.slide-img-box {
+  position: relative; width: 82%; aspect-ratio: 16/10; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
-.demo-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.demo-img-label {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,0.75));
-  padding: 24px 12px 10px; color: white; font-size: 12px; font-weight: 600; text-align: center;
+.slide-before-img, .slide-after-img {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
 }
-.demo-arrow {
-  width: 44px; height: 44px; background: var(--orange); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; color: white;
-  font-size: 20px; font-weight: 900; box-shadow: 0 6px 16px rgba(234,88,12,0.35);
-  animation: arrowBounce 2s infinite;
+.slide-after-img { opacity: 0; transition: opacity 0.5s ease; }
+.slide.active.done .slide-after-img { opacity: 1; }
+.slide-progress-ring {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 56px; height: 56px; opacity: 0; transition: opacity 0.3s; z-index: 2;
 }
-@keyframes arrowBounce { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-.demo-progress {
-  background: var(--paper); border-radius: 12px; padding: 16px 18px;
+.slide.active.generating .slide-progress-ring { opacity: 1; }
+.slide-progress-arc { transition: stroke-dashoffset 2s linear; }
+.slide.active.generating .slide-progress-arc { stroke-dashoffset: 0; }
+.slide-caption {
+  font-size: 13px; color: rgba(255,255,255,0.55); text-align: center; letter-spacing: 0.5px;
 }
-.demo-progress-label {
-  display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; font-weight: 600;
+.slide-dots {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 3;
 }
-.demo-progress-label span:last-child { color: var(--orange); }
-.demo-progress-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.demo-progress-fill {
-  height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));
-  border-radius: 4px; width: 100%; animation: progressFill 3.5s ease-in-out infinite;
+.dot {
+  width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.25);
+  transition: all 0.3s; cursor: pointer;
 }
-@keyframes progressFill { 0% { width: 0%; } 25% { width: 35%; } 50% { width: 65%; } 75% { width: 85%; } 100% { width: 100%; } }
-.demo-steps { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--ink-muted); }
+.dot.active { background: var(--orange); width: 18px; border-radius: 3px; }
 
 /* ===== 痛点 ===== */
 .pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }
@@ -397,9 +402,9 @@ body::after {
 }
 .demo-upload-zone:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }
 .demo-upload-zone img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
-.demo-upload-text { text-align: center; z-index: 1; }
-.demo-upload-icon { font-size: 32px; margin-bottom: 8px; color: var(--ink-muted); }
-.demo-upload-label { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
+.upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 1; text-align: center; padding: 20px; }
+.upload-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+.upload-hint { font-size: 11px; color: var(--ink-muted); }
 .demo-generate-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   cursor: pointer; flex-shrink: 0; user-select: none;
@@ -544,34 +549,77 @@ body::after {
         <div class="hero-stat"><div class="num"><span>8</span>+</div><div class="label">已适配平台</div></div>
       </div>
     </div>
-    <div class="hero-demo" id="demo">
-      <div class="demo-header">
-        <div class="demo-title">实时演示 · 奶茶场景图生成</div>
-        <div class="demo-badge">AI处理中</div>
+    <div class="hero-slideshow" id="heroSlideshow">
+      <div class="slides-container">
+        <div class="slide active" data-index="0">
+          <div class="slide-header"><span class="slide-industry">饮品版 · 珍珠奶茶</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/drink-milktea-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/drink-milktea-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → ins风咖啡店场景</div>
+          </div>
+        </div>
+        <div class="slide" data-index="1">
+          <div class="slide-header"><span class="slide-industry">餐饮版 · 红烧肉</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/dish-hongshaorou-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/dish-hongshaorou-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → 中式餐厅暖光场景</div>
+          </div>
+        </div>
+        <div class="slide" data-index="2">
+          <div class="slide-header"><span class="slide-industry">家居版 · 陶瓷花瓶</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/home-vase-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/home-vase-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → 侘寂风原木边几场景</div>
+          </div>
+        </div>
+        <div class="slide" data-index="3">
+          <div class="slide-header"><span class="slide-industry">美妆版 · 口红</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/beauty-lipstick-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/beauty-lipstick-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → 大理石高级美妆台场景</div>
+          </div>
+        </div>
+        <div class="slide" data-index="4">
+          <div class="slide-header"><span class="slide-industry">服装版 · 白T恤</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/cloth-tshirt-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/cloth-tshirt-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → 城市街头穿搭场景</div>
+          </div>
+        </div>
+        <div class="slide" data-index="5">
+          <div class="slide-header"><span class="slide-industry">3C版 · 无线耳机</span><span class="slide-status">AI生成中</span></div>
+          <div class="slide-body">
+            <div class="slide-img-box">
+              <img src="images/3c-earphone-white.jpg" class="slide-before-img" alt="">
+              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
+              <img src="images/3c-earphone-pro.jpg" class="slide-after-img" alt="">
+            </div>
+            <div class="slide-caption">白底素图 → 极简科技桌面场景</div>
+          </div>
+        </div>
       </div>
-      <div class="demo-compare">
-        <div class="demo-img-wrap">
-          <img src="images/drink-milktea-white.jpg" alt="手机实拍原图">
-          <div class="demo-img-label">手机实拍 · 白底素图</div>
-        </div>
-        <div class="demo-arrow">→</div>
-        <div class="demo-img-wrap">
-          <img src="images/drink-milktea-pro.jpg" alt="AI生成成品">
-          <div class="demo-img-label">AI生成 · ins风咖啡店</div>
-        </div>
-      </div>
-      <div class="demo-progress">
-        <div class="demo-progress-label">
-          <span>Seedream 4.5 处理进度</span>
-          <span>20秒</span>
-        </div>
-        <div class="demo-progress-bar"><div class="demo-progress-fill"></div></div>
-        <div class="demo-steps">
-          <span>① 图像识别 3s</span>
-          <span>② 提示词匹配 5s</span>
-          <span>③ AI生成 10s</span>
-          <span>④ 质量校验 2s</span>
-        </div>
+      <div class="slide-dots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
       </div>
     </div>
   </div>
@@ -601,7 +649,12 @@ body::after {
       </div>
       <div class="demo-workspace">
         <div class="demo-upload-zone" id="uploadZone" onclick="triggerUpload()">
-          <img id="beforeImg" src="images/drink-milktea-white.jpg" alt="原图">
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-text">拖拽图片到这里，或点击上传</div>
+            <div class="upload-hint">支持 JPG / PNG，建议白底素图</div>
+          </div>
+          <img id="beforeImg" src="" alt="原图" style="display:none;">
         </div>
         <div class="demo-generate-wrap" id="generateBtn" onclick="generateImage()">
           <div class="demo-circle-btn">
@@ -943,7 +996,6 @@ function switchIndustry(industry) {
   document.querySelectorAll('.demo-industry-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.industry === industry);
   });
-  document.getElementById('beforeImg').src = demoData[industry].before;
   // 重置结果区和进度条
   const resultZone = document.getElementById('resultZone');
   resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
@@ -1019,7 +1071,17 @@ function generateImage() {
 }
 
 function triggerUpload() {
-  // 演示用，实际不做文件上传
+  // 演示用：模拟用户上传，显示当前行业的示例原图
+  const placeholder = document.getElementById('uploadPlaceholder');
+  const beforeImg = document.getElementById('beforeImg');
+  if (placeholder) placeholder.style.display = 'none';
+  beforeImg.style.display = 'block';
+  beforeImg.src = demoData[currentIndustry].before;
+  // 重置结果区
+  const resultZone = document.getElementById('resultZone');
+  resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
+  const genBtn = document.getElementById('generateBtn');
+  genBtn.classList.remove('generating', 'done');
 }
 
 // 导航滚动效果
@@ -1050,6 +1112,43 @@ document.getElementById('navToggle').addEventListener('click', function() {
     links.style.gap = '16px';
   }
 });
+/* ===== Hero 自动播放幻灯片 ===== */
+(function() {
+  const slides = document.querySelectorAll('#heroSlideshow .slide');
+  const dots = document.querySelectorAll('#heroSlideshow .dot');
+  if (!slides.length) return;
+  let current = 0;
+  function playSlide(index) {
+    slides.forEach(s => s.classList.remove('active', 'generating', 'done'));
+    dots.forEach(d => d.classList.remove('active'));
+    const slide = slides[index];
+    slide.classList.add('active');
+    dots[index].classList.add('active');
+    // 0.3秒后开始生成动画
+    setTimeout(function() {
+      slide.classList.add('generating');
+      // 2秒后生成完成，显示成品图
+      setTimeout(function() {
+        slide.classList.remove('generating');
+        slide.classList.add('done');
+      }, 2000);
+    }, 300);
+  }
+  // 点击指示器切换
+  dots.forEach(function(dot, i) {
+    dot.addEventListener('click', function() {
+      current = i;
+      playSlide(current);
+    });
+  });
+  // 初始化第一个
+  playSlide(0);
+  // 每3秒自动切换
+  setInterval(function() {
+    current = (current + 1) % slides.length;
+    playSlide(current);
+  }, 3000);
+})();
 </script>
 
 </body>
