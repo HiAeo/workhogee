@@ -404,40 +404,25 @@ body::after {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   cursor: pointer; flex-shrink: 0; user-select: none;
 }
-.demo-generate-track {
-  width: 130px; height: 38px; background: #e7e5e4; border-radius: 19px;
-  position: relative; overflow: hidden; transition: background 0.4s;
+.demo-generate-arrows {
+  display: flex; gap: 4px; align-items: center; height: 32px;
 }
-.demo-generate-lines {
-  position: absolute; top: 50%; left: 0; right: 0; height: 4px;
-  transform: translateY(-50%);
-  background: repeating-linear-gradient(90deg, var(--orange) 0px, var(--orange) 14px, transparent 14px, transparent 28px);
-  animation: lineFlow 0.8s linear infinite;
-  z-index: 2;
+.demo-arrow {
+  width: 42px; height: 28px; position: relative;
 }
-@keyframes lineFlow {
-  from { background-position: 0 0; }
-  to { background-position: 28px 0; }
-}
-.demo-generate-fill {
-  position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--orange), var(--orange-light));
-  border-radius: 19px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1;
-}
-.demo-generate-wrap.generating .demo-generate-fill { width: 100%; }
-.demo-generate-wrap.generating .demo-generate-lines {
-  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 14px, transparent 14px, transparent 28px);
-}
-.demo-generate-wrap.done .demo-generate-track { background: var(--orange); }
-.demo-generate-wrap.done .demo-generate-lines {
-  background: repeating-linear-gradient(90deg, white 0px, white 14px, transparent 14px, transparent 28px);
-  animation: none;
-}
+.demo-arrow svg { width: 100%; height: 100%; display: block; }
+.arrow-outline { fill: none; stroke: var(--orange); stroke-width: 2; stroke-linejoin: round; }
+.arrow-inner { fill: #e7e5e4; transition: fill 0.4s ease; }
+/* 点击后从左到右依次填充橙色 */
+.demo-generate-wrap.generating .demo-arrow:nth-child(1) .arrow-inner { fill: var(--orange); transition-delay: 0s; }
+.demo-generate-wrap.generating .demo-arrow:nth-child(2) .arrow-inner { fill: var(--orange); transition-delay: 0.4s; }
+.demo-generate-wrap.generating .demo-arrow:nth-child(3) .arrow-inner { fill: var(--orange); transition-delay: 0.8s; }
+/* 完成后保持橙色 */
+.demo-generate-wrap.done .arrow-inner { fill: var(--orange); }
 .demo-generate-hint {
   font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;
 }
-.demo-generate-wrap.generating .demo-generate-hint { color: var(--orange); }
+.demo-generate-wrap.generating .demo-generate-hint,
 .demo-generate-wrap.done .demo-generate-hint { color: var(--orange); }
 .demo-result-zone {
   aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;
@@ -601,9 +586,25 @@ body::after {
           <img id="beforeImg" src="images/drink-milktea-white.jpg" alt="原图">
         </div>
         <div class="demo-generate-wrap" id="generateBtn" onclick="generateImage()">
-          <div class="demo-generate-track">
-            <div class="demo-generate-fill" id="generateFill"></div>
-            <div class="demo-generate-lines"></div>
+          <div class="demo-generate-arrows">
+            <div class="demo-arrow">
+              <svg viewBox="0 0 42 28">
+                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
+                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
+              </svg>
+            </div>
+            <div class="demo-arrow">
+              <svg viewBox="0 0 42 28">
+                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
+                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
+              </svg>
+            </div>
+            <div class="demo-arrow">
+              <svg viewBox="0 0 42 28">
+                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
+                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
+              </svg>
+            </div>
           </div>
           <div class="demo-generate-hint">点击看成品</div>
         </div>
@@ -942,7 +943,6 @@ function switchIndustry(industry) {
   document.getElementById('progressText').style.display = 'none';
   const genBtn = document.getElementById('generateBtn');
   genBtn.classList.remove('generating', 'done');
-  document.getElementById('generateFill').style.width = '0%';
 }
 
 // 风格强度滤镜映射
@@ -972,7 +972,6 @@ function generateImage() {
   const btn = document.getElementById('generateBtn');
   btn.classList.remove('done');
   btn.classList.add('generating');
-  document.getElementById('generateFill').style.width = '0%';
   
   const progressBar = document.getElementById('progressBar');
   const progressFill = document.getElementById('progressFill');
