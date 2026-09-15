@@ -478,7 +478,7 @@ img { max-width: 100%; display: block; }
 .version-switch-inline .version-switch { justify-content: center; }
 .workspace-panel {
   background: var(--paper); border-radius: var(--radius-lg); padding: 32px;
-  border: 1px solid var(--line); box-shadow: var(--shadow-md);
+  border: 1px solid var(--line); box-shadow: var(--shadow-md); position: relative; overflow: visible;
 }
 .workspace-panel-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -486,7 +486,14 @@ img { max-width: 100%; display: block; }
 }
 .workspace-panel-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
 .workspace-panel-title .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
-.workspace-panel-badge { font-size: 12px; color: var(--orange); background: rgba(234,88,12,0.1); padding: 5px 14px; border-radius: 12px; font-weight: 700; }
+.workspace-panel-badge {
+  position: absolute; top: -14px; right: -14px;
+  width: 52px; height: 52px; background: var(--white);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(28,25,23,0.15); border: 2px solid var(--line);
+  z-index: 5;
+}
+.workspace-panel-badge svg { width: 28px; height: 28px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .workspace-panel-body { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 20px; align-items: center; }
 .workspace-arrow { display: flex; align-items: center; justify-content: center; }
 .workspace-arrow svg { width: 32px; height: 32px; color: var(--orange); animation: arrowMove 1.5s ease-in-out infinite; }
@@ -733,7 +740,9 @@ img { max-width: 100%; display: block; }
             <span class="status-dot"></span>
             活儿伙计 · 餐饮版在线工作台
           </div>
-          <div class="workspace-panel-badge">餐饮版</div>
+          <div class="workspace-panel-badge">
+            <svg viewBox="0 0 24 24"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+          </div>
         </div>
         <div class="workspace-panel-body">
           <div class="workspace-upload-area">
@@ -769,7 +778,9 @@ img { max-width: 100%; display: block; }
             <span class="status-dot"></span>
             活儿伙计 · 家居/饰品版在线工作台
           </div>
-          <div class="workspace-panel-badge">家居/饰品版</div>
+          <div class="workspace-panel-badge">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
         </div>
         <div class="workspace-panel-body">
           <div class="workspace-upload-area">
