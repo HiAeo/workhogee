@@ -1,384 +1,333 @@
-﻿<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WorkHogee · 生图伙计 — 小商家的AI工作流伙计</title><style>:root {  --orange: #ea580c;  --orange-light: #fb923c;  --orange-dark: #c2410c;  --ink: #1c1917;  --ink-soft: #57534e;  --ink-muted: #a8a29e;  --paper: #faf8f4;  --sand: #f5f0e8;  --white: #ffffff;  --line: #e7e5e4;  --green: #16a34a;}* { margin: 0; padding: 0; box-sizing: border-box; }html { scroll-behavior: smooth; }body {  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;  color: var(--ink); background: var(--white); line-height: 1.6;  -webkit-font-smoothing: antialiased;}a { color: inherit; text-decoration: none; }img { max-width: 100%; display: block; }/* ===== 导航（与首页一致） ===== */.nav {  position: fixed; top: 0; left: 0; right: 0; z-index: 100;  background: rgba(255,255,255,0.88); backdrop-filter: blur(20px);  border-bottom: 1px solid var(--line);}.nav-inner {  display: flex; align-items: center; justify-content: space-between;  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;}.nav-logo { display: flex; align-items: center; gap: 10px; }.nav-logo svg { height: 28px; width: auto; }.nav-links { display: flex; align-items: center; gap: 36px; }.nav-links a {  font-size: 15px; color: var(--ink-soft); font-weight: 500;  transition: color 0.2s; position: relative;}.nav-links a:hover { color: var(--orange); }.nav-cta {  display: inline-flex; align-items: center; gap: 6px;  background: var(--ink); color: var(--paper) !important;  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;  font-weight: 600 !important; transition: all 0.25s;}.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }.nav-product-link {  display: inline-flex; align-items: center; gap: 5px;  font-size: 14px; color: var(--ink-soft); font-weight: 500;  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;}.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }.nav-product-link.active {  background: var(--orange); color: var(--white) !important;  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);}.nav-product-link.active:hover { background: var(--orange-light); }.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }/* ===== Hero ===== */.hero {  padding: 140px 0 100px;  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);  position: relative; overflow: hidden;}.hero::before {  content: ''; position: absolute; top: -200px; right: -200px;  width: 700px; height: 700px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 65%);}.hero-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;  position: relative; z-index: 1;}.hero-tag {  display: inline-flex; align-items: center; gap: 8px;  background: white; border: 1px solid var(--line); border-radius: 100px;  padding: 7px 18px; font-size: 13px; font-weight: 600; color: var(--ink-soft);  margin-bottom: 28px;}.hero-tag .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }.hero h1 {  font-size: 56px; font-weight: 900; line-height: 1.1; letter-spacing: -2px;  margin-bottom: 24px;}.hero h1 .highlight { color: var(--orange); }.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 40px; max-width: 500px; }.hero-buttons { display: flex; gap: 16px; margin-bottom: 56px; }.btn-primary {  background: var(--orange); color: white; padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 700; border: none;  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;}.btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }.btn-secondary {  background: white; color: var(--ink); padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 600; border: 1px solid var(--line);  cursor: pointer; transition: all 0.2s;}.btn-secondary:hover { border-color: var(--ink); }.hero-stats { display: flex; gap: 48px; }.hero-stat .num { font-size: 36px; font-weight: 900; color: var(--ink); line-height: 1; }.hero-stat .num span { color: var(--orange); }.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }/* Hero 自动播放幻灯片 */.hero-slideshow {  background: var(--ink); border-radius: 24px; overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.18); position: relative;}.slides-container { position: relative; width: 100%; padding-top: 80%; }.slide {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;  opacity: 0; transition: opacity 0.5s ease; display: flex; flex-direction: column;}.slide.active { opacity: 1; }.slide-header {  display: flex; align-items: center; justify-content: space-between;  padding: 18px 22px; flex-shrink: 0;}.slide-industry { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.5px; }.slide-status {  font-size: 11px; font-weight: 700; color: var(--orange);  background: rgba(234,88,12,0.15); padding: 5px 12px; border-radius: 6px;  display: flex; align-items: center; gap: 6px;}.slide-status::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }.slide-body {  flex: 1; display: flex; flex-direction: column; align-items: center;  justify-content: center; padding: 0 24px 24px; gap: 16px;}.slide-img-box {  position: relative; width: 82%; aspect-ratio: 16/10; border-radius: 14px; overflow: hidden;  box-shadow: 0 20px 50px rgba(0,0,0,0.3);}.slide-before-img, .slide-after-img {  position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;}.slide-after-img { opacity: 0; transition: opacity 0.5s ease; }.slide.active.done .slide-after-img { opacity: 1; }.slide-progress-ring {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 56px; height: 56px; opacity: 0; transition: opacity 0.3s; z-index: 2;}.slide.active.generating .slide-progress-ring { opacity: 1; }.slide-progress-arc { transition: stroke-dashoffset 2s linear; }.slide.active.generating .slide-progress-arc { stroke-dashoffset: 0; }.slide-caption {  font-size: 13px; color: rgba(255,255,255,0.55); text-align: center; letter-spacing: 0.5px;}.slide-dots {  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);  display: flex; gap: 6px; z-index: 3;}.dot {  width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.25);  transition: all 0.3s; cursor: pointer;}.dot.active { background: var(--orange); width: 18px; border-radius: 3px; }/* Hero 视觉区 */.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }.hv-main {  width: 100%; background: var(--ink); border-radius: 24px; padding: 32px 28px;  box-shadow: 0 30px 80px rgba(28,25,23,0.18);}.hv-ba { display: flex; align-items: center; gap: 12px; }.hv-ba-side {  flex: 1; position: relative; border-radius: 14px; overflow: hidden;  aspect-ratio: 1/1; background: #f5f5f4;}.hv-ba-side img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }.hv-ba-side:hover img { transform: scale(1.05); }.hv-ba-tag {  position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 700;  padding: 4px 10px; border-radius: 6px; z-index: 2;}.hv-before .hv-ba-tag { background: rgba(28,25,23,0.7); color: #fff; }.hv-after .hv-ba-tag { background: var(--orange); color: #fff; }.hv-ba-arrow {  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;  background: var(--orange); color: #fff; display: flex; align-items: center;  justify-content: center; animation: arrowPulse 2s infinite;}.hv-ba-arrow svg { width: 18px; height: 18px; }@keyframes arrowPulse {  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234,88,12,0.4); }  50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(234,88,12,0); }}.hv-float {  position: absolute; display: flex; align-items: center; gap: 10px;  background: #fff; padding: 12px 16px; border-radius: 14px;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); z-index: 3;}.hv-float svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }.hv-float div { display: flex; flex-direction: column; line-height: 1.3; }.hv-float strong { font-size: 15px; font-weight: 800; color: var(--ink); }.hv-float span { font-size: 11px; color: var(--ink-soft); }.hv-f1 { top: -16px; left: -20px; animation: floatY 3s ease-in-out infinite; }.hv-f2 { top: 40%; right: -24px; animation: floatY 3.5s ease-in-out infinite 0.5s; }.hv-f3 { bottom: -16px; left: 30%; animation: floatY 4s ease-in-out infinite 1s; }@keyframes floatY {  0%, 100% { transform: translateY(0); }  50% { transform: translateY(-8px); }}/* Hero 插画 */.hv-illustration {  position: relative;  width: 100%;  aspect-ratio: 4/3;  border-radius: 24px;  overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.15);}.hv-illustration img {  width: 100%;  height: 100%;  object-fit: cover;  display: block;  transition: transform 0.6s ease;}.hv-illustration:hover img {  transform: scale(1.05);}/* Hero CTA按钮 */.hero-cta {  display: flex;  gap: 14px;  margin-top: 30px;  flex-wrap: wrap;}.btn-primary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: var(--orange);  color: white;  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: none;  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-primary:hover {  background: var(--orange-dark);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(234,88,12,0.32);}.btn-primary:active {  transform: translateY(0);}.btn-secondary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: white;  color: var(--ink);  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: 1.5px solid var(--line);  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-secondary:hover {  border-color: var(--orange);  color: var(--orange);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(28,25,23,0.08);}.btn-secondary:active {  transform: translateY(0);}
-/* Hero 浮动标签 */.hv-float-tag {  position: absolute;  display: flex;  align-items: center;  gap: 8px;  background: white;  padding: 10px 16px;  border-radius: 100px;  box-shadow: 0 8px 24px rgba(28,25,23,0.12);  border: 1px solid var(--line);  z-index: 3;  transition: all 0.3s ease;}.hv-float-tag:hover {  transform: translateY(-3px);  box-shadow: 0 12px 32px rgba(28,25,23,0.18);}.hv-float-tag svg {  width: 15px;  height: 15px;  color: var(--orange);  flex-shrink: 0;}.hv-float-tag span {  font-size: 12px;  font-weight: 700;  color: var(--ink);  white-space: nowrap;}.hv-ft1 {  top: -12px;  left: -16px;  animation: floatY 4s ease-in-out infinite;}.hv-ft2 {  bottom: 28px;  right: -16px;  animation: floatY 4.5s ease-in-out infinite 0.8s;}.hv-ft3 {  bottom: -12px;  left: 26%;  animation: floatY 5s ease-in-out infinite 1.6s;}.hfc-value-sm {  font-size: 14px;  font-weight: 800;  color: var(--orange);  line-height: 1.3;  letter-spacing: 0.3px;}.hfc-value-full {  font-size: 13px;  font-weight: 700;  color: var(--ink);  line-height: 1.4;  white-space: nowrap;}.hv-float-card {  min-width: 160px;}/* ===== 痛点 ===== */.pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }.pain::before {  content: ''; position: absolute; top: 50%; left: -150px; transform: translateY(-50%);  width: 500px; height: 500px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 65%);}.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }.pain-header { text-align: center; margin-bottom: 64px; }.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 3px; margin-bottom: 20px; }.pain h2 { font-size: 42px; font-weight: 900; line-height: 1.3; max-width: 700px; margin: 0 auto; letter-spacing: -1px; }.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }.pain-card {  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);  border-radius: 20px; padding: 40px 32px; transition: all 0.3s;}.pain-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-6px); border-color: rgba(234,88,12,0.3); }.pain-num { font-size: 56px; font-weight: 900; color: var(--orange); opacity: 0.5; margin-bottom: 20px; line-height: 1; letter-spacing: -2px; }.pain-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }.pain-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.9; margin-bottom: 24px; }.pain-card .cost { font-size: 36px; font-weight: 900; color: #ef4444; line-height: 1; }.pain-card .cost span { font-size: 15px; color: rgba(255,255,255,0.4); font-weight: 400; margin-left: 4px; }/* ===== 核心能力通用 ===== */.feature { padding: 120px 0; background: var(--white); }.feature-alt { background: var(--paper); }.feature-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;}.feature-inner.reverse { direction: rtl; }.feature-inner.reverse > * { direction: ltr; }.feature-num {  font-size: 14px; font-weight: 800; color: var(--orange);  letter-spacing: 4px; margin-bottom: 20px;}.feature-title { font-size: 40px; font-weight: 900; line-height: 1.2; margin-bottom: 24px; letter-spacing: -1px; }.feature-title .highlight { color: var(--orange); }.feature-desc { font-size: 17px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 36px; }.feature-points { display: flex; flex-direction: column; gap: 18px; }.feature-point { display: flex; gap: 14px; align-items: flex-start; }.point-icon {  width: 26px; height: 26px; background: rgba(234,88,12,0.1); color: var(--orange);  border-radius: 50%; display: flex; align-items: center; justify-content: center;  font-size: 14px; font-weight: 900; flex-shrink: 0; margin-top: 2px;}.feature-point div { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }.feature-point strong { color: var(--ink); font-weight: 700; }/* 核心能力1：对比卡片 */.compare-card {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }.compare-label { font-size: 16px; font-weight: 700; }.compare-time { font-size: 13px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 6px 14px; border-radius: 8px; }.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 28px; }.compare-img { aspect-ratio: 1; border-radius: 16px; overflow: hidden; }.compare-img img { width: 100%; height: 100%; object-fit: cover; }.compare-img.after { box-shadow: 0 12px 32px rgba(234,88,12,0.18); }.compare-caption { text-align: center; font-size: 12px; color: var(--ink-muted); margin-top: 10px; font-weight: 500; }.compare-arrow { font-size: 24px; color: var(--orange); font-weight: 900; }.compare-footer { display: flex; justify-content: space-around; padding-top: 24px; border-top: 1px solid var(--line); }.compare-metric { text-align: center; }.metric-num { display: block; font-size: 24px; font-weight: 900; color: var(--ink); }.metric-label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }/* 核心能力2：平台展示 */.platform-showcase {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.platform-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }.platform-title { font-size: 16px; font-weight: 700; }.platform-count { font-size: 13px; color: var(--orange); font-weight: 700; }.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }.platform-item { text-align: center; transition: transform 0.2s; }.platform-item:hover { transform: translateY(-4px); }.platform-img { aspect-ratio: 1; border-radius: 14px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0,0,0,0.1); position: relative; }.platform-img img { width: 100%; height: 100%; object-fit: cover; }.platform-tag {  position: absolute; top: 8px; left: 8px; color: white;  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;}.platform-tag.meituan { background: rgba(255,193,7,0.95); color: #333; }.platform-tag.taobao { background: rgba(255,106,0,0.95); }.platform-tag.xhs { background: rgba(254,44,85,0.95); }.platform-tag.douyin { background: rgba(0,0,0,0.8); }.platform-name { font-size: 13px; font-weight: 700; }.platform-size { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }.platform-action { text-align: center; }.btn-platform {  background: var(--orange); color: white; padding: 14px 32px;  border: none; border-radius: 12px; font-size: 15px; font-weight: 700;  cursor: pointer; transition: all 0.2s; width: 100%;}.btn-platform:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(234,88,12,0.3); }/* 更多能力 */.more { padding: 100px 0; background: var(--paper); }.more-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.more-header { text-align: center; margin-bottom: 56px; }.more-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.more h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }.more-card {  background: white; border-radius: 16px; padding: 28px 24px;  border: 1px solid var(--line); transition: all 0.3s;}.more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.more-icon {  width: 44px; height: 44px; border-radius: 12px; background: rgba(234,88,12,0.08);  display: flex; align-items: center; justify-content: center;  font-size: 18px; font-weight: 800; color: var(--orange); margin-bottom: 16px;}.more-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }.more-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.8; }/* 行业场景 */.scenarios { padding: 100px 0; background: var(--white); }.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.scenarios-header { text-align: center; margin-bottom: 56px; }.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.scenarios h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 500px; margin: 12px auto 0; }.scenarios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }.scenario-card {  background: var(--paper); border-radius: 20px; padding: 32px;  border: 1px solid var(--line); transition: all 0.3s;  display: flex; gap: 24px; align-items: flex-start;}.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.scenario-icon {  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;  display: flex; align-items: center; justify-content: center;  font-size: 22px; font-weight: 800; color: var(--ink);}.scenario-icon.food { background: rgba(234,88,12,0.1); color: var(--orange); }.scenario-icon.home { background: rgba(139,92,246,0.1); color: #8b5cf6; }.scenario-icon.car { background: rgba(59,130,246,0.1); color: #3b82f6; }.scenario-icon.deco { background: rgba(16,185,129,0.1); color: #10b981; }.scenario-content h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }.scenario-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }.scenario-tags { display: flex; gap: 8px; flex-wrap: wrap; }.scenario-tag { font-size: 11px; color: var(--ink-muted); background: white; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); }.scenario-soon { font-size: 11px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.08); padding: 3px 8px; border-radius: 6px; margin-left: 8px; }/* CTA */.cta { padding: 120px 0; background: var(--ink); position: relative; overflow: hidden; }.cta::before {  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 900px; height: 900px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 60%);}.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; text-align: center; position: relative; z-index: 1; }.cta h2 { font-size: 48px; font-weight: 900; color: white; line-height: 1.2; margin-bottom: 24px; letter-spacing: -2px; }.cta h2 .highlight { color: var(--orange-light); }.cta p { font-size: 19px; color: rgba(255,255,255,0.6); margin-bottom: 48px; line-height: 1.8; }.cta-buttons { display: flex; gap: 16px; justify-content: center; }.cta .btn-primary { font-size: 18px; padding: 18px 44px; }.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 44px; }.cta .btn-secondary:hover { border-color: white; }/* 页脚 */.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 60px 0 30px; }.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; color: rgba(255,255,255,0.45); }.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 18px; }.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 12px; transition: color 0.2s; }.footer-col a:hover { color: var(--orange-light); }.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.35); }.footer-links { display: flex; gap: 24px; }.footer-links a { font-size: 12px; color: rgba(255,255,255,0.35); }/* Grain噪点overlay - 提升印刷质感 */body::after {  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;  pointer-events: none; z-index: 9999; opacity: 0.04;  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}/* 在线操作体验台 */.live-demo { padding: 120px 0; background: var(--white); }.live-demo-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.live-demo-header { text-align: center; margin-bottom: 56px; }.live-demo-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.live-demo h2 { font-size: 40px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }.live-demo-desc { font-size: 17px; color: var(--ink-soft); max-width: 600px; margin: 0 auto; }.live-demo-card {  background: var(--paper); border-radius: 24px; padding: 40px;  border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(28,25,23,0.08);}.demo-toolbar {  display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; align-items: center;}.demo-industry-btn {  padding: 10px 20px; border-radius: 10px; border: 1px solid var(--line);  background: white; font-size: 14px; font-weight: 600; cursor: pointer;  transition: all 0.2s; color: var(--ink-soft);}.demo-industry-btn:hover { border-color: var(--orange); color: var(--orange); }.demo-industry-btn.active { background: var(--orange); color: white; border-color: var(--orange); }.demo-style-slider {  flex: 1; min-width: 200px; display: flex; align-items: center; gap: 12px;}.demo-style-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }.demo-style-slider input[type="range"] {  flex: 1; -webkit-appearance: none; height: 6px; background: var(--line);  border-radius: 3px; outline: none;}.demo-style-slider input[type="range"]::-webkit-slider-thumb {  -webkit-appearance: none; width: 20px; height: 20px; background: var(--orange);  border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(234,88,12,0.4);}.demo-style-value { font-size: 13px; font-weight: 700; color: var(--orange); min-width: 60px; }.demo-workspace {  display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center;}.demo-upload-zone {  aspect-ratio: 1; border-radius: 16px; border: 2px dashed var(--line);  display: flex; flex-direction: column; align-items: center; justify-content: center;  background: white; transition: all 0.3s; cursor: pointer; overflow: hidden; position: relative;}.demo-upload-zone:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }.demo-upload-zone img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }.upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 1; text-align: center; padding: 20px; }.upload-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }.upload-hint { font-size: 11px; color: var(--ink-muted); }.demo-generate-wrap {  display: flex; flex-direction: column; align-items: center; gap: 10px;  cursor: pointer; flex-shrink: 0; user-select: none;}.demo-circle-btn {  width: 60px; height: 60px; position: relative;  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-circle-btn:hover { transform: scale(1.1); }.demo-progress-ring {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;}.progress-bg { fill: none; stroke: #e7e5e4; stroke-width: 3; }.progress-arc {  fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round;  stroke-dasharray: 175.93; stroke-dashoffset: 175.93;  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-generate-wrap.generating .progress-arc,.demo-generate-wrap.done .progress-arc { stroke-dashoffset: 0; }.demo-circle-inner {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 30px; height: 30px; border-radius: 50%;  background: #f5f5f4; display: flex; align-items: center; justify-content: center;  transition: background 0.3s ease;}.demo-generate-wrap.generating .demo-circle-inner,.demo-generate-wrap.done .demo-circle-inner { background: var(--orange); }.demo-circle-inner svg {  width: 15px; height: 15px; position: absolute;  transition: opacity 0.25s ease, transform 0.25s ease;}.icon-default { fill: var(--orange); opacity: 1; transform: scale(1); }.icon-done { fill: white; opacity: 0; transform: scale(0.5); }.demo-generate-wrap.generating .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-done { opacity: 1; transform: scale(1); }.demo-generate-hint {  font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;}.demo-generate-wrap.generating .demo-generate-hint,.demo-generate-wrap.done .demo-generate-hint { color: var(--orange); }.demo-result-zone {  aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); background: var(--line);}.demo-result-zone img { width: 100%; height: 100%; object-fit: cover; }.demo-result-placeholder {  width: 100%; height: 100%; display: flex; flex-direction: column;  align-items: center; justify-content: center; color: var(--ink-muted);}.demo-result-placeholder .spinner {  width: 32px; height: 32px; border: 3px solid var(--line);  border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite;  margin-bottom: 12px;}@keyframes spin { to { transform: rotate(360deg); } }.demo-result-label {  position: absolute; bottom: 0; left: 0; right: 0;  background: linear-gradient(transparent, rgba(0,0,0,0.75));  padding: 24px 12px 10px; color: white; font-size: 12px; font-weight: 600; text-align: center;}.demo-progress-bar {  margin-top: 24px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden;}.demo-progress-fill {  height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));  border-radius: 4px; width: 0%; transition: width 0.3s;}.demo-progress-text {  text-align: center; margin-top: 10px; font-size: 13px; color: var(--ink-muted); font-weight: 500;}/* 响应式 */@media (max-width: 900px) {  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 48px; }  .hero h1 { font-size: 40px; }  .feature-title { font-size: 30px; }  .pain h2, .more h2, .scenarios h2 { font-size: 28px; }  .pain-cards, .scenarios-grid { grid-template-columns: 1fr; }  .more-grid { grid-template-columns: repeat(2, 1fr); }  .platform-grid { grid-template-columns: repeat(2, 1fr); }  .footer-top { grid-template-columns: 1fr 1fr; }  .nav-links { display: none; }  .nav-toggle { display: flex; }  .hero-stats { gap: 28px; }  .cta h2 { font-size: 32px; }}</style></head><body><!-- 导航（与首页一致） --><header class="nav" id="nav">  <div class="nav-inner">    <a href="/index.html" class="nav-logo">      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>        <g transform="translate(-1.06 -28.16)">          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>        </g>      </svg>    </a>    <nav class="nav-links" id="navLinks">      <a href="/huoer.html" class="nav-product-link active">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计      </a>      <a href="/geo.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计      </a>      <a href="/global.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计      </a>      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>      <a class="nav-cta" href="#download">免费下载</a>    </nav>    <button class="nav-toggle" id="navToggle" aria-label="菜单">      <span></span><span></span><span></span>    </button>  </div></header><!-- Hero --><section class="hero">  <div class="hero-inner">    <div>      <div class="hero-tag"><span class="dot"></span>基于火山引擎Seedream 4.5 · 已服务10000+小商家</div>      <h1>不止是生图，<br>是<span class="highlight">懂行业</span>的AI工作流</h1>      <p class="hero-desc">Hogee生图伙伴自动识别上传图片、调用行业知识库、20秒生成能直接上架的商品图。Seedream 5.0大模型驱动，飞书多维表格协同，一次生成全平台适配。</p>      <div class="hero-cta">        <a href="#workbench" class="btn-primary">          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>          在线体验        </a>        <a href="#download" class="btn-secondary">          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>          下载客户端        </a>      </div>    </div>    <div class="hero-visual">      <div class="hv-illustration">        <img src="images/hero-illustration.jpg" alt="生图Hogee工作场景">      </div>      <div class="hv-float-tag hv-ft1">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>        <span>Seedream 5.0大模型驱动</span>      </div>      <div class="hv-float-tag hv-ft2">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>        <span>飞书多维表格协同共享</span>      </div>      <div class="hv-float-tag hv-ft3">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>        <span>自研5大行业生图知识库</span>      </div>    </div></div></section><style>
-/* ===== 生图工作台 ===== */
-.workbench {
-  padding: 60px 0;
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WorkHogee · 生图伙计 — 小商家的AI工作流伙计</title><style>:root {  --orange: #ea580c;  --orange-light: #fb923c;  --orange-dark: #c2410c;  --ink: #1c1917;  --ink-soft: #57534e;  --ink-muted: #a8a29e;  --paper: #faf8f4;  --sand: #f5f0e8;  --white: #ffffff;  --line: #e7e5e4;  --green: #16a34a;}* { margin: 0; padding: 0; box-sizing: border-box; }html { scroll-behavior: smooth; }body {  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;  color: var(--ink); background: var(--white); line-height: 1.6;  -webkit-font-smoothing: antialiased;}a { color: inherit; text-decoration: none; }img { max-width: 100%; display: block; }/* ===== 导航（与首页一致） ===== */.nav {  position: fixed; top: 0; left: 0; right: 0; z-index: 100;  background: rgba(255,255,255,0.88); backdrop-filter: blur(20px);  border-bottom: 1px solid var(--line);}.nav-inner {  display: flex; align-items: center; justify-content: space-between;  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;}.nav-logo { display: flex; align-items: center; gap: 10px; }.nav-logo svg { height: 28px; width: auto; }.nav-links { display: flex; align-items: center; gap: 36px; }.nav-links a {  font-size: 15px; color: var(--ink-soft); font-weight: 500;  transition: color 0.2s; position: relative;}.nav-links a:hover { color: var(--orange); }.nav-cta {  display: inline-flex; align-items: center; gap: 6px;  background: var(--ink); color: var(--paper) !important;  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;  font-weight: 600 !important; transition: all 0.25s;}.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }.nav-product-link {  display: inline-flex; align-items: center; gap: 5px;  font-size: 14px; color: var(--ink-soft); font-weight: 500;  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;}.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }.nav-product-link.active {  background: var(--orange); color: var(--white) !important;  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);}.nav-product-link.active:hover { background: var(--orange-light); }.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }/* ===== Hero ===== */.hero {  padding: 140px 0 100px;  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);  position: relative; overflow: hidden;}.hero::before {  content: ''; position: absolute; top: -200px; right: -200px;  width: 700px; height: 700px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 65%);}.hero-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;  position: relative; z-index: 1;}.hero-tag {  display: inline-flex; align-items: center; gap: 8px;  background: white; border: 1px solid var(--line); border-radius: 100px;  padding: 7px 18px; font-size: 13px; font-weight: 600; color: var(--ink-soft);  margin-bottom: 28px;}.hero-tag .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }.hero h1 {  font-size: 56px; font-weight: 900; line-height: 1.1; letter-spacing: -2px;  margin-bottom: 24px;}.hero h1 .highlight { color: var(--orange); }.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 40px; max-width: 500px; }.hero-buttons { display: flex; gap: 16px; margin-bottom: 56px; }.btn-primary {  background: var(--orange); color: white; padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 700; border: none;  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;}.btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }.btn-secondary {  background: white; color: var(--ink); padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 600; border: 1px solid var(--line);  cursor: pointer; transition: all 0.2s;}.btn-secondary:hover { border-color: var(--ink); }.hero-stats { display: flex; gap: 48px; }.hero-stat .num { font-size: 36px; font-weight: 900; color: var(--ink); line-height: 1; }.hero-stat .num span { color: var(--orange); }.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }/* Hero 自动播放幻灯片 */.hero-slideshow {  background: var(--ink); border-radius: 24px; overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.18); position: relative;}.slides-container { position: relative; width: 100%; padding-top: 80%; }.slide {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;  opacity: 0; transition: opacity 0.5s ease; display: flex; flex-direction: column;}.slide.active { opacity: 1; }.slide-header {  display: flex; align-items: center; justify-content: space-between;  padding: 18px 22px; flex-shrink: 0;}.slide-industry { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.5px; }.slide-status {  font-size: 11px; font-weight: 700; color: var(--orange);  background: rgba(234,88,12,0.15); padding: 5px 12px; border-radius: 6px;  display: flex; align-items: center; gap: 6px;}.slide-status::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }.slide-body {  flex: 1; display: flex; flex-direction: column; align-items: center;  justify-content: center; padding: 0 24px 24px; gap: 16px;}.slide-img-box {  position: relative; width: 82%; aspect-ratio: 16/10; border-radius: 14px; overflow: hidden;  box-shadow: 0 20px 50px rgba(0,0,0,0.3);}.slide-before-img, .slide-after-img {  position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;}.slide-after-img { opacity: 0; transition: opacity 0.5s ease; }.slide.active.done .slide-after-img { opacity: 1; }.slide-progress-ring {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 56px; height: 56px; opacity: 0; transition: opacity 0.3s; z-index: 2;}.slide.active.generating .slide-progress-ring { opacity: 1; }.slide-progress-arc { transition: stroke-dashoffset 2s linear; }.slide.active.generating .slide-progress-arc { stroke-dashoffset: 0; }.slide-caption {  font-size: 13px; color: rgba(255,255,255,0.55); text-align: center; letter-spacing: 0.5px;}.slide-dots {  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);  display: flex; gap: 6px; z-index: 3;}.dot {  width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.25);  transition: all 0.3s; cursor: pointer;}.dot.active { background: var(--orange); width: 18px; border-radius: 3px; }/* Hero 视觉区 */.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }.hv-main {  width: 100%; background: var(--ink); border-radius: 24px; padding: 32px 28px;  box-shadow: 0 30px 80px rgba(28,25,23,0.18);}.hv-ba { display: flex; align-items: center; gap: 12px; }.hv-ba-side {  flex: 1; position: relative; border-radius: 14px; overflow: hidden;  aspect-ratio: 1/1; background: #f5f5f4;}.hv-ba-side img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }.hv-ba-side:hover img { transform: scale(1.05); }.hv-ba-tag {  position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 700;  padding: 4px 10px; border-radius: 6px; z-index: 2;}.hv-before .hv-ba-tag { background: rgba(28,25,23,0.7); color: #fff; }.hv-after .hv-ba-tag { background: var(--orange); color: #fff; }.hv-ba-arrow {  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;  background: var(--orange); color: #fff; display: flex; align-items: center;  justify-content: center; animation: arrowPulse 2s infinite;}.hv-ba-arrow svg { width: 18px; height: 18px; }@keyframes arrowPulse {  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234,88,12,0.4); }  50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(234,88,12,0); }}.hv-float {  position: absolute; display: flex; align-items: center; gap: 10px;  background: #fff; padding: 12px 16px; border-radius: 14px;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); z-index: 3;}.hv-float svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }.hv-float div { display: flex; flex-direction: column; line-height: 1.3; }.hv-float strong { font-size: 15px; font-weight: 800; color: var(--ink); }.hv-float span { font-size: 11px; color: var(--ink-soft); }.hv-f1 { top: -16px; left: -20px; animation: floatY 3s ease-in-out infinite; }.hv-f2 { top: 40%; right: -24px; animation: floatY 3.5s ease-in-out infinite 0.5s; }.hv-f3 { bottom: -16px; left: 30%; animation: floatY 4s ease-in-out infinite 1s; }@keyframes floatY {  0%, 100% { transform: translateY(0); }  50% { transform: translateY(-8px); }}/* Hero 插画 */.hv-illustration {  position: relative;  width: 100%;  aspect-ratio: 4/3;  border-radius: 24px;  overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.15);}.hv-illustration img {  width: 100%;  height: 100%;  object-fit: cover;  display: block;  transition: transform 0.6s ease;}.hv-illustration:hover img {  transform: scale(1.05);}/* Hero CTA按钮 */.hero-cta {  display: flex;  gap: 14px;  margin-top: 30px;  flex-wrap: wrap;}.btn-primary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: var(--orange);  color: white;  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: none;  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-primary:hover {  background: var(--orange-dark);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(234,88,12,0.32);}.btn-primary:active {  transform: translateY(0);}.btn-secondary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: white;  color: var(--ink);  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: 1.5px solid var(--line);  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-secondary:hover {  border-color: var(--orange);  color: var(--orange);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(28,25,23,0.08);}.btn-secondary:active {  transform: translateY(0);}
+/* Hero 浮动标签 */.hv-float-tag {  position: absolute;  display: flex;  align-items: center;  gap: 8px;  background: white;  padding: 10px 16px;  border-radius: 100px;  box-shadow: 0 8px 24px rgba(28,25,23,0.12);  border: 1px solid var(--line);  z-index: 3;  transition: all 0.3s ease;}.hv-float-tag:hover {  transform: translateY(-3px);  box-shadow: 0 12px 32px rgba(28,25,23,0.18);}.hv-float-tag svg {  width: 15px;  height: 15px;  color: var(--orange);  flex-shrink: 0;}.hv-float-tag span {  font-size: 12px;  font-weight: 700;  color: var(--ink);  white-space: nowrap;}.hv-ft1 {  top: -12px;  left: -16px;  animation: floatY 4s ease-in-out infinite;}.hv-ft2 {  bottom: 28px;  right: -16px;  animation: floatY 4.5s ease-in-out infinite 0.8s;}.hv-ft3 {  bottom: -12px;  left: 26%;  animation: floatY 5s ease-in-out infinite 1.6s;}.hfc-value-sm {  font-size: 14px;  font-weight: 800;  color: var(--orange);  line-height: 1.3;  letter-spacing: 0.3px;}.hfc-value-full {  font-size: 13px;  font-weight: 700;  color: var(--ink);  line-height: 1.4;  white-space: nowrap;}.hv-float-card {  min-width: 160px;}/* ===== 痛点 ===== */.pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }.pain::before {  content: ''; position: absolute; top: 50%; left: -150px; transform: translateY(-50%);  width: 500px; height: 500px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 65%);}.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }.pain-header { text-align: center; margin-bottom: 64px; }.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 3px; margin-bottom: 20px; }.pain h2 { font-size: 42px; font-weight: 900; line-height: 1.3; max-width: 700px; margin: 0 auto; letter-spacing: -1px; }.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }.pain-card {  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);  border-radius: 20px; padding: 40px 32px; transition: all 0.3s;}.pain-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-6px); border-color: rgba(234,88,12,0.3); }.pain-num { font-size: 56px; font-weight: 900; color: var(--orange); opacity: 0.5; margin-bottom: 20px; line-height: 1; letter-spacing: -2px; }.pain-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }.pain-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.9; margin-bottom: 24px; }.pain-card .cost { font-size: 36px; font-weight: 900; color: #ef4444; line-height: 1; }.pain-card .cost span { font-size: 15px; color: rgba(255,255,255,0.4); font-weight: 400; margin-left: 4px; }/* ===== 核心能力通用 ===== */.feature { padding: 120px 0; background: var(--white); }.feature-alt { background: var(--paper); }.feature-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;}.feature-inner.reverse { direction: rtl; }.feature-inner.reverse > * { direction: ltr; }.feature-num {  font-size: 14px; font-weight: 800; color: var(--orange);  letter-spacing: 4px; margin-bottom: 20px;}.feature-title { font-size: 40px; font-weight: 900; line-height: 1.2; margin-bottom: 24px; letter-spacing: -1px; }.feature-title .highlight { color: var(--orange); }.feature-desc { font-size: 17px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 36px; }.feature-points { display: flex; flex-direction: column; gap: 18px; }.feature-point { display: flex; gap: 14px; align-items: flex-start; }.point-icon {  width: 26px; height: 26px; background: rgba(234,88,12,0.1); color: var(--orange);  border-radius: 50%; display: flex; align-items: center; justify-content: center;  font-size: 14px; font-weight: 900; flex-shrink: 0; margin-top: 2px;}.feature-point div { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }.feature-point strong { color: var(--ink); font-weight: 700; }/* 核心能力1：对比卡片 */.compare-card {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }.compare-label { font-size: 16px; font-weight: 700; }.compare-time { font-size: 13px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 6px 14px; border-radius: 8px; }.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 28px; }.compare-img { aspect-ratio: 1; border-radius: 16px; overflow: hidden; }.compare-img img { width: 100%; height: 100%; object-fit: cover; }.compare-img.after { box-shadow: 0 12px 32px rgba(234,88,12,0.18); }.compare-caption { text-align: center; font-size: 12px; color: var(--ink-muted); margin-top: 10px; font-weight: 500; }.compare-arrow { font-size: 24px; color: var(--orange); font-weight: 900; }.compare-footer { display: flex; justify-content: space-around; padding-top: 24px; border-top: 1px solid var(--line); }.compare-metric { text-align: center; }.metric-num { display: block; font-size: 24px; font-weight: 900; color: var(--ink); }.metric-label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }/* 核心能力2：平台展示 */.platform-showcase {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.platform-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }.platform-title { font-size: 16px; font-weight: 700; }.platform-count { font-size: 13px; color: var(--orange); font-weight: 700; }.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }.platform-item { text-align: center; transition: transform 0.2s; }.platform-item:hover { transform: translateY(-4px); }.platform-img { aspect-ratio: 1; border-radius: 14px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0,0,0,0.1); position: relative; }.platform-img img { width: 100%; height: 100%; object-fit: cover; }.platform-tag {  position: absolute; top: 8px; left: 8px; color: white;  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;}.platform-tag.meituan { background: rgba(255,193,7,0.95); color: #333; }.platform-tag.taobao { background: rgba(255,106,0,0.95); }.platform-tag.xhs { background: rgba(254,44,85,0.95); }.platform-tag.douyin { background: rgba(0,0,0,0.8); }.platform-name { font-size: 13px; font-weight: 700; }.platform-size { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }.platform-action { text-align: center; }.btn-platform {  background: var(--orange); color: white; padding: 14px 32px;  border: none; border-radius: 12px; font-size: 15px; font-weight: 700;  cursor: pointer; transition: all 0.2s; width: 100%;}.btn-platform:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(234,88,12,0.3); }/* 更多能力 */.more { padding: 100px 0; background: var(--paper); }.more-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.more-header { text-align: center; margin-bottom: 56px; }.more-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.more h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }.more-card {  background: white; border-radius: 16px; padding: 28px 24px;  border: 1px solid var(--line); transition: all 0.3s;}.more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.more-icon {  width: 44px; height: 44px; border-radius: 12px; background: rgba(234,88,12,0.08);  display: flex; align-items: center; justify-content: center;  font-size: 18px; font-weight: 800; color: var(--orange); margin-bottom: 16px;}.more-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }.more-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.8; }/* 行业场景 */.scenarios { padding: 100px 0; background: var(--white); }.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.scenarios-header { text-align: center; margin-bottom: 56px; }.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.scenarios h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 500px; margin: 12px auto 0; }.scenarios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }.scenario-card {  background: var(--paper); border-radius: 20px; padding: 32px;  border: 1px solid var(--line); transition: all 0.3s;  display: flex; gap: 24px; align-items: flex-start;}.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.scenario-icon {  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;  display: flex; align-items: center; justify-content: center;  font-size: 22px; font-weight: 800; color: var(--ink);}.scenario-icon.food { background: rgba(234,88,12,0.1); color: var(--orange); }.scenario-icon.home { background: rgba(139,92,246,0.1); color: #8b5cf6; }.scenario-icon.car { background: rgba(59,130,246,0.1); color: #3b82f6; }.scenario-icon.deco { background: rgba(16,185,129,0.1); color: #10b981; }.scenario-content h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }.scenario-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }.scenario-tags { display: flex; gap: 8px; flex-wrap: wrap; }.scenario-tag { font-size: 11px; color: var(--ink-muted); background: white; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); }.scenario-soon { font-size: 11px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.08); padding: 3px 8px; border-radius: 6px; margin-left: 8px; }/* CTA */.cta { padding: 120px 0; background: var(--ink); position: relative; overflow: hidden; }.cta::before {  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 900px; height: 900px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 60%);}.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; text-align: center; position: relative; z-index: 1; }.cta h2 { font-size: 48px; font-weight: 900; color: white; line-height: 1.2; margin-bottom: 24px; letter-spacing: -2px; }.cta h2 .highlight { color: var(--orange-light); }.cta p { font-size: 19px; color: rgba(255,255,255,0.6); margin-bottom: 48px; line-height: 1.8; }.cta-buttons { display: flex; gap: 16px; justify-content: center; }.cta .btn-primary { font-size: 18px; padding: 18px 44px; }.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 44px; }.cta .btn-secondary:hover { border-color: white; }/* 页脚 */.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 60px 0 30px; }.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; color: rgba(255,255,255,0.45); }.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 18px; }.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 12px; transition: color 0.2s; }.footer-col a:hover { color: var(--orange-light); }.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.35); }.footer-links { display: flex; gap: 24px; }.footer-links a { font-size: 12px; color: rgba(255,255,255,0.35); }/* Grain噪点overlay - 提升印刷质感 */body::after {  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;  pointer-events: none; z-index: 9999; opacity: 0.04;  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}/* 在线操作体验台 */.live-demo { padding: 120px 0; background: var(--white); }.live-demo-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.live-demo-header { text-align: center; margin-bottom: 56px; }.live-demo-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.live-demo h2 { font-size: 40px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }.live-demo-desc { font-size: 17px; color: var(--ink-soft); max-width: 600px; margin: 0 auto; }.live-demo-card {  background: var(--paper); border-radius: 24px; padding: 40px;  border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(28,25,23,0.08);}.demo-toolbar {  display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; align-items: center;}.demo-industry-btn {  padding: 10px 20px; border-radius: 10px; border: 1px solid var(--line);  background: white; font-size: 14px; font-weight: 600; cursor: pointer;  transition: all 0.2s; color: var(--ink-soft);}.demo-industry-btn:hover { border-color: var(--orange); color: var(--orange); }.demo-industry-btn.active { background: var(--orange); color: white; border-color: var(--orange); }.demo-style-slider {  flex: 1; min-width: 200px; display: flex; align-items: center; gap: 12px;}.demo-style-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }.demo-style-slider input[type="range"] {  flex: 1; -webkit-appearance: none; height: 6px; background: var(--line);  border-radius: 3px; outline: none;}.demo-style-slider input[type="range"]::-webkit-slider-thumb {  -webkit-appearance: none; width: 20px; height: 20px; background: var(--orange);  border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(234,88,12,0.4);}.demo-style-value { font-size: 13px; font-weight: 700; color: var(--orange); min-width: 60px; }.demo-workspace {  display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center;}.demo-upload-zone {  aspect-ratio: 1; border-radius: 16px; border: 2px dashed var(--line);  display: flex; flex-direction: column; align-items: center; justify-content: center;  background: white; transition: all 0.3s; cursor: pointer; overflow: hidden; position: relative;}.demo-upload-zone:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }.demo-upload-zone img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }.upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 1; text-align: center; padding: 20px; }.upload-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }.upload-hint { font-size: 11px; color: var(--ink-muted); }.demo-generate-wrap {  display: flex; flex-direction: column; align-items: center; gap: 10px;  cursor: pointer; flex-shrink: 0; user-select: none;}.demo-circle-btn {  width: 60px; height: 60px; position: relative;  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-circle-btn:hover { transform: scale(1.1); }.demo-progress-ring {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;}.progress-bg { fill: none; stroke: #e7e5e4; stroke-width: 3; }.progress-arc {  fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round;  stroke-dasharray: 175.93; stroke-dashoffset: 175.93;  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-generate-wrap.generating .progress-arc,.demo-generate-wrap.done .progress-arc { stroke-dashoffset: 0; }.demo-circle-inner {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 30px; height: 30px; border-radius: 50%;  background: #f5f5f4; display: flex; align-items: center; justify-content: center;  transition: background 0.3s ease;}.demo-generate-wrap.generating .demo-circle-inner,.demo-generate-wrap.done .demo-circle-inner { background: var(--orange); }.demo-circle-inner svg {  width: 15px; height: 15px; position: absolute;  transition: opacity 0.25s ease, transform 0.25s ease;}.icon-default { fill: var(--orange); opacity: 1; transform: scale(1); }.icon-done { fill: white; opacity: 0; transform: scale(0.5); }.demo-generate-wrap.generating .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-done { opacity: 1; transform: scale(1); }.demo-generate-hint {  font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;}.demo-generate-wrap.generating .demo-generate-hint,.demo-generate-wrap.done .demo-generate-hint { color: var(--orange); }.demo-result-zone {  aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); background: var(--line);}.demo-result-zone img { width: 100%; height: 100%; object-fit: cover; }.demo-result-placeholder {  width: 100%; height: 100%; display: flex; flex-direction: column;  align-items: center; justify-content: center; color: var(--ink-muted);}.demo-result-placeholder .spinner {  width: 32px; height: 32px; border: 3px solid var(--line);  border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite;  margin-bottom: 12px;}@keyframes spin { to { transform: rotate(360deg); } }.demo-result-label {  position: absolute; bottom: 0; left: 0; right: 0;  background: linear-gradient(transparent, rgba(0,0,0,0.75));  padding: 24px 12px 10px; color: white; font-size: 12px; font-weight: 600; text-align: center;}.demo-progress-bar {  margin-top: 24px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden;}.demo-progress-fill {  height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));  border-radius: 4px; width: 0%; transition: width 0.3s;}.demo-progress-text {  text-align: center; margin-top: 10px; font-size: 13px; color: var(--ink-muted); font-weight: 500;}/* 响应式 */@media (max-width: 900px) {  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 48px; }  .hero h1 { font-size: 40px; }  .feature-title { font-size: 30px; }  .pain h2, .more h2, .scenarios h2 { font-size: 28px; }  .pain-cards, .scenarios-grid { grid-template-columns: 1fr; }  .more-grid { grid-template-columns: repeat(2, 1fr); }  .platform-grid { grid-template-columns: repeat(2, 1fr); }  .footer-top { grid-template-columns: 1fr 1fr; }  .nav-links { display: none; }  .nav-toggle { display: flex; }  .hero-stats { gap: 28px; }  .cta h2 { font-size: 32px; }}
+/* Hero 三按钮 */
+.hero-cta-three { gap: 12px; }
+.hero-cta-three .btn-primary, .hero-cta-three .btn-secondary { padding: 13px 22px; font-size: 14px; }
+@media (max-width: 768px) {
+  .hero-cta-three { flex-direction: column; align-items: stretch; }
+  .hero-cta-three a { justify-content: center; }
+}
+</style></head><body><!-- 导航（与首页一致） --><header class="nav" id="nav">  <div class="nav-inner">    <a href="/index.html" class="nav-logo">      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>        <g transform="translate(-1.06 -28.16)">          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>        </g>      </svg>    </a>    <nav class="nav-links" id="navLinks">      <a href="/huoer.html" class="nav-product-link active">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计      </a>      <a href="/geo.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计      </a>      <a href="/global.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计      </a>      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>      <a class="nav-cta" href="#download">免费下载</a>    </nav>    <button class="nav-toggle" id="navToggle" aria-label="菜单">      <span></span><span></span><span></span>    </button>  </div></header><!-- Hero --><section class="hero">  <div class="hero-inner">    <div>      <div class="hero-tag"><span class="dot"></span>基于火山引擎Seedream 4.5 · 已服务10000+小商家</div>      <h1>不止是生图，<br>是<span class="highlight">懂行业</span>的AI工作流</h1>      <p class="hero-desc">Hogee生图伙伴自动识别上传图片、调用行业知识库、20秒生成能直接上架的商品图。Seedream 5.0大模型驱动，飞书多维表格协同，一次生成全平台适配。</p>      <div class="hero-cta hero-cta-three">
+        <a href="#workbench" class="btn-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          官网体验版
+        </a>
+        <a href="huoer-online.html" class="btn-secondary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          在线生图版
+        </a>
+        <a href="huoer-download.html" class="btn-secondary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载客户端
+        </a>
+      </div>    </div>    <div class="hero-visual">      <div class="hv-illustration">        <img src="images/hero-illustration.jpg" alt="生图Hogee工作场景">      </div>      <div class="hv-float-tag hv-ft1">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>        <span>Seedream 5.0大模型驱动</span>      </div>      <div class="hv-float-tag hv-ft2">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>        <span>飞书多维表格协同共享</span>      </div>      <div class="hv-float-tag hv-ft3">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>        <span>自研5大行业生图知识库</span>      </div>    </div></div></section><style>
+</style>
+
+<!-- 在线生图伙伴工作台 -->
+<!-- ===== 官网体验版工作台 ===== -->
+<section class="trial-wb" id="workbench">
+  <div class="trial-wb-inner">
+    <div class="trial-wb-header">
+      <div class="trial-wb-title">
+        <span class="trial-wb-badge">官网体验版</span>
+        <h2>免费体验 3 张，无需注册</h2>
+      </div>
+      <div class="trial-wb-credits">
+        <div class="trial-credits-bar">
+          <div class="trial-credits-fill" id="trialCreditsFill"></div>
+        </div>
+        <span class="trial-credits-text" id="trialCreditsText">剩余 3 / 3 次</span>
+      </div>
+    </div>
+
+    <div class="trial-wb-body">
+      <!-- 上传阶段 -->
+      <div class="trial-stage trial-stage-upload active" id="trialStageUpload">
+        <div class="trial-upload-zone" id="trialUploadZone">
+          <input type="file" id="trialFileInput" accept="image/*" hidden>
+          <div class="trial-upload-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="trial-upload-title">拖拽图片到这里，或点击上传</div>
+          <div class="trial-upload-desc">支持 JPG / PNG / WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
+          <div class="trial-upload-samples">
+            <span>试试示例：</span>
+            <button class="trial-sample-btn" data-sample="3c">3C耳机</button>
+            <button class="trial-sample-btn" data-sample="food">红烧肉</button>
+            <button class="trial-sample-btn" data-sample="home">家居花瓶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 生图中阶段 -->
+      <div class="trial-stage trial-stage-processing" id="trialStageProcessing">
+        <div class="trial-processing-wrap">
+          <div class="trial-processing-preview">
+            <img id="trialProcessingImg" src="" alt="">
+            <div class="trial-processing-overlay">
+              <div class="trial-spinner"></div>
+            </div>
+          </div>
+          <div class="trial-processing-text">
+            <div class="trial-processing-title" id="trialProcessingTitle">AI 正在识别图片...</div>
+            <div class="trial-processing-sub" id="trialProcessingSub">预计 15 秒完成</div>
+          </div>
+          <div class="trial-progress-bar">
+            <div class="trial-progress-fill" id="trialProgressFill"></div>
+          </div>
+          <button class="trial-cancel-btn" id="trialCancelBtn">取消</button>
+        </div>
+      </div>
+
+      <!-- 结果阶段 -->
+      <div class="trial-stage trial-stage-result" id="trialStageResult">
+        <div class="trial-result-compare">
+          <div class="trial-compare-container" id="trialCompareContainer">
+            <div class="trial-compare-original">
+              <img id="trialOriginalImg" src="" alt="原图">
+              <span class="trial-compare-label">原图</span>
+            </div>
+            <div class="trial-compare-generated" id="trialCompareGenerated">
+              <img id="trialGeneratedImg" src="" alt="成品">
+              <span class="trial-compare-label trial-compare-label-gen">AI 成品</span>
+            </div>
+            <div class="trial-compare-slider" id="trialCompareSlider">
+              <div class="trial-compare-handle">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" transform="translate(12 0)"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="trial-result-controls">
+          <div class="trial-control-group">
+            <label class="trial-control-label">输出尺寸</label>
+            <div class="trial-size-options">
+              <button class="trial-size-btn active" data-size="800x800">方形 800×800</button>
+              <button class="trial-size-btn" data-size="1080x1440">竖版 1080×1440</button>
+              <button class="trial-size-btn" data-size="1920x1080">横版 1920×1080</button>
+            </div>
+          </div>
+          <div class="trial-control-group">
+            <label class="trial-control-label">图片清晰度</label>
+            <div class="trial-quality-options">
+              <button class="trial-quality-btn" data-quality="standard">标准</button>
+              <button class="trial-quality-btn active" data-quality="hd">高清</button>
+              <button class="trial-quality-btn" data-quality="ultra">超清</button>
+            </div>
+          </div>
+          <div class="trial-result-actions">
+            <button class="trial-btn-secondary" id="trialRegenBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              重新生成
+            </button>
+            <button class="trial-btn-primary" id="trialDownloadBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              下载成品图
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 次数用完提示 -->
+      <div class="trial-stage trial-stage-limit" id="trialStageLimit">
+        <div class="trial-limit-wrap">
+          <div class="trial-limit-icon">
+            <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>免费体验次数已用完</h3>
+          <p>官网体验版每位用户可免费生成 3 张图片。<br>如需继续使用，请选择以下方式：</p>
+          <div class="trial-limit-options">
+            <a href="huoer-online.html" class="trial-limit-card">
+              <div class="trial-limit-card-title">在线生图版</div>
+              <div class="trial-limit-card-desc">注册即送 10 张免费额度<br>按量购买，不用不花钱</div>
+              <div class="trial-limit-card-cta">前往体验 →</div>
+            </a>
+            <a href="huoer-download.html" class="trial-limit-card trial-limit-card-highlight">
+              <div class="trial-limit-card-title">下载客户端</div>
+              <div class="trial-limit-card-desc">注册即送 20 张免费额度<br>会员享无限生成 + 全部功能</div>
+              <div class="trial-limit-card-cta">下载客户端 →</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ===== 官网体验版工作台 ===== */
+.trial-wb {
+  padding: 80px 0;
   background: var(--paper);
 }
-.workbench-inner {
-  max-width: 1400px;
+.trial-wb-inner {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 24px;
 }
-
-/* 顶部工具栏 */
-.wb-topbar {
+.trial-wb-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--ink);
-  border-radius: 16px 16px 0 0;
-  padding: 12px 20px;
-  color: white;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.wb-topbar-left {
+.trial-wb-title {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
 }
-.wb-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.wb-logo-mark {
-  width: 28px;
-  height: 28px;
+.trial-wb-badge {
+  display: inline-block;
+  padding: 5px 14px;
   background: var(--orange);
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 15px;
-  color: white;
-}
-.wb-logo-text {
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-}
-.wb-version-switcher {
-  position: relative;
-}
-.wb-version-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 8px;
   color: white;
   font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.wb-version-btn:hover {
-  background: rgba(255,255,255,0.12);
-}
-.wb-version-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-  padding: 6px;
-  min-width: 140px;
-  display: none;
-  z-index: 100;
-}
-.wb-version-dropdown.show {
-  display: block;
-}
-.wb-version-option {
-  padding: 8px 12px;
+  font-weight: 700;
   border-radius: 6px;
-  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.trial-wb-title h2 {
+  font-size: 22px;
+  font-weight: 800;
   color: var(--ink);
-  cursor: pointer;
-  transition: background 0.15s;
 }
-.wb-version-option:hover {
-  background: var(--paper);
-}
-.wb-version-option.active {
-  background: rgba(234,88,12,0.1);
-  color: var(--orange);
-  font-weight: 600;
-}
-.wb-topbar-center {
+.trial-wb-credits {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
-.wb-task-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.6);
+.trial-credits-bar {
+  width: 120px;
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
 }
-.wb-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px rgba(34,197,94,0.5);
+.trial-credits-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange-light), var(--orange));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  width: 100%;
 }
-.wb-status-text {
-  color: white;
-  font-weight: 600;
-}
-.wb-status-divider {
-  color: rgba(255,255,255,0.2);
-}
-.wb-status-count strong {
-  color: var(--orange-light);
-  font-weight: 700;
-}
-.wb-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.wb-credits {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.7);
-}
-.wb-credits strong {
-  color: #fbbf24;
-  font-weight: 700;
-}
-.wb-user-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--orange);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.trial-credits-text {
   font-size: 13px;
-  font-weight: 700;
-  color: white;
-  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
 
-/* 三栏主区 */
-.wb-main {
-  display: grid;
-  grid-template-columns: 200px 1fr 260px;
+.trial-wb-body {
   background: white;
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
-  min-height: 560px;
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(28,25,23,0.06);
+  overflow: hidden;
+  min-height: 480px;
 }
-
-/* 左侧边栏 */
-.wb-sidebar {
-  border-right: 1px solid var(--line);
-  padding: 16px 0;
-  overflow-y: auto;
-}
-.wb-sidebar-section {
-  padding: 0 12px 16px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-.wb-sidebar-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-.wb-sidebar-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 10px;
-  padding: 0 4px;
-}
-.wb-version-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin-bottom: 2px;
-}
-.wb-version-item:hover {
-  background: var(--paper);
-}
-.wb-version-item.active {
-  background: rgba(234,88,12,0.08);
-}
-.wb-version-item.active .wb-version-name {
-  color: var(--orange);
-  font-weight: 700;
-}
-.wb-version-icon {
-  font-size: 15px;
-}
-.wb-version-name {
-  font-size: 12px;
-  color: var(--ink);
-  font-weight: 500;
-}
-.wb-history-list, .wb-fav-list {
-  max-height: 180px;
-  overflow-y: auto;
-}
-.wb-history-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px 10px;
-  color: var(--ink-muted);
-  font-size: 11px;
-  text-align: center;
-}
-.wb-kb-entry {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: var(--paper);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.wb-kb-entry:hover {
-  background: rgba(234,88,12,0.06);
-}
-.wb-kb-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--orange);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  flex-shrink: 0;
-}
-.wb-kb-info {
-  flex: 1;
-  min-width: 0;
-}
-.wb-kb-name {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 2px;
-}
-.wb-kb-desc {
-  font-size: 10px;
-  color: var(--ink-muted);
-}
-
-/* 中央主工作区 */
-.wb-center {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 16px;
-}
-.wb-stage {
+.trial-stage {
   display: none;
-  flex: 1;
+  padding: 40px;
 }
-.wb-stage.active {
-  display: flex;
-  flex-direction: column;
+.trial-stage.active {
+  display: block;
 }
 
 /* 上传区 */
-.wb-stage-upload {
-  align-items: center;
-  justify-content: center;
+.trial-stage-upload {
+  padding: 40px;
 }
-.wb-upload-zone {
-  width: 100%;
-  flex: 1;
+.trial-upload-zone {
   border: 2px dashed var(--line);
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  padding: 60px 40px;
+  text-align: center;
   cursor: pointer;
   transition: all 0.25s;
   background: var(--paper);
-  position: relative;
 }
-.wb-upload-zone:hover, .wb-upload-zone.dragover {
+.trial-upload-zone:hover, .trial-upload-zone.dragover {
   border-color: var(--orange);
   background: rgba(234,88,12,0.03);
 }
-.wb-upload-icon {
+.trial-upload-icon {
   color: var(--orange);
+  margin-bottom: 20px;
   opacity: 0.7;
 }
-.wb-upload-title {
-  font-size: 16px;
+.trial-upload-title {
+  font-size: 18px;
   font-weight: 700;
   color: var(--ink);
+  margin-bottom: 10px;
 }
-.wb-upload-desc {
-  font-size: 12px;
+.trial-upload-desc {
+  font-size: 13px;
   color: var(--ink-muted);
-  text-align: center;
-  line-height: 1.6;
+  line-height: 1.8;
+  margin-bottom: 28px;
 }
-.wb-upload-samples {
+.trial-upload-samples {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-.wb-upload-samples-title {
-  font-size: 11px;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
   color: var(--ink-muted);
 }
-.wb-sample-btn {
-  padding: 5px 12px;
+.trial-sample-btn {
+  padding: 6px 16px;
   background: white;
   border: 1px solid var(--line);
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink);
   cursor: pointer;
   transition: all 0.2s;
 }
-.wb-sample-btn:hover {
+.trial-sample-btn:hover {
   border-color: var(--orange);
   color: var(--orange);
 }
 
 /* 生图中 */
-.wb-stage-processing {
+.trial-stage-processing {
+  display: none;
+}
+.trial-stage-processing.active {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-.wb-processing-wrap {
+.trial-processing-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
   width: 100%;
+  max-width: 400px;
 }
-.wb-processing-preview {
+.trial-processing-preview {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 160px;
+  height: 160px;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0,0,0,0.12);
 }
-.wb-processing-preview img {
+.trial-processing-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.wb-processing-overlay {
+.trial-processing-overlay {
   position: absolute;
   inset: 0;
   background: rgba(28,25,23,0.5);
@@ -386,133 +335,83 @@
   align-items: center;
   justify-content: center;
 }
-.wb-processing-spinner {
-  width: 36px;
-  height: 36px;
+.trial-spinner {
+  width: 32px;
+  height: 32px;
   border: 3px solid rgba(255,255,255,0.2);
   border-top-color: var(--orange);
   border-radius: 50%;
-  animation: wbSpin 0.8s linear infinite;
+  animation: trialSpin 0.8s linear infinite;
 }
-@keyframes wbSpin {
-  to { transform: rotate(360deg); }
+@keyframes trialSpin { to { transform: rotate(360deg); } }
+.trial-processing-text {
+  text-align: center;
 }
-.wb-processing-steps {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-  max-width: 560px;
-}
-.wb-step {
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px;
-  background: var(--paper);
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  opacity: 0.4;
-  transition: all 0.3s;
-}
-.wb-step.active {
-  opacity: 1;
-  border-color: var(--orange);
-  background: rgba(234,88,12,0.04);
-}
-.wb-step.done {
-  opacity: 0.7;
-}
-.wb-step.done .wb-step-icon {
-  background: #22c55e;
-  color: white;
-}
-.wb-step-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: white;
-  border: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-muted);
-  flex-shrink: 0;
-}
-.wb-step.active .wb-step-icon {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: white;
-}
-.wb-step-title {
-  font-size: 12px;
+.trial-processing-title {
+  font-size: 16px;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
-.wb-step-desc {
-  font-size: 10px;
-  color: var(--ink-muted);
-  line-height: 1.4;
-}
-.wb-processing-time {
+.trial-processing-sub {
   font-size: 13px;
   color: var(--ink-muted);
 }
-.wb-processing-time span {
-  color: var(--orange);
-  font-weight: 700;
+.trial-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  overflow: hidden;
 }
-.wb-cancel-btn {
-  padding: 8px 20px;
+.trial-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange-light), var(--orange));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.trial-cancel-btn {
+  padding: 8px 24px;
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
-.wb-cancel-btn:hover {
+.trial-cancel-btn:hover {
   border-color: #ef4444;
   color: #ef4444;
 }
 
-/* 结果展示 */
-.wb-stage-result {
-  gap: 16px;
+/* 结果区 */
+.trial-result-compare {
+  margin-bottom: 28px;
 }
-.wb-result-compare {
-  flex: 1;
-  min-height: 280px;
-}
-.wb-compare-container {
+.trial-compare-container {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: 280px;
-  border-radius: 12px;
+  aspect-ratio: 16/9;
+  border-radius: 14px;
   overflow: hidden;
   user-select: none;
   cursor: ew-resize;
 }
-.wb-compare-original, .wb-compare-generated {
+.trial-compare-original, .trial-compare-generated {
   position: absolute;
   inset: 0;
 }
-.wb-compare-original img, .wb-compare-generated img {
+.trial-compare-original img, .trial-compare-generated img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.wb-compare-original {
-  z-index: 1;
-}
-.wb-compare-generated {
-  z-index: 2;
+.trial-compare-generated {
   clip-path: inset(0 0 0 50%);
 }
-.wb-compare-label {
+.trial-compare-label {
   position: absolute;
   top: 12px;
   left: 12px;
@@ -525,12 +424,12 @@
   z-index: 5;
   backdrop-filter: blur(4px);
 }
-.wb-compare-label-gen {
+.trial-compare-label-gen {
   left: auto;
   right: 12px;
   background: rgba(234,88,12,0.85);
 }
-.wb-compare-slider {
+.trial-compare-slider {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -541,13 +440,13 @@
   transform: translateX(-50%);
   box-shadow: 0 0 12px rgba(0,0,0,0.3);
 }
-.wb-compare-handle {
+.trial-compare-handle {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   background: white;
   border-radius: 50%;
   display: flex;
@@ -557,1087 +456,206 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* 多尺寸预览 */
-.wb-sizes-section {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-.wb-sizes-header {
+.trial-result-controls {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 20px;
 }
-.wb-sizes-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-}
-.wb-download-all-btn {
+.trial-control-group {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: var(--ink);
-  color: white;
-  border: none;
-  border-radius: 7px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.wb-download-all-btn:hover {
-  background: var(--orange);
-}
-.wb-sizes-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.wb-size-card {
-  background: var(--paper);
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  transition: all 0.2s;
-}
-.wb-size-card:hover {
-  border-color: var(--orange);
-  box-shadow: 0 4px 12px rgba(234,88,12,0.1);
-}
-.wb-size-preview {
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80px;
-}
-.wb-size-placeholder {
-  font-size: 10px;
-  color: var(--ink-muted);
-  font-weight: 600;
-}
-.wb-size-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  border-top: 1px solid var(--line);
-}
-.wb-size-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.wb-size-download {
-  padding: 3px 8px;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  font-size: 10px;
-  color: var(--ink-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.wb-size-download:hover {
-  border-color: var(--orange);
-  color: var(--orange);
-}
-
-/* 操作栏 */
-.wb-actions {
-  display: flex;
+  flex-direction: column;
   gap: 10px;
-  padding-top: 16px;
+}
+.trial-control-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.trial-size-options, .trial-quality-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.trial-size-btn, .trial-quality-btn {
+  padding: 8px 18px;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.trial-size-btn:hover, .trial-quality-btn:hover {
+  border-color: var(--orange-light);
+}
+.trial-size-btn.active, .trial-quality-btn.active {
+  border-color: var(--orange);
+  background: rgba(234,88,12,0.06);
+  color: var(--orange);
+}
+.trial-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 8px;
   border-top: 1px solid var(--line);
 }
-.wb-action-btn {
-  display: flex;
+.trial-btn-primary, .trial-btn-secondary {
+  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 11px 20px;
+  gap: 8px;
+  padding: 12px 28px;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
 }
-.wb-action-secondary {
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--line);
-}
-.wb-action-secondary:hover {
-  border-color: var(--orange);
-  color: var(--orange);
-  transform: translateY(-1px);
-}
-.wb-action-primary {
+.trial-btn-primary {
   background: var(--orange);
   color: white;
-  margin-left: auto;
 }
-.wb-action-primary:hover {
+.trial-btn-primary:hover {
   background: var(--orange-dark);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(234,88,12,0.3);
 }
+.trial-btn-secondary {
+  background: white;
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+.trial-btn-secondary:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
 
-/* 右侧参数面板 */
-.wb-panel {
-  border-left: 1px solid var(--line);
-  padding: 16px;
-  overflow-y: auto;
+/* 次数用完 */
+.trial-stage-limit {
+  display: none;
+}
+.trial-stage-limit.active {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.trial-limit-wrap {
+  text-align: center;
+  max-width: 560px;
+}
+.trial-limit-icon {
+  color: var(--orange);
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+.trial-limit-wrap h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.trial-limit-wrap p {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.trial-limit-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
-.wb-panel-section {
+.trial-limit-card {
+  display: block;
+  padding: 24px;
   background: var(--paper);
-  border-radius: 12px;
-  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  text-align: left;
+  transition: all 0.25s;
 }
-.wb-panel-title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-  border-bottom: 1px solid var(--line);
-  background: white;
-}
-.wb-panel-title svg {
-  color: var(--orange);
-}
-.wb-panel-body {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.wb-form-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.wb-form-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-muted);
-}
-.wb-slider-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.wb-range {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 5px;
-  background: var(--line);
-  border-radius: 3px;
-  outline: none;
-}
-.wb-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--orange);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(234,88,12,0.3);
-}
-.wb-range-value {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--orange);
-  min-width: 36px;
-  text-align: right;
-}
-.wb-style-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.wb-style-tag {
-  padding: 5px 10px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 11px;
-  color: var(--ink);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.wb-style-tag:hover {
+.trial-limit-card:hover {
   border-color: var(--orange);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(234,88,12,0.12);
 }
-.wb-style-tag.active {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: white;
-  font-weight: 600;
-}
-.wb-textarea {
-  width: 100%;
-  min-height: 60px;
-  padding: 8px 10px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-size: 11px;
-  color: var(--ink);
-  resize: vertical;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.wb-textarea:focus {
-  border-color: var(--orange);
-}
-.wb-size-checkboxes {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.wb-size-check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-size: 11px;
-  color: var(--ink);
-}
-.wb-size-check:hover {
-  border-color: var(--orange);
-}
-.wb-size-check.active {
+.trial-limit-card-highlight {
   border-color: var(--orange);
   background: rgba(234,88,12,0.04);
 }
-.wb-size-check input[type="checkbox"] {
-  accent-color: var(--orange);
-}
-.wb-custom-size {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.wb-size-input {
-  width: 60px;
-  padding: 6px 8px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 11px;
+.trial-limit-card-title {
+  font-size: 16px;
+  font-weight: 800;
   color: var(--ink);
-  outline: none;
-  text-align: center;
-}
-.wb-size-input:focus {
-  border-color: var(--orange);
-}
-.wb-size-x {
-  font-size: 12px;
-  color: var(--ink-muted);
-}
-.wb-size-add {
-  padding: 6px 10px;
-  background: var(--ink);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.wb-size-add:hover {
-  background: var(--orange);
-}
-.wb-segmented {
-  display: flex;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.wb-seg-btn {
-  flex: 1;
-  padding: 7px 4px;
-  background: transparent;
-  border: none;
-  font-size: 11px;
-  color: var(--ink-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  border-right: 1px solid var(--line);
-}
-.wb-seg-btn:last-child {
-  border-right: none;
-}
-.wb-seg-btn.active {
-  background: var(--orange);
-  color: white;
-  font-weight: 600;
-}
-.wb-publish-platforms {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.wb-pub-platform {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-.wb-pub-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.wb-pub-status {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-.wb-pub-unbound {
-  background: rgba(239,68,68,0.1);
-  color: #ef4444;
-}
-.wb-pub-bound {
-  background: rgba(34,197,94,0.1);
-  color: #22c55e;
-}
-.wb-bind-all-btn {
-  width: 100%;
-  padding: 9px;
-  background: var(--ink);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
   margin-bottom: 8px;
 }
-.wb-bind-all-btn:hover {
-  background: var(--orange);
-}
-.wb-publish-hint {
-  font-size: 10px;
-  color: var(--ink-muted);
-  text-align: center;
-  line-height: 1.5;
-}
-
-/* 底部任务队列 */
-.wb-queue {
-  background: white;
-  border: 1px solid var(--line);
-  border-top: none;
-  border-radius: 0 0 16px 16px;
-  overflow: hidden;
-}
-.wb-queue-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: var(--paper);
-  border-bottom: 1px solid var(--line);
-}
-.wb-queue-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.wb-queue-title {
+.trial-limit-card-desc {
   font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.trial-limit-card-cta {
+  font-size: 13px;
   font-weight: 700;
-  color: var(--ink);
-}
-.wb-queue-count {
-  font-size: 11px;
-  color: var(--ink-muted);
-}
-.wb-queue-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.wb-feishu-status {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--ink-muted);
-}
-.wb-feishu-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-.wb-feishu-synced {
-  background: #22c55e;
-}
-.wb-feishu-syncing {
-  background: #f59e0b;
-  animation: wbPulse 1s infinite;
-}
-@keyframes wbPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.wb-queue-action {
-  padding: 5px 12px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 11px;
-  color: var(--ink);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.wb-queue-action:hover {
-  border-color: var(--orange);
   color: var(--orange);
 }
-.wb-queue-toggle {
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--ink-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-.wb-queue-toggle:hover {
-  background: var(--line);
-  color: var(--ink);
-}
-.wb-queue-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-.wb-queue-body.expanded {
-  max-height: 200px;
-}
-.wb-queue-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 24px;
-  color: var(--ink-muted);
-  font-size: 12px;
-}
 
-/* 响应式 */
-@media (max-width: 1100px) {
-  .wb-main {
-    grid-template-columns: 180px 1fr 240px;
-  }
-  .wb-sizes-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 900px) {
-  .wb-main {
-    grid-template-columns: 1fr;
-  }
-  .wb-sidebar, .wb-panel {
-    display: none;
-  }
-  .wb-processing-steps {
-    flex-direction: column;
-  }
+@media (max-width: 640px) {
+  .trial-stage { padding: 24px; }
+  .trial-upload-zone { padding: 40px 20px; }
+  .trial-limit-options { grid-template-columns: 1fr; }
+  .trial-result-actions { flex-direction: column; }
+  .trial-result-actions button { justify-content: center; }
 }
 </style>
 
-<!-- 在线生图伙伴工作台 -->
-<section class="workbench" id="workbench">
-  <div class="workbench-inner">
-    <!-- ===== 顶部工具栏 ===== -->
-    <div class="wb-topbar">
-      <div class="wb-topbar-left">
-        <div class="wb-logo">
-          <span class="wb-logo-mark">W</span>
-          <span class="wb-logo-text">WorkHogee · 生图工作台</span>
-        </div>
-        <div class="wb-version-switcher" id="wbVersionSwitcher">
-          <button class="wb-version-btn" data-version="ecommerce">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            电商通用版
-          </button>
-          <div class="wb-version-dropdown" id="wbVersionDropdown">
-            <div class="wb-version-option active" data-version="ecommerce">电商通用版</div>
-            <div class="wb-version-option" data-version="xianyu">闲鱼专版</div>
-            <div class="wb-version-option" data-version="food">餐饮专版</div>
-            <div class="wb-version-option" data-version="cloth">服装专版</div>
-            <div class="wb-version-option" data-version="global">外贸专版</div>
-          </div>
-        </div>
-      </div>
-      <div class="wb-topbar-center">
-        <div class="wb-task-status">
-          <span class="wb-status-dot wb-status-active"></span>
-          <span class="wb-status-text">就绪</span>
-          <span class="wb-status-divider">|</span>
-          <span class="wb-status-count">今日已生成 <strong>0</strong> 张</span>
-        </div>
-      </div>
-      <div class="wb-topbar-right">
-        <div class="wb-credits">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span>剩余 <strong>100</strong> 点</span>
-        </div>
-        <div class="wb-user">
-          <div class="wb-user-avatar">H</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== 三栏主区 ===== -->
-    <div class="wb-main">
-      <!-- 左侧边栏 -->
-      <div class="wb-sidebar">
-        <div class="wb-sidebar-section">
-          <div class="wb-sidebar-title">行业版本</div>
-          <div class="wb-version-list" id="wbVersionList">
-            <div class="wb-version-item active" data-version="ecommerce">
-              <span class="wb-version-icon">🛒</span>
-              <span class="wb-version-name">电商通用版</span>
-            </div>
-            <div class="wb-version-item" data-version="xianyu">
-              <span class="wb-version-icon">🐟</span>
-              <span class="wb-version-name">闲鱼专版</span>
-            </div>
-            <div class="wb-version-item" data-version="food">
-              <span class="wb-version-icon">🍜</span>
-              <span class="wb-version-name">餐饮专版</span>
-            </div>
-            <div class="wb-version-item" data-version="cloth">
-              <span class="wb-version-icon">👕</span>
-              <span class="wb-version-name">服装专版</span>
-            </div>
-            <div class="wb-version-item" data-version="global">
-              <span class="wb-version-icon">🌍</span>
-              <span class="wb-version-name">外贸专版</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-sidebar-section">
-          <div class="wb-sidebar-title">任务历史</div>
-          <div class="wb-history-list" id="wbHistoryList">
-            <div class="wb-history-empty">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span>暂无任务记录</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-sidebar-section">
-          <div class="wb-sidebar-title">我的收藏</div>
-          <div class="wb-fav-list">
-            <div class="wb-history-empty">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              <span>暂无收藏</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-sidebar-section">
-          <div class="wb-sidebar-title">行业知识库</div>
-          <div class="wb-kb-entry" id="wbKbEntry">
-            <div class="wb-kb-icon">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-            <div class="wb-kb-info">
-              <div class="wb-kb-name">电商通用知识库</div>
-              <div class="wb-kb-desc">提示词库 · 拍摄规范 · 平台尺寸</div>
-            </div>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- 中央主工作区 -->
-      <div class="wb-center">
-        <!-- 上传阶段 -->
-        <div class="wb-stage wb-stage-upload active" id="wbStageUpload">
-          <div class="wb-upload-zone" id="wbUploadZone">
-            <div class="wb-upload-icon">
-              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            </div>
-            <div class="wb-upload-title">拖拽图片到这里，或点击上传</div>
-            <div class="wb-upload-desc">支持 JPG / PNG / WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
-            <div class="wb-upload-samples">
-              <span class="wb-upload-samples-title">试试示例：</span>
-              <button class="wb-sample-btn" data-sample="3c">3C耳机</button>
-              <button class="wb-sample-btn" data-sample="food">红烧肉</button>
-              <button class="wb-sample-btn" data-sample="home">家居花瓶</button>
-            </div>
-            <input type="file" id="wbFileInput" accept="image/*" hidden>
-          </div>
-        </div>
-
-        <!-- 生图中阶段 -->
-        <div class="wb-stage wb-stage-processing" id="wbStageProcessing">
-          <div class="wb-processing-wrap">
-            <div class="wb-processing-preview">
-              <img id="wbProcessingImg" src="" alt="上传图片">
-              <div class="wb-processing-overlay">
-                <div class="wb-processing-spinner"></div>
-              </div>
-            </div>
-            <div class="wb-processing-steps">
-              <div class="wb-step active" data-step="1">
-                <div class="wb-step-icon">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </div>
-                <div class="wb-step-text">
-                  <div class="wb-step-title">AI识别产品</div>
-                  <div class="wb-step-desc">分析商品类型、颜色、材质</div>
-                </div>
-              </div>
-              <div class="wb-step" data-step="2">
-                <div class="wb-step-icon">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </div>
-                <div class="wb-step-text">
-                  <div class="wb-step-title">调用行业知识库</div>
-                  <div class="wb-step-desc">匹配专属提示词与风格规范</div>
-                </div>
-              </div>
-              <div class="wb-step" data-step="3">
-                <div class="wb-step-icon">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-                </div>
-                <div class="wb-step-text">
-                  <div class="wb-step-title">Seedream 生成中</div>
-                  <div class="wb-step-desc">大模型渲染专业商品图</div>
-                </div>
-              </div>
-              <div class="wb-step" data-step="4">
-                <div class="wb-step-icon">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <div class="wb-step-text">
-                  <div class="wb-step-title">完成</div>
-                  <div class="wb-step-desc">多尺寸适配，可下载可上架</div>
-                </div>
-              </div>
-            </div>
-            <div class="wb-processing-time">预计剩余 <span id="wbTimeLeft">18</span> 秒</div>
-            <button class="wb-cancel-btn" id="wbCancelBtn">取消生成</button>
-          </div>
-        </div>
-
-        <!-- 结果展示阶段 -->
-        <div class="wb-stage wb-stage-result" id="wbStageResult">
-          <div class="wb-result-compare">
-            <div class="wb-compare-container" id="wbCompareContainer">
-              <div class="wb-compare-original">
-                <div class="wb-compare-label">原图</div>
-                <img id="wbOriginalImg" src="" alt="原图">
-              </div>
-              <div class="wb-compare-generated">
-                <div class="wb-compare-label wb-compare-label-gen">AI生成</div>
-                <img id="wbGeneratedImg" src="" alt="生成图">
-              </div>
-              <div class="wb-compare-slider" id="wbCompareSlider">
-                <div class="wb-compare-handle">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" transform="translate(12 0)"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 多尺寸预览 -->
-          <div class="wb-sizes-section">
-            <div class="wb-sizes-header">
-              <span class="wb-sizes-title">多平台尺寸适配</span>
-              <button class="wb-download-all-btn">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                全部下载
-              </button>
-            </div>
-            <div class="wb-sizes-grid" id="wbSizesGrid">
-              <div class="wb-size-card">
-                <div class="wb-size-preview" style="aspect-ratio:1"><div class="wb-size-placeholder">800×800</div></div>
-                <div class="wb-size-info">
-                  <span class="wb-size-name">淘宝主图</span>
-                  <button class="wb-size-download">下载</button>
-                </div>
-              </div>
-              <div class="wb-size-card">
-                <div class="wb-size-preview" style="aspect-ratio:1"><div class="wb-size-placeholder">800×800</div></div>
-                <div class="wb-size-info">
-                  <span class="wb-size-name">美团菜品</span>
-                  <button class="wb-size-download">下载</button>
-                </div>
-              </div>
-              <div class="wb-size-card">
-                <div class="wb-size-preview" style="aspect-ratio:0.75"><div class="wb-size-placeholder">3:4</div></div>
-                <div class="wb-size-info">
-                  <span class="wb-size-name">小红书</span>
-                  <button class="wb-size-download">下载</button>
-                </div>
-              </div>
-              <div class="wb-size-card">
-                <div class="wb-size-preview" style="aspect-ratio:0.5625"><div class="wb-size-placeholder">9:16</div></div>
-                <div class="wb-size-info">
-                  <span class="wb-size-name">抖音</span>
-                  <button class="wb-size-download">下载</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 操作栏 -->
-        <div class="wb-actions" id="wbActions">
-          <button class="wb-action-btn wb-action-secondary" id="wbRegenBtn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            重新生成
-          </button>
-          <button class="wb-action-btn wb-action-secondary" id="wbFavBtn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            收藏
-          </button>
-          <button class="wb-action-btn wb-action-secondary" id="wbDownloadBtn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            下载原图
-          </button>
-          <button class="wb-action-btn wb-action-primary" id="wbUploadBtn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            一键上架
-          </button>
-        </div>
-      </div>
-
-      <!-- 右侧参数面板 -->
-      <div class="wb-panel">
-        <div class="wb-panel-section">
-          <div class="wb-panel-title">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            风格设置
-          </div>
-          <div class="wb-panel-body">
-            <div class="wb-form-item">
-              <label class="wb-form-label">风格强度</label>
-              <div class="wb-slider-wrap">
-                <input type="range" class="wb-range" id="wbStyleStrength" min="0" max="100" value="60">
-                <span class="wb-range-value" id="wbStyleStrengthVal">60%</span>
-              </div>
-            </div>
-            <div class="wb-form-item">
-              <label class="wb-form-label">参考风格</label>
-              <div class="wb-style-tags">
-                <span class="wb-style-tag active">极简电商</span>
-                <span class="wb-style-tag">日系清新</span>
-                <span class="wb-style-tag">复古质感</span>
-                <span class="wb-style-tag">现代简约</span>
-                <span class="wb-style-tag">暖光生活</span>
-              </div>
-            </div>
-            <div class="wb-form-item">
-              <label class="wb-form-label">自定义提示词</label>
-              <textarea class="wb-textarea" id="wbCustomPrompt" placeholder="可选：输入额外的风格描述或要求..."></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-panel-section">
-          <div class="wb-panel-title">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-            尺寸适配
-          </div>
-          <div class="wb-panel-body">
-            <div class="wb-form-item">
-              <label class="wb-form-label">平台尺寸（可多选）</label>
-              <div class="wb-size-checkboxes">
-                <label class="wb-size-check active">
-                  <input type="checkbox" checked>
-                  <span>淘宝主图 800×800</span>
-                </label>
-                <label class="wb-size-check active">
-                  <input type="checkbox" checked>
-                  <span>美团菜品 800×800</span>
-                </label>
-                <label class="wb-size-check">
-                  <input type="checkbox">
-                  <span>小红书 3:4</span>
-                </label>
-                <label class="wb-size-check">
-                  <input type="checkbox">
-                  <span>抖音 9:16</span>
-                </label>
-                <label class="wb-size-check">
-                  <input type="checkbox">
-                  <span>拼多多 800×800</span>
-                </label>
-                <label class="wb-size-check">
-                  <input type="checkbox">
-                  <span>京东主图 800×800</span>
-                </label>
-              </div>
-            </div>
-            <div class="wb-form-item">
-              <label class="wb-form-label">自定义尺寸</label>
-              <div class="wb-custom-size">
-                <input type="number" class="wb-size-input" placeholder="宽" value="800">
-                <span class="wb-size-x">×</span>
-                <input type="number" class="wb-size-input" placeholder="高" value="800">
-                <button class="wb-size-add">添加</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-panel-section">
-          <div class="wb-panel-title">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            高级参数
-          </div>
-          <div class="wb-panel-body">
-            <div class="wb-form-item">
-              <label class="wb-form-label">输出质量</label>
-              <div class="wb-segmented">
-                <button class="wb-seg-btn">标准</button>
-                <button class="wb-seg-btn active">高清</button>
-                <button class="wb-seg-btn">超清</button>
-              </div>
-            </div>
-            <div class="wb-form-item">
-              <label class="wb-form-label">生成模型</label>
-              <div class="wb-segmented">
-                <button class="wb-seg-btn active">Seedream 4.5</button>
-                <button class="wb-seg-btn">Seedream 5.0</button>
-              </div>
-            </div>
-            <div class="wb-form-item">
-              <label class="wb-form-label">生成数量</label>
-              <div class="wb-segmented">
-                <button class="wb-seg-btn active">1张</button>
-                <button class="wb-seg-btn">2张</button>
-                <button class="wb-seg-btn">4张</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="wb-panel-section wb-panel-publish">
-          <div class="wb-panel-title">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            一键上架
-          </div>
-          <div class="wb-panel-body">
-            <div class="wb-publish-platforms">
-              <div class="wb-pub-platform">
-                <span class="wb-pub-name">淘宝</span>
-                <span class="wb-pub-status wb-pub-unbound">未绑定</span>
-              </div>
-              <div class="wb-pub-platform">
-                <span class="wb-pub-name">美团</span>
-                <span class="wb-pub-status wb-pub-unbound">未绑定</span>
-              </div>
-              <div class="wb-pub-platform">
-                <span class="wb-pub-name">小红书</span>
-                <span class="wb-pub-status wb-pub-unbound">未绑定</span>
-              </div>
-              <div class="wb-pub-platform">
-                <span class="wb-pub-name">抖音</span>
-                <span class="wb-pub-status wb-pub-unbound">未绑定</span>
-              </div>
-              <div class="wb-pub-platform">
-                <span class="wb-pub-name">拼多多</span>
-                <span class="wb-pub-status wb-pub-unbound">未绑定</span>
-              </div>
-            </div>
-            <button class="wb-bind-all-btn">绑定平台账号</button>
-            <div class="wb-publish-hint">绑定后可直接将生成图发布到对应平台</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== 底部任务队列 ===== -->
-    <div class="wb-queue" id="wbQueue">
-      <div class="wb-queue-header">
-        <div class="wb-queue-left">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          <span class="wb-queue-title">任务队列</span>
-          <span class="wb-queue-count">0 个任务</span>
-        </div>
-        <div class="wb-queue-right">
-          <div class="wb-feishu-status">
-            <span class="wb-feishu-dot wb-feishu-synced"></span>
-            <span>飞书多维表格已同步</span>
-          </div>
-          <button class="wb-queue-action">批量下载</button>
-          <button class="wb-queue-action">批量上架</button>
-          <button class="wb-queue-toggle" id="wbQueueToggle">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="wb-queue-body" id="wbQueueBody">
-        <div class="wb-queue-empty">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span>暂无任务，上传图片开始生成</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- CTA --><section class="cta" id="download">  <div class="cta-inner">    <h2>你有活儿，<span class="highlight">现在就喊伙计</span>。</h2>    <p>下载WorkHogee客户端，免费体验全部功能。第一张图，20秒后见。</p>    <div class="cta-buttons">      <button class="btn-primary">免费下载</button>      <button class="btn-secondary">在线体验</button>    </div>  </div></section><!-- 页脚 --><footer class="footer">  <div class="footer-inner">    <div class="footer-top">      <div class="footer-brand">        <a href="/index.html" aria-label="WorkHogee Home">        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>          <g transform="translate(-1.06 -28.16)">            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>          </g>        </svg>        </a>        <p>小商家的AI工作流伙计。你有活儿，喊伙计。一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>      </div>      <div class="footer-col">        <h4>产品</h4>        <a href="/index.html">AI获客伙计</a>        <a href="/huoer.html">生图伙计</a>        <a href="/geo.html">GEO伙计</a>        <a href="/global.html">出海伙计</a>      </div>      <div class="footer-col">        <h4>资源</h4>        <a href="/huoer-dynamic.html">图片动态化</a>        <a href="#">使用文档</a>        <a href="#">常见问题</a>        <a href="#">更新日志</a>      </div>      <div class="footer-col">        <h4>关于</h4>        <a href="#">关于我们</a>        <a href="#">联系我们</a>        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>    <div class="footer-bottom">      <p>© 2026 WorkHogee. All rights reserved.</p>      <div class="footer-links">        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>  </div></footer><script>// 在线体验台数据const demoData = {  ecommerce: { before: 'images/3c-earphone-white.jpg', after: 'images/3c-earphone-pro.jpg', label: '无线耳机 · 极简电商场景' },  xianyu: { before: 'images/cloth-tshirt-white.jpg', after: 'images/cloth-tshirt-pro.jpg', label: '白T恤 · 闲鱼生活化实拍' },  food: { before: 'images/dish-hongshaorou-white.jpg', after: 'images/dish-hongshaorou-pro.jpg', label: '红烧肉 · 中式餐厅暖光' },  cloth: { before: 'images/cloth-shoes-white.jpg', after: 'images/cloth-shoes-pro.jpg', label: '小白鞋 · 专业服装主图' },  global: { before: 'images/beauty-lipstick-white.jpg', after: 'images/beauty-lipstick-pro.jpg', label: '口红 · 亚马逊纯白底' }};let currentIndustry = 'ecommerce';let isGenerating = false;function switchIndustry(industry) {  if (isGenerating) return;  currentIndustry = industry;  currentStyle = 2; // 重置为中等  document.getElementById('styleSlider').value = 3;  document.getElementById('styleValue').textContent = '中等';  document.querySelectorAll('.demo-industry-btn').forEach(btn => {    btn.classList.toggle('active', btn.dataset.industry === industry);  });  // 重置结果区和进度条  const resultZone = document.getElementById('resultZone');  resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';  document.getElementById('progressBar').style.display = 'none';  document.getElementById('progressText').style.display = 'none';  const genBtn = document.getElementById('generateBtn');  genBtn.classList.remove('generating', 'done');}// 风格强度滤镜映射const styleFilters = [  'saturate(0.5) brightness(1.1) contrast(0.9)',  'saturate(0.75) brightness(1.05)',  'none',  'saturate(1.3) contrast(1.1)',  'saturate(1.6) contrast(1.2) brightness(0.95)'];let currentStyle = 2; // 默认中等function updateStyle(value) {  const labels = ['极淡', '清淡', '中等', '浓郁', '极致'];  document.getElementById('styleValue').textContent = labels[value - 1];  currentStyle = value - 1;  // 实时应用到已生成的成品图  const resultImg = document.querySelector('#resultZone img');  if (resultImg) {    resultImg.style.filter = styleFilters[currentStyle];  }}function generateImage() {  if (isGenerating) return;    const beforeImg = document.getElementById('beforeImg');  const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');    if (!userUploaded) {    // 未上传图片：显示预设成品图（演示模式）    isGenerating = true;    const btn = document.getElementById('generateBtn');    btn.classList.remove('done');    btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');    const progressFill = document.getElementById('progressFill');    const progressText = document.getElementById('progressText');    const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';    progressText.style.display = 'block';    progressFill.style.width = '0%';    resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">演示模式...</div></div>';    setTimeout(function() {      const data = demoData[currentIndustry];      resultZone.innerHTML = '<img src="' + data.after + '" alt="成品"><div class="demo-result-label">' + data.label + '（演示图）</div>';      progressText.textContent = '演示完成！上传自己的图片体验真实AI生成';      btn.classList.remove('generating');      btn.classList.add('done');      isGenerating = false;    }, 1500);    return;  }    // 用户上传了图片：调用真正的后端API  isGenerating = true;  const btn = document.getElementById('generateBtn');  btn.classList.remove('done');  btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');  const progressFill = document.getElementById('progressFill');  const progressText = document.getElementById('progressText');  const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';  progressText.style.display = 'block';  progressFill.style.width = '0%';  resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">AI生成中，请稍候...</div></div>';    // 模拟进度（API调用是异步的，用模拟进度提升体验）  let mockProgress = 0;  const mockInterval = setInterval(function() {    if (mockProgress < 85) {      mockProgress += Math.random() * 8;      progressFill.style.width = Math.min(mockProgress, 85) + '%';    }  }, 500);    // 图片转为data URL格式（火山引擎要求 data:image/xxx;base64,xxx 格式）  var imageData = beforeImg.src;  if (imageData.indexOf('data:') !== 0) {    imageData = 'data:image/jpeg;base64,' + imageData;  }    // 行业提示词库（前端直接调用火山引擎API）  var INDUSTRY_PROMPTS = {    ecommerce: '将这张产品图片放置在极简电商展示场景中，柔和照明，浅灰色渐变背景，专业电商产品摄影风格，高清细节，保持产品本身完全不变',    xianyu: '将这张物品图片放置在生活化闲鱼实拍场景中，自然光，木质地板或床单背景，真实感手机拍摄风格，保持物品本身完全不变',    food: '将这张菜品图片放置在中式餐厅暖光场景中，木质餐桌，热气腾腾的氛围，专业美食摄影风格，暖色调，高清细节，保持菜品本身完全不变',    cloth: '将这张鞋服产品图片放置在专业电商服装主图场景中，纯白背景，柔和无影光，专业服装摄影风格，保持产品本身完全不变',    global: '将这张产品图片放置在亚马逊纯白底产品图场景中，纯白背景，柔和无影光，专业亚马逊产品摄影风格，保持产品本身完全不变'  };    // 直接调用火山引擎图像生成API  var apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';  var apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');  var prompt = INDUSTRY_PROMPTS[currentIndustry] || INDUSTRY_PROMPTS.food;    fetch(apiUrl, {    method: 'POST',    headers: {      'Content-Type': 'application/json',      'Authorization': 'Bearer ' + apiKey    },    body: JSON.stringify({      model: 'ep-m-20260915134242-p4rpr',      prompt: prompt,      image: imageData,      size: '2048x2048',      response_format: 'url'    })  })  .then(function(response) {    return response.text().then(function(text) {      try { return JSON.parse(text); }      catch(e) { return { _rawError: text, _status: response.status }; }    });  })  .then(function(data) {    clearInterval(mockInterval);    progressFill.style.width = '100%';        if (data._rawError) {      // API返回非JSON错误      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:12px;color:#dc2626;max-width:100%;word-break:break-all;text-align:left;padding:0 16px;">API错误(' + data._status + '): ' + data._rawError + '</div></div>';      progressText.textContent = 'API调用失败，请检查推理接入点是否创建';      btn.classList.remove('generating');      isGenerating = false;      return;    }        if (data.data && data.data[0] && data.data[0].url) {      // 生成成功：显示真正的AI生成图片      resultZone.innerHTML = '<img src="' + data.data[0].url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';      progressText.textContent = '生成完成！Seedream 4.5 真实AI生成，点击图片可下载';    } else {      // 生成失败      var errMsg = (data.error && data.error.message) ? data.error.message : JSON.stringify(data);      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + errMsg + '</div></div>';      progressText.textContent = '生成失败，请重试';    }        btn.classList.remove('generating');    btn.classList.add('done');    isGenerating = false;  })  .catch(function(error) {    clearInterval(mockInterval);    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">网络错误：' + error.message + '</div></div>';    progressText.textContent = '网络错误，请检查连接后重试';    btn.classList.remove('generating');    isGenerating = false;  });}function handleFileUpload(event) {  const file = event.target.files[0];  if (!file || !file.type.startsWith('image/')) {    alert('请选择图片文件');    return;  }  const reader = new FileReader();  reader.onload = function(e) {    const placeholder = document.getElementById('uploadPlaceholder');    const beforeImg = document.getElementById('beforeImg');    if (placeholder) placeholder.style.display = 'none';    beforeImg.style.display = 'block';    beforeImg.src = e.target.result;    beforeImg.style.filter = 'none';    // 重置结果区和生成按钮    const resultZone = document.getElementById('resultZone');    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';    const genBtn = document.getElementById('generateBtn');    genBtn.classList.remove('generating', 'done');    isGenerating = false;  };  reader.readAsDataURL(file);}function triggerUpload() {  document.getElementById('fileInput').click();}// 拖拽上传支持(function() {  const uploadZone = document.getElementById('uploadZone');  if (!uploadZone) return;  ['dragenter', 'dragover'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = 'var(--orange)';      uploadZone.style.background = 'rgba(234,88,12,0.03)';    });  });  ['dragleave', 'drop'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = '';      uploadZone.style.background = '';    });  });  uploadZone.addEventListener('drop', function(e) {    const files = e.dataTransfer.files;    if (files && files.length > 0 && files[0].type.startsWith('image/')) {      const reader = new FileReader();      reader.onload = function(ev) {        const placeholder = document.getElementById('uploadPlaceholder');        const beforeImg = document.getElementById('beforeImg');        if (placeholder) placeholder.style.display = 'none';        beforeImg.style.display = 'block';        beforeImg.src = ev.target.result;        beforeImg.style.filter = 'none';        const resultZone = document.getElementById('resultZone');        resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';        const genBtn = document.getElementById('generateBtn');        genBtn.classList.remove('generating', 'done');        isGenerating = false;      };      reader.readAsDataURL(files[0]);    }  });})();// 导航滚动效果window.addEventListener('scroll', function() {  const nav = document.getElementById('nav');  if (window.scrollY > 50) {    nav.style.boxShadow = '0 2px 20px rgba(28,25,23,0.08)';  } else {    nav.style.boxShadow = 'none';  }});// 移动端菜单document.getElementById('navToggle').addEventListener('click', function() {  const links = document.getElementById('navLinks');  if (links.style.display === 'flex') {    links.style.display = 'none';  } else {    links.style.display = 'flex';    links.style.flexDirection = 'column';    links.style.position = 'absolute';    links.style.top = '68px';    links.style.left = '0';    links.style.right = '0';    links.style.background = 'white';    links.style.padding = '20px';    links.style.borderBottom = '1px solid var(--line)';    links.style.gap = '16px';  }});/* ===== Hero 自动播放幻灯片 ===== */(function() {  const slides = document.querySelectorAll('#heroSlideshow .slide');  const dots = document.querySelectorAll('#heroSlideshow .dot');  if (!slides.length) return;  let current = 0;  function playSlide(index) {    slides.forEach(s => s.classList.remove('active', 'generating', 'done'));    dots.forEach(d => d.classList.remove('active'));    const slide = slides[index];    slide.classList.add('active');    dots[index].classList.add('active');    // 0.3秒后开始生成动画    setTimeout(function() {      slide.classList.add('generating');      // 2秒后生成完成，显示成品图      setTimeout(function() {        slide.classList.remove('generating');        slide.classList.add('done');      }, 2000);    }, 300);  }  // 点击指示器切换  dots.forEach(function(dot, i) {    dot.addEventListener('click', function() {      current = i;      playSlide(current);    });  });  // 初始化第一个  playSlide(0);  // 每3秒自动切换  setInterval(function() {    current = (current + 1) % slides.length;    playSlide(current);  }, 3000);})();</script>
 <script>
 (function() {
   'use strict';
+  const FREE_LIMIT = 3;
+  let usedCount = parseInt(localStorage.getItem('workhogee_trial_used') || '0');
+  let currentImage = null;
+  let generatedImage = null;
+  let selectedSize = '800x800';
+  let selectedQuality = 'hd';
+  let isProcessing = false;
 
-  // ===== 状态管理 =====
-  const state = {
-    currentVersion: 'ecommerce',
-    uploadedImage: null,
-    generatedImage: null,
-    isProcessing: false,
-    tasks: [],
-    styleStrength: 60,
-    selectedStyle: '极简电商',
-    selectedSizes: ['淘宝主图', '美团菜品'],
-    quality: '高清',
-    model: 'Seedream 4.5',
-    count: 1
-  };
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return Array.from(document.querySelectorAll(s)); }
 
-  const versionNames = {
-    ecommerce: '电商通用版',
-    xianyu: '闲鱼专版',
-    food: '餐饮专版',
-    cloth: '服装专版',
-    global: '外贸专版'
-  };
+  function updateCredits() {
+    const remaining = Math.max(0, FREE_LIMIT - usedCount);
+    const pct = (remaining / FREE_LIMIT) * 100;
+    const fill = $('#trialCreditsFill');
+    const text = $('#trialCreditsText');
+    if (fill) fill.style.width = pct + '%';
+    if (text) text.textContent = '剩余 ' + remaining + ' / ' + FREE_LIMIT + ' 次';
+  }
 
-  // ===== 工具函数 =====
-  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
-  function $$(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
-
-  function switchStage(stageName) {
-    $$('.wb-stage').forEach(s => s.classList.remove('active'));
-    const stage = $('#wbStage' + stageName.charAt(0).toUpperCase() + stageName.slice(1));
+  function switchStage(name) {
+    $$('.trial-stage').forEach(s => s.classList.remove('active'));
+    const stage = $('#trialStage' + name.charAt(0).toUpperCase() + name.slice(1));
     if (stage) stage.classList.add('active');
   }
 
-  function updateStatus(text, isActive) {
-    const dot = $('.wb-status-dot');
-    const statusText = $('.wb-status-text');
-    if (dot) {
-      dot.style.background = isActive ? '#f59e0b' : '#22c55e';
-      dot.style.boxShadow = isActive ? '0 0 8px rgba(245,158,11,0.5)' : '0 0 8px rgba(34,197,94,0.5)';
-    }
-    if (statusText) statusText.textContent = text;
-  }
-
-  // ===== 行业版本切换 =====
-  function initVersionSwitcher() {
-    // 侧边栏版本切换
-    $$('.wb-version-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const version = item.dataset.version;
-        setVersion(version);
-      });
-    });
-
-    // 顶部下拉
-    const btn = $('.wb-version-btn');
-    const dropdown = $('#wbVersionDropdown');
-    if (btn && dropdown) {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('show');
-      });
-      document.addEventListener('click', () => dropdown.classList.remove('show'));
-      $$('.wb-version-option', dropdown).forEach(opt => {
-        opt.addEventListener('click', () => {
-          setVersion(opt.dataset.version);
-          dropdown.classList.remove('show');
-        });
-      });
-    }
-  }
-
-  function setVersion(version) {
-    state.currentVersion = version;
-    // 更新侧边栏
-    $$('.wb-version-item').forEach(item => {
-      item.classList.toggle('active', item.dataset.version === version);
-    });
-    // 更新顶部按钮文字
-    const btnText = $('.wb-version-btn');
-    if (btnText) {
-      const span = btnText.querySelector('span:not(svg)');
-      if (span) span.textContent = versionNames[version];
-    }
-    // 更新下拉active
-    $$('.wb-version-option').forEach(opt => {
-      opt.classList.toggle('active', opt.dataset.version === version);
-    });
-    // 更新知识库名称
-    const kbName = $('.wb-kb-name');
-    if (kbName) kbName.textContent = versionNames[version] + '知识库';
-  }
-
-  // ===== 上传功能 =====
   function initUpload() {
-    const zone = $('#wbUploadZone');
-    const input = $('#wbFileInput');
+    const zone = $('#trialUploadZone');
+    const input = $('#trialFileInput');
     if (!zone || !input) return;
-
     zone.addEventListener('click', () => input.click());
-    input.addEventListener('change', (e) => {
-      if (e.target.files[0]) handleFile(e.target.files[0]);
-    });
-
-    // 拖拽
-    zone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      zone.classList.add('dragover');
-    });
+    input.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-    zone.addEventListener('drop', (e) => {
+    zone.addEventListener('drop', e => {
       e.preventDefault();
       zone.classList.remove('dragover');
       if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
     });
-
-    // 粘贴
-    document.addEventListener('paste', (e) => {
+    document.addEventListener('paste', e => {
       const items = e.clipboardData?.items;
       if (!items) return;
       for (const item of items) {
@@ -1648,474 +666,200 @@
         }
       }
     });
-
-    // 示例图片
-    $$('.wb-sample-btn').forEach(btn => {
+    $$('.trial-sample-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const sample = btn.dataset.sample;
-        loadSample(sample);
+        const samples = { '3c': 'images/3c-earphone.jpg', 'food': 'images/food-hongshaorou.jpg', 'home': 'images/home-vase.jpg' };
+        currentImage = samples[btn.dataset.sample] || samples['3c'];
+        startGeneration();
       });
     });
   }
 
   function handleFile(file) {
-    if (!file.type.startsWith('image/')) {
-      alert('请上传图片文件');
-      return;
-    }
+    if (!file.type.startsWith('image/')) { alert('请上传图片文件'); return; }
     const reader = new FileReader();
-    reader.onload = (e) => {
-      state.uploadedImage = e.target.result;
-      startGeneration();
-    };
+    reader.onload = e => { currentImage = e.target.result; startGeneration(); };
     reader.readAsDataURL(file);
   }
 
-  function loadSample(sample) {
-    const sampleMap = {
-      '3c': 'images/3c-earphone.jpg',
-      'food': 'images/food-hongshaorou.jpg',
-      'home': 'images/home-vase.jpg'
-    };
-    const path = sampleMap[sample] || 'images/3c-earphone.jpg';
-    // 检查文件是否存在，不存在则用占位
-    state.uploadedImage = path;
-    startGeneration();
-  }
-
-  // ===== 生图流程 =====
   function startGeneration() {
-    if (state.isProcessing) return;
-    state.isProcessing = true;
-    updateStatus('生成中', true);
+    if (isProcessing) return;
+    if (usedCount >= FREE_LIMIT) { switchStage('limit'); return; }
+    isProcessing = true;
     switchStage('processing');
+    const previewImg = $('#trialProcessingImg');
+    if (previewImg && currentImage) previewImg.src = currentImage;
 
-    // 设置预览图
-    const previewImg = $('#wbProcessingImg');
-    if (previewImg && state.uploadedImage) {
-      previewImg.src = state.uploadedImage;
-    }
-
-    // 四步进度
-    const steps = $$('.wb-step');
-    let currentStep = 0;
-    const stepDuration = [2000, 2500, 12000, 1500]; // 识别、知识库、生成、完成
-
-    function runStep(idx) {
-      if (idx >= steps.length) {
-        finishGeneration();
-        return;
+    const steps = [
+      { title: 'AI 正在识别图片...', sub: '分析主体、材质与颜色', duration: 2000, pct: 20 },
+      { title: '调用行业生图知识库...', sub: '匹配最佳风格与构图', duration: 2500, pct: 45 },
+      { title: 'Seedream 大模型生成中...', sub: '预计 12 秒完成', duration: 12000, pct: 90 },
+      { title: '生成完成！', sub: '正在优化输出...', duration: 1000, pct: 100 }
+    ];
+    let stepIdx = 0;
+    function runStep() {
+      if (stepIdx >= steps.length) { finishGeneration(); return; }
+      const step = steps[stepIdx];
+      const title = $('#trialProcessingTitle');
+      const sub = $('#trialProcessingSub');
+      const fill = $('#trialProgressFill');
+      if (title) title.textContent = step.title;
+      if (sub) sub.textContent = step.sub;
+      if (fill) {
+        fill.style.transition = 'width ' + step.duration + 'ms linear';
+        fill.style.width = step.pct + '%';
       }
-      steps.forEach((s, i) => {
-        s.classList.remove('active', 'done');
-        if (i < idx) s.classList.add('done');
-        if (i === idx) s.classList.add('active');
-      });
-
-      // 倒计时
-      if (idx === 2) {
-        let timeLeft = 12;
-        const timeEl = $('#wbTimeLeft');
-        const timer = setInterval(() => {
-          timeLeft--;
-          if (timeEl) timeEl.textContent = timeLeft;
-          if (timeLeft <= 0) clearInterval(timer);
-        }, 1000);
-      }
-
-      setTimeout(() => runStep(idx + 1), stepDuration[idx] || 2000);
+      stepIdx++;
+      setTimeout(runStep, step.duration);
     }
-    runStep(0);
+    runStep();
 
-    // 取消按钮
-    const cancelBtn = $('#wbCancelBtn');
-    if (cancelBtn) {
-      cancelBtn.onclick = () => {
-        state.isProcessing = false;
-        updateStatus('就绪', false);
-        switchStage('upload');
-      };
-    }
+    const cancelBtn = $('#trialCancelBtn');
+    if (cancelBtn) cancelBtn.onclick = () => {
+      isProcessing = false;
+      switchStage('upload');
+    };
   }
 
-  function finishGeneration() {
-    state.isProcessing = false;
-    updateStatus('就绪', false);
+  async function finishGeneration() {
+    isProcessing = false;
+    usedCount++;
+    localStorage.setItem('workhogee_trial_used', usedCount.toString());
+    updateCredits();
 
-    // 调用真实API生成
-    callGenerateAPI().then(resultImg => {
-      state.generatedImage = resultImg;
-      showResult();
-      addTask(resultImg);
-    }).catch(() => {
-      // API失败时用上传图作为占位
-      state.generatedImage = state.uploadedImage;
-      showResult();
-      addTask(state.uploadedImage);
-    });
+    // 调用真实API
+    try {
+      generatedImage = await callAPI();
+    } catch(e) {
+      console.warn('API失败，使用原图占位:', e);
+      generatedImage = currentImage;
+    }
+
+    const origImg = $('#trialOriginalImg');
+    const genImg = $('#trialGeneratedImg');
+    if (origImg) origImg.src = currentImage;
+    if (genImg) genImg.src = generatedImage;
+    switchStage('result');
   }
 
-  async function callGenerateAPI() {
-    // 火山引擎Seedream API
-    const apiKey = 'YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==';
+  async function callAPI() {
+    const apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');
     const endpoint = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
-    const decodedKey = atob(apiKey);
-
-    // 将上传图转为base64（如果是URL则先fetch）
-    let imageBase64 = state.uploadedImage;
-    if (state.uploadedImage && !state.uploadedImage.startsWith('data:')) {
+    let imageBase64 = currentImage;
+    if (currentImage && !currentImage.startsWith('data:')) {
       try {
-        const resp = await fetch(state.uploadedImage);
+        const resp = await fetch(currentImage);
         const blob = await resp.blob();
-        imageBase64 = await new Promise((resolve) => {
+        imageBase64 = await new Promise(resolve => {
           const reader = new FileReader();
           reader.onload = e => resolve(e.target.result);
           reader.readAsDataURL(blob);
         });
-      } catch(e) {
-        imageBase64 = state.uploadedImage;
-      }
+      } catch(e) {}
     }
-
-    const prompt = `专业电商商品图，${state.selectedStyle}风格，${versionNames[state.currentVersion]}适配，高质量，专业布光，干净背景`;
-
-    try {
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + decodedKey
-        },
-        body: JSON.stringify({
-          model: 'ep-m-20260915134242-p4rpr',
-          prompt: prompt,
-          image: imageBase64,
-          size: '2048x2048',
-          response_format: 'b64_json'
-        })
-      });
-      const data = await resp.json();
-      if (data.data && data.data[0] && data.data[0].b64_json) {
-        return 'data:image/jpeg;base64,' + data.data[0].b64_json;
-      }
-      throw new Error('API返回格式错误');
-    } catch(e) {
-      console.warn('生图API调用失败，使用占位图:', e);
-      throw e;
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'ep-m-20260915134242-p4rpr',
+        prompt: '专业电商商品图，高质量，专业布光，干净背景，商品主体清晰',
+        image: imageBase64,
+        size: '2048x2048',
+        response_format: 'b64_json'
+      })
+    });
+    const data = await resp.json();
+    if (data.data && data.data[0] && data.data[0].b64_json) {
+      return 'data:image/jpeg;base64,' + data.data[0].b64_json;
     }
+    throw new Error('API返回错误');
   }
 
-  // ===== 结果展示 =====
-  function showResult() {
-    switchStage('result');
-    const origImg = $('#wbOriginalImg');
-    const genImg = $('#wbGeneratedImg');
-    if (origImg) origImg.src = state.uploadedImage;
-    if (genImg) genImg.src = state.generatedImage;
-
-    // 更新多尺寸预览
-    updateSizePreviews();
-  }
-
-  function initCompareSlider() {
-    const container = $('#wbCompareContainer');
-    const slider = $('#wbCompareSlider');
-    const generated = $('.wb-compare-generated');
+  function initCompare() {
+    const container = $('#trialCompareContainer');
+    const slider = $('#trialCompareSlider');
+    const generated = $('.trial-compare-generated');
     if (!container || !slider || !generated) return;
-
-    let isDragging = false;
-
-    function setPosition(x) {
+    let dragging = false;
+    function setPos(x) {
       const rect = container.getBoundingClientRect();
       let pct = ((x - rect.left) / rect.width) * 100;
       pct = Math.max(0, Math.min(100, pct));
       slider.style.left = pct + '%';
-      generated.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      generated.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
     }
-
-    slider.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      e.preventDefault();
-    });
-    container.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      setPosition(e.clientX);
-    });
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) setPosition(e.clientX);
-    });
-    document.addEventListener('mouseup', () => { isDragging = false; });
-
-    // 触摸支持
-    slider.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      e.preventDefault();
-    });
-    container.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      setPosition(e.touches[0].clientX);
-    });
-    document.addEventListener('touchmove', (e) => {
-      if (isDragging) setPosition(e.touches[0].clientX);
-    });
-    document.addEventListener('touchend', () => { isDragging = false; });
+    slider.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+    container.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
+    document.addEventListener('mousemove', e => { if (dragging) setPos(e.clientX); });
+    document.addEventListener('mouseup', () => { dragging = false; });
+    slider.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); });
+    container.addEventListener('touchstart', e => { dragging = true; setPos(e.touches[0].clientX); });
+    document.addEventListener('touchmove', e => { if (dragging) setPos(e.touches[0].clientX); });
+    document.addEventListener('touchend', () => { dragging = false; });
   }
 
-  // ===== 多尺寸预览和下载 =====
-  function updateSizePreviews() {
-    const cards = $$('.wb-size-card');
-    cards.forEach(card => {
-      const preview = $('.wb-size-preview', card);
-      if (preview && state.generatedImage) {
-        const placeholder = $('.wb-size-placeholder', preview);
-        if (placeholder) placeholder.remove();
-        if (!preview.querySelector('img')) {
-          const img = document.createElement('img');
-          img.src = state.generatedImage;
-          img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-          preview.appendChild(img);
-        }
-      }
+  function initControls() {
+    $$('.trial-size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.trial-size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSize = btn.dataset.size;
+      });
+    });
+    $$('.trial-quality-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.trial-quality-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedQuality = btn.dataset.quality;
+      });
+    });
+    const regen = $('#trialRegenBtn');
+    if (regen) regen.addEventListener('click', () => { if (currentImage) startGeneration(); });
+    const dl = $('#trialDownloadBtn');
+    if (dl) dl.addEventListener('click', async () => {
+      if (!generatedImage) return;
+      const [w, h] = selectedSize.split('x').map(Number);
+      const resized = await resizeImage(generatedImage, w, h);
+      const a = document.createElement('a');
+      a.href = resized;
+      a.download = 'workhogee-' + selectedSize + '-' + selectedQuality + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
   }
 
-  function downloadImage(dataUrl, filename) {
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  function resizeImage(dataUrl, targetWidth, targetHeight) {
-    return new Promise((resolve) => {
+  function resizeImage(dataUrl, w, h) {
+    return new Promise(resolve => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
+        canvas.width = w;
+        canvas.height = h;
         const ctx = canvas.getContext('2d');
-        // cover模式裁剪
-        const scale = Math.max(targetWidth / img.width, targetHeight / img.height);
-        const sw = targetWidth / scale;
-        const sh = targetHeight / scale;
-        const sx = (img.width - sw) / 2;
-        const sy = (img.height - sh) / 2;
-        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
+        const scale = Math.max(w / img.width, h / img.height);
+        const sw = w / scale, sh = h / scale;
+        const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', selectedQuality === 'ultra' ? 0.95 : selectedQuality === 'hd' ? 0.9 : 0.8));
       };
       img.src = dataUrl;
     });
   }
 
-  // ===== 操作栏按钮 =====
-  function initActions() {
-    // 重新生成
-    const regenBtn = $('#wbRegenBtn');
-    if (regenBtn) regenBtn.addEventListener('click', () => {
-      if (state.uploadedImage) startGeneration();
-    });
-
-    // 收藏
-    const favBtn = $('#wbFavBtn');
-    if (favBtn) favBtn.addEventListener('click', () => {
-      favBtn.style.color = '#ef4444';
-      favBtn.style.borderColor = '#ef4444';
-      setTimeout(() => {
-        favBtn.style.color = '';
-        favBtn.style.borderColor = '';
-      }, 1000);
-    });
-
-    // 下载原图
-    const dlBtn = $('#wbDownloadBtn');
-    if (dlBtn) dlBtn.addEventListener('click', () => {
-      if (state.generatedImage) {
-        downloadImage(state.generatedImage, 'workhogee-generated.jpg');
-      }
-    });
-
-    // 一键上架
-    const uploadBtn = $('#wbUploadBtn');
-    if (uploadBtn) uploadBtn.addEventListener('click', () => {
-      alert('请先在右侧面板绑定平台账号，绑定后可一键上架到淘宝/美团/小红书等平台');
-    });
-
-    // 单尺寸下载
-    $$('.wb-size-download').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!state.generatedImage) return;
-        const card = btn.closest('.wb-size-card');
-        const name = $('.wb-size-name', card)?.textContent || 'image';
-        const sizeMap = {
-          '淘宝主图': [800, 800],
-          '美团菜品': [800, 800],
-          '小红书': [1080, 1440],
-          '抖音': [1080, 1920]
-        };
-        const [w, h] = sizeMap[name] || [800, 800];
-        const resized = await resizeImage(state.generatedImage, w, h);
-        downloadImage(resized, `workhogee-${name}-${w}x${h}.jpg`);
-      });
-    });
-
-    // 全部下载
-    const dlAllBtn = $('.wb-download-all-btn');
-    if (dlAllBtn) dlAllBtn.addEventListener('click', async () => {
-      if (!state.generatedImage) return;
-      const sizes = [
-        ['淘宝主图', 800, 800],
-        ['美团菜品', 800, 800],
-        ['小红书', 1080, 1440],
-        ['抖音', 1080, 1920]
-      ];
-      for (const [name, w, h] of sizes) {
-        const resized = await resizeImage(state.generatedImage, w, h);
-        downloadImage(resized, `workhogee-${name}-${w}x${h}.jpg`);
-        await new Promise(r => setTimeout(r, 300));
-      }
-    });
-  }
-
-  // ===== 右侧参数面板 =====
-  function initPanel() {
-    // 风格强度
-    const strength = $('#wbStyleStrength');
-    const strengthVal = $('#wbStyleStrengthVal');
-    if (strength && strengthVal) {
-      strength.addEventListener('input', () => {
-        state.styleStrength = strength.value;
-        strengthVal.textContent = strength.value + '%';
-      });
-    }
-
-    // 参考风格
-    $$('.wb-style-tag').forEach(tag => {
-      tag.addEventListener('click', () => {
-        $$('.wb-style-tag').forEach(t => t.classList.remove('active'));
-        tag.classList.add('active');
-        state.selectedStyle = tag.textContent;
-      });
-    });
-
-    // 尺寸复选框
-    $$('.wb-size-check').forEach(check => {
-      check.addEventListener('click', () => {
-        check.classList.toggle('active');
-        const input = check.querySelector('input');
-        if (input) input.checked = check.classList.contains('active');
-      });
-    });
-
-    // 分段控件
-    $$('.wb-segmented').forEach(seg => {
-      $$('.wb-seg-btn', seg).forEach(btn => {
-        btn.addEventListener('click', () => {
-          $$('.wb-seg-btn', seg).forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-    });
-
-    // 绑定平台
-    const bindBtn = $('.wb-bind-all-btn');
-    if (bindBtn) bindBtn.addEventListener('click', () => {
-      alert('平台账号绑定功能开发中，敬请期待');
-    });
-  }
-
-  // ===== 任务队列 =====
-  function addTask(imgData) {
-    const task = {
-      id: Date.now(),
-      version: versionNames[state.currentVersion],
-      image: imgData,
-      status: '已完成',
-      time: new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})
-    };
-    state.tasks.unshift(task);
-    renderTasks();
-    updateTaskCount();
-  }
-
-  function renderTasks() {
-    const list = $('#wbQueueBody');
-    if (!list) return;
-    if (state.tasks.length === 0) {
-      list.innerHTML = '<div class="wb-queue-empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>暂无任务，上传图片开始生成</span></div>';
-      return;
-    }
-    list.innerHTML = state.tasks.map(t => `
-      <div class="wb-queue-item" data-id="${t.id}" style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);">
-        <img src="${t.image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:600;color:var(--ink);">${t.version}</div>
-          <div style="font-size:10px;color:var(--ink-muted);">${t.time}</div>
-        </div>
-        <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.1);color:#22c55e;">${t.status}</span>
-        <button class="wb-queue-item-dl" style="padding:4px 10px;background:transparent;border:1px solid var(--line);border-radius:5px;font-size:10px;color:var(--ink-muted);cursor:pointer;">下载</button>
-      </div>
-    `).join('');
-
-    // 绑定下载
-    $$('.wb-queue-item-dl', list).forEach(btn => {
-      btn.addEventListener('click', () => {
-        const item = btn.closest('.wb-queue-item');
-        const id = parseInt(item.dataset.id);
-        const task = state.tasks.find(t => t.id === id);
-        if (task) downloadImage(task.image, `workhogee-task-${id}.jpg`);
-      });
-    });
-  }
-
-  function updateTaskCount() {
-    const countEl = $('.wb-queue-count');
-    if (countEl) countEl.textContent = state.tasks.length + ' 个任务';
-    const todayCount = $('.wb-status-count strong');
-    if (todayCount) todayCount.textContent = state.tasks.length;
-  }
-
-  function initQueue() {
-    const toggle = $('#wbQueueToggle');
-    const body = $('#wbQueueBody');
-    if (toggle && body) {
-      toggle.addEventListener('click', () => {
-        body.classList.toggle('expanded');
-        const svg = toggle.querySelector('svg');
-        if (svg) {
-          svg.style.transform = body.classList.contains('expanded') ? 'rotate(180deg)' : '';
-          svg.style.transition = 'transform 0.3s';
-        }
-      });
-    }
-
-    // 批量下载
-    const batchDl = $$('.wb-queue-action')[0];
-    if (batchDl) batchDl.addEventListener('click', async () => {
-      for (const task of state.tasks) {
-        downloadImage(task.image, `workhogee-batch-${task.id}.jpg`);
-        await new Promise(r => setTimeout(r, 300));
-      }
-    });
-  }
-
-  // ===== 初始化 =====
   function init() {
-    initVersionSwitcher();
+    updateCredits();
+    if (usedCount >= FREE_LIMIT) { switchStage('limit'); }
     initUpload();
-    initCompareSlider();
-    initActions();
-    initPanel();
-    initQueue();
+    initCompare();
+    initControls();
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
+
+<!-- CTA --><section class="cta" id="download">  <div class="cta-inner">    <h2>你有活儿，<span class="highlight">现在就喊伙计</span>。</h2>    <p>下载WorkHogee客户端，免费体验全部功能。第一张图，20秒后见。</p>    <div class="cta-buttons">      <button class="btn-primary">免费下载</button>      <button class="btn-secondary">在线体验</button>    </div>  </div></section><!-- 页脚 --><footer class="footer">  <div class="footer-inner">    <div class="footer-top">      <div class="footer-brand">        <a href="/index.html" aria-label="WorkHogee Home">        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>          <g transform="translate(-1.06 -28.16)">            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>          </g>        </svg>        </a>        <p>小商家的AI工作流伙计。你有活儿，喊伙计。一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>      </div>      <div class="footer-col">        <h4>产品</h4>        <a href="/index.html">AI获客伙计</a>        <a href="/huoer.html">生图伙计</a>        <a href="/geo.html">GEO伙计</a>        <a href="/global.html">出海伙计</a>      </div>      <div class="footer-col">        <h4>资源</h4>        <a href="/huoer-dynamic.html">图片动态化</a>        <a href="#">使用文档</a>        <a href="#">常见问题</a>        <a href="#">更新日志</a>      </div>      <div class="footer-col">        <h4>关于</h4>        <a href="#">关于我们</a>        <a href="#">联系我们</a>        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>    <div class="footer-bottom">      <p>© 2026 WorkHogee. All rights reserved.</p>      <div class="footer-links">        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>  </div></footer><script>// 在线体验台数据const demoData = {  ecommerce: { before: 'images/3c-earphone-white.jpg', after: 'images/3c-earphone-pro.jpg', label: '无线耳机 · 极简电商场景' },  xianyu: { before: 'images/cloth-tshirt-white.jpg', after: 'images/cloth-tshirt-pro.jpg', label: '白T恤 · 闲鱼生活化实拍' },  food: { before: 'images/dish-hongshaorou-white.jpg', after: 'images/dish-hongshaorou-pro.jpg', label: '红烧肉 · 中式餐厅暖光' },  cloth: { before: 'images/cloth-shoes-white.jpg', after: 'images/cloth-shoes-pro.jpg', label: '小白鞋 · 专业服装主图' },  global: { before: 'images/beauty-lipstick-white.jpg', after: 'images/beauty-lipstick-pro.jpg', label: '口红 · 亚马逊纯白底' }};let currentIndustry = 'ecommerce';let isGenerating = false;function switchIndustry(industry) {  if (isGenerating) return;  currentIndustry = industry;  currentStyle = 2; // 重置为中等  document.getElementById('styleSlider').value = 3;  document.getElementById('styleValue').textContent = '中等';  document.querySelectorAll('.demo-industry-btn').forEach(btn => {    btn.classList.toggle('active', btn.dataset.industry === industry);  });  // 重置结果区和进度条  const resultZone = document.getElementById('resultZone');  resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';  document.getElementById('progressBar').style.display = 'none';  document.getElementById('progressText').style.display = 'none';  const genBtn = document.getElementById('generateBtn');  genBtn.classList.remove('generating', 'done');}// 风格强度滤镜映射const styleFilters = [  'saturate(0.5) brightness(1.1) contrast(0.9)',  'saturate(0.75) brightness(1.05)',  'none',  'saturate(1.3) contrast(1.1)',  'saturate(1.6) contrast(1.2) brightness(0.95)'];let currentStyle = 2; // 默认中等function updateStyle(value) {  const labels = ['极淡', '清淡', '中等', '浓郁', '极致'];  document.getElementById('styleValue').textContent = labels[value - 1];  currentStyle = value - 1;  // 实时应用到已生成的成品图  const resultImg = document.querySelector('#resultZone img');  if (resultImg) {    resultImg.style.filter = styleFilters[currentStyle];  }}function generateImage() {  if (isGenerating) return;    const beforeImg = document.getElementById('beforeImg');  const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');    if (!userUploaded) {    // 未上传图片：显示预设成品图（演示模式）    isGenerating = true;    const btn = document.getElementById('generateBtn');    btn.classList.remove('done');    btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');    const progressFill = document.getElementById('progressFill');    const progressText = document.getElementById('progressText');    const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';    progressText.style.display = 'block';    progressFill.style.width = '0%';    resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">演示模式...</div></div>';    setTimeout(function() {      const data = demoData[currentIndustry];      resultZone.innerHTML = '<img src="' + data.after + '" alt="成品"><div class="demo-result-label">' + data.label + '（演示图）</div>';      progressText.textContent = '演示完成！上传自己的图片体验真实AI生成';      btn.classList.remove('generating');      btn.classList.add('done');      isGenerating = false;    }, 1500);    return;  }    // 用户上传了图片：调用真正的后端API  isGenerating = true;  const btn = document.getElementById('generateBtn');  btn.classList.remove('done');  btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');  const progressFill = document.getElementById('progressFill');  const progressText = document.getElementById('progressText');  const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';  progressText.style.display = 'block';  progressFill.style.width = '0%';  resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">AI生成中，请稍候...</div></div>';    // 模拟进度（API调用是异步的，用模拟进度提升体验）  let mockProgress = 0;  const mockInterval = setInterval(function() {    if (mockProgress < 85) {      mockProgress += Math.random() * 8;      progressFill.style.width = Math.min(mockProgress, 85) + '%';    }  }, 500);    // 图片转为data URL格式（火山引擎要求 data:image/xxx;base64,xxx 格式）  var imageData = beforeImg.src;  if (imageData.indexOf('data:') !== 0) {    imageData = 'data:image/jpeg;base64,' + imageData;  }    // 行业提示词库（前端直接调用火山引擎API）  var INDUSTRY_PROMPTS = {    ecommerce: '将这张产品图片放置在极简电商展示场景中，柔和照明，浅灰色渐变背景，专业电商产品摄影风格，高清细节，保持产品本身完全不变',    xianyu: '将这张物品图片放置在生活化闲鱼实拍场景中，自然光，木质地板或床单背景，真实感手机拍摄风格，保持物品本身完全不变',    food: '将这张菜品图片放置在中式餐厅暖光场景中，木质餐桌，热气腾腾的氛围，专业美食摄影风格，暖色调，高清细节，保持菜品本身完全不变',    cloth: '将这张鞋服产品图片放置在专业电商服装主图场景中，纯白背景，柔和无影光，专业服装摄影风格，保持产品本身完全不变',    global: '将这张产品图片放置在亚马逊纯白底产品图场景中，纯白背景，柔和无影光，专业亚马逊产品摄影风格，保持产品本身完全不变'  };    // 直接调用火山引擎图像生成API  var apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';  var apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');  var prompt = INDUSTRY_PROMPTS[currentIndustry] || INDUSTRY_PROMPTS.food;    fetch(apiUrl, {    method: 'POST',    headers: {      'Content-Type': 'application/json',      'Authorization': 'Bearer ' + apiKey    },    body: JSON.stringify({      model: 'ep-m-20260915134242-p4rpr',      prompt: prompt,      image: imageData,      size: '2048x2048',      response_format: 'url'    })  })  .then(function(response) {    return response.text().then(function(text) {      try { return JSON.parse(text); }      catch(e) { return { _rawError: text, _status: response.status }; }    });  })  .then(function(data) {    clearInterval(mockInterval);    progressFill.style.width = '100%';        if (data._rawError) {      // API返回非JSON错误      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:12px;color:#dc2626;max-width:100%;word-break:break-all;text-align:left;padding:0 16px;">API错误(' + data._status + '): ' + data._rawError + '</div></div>';      progressText.textContent = 'API调用失败，请检查推理接入点是否创建';      btn.classList.remove('generating');      isGenerating = false;      return;    }        if (data.data && data.data[0] && data.data[0].url) {      // 生成成功：显示真正的AI生成图片      resultZone.innerHTML = '<img src="' + data.data[0].url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';      progressText.textContent = '生成完成！Seedream 4.5 真实AI生成，点击图片可下载';    } else {      // 生成失败      var errMsg = (data.error && data.error.message) ? data.error.message : JSON.stringify(data);      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + errMsg + '</div></div>';      progressText.textContent = '生成失败，请重试';    }        btn.classList.remove('generating');    btn.classList.add('done');    isGenerating = false;  })  .catch(function(error) {    clearInterval(mockInterval);    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">网络错误：' + error.message + '</div></div>';    progressText.textContent = '网络错误，请检查连接后重试';    btn.classList.remove('generating');    isGenerating = false;  });}function handleFileUpload(event) {  const file = event.target.files[0];  if (!file || !file.type.startsWith('image/')) {    alert('请选择图片文件');    return;  }  const reader = new FileReader();  reader.onload = function(e) {    const placeholder = document.getElementById('uploadPlaceholder');    const beforeImg = document.getElementById('beforeImg');    if (placeholder) placeholder.style.display = 'none';    beforeImg.style.display = 'block';    beforeImg.src = e.target.result;    beforeImg.style.filter = 'none';    // 重置结果区和生成按钮    const resultZone = document.getElementById('resultZone');    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';    const genBtn = document.getElementById('generateBtn');    genBtn.classList.remove('generating', 'done');    isGenerating = false;  };  reader.readAsDataURL(file);}function triggerUpload() {  document.getElementById('fileInput').click();}// 拖拽上传支持(function() {  const uploadZone = document.getElementById('uploadZone');  if (!uploadZone) return;  ['dragenter', 'dragover'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = 'var(--orange)';      uploadZone.style.background = 'rgba(234,88,12,0.03)';    });  });  ['dragleave', 'drop'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = '';      uploadZone.style.background = '';    });  });  uploadZone.addEventListener('drop', function(e) {    const files = e.dataTransfer.files;    if (files && files.length > 0 && files[0].type.startsWith('image/')) {      const reader = new FileReader();      reader.onload = function(ev) {        const placeholder = document.getElementById('uploadPlaceholder');        const beforeImg = document.getElementById('beforeImg');        if (placeholder) placeholder.style.display = 'none';        beforeImg.style.display = 'block';        beforeImg.src = ev.target.result;        beforeImg.style.filter = 'none';        const resultZone = document.getElementById('resultZone');        resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';        const genBtn = document.getElementById('generateBtn');        genBtn.classList.remove('generating', 'done');        isGenerating = false;      };      reader.readAsDataURL(files[0]);    }  });})();// 导航滚动效果window.addEventListener('scroll', function() {  const nav = document.getElementById('nav');  if (window.scrollY > 50) {    nav.style.boxShadow = '0 2px 20px rgba(28,25,23,0.08)';  } else {    nav.style.boxShadow = 'none';  }});// 移动端菜单document.getElementById('navToggle').addEventListener('click', function() {  const links = document.getElementById('navLinks');  if (links.style.display === 'flex') {    links.style.display = 'none';  } else {    links.style.display = 'flex';    links.style.flexDirection = 'column';    links.style.position = 'absolute';    links.style.top = '68px';    links.style.left = '0';    links.style.right = '0';    links.style.background = 'white';    links.style.padding = '20px';    links.style.borderBottom = '1px solid var(--line)';    links.style.gap = '16px';  }});/* ===== Hero 自动播放幻灯片 ===== */(function() {  const slides = document.querySelectorAll('#heroSlideshow .slide');  const dots = document.querySelectorAll('#heroSlideshow .dot');  if (!slides.length) return;  let current = 0;  function playSlide(index) {    slides.forEach(s => s.classList.remove('active', 'generating', 'done'));    dots.forEach(d => d.classList.remove('active'));    const slide = slides[index];    slide.classList.add('active');    dots[index].classList.add('active');    // 0.3秒后开始生成动画    setTimeout(function() {      slide.classList.add('generating');      // 2秒后生成完成，显示成品图      setTimeout(function() {        slide.classList.remove('generating');        slide.classList.add('done');      }, 2000);    }, 300);  }  // 点击指示器切换  dots.forEach(function(dot, i) {    dot.addEventListener('click', function() {      current = i;      playSlide(current);    });  });  // 初始化第一个  playSlide(0);  // 每3秒自动切换  setInterval(function() {    current = (current + 1) % slides.length;    playSlide(current);  }, 3000);})();</script>
+
 
 </body></html>
