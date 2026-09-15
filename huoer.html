@@ -3,1040 +3,619 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee · 活儿伙计 - 小商家的AI工作流伙计</title>
-<meta name="description" content="WorkHogee活儿伙计，小商家的AI工作流伙计。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。餐饮、家居、车行、装修……你有活儿，喊伙计。">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
+<title>WorkHogee · 活儿伙计 — 小商家的AI工作流伙计</title>
 <style>
-/* ===== 设计令牌 ===== */
 :root {
+  --orange: #ea580c;
+  --orange-light: #fb923c;
+  --orange-dark: #c2410c;
   --ink: #1c1917;
   --ink-soft: #57534e;
   --ink-muted: #a8a29e;
-  --orange: #ea580c;
-  --orange-deep: #c2410c;
-  --orange-light: #fb923c;
   --paper: #faf8f4;
-  --sand: #f0e9db;
-  --line: #e7e0d4;
   --white: #ffffff;
+  --line: #e7e5e4;
   --green: #16a34a;
-  --shadow-sm: 0 1px 3px rgba(28,25,23,0.06);
-  --shadow-md: 0 4px 16px rgba(28,25,23,0.08);
-  --shadow-lg: 0 12px 40px rgba(28,25,23,0.12);
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 32px;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink); background: var(--white); line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-a { text-decoration: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 
-/* ===== 导航栏 ===== */
+/* ===== 导航 ===== */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  background: rgba(250,248,244,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s ease;
-}
-.nav.scrolled {
-  background: rgba(250,248,244,0.95);
-  border-bottom-color: var(--line);
-  box-shadow: var(--shadow-sm);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
 }
 .nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between; height: 64px;
 }
-.nav-logo { display: flex; align-items: center; gap: 10px; }
-.nav-logo svg { height: 28px; width: auto; }
-.nav-links { display: flex; align-items: center; gap: 36px; }
-.nav-links a {
-  font-size: 15px; color: var(--ink-soft); font-weight: 500;
-  transition: color 0.2s; position: relative;
-}
+.nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.nav-logo span { color: var(--orange); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a { font-size: 14px; color: var(--ink-soft); font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover { color: var(--orange); }
 .nav-cta {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--ink); color: var(--paper) !important;
-  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;
-  font-weight: 600 !important; transition: all 0.25s;
+  background: var(--orange); color: white !important; padding: 8px 20px;
+  border-radius: 8px; font-weight: 600 !important; transition: all 0.2s !important;
 }
-.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }
-/* 产品导航链接统一样式 */
-.nav-product-link {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 14px; color: var(--ink-soft); font-weight: 500;
-  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;
-}
-.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }
-.nav-product-link.active {
-  background: var(--orange); color: var(--white) !important;
-  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);
-}
-.nav-product-link.active:hover { background: var(--orange-light); }
-.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }
-.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
-.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }
+.nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
 
-/* ===== Hero区域 ===== */
+/* ===== Hero ===== */
 .hero {
-  padding: 140px 0 80px;
-  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);
+  padding: 140px 0 80px; background: var(--paper);
   position: relative; overflow: hidden;
 }
 .hero::before {
   content: ''; position: absolute; top: -200px; right: -200px;
   width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 70%);
-  pointer-events: none;
+  background: radial-gradient(circle, rgba(234,88,12,0.08) 0%, transparent 70%);
 }
 .hero-inner {
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
   position: relative; z-index: 1;
 }
-.hero-badge {
+.hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--white); border: 1px solid var(--line);
-  padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
-  color: var(--ink-soft); margin-bottom: 24px; box-shadow: var(--shadow-sm);
+  background: white; border: 1px solid var(--line); border-radius: 100px;
+  padding: 6px 16px; font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 24px;
 }
-.hero-badge .dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
+.hero-tag .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero h1 {
-  font-size: 52px; font-weight: 800; line-height: 1.15; margin-bottom: 20px;
-  letter-spacing: -1.5px;
+  font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px;
+  margin-bottom: 20px;
 }
-.hero h1 .highlight { color: var(--orange); }
-.hero-slogan {
-  font-size: 22px; color: var(--ink); font-weight: 600; margin-bottom: 12px;
-}
-.hero-sub {
-  font-size: 16px; color: var(--ink-soft); margin-bottom: 32px; line-height: 1.8;
-}
-.hero-cta { display: flex; gap: 16px; margin-bottom: 32px; }
+.hero h1 .highlight { color: var(--orange); position: relative; }
+.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 36px; max-width: 480px; }
+.hero-buttons { display: flex; gap: 16px; margin-bottom: 48px; }
 .btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--orange); color: var(--white);
-  padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600;
-  text-decoration: none; border: none; cursor: pointer;
-  transition: all 0.25s; box-shadow: 0 4px 14px rgba(234,88,12,0.3);
+  background: var(--orange); color: white; padding: 16px 32px;
+  border-radius: 12px; font-size: 16px; font-weight: 700; border: none;
+  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-primary:hover { background: var(--orange-deep); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.4); }
+.btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
 .btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--white); color: var(--ink);
-  padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600;
-  text-decoration: none; border: 1px solid var(--line); cursor: pointer;
-  transition: all 0.25s;
+  background: white; color: var(--ink); padding: 16px 32px;
+  border-radius: 12px; font-size: 16px; font-weight: 600; border: 1px solid var(--line);
+  cursor: pointer; transition: all 0.2s;
 }
-.btn-secondary:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
-.hero-meta { display: flex; gap: 28px; }
-.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
-.hero-meta-item svg { width: 18px; height: 18px; color: var(--green); }
+.btn-secondary:hover { border-color: var(--ink); }
+.hero-stats { display: flex; gap: 40px; }
+.hero-stat .num { font-size: 32px; font-weight: 800; color: var(--ink); }
+.hero-stat .num span { color: var(--orange); }
+.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
 
-/* Hero Visual - 形象化产品概念表达 */
-.hero-visual { position: relative; }
-.hero-concept {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  gap: 0; padding: 20px 0;
+/* Hero 实时演示 */
+.hero-demo {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.1); border: 1px solid var(--line);
 }
-/* 原图卡片 */
-.concept-before {
-  width: 42%; position: relative; z-index: 1;
-  transform: rotate(-4deg);
-  transition: transform 0.4s ease;
+.demo-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
-.hero-concept:hover .concept-before { transform: rotate(-6deg) translateY(-4px); }
-.concept-before-card {
-  background: var(--white); border-radius: 14px; padding: 10px;
-  box-shadow: 0 15px 40px -10px rgba(28,25,23,0.2);
-  border: 1px solid var(--line);
+.demo-title { font-size: 14px; font-weight: 700; }
+.demo-badge {
+  background: rgba(234,88,12,0.1); color: var(--orange);
+  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
 }
-.concept-before-img {
-  width: 100%; aspect-ratio: 1; border-radius: 10px;
-  background: linear-gradient(135deg, #e7e5e4, #d6d3d1);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
+.demo-compare {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;
+  margin-bottom: 20px;
 }
-.concept-before-img::before {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.03) 8px, rgba(0,0,0,0.03) 16px);
+.demo-img-wrap {
+  aspect-ratio: 1; border-radius: 12px; overflow: hidden; position: relative;
 }
-.concept-before-img .dish-raw {
-  width: 55%; height: 55%; background: linear-gradient(135deg, #a8a29e, #78716c);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  position: relative; z-index: 1;
+.demo-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.demo-img-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: 20px 10px 8px; color: white; font-size: 11px; font-weight: 600; text-align: center;
 }
-.concept-before-img .dish-raw::after {
-  content: ''; position: absolute; inset: 15%;
-  background: linear-gradient(135deg, #92400e, #78350f); border-radius: 50%;
-  opacity: 0.7;
+.demo-arrow {
+  width: 40px; height: 40px; background: var(--orange); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: white;
+  font-size: 18px; font-weight: 800; box-shadow: 0 4px 12px rgba(234,88,12,0.3);
+  animation: arrowBounce 2s infinite;
 }
-.concept-before-label {
-  text-align: center; padding: 8px 4px 4px;
+@keyframes arrowBounce { 0%,100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+.demo-progress {
+  background: var(--paper); border-radius: 10px; padding: 14px 16px;
 }
-.concept-before-label .tag {
-  display: inline-block; font-size: 10px; font-weight: 700; color: var(--ink-muted);
-  background: var(--sand); padding: 3px 10px; border-radius: 8px;
+.demo-progress-label {
+  display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;
 }
-.concept-before-label p { font-size: 11px; color: var(--ink-soft); margin-top: 5px; }
+.demo-progress-label span:last-child { color: var(--orange); font-weight: 700; }
+.demo-progress-bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.demo-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));
+  border-radius: 3px; width: 100%; animation: progressFill 3s ease-in-out infinite;
+}
+@keyframes progressFill { 0% { width: 0%; } 30% { width: 40%; } 60% { width: 75%; } 100% { width: 100%; } }
+.demo-steps { display: flex; justify-content: space-between; margin-top: 10px; font-size: 10px; color: var(--ink-muted); }
 
-/* AI魔法中心 */
-.concept-magic {
-  width: 16%; display: flex; flex-direction: column; align-items: center;
-  position: relative; z-index: 2; margin: 0 -3%;
+/* ===== 痛点场景 ===== */
+.pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }
+.pain::before {
+  content: ''; position: absolute; top: 50%; left: -100px; transform: translateY(-50%);
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%);
 }
-.magic-circle {
-  width: 72px; height: 72px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px rgba(234,88,12,0.4), 0 0 0 6px rgba(234,88,12,0.1);
-  position: relative;
-  animation: magicPulse 2s ease-in-out infinite;
+.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+.pain-header { text-align: center; margin-bottom: 60px; }
+.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 2px; margin-bottom: 16px; }
+.pain h2 { font-size: 40px; font-weight: 800; line-height: 1.3; max-width: 700px; margin: 0 auto; }
+.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.pain-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; padding: 32px; transition: all 0.3s;
 }
-@keyframes magicPulse {
-  0%,100% { box-shadow: 0 8px 24px rgba(234,88,12,0.4), 0 0 0 6px rgba(234,88,12,0.1); }
-  50% { box-shadow: 0 8px 32px rgba(234,88,12,0.55), 0 0 0 12px rgba(234,88,12,0.06); }
-}
-.magic-circle svg { width: 32px; height: 32px; color: var(--white); }
-.magic-sparkles {
-  position: absolute; width: 100%; height: 100%; pointer-events: none;
-}
-.magic-sparkles span {
-  position: absolute; width: 6px; height: 6px; background: var(--orange);
-  border-radius: 50%; opacity: 0;
-}
-.magic-sparkles span:nth-child(1) { top: -8px; left: 50%; animation: sparkle 1.8s ease-in-out infinite; }
-.magic-sparkles span:nth-child(2) { top: 50%; right: -10px; animation: sparkle 1.8s ease-in-out 0.3s infinite; }
-.magic-sparkles span:nth-child(3) { bottom: -8px; left: 50%; animation: sparkle 1.8s ease-in-out 0.6s infinite; }
-.magic-sparkles span:nth-child(4) { top: 50%; left: -10px; animation: sparkle 1.8s ease-in-out 0.9s infinite; }
-@keyframes sparkle {
-  0%,100% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-.magic-label {
-  margin-top: 12px; font-size: 11px; font-weight: 800; color: var(--orange);
-  background: rgba(234,88,12,0.1); padding: 4px 12px; border-radius: 10px;
-  letter-spacing: 0.5px;
-}
-.magic-arrows {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 100%; display: flex; justify-content: space-between; pointer-events: none;
-}
-.magic-arrows svg { width: 20px; height: 20px; color: var(--orange); opacity: 0.5; }
+.pain-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-4px); border-color: rgba(234,88,12,0.3); }
+.pain-num { font-size: 48px; font-weight: 900; color: var(--orange); opacity: 0.6; margin-bottom: 16px; line-height: 1; }
+.pain-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+.pain-card p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.8; }
+.pain-card .cost { font-size: 28px; font-weight: 800; color: #ef4444; margin-top: 16px; }
+.pain-card .cost span { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 400; }
 
-/* 成品图卡片 */
-.concept-after {
-  width: 42%; position: relative; z-index: 1;
-  transform: rotate(4deg);
-  transition: transform 0.4s ease;
-}
-.hero-concept:hover .concept-after { transform: rotate(6deg) translateY(-4px); }
-.concept-after-card {
-  background: var(--white); border-radius: 14px; padding: 10px;
-  box-shadow: 0 20px 50px -10px rgba(234,88,12,0.25);
-  border: 2px solid var(--orange);
-  position: relative;
-}
-.concept-after-card::before {
-  content: 'AI 生成'; position: absolute; top: -10px; right: 12px;
-  background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  color: var(--white); font-size: 9px; font-weight: 800; padding: 3px 10px;
-  border-radius: 8px; letter-spacing: 0.5px; z-index: 3;
-}
-.concept-after-img {
-  width: 100%; aspect-ratio: 1; border-radius: 10px;
-  background: linear-gradient(135deg, #1c1917, #292524);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.concept-after-img::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 40%, rgba(234,88,12,0.15), transparent 60%);
-}
-.concept-after-img .dish-pro {
-  width: 60%; height: 60%; background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  position: relative; z-index: 1;
-  box-shadow: 0 8px 30px rgba(254,215,170,0.3);
-}
-.concept-after-img .dish-pro::after {
-  content: ''; position: absolute; inset: 18%;
-  background: linear-gradient(135deg, #ea580c, #c2410c); border-radius: 50%;
-}
-.concept-after-img .dish-pro::before {
-  content: ''; position: absolute; inset: 8%;
-  border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; z-index: 2;
-}
-.concept-after-img .steam {
-  position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; z-index: 2;
-}
-.concept-after-img .steam span {
-  width: 4px; height: 20px; background: rgba(255,255,255,0.3);
-  border-radius: 4px; animation: steam 2s ease-in-out infinite;
-}
-.concept-after-img .steam span:nth-child(2) { animation-delay: 0.3s; }
-.concept-after-img .steam span:nth-child(3) { animation-delay: 0.6s; }
-@keyframes steam {
-  0%,100% { opacity: 0; transform: translateY(0) scaleY(1); }
-  50% { opacity: 1; transform: translateY(-8px) scaleY(1.3); }
-}
-.concept-after-label {
-  text-align: center; padding: 8px 4px 4px;
-}
-.concept-after-label .tag {
-  display: inline-block; font-size: 10px; font-weight: 800; color: var(--orange);
-  background: rgba(234,88,12,0.1); padding: 3px 10px; border-radius: 8px;
-}
-.concept-after-label p { font-size: 11px; color: var(--ink); font-weight: 600; margin-top: 5px; }
-
-.hero-float-card {
-  position: absolute; background: var(--white); border-radius: 14px; padding: 14px 18px;
-  box-shadow: 0 12px 32px -8px rgba(28,25,23,0.18), 0 0 0 1px rgba(28,25,23,0.05);
-  z-index: 5;
-}
-.hero-float-card .label { font-size: 11px; color: var(--ink-soft); font-weight: 600; margin-bottom: 4px; }
-.hero-float-card .value { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
-.hero-float-card .sub { font-size: 11px; color: var(--green); margin-top: 4px; font-weight: 600; }
-.hero-float-card.card1 { top: 0px; right: -10px; animation: float1 4s ease-in-out infinite; }
-.hero-float-card.card2 { bottom: 10px; left: -10px; animation: float2 4.5s ease-in-out infinite; }
-@keyframes float1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes float2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
-
-/* ===== 通用section ===== */
-.section { padding: 90px 0; }
-.section-head { text-align: center; margin-bottom: 56px; }
-.section-kicker {
-  display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange);
-  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;
-}
-.section-head h2 { font-size: 38px; font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; }
-.section-head p { color: var(--ink-soft); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.8; }
-
-/* ===== 行业版本切换 ===== */
-.version-section { padding: 50px 0; background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.version-switch { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-.version-tab {
-  padding: 12px 28px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600;
-  cursor: pointer; border: 1px solid var(--line); background: var(--white);
-  color: var(--ink-soft); transition: all 0.25s; display: flex; align-items: center; gap: 8px;
-}
-.version-tab svg { width: 18px; height: 18px; }
-.version-tab.active { background: var(--orange); color: var(--white); border-color: var(--orange); box-shadow: 0 4px 12px rgba(234,88,12,0.3); }
-.version-tab:hover:not(.active) { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
-.version-tab .coming-soon { font-size: 10px; color: var(--ink-muted); background: var(--paper); padding: 2px 8px; border-radius: 8px; }
-
-/* ===== 三步流程 ===== */
-.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-.step-card {
-  background: var(--white); border-radius: var(--radius-lg); padding: 36px;
-  border: 1px solid var(--line); transition: all 0.3s; position: relative; overflow: hidden;
-}
-.step-card::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 0;
-  background: var(--orange); transition: height 0.3s;
-}
-.step-card:hover::before { height: 100%; }
-.step-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-.step-num {
-  width: 48px; height: 48px; background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  color: var(--white); border-radius: var(--radius-md); display: flex; align-items: center;
-  justify-content: center; font-weight: 800; font-size: 20px; margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(234,88,12,0.3);
-}
-.step-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
-.step-card p { font-size: 15px; color: var(--ink-soft); line-height: 1.8; }
-
-/* ===== 核心能力展开板块（首页级别设计） ===== */
-.capability-section { padding: 90px 0; position: relative; overflow: hidden; }
-.capability-section:nth-child(odd) { background: var(--white); }
-.capability-section:nth-child(even) { background: var(--paper); }
-.capability-inner {
+/* ===== 核心能力通用 ===== */
+.feature { padding: 100px 0; background: var(--white); }
+.feature-alt { background: var(--paper); }
+.feature-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 32px;
-  display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
 }
-.capability-section:nth-child(even) .capability-inner { direction: rtl; }
-.capability-section:nth-child(even) .capability-inner > * { direction: ltr; }
-.capability-text .capability-num {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--orange) 0%, #c2410c 100%);
-  color: white; font-size: 16px; font-weight: 800; margin-bottom: 16px;
+.feature-inner.reverse { direction: rtl; }
+.feature-inner.reverse > * { direction: ltr; }
+.feature-num {
+  font-size: 14px; font-weight: 800; color: var(--orange);
+  letter-spacing: 3px; margin-bottom: 16px;
 }
-.capability-text h2 { font-size: 30px; font-weight: 800; margin-bottom: 14px; line-height: 1.25; }
-.capability-text > p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 24px; }
-.capability-points { list-style: none; margin-bottom: 24px; }
-.capability-points li {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 8px 0; font-size: 14px; color: var(--ink);
+.feature-title { font-size: 36px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; letter-spacing: -0.5px; }
+.feature-title .highlight { color: var(--orange); }
+.feature-desc { font-size: 16px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 32px; }
+.feature-points { display: flex; flex-direction: column; gap: 16px; }
+.feature-point { display: flex; gap: 12px; align-items: flex-start; }
+.point-icon {
+  width: 24px; height: 24px; background: rgba(234,88,12,0.1); color: var(--orange);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; flex-shrink: 0; margin-top: 2px;
 }
-.capability-points li::before {
-  content: ''; flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px;
-  background: #dcfce7; border-radius: 50%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: center;
-}
-.capability-tag {
-  display: inline-block; padding: 6px 14px; background: #fff7ed; color: #c2410c;
-  font-size: 13px; font-weight: 600; border-radius: 20px; border: 1px solid #fed7aa;
-}
+.feature-point div { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+.feature-point strong { color: var(--ink); font-weight: 700; }
 
-/* 示意图容器 */
-.capability-visual { position: relative; }
-.mock-window {
-  background: white; border-radius: 16px; overflow: hidden;
-  box-shadow: 0 20px 60px rgba(28,25,23,0.12), 0 4px 12px rgba(28,25,23,0.06);
-  border: 1px solid var(--line);
+/* 对比卡片 */
+.compare-card {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
 }
-.mock-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 16px; background: #fafaf9; border-bottom: 1px solid var(--line);
-}
-.mock-dot { width: 12px; height: 12px; border-radius: 50%; }
-.mock-dot.red { background: #ef4444; }
-.mock-dot.yellow { background: #f59e0b; }
-.mock-dot.green { background: #22c55e; }
-.mock-title { margin-left: 8px; font-size: 12px; color: #78716c; font-weight: 500; }
-.mock-body { padding: 20px; min-height: 320px; }
+.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.compare-label { font-size: 14px; font-weight: 700; }
+.compare-time { font-size: 12px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 4px 12px; border-radius: 6px; }
+.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 20px; }
+.compare-img { aspect-ratio: 1; border-radius: 12px; overflow: hidden; }
+.compare-img img { width: 100%; height: 100%; object-fit: cover; }
+.compare-img.after { box-shadow: 0 8px 24px rgba(234,88,12,0.15); }
+.compare-caption { text-align: center; font-size: 11px; color: var(--ink-muted); margin-top: 8px; }
+.compare-arrow { font-size: 20px; color: var(--orange); font-weight: 800; }
+.compare-footer { display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid var(--line); }
+.compare-metric { text-align: center; }
+.metric-num { display: block; font-size: 20px; font-weight: 800; color: var(--ink); }
+.metric-label { font-size: 11px; color: var(--ink-muted); }
 
-/* 浮动标注卡片 */
-.annotation-card {
-  position: absolute; background: white; border-radius: 14px;
-  padding: 14px 18px; box-shadow: 0 8px 30px rgba(28,25,23,0.12);
-  border: 1px solid var(--line); z-index: 5;
-  animation: floatCard 3s ease-in-out infinite;
+/* 平台展示 */
+.platform-showcase {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
 }
-.annotation-card .ann-label { font-size: 12px; color: #78716c; font-weight: 500; margin-bottom: 4px; }
-.annotation-card .ann-value { font-size: 24px; font-weight: 800; color: var(--orange); line-height: 1.1; }
-.annotation-card .ann-sub { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 2px; }
-.annotation-card.top-left { top: -20px; left: -20px; }
-.annotation-card.top-right { top: -20px; right: -20px; }
-.annotation-card.bottom-left { bottom: -20px; left: -20px; }
-.annotation-card.bottom-right { bottom: -20px; right: -20px; }
-@keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.platform-item { text-align: center; }
+.platform-img { aspect-ratio: 1; border-radius: 10px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.platform-img img { width: 100%; height: 100%; object-fit: cover; }
+.platform-name { font-size: 12px; font-weight: 700; }
+.platform-size { font-size: 10px; color: var(--ink-muted); }
+.platform-action { text-align: center; }
+.btn-platform {
+  background: var(--orange); color: white; padding: 12px 28px;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; width: 100%;
+}
+.btn-platform:hover { background: var(--orange-dark); }
 
-/* 成品图光影流动动态化效果 */
-.dynamic-image-wrap { position: relative; overflow: hidden; border-radius: 8px; }
-.dynamic-image-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.dynamic-image-wrap::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0.1) 55%, transparent 70%);
-  background-size: 250% 100%;
-  animation: lightSweep 4s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes lightSweep {
-  0% { background-position: 150% 0; }
-  50% { background-position: -50% 0; }
-  100% { background-position: -50% 0; }
-}
-.dynamic-badge {
-  position: absolute; top: 6px; right: 6px; z-index: 2;
-  background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  color: white; font-size: 10px; font-weight: 700; padding: 3px 10px;
-  border-radius: 10px; box-shadow: 0 2px 8px rgba(234,88,12,0.4);
-  display: flex; align-items: center; gap: 4px;
-  animation: badgePulse 2s ease-in-out infinite;
-}
-@keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
-/* 数据卡片网格 */
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.dash-card {
-  background: var(--paper); border-radius: 10px; padding: 14px;
-  border: 1px solid var(--line);
-}
-.dash-card-label { font-size: 11px; color: var(--ink-muted); margin-bottom: 4px; }
-.dash-card-value { font-size: 22px; font-weight: 800; color: var(--ink); }
-.dash-card-change { font-size: 11px; font-weight: 600; margin-top: 2px; }
-.dash-card-change.up { color: #16a34a; }
-.dash-card-change.down { color: #ef4444; }
-
-/* 进度条 */
-.progress-row { margin-bottom: 12px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
-.progress-label span:last-child { font-weight: 700; color: var(--orange); }
-.progress-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 4px; transition: width 1.5s ease; }
-
-/* 任务列表 */
-.task-list { display: flex; flex-direction: column; gap: 8px; }
-.task-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-  background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
-}
-.task-thumb { width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0; }
-.task-info { flex: 1; min-width: 0; }
-.task-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.task-status { font-size: 10px; color: var(--ink-muted); }
-.task-item.processing { border-color: var(--orange); background: rgba(234,88,12,0.04); }
-.task-item.processing .task-status { color: var(--orange); }
-.task-item.done .task-status { color: var(--green); }
-.task-spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* 词库卡片 */
-.kb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* 知识库卡片 */
 .kb-card {
-  background: var(--paper); border-radius: 8px; padding: 12px;
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+}
+.kb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.kb-title { font-size: 14px; font-weight: 700; }
+.kb-count { font-size: 11px; color: var(--ink-muted); }
+.kb-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.kb-tab {
+  padding: 6px 14px; border: 1px solid var(--line); background: var(--paper);
+  border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; color: var(--ink-soft);
+}
+.kb-tab.active { background: var(--orange); color: white; border-color: var(--orange); }
+.kb-tab.disabled { opacity: 0.4; cursor: not-allowed; }
+.kb-content { display: flex; flex-direction: column; gap: 10px; }
+.kb-item {
+  background: var(--paper); border-radius: 10px; padding: 14px 16px;
+  border-left: 3px solid var(--orange);
+}
+.kb-item-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.kb-item-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+
+/* 批量处理卡片 */
+.batch-card {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+}
+.batch-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.batch-title { font-size: 14px; font-weight: 700; }
+.batch-status { font-size: 12px; color: var(--orange); font-weight: 700; }
+.batch-stats { display: flex; gap: 16px; margin-bottom: 16px; }
+.batch-stat { flex: 1; background: var(--paper); border-radius: 10px; padding: 12px; text-align: center; }
+.batch-num { display: block; font-size: 24px; font-weight: 800; color: var(--ink); }
+.batch-label { font-size: 11px; color: var(--ink-muted); }
+.batch-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.batch-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--paper); border-radius: 10px; }
+.batch-thumb { width: 40px; height: 40px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.batch-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.batch-info { flex: 1; }
+.batch-name { font-size: 12px; font-weight: 600; }
+.batch-result { font-size: 11px; color: var(--ink-muted); }
+.batch-state { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+.batch-state.done { color: var(--green); }
+.batch-state.processing { color: var(--orange); }
+.spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.batch-footer { text-align: center; font-size: 12px; color: var(--ink-muted); padding-top: 12px; border-top: 1px solid var(--line); }
+
+/* 成本对比卡片 */
+.cost-card {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+}
+.cost-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.cost-title { font-size: 14px; font-weight: 700; }
+.cost-subtitle { font-size: 12px; color: var(--ink-muted); }
+.cost-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; margin-bottom: 16px; }
+.cost-side { border-radius: 12px; padding: 16px; text-align: center; }
+.cost-side.old { background: var(--paper); border: 1px solid var(--line); }
+.cost-side.new { background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.2); }
+.cost-side-label { font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; }
+.cost-side-num { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+.cost-side.old .cost-side-num { color: #999; text-decoration: line-through; }
+.cost-side.new .cost-side-num { color: var(--orange); }
+.cost-side-item { font-size: 11px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 4px; }
+.cost-vs { display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--ink-muted); }
+.cost-saving {
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  border-radius: 12px; padding: 16px; text-align: center; color: white;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.saving-num { font-size: 28px; font-weight: 900; }
+.saving-percent { font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; }
+
+/* 安全中心卡片 */
+.security-card {
+  background: white; border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.08); border: 1px solid var(--line);
+}
+.security-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.security-title { font-size: 14px; font-weight: 700; }
+.security-badge { font-size: 11px; color: var(--green); font-weight: 700; background: rgba(22,163,74,0.1); padding: 4px 10px; border-radius: 6px; }
+.security-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+.security-item { background: var(--paper); border-radius: 10px; padding: 14px; text-align: center; }
+.security-icon { font-size: 24px; margin-bottom: 6px; }
+.security-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.security-desc { font-size: 10px; color: var(--ink-muted); }
+.security-log { background: var(--paper); border-radius: 10px; padding: 12px; }
+.log-item { display: flex; gap: 12px; padding: 6px 0; font-size: 11px; color: var(--ink-soft); border-bottom: 1px solid var(--line); }
+.log-item:last-child { border-bottom: none; }
+.log-time { color: var(--ink-muted); flex-shrink: 0; width: 90px; }
+
+/* ===== 行业场景 ===== */
+.scenarios { padding: 100px 0; background: var(--paper); }
+.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.scenarios-header { text-align: center; margin-bottom: 60px; }
+.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 2px; margin-bottom: 16px; }
+.scenarios h2 { font-size: 36px; font-weight: 800; margin-bottom: 16px; }
+.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 600px; margin: 0 auto; }
+.scenarios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.scenario-card {
+  background: white; border-radius: 20px; padding: 32px;
   border: 1px solid var(--line); transition: all 0.3s;
-  opacity: 0; animation: kbCardIn 0.4s ease forwards;
+  display: flex; gap: 24px; align-items: flex-start;
 }
-.kb-card:nth-child(1) { animation-delay: 0.1s; }
-.kb-card:nth-child(2) { animation-delay: 0.2s; }
-.kb-card:nth-child(3) { animation-delay: 0.3s; }
-.kb-card:nth-child(4) { animation-delay: 0.4s; }
-@keyframes kbCardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.kb-card-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-.kb-card-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
-.kb-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.kb-tag { font-size: 10px; padding: 2px 8px; background: white; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-soft); }
-
-/* 平台发布 */
-.platform-row { display: flex; gap: 10px; margin-bottom: 14px; }
-.platform-item {
-  flex: 1; text-align: center; padding: 12px 8px; background: var(--paper);
-  border: 1px solid var(--line); border-radius: 8px; transition: all 0.3s;
+.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.1); border-color: rgba(234,88,12,0.3); }
+.scenario-icon {
+  width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
 }
-.platform-item.active { border-color: var(--orange); background: rgba(234,88,12,0.05); }
-.platform-icon { width: 28px; height: 28px; margin: 0 auto 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; }
-.platform-name { font-size: 11px; font-weight: 600; }
-.platform-size { font-size: 9px; color: var(--ink-muted); }
+.scenario-icon.food { background: rgba(234,88,12,0.1); }
+.scenario-icon.home { background: rgba(139,92,246,0.1); }
+.scenario-icon.car { background: rgba(59,130,246,0.1); }
+.scenario-icon.deco { background: rgba(16,185,129,0.1); }
+.scenario-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.scenario-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }
+.scenario-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.scenario-tag { font-size: 11px; color: var(--ink-muted); background: var(--paper); padding: 4px 10px; border-radius: 6px; }
 
-/* 柱状图 */
-.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 8px; margin-bottom: 8px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.bar { width: 100%; max-width: 32px; background: linear-gradient(180deg, var(--orange), var(--orange-light)); border-radius: 4px 4px 0 0; transition: height 1s ease; min-height: 4px; }
-.bar-label { font-size: 10px; color: var(--ink-muted); }
-
-/* 安全指标 */
-.security-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.security-item {
-  display: flex; align-items: center; gap: 10px; padding: 12px;
-  background: var(--paper); border-radius: 8px; border: 1px solid var(--line);
+/* ===== CTA ===== */
+.cta { padding: 100px 0; background: var(--ink); position: relative; overflow: hidden; }
+.cta::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 60%);
 }
-.security-icon { width: 32px; height: 32px; border-radius: 8px; background: #dcfce7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.security-icon svg { width: 16px; height: 16px; color: var(--green); }
-.security-text { font-size: 12px; font-weight: 600; }
-.security-text small { display: block; font-size: 10px; color: var(--ink-muted); font-weight: 400; }
+.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 32px; text-align: center; position: relative; z-index: 1; }
+.cta h2 { font-size: 44px; font-weight: 800; color: white; line-height: 1.3; margin-bottom: 20px; }
+.cta h2 .highlight { color: var(--orange-light); }
+.cta p { font-size: 18px; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.8; }
+.cta-buttons { display: flex; gap: 16px; justify-content: center; }
+.cta .btn-primary { font-size: 18px; padding: 18px 40px; }
+.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 40px; }
+.cta .btn-secondary:hover { border-color: white; }
 
-/* 入场动画 */
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-.reveal-d1 { transition-delay: 0.1s; }
-.reveal-d2 { transition-delay: 0.2s; }
+/* ===== 页脚 ===== */
+.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.1); padding: 60px 0 30px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer-brand .footer-logo { font-size: 24px; font-weight: 800; color: white; margin-bottom: 12px; }
+.footer-brand .footer-logo span { color: var(--orange); }
+.footer-brand p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.8; }
+.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--orange-light); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.4); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 12px; color: rgba(255,255,255,0.4); }
 
 /* 响应式 */
 @media (max-width: 900px) {
-  .capability-inner { grid-template-columns: 1fr; gap: 40px; }
-  .capability-section:nth-child(even) .capability-inner { direction: ltr; }
-  .capability-text h2 { font-size: 26px; }
-  .annotation-card { position: static; margin-bottom: 12px; display: inline-block; }
-}
-
-/* ===== 行业场景 ===== */
-.industries-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.industry-card {
-  background: var(--white); border-radius: var(--radius-md); padding: 32px 24px;
-  text-align: center; border: 1px solid var(--line); transition: all 0.3s;
-}
-.industry-card:hover { border-color: var(--orange); transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.industry-icon {
-  width: 52px; height: 52px; margin: 0 auto 16px; background: var(--paper);
-  border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
-}
-.industry-icon svg { width: 26px; height: 26px; color: var(--ink-soft); }
-.industry-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-.industry-card p { font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
-.industry-card.available { border-color: var(--orange); background: linear-gradient(135deg, rgba(234,88,12,0.03), var(--white)); }
-.industry-card.available .industry-icon { background: rgba(234,88,12,0.1); }
-.industry-card.available .industry-icon svg { color: var(--orange); }
-.industry-card .badge {
-  display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: 700;
-  margin-bottom: 14px; letter-spacing: 0.5px;
-}
-.industry-card .badge.available { background: var(--orange); color: var(--white); }
-.industry-card .badge.coming { background: var(--ink-soft); color: var(--white); }
-.industry-card .badge.plan { background: var(--paper); color: var(--ink-muted); border: 1px solid var(--line); }
-
-/* ===== 使用方式 ===== */
-.usage { background: var(--white); }
-.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.usage-card {
-  background: var(--paper); border-radius: var(--radius-lg); padding: 44px;
-  border: 1px solid var(--line); transition: all 0.3s;
-}
-.usage-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.usage-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; }
-.usage-card h3 .icon {
-  width: 44px; height: 44px; background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 12px rgba(234,88,12,0.3);
-}
-.usage-card h3 .icon svg { width: 22px; height: 22px; color: var(--white); }
-.usage-card p { font-size: 15px; color: var(--ink-soft); margin-bottom: 28px; line-height: 1.8; }
-.usage-card ul { list-style: none; margin-bottom: 32px; }
-.usage-card ul li {
-  padding: 10px 0; font-size: 14px; color: var(--ink-soft);
-  display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line);
-}
-.usage-card ul li:last-child { border-bottom: none; }
-.usage-card ul li svg { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; }
-.usage-card .btn { width: 100%; justify-content: center; }
-.client-download-row { display: flex; gap: 10px; margin-top: auto; }
-.client-version-info { font-size: 11px; color: var(--ink-muted); margin-top: 12px; text-align: center; }
-
-/* ===== CTA ===== */
-.cta-section {
-  padding: 90px 0; background: var(--ink); color: var(--white); text-align: center;
-  position: relative; overflow: hidden;
-}
-.cta-section::before {
-  content: ''; position: absolute; top: -300px; left: 50%; transform: translateX(-50%);
-  width: 800px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(234,88,12,0.2) 0%, transparent 70%);
-  pointer-events: none;
-}
-.cta-section h2 { font-size: 42px; font-weight: 800; margin-bottom: 18px; position: relative; z-index: 1; }
-.cta-section h2 span { color: var(--orange); }
-.cta-section p { font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 36px; position: relative; z-index: 1; }
-.cta-section .btn-primary { font-size: 17px; padding: 18px 44px; position: relative; z-index: 1; }
-
-/* ===== 页脚 ===== */
-.footer { background: var(--ink); color: #a9a196; padding: 60px 0 30px; border-top: 1px solid #37322c; }
-.footer-grid {
-  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px;
-}
-.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
-.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }
-.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }
-.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; }
-.footer-col h5 { font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 16px; }
-.footer-col ul { list-style: none; }
-.footer-col li { margin-bottom: 10px; }
-.footer-col a { font-size: 13.5px; color: #a9a196; transition: color 0.2s; }
-.footer-col a:hover { color: var(--orange-light); }
-.footer-bottom {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 24px; border-top: 1px solid #37322c;
-}
-.footer-copy { font-size: 12.5px; color: #7c7468; }
-.footer-links { display: flex; gap: 20px; }
-.footer-links a { font-size: 12.5px; color: #7c7468; }
-.footer-links a:hover { color: var(--orange-light); }
-
-/* ===== 在线工作台演示 ===== */
-.workspace-demo { padding: 60px 0 80px; background: var(--white); }
-.workspace-demo-title { text-align: center; margin-bottom: 36px; }
-.workspace-demo-title h3 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
-.workspace-demo-title p { color: var(--ink-soft); font-size: 15px; }
-/* 演示区域内的版本切换（放在标题下方、演示内容上方） */
-.version-switch-inline { margin-bottom: 32px; text-align: center; }
-.version-switch-inline .version-switch { justify-content: center; }
-.workspace-panel {
-  background: var(--paper); border-radius: var(--radius-lg); padding: 32px;
-  border: 1px solid var(--line); box-shadow: var(--shadow-md); position: relative; overflow: visible;
-}
-.workspace-panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 28px;
-}
-.workspace-panel-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
-.workspace-panel-title .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
-.workspace-panel-badge {
-  position: absolute; top: -14px; right: -14px;
-  width: 52px; height: 52px; background: var(--white);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(28,25,23,0.15); border: 2px solid var(--line);
-  z-index: 5;
-}
-.workspace-panel-badge svg { width: 28px; height: 28px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.workspace-panel-body { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 20px; align-items: center; }
-.workspace-arrow { display: flex; align-items: center; justify-content: center; }
-.workspace-arrow svg { width: 32px; height: 32px; color: var(--orange); animation: arrowMove 1.5s ease-in-out infinite; }
-@keyframes arrowMove { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
-.workspace-upload-area, .workspace-result-area {
-  background: var(--white); border-radius: var(--radius-md); padding: 28px;
-  text-align: center; border: 2px dashed var(--line); min-height: 280px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.workspace-result-area { border-style: solid; border-color: var(--orange); background: linear-gradient(135deg, #fff7ed, #ffedd5); }
-.workspace-upload-area svg { width: 48px; height: 48px; color: var(--ink-muted); margin-bottom: 16px; }
-.workspace-upload-area h4 { font-size: 18px; margin-bottom: 8px; }
-.workspace-upload-area p { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
-.workspace-upload-btn {
-  padding: 10px 24px; background: var(--ink); color: var(--white);
-  border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-  border: none; transition: all 0.2s;
-}
-.workspace-upload-btn:hover { background: var(--orange); }
-.workspace-result-img {
-  width: 160px; height: 160px; background: var(--white); border-radius: var(--radius-md);
-  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
-  position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
-}
-.workspace-result-img::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-  animation: shimmer 2s infinite;
-}
-.workspace-result-img svg { width: 56px; height: 56px; color: var(--orange); }
-.workspace-result-area h4 { font-size: 16px; margin-bottom: 6px; }
-.workspace-result-area p { font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; }
-.workspace-result-tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
-.workspace-result-tag { font-size: 10px; padding: 3px 8px; background: rgba(22,163,74,0.1); color: var(--green); border-radius: 10px; font-weight: 700; }
-
-/* ===== 图片动态化 ===== */
-.dynamic-img { position: relative; overflow: hidden; }
-.dynamic-img .steam-layer,
-.dynamic-img .light-layer { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
-.dynamic-img.dynamic-active .steam-layer,
-.dynamic-img.dynamic-active .light-layer { opacity: 1; }
-
-/* 热气动效 */
-.steam-layer { display: flex; justify-content: center; align-items: flex-start; padding-top: 15%; }
-.steam { display: block; width: 12px; height: 40px; background: linear-gradient(to top, rgba(255,255,255,0.6), transparent); border-radius: 50%; filter: blur(4px); margin: 0 8px; animation: steamRise 2.5s ease-in-out infinite; }
-.steam.s1 { animation-delay: 0s; }
-.steam.s2 { animation-delay: 0.8s; height: 50px; }
-.steam.s3 { animation-delay: 1.6s; height: 35px; }
-@keyframes steamRise {
-  0% { transform: translateY(20px) scaleX(1); opacity: 0; }
-  30% { opacity: 0.8; }
-  100% { transform: translateY(-50px) scaleX(1.8); opacity: 0; }
-}
-
-/* 光影流动动效 */
-.light-layer { overflow: hidden; }
-.light-beam { position: absolute; top: -50%; left: -50%; width: 60%; height: 200%; background: linear-gradient(105deg, transparent 40%, rgba(255,248,220,0.5) 50%, transparent 60%); transform: rotate(15deg); animation: lightSweep 4s ease-in-out infinite; }
-@keyframes lightSweep {
-  0% { transform: translateX(-100%) rotate(15deg); }
-  100% { transform: translateX(350%) rotate(15deg); }
-}
-
-/* 动态版徽章 */
-.dynamic-badge { position: absolute; top: 10px; right: 10px; background: var(--orange); color: var(--white); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; opacity: 0; transition: opacity 0.3s; z-index: 3; }
-.dynamic-img.dynamic-active .dynamic-badge { opacity: 1; }
-
-/* 动态化按钮 */
-.dynamic-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin-top: 14px; padding: 9px 20px; background: var(--ink); color: var(--white);
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all 0.25s;
-}
-.dynamic-btn:hover { background: var(--orange); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(234,88,12,0.3); }
-.dynamic-btn svg { width: 14px; height: 14px; }
-.dynamic-btn.playing { background: var(--orange); }
-.workspace-version-content { display: none; }
-.workspace-version-content.active { display: block; animation: fadeIn 0.4s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ===== 下载区域 ===== */
-.download-section { padding: 80px 0; background: var(--paper); }
-.download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-.download-card {
-  background: var(--white); border-radius: var(--radius-lg); padding: 40px;
-  border: 1px solid var(--line); text-align: center; transition: all 0.3s;
-}
-.download-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
-.download-card-icon {
-  width: 72px; height: 72px; margin: 0 auto 24px; background: linear-gradient(135deg, var(--orange), var(--orange-light));
-  border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 20px rgba(234,88,12,0.3);
-}
-.download-card-icon svg { width: 36px; height: 36px; color: var(--white); }
-.download-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-.download-card p { font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.7; }
-.download-card .btn { width: 100%; justify-content: center; }
-.download-card .version-info { font-size: 12px; color: var(--ink-muted); margin-top: 16px; }
-
-/* ===== 响应式补充 ===== */
-@media (max-width: 968px) {
-  .workspace-panel-body { grid-template-columns: 1fr; }
-  .workspace-arrow { transform: rotate(90deg); }
-  .download-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 968px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
-  .hero h1 { font-size: 38px; }
-  .steps-grid, .features-grid { grid-template-columns: 1fr; }
-  .industries-grid { grid-template-columns: 1fr 1fr; }
-  .usage-grid { grid-template-columns: 1fr; }
+  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 40px; }
+  .hero h1 { font-size: 36px; }
+  .feature-title { font-size: 28px; }
+  .pain-cards, .scenarios-grid { grid-template-columns: 1fr; }
+  .platform-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-top { grid-template-columns: 1fr 1fr; }
   .nav-links { display: none; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
-}
-@media (max-width: 640px) {
-  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
 }
 </style>
 </head>
 <body>
 
-<!-- ===== 导航栏 ===== -->
-<header class="nav" id="nav">
+<!-- 导航 -->
+<nav class="nav">
   <div class="nav-inner">
-    <a href="/" class="nav-logo">
-      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
-        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
-        <g transform="translate(-1.06 -28.16)">
-          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
-          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
-          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
-          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
-          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
-          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
-        </g>
-      </svg>
-    </a>
-    <nav class="nav-links" id="navLinks">
-      <a href="/huoer.html" class="nav-product-link active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>活儿伙计
-      </a>
-      <a href="/geo.html" class="nav-product-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计
-      </a>
-      <a href="/global.html" class="nav-product-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计
-      </a>
-      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
-      <a class="nav-cta" href="#usage">免费下载</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="菜单">
-      <span></span><span></span><span></span>
-    </button>
+    <a href="index.html" class="nav-logo"><span>Work</span>Hogee</a>
+    <div class="nav-links">
+      <a href="#features">核心能力</a>
+      <a href="#scenarios">行业场景</a>
+      <a href="#pricing">价格方案</a>
+      <a href="huoer-dynamic.html">图片动态化</a>
+      <a href="index.html" class="nav-cta">免费下载</a>
+    </div>
   </div>
-</header>
+</nav>
 
-<!-- ===== Hero区域 ===== -->
+<!-- Hero -->
 <section class="hero">
-  <div class="container">
-    <div class="hero-inner">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="dot"></span>
-          <span>WorkHogee · 活儿伙计 · 在线版已上线</span>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag"><span class="dot"></span>基于火山引擎Seedream 4.5 · 已服务10000+小商家</div>
+      <h1>你有活儿，<br><span class="highlight">喊伙计</span>。</h1>
+      <p class="hero-desc">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张手机实拍，20秒变成能直接上架的专业商品图。</p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">立即体验 →</button>
+        <button class="btn-secondary">观看演示</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num"><span>20</span>秒</div><div class="label">平均出图时间</div></div>
+        <div class="hero-stat"><div class="num"><span>95</span>%</div><div class="label">比设计师省成本</div></div>
+        <div class="hero-stat"><div class="num"><span>8</span>+</div><div class="label">已适配平台</div></div>
+      </div>
+    </div>
+    <div class="hero-demo" id="demo">
+      <div class="demo-header">
+        <div class="demo-title">实时演示 · 花瓶场景图生成</div>
+        <div class="demo-badge">AI处理中</div>
+      </div>
+      <div class="demo-compare">
+        <div class="demo-img-wrap">
+          <img src="images/before-vase.jpg" alt="手机实拍原图">
+          <div class="demo-img-label">手机实拍 · 白底素图</div>
         </div>
-        <h1>小商家的<span class="highlight">AI工作流伙计</span></h1>
-        <p class="hero-slogan">你有活儿，喊伙计。</p>
-        <p class="hero-sub">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。餐饮、家居、车行、装修……你有活儿，喊伙计。</p>
-        <div class="hero-cta">
-          <a href="#workspace" class="btn-primary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            在线体验
-          </a>
-          <a href="#usage" class="btn-secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            下载客户端
-          </a>
-        </div>
-        <div class="hero-meta">
-          <div class="hero-meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            免费版每月10张
-          </div>
-          <div class="hero-meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            20秒极速出图
-          </div>
-          <div class="hero-meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            直接上架平台
-          </div>
+        <div class="demo-arrow">→</div>
+        <div class="demo-img-wrap">
+          <img src="images/after-vase.jpg" alt="AI生成成品">
+          <div class="demo-img-label">AI生成 · 侘寂风场景</div>
         </div>
       </div>
-      <div class="hero-visual">
-        <div class="hero-concept">
-          <!-- 原图 -->
-          <div class="concept-before">
-            <div class="concept-before-card">
-              <div class="concept-before-img">
-                <div class="dish-raw"></div>
-              </div>
-              <div class="concept-before-label">
-                <span class="tag">手机实拍</span>
-                <p>光线暗 · 无摆盘 · 不敢上架</p>
-              </div>
-            </div>
-          </div>
-          <!-- AI魔法 -->
-          <div class="concept-magic">
-            <div class="magic-circle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <div class="magic-sparkles">
-                <span></span><span></span><span></span><span></span>
-              </div>
-            </div>
-            <div class="magic-label">AI 行业大脑</div>
-          </div>
-          <!-- 成品图 -->
-          <div class="concept-after">
-            <div class="concept-after-card">
-              <div class="concept-after-img">
-                <div class="steam"><span></span><span></span><span></span></div>
-                <div class="dish-pro"></div>
-              </div>
-              <div class="concept-after-label">
-                <span class="tag">专业级成品</span>
-                <p>精致摆盘 · 暖光氛围 · 直接上架</p>
-              </div>
-            </div>
-          </div>
+      <div class="demo-progress">
+        <div class="demo-progress-label">
+          <span>Seedream 4.5 处理进度</span>
+          <span>20秒</span>
         </div>
-        <div class="hero-float-card card1">
-          <div class="label">生成耗时</div>
-          <div class="value">18s</div>
-          <div class="sub">比人工快90%</div>
-        </div>
-        <div class="hero-float-card card2">
-          <div class="label">本月已生成</div>
-          <div class="value">1,286张</div>
-          <div class="sub">↑ 持续增长中</div>
+        <div class="demo-progress-bar"><div class="demo-progress-fill"></div></div>
+        <div class="demo-steps">
+          <span>① 图像识别 3s</span>
+          <span>② 提示词匹配 5s</span>
+          <span>③ AI生成 10s</span>
+          <span>④ 质量校验 2s</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 行业版本切换 ===== -->
-<!-- ===== 在线工作台演示 ===== -->
-<section class="workspace-demo" id="workspace">
-  <div class="container">
-    <div class="workspace-demo-title">
-      <h3>在线工作台 · 实时演示</h3>
-      <p>选择行业版本，查看不同场景的AI出图效果</p>
+<!-- 痛点场景 -->
+<section class="pain">
+  <div class="pain-inner">
+    <div class="pain-header">
+      <div class="pain-tag">小商家的真实困境</div>
+      <h2>一张好图，难倒了多少小商家</h2>
     </div>
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="pain-num">01</div>
+        <h3>拍图难</h3>
+        <p>没有专业摄影棚，没有补光灯，手机拍出来的图要么光线暗、要么背景乱，自己都看不上，更别说吸引客户下单。</p>
+        <div class="cost">平均3小时<span>/组图</span></div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">02</div>
+        <h3>修图贵</h3>
+        <p>找设计师修一张图50-200元，一批新品上架光修图就要几千块。小本生意，利润本来就薄，修图成本占了一大块。</p>
+        <div class="cost">¥50-200<span>/张图</span></div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">03</div>
+        <h3>上架慢</h3>
+        <p>美团要800×800，淘宝要白底主图，小红书要3:4，抖音要9:16。一个平台一个尺寸，裁完这个裁那个，半天过去了还没上架。</p>
+        <div class="cost">2-3天<span>/批新品</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- 行业版本切换（放在操作界面上方，先选版本再看演示） -->
-    <div class="version-switch-inline">
-      <div class="version-switch">
-        <div class="version-tab active" onclick="switchVersion('food', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-          餐饮版
+<!-- 核心能力1：20秒出图 -->
+<section class="feature" id="features">
+  <div class="feature-inner">
+    <div class="feature-text">
+      <div class="feature-num">01</div>
+      <h2 class="feature-title">20秒，<span class="highlight">一张专业图</span></h2>
+      <p class="feature-desc">不用学PS，不用找设计师。上传一张手机实拍，AI自动识别产品、匹配行业风格、生成专业场景图。从"能看"到"能卖"，只需要20秒。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>自动抠图</strong> — 一键去除杂乱背景，边缘精准到发丝</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>风格匹配</strong> — 餐饮暖光、家居侘寂、电商白底，行业风格自动适配</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>光影合成</strong> — 自然光影、真实投影，看不出是AI生成的</div></div>
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="compare-card">
+        <div class="compare-header">
+          <span class="compare-label">前后对比</span>
+          <span class="compare-time">耗时 20秒</span>
         </div>
-        <div class="version-tab" onclick="switchVersion('home', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          家居/饰品版
+        <div class="compare-body">
+          <div class="compare-side">
+            <div class="compare-img"><img src="images/before-vase.jpg" alt="原图"></div>
+            <div class="compare-caption">手机实拍 · 白底素图</div>
+          </div>
+          <div class="compare-arrow">→</div>
+          <div class="compare-side">
+            <div class="compare-img after"><img src="images/after-vase.jpg" alt="成品"></div>
+            <div class="compare-caption">AI生成 · 侘寂风场景</div>
+          </div>
         </div>
-        <div class="version-tab" onclick="switchVersion('car', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
-          车行版
-          <span class="coming-soon">即将推出</span>
-        </div>
-        <div class="version-tab" onclick="switchVersion('deco', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-          装修版
-          <span class="coming-soon">即将推出</span>
+        <div class="compare-footer">
+          <div class="compare-metric"><span class="metric-num">95%</span><span class="metric-label">专业度提升</span></div>
+          <div class="compare-metric"><span class="metric-num">3h→20s</span><span class="metric-label">效率提升</span></div>
+          <div class="compare-metric"><span class="metric-num">¥0</span><span class="metric-label">设计师费用</span></div>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 餐饮版演示 -->
-    <div class="workspace-version-content active" id="version-food">
-      <div class="workspace-panel">
-        <div class="workspace-panel-header">
-          <div class="workspace-panel-title">
-            <span class="status-dot"></span>
-            活儿伙计 · 餐饮版在线工作台
+<!-- 核心能力2：直接上架 -->
+<section class="feature feature-alt">
+  <div class="feature-inner reverse">
+    <div class="feature-text">
+      <div class="feature-num">02</div>
+      <h2 class="feature-title">一次生成，<span class="highlight">全平台直接上架</span></h2>
+      <p class="feature-desc">美团要800×800，淘宝要白底主图，小红书要3:4，抖音要9:16。活儿伙计自动适配所有平台尺寸和规范，一次生成，一键发布，不用再一张一张裁。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>尺寸自动适配</strong> — 8个主流平台，尺寸规范内置，自动裁剪</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>品类智能匹配</strong> — 餐饮放美团、商品放淘宝、种草放小红书，品类自动对应</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>一键批量发布</strong> — 选好平台，一键发布，不用逐个登录后台</div></div>
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="platform-showcase">
+        <div class="platform-grid">
+          <div class="platform-item meituan">
+            <div class="platform-img"><img src="images/dish-hongshaorou.jpg" alt="美团"></div>
+            <div class="platform-name">美团</div>
+            <div class="platform-size">800×800</div>
           </div>
-          <div class="workspace-panel-badge">
-            <svg viewBox="0 0 24 24"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+          <div class="platform-item taobao">
+            <div class="platform-img"><img src="images/taobao-vase-white.jpg" alt="淘宝"></div>
+            <div class="platform-name">淘宝</div>
+            <div class="platform-size">白底主图</div>
+          </div>
+          <div class="platform-item xiaohongshu">
+            <div class="platform-img"><img src="images/after-vase.jpg" alt="小红书"></div>
+            <div class="platform-name">小红书</div>
+            <div class="platform-size">3:4 竖版</div>
+          </div>
+          <div class="platform-item douyin">
+            <div class="platform-img"><img src="images/douyin-hongshaorou-cover.jpg" alt="抖音"></div>
+            <div class="platform-name">抖音</div>
+            <div class="platform-size">9:16 封面</div>
           </div>
         </div>
-        <div class="workspace-panel-body">
-          <div class="workspace-upload-area">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <h4>上传菜品原图</h4>
-            <p>手机拍的红烧肉，不用修图直接上传</p>
-            <button class="workspace-upload-btn" onclick="alert('在线版即将开放真实上传功能，敬请期待！')">选择图片上传</button>
-          </div>
-          <div class="workspace-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
-          <div class="workspace-result-area">
-            <div class="workspace-result-img dynamic-img" id="food-result-img">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
-              <!-- 热气动效层 -->
-              <div class="steam-layer">
-                <span class="steam s1"></span>
-                <span class="steam s2"></span>
-                <span class="steam s3"></span>
-              </div>
-              <div class="dynamic-badge">动态版</div>
-            </div>
-            <h4>精致摆盘红烧肉</h4>
-            <p>45°俯拍 · 暖光氛围 · 白色圆盘</p>
-            <div class="workspace-result-tags">
-              <span class="workspace-result-tag">800×800 美团尺寸</span>
-              <span class="workspace-result-tag">无水印</span>
-              <span class="workspace-result-tag">可直接上架</span>
-            </div>
-            <button class="dynamic-btn" onclick="toggleDynamic('food')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              一键动态化
-            </button>
-          </div>
+        <div class="platform-action">
+          <button class="btn-platform">⚡ 一键发布到4个平台</button>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 家居/饰品版演示 -->
-    <div class="workspace-version-content" id="version-home">
-      <div class="workspace-panel">
-        <div class="workspace-panel-header">
-          <div class="workspace-panel-title">
-            <span class="status-dot"></span>
-            活儿伙计 · 家居/饰品版在线工作台
-          </div>
-          <div class="workspace-panel-badge">
-            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          </div>
+<!-- 核心能力3：行业大脑 -->
+<section class="feature">
+  <div class="feature-inner">
+    <div class="feature-text">
+      <div class="feature-num">03</div>
+      <h2 class="feature-title">每个行业，<span class="highlight">都有一个专属大脑</span></h2>
+      <p class="feature-desc">不是通用AI随便生成。活儿伙计内置行业知识库——餐饮有24节气氛围词库、拍摄角度规范；家居有8种风格描述词、材质光影模板。每个行业的"好图标准"，都已经内置好了。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>餐饮知识包</strong> — 24节气氛围词、5种菜品风格、美团/饿了么尺寸规范</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>家居知识包</strong> — 北欧/侘寂/中古/法式等8种风格、材质光影模板</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>持续扩展</strong> — 车行、装修、服装、美妆，更多行业大脑陆续上线</div></div>
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="kb-card">
+        <div class="kb-header">
+          <span class="kb-title">行业知识库</span>
+          <span class="kb-count">2个行业 · 500+词条</span>
         </div>
-        <div class="workspace-panel-body">
-          <div class="workspace-upload-area">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <h4>上传商品原图</h4>
-            <p>白底陶瓷花瓶，直接上传生成场景图</p>
-            <button class="workspace-upload-btn" onclick="alert('在线版即将开放真实上传功能，敬请期待！')">选择图片上传</button>
+        <div class="kb-tabs">
+          <button class="kb-tab active">餐饮版</button>
+          <button class="kb-tab">家居/饰品版</button>
+          <button class="kb-tab disabled">车行版 即将</button>
+          <button class="kb-tab disabled">装修版 即将</button>
+        </div>
+        <div class="kb-content">
+          <div class="kb-item">
+            <div class="kb-item-title">立冬·饺子氛围词</div>
+            <div class="kb-item-desc">暖光、木质餐桌、热气腾腾、白瓷盘、醋碟、筷子</div>
           </div>
-          <div class="workspace-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <div class="kb-item">
+            <div class="kb-item-title">菜品拍摄角度规范</div>
+            <div class="kb-item-desc">45°俯拍为主、暖光色温3200K、留白30%</div>
           </div>
-          <div class="workspace-result-area">
-            <div class="workspace-result-img dynamic-img" id="home-result-img">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              <!-- 光影流动动效层 -->
-              <div class="light-layer">
-                <div class="light-beam"></div>
-              </div>
-              <div class="dynamic-badge">动态版</div>
-            </div>
-            <h4>侘寂风场景图</h4>
-            <p>原木桌面 · 亚麻背景 · 自然光氛围</p>
-            <div class="workspace-result-tags">
-              <span class="workspace-result-tag">800×800 淘宝主图</span>
-              <span class="workspace-result-tag">3:4 小红书</span>
-              <span class="workspace-result-tag">可直接上架</span>
-            </div>
-            <button class="dynamic-btn" onclick="toggleDynamic('home')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              一键动态化
-            </button>
+          <div class="kb-item">
+            <div class="kb-item-title">5种菜品风格模板</div>
+            <div class="kb-item-desc">家常菜、精致摆盘、日式居酒屋、街头小吃、高端料理</div>
+          </div>
+          <div class="kb-item">
+            <div class="kb-item-title">平台尺寸规范</div>
+            <div class="kb-item-desc">美团800×800、饿了么800×800、抖音9:16封面</div>
           </div>
         </div>
       </div>
@@ -1044,297 +623,204 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- ===== 三步出图 ===== -->
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="section-kicker">使用流程</span>
-      <h2>三步出图，就是这么简单</h2>
-      <p>不用学设计，不用调参数，上传一张图，行业大脑帮你搞定一切</p>
+<!-- 核心能力4：批量处理 -->
+<section class="feature feature-alt">
+  <div class="feature-inner reverse">
+    <div class="feature-text">
+      <div class="feature-num">04</div>
+      <h2 class="feature-title">50张图，<span class="highlight">一杯咖啡的时间</span></h2>
+      <p class="feature-desc">新品上架，一次要处理几十上百张图？活儿伙计支持批量上传、批量生成、批量发布。50张图，从上传到全部生成完成，只需要一杯咖啡的时间。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>批量上传</strong> — 一次拖入50张，自动排队处理</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>并行生成</strong> — 多任务同时处理，不用一张一张等</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>进度实时</strong> — 每张图的处理状态实时可见，完成自动通知</div></div>
+      </div>
     </div>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <h3>上传原图</h3>
-        <p>手机拍的菜品图、商品图，直接上传。支持JPG/PNG/WEBP格式，最大10MB，不用修图不用调色。</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <h3>选择场景</h3>
-        <p>选择行业版本和风格需求，行业大脑自动匹配拍摄角度、氛围词、平台尺寸，比你更懂怎么拍才好看。</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <h3>获取专业图</h3>
-        <p>20秒生成专业级商品图，自动适配美团800×800、淘宝主图、小红书3:4等尺寸，直接上架不用再改。</p>
+    <div class="feature-visual">
+      <div class="batch-card">
+        <div class="batch-header">
+          <span class="batch-title">批量任务队列</span>
+          <span class="batch-status">处理中 3/50</span>
+        </div>
+        <div class="batch-stats">
+          <div class="batch-stat"><span class="batch-num">47</span><span class="batch-label">已完成</span></div>
+          <div class="batch-stat"><span class="batch-num">3</span><span class="batch-label">处理中</span></div>
+          <div class="batch-stat"><span class="batch-num">0</span><span class="batch-label">失败</span></div>
+        </div>
+        <div class="batch-list">
+          <div class="batch-item done">
+            <div class="batch-thumb"><img src="images/before-vase.jpg" alt=""></div>
+            <div class="batch-info"><div class="batch-name">花瓶_001.jpg</div><div class="batch-result">侘寂风场景 · 已完成</div></div>
+            <div class="batch-state done">✓</div>
+          </div>
+          <div class="batch-item done">
+            <div class="batch-thumb"><img src="images/dish-hongshaorou.jpg" alt=""></div>
+            <div class="batch-info"><div class="batch-name">红烧肉_主图.jpg</div><div class="batch-result">精致摆盘 · 已完成</div></div>
+            <div class="batch-state done">✓</div>
+          </div>
+          <div class="batch-item processing">
+            <div class="batch-thumb"><img src="images/taobao-vase-white.jpg" alt=""></div>
+            <div class="batch-info"><div class="batch-name">花瓶_淘宝版.jpg</div><div class="batch-result">白底主图 · 生成中 65%</div></div>
+            <div class="batch-state processing"><div class="spinner"></div></div>
+          </div>
+        </div>
+        <div class="batch-footer">预计剩余时间：2分30秒</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 核心能力 01: 行业大脑 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">01</div>
-      <h2>行业大脑，比通用AI更懂你的生意</h2>
-      <p>不是随便画个图就完事。活儿伙计内置餐饮、家居等垂直行业知识库，从二十四节气氛围词到拍摄角度规范，从平台尺寸标准到5种菜品风格模板，每一个细节都为你的行业量身定制。</p>
-      <ul class="capability-points">
-        <li>二十四节气氛围词库，立冬饺子=暖光+木质餐桌+热气腾腾</li>
-        <li>拍摄角度规范：45°俯拍、暖光、菜品居中构图</li>
-        <li>8-10种家居风格描述词：侘寂风=米白墙面+原木+亚麻+干花</li>
-        <li>知识库持续更新，行业越用越准</li>
-      </ul>
+<!-- 核心能力5：按张计费 -->
+<section class="feature">
+  <div class="feature-inner">
+    <div class="feature-text">
+      <div class="feature-num">05</div>
+      <h2 class="feature-title">按张计费，<span class="highlight">用多少花多少</span></h2>
+      <p class="feature-desc">不搞年费套路，不搞最低消费。用一张算一张的钱，没用完的额度永久有效。小商家一个月可能只用几十张，那就只付几十张的钱。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>按张计费</strong> — 用一张算一张，没有年费、没有最低消费</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>额度永久有效</strong> — 买的额度不会过期，什么时候用都行</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>成本透明</strong> — 每张图的消耗清晰可见，不花糊涂账</div></div>
+      </div>
     </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">行业词库总量</div>
-        <div class="ann-value" data-count="2400">0</div>
-        <div class="ann-sub">持续更新中</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">风格匹配准确率</div>
-        <div class="ann-value">96%</div>
-        <div class="ann-sub">远超通用AI</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/knowledge</span>
+    <div class="feature-visual">
+      <div class="cost-card">
+        <div class="cost-header">
+          <span class="cost-title">成本对比</span>
+          <span class="cost-subtitle">每月100张图</span>
         </div>
-        <div class="mock-body">
-          <div style="display:flex;gap:16px;">
-            <div style="width:120px;flex-shrink:0;">
-              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:10px;">行业分类</div>
-              <div style="display:flex;flex-direction:column;gap:4px;">
-                <div style="padding:8px 10px;background:rgba(234,88,12,0.08);border-radius:6px;font-size:12px;font-weight:600;color:var(--orange);border-left:2px solid var(--orange);">🍜 餐饮</div>
-                <div style="padding:8px 10px;font-size:12px;color:var(--ink-soft);border-radius:6px;">🏠 家居饰品</div>
-                <div style="padding:8px 10px;font-size:12px;color:var(--ink-muted);border-radius:6px;">🚗 车行</div>
-                <div style="padding:8px 10px;font-size:12px;color:var(--ink-muted);border-radius:6px;">🎨 装修</div>
-              </div>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-                <span>餐饮知识库 · 词库卡片</span>
-                <span style="font-size:10px;color:var(--green);font-weight:600;">● 已同步</span>
-              </div>
-              <div class="kb-grid">
-                <div class="kb-card">
-                  <div class="kb-card-title"><span class="dot"></span>节气氛围词</div>
-                  <div class="kb-card-tags">
-                    <span class="kb-tag">立冬·暖光</span>
-                    <span class="kb-tag">夏至·清凉</span>
-                    <span class="kb-tag">中秋·团圆</span>
-                  </div>
-                </div>
-                <div class="kb-card">
-                  <div class="kb-card-title"><span class="dot"></span>拍摄角度规范</div>
-                  <div class="kb-card-tags">
-                    <span class="kb-tag">45°俯拍</span>
-                    <span class="kb-tag">暖光</span>
-                    <span class="kb-tag">居中构图</span>
-                  </div>
-                </div>
-                <div class="kb-card">
-                  <div class="kb-card-title"><span class="dot"></span>菜品风格模板</div>
-                  <div class="kb-card-tags">
-                    <span class="kb-tag">家常菜</span>
-                    <span class="kb-tag">精致摆盘</span>
-                    <span class="kb-tag">居酒屋</span>
-                  </div>
-                </div>
-                <div class="kb-card">
-                  <div class="kb-card-title"><span class="dot"></span>平台尺寸标准</div>
-                  <div class="kb-card-tags">
-                    <span class="kb-tag">美团800²</span>
-                    <span class="kb-tag">小红书3:4</span>
-                    <span class="kb-tag">抖音9:16</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="cost-compare">
+          <div class="cost-side old">
+            <div class="cost-side-label">传统方式</div>
+            <div class="cost-side-num">¥10,000</div>
+            <div class="cost-side-item">设计师 ¥100/张 × 100张</div>
+            <div class="cost-side-item">沟通返工时间 不计</div>
           </div>
+          <div class="cost-vs">VS</div>
+          <div class="cost-side new">
+            <div class="cost-side-label">活儿伙计</div>
+            <div class="cost-side-num">¥99</div>
+            <div class="cost-side-item">按张计费 ¥0.99/张 × 100张</div>
+            <div class="cost-side-item">20秒出图 不用等</div>
+          </div>
+        </div>
+        <div class="cost-saving">
+          <span>每月节省</span>
+          <span class="saving-num">¥9,901</span>
+          <span class="saving-percent">省99%</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 核心能力 02: 20秒出图 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">02</div>
-      <h2>20秒出图，比设计师快100倍</h2>
-      <p>基于火山引擎Seedream 4.5大模型，图生图模式平均20秒交付一张专业级商品图。上传一张原图，选个行业风格，喝口水的功夫图就好了，不用再等设计师三天交稿。</p>
-      <ul class="capability-points">
-        <li>火山引擎Seedream 4.5模型，画质对标专业摄影师</li>
-        <li>图生图模式平均20秒交付，无需排队等待</li>
-        <li>比找设计师快100倍，比自己拍摄省90%成本</li>
-        <li>不满意一键重生成，直到满意为止</li>
-      </ul>
+<!-- 核心能力6：数据安全 -->
+<section class="feature feature-alt">
+  <div class="feature-inner reverse">
+    <div class="feature-text">
+      <div class="feature-num">06</div>
+      <h2 class="feature-title">你的图，<span class="highlight">只有你能看</span></h2>
+      <p class="feature-desc">上传的每一张图、生成的每一个结果，都只属于你。我们不会用你的图片训练模型，不会分享给第三方，不会在任何地方展示。数据加密存储，随时可以删除。</p>
+      <div class="feature-points">
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>不训练模型</strong> — 你的图片不会被用于训练任何AI模型</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>加密存储</strong> — 数据传输和存储全程加密，符合等保要求</div></div>
+        <div class="feature-point"><div class="point-icon">✓</div><div><strong>随时删除</strong> — 一键清空所有数据，不留任何痕迹</div></div>
+      </div>
     </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">平均出图耗时</div>
-        <div class="ann-value">20<span style="font-size:14px;">秒</span></div>
-        <div class="ann-sub">比设计师快100倍</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">今日已出图</div>
-        <div class="ann-value" data-count="1286">0</div>
-        <div class="ann-sub">张 · 稳定运行</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/generate</span>
+    <div class="feature-visual">
+      <div class="security-card">
+        <div class="security-header">
+          <span class="security-title">安全中心</span>
+          <span class="security-badge">已启用</span>
         </div>
-        <div class="mock-body">
-          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">手机实拍原图</div>
-              <div style="aspect-ratio:1;border-radius:8px;overflow:hidden;margin-bottom:10px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                <img src="images/before-vase.jpg" style="width:100%;height:100%;object-fit:cover;display:block;">
-                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.75));padding:24px 10px 8px;color:white;font-size:10px;font-weight:600;">杂乱背景 · 光线昏暗 · 无构图</div>
-              </div>
-              <div style="font-size:10px;color:var(--ink-muted);text-align:center;">花瓶_手机实拍.jpg</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-              <div style="width:36px;height:36px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(234,88,12,0.4);">AI</div>
-              <div style="font-size:9px;color:var(--orange);font-weight:700;">20秒</div>
-            </div>
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">AI生成成品</div>
-              <div class="dynamic-image-wrap" style="aspect-ratio:1;margin-bottom:10px;box-shadow:0 4px 16px rgba(234,88,12,0.2);">
-                <img src="images/after-vase.jpg">
-                <div class="dynamic-badge">✨ 一键动态化</div>
-                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.75));padding:24px 10px 8px;color:white;font-size:10px;font-weight:600;z-index:1;">侘寂风 · 自然光 · 专业构图</div>
-              </div>
-              <div style="font-size:10px;color:var(--orange);text-align:center;font-weight:700;">侘寂风场景 · 支持动态化 · 直接上架</div>
-            </div>
+        <div class="security-grid">
+          <div class="security-item">
+            <div class="security-icon">🔒</div>
+            <div class="security-name">传输加密</div>
+            <div class="security-desc">TLS 1.3</div>
           </div>
-          <div style="margin-top:16px;">
-            <div class="progress-row">
-              <div class="progress-label"><span>Seedream 4.5 处理进度</span><span>100%</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink-muted);margin-top:8px;">
-              <span>① 图像识别 3s</span>
-              <span>② 提示词匹配 5s</span>
-              <span>③ AI生成 10s</span>
-              <span>④ 质量校验 2s</span>
-            </div>
-            <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:8px;">
-              <span style="font-size:10px;font-weight:700;color:var(--orange);">✨ 成品图支持一键动态化：</span>
-              <span style="font-size:10px;color:var(--ink-soft);">光影流动 · 热气蒸汽 · 缓慢推拉 · 粒子飘散</span>
-            </div>
+          <div class="security-item">
+            <div class="security-icon">🛡️</div>
+            <div class="security-name">存储加密</div>
+            <div class="security-desc">AES-256</div>
           </div>
+          <div class="security-item">
+            <div class="security-icon">🚫</div>
+            <div class="security-name">不训练</div>
+            <div class="security-desc">数据隔离</div>
+          </div>
+          <div class="security-item">
+            <div class="security-icon">📋</div>
+            <div class="security-name">等保三级</div>
+            <div class="security-desc">合规认证</div>
+          </div>
+        </div>
+        <div class="security-log">
+          <div class="log-item"><span class="log-time">今天 14:32</span><span>上传图片 12 张 · 已加密存储</span></div>
+          <div class="log-item"><span class="log-time">今天 14:30</span><span>生成图片 12 张 · 仅本人可见</span></div>
+          <div class="log-item"><span class="log-time">昨天 18:05</span><span>删除历史图片 50 张 · 已彻底清除</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 核心能力 03: 直接上架 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">03</div>
-      <h2>生成即可上架，不用再裁剪调整</h2>
-      <p>生成的图片自动适配各平台尺寸标准，美团800×800、淘宝主图、小红书3:4、抖音9:16，一键切换。不用再打开PS裁剪缩放，生成完直接下载发布，多平台同步上架。</p>
-      <ul class="capability-points">
-        <li>美团/饿了么菜品图：800×800标准尺寸</li>
-        <li>淘宝/京东主图：800×800白底+场景图</li>
-        <li>小红书图文：3:4竖版，封面+内页全套</li>
-        <li>一次生成，多平台尺寸自动适配，一键下载</li>
-      </ul>
+<!-- 行业场景 -->
+<section class="scenarios" id="scenarios">
+  <div class="scenarios-inner">
+    <div class="scenarios-header">
+      <div class="scenarios-tag">覆盖行业</div>
+      <h2>哪个行业，都有专属伙计</h2>
+      <p class="scenarios-desc">不止餐饮和家居，更多行业大脑正在陆续上线。每个行业的"好图标准"，我们都帮你内置好了。</p>
     </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">已适配平台</div>
-        <div class="ann-value">8+</div>
-        <div class="ann-sub">持续增加中</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">一键发布耗时</div>
-        <div class="ann-value">&lt;10s</div>
-        <div class="ann-sub">多平台同步</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/publish</span>
+    <div class="scenarios-grid">
+      <div class="scenario-card">
+        <div class="scenario-icon food">🍜</div>
+        <div class="scenario-content">
+          <h3>餐饮版 · 已上线</h3>
+          <p>24节气氛围词库、5种菜品风格模板、美团/饿了么尺寸规范。从家常菜到高端料理，每道菜都能拍出食欲感。</p>
+          <div class="scenario-tags">
+            <span class="scenario-tag">美团外卖</span>
+            <span class="scenario-tag">饿了么</span>
+            <span class="scenario-tag">抖音团购</span>
+            <span class="scenario-tag">小红书种草</span>
+          </div>
         </div>
-        <div class="mock-body">
-          <div style="font-size:12px;font-weight:700;margin-bottom:12px;">选择发布平台</div>
-          <div class="platform-row">
-            <div class="platform-item active">
-              <div class="platform-icon" style="background:#ffc107;">美</div>
-              <div class="platform-name">美团</div>
-              <div class="platform-size">800×800</div>
-            </div>
-            <div class="platform-item active">
-              <div class="platform-icon" style="background:#ff6a00;">淘</div>
-              <div class="platform-name">淘宝</div>
-              <div class="platform-size">800×800</div>
-            </div>
-            <div class="platform-item active">
-              <div class="platform-icon" style="background:#fe2c55;">红</div>
-              <div class="platform-name">小红书</div>
-              <div class="platform-size">3:4</div>
-            </div>
-            <div class="platform-item">
-              <div class="platform-icon" style="background:#000;">抖</div>
-              <div class="platform-name">抖音</div>
-              <div class="platform-size">9:16</div>
-            </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-icon home">🏠</div>
+        <div class="scenario-content">
+          <h3>家居/饰品版 · 已上线</h3>
+          <p>北欧、侘寂、中古、法式、奶油风等8种风格描述词，原木/陶瓷/玻璃/金属材质光影模板。一张白底图，秒变杂志级场景图。</p>
+          <div class="scenario-tags">
+            <span class="scenario-tag">淘宝电商</span>
+            <span class="scenario-tag">小红书</span>
+            <span class="scenario-tag">抖音</span>
+            <span class="scenario-tag">微信小程序</span>
           </div>
-          <div style="font-size:12px;font-weight:700;margin-bottom:10px;">各平台自动适配效果（不同品类示例）</div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
-            <div style="text-align:center;">
-              <div style="aspect-ratio:1;border-radius:6px;overflow:hidden;margin-bottom:4px;box-shadow:0 2px 6px rgba(0,0,0,0.1);position:relative;">
-                <img src="images/dish-hongshaorou.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-                <div style="position:absolute;top:4px;left:4px;background:rgba(255,193,7,0.95);color:#333;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;">美团</div>
-              </div>
-              <div style="font-size:9px;color:var(--ink-muted);">餐饮菜品 · 1:1</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="aspect-ratio:1;border-radius:6px;overflow:hidden;margin-bottom:4px;box-shadow:0 2px 6px rgba(0,0,0,0.1);position:relative;">
-                <img src="images/taobao-vase-white.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-                <div style="position:absolute;top:4px;left:4px;background:rgba(255,106,0,0.95);color:white;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;">淘宝</div>
-              </div>
-              <div style="font-size:9px;color:var(--ink-muted);">电商商品 · 1:1</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="aspect-ratio:0.75;border-radius:6px;overflow:hidden;margin-bottom:4px;box-shadow:0 2px 6px rgba(0,0,0,0.1);position:relative;">
-                <img src="images/after-vase.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
-                <div style="position:absolute;top:4px;left:4px;background:rgba(254,44,85,0.95);color:white;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;">小红书</div>
-              </div>
-              <div style="font-size:9px;color:var(--ink-muted);">家居种草 · 3:4</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="aspect-ratio:0.56;border-radius:6px;overflow:hidden;margin-bottom:4px;box-shadow:0 2px 6px rgba(0,0,0,0.1);position:relative;">
-                <img src="images/douyin-hongshaorou-cover.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-                <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.8);color:white;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;">抖音</div>
-                <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:16px 6px 4px;color:white;font-size:7px;font-weight:600;text-align:center;">家常菜教程</div>
-              </div>
-              <div style="font-size:9px;color:var(--ink-muted);">美食视频 · 9:16</div>
-            </div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-icon car">🚗</div>
+        <div class="scenario-content">
+          <h3>车行版 · 即将上线</h3>
+          <p>二手车实拍图一键生成展厅效果图，4S店级布光、专业角度、品牌背景。不用租展厅，不用请摄影师，手机拍的也能卖出好价钱。</p>
+          <div class="scenario-tags">
+            <span class="scenario-tag">瓜子二手车</span>
+            <span class="scenario-tag">懂车帝</span>
+            <span class="scenario-tag">汽车之家</span>
           </div>
-          <div style="display:flex;gap:8px;">
-            <button style="flex:1;padding:10px;background:var(--orange);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
-              ⚡ 一键发布到4个平台
-            </button>
-            <button style="padding:10px 16px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
-              全部下载
-            </button>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-icon deco">🏗️</div>
+        <div class="scenario-content">
+          <h3>装修版 · 即将上线</h3>
+          <p>毛坯房实拍一键生成装修效果图，北欧/现代/中式等多种风格，家具摆放、灯光氛围自动匹配。签单率提升，客户一眼就懂。</p>
+          <div class="scenario-tags">
+            <span class="scenario-tag">土巴兔</span>
+            <span class="scenario-tag">齐家网</span>
+            <span class="scenario-tag">小红书</span>
           </div>
         </div>
       </div>
@@ -1342,582 +828,57 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
-<!-- ===== 核心能力 04: 按张计费 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">04</div>
-      <h2>按张计费，小商家也用得起</h2>
-      <p>订阅制+按出图量扣费，用多少付多少，没有隐藏费用。免费版每月10张体验，专业版每月500张，企业版不限量。一杯奶茶钱就能搞定一个月的菜品图，比请设计师划算太多。</p>
-      <ul class="capability-points">
-        <li>免费版：每月10张，零成本体验</li>
-        <li>专业版：每月500张，适合中小商家</li>
-        <li>企业版：不限量+批量处理+专属客服</li>
-        <li>用多少付多少，没有隐藏费用，随时升级降级</li>
-      </ul>
-    </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">单张平均成本</div>
-        <div class="ann-value">¥0.2</div>
-        <div class="ann-sub">比设计师省95%</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">本月已节省</div>
-        <div class="ann-value" data-count="3200">0</div>
-        <div class="ann-sub">元 · 对比外包</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/billing</span>
-        </div>
-        <div class="mock-body">
-          <div class="dash-grid">
-            <div class="dash-card">
-              <div class="dash-card-label">本月用量</div>
-              <div class="dash-card-value">328<span style="font-size:12px;color:var(--ink-muted);">/500张</span></div>
-              <div class="dash-card-change up">↑ 专业版</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-card-label">本月消费</div>
-              <div class="dash-card-value">¥99</div>
-              <div class="dash-card-change up">订阅制</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-card-label">单张成本</div>
-              <div class="dash-card-value" style="color:var(--orange);">¥0.30</div>
-              <div class="dash-card-change up">↓ 比上月低12%</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-card-label">剩余额度</div>
-              <div class="dash-card-value">172张</div>
-              <div class="dash-card-change up">可用至月底</div>
-            </div>
-          </div>
-          <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">近6个月出图量趋势</div>
-          <div class="bar-chart">
-            <div class="bar-col"><div class="bar" style="height:40%;"></div><div class="bar-label">4月</div></div>
-            <div class="bar-col"><div class="bar" style="height:55%;"></div><div class="bar-label">5月</div></div>
-            <div class="bar-col"><div class="bar" style="height:48%;"></div><div class="bar-label">6月</div></div>
-            <div class="bar-col"><div class="bar" style="height:70%;"></div><div class="bar-label">7月</div></div>
-            <div class="bar-col"><div class="bar" style="height:85%;"></div><div class="bar-label">8月</div></div>
-            <div class="bar-col"><div class="bar" style="height:65%;"></div><div class="bar-label">9月</div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line);">
-            <span style="font-size:11px;color:var(--ink-soft);">当前套餐：专业版 ¥99/月</span>
-            <span style="font-size:11px;color:var(--orange);font-weight:700;cursor:pointer;">升级企业版 →</span>
-          </div>
-        </div>
-      </div>
+<!-- CTA -->
+<section class="cta" id="pricing">
+  <div class="cta-inner">
+    <h2>你有活儿，<span class="highlight">现在就喊伙计</span>。</h2>
+    <p>下载WorkHogee客户端，免费体验全部功能。第一张图，20秒后见。</p>
+    <div class="cta-buttons">
+      <button class="btn-primary">免费下载 →</button>
+      <button class="btn-secondary">在线体验</button>
     </div>
   </div>
 </section>
 
-<!-- ===== 核心能力 05: 批量处理 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">05</div>
-      <h2>批量处理，菜单更新一次搞定</h2>
-      <p>支持批量上传多张图片，行业大脑统一处理风格。换菜单、上新品、做活动，几十张图一次性搞定，不用一张张调参数。客户端版支持后台队列自动处理，你该干嘛干嘛，图好了通知你。</p>
-      <ul class="capability-points">
-        <li>批量上传多张图片，一次选几十张</li>
-        <li>行业大脑统一风格，不用一张张调参数</li>
-        <li>后台队列自动处理，完成后通知下载</li>
-        <li>效率提升10倍，菜单更新从一天变10分钟</li>
-      </ul>
-    </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">单次批量上限</div>
-        <div class="ann-value">500</div>
-        <div class="ann-sub">张 · 企业版</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">效率提升</div>
-        <div class="ann-value">10x</div>
-        <div class="ann-sub">对比单张处理</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/batch</span>
-        </div>
-        <div class="mock-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-            <div style="font-size:12px;font-weight:700;">批量任务 · 秋季菜单更新</div>
-            <div style="font-size:10px;padding:3px 10px;background:rgba(234,88,12,0.1);color:var(--orange);border-radius:10px;font-weight:600;">处理中</div>
-          </div>
-          <div class="progress-row" style="margin-bottom:14px;">
-            <div class="progress-label"><span>整体进度</span><span>12/20 张</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div>
-          </div>
-          <div class="task-list">
-            <div class="task-item done">
-              <div class="task-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a);"></div>
-              <div class="task-info">
-                <div class="task-name">红烧肉.jpg</div>
-                <div class="task-status">已完成 · 精致摆盘</div>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            </div>
-            <div class="task-item done">
-              <div class="task-thumb" style="background:linear-gradient(135deg,#dbeafe,#93c5fd);"></div>
-              <div class="task-info">
-                <div class="task-name">清蒸鲈鱼.jpg</div>
-                <div class="task-status">已完成 · 日式居酒屋</div>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            </div>
-            <div class="task-item processing">
-              <div class="task-thumb" style="background:linear-gradient(135deg,#dcfce7,#86efac);"></div>
-              <div class="task-info">
-                <div class="task-name">宫保鸡丁.jpg</div>
-                <div class="task-status">AI生成中... 15秒</div>
-              </div>
-              <div class="task-spinner"></div>
-            </div>
-            <div class="task-item">
-              <div class="task-thumb" style="background:var(--line);"></div>
-              <div class="task-info">
-                <div class="task-name">麻婆豆腐.jpg</div>
-                <div class="task-status">排队中 · 预计2分钟</div>
-              </div>
-            </div>
-            <div class="task-item">
-              <div class="task-thumb" style="background:var(--line);"></div>
-              <div class="task-info">
-                <div class="task-name">糖醋排骨.jpg</div>
-                <div class="task-status">排队中 · 预计3分钟</div>
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-around;padding-top:12px;margin-top:12px;border-top:1px solid var(--line);">
-            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--green);">10</div><div style="font-size:10px;color:var(--ink-muted);">已完成</div></div>
-            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--orange);">2</div><div style="font-size:10px;color:var(--ink-muted);">处理中</div></div>
-            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--ink-muted);">8</div><div style="font-size:10px;color:var(--ink-muted);">排队中</div></div>
-            <div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--ink);">0</div><div style="font-size:10px;color:var(--ink-muted);">失败</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 核心能力 06: 数据安全 ===== -->
-<section class="capability-section">
-  <div class="capability-inner">
-    <div class="capability-text">
-      <div class="capability-num">06</div>
-      <h2>企业级安全，你的数据只属于你</h2>
-      <p>基于飞书多维表格构建任务队列和数据存储，享受字节跳动企业级安全保障。你的原图、生成图、业务数据全部加密存储，不会被用于模型训练，不会泄露给第三方，数据安全有保障。</p>
-      <ul class="capability-points">
-        <li>基于飞书多维表格，字节跳动企业级安全架构</li>
-        <li>数据加密存储，传输全程HTTPS加密</li>
-        <li>你的图片和数据不会被用于模型训练</li>
-        <li>支持数据导出和账户注销，数据完全可控</li>
-      </ul>
-    </div>
-    <div class="capability-visual reveal reveal-d1">
-      <div class="annotation-card top-left">
-        <div class="ann-label">加密等级</div>
-        <div class="ann-value">AES-256</div>
-        <div class="ann-sub">企业级加密</div>
-      </div>
-      <div class="annotation-card bottom-right">
-        <div class="ann-label">数据泄露事件</div>
-        <div class="ann-value">0</div>
-        <div class="ann-sub">零事故记录</div>
-      </div>
-      <div class="mock-window">
-        <div class="mock-header">
-          <span class="mock-dot red"></span>
-          <span class="mock-dot yellow"></span>
-          <span class="mock-dot green"></span>
-          <span class="mock-title">app.workhogee.com/security</span>
-        </div>
-        <div class="mock-body">
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:14px;background:linear-gradient(135deg,rgba(22,163,74,0.08),rgba(22,163,74,0.02));border-radius:10px;border:1px solid rgba(22,163,74,0.2);">
-            <div style="width:44px;height:44px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            </div>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:#16a34a;">安全状态：全部正常</div>
-              <div style="font-size:11px;color:var(--ink-muted);">最后安全扫描：2分钟前 · 全部通过</div>
-            </div>
-          </div>
-          <div class="security-grid" style="margin-bottom:14px;">
-            <div class="security-item">
-              <div class="security-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </div>
-              <div class="security-text">传输加密<small>HTTPS / TLS 1.3</small></div>
-            </div>
-            <div class="security-item">
-              <div class="security-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-              </div>
-              <div class="security-text">存储加密<small>AES-256 位加密</small></div>
-            </div>
-            <div class="security-item">
-              <div class="security-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-              <div class="security-text">权限隔离<small>多租户数据隔离</small></div>
-            </div>
-            <div class="security-item">
-              <div class="security-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              </div>
-              <div class="security-text">审计日志<small>全操作可追溯</small></div>
-            </div>
-          </div>
-          <div style="font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:8px;">近期安全事件</div>
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
-              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
-              <span style="color:var(--ink-soft);">每日安全扫描完成 · 无异常</span>
-              <span style="color:var(--ink-muted);margin-left:auto;">2分钟前</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
-              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
-              <span style="color:var(--ink-soft);">数据备份完成 · 已同步至异地</span>
-              <span style="color:var(--ink-muted);margin-left:auto;">1小时前</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper);border-radius:6px;">
-              <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span>
-              <span style="color:var(--ink-soft);">权限审计通过 · 0个异常账号</span>
-              <span style="color:var(--ink-muted);margin-left:auto;">昨天</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 行业场景 ===== -->
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="section-kicker">行业覆盖</span>
-      <h2>更多行业场景，陆续推出</h2>
-      <p>餐饮、家居已上线，车行、装修、服装、美业陆续推出，你有活儿，喊伙计</p>
-    </div>
-    <div class="industries-grid">
-      <div class="industry-card available">
-        <span class="badge available">已上线</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        </div>
-        <h4>餐饮版</h4>
-        <p>菜品图、菜单图、美团饿了么上架图</p>
-      </div>
-      <div class="industry-card available">
-        <span class="badge available">已上线</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </div>
-        <h4>家居/饰品版</h4>
-        <p>商品场景图、淘宝主图、小红书种草图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge coming">即将推出</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
-        </div>
-        <h4>车行版</h4>
-        <p>二手车展厅效果图、4S店宣传图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge coming">即将推出</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-        </div>
-        <h4>装修版</h4>
-        <p>毛坯房效果图、装修案例展示图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge plan">规划中</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
-        </div>
-        <h4>服装版</h4>
-        <p>AI模特试穿、场景搭配图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge plan">规划中</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><path d="M10 21h4"/></svg>
-        </div>
-        <h4>美业版</h4>
-        <p>发型效果图、美甲款式图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge plan">规划中</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M21 21l-4.35-4.35"/><path d="M2 2l4.35 4.35"/><path d="M2 22l4.35-4.35"/><path d="M22 2l-4.35 4.35"/></svg>
-        </div>
-        <h4>健身版</h4>
-        <p>健身效果对比图、课程宣传图</p>
-      </div>
-      <div class="industry-card">
-        <span class="badge plan">规划中</span>
-        <div class="industry-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
-        </div>
-        <h4>烘焙版</h4>
-        <p>蛋糕效果图、甜品展示图</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 使用方式 ===== -->
-<section class="section usage" id="usage">
-  <div class="container">
-    <div class="section-head">
-      <span class="section-kicker">使用方式</span>
-      <h2>两种使用方式，随你选</h2>
-      <p>在线直接完成交付，也可以下载客户端离线使用，怎么方便怎么来</p>
-    </div>
-    <div class="usage-grid">
-      <div class="usage-card">
-        <h3>
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </span>
-          在线版
-        </h3>
-        <p>打开浏览器就能用，不用下载安装，适合偶尔出图、快速交付的商家。随时随地，有网就能用。</p>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>无需下载，打开即用</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持Windows/Mac/手机浏览器</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>任务自动保存，随时查看</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>免费版每月10张体验</li>
-        </ul>
-        <a href="#demo" class="btn-primary btn" style="display: flex;">立即在线体验</a>
-      </div>
-      <div class="usage-card">
-        <h3>
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </span>
-          客户端版
-        </h3>
-        <p>下载安装到电脑，支持批量处理、离线任务队列，适合高频出图的专业商家，效率更高更稳定。</p>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>支持Windows / macOS双系统</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>批量上传，后台自动处理</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>本地历史记录，快速复用</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>专业版/企业版优先体验新功能</li>
-        </ul>
-        <div class="client-download-row">
-          <button class="btn-primary btn" style="flex:1; justify-content: center; font-size: 13px; padding: 12px 16px;" onclick="alert('Windows客户端即将发布，敬请期待！')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Windows
-          </button>
-          <button class="btn-secondary btn" style="flex:1; justify-content: center; font-size: 13px; padding: 12px 16px;" onclick="alert('macOS客户端即将发布，敬请期待！')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
-            macOS
-          </button>
-        </div>
-        <div class="client-version-info">v1.0.0 · Windows约85MB / macOS约92MB · 2026年9月更新</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CTA ===== -->
-<section class="cta-section">
-  <div class="container">
-    <h2>你有活儿，<span>喊伙计</span></h2>
-    <p>一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
-    <a href="#workspace" class="btn-primary">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      现在就开始
-    </a>
-  </div>
-</section>
-
-<!-- ===== 页脚 ===== -->
+<!-- 页脚 -->
 <footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
+  <div class="footer-inner">
+    <div class="footer-top">
       <div class="footer-brand">
-        <a href="/" aria-label="WorkHogee Home">
-        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
-          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
-          <g transform="translate(-1.06 -28.16)">
-            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
-            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
-            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
-            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
-            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
-            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
-          </g>
-        </svg>
-        </a>
-        <p>AI工作流伙计，让小商家也能出专业图。你有活儿，喊伙计。</p>
+        <div class="footer-logo"><span>Work</span>Hogee</div>
+        <p>小商家的AI工作流伙计。你有活儿，喊伙计。一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>
       </div>
       <div class="footer-col">
-        <h5>产品</h5>
-        <ul>
-          <li><a href="#demo">在线体验</a></li>
-          <li><a href="#usage">使用方式</a></li>
-          <li><a href="/#platforms">多端下载</a></li>
-          <li><a href="/geo.html">GEO伙计</a></li>
-          <li><a href="/global.html">出海伙计</a></li>
-        </ul>
+        <h4>产品</h4>
+        <a href="index.html">AI获客伙计</a>
+        <a href="huoer.html">活儿伙计</a>
+        <a href="geo.html">GEO伙计</a>
+        <a href="global.html">出海伙计</a>
       </div>
       <div class="footer-col">
-        <h5>资源</h5>
-        <ul>
-          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
-          <li><a href="https://github.com/HiAeo/workhogee/releases" target="_blank">版本更新</a></li>
-          <li><a href="docs/index.html#overview">使用文档</a></li>
-          <li><a href="docs/index.html#quickstart">快速开始</a></li>
-          <li><a href="docs/index.html#faq">常见问题</a></li>
-        </ul>
+        <h4>资源</h4>
+        <a href="huoer-dynamic.html">图片动态化</a>
+        <a href="#">使用文档</a>
+        <a href="#">常见问题</a>
+        <a href="#">更新日志</a>
       </div>
       <div class="footer-col">
-        <h5>关于</h5>
-        <ul>
-          <li><a href="/">关于我们</a></li>
-          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
-          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
-          <li><a href="privacy.html">隐私政策</a></li>
-          <li><a href="terms.html">服务条款</a></li>
-        </ul>
+        <h4>关于</h4>
+        <a href="#">关于我们</a>
+        <a href="#">联系我们</a>
+        <a href="#">服务条款</a>
+        <a href="#">隐私政策</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2026 WorkHogee. All rights reserved. 你有活儿，喊伙计</div>
+      <p>© 2026 WorkHogee. All rights reserved.</p>
       <div class="footer-links">
-        <a href="privacy.html">隐私政策</a>
-        <a href="terms.html">服务条款</a>
-        <a href="mailto:hello@workhogee.com">联系我们</a>
+        <a href="#">服务条款</a>
+        <a href="#">隐私政策</a>
       </div>
     </div>
   </div>
 </footer>
-
-<script>
-// 导航栏滚动效果
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 20) {
-    nav.classList.add('scrolled');
-  } else {
-    nav.classList.remove('scrolled');
-  }
-});
-
-// 移动端菜单
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
-navToggle.addEventListener('click', () => {
-  navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-  navLinks.style.flexDirection = 'column';
-  navLinks.style.position = 'absolute';
-  navLinks.style.top = '68px';
-  navLinks.style.left = '0';
-  navLinks.style.right = '0';
-  navLinks.style.background = 'var(--paper)';
-  navLinks.style.padding = '20px';
-  navLinks.style.borderBottom = '1px solid var(--line)';
-});
-
-// 滚动入场动画
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-// 数字滚动动画
-function animateCount(el) {
-  const target = parseInt(el.getAttribute('data-count'), 10);
-  const duration = 1500;
-  const start = performance.now();
-  function update(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(eased * target).toLocaleString();
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-const countObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateCount(entry.target);
-      countObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
-document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
-
-function switchVersion(version, element) {
-  const tabs = document.querySelectorAll('.version-tab');
-  const comingVersions = ['car', 'deco'];
-  const availableVersions = ['food', 'home'];
-  
-  if (comingVersions.includes(version)) {
-    alert('该版本即将推出，敬请期待！');
-    return;
-  }
-  
-  // 切换tab的active状态
-  tabs.forEach(tab => tab.classList.remove('active'));
-  element.classList.add('active');
-  
-  // 切换工作台演示内容
-  document.querySelectorAll('.workspace-version-content').forEach(content => {
-    content.classList.remove('active');
-  });
-  const targetContent = document.getElementById('version-' + version);
-  if (targetContent) {
-    targetContent.classList.add('active');
-  }
-}
-
-// 图片动态化切换
-function toggleDynamic(type) {
-  const img = document.getElementById(type + '-result-img');
-  const btn = img.closest('.workspace-result-area').querySelector('.dynamic-btn');
-  const isActive = img.classList.toggle('dynamic-active');
-  btn.classList.toggle('playing', isActive);
-  if (isActive) {
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>暂停动效';
-    // 3秒后提示跳转完整工具
-    setTimeout(() => {
-      if (img.classList.contains('dynamic-active')) {
-        const tip = document.createElement('div');
-        tip.style.cssText = 'margin-top:10px;font-size:12px;color:var(--orange);cursor:pointer;text-decoration:underline;';
-        tip.textContent = '→ 上传自己的图片生成视频，体验完整动态化工具';
-        tip.onclick = () => window.open('/huoer-dynamic.html', '_blank');
-        btn.parentNode.appendChild(tip);
-      }
-    }, 3000);
-  } else {
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>一键动态化';
-    // 移除提示
-    const tip = btn.parentNode.querySelector('div[style*="text-decoration:underline"]');
-    if (tip) tip.remove();
-  }
-}
-</script>
 
 </body>
 </html>
