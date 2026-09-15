@@ -528,6 +528,48 @@ img { max-width: 100%; display: block; }
 .workspace-result-area p { font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; }
 .workspace-result-tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
 .workspace-result-tag { font-size: 10px; padding: 3px 8px; background: rgba(22,163,74,0.1); color: var(--green); border-radius: 10px; font-weight: 700; }
+
+/* ===== 图片动态化 ===== */
+.dynamic-img { position: relative; overflow: hidden; }
+.dynamic-img .steam-layer,
+.dynamic-img .light-layer { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+.dynamic-img.dynamic-active .steam-layer,
+.dynamic-img.dynamic-active .light-layer { opacity: 1; }
+
+/* 热气动效 */
+.steam-layer { display: flex; justify-content: center; align-items: flex-start; padding-top: 15%; }
+.steam { display: block; width: 12px; height: 40px; background: linear-gradient(to top, rgba(255,255,255,0.6), transparent); border-radius: 50%; filter: blur(4px); margin: 0 8px; animation: steamRise 2.5s ease-in-out infinite; }
+.steam.s1 { animation-delay: 0s; }
+.steam.s2 { animation-delay: 0.8s; height: 50px; }
+.steam.s3 { animation-delay: 1.6s; height: 35px; }
+@keyframes steamRise {
+  0% { transform: translateY(20px) scaleX(1); opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { transform: translateY(-50px) scaleX(1.8); opacity: 0; }
+}
+
+/* 光影流动动效 */
+.light-layer { overflow: hidden; }
+.light-beam { position: absolute; top: -50%; left: -50%; width: 60%; height: 200%; background: linear-gradient(105deg, transparent 40%, rgba(255,248,220,0.5) 50%, transparent 60%); transform: rotate(15deg); animation: lightSweep 4s ease-in-out infinite; }
+@keyframes lightSweep {
+  0% { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(350%) rotate(15deg); }
+}
+
+/* 动态版徽章 */
+.dynamic-badge { position: absolute; top: 10px; right: 10px; background: var(--orange); color: var(--white); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; opacity: 0; transition: opacity 0.3s; z-index: 3; }
+.dynamic-img.dynamic-active .dynamic-badge { opacity: 1; }
+
+/* 动态化按钮 */
+.dynamic-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px; padding: 9px 20px; background: var(--ink); color: var(--white);
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.25s;
+}
+.dynamic-btn:hover { background: var(--orange); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(234,88,12,0.3); }
+.dynamic-btn svg { width: 14px; height: 14px; }
+.dynamic-btn.playing { background: var(--orange); }
 .workspace-version-content { display: none; }
 .workspace-version-content.active { display: block; animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -755,8 +797,15 @@ img { max-width: 100%; display: block; }
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </div>
           <div class="workspace-result-area">
-            <div class="workspace-result-img">
+            <div class="workspace-result-img dynamic-img" id="food-result-img">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
+              <!-- 热气动效层 -->
+              <div class="steam-layer">
+                <span class="steam s1"></span>
+                <span class="steam s2"></span>
+                <span class="steam s3"></span>
+              </div>
+              <div class="dynamic-badge">动态版</div>
             </div>
             <h4>精致摆盘红烧肉</h4>
             <p>45°俯拍 · 暖光氛围 · 白色圆盘</p>
@@ -765,6 +814,10 @@ img { max-width: 100%; display: block; }
               <span class="workspace-result-tag">无水印</span>
               <span class="workspace-result-tag">可直接上架</span>
             </div>
+            <button class="dynamic-btn" onclick="toggleDynamic('food')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              一键动态化
+            </button>
           </div>
         </div>
       </div>
@@ -793,8 +846,13 @@ img { max-width: 100%; display: block; }
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </div>
           <div class="workspace-result-area">
-            <div class="workspace-result-img">
+            <div class="workspace-result-img dynamic-img" id="home-result-img">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <!-- 光影流动动效层 -->
+              <div class="light-layer">
+                <div class="light-beam"></div>
+              </div>
+              <div class="dynamic-badge">动态版</div>
             </div>
             <h4>侘寂风场景图</h4>
             <p>原木桌面 · 亚麻背景 · 自然光氛围</p>
@@ -803,6 +861,10 @@ img { max-width: 100%; display: block; }
               <span class="workspace-result-tag">3:4 小红书</span>
               <span class="workspace-result-tag">可直接上架</span>
             </div>
+            <button class="dynamic-btn" onclick="toggleDynamic('home')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              一键动态化
+            </button>
           </div>
         </div>
       </div>
@@ -1173,6 +1235,19 @@ function switchVersion(version, element) {
   const targetContent = document.getElementById('version-' + version);
   if (targetContent) {
     targetContent.classList.add('active');
+  }
+}
+
+// 图片动态化切换
+function toggleDynamic(type) {
+  const img = document.getElementById(type + '-result-img');
+  const btn = img.closest('.workspace-result-area').querySelector('.dynamic-btn');
+  const isActive = img.classList.toggle('dynamic-active');
+  btn.classList.toggle('playing', isActive);
+  if (isActive) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>暂停动效';
+  } else {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>一键动态化';
   }
 }
 </script>
