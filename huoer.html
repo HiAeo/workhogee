@@ -171,6 +171,52 @@ img { max-width: 100%; display: block; }
 }
 .dot.active { background: var(--orange); width: 18px; border-radius: 3px; }
 
+/* Hero 视觉区 */
+.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
+.hv-main {
+  width: 100%; background: var(--ink); border-radius: 24px; padding: 32px 28px;
+  box-shadow: 0 30px 80px rgba(28,25,23,0.18);
+}
+.hv-ba { display: flex; align-items: center; gap: 12px; }
+.hv-ba-side {
+  flex: 1; position: relative; border-radius: 14px; overflow: hidden;
+  aspect-ratio: 1/1; background: #f5f5f4;
+}
+.hv-ba-side img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.hv-ba-side:hover img { transform: scale(1.05); }
+.hv-ba-tag {
+  position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 6px; z-index: 2;
+}
+.hv-before .hv-ba-tag { background: rgba(28,25,23,0.7); color: #fff; }
+.hv-after .hv-ba-tag { background: var(--orange); color: #fff; }
+.hv-ba-arrow {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--orange); color: #fff; display: flex; align-items: center;
+  justify-content: center; animation: arrowPulse 2s infinite;
+}
+.hv-ba-arrow svg { width: 18px; height: 18px; }
+@keyframes arrowPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234,88,12,0.4); }
+  50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(234,88,12,0); }
+}
+.hv-float {
+  position: absolute; display: flex; align-items: center; gap: 10px;
+  background: #fff; padding: 12px 16px; border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(28,25,23,0.12); z-index: 3;
+}
+.hv-float svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }
+.hv-float div { display: flex; flex-direction: column; line-height: 1.3; }
+.hv-float strong { font-size: 15px; font-weight: 800; color: var(--ink); }
+.hv-float span { font-size: 11px; color: var(--ink-soft); }
+.hv-f1 { top: -16px; left: -20px; animation: floatY 3s ease-in-out infinite; }
+.hv-f2 { top: 40%; right: -24px; animation: floatY 3.5s ease-in-out infinite 0.5s; }
+.hv-f3 { bottom: -16px; left: 30%; animation: floatY 4s ease-in-out infinite 1s; }
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
 /* ===== 痛点 ===== */
 .pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }
 .pain::before {
@@ -538,79 +584,35 @@ body::after {
     <div>
       <div class="hero-tag"><span class="dot"></span>基于火山引擎Seedream 4.5 · 已服务10000+小商家</div>
       <h1>生图，<br><span class="highlight">Hogee是认真的</span>。</h1>
-      <p class="hero-desc">一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。上传一张手机实拍，20秒变成能直接上架的专业商品图。</p>
-      <div class="hero-buttons">
-        <button class="btn-primary" onclick="document.getElementById('live-demo').scrollIntoView({behavior:'smooth'})">立即体验</button>
-        <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">观看演示</button>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="num"><span>20</span>秒</div><div class="label">平均出图时间</div></div>
-        <div class="hero-stat"><div class="num"><span>95</span>%</div><div class="label">比设计师省成本</div></div>
-        <div class="hero-stat"><div class="num"><span>8</span>+</div><div class="label">已适配平台</div></div>
-      </div>
+      <p class="hero-desc">不用学PS，不用找设计师。上传一张手机实拍，AI自动识别产品、匹配行业风格、生成专业场景图。从"能看"到"能卖"，Hogee生图伙计只需要20秒。</p>
     </div>
-    <div class="hero-slideshow" id="heroSlideshow">
-      <div class="slides-container">
-        <div class="slide active" data-index="0">
-          <div class="slide-header"><span class="slide-industry">电商通用版 · 无线耳机</span><span class="slide-status">AI生成中</span></div>
-          <div class="slide-body">
-            <div class="slide-img-box">
-              <img src="images/3c-earphone-white.jpg" class="slide-before-img" alt="">
-              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
-              <img src="images/3c-earphone-pro.jpg" class="slide-after-img" alt="">
-            </div>
-            <div class="slide-caption">白底素图 → 极简电商展示场景</div>
+    <div class="hero-visual">
+      <div class="hv-main">
+        <div class="hv-ba">
+          <div class="hv-ba-side hv-before">
+            <span class="hv-ba-tag">手机实拍</span>
+            <img src="images/3c-earphone-white.jpg" alt="原图">
           </div>
-        </div>
-        <div class="slide" data-index="1">
-          <div class="slide-header"><span class="slide-industry">闲鱼专版 · 白T恤</span><span class="slide-status">AI生成中</span></div>
-          <div class="slide-body">
-            <div class="slide-img-box">
-              <img src="images/cloth-tshirt-white.jpg" class="slide-before-img" alt="">
-              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
-              <img src="images/cloth-tshirt-pro.jpg" class="slide-after-img" alt="">
-            </div>
-            <div class="slide-caption">白底素图 → 闲鱼生活化实拍场景</div>
+          <div class="hv-ba-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-        </div>
-        <div class="slide" data-index="2">
-          <div class="slide-header"><span class="slide-industry">餐饮专版 · 红烧肉</span><span class="slide-status">AI生成中</span></div>
-          <div class="slide-body">
-            <div class="slide-img-box">
-              <img src="images/dish-hongshaorou-white.jpg" class="slide-before-img" alt="">
-              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
-              <img src="images/dish-hongshaorou-pro.jpg" class="slide-after-img" alt="">
-            </div>
-            <div class="slide-caption">白底素图 → 中式餐厅暖光场景</div>
-          </div>
-        </div>
-        <div class="slide" data-index="3">
-          <div class="slide-header"><span class="slide-industry">服装专版 · 小白鞋</span><span class="slide-status">AI生成中</span></div>
-          <div class="slide-body">
-            <div class="slide-img-box">
-              <img src="images/cloth-shoes-white.jpg" class="slide-before-img" alt="">
-              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
-              <img src="images/cloth-shoes-pro.jpg" class="slide-after-img" alt="">
-            </div>
-            <div class="slide-caption">白底素图 → 专业电商服装主图</div>
-          </div>
-        </div>
-        <div class="slide" data-index="4">
-          <div class="slide-header"><span class="slide-industry">外贸专版 · 口红</span><span class="slide-status">AI生成中</span></div>
-          <div class="slide-body">
-            <div class="slide-img-box">
-              <img src="images/beauty-lipstick-white.jpg" class="slide-before-img" alt="">
-              <div class="slide-progress-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle class="slide-progress-arc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 30 30)"/></svg></div>
-              <img src="images/beauty-lipstick-pro.jpg" class="slide-after-img" alt="">
-            </div>
-            <div class="slide-caption">白底素图 → 亚马逊纯白底产品图</div>
-          </div>
-        </div>
+          <div class="hv-ba-side hv-after">
+            <span class="hv-ba-tag">AI生成</span>
+            <img src="images/3c-earphone-pro.jpg" alt="成品图">
           </div>
         </div>
       </div>
-      <div class="slide-dots">
-        <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <div class="hv-float hv-f1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div><strong>20秒</strong><span>平均出图</span></div>
+      </div>
+      <div class="hv-float hv-f2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div><strong>5大版本</strong><span>行业全覆盖</span></div>
+      </div>
+      <div class="hv-float hv-f3">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div><strong>95%</strong><span>成本节省</span></div>
       </div>
     </div>
   </div>
