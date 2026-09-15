@@ -401,24 +401,42 @@ body::after {
 .demo-upload-icon { font-size: 32px; margin-bottom: 8px; color: var(--ink-muted); }
 .demo-upload-label { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
 .demo-generate-wrap {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
   cursor: pointer; flex-shrink: 0; user-select: none;
 }
-.demo-generate-arrows {
-  display: flex; gap: 4px; align-items: center; height: 32px;
+.demo-circle-btn {
+  width: 60px; height: 60px; position: relative;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.demo-arrow {
-  width: 42px; height: 28px; position: relative;
+.demo-circle-btn:hover { transform: scale(1.1); }
+.demo-progress-ring {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
 }
-.demo-arrow svg { width: 100%; height: 100%; display: block; }
-.arrow-outline { fill: none; stroke: var(--orange); stroke-width: 2; stroke-linejoin: round; }
-.arrow-inner { fill: #e7e5e4; transition: fill 0.4s ease; }
-/* 点击后从左到右依次填充橙色 */
-.demo-generate-wrap.generating .demo-arrow:nth-child(1) .arrow-inner { fill: var(--orange); transition-delay: 0s; }
-.demo-generate-wrap.generating .demo-arrow:nth-child(2) .arrow-inner { fill: var(--orange); transition-delay: 0.4s; }
-.demo-generate-wrap.generating .demo-arrow:nth-child(3) .arrow-inner { fill: var(--orange); transition-delay: 0.8s; }
-/* 完成后保持橙色 */
-.demo-generate-wrap.done .arrow-inner { fill: var(--orange); }
+.progress-bg { fill: none; stroke: #e7e5e4; stroke-width: 3; }
+.progress-arc {
+  fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round;
+  stroke-dasharray: 175.93; stroke-dashoffset: 175.93;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.demo-generate-wrap.generating .progress-arc,
+.demo-generate-wrap.done .progress-arc { stroke-dashoffset: 0; }
+.demo-circle-inner {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #f5f5f4; display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s ease;
+}
+.demo-generate-wrap.generating .demo-circle-inner,
+.demo-generate-wrap.done .demo-circle-inner { background: var(--orange); }
+.demo-circle-inner svg {
+  width: 15px; height: 15px; position: absolute;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.icon-default { fill: var(--orange); opacity: 1; transform: scale(1); }
+.icon-done { fill: white; opacity: 0; transform: scale(0.5); }
+.demo-generate-wrap.generating .icon-default { opacity: 0; transform: scale(0.5); }
+.demo-generate-wrap.done .icon-default { opacity: 0; transform: scale(0.5); }
+.demo-generate-wrap.done .icon-done { opacity: 1; transform: scale(1); }
 .demo-generate-hint {
   font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;
 }
@@ -586,24 +604,14 @@ body::after {
           <img id="beforeImg" src="images/drink-milktea-white.jpg" alt="原图">
         </div>
         <div class="demo-generate-wrap" id="generateBtn" onclick="generateImage()">
-          <div class="demo-generate-arrows">
-            <div class="demo-arrow">
-              <svg viewBox="0 0 42 28">
-                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
-                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
-              </svg>
-            </div>
-            <div class="demo-arrow">
-              <svg viewBox="0 0 42 28">
-                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
-                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
-              </svg>
-            </div>
-            <div class="demo-arrow">
-              <svg viewBox="0 0 42 28">
-                <path class="arrow-outline" d="M2,14 L18,3 L18,9 L38,9 L38,19 L18,19 L18,25 Z"/>
-                <path class="arrow-inner" d="M6,14 L16,7 L16,11 L34,11 L34,17 L16,17 L16,21 Z"/>
-              </svg>
+          <div class="demo-circle-btn">
+            <svg class="demo-progress-ring" viewBox="0 0 64 64">
+              <circle class="progress-bg" cx="32" cy="32" r="28"/>
+              <circle class="progress-arc" cx="32" cy="32" r="28" transform="rotate(-90 32 32)"/>
+            </svg>
+            <div class="demo-circle-inner">
+              <svg class="icon-default" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+              <svg class="icon-done" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
           </div>
           <div class="demo-generate-hint">点击看成品</div>
