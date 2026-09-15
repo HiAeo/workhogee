@@ -648,7 +648,8 @@ body::after {
         </div>
       </div>
       <div class="demo-workspace">
-        <div class="demo-upload-zone" id="uploadZone" onclick="triggerUpload()">
+        <div class="demo-upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
           <div class="upload-placeholder" id="uploadPlaceholder">
             <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <div class="upload-text">拖拽图片到这里，或点击上传</div>
@@ -1058,10 +1059,28 @@ function generateImage() {
       stepIndex++;
       setTimeout(runStep, steps[stepIndex - 1].delay);
     } else {
-      // 显示结果，应用当前风格强度滤镜
-      const data = demoData[currentIndustry];
-      resultZone.innerHTML = '<img src="' + data.after + '" alt="成品" style="filter:' + styleFilters[currentStyle] + '"><div class="demo-result-label">' + data.label + '</div>';
-      progressText.textContent = '生成完成！耗时 20秒 · 风格强度：' + ['极淡','清淡','中等','浓郁','极致'][currentStyle];
+      // 显示结果
+      const beforeImg = document.getElementById('beforeImg');
+      const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');
+      if (userUploaded) {
+        // 用户上传了图片：用CSS滤镜模拟AI生成的专业效果
+        const industryFilters = {
+          drink: 'sepia(0.12) saturate(1.35) contrast(1.12) brightness(1.06)',
+          food: 'sepia(0.18) saturate(1.4) contrast(1.15) brightness(1.05)',
+          home: 'sepia(0.1) saturate(1.15) contrast(1.05) brightness(1.08)',
+          beauty: 'saturate(1.2) contrast(1.2) brightness(1.05)',
+          cloth: 'saturate(1.1) contrast(1.1) brightness(1.05)',
+          '3c': 'saturate(1.15) contrast(1.25) brightness(1.03)'
+        };
+        const filter = industryFilters[currentIndustry] || industryFilters.food;
+        resultZone.innerHTML = '<img src="' + beforeImg.src + '" alt="成品" style="filter:' + filter + '"><div class="demo-result-label">AI优化 · ' + demoData[currentIndustry].label + '</div>';
+        progressText.textContent = '生成完成！已应用' + ['极淡','清淡','中等','浓郁','极致'][currentStyle] + '风格强度';
+      } else {
+        // 未上传图片：显示预设成品图
+        const data = demoData[currentIndustry];
+        resultZone.innerHTML = '<img src="' + data.after + '" alt="成品" style="filter:' + styleFilters[currentStyle] + '"><div class="demo-result-label">' + data.label + '</div>';
+        progressText.textContent = '生成完成！耗时 20秒 · 风格强度：' + ['极淡','清淡','中等','浓郁','极致'][currentStyle];
+      }
       btn.classList.remove('generating');
       btn.classList.add('done');
       isGenerating = false;
@@ -1070,19 +1089,75 @@ function generateImage() {
   runStep();
 }
 
-function triggerUpload() {
-  // 演示用：模拟用户上传，显示当前行业的示例原图
-  const placeholder = document.getElementById('uploadPlaceholder');
-  const beforeImg = document.getElementById('beforeImg');
-  if (placeholder) placeholder.style.display = 'none';
-  beforeImg.style.display = 'block';
-  beforeImg.src = demoData[currentIndustry].before;
-  // 重置结果区
-  const resultZone = document.getElementById('resultZone');
-  resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
-  const genBtn = document.getElementById('generateBtn');
-  genBtn.classList.remove('generating', 'done');
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file || !file.type.startsWith('image/')) {
+    alert('请选择图片文件');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const beforeImg = document.getElementById('beforeImg');
+    if (placeholder) placeholder.style.display = 'none';
+    beforeImg.style.display = 'block';
+    beforeImg.src = e.target.result;
+    beforeImg.style.filter = 'none';
+    // 重置结果区和生成按钮
+    const resultZone = document.getElementById('resultZone');
+    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
+    const genBtn = document.getElementById('generateBtn');
+    genBtn.classList.remove('generating', 'done');
+    isGenerating = false;
+  };
+  reader.readAsDataURL(file);
 }
+
+function triggerUpload() {
+  document.getElementById('fileInput').click();
+}
+
+// 拖拽上传支持
+(function() {
+  const uploadZone = document.getElementById('uploadZone');
+  if (!uploadZone) return;
+  ['dragenter', 'dragover'].forEach(function(evt) {
+    uploadZone.addEventListener(evt, function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadZone.style.borderColor = 'var(--orange)';
+      uploadZone.style.background = 'rgba(234,88,12,0.03)';
+    });
+  });
+  ['dragleave', 'drop'].forEach(function(evt) {
+    uploadZone.addEventListener(evt, function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadZone.style.borderColor = '';
+      uploadZone.style.background = '';
+    });
+  });
+  uploadZone.addEventListener('drop', function(e) {
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0 && files[0].type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const placeholder = document.getElementById('uploadPlaceholder');
+        const beforeImg = document.getElementById('beforeImg');
+        if (placeholder) placeholder.style.display = 'none';
+        beforeImg.style.display = 'block';
+        beforeImg.src = ev.target.result;
+        beforeImg.style.filter = 'none';
+        const resultZone = document.getElementById('resultZone');
+        resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
+        const genBtn = document.getElementById('generateBtn');
+        genBtn.classList.remove('generating', 'done');
+        isGenerating = false;
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  });
+})();
 
 // 导航滚动效果
 window.addEventListener('scroll', function() {
