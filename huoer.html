@@ -400,25 +400,45 @@ body::after {
 .demo-upload-text { text-align: center; z-index: 1; }
 .demo-upload-icon { font-size: 32px; margin-bottom: 8px; color: var(--ink-muted); }
 .demo-upload-label { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
-.demo-generate-btn {
-  height: 48px; padding: 0 28px;
-  background: var(--ink);
-  border: 1px solid rgba(234,88,12,0.35);
-  border-radius: 6px;
-  display: flex; align-items: center; gap: 10px;
-  color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500;
-  letter-spacing: 0.5px; cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
+.demo-generate-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; flex-shrink: 0; user-select: none;
 }
-.demo-generate-btn:hover {
-  border-color: var(--orange);
-  background: rgba(234,88,12,0.08);
-  box-shadow: 0 0 24px rgba(234,88,12,0.12);
+.demo-generate-track {
+  width: 130px; height: 38px; background: #e7e5e4; border-radius: 19px;
+  position: relative; overflow: hidden; transition: background 0.4s;
 }
-.demo-generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.demo-generate-btn svg { width: 16px; height: 16px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.25s; flex-shrink: 0; }
-.demo-generate-btn:hover svg { transform: translateX(3px); }
+.demo-generate-lines {
+  position: absolute; top: 50%; left: 0; right: 0; height: 4px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, var(--orange) 0px, var(--orange) 14px, transparent 14px, transparent 28px);
+  animation: lineFlow 0.8s linear infinite;
+  z-index: 2;
+}
+@keyframes lineFlow {
+  from { background-position: 0 0; }
+  to { background-position: 28px 0; }
+}
+.demo-generate-fill {
+  position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--orange), var(--orange-light));
+  border-radius: 19px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+.demo-generate-wrap.generating .demo-generate-fill { width: 100%; }
+.demo-generate-wrap.generating .demo-generate-lines {
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 14px, transparent 14px, transparent 28px);
+}
+.demo-generate-wrap.done .demo-generate-track { background: var(--orange); }
+.demo-generate-wrap.done .demo-generate-lines {
+  background: repeating-linear-gradient(90deg, white 0px, white 14px, transparent 14px, transparent 28px);
+  animation: none;
+}
+.demo-generate-hint {
+  font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;
+}
+.demo-generate-wrap.generating .demo-generate-hint { color: var(--orange); }
+.demo-generate-wrap.done .demo-generate-hint { color: var(--orange); }
 .demo-result-zone {
   aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;
   box-shadow: 0 12px 32px rgba(28,25,23,0.12); background: var(--line);
@@ -580,10 +600,13 @@ body::after {
         <div class="demo-upload-zone" id="uploadZone" onclick="triggerUpload()">
           <img id="beforeImg" src="images/drink-milktea-white.jpg" alt="原图">
         </div>
-        <button class="demo-generate-btn" id="generateBtn" onclick="generateImage()">
-          <span>生成效果图</span>
-          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
+        <div class="demo-generate-wrap" id="generateBtn" onclick="generateImage()">
+          <div class="demo-generate-track">
+            <div class="demo-generate-fill" id="generateFill"></div>
+            <div class="demo-generate-lines"></div>
+          </div>
+          <div class="demo-generate-hint">点击看成品</div>
+        </div>
         <div class="demo-result-zone" id="resultZone">
           <div class="demo-result-placeholder" id="resultPlaceholder">
             <div style="font-size:32px;margin-bottom:8px;">?</div>
@@ -917,7 +940,9 @@ function switchIndustry(industry) {
   resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';
   document.getElementById('progressBar').style.display = 'none';
   document.getElementById('progressText').style.display = 'none';
-  document.getElementById('generateBtn').querySelector('span').textContent = '生成效果图';
+  const genBtn = document.getElementById('generateBtn');
+  genBtn.classList.remove('generating', 'done');
+  document.getElementById('generateFill').style.width = '0%';
 }
 
 // 风格强度滤镜映射
@@ -945,8 +970,9 @@ function generateImage() {
   if (isGenerating) return;
   isGenerating = true;
   const btn = document.getElementById('generateBtn');
-  btn.disabled = true;
-  btn.querySelector('span').textContent = '生成中...';
+  btn.classList.remove('done');
+  btn.classList.add('generating');
+  document.getElementById('generateFill').style.width = '0%';
   
   const progressBar = document.getElementById('progressBar');
   const progressFill = document.getElementById('progressFill');
@@ -977,8 +1003,8 @@ function generateImage() {
       const data = demoData[currentIndustry];
       resultZone.innerHTML = '<img src="' + data.after + '" alt="成品" style="filter:' + styleFilters[currentStyle] + '"><div class="demo-result-label">' + data.label + '</div>';
       progressText.textContent = '生成完成！耗时 20秒 · 风格强度：' + ['极淡','清淡','中等','浓郁','极致'][currentStyle];
-      btn.disabled = false;
-      btn.querySelector('span').textContent = '重新生成';
+      btn.classList.remove('generating');
+      btn.classList.add('done');
       isGenerating = false;
     }
   }
