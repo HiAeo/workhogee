@@ -21,6 +21,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
+section[id]{scroll-margin-top:86px;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
 .container{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
 a{text-decoration:none;color:inherit;}
@@ -33,6 +34,25 @@ ul{list-style:none;}
 .nav-logo{display:flex;align-items:center;}
 .nav-logo svg{height:28px;width:auto;}
 .nav-links{display:flex;align-items:center;gap:12px;}
+/* 品牌导航：文字菜单 + 右侧主 CTA */
+.nav-menu{display:flex;align-items:center;gap:2px;}
+.nav-link{position:relative;font-size:14.5px;font-weight:500;line-height:1;padding:10px 13px;border-radius:8px;white-space:nowrap;transition:color .2s,background .2s;}
+.nav-link::after{content:"";position:absolute;left:14px;right:14px;bottom:5px;height:2px;border-radius:2px;background:var(--orange-light);transform:scaleX(0);transform-origin:left center;transition:transform .26s cubic-bezier(.22,1,.36,1);}
+.nav-link:hover::after{transform:scaleX(1);}
+.nav-cta{display:inline-flex;align-items:center;gap:7px;margin-left:14px;font-size:14px;font-weight:600;line-height:1;padding:11px 18px;border-radius:9px;background:var(--orange);color:#fff;white-space:nowrap;box-shadow:0 6px 16px rgba(234,88,12,.28);transition:background .2s,transform .2s,box-shadow .2s;}
+.nav-cta:hover{background:var(--orange-deep);transform:translateY(-1px);box-shadow:0 10px 22px rgba(234,88,12,.4);}
+.nav-cta svg{width:15px;height:15px;}
+.nav.atop .nav-link{color:rgba(255,255,255,.82);}
+.nav.atop .nav-link:hover{color:#fff;background:rgba(255,255,255,.08);}
+.nav.solid .nav-link,.nav.panel-open .nav-link{color:var(--ink-soft);}
+.nav.solid .nav-link:hover,.nav.panel-open .nav-link:hover{color:var(--orange-deep);background:var(--orange-soft);}
+.nav.solid .nav-link::after,.nav.panel-open .nav-link::after{background:var(--orange);}
+@media (max-width:640px){
+  .nav-menu{flex-direction:column;align-items:stretch;gap:4px;width:100%;}
+  .nav-link{padding:13px 14px;font-size:15px;border-radius:9px;}
+  .nav-link::after{display:none;}
+  .nav-cta{margin:10px 0 0;width:100%;justify-content:center;padding:14px 18px;}
+}
 .nav-pill{position:relative;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14px;font-weight:500;line-height:1;padding:10px 16px;border-radius:9px;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;background:transparent;}
 .nav-pill.on{background:var(--orange);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(234,88,12,.28);}
 .nav-pill.on:hover{background:var(--orange-deep);color:#fff;}
@@ -121,6 +141,22 @@ ul{list-style:none;}
 .section{padding:96px 0;}
 .section.white{background:var(--white);}
 .section.sand{background:var(--sand);}
+/* 关于我们 */
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.ab-col{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:38px 36px;box-shadow:var(--shadow-sm);}
+.ab-col h3{font-size:20px;font-weight:800;letter-spacing:-.3px;margin-bottom:14px;display:flex;align-items:center;gap:11px;}
+.ab-col h3::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--orange);display:inline-block;flex-shrink:0;}
+.ab-col p{color:var(--ink-soft);font-size:15px;line-height:1.9;}
+.ab-list{margin-top:18px;display:grid;gap:12px;}
+.ab-list li{position:relative;padding-left:27px;font-size:14.5px;line-height:1.6;}
+.ab-list li::before{content:"";position:absolute;left:2px;top:2px;width:15px;height:15px;border-radius:50%;border:1.5px solid var(--orange);background:var(--orange-soft);}
+.ab-list li::after{content:"";position:absolute;left:7px;top:6px;width:5px;height:9px;border:solid var(--orange-deep);border-width:0 2px 2px 0;transform:rotate(42deg);}
+.ab-list-no li::before{border-color:var(--ink-muted);background:var(--paper);}
+.ab-list-no li::after{left:5px;top:9px;width:9px;height:0;border:0;border-top:2px solid var(--ink-muted);transform:none;}
+.ab-creed{margin-top:26px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:var(--r-lg);padding:30px 36px;}
+.ab-mark{font-size:clamp(20px,2.4vw,26px);font-weight:900;letter-spacing:-.4px;color:var(--orange-light);}
+.ab-sub{color:rgba(255,255,255,.66);font-size:14.5px;}
+@media (max-width:860px){.ab-grid{grid-template-columns:1fr;}.ab-col{padding:30px 24px;}}
 .shead{display:grid;grid-template-columns:3fr 9fr;gap:36px;align-items:end;margin-bottom:54px;}
 .shead .kick{font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;padding-bottom:8px;}
 .shead h2{font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.18;letter-spacing:-.8px;text-align:left;}
@@ -387,9 +423,17 @@ ul{list-style:none;}
       </svg>
     </a>
     <nav class="nav-links" id="navLinks">
-      <a href="/usedcar.html" class="nav-pill on">二手车伙计</a>
-      <button type="button" class="nav-pill soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">二手房伙计<span class="soon-badge">即将上线</span></button>
-      <button type="button" class="nav-pill soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">二手潮玩伙计<span class="soon-badge">即将上线</span></button>
+      <div class="nav-menu">
+        <a class="nav-link" href="/">首页</a>
+        <a class="nav-link" href="#matrix">产品矩阵</a>
+        <a class="nav-link" href="#how">如何使用</a>
+        <a class="nav-link" href="#roadmap">发展历程</a>
+        <a class="nav-link" href="#about">关于我们</a>
+      </div>
+      <a class="nav-cta" href="/workbench.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        打开工作台
+      </a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
@@ -466,7 +510,7 @@ ul{list-style:none;}
   </div>
 </section>
 <!-- ===== 品类矩阵 ===== -->
-<section class="section white">
+<section class="section white" id="matrix">
   <div class="container">
     <div class="shead reveal">
       <div class="kick">产品矩阵 · Categories</div>
@@ -623,7 +667,7 @@ ul{list-style:none;}
   </div>
 </section>
 <!-- ===== 一条工作流 ===== -->
-<section class="section white">
+<section class="section white" id="how">
   <div class="container">
     <div class="shead reveal">
       <div class="kick">一条工作流 · Workflow</div>
@@ -707,7 +751,7 @@ ul{list-style:none;}
   </div>
 </section>
 <!-- ===== 路线图 ===== -->
-<section class="section white">
+<section class="section white" id="roadmap">
   <div class="container">
     <div class="shead reveal">
       <div class="kick">产品路线图 · Roadmap</div>
@@ -752,6 +796,44 @@ ul{list-style:none;}
     </div>
   </div>
 </section>
+
+<!-- ===== 关于我们 ===== -->
+<section class="section sand" id="about">
+  <div class="container">
+    <div class="shead reveal">
+      <div class="kick">关于我们 · About</div>
+      <div>
+        <h2>让每一件二手商品，被真实、专业、合规地展示</h2>
+        <p>WorkHogee（二手生图伙计）是只做二手行业的 AI 物料工作台。我们相信「好货，不该输在图上」——二手非标品的成交，图片几乎决定了信任与转化，而行业里大量「图骗」正在透支买家的信任。我们不做美化失真的滤镜，只做如实呈现的专业表达。</p>
+      </div>
+    </div>
+    <div class="ab-grid">
+      <div class="ab-col reveal">
+        <h3>我们只做这些</h3>
+        <p>只服务「图片决定成交」的二手非标品类：二手车、二手房、二手潮玩、二手乐器、二手 3C、二手办公。按品类逐个打磨，每个品类都有专属的拍摄点位、行业知识库、合规红线与渠道尺寸。内测期从二手车起步，跑通一个再复制下一个。</p>
+        <ul class="ab-list">
+          <li>手机随手拍，AI 引导拍摄点位与成片质检</li>
+          <li>行业知识库生成卖点、话术与真实场景图</li>
+          <li>一次生成，多平台尺寸与格式直接上架</li>
+        </ul>
+      </div>
+      <div class="ab-col reveal">
+        <h3>我们明确不做</h3>
+        <p>不做新品、不做通用生图；不碰需要专业鉴定或重物流的品类。合规红线内置且不可关闭：不改变商品真实颜色、不抹除瑕疵、不掩盖事故与故障，所有 AI 生成物料统一加注标识。</p>
+        <ul class="ab-list ab-list-no">
+          <li>不做服饰（真假难辨）、奢品（需鉴定）、家具（重物流）</li>
+          <li>不做「零事故 / 原版原漆」这类禁用与夸大话术</li>
+          <li>不做隐瞒车况、成色与故障的「图骗」</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ab-creed reveal">
+      <span class="ab-mark">不修图，修信任</span>
+      <span class="ab-sub">收进来，拍几张，卖出去。二手生意，从图开始。</span>
+    </div>
+  </div>
+</section>
+
 <!-- ===== 收尾 CTA ===== -->
 <section class="mcta">
   <div class="container">
