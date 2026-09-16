@@ -1,0 +1,4084 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee - 你的AI获客伙计，24小时主动干活</title>
+<meta name="description" content="WorkHogee是装在官网、邮箱、小红书、抖音、手机里的AI获客秘书，不用你交代，他自己找客户、回消息、跟线索。PC+移动全端覆盖。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<style>
+/* ===== 设计令牌 ===== */
+:root {
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-muted: #a8a29e;
+  --orange: #ea580c;
+  --orange-deep: #c2410c;
+  --orange-light: #fb923c;
+  --paper: #faf8f4;
+  --sand: #f0e9db;
+  --line: #e7e0d4;
+  --white: #ffffff;
+  --green: #16a34a;
+  --shadow-sm: 0 1px 3px rgba(28,25,23,0.06);
+  --shadow-md: 0 4px 16px rgba(28,25,23,0.08);
+  --shadow-lg: 0 12px 40px rgba(28,25,23,0.12);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ===== 导航栏 ===== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(250,248,244,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+.nav.scrolled {
+  background: rgba(250,248,244,0.95);
+  border-bottom-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { height: 28px; width: auto; }
+.nav-links { display: flex; align-items: center; gap: 36px; }
+.nav-links a {
+  font-size: 15px; color: var(--ink-soft); font-weight: 500;
+  transition: color 0.2s; position: relative;
+}
+.nav-links a:hover { color: var(--orange); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink); color: var(--paper) !important;
+  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;
+  font-weight: 600 !important; transition: all 0.25s;
+}
+.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }
+/* 产品导航链接统一样式 */
+.nav-product-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 14px; color: var(--ink-soft); font-weight: 500;
+  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;
+}
+.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }
+.nav-product-link.active {
+  background: var(--orange); color: var(--white) !important;
+  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);
+}
+.nav-product-link.active:hover { background: var(--orange-light); }
+.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }
+
+/* ===== Hero区域 ===== */
+.hero {
+  padding: 140px 0 80px;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); border: 1px solid var(--line);
+  padding: 8px 16px; border-radius: 100px; font-size: 13px;
+  color: var(--ink-soft); margin-bottom: 24px; box-shadow: var(--shadow-sm);
+}
+.hero-badge .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.hero h1 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 900; line-height: 1.15;
+  letter-spacing: -0.02em; margin-bottom: 20px;
+}
+.hero h1 .highlight { color: var(--orange); position: relative; }
+.hero h1 .highlight::after {
+  content: ''; position: absolute; left: 0; bottom: 4px; width: 100%; height: 8px;
+  background: rgba(234,88,12,0.18); z-index: -1; border-radius: 4px;
+}
+.hero-sub {
+  font-size: 18px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 36px; max-width: 540px;
+}
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--orange); color: var(--white);
+  padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(234,88,12,0.3);
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.btn-primary:hover {
+  background: var(--orange-deep); transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 28px rgba(234,88,12,0.45);
+}
+.btn-primary:hover::after { left: 100%; }
+.btn-primary:active { transform: translateY(-1px) scale(1.01); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); color: var(--ink); border: 2px solid var(--line);
+  padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+  border-color: var(--orange); color: var(--orange);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(234,88,12,0.2);
+  background: rgba(234,88,12,0.03);
+}
+.btn-secondary:active { transform: translateY(-1px) scale(1.01); }
+.hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+.hero-meta-item svg { width: 18px; height: 18px; color: var(--orange); }
+
+.hero-visual { position: relative; }
+.hero-visual img {
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line);
+}
+.hero-float-card {
+  position: absolute; background: var(--white); border-radius: var(--radius-md);
+  padding: 16px 20px; box-shadow: var(--shadow-lg); border: 1px solid var(--line);
+  animation: floatY 5s ease-in-out infinite;
+}
+.hero-float-card.card1 { top: -20px; left: -30px; animation-delay: 0s; }
+.hero-float-card.card2 { bottom: 40px; right: -20px; animation-delay: 1.5s; }
+.hero-float-card .label { font-size: 12px; color: var(--ink-muted); margin-bottom: 4px; }
+.hero-float-card .value { font-size: 22px; font-weight: 900; color: var(--orange); }
+.hero-float-card .sub { font-size: 12px; color: var(--green); margin-top: 2px; }
+@keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+/* ===== 信任数据条 ===== */
+.trust-bar {
+  background: var(--ink); color: var(--paper); padding: 48px 0;
+}
+.trust-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center;
+}
+.trust-item .num {
+  font-size: 42px; font-weight: 900; color: var(--orange-light); margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.trust-item .label { font-size: 14px; color: #a9a196; }
+
+/* ===== 通用板块标题 ===== */
+.section { padding: 100px 0; }
+.section-head { text-align: center; max-width: 720px; margin: 0 auto 60px; }
+.section-kicker {
+  display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px;
+}
+.section-head h2 {
+  font-size: clamp(28px, 3.5vw, 40px); font-weight: 900; line-height: 1.25;
+  letter-spacing: -0.01em; margin-bottom: 16px;
+}
+.section-head p { font-size: 17px; color: var(--ink-soft); line-height: 1.7; }
+
+/* ===== 核心能力区域 ===== */
+.capabilities { background: var(--white); }
+.cap-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.cap-card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 36px 30px; transition: all 0.35s cubic-bezier(.22,.61,.36,1);
+  position: relative; overflow: hidden;
+}
+.cap-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--orange); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.cap-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+.cap-card:hover::before { transform: scaleX(1); }
+.cap-icon {
+  width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  display: flex; align-items: center; justify-content: center; color: var(--white);
+  margin-bottom: 22px;
+}
+.cap-icon svg { width: 28px; height: 28px; }
+.cap-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+.cap-card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 16px; }
+.cap-features { list-style: none; }
+.cap-features li {
+  font-size: 13px; color: var(--ink-soft); padding: 5px 0; padding-left: 22px;
+  position: relative;
+}
+.cap-features li::before {
+  content: ''; position: absolute; left: 0; top: 11px; width: 14px; height: 2px;
+  background: var(--orange); border-radius: 1px;
+}
+
+/* ===== 全渠道覆盖区域 ===== */
+.channels { background: var(--paper); }
+.channel-showcase {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.channel-list { display: flex; flex-direction: column; gap: 20px; }
+.channel-item {
+  display: flex; gap: 20px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: 24px; transition: all 0.3s;
+}
+.channel-item:hover { border-color: var(--orange); box-shadow: var(--shadow-md); transform: translateX(6px); }
+.channel-icon {
+  width: 48px; height: 48px; border-radius: 12px; background: var(--sand);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  color: var(--orange);
+}
+.channel-icon svg { width: 24px; height: 24px; }
+.channel-item h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.channel-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+.channel-visual {
+  position: relative; background: var(--ink); border-radius: var(--radius-lg);
+  padding: 30px; min-height: 420px; display: flex; flex-direction: column; gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+.channel-visual-title { color: var(--paper); font-size: 14px; font-weight: 600; opacity: 0.7; margin-bottom: 6px; }
+.chat-bubble {
+  max-width: 85%; padding: 12px 16px; border-radius: 14px; font-size: 13.5px; line-height: 1.5;
+  animation: slideIn 0.5s ease both;
+}
+.chat-bubble.user { background: rgba(255,255,255,0.1); color: var(--paper); align-self: flex-start; border-bottom-left-radius: 4px; }
+.chat-bubble.ai { background: var(--orange); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+.chat-bubble:nth-child(2) { animation-delay: 0.3s; }
+.chat-bubble:nth-child(3) { animation-delay: 0.6s; }
+.chat-bubble:nth-child(4) { animation-delay: 0.9s; }
+.chat-bubble:nth-child(5) { animation-delay: 1.2s; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.chat-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--green); margin-top: auto; }
+.chat-status .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+
+/* ===== 多端产品区域 ===== */
+.platforms { background: var(--white); }
+.platform-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.platform-card {
+  border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+  transition: all 0.35s; background: var(--paper);
+}
+.platform-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+.platform-header {
+  padding: 28px 28px 20px; border-bottom: 1px solid var(--line);
+}
+.platform-icon {
+  width: 52px; height: 52px; border-radius: 14px; background: var(--ink);
+  display: flex; align-items: center; justify-content: center; color: var(--paper);
+  margin-bottom: 16px;
+}
+.platform-icon svg { width: 26px; height: 26px; }
+.platform-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.platform-card .platform-desc { font-size: 14px; color: var(--ink-soft); }
+.platform-body { padding: 20px 28px 28px; }
+.platform-features { list-style: none; margin-bottom: 22px; }
+.platform-features li {
+  font-size: 13.5px; color: var(--ink-soft); padding: 6px 0; padding-left: 24px;
+  position: relative;
+}
+.platform-features li::before {
+  content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; font-size: 14px;
+}
+.platform-download {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600;
+  color: var(--orange); padding: 10px 18px; border-radius: 10px;
+  border: 2px solid var(--orange); background: transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden;
+}
+.platform-download::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: var(--orange); transition: left 0.3s ease; z-index: -1;
+}
+.platform-download:hover {
+  gap: 12px; color: white; transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.35);
+}
+.platform-download:hover::before { left: 0; }
+.platform-download:hover svg { transform: translateX(4px); }
+.platform-download svg { transition: transform 0.25s ease; }
+.platform-download:active { transform: translateY(-1px) scale(1.01); }
+
+/* ===== 工作流程区域 ===== */
+.workflow { background: var(--paper); }
+.workflow-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative;
+}
+.workflow-steps::before {
+  content: ''; position: absolute; top: 44px; left: 12.5%; right: 12.5%; height: 2px;
+  background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 50%, var(--orange) 100%);
+  z-index: 0;
+}
+.workflow-step { text-align: center; position: relative; z-index: 1; padding: 0 16px; }
+.step-num {
+  width: 88px; height: 88px; border-radius: 50%; background: var(--white);
+  border: 3px solid var(--orange); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px; font-size: 32px; font-weight: 900; color: var(--orange);
+  box-shadow: var(--shadow-md); transition: all 0.3s;
+}
+.workflow-step:hover .step-num { background: var(--orange); color: var(--white); transform: scale(1.08); }
+.workflow-step h4 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.workflow-step p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* ===== 产品界面展示 ===== */
+.showcase { background: var(--white); }
+.showcase-tabs {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+}
+.showcase-tab {
+  padding: 10px 22px; border-radius: 100px; font-size: 14px; font-weight: 600;
+  background: var(--paper); border: 1px solid var(--line); color: var(--ink-soft);
+  cursor: pointer; transition: all 0.25s;
+}
+.showcase-tab.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.showcase-tab:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
+.showcase-frame {
+  background: var(--ink); border-radius: var(--radius-lg); padding: 12px;
+  box-shadow: var(--shadow-lg); max-width: 1000px; margin: 0 auto;
+}
+.showcase-browser {
+  background: var(--paper); border-radius: 12px; overflow: hidden;
+}
+.showcase-browser-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  background: var(--sand); border-bottom: 1px solid var(--line);
+}
+.browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+.browser-dot.r { background: #ef4444; }
+.browser-dot.y { background: #eab308; }
+.browser-dot.g { background: #22c55e; }
+.browser-url {
+  flex: 1; margin-left: 12px; background: var(--white); border-radius: 6px;
+  padding: 6px 14px; font-size: 12px; color: var(--ink-muted);
+}
+.showcase-content { padding: 30px; min-height: 380px; }
+.showcase-panel { display: none; }
+.showcase-panel.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.panel-grid { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+.panel-sidebar { background: var(--sand); border-radius: 10px; padding: 16px; }
+.panel-menu-item {
+  padding: 10px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-soft);
+  margin-bottom: 4px; cursor: pointer; transition: all 0.2s;
+}
+.panel-menu-item.active { background: var(--orange); color: var(--white); font-weight: 600; }
+.panel-menu-item:hover:not(.active) { background: var(--white); }
+.panel-main { display: flex; flex-direction: column; gap: 16px; }
+.panel-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.panel-stat {
+  background: var(--sand); border-radius: 10px; padding: 14px;
+}
+.panel-stat .val { font-size: 22px; font-weight: 900; color: var(--ink); }
+.panel-stat .lbl { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+.panel-table { background: var(--sand); border-radius: 10px; padding: 16px; flex: 1; }
+.panel-table-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px;
+}
+.panel-table-row:last-child { border-bottom: none; }
+.panel-table-row.head { font-weight: 700; color: var(--ink-muted); font-size: 12px; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+.tag.a { background: #dcfce7; color: #166534; }
+.tag.b { background: #fef3c7; color: #92400e; }
+.tag.c { background: #fee2e2; color: #991b1b; }
+
+/* ===== 效果数据区域 ===== */
+.results { background: var(--ink); color: var(--paper); }
+.results .section-head h2 { color: var(--paper); }
+.results .section-head p { color: #a9a196; }
+.results-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.result-card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 36px 30px; text-align: center;
+  transition: all 0.35s;
+}
+.result-card:hover { background: rgba(255,255,255,0.08); border-color: var(--orange); transform: translateY(-4px); }
+.result-card .big-num {
+  font-size: 56px; font-weight: 900; color: var(--orange-light); line-height: 1;
+  margin-bottom: 10px; letter-spacing: -0.02em;
+}
+.result-card .big-num .unit { font-size: 28px; }
+.result-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--paper); }
+.result-card p { font-size: 14px; color: #a9a196; line-height: 1.6; }
+
+/* ===== 如何使用板块 ===== */
+.howto { background: var(--paper); padding: 100px 0; }
+.howto-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+  margin-bottom: 70px; position: relative;
+}
+.howto-step {
+  text-align: center; padding: 0 16px; position: relative;
+}
+.howto-step .step-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--ink); color: var(--orange-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 900; margin: 0 auto 18px;
+  position: relative; z-index: 2;
+}
+.howto-step .step-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.howto-step .step-icon svg { width: 30px; height: 30px; color: var(--orange); }
+.howto-step h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+.howto-step p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+.howto-step:not(:last-child)::after {
+  content: ''; position: absolute; top: 32px; right: -50%;
+  width: 100%; height: 2px;
+  background: repeating-linear-gradient(90deg, #d6d3d1 0, #d6d3d1 6px, transparent 6px, transparent 12px);
+  z-index: 1;
+}
+.howto-scenarios {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.scenario-card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 28px 24px;
+  transition: all 0.3s; display: flex; gap: 16px; align-items: flex-start;
+}
+.scenario-card:hover { border-color: var(--orange); box-shadow: 0 8px 24px rgba(234,88,12,0.08); transform: translateY(-2px); }
+.scenario-card .sc-icon {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa; display: flex; align-items: center; justify-content: center;
+}
+.scenario-card .sc-icon svg { width: 24px; height: 24px; color: var(--orange); }
+.scenario-card .sc-content h4 { font-size: 15.5px; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+.scenario-card .sc-content p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
+.scenario-card .sc-content .sc-tag {
+  display: inline-block; margin-top: 8px; padding: 2px 8px;
+  background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 600;
+  border-radius: 4px;
+}
+
+/* ===== 场景详情板块（6个独立板块） ===== */
+.feature-section { padding: 90px 0; position: relative; }
+.feature-section:nth-child(even) { background: var(--white); }
+.feature-section:nth-child(odd) { background: var(--paper); }
+.feature-inner {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px;
+  align-items: center;
+}
+.feature-section:nth-child(even) .feature-inner { direction: rtl; }
+.feature-section:nth-child(even) .feature-inner > * { direction: ltr; }
+.feature-content .feature-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  color: white; font-size: 16px; font-weight: 800; margin-bottom: 16px;
+}
+.feature-content h3 {
+  font-size: 30px; font-weight: 800; color: var(--ink);
+  margin-bottom: 14px; line-height: 1.25;
+}
+.feature-content > p {
+  font-size: 15.5px; color: var(--ink-soft); line-height: 1.75;
+  margin-bottom: 24px;
+}
+.feature-points { list-style: none; margin-bottom: 24px; }
+.feature-points li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; font-size: 14px; color: var(--ink);
+}
+.feature-points li::before {
+  content: ''; flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px;
+  background: #dcfce7; border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center;
+}
+.feature-tag {
+  display: inline-block; padding: 6px 14px;
+  background: #fff7ed; color: var(--orange-deep);
+  font-size: 13px; font-weight: 600; border-radius: 20px;
+  border: 1px solid #fed7aa;
+}
+
+/* 示意图容器 */
+.feature-visual { position: relative; }
+.mock-window {
+  background: white; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(28,25,23,0.12), 0 4px 12px rgba(28,25,23,0.06);
+  border: 1px solid var(--line);
+}
+.mock-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; background: #fafaf9; border-bottom: 1px solid var(--line);
+}
+.mock-dot { width: 12px; height: 12px; border-radius: 50%; }
+.mock-dot.red { background: #ef4444; }
+.mock-dot.yellow { background: #f59e0b; }
+.mock-dot.green { background: #22c55e; }
+.mock-title {
+  margin-left: 8px; font-size: 12px; color: #78716c; font-weight: 500;
+}
+.mock-body { padding: 20px; min-height: 320px; }
+
+/* 浮动标注卡片 */
+.annotation-card {
+  position: absolute; background: white; border-radius: 14px;
+  padding: 14px 18px; box-shadow: 0 8px 30px rgba(28,25,23,0.12);
+  border: 1px solid var(--line); z-index: 5;
+  animation: floatCard 3s ease-in-out infinite;
+}
+.annotation-card .ann-label {
+  font-size: 12px; color: #78716c; font-weight: 500; margin-bottom: 4px;
+}
+.annotation-card .ann-value {
+  font-size: 24px; font-weight: 800; color: var(--orange); line-height: 1.1;
+}
+.annotation-card .ann-sub {
+  font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 2px;
+}
+.annotation-card.top-left { top: -20px; left: -20px; }
+.annotation-card.top-right { top: -20px; right: -20px; }
+.annotation-card.bottom-left { bottom: -20px; left: -20px; }
+.annotation-card.bottom-right { bottom: -20px; right: -20px; }
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* 对话气泡样式（官网智能客服） */
+.chat-area { display: flex; flex-direction: column; gap: 12px; }
+.chat-bubble {
+  max-width: 80%; padding: 10px 14px; border-radius: 14px;
+  font-size: 13px; line-height: 1.5; opacity: 0;
+  animation: bubbleIn 0.4s ease forwards;
+}
+.chat-bubble.user {
+  align-self: flex-end; background: var(--orange); color: white;
+  border-bottom-right-radius: 4px;
+}
+.chat-bubble.ai {
+  align-self: flex-start; background: #f5f5f4; color: var(--ink);
+  border-bottom-left-radius: 4px;
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.typing-indicator {
+  display: inline-flex; gap: 4px; padding: 10px 14px;
+  background: #f5f5f4; border-radius: 14px; align-self: flex-start;
+}
+.typing-indicator span {
+  width: 6px; height: 6px; background: #a8a29e; border-radius: 50%;
+  animation: typing 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 邮箱界面样式 */
+.email-list { display: flex; flex-direction: column; gap: 8px; }
+.email-item {
+  display: flex; gap: 12px; padding: 12px; border-radius: 10px;
+  border: 1px solid var(--line); transition: all 0.2s;
+}
+.email-item.unread { background: #fff7ed; border-color: #fed7aa; }
+.email-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: 700;
+}
+.email-info { flex: 1; min-width: 0; }
+.email-from { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.email-subject { font-size: 12px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-preview { font-size: 11px; color: #a8a29e; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-reply-box {
+  margin-top: 16px; padding: 14px; background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: 10px;
+}
+.email-reply-label {
+  font-size: 11px; color: #16a34a; font-weight: 600; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 4px;
+}
+.email-reply-text { font-size: 12px; color: var(--ink); line-height: 1.6; }
+
+/* 评论区样式（社媒） */
+.social-post {
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+  margin-bottom: 16px;
+}
+.social-post-header {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.social-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+}
+.social-username { font-size: 13px; font-weight: 600; color: var(--ink); }
+.social-post-content { padding: 12px 14px; font-size: 13px; color: var(--ink); line-height: 1.6; }
+.social-comments { border-top: 1px solid var(--line); padding: 12px 14px; }
+.comment-item {
+  display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f5f4;
+}
+.comment-item:last-child { border-bottom: none; }
+.comment-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: #e7e5e4;
+}
+.comment-content { flex: 1; }
+.comment-user { font-size: 12px; font-weight: 600; color: var(--ink); }
+.comment-text { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.comment-ai-reply {
+  margin-top: 6px; padding: 8px 10px; background: #fff7ed;
+  border-radius: 8px; font-size: 11px; color: var(--ink);
+  border-left: 2px solid var(--orange);
+}
+.comment-ai-badge {
+  display: inline-block; font-size: 10px; color: var(--orange);
+  font-weight: 700; margin-right: 4px;
+}
+
+/* 线索跟进样式 */
+.lead-card {
+  border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+  margin-bottom: 12px; background: white;
+}
+.lead-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.lead-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.lead-grade {
+  padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;
+}
+.lead-grade.a { background: #fef2f2; color: #dc2626; }
+.lead-grade.b { background: #fffbeb; color: #d97706; }
+.lead-grade.c { background: #f0fdf4; color: #16a34a; }
+.sop-steps { display: flex; flex-direction: column; gap: 6px; }
+.sop-step {
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+  padding: 6px 10px; border-radius: 6px;
+}
+.sop-step.done { background: #f0fdf4; color: #16a34a; }
+.sop-step.current { background: #fff7ed; color: var(--orange); font-weight: 600; }
+.sop-step.pending { background: #fafaf9; color: #a8a29e; }
+.sop-step .step-dot {
+  width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+}
+.sop-step.done .step-dot { background: #16a34a; color: white; }
+.sop-step.current .step-dot { background: var(--orange); color: white; }
+.sop-step.pending .step-dot { background: #e7e5e4; color: #a8a29e; }
+
+/* 内容生成样式 */
+.gen-input-area {
+  border: 1px solid var(--line); border-radius: 10px; padding: 12px;
+  margin-bottom: 12px; background: #fafaf9;
+}
+.gen-input-label { font-size: 11px; color: #78716c; font-weight: 600; margin-bottom: 6px; }
+.gen-input-text { font-size: 12px; color: var(--ink); line-height: 1.5; }
+.gen-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; background: var(--orange); color: white;
+  border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; margin-bottom: 12px;
+}
+.gen-result {
+  border: 1px solid #fed7aa; border-radius: 10px; padding: 14px;
+  background: #fff7ed;
+}
+.gen-result-title {
+  font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.gen-result-body { font-size: 12px; color: var(--ink); line-height: 1.7; }
+.gen-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.gen-tag {
+  padding: 2px 8px; background: white; border: 1px solid #fed7aa;
+  border-radius: 4px; font-size: 10px; color: var(--orange-deep); font-weight: 600;
+}
+
+/* 小红书笔记卡片样式 */
+.xhs-card {
+  background: white; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.xhs-card-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-bottom: 1px solid #f5f5f5;
+}
+.xhs-logo {
+  width: 22px; height: 22px; background: #ff2442; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 10px; font-weight: 800; font-style: italic;
+  flex-shrink: 0;
+}
+.xhs-app-name { font-size: 12px; font-weight: 700; color: #333; }
+.xhs-card-body { padding: 12px; }
+.xhs-cover {
+  width: 100%; height: 140px; border-radius: 8px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 50%, #ff6348 100%);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px; position: relative; overflow: hidden;
+}
+.xhs-cover::before {
+  content: ''; position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  animation: xhs-shine 3s ease-in-out infinite;
+}
+@keyframes xhs-shine {
+  0%, 100% { transform: translate(-30%, -30%); }
+  50% { transform: translate(30%, 30%); }
+}
+.xhs-cover-text {
+  color: white; font-size: 15px; font-weight: 800; text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 1; padding: 0 20px;
+  line-height: 1.4;
+}
+.xhs-title {
+  font-size: 13px; font-weight: 700; color: #333; line-height: 1.4;
+  margin-bottom: 8px;
+}
+.xhs-content {
+  font-size: 11px; color: #666; line-height: 1.6; margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xhs-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.xhs-tag {
+  font-size: 10px; color: #1331ef; background: #f0f2ff;
+  padding: 2px 6px; border-radius: 4px; font-weight: 500;
+}
+.xhs-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 8px; border-top: 1px solid #f5f5f5;
+}
+.xhs-author { display: flex; align-items: center; gap: 6px; }
+.xhs-avatar {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ffa502);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 9px; font-weight: 700;
+}
+.xhs-author-name { font-size: 10px; color: #999; }
+.xhs-actions { display: flex; gap: 12px; }
+.xhs-action {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 10px; color: #999;
+}
+.xhs-action svg { width: 12px; height: 12px; }
+
+/* 日报样式 */
+.report-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 16px;
+}
+.report-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+.report-date { font-size: 12px; color: #78716c; }
+.report-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;
+}
+.report-stat {
+  padding: 12px; background: #fafaf9; border-radius: 10px; text-align: center;
+}
+.report-stat .stat-num { font-size: 20px; font-weight: 800; color: var(--orange); }
+.report-stat .stat-label { font-size: 11px; color: #78716c; margin-top: 2px; }
+.report-section { margin-bottom: 14px; }
+.report-section-title {
+  font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.report-item {
+  font-size: 11px; color: var(--ink-soft); padding: 4px 0;
+  display: flex; gap: 6px; align-items: flex-start;
+}
+.report-item::before { content: '·'; color: var(--orange); font-weight: 700; }
+.ai-insight {
+  padding: 12px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-radius: 10px; border: 1px solid #fed7aa;
+}
+.ai-insight-title {
+  font-size: 12px; font-weight: 700; color: var(--orange-deep); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ai-insight-text { font-size: 11px; color: var(--ink); line-height: 1.6; }
+
+/* ===== CTA区域 ===== */
+.cta { background: var(--paper); padding: 100px 0; }
+.cta-band {
+  background: linear-gradient(135deg, var(--ink) 0%, #292524 100%);
+  border-radius: var(--radius-xl); padding: 72px 60px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-band::before {
+  content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(234,88,12,0.2) 0%, transparent 70%);
+}
+.cta-band h2 {
+  font-size: clamp(28px, 3.5vw, 40px); font-weight: 900; color: var(--paper);
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.cta-band p {
+  font-size: 17px; color: #a9a196; margin-bottom: 36px; max-width: 560px;
+  margin-left: auto; margin-right: auto; position: relative; z-index: 1;
+}
+.cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+.cta-band .btn-primary { background: var(--orange); }
+.cta-band .btn-primary:hover { background: var(--orange-deep); }
+.cta-band .btn-secondary { background: transparent; color: var(--paper); border-color: rgba(255,255,255,0.2); }
+.cta-band .btn-secondary:hover { border-color: var(--orange); color: var(--orange-light); }
+
+/* ===== Footer ===== */
+.footer { background: var(--ink); color: #a9a196; padding: 60px 0 30px; border-top: 1px solid #37322c; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px;
+}
+.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }
+.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }
+.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; }
+.footer-col h5 { font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 16px; }
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a { font-size: 13.5px; color: #a9a196; transition: color 0.2s; }
+.footer-col a:hover { color: var(--orange-light); }
+.footer-bottom {
+  border-top: 1px solid #37322c; padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 12.5px; color: #7c7468; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 12.5px; color: #7c7468; }
+.footer-links a:hover { color: var(--orange-light); }
+
+/* ===== 专业产品界面样式 ===== */
+.product-mockup {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(28,25,23,0.12);
+  border: 1px solid var(--line);
+}
+.mockup-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f7f5;
+  border-bottom: 1px solid var(--line);
+}
+.mockup-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.mockup-dot.red { background: #ff5f57; }
+.mockup-dot.yellow { background: #febc2e; }
+.mockup-dot.green { background: #28c840; }
+.mockup-url {
+  flex: 1;
+  background: white;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--ink-light);
+  margin-left: 8px;
+  border: 1px solid var(--line);
+}
+.mockup-content {
+  padding: 16px;
+  background: white;
+}
+
+/* 卡通头像 */
+.avatar-cartoon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-cartoon::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.avatar-saas { background: linear-gradient(135deg, #667eea, #764ba2); }
+.avatar-trade { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.avatar-beauty { background: linear-gradient(135deg, #fa709a, #fee140); }
+.avatar-edu { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.avatar-fitness { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.avatar-data { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+/* 数据看板样式 */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.dash-card {
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+}
+.dash-card-label {
+  font-size: 10px;
+  color: var(--ink-light);
+  margin-bottom: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.dash-card-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.dash-card-change {
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.dash-card-change.up { color: #16a34a; }
+.dash-card-change.down { color: #dc2626; }
+
+/* 迷你图表 */
+.mini-chart {
+  height: 50px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding-top: 8px;
+}
+.mini-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--orange-light), var(--orange));
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+/* 线索列表 */
+.lead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lead-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--paper);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.lead-info {
+  flex: 1;
+  min-width: 0;
+}
+.lead-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lead-meta {
+  font-size: 10px;
+  color: var(--ink-light);
+  margin-top: 1px;
+}
+.lead-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.lead-badge.hot { background: #fef2f2; color: #dc2626; }
+.lead-badge.warm { background: #fff7ed; color: #ea580c; }
+.lead-badge.cold { background: #f5f5f4; color: #78716c; }
+
+/* 邮件界面 */
+.email-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.email-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.email-subject {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  flex: 1;
+}
+.email-body {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.email-ai-draft {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+.email-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 6px;
+}
+.email-ai-text {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* 小红书界面 */
+.xhs-interface {
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.xhs-post {
+  background: white;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.xhs-post-image {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.xhs-post-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.3));
+}
+.xhs-post-title {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  right: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 1;
+  line-height: 1.3;
+}
+.xhs-post-body {
+  padding: 8px 10px;
+}
+.xhs-post-text {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.xhs-post-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.xhs-post-tag {
+  font-size: 9px;
+  color: #1331ef;
+  background: #f0f2ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.xhs-comment {
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.xhs-comment-content {
+  flex: 1;
+}
+.xhs-comment-user {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.xhs-comment-text {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.xhs-ai-reply {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 4px;
+  font-size: 10.5px;
+  color: var(--orange-deep);
+  line-height: 1.4;
+}
+
+/* SOP跟进界面 */
+.sop-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sop-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sop-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.sop-step-content {
+  flex: 1;
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+}
+.sop-step-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.sop-step-desc {
+  font-size: 10px;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+.sop-step-status {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
+}
+.sop-step-status.done { background: #f0fdf4; color: #16a34a; }
+.sop-step-status.doing { background: #fff7ed; color: #ea580c; }
+.sop-step-status.pending { background: #f5f5f4; color: #78716c; }
+
+/* 内容生成界面 */
+.content-gen-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.content-input {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.content-gen-btn {
+  align-self: flex-start;
+  background: var(--orange);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.content-result {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.content-result-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.content-result-body {
+  padding: 10px 12px;
+}
+.content-result-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.content-result-text {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.content-result-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* 数据复盘界面 */
+.report-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.report-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.report-date {
+  font-size: 10px;
+  color: var(--ink-light);
+}
+.report-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.report-stat {
+  text-align: center;
+  padding: 8px;
+  background: var(--paper);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.report-stat-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.report-stat-label {
+  font-size: 9px;
+  color: var(--ink-light);
+  margin-top: 2px;
+}
+.report-insight {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.report-insight-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 6px;
+}
+.report-insight-text {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* ===== 新增板块样式 ===== */
+/* 通讯工具连通 */
+.comm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.comm-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
+}
+.comm-card:hover {
+  background: var(--white);
+  border-color: var(--orange-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.comm-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.comm-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.comm-info { flex: 1; min-width: 0; }
+.comm-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.comm-desc { font-size: 10.5px; color: var(--ink-light); margin-top: 2px; }
+
+/* 技术底座 */
+.tech-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tech-layer {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.tech-layer-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.tech-layer-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tech-tag {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tech-tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.tech-tag.primary {
+  background: var(--orange-bg);
+  border-color: var(--orange-border);
+  color: var(--orange-deep);
+}
+.tech-tag.primary .dot { background: var(--orange); }
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.model-item {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+.model-item:hover {
+  border-color: var(--orange-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234,88,12,0.1);
+}
+.model-item img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.model-item span {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* 安全板块 */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.security-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.security-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--orange-bg);
+  color: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.security-content { flex: 1; }
+.security-title { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.security-desc { font-size: 10.5px; color: var(--ink-light); line-height: 1.5; }
+
+/* 多端协同 */
+.device-showcase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 0;
+}
+.device-pc {
+  width: 320px;
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 10px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(28,25,23,0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.device-pc:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 56px rgba(28,25,23,0.2);
+}
+.device-pc-screen {
+  background: var(--paper);
+  border-radius: 6px;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+.device-pc-topbar {
+  height: 22px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+}
+.device-pc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.device-pc-body {
+  display: flex;
+  height: calc(100% - 22px);
+}
+.device-pc-sidebar {
+  width: 50px;
+  background: var(--ink);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.device-pc-nav-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a9a196;
+  transition: all 0.3s;
+}
+.device-pc-nav-item.active {
+  background: var(--orange);
+  color: white;
+}
+.device-pc-main {
+  flex: 1;
+  padding: 8px;
+  overflow: hidden;
+}
+.device-pc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.device-pc-stat {
+  background: var(--white);
+  border-radius: 4px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+}
+.device-pc-stat-num {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--orange);
+  line-height: 1.2;
+}
+.device-pc-stat-label {
+  font-size: 8px;
+  color: var(--ink-light);
+  margin-top: 2px;
+}
+.device-pc-list {
+  background: var(--white);
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  padding: 6px;
+}
+.device-pc-list-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.device-pc-list-item:last-child {
+  border-bottom: none;
+}
+.device-pc-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.device-pc-list-info {
+  flex: 1;
+  min-width: 0;
+}
+.device-pc-list-name {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-pc-list-desc {
+  font-size: 7px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-pc-badge {
+  font-size: 6px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.device-mobile {
+  width: 130px;
+  background: var(--ink);
+  border-radius: 20px;
+  padding: 8px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(28,25,23,0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.device-mobile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 56px rgba(28,25,23,0.2);
+}
+.device-mobile-screen {
+  background: var(--paper);
+  border-radius: 14px;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+.device-mobile-notch {
+  width: 40px;
+  height: 4px;
+  background: var(--ink);
+  border-radius: 2px;
+  margin: 6px auto 4px;
+}
+.device-mobile-header {
+  padding: 4px 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.device-mobile-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.device-mobile-badge {
+  background: var(--orange);
+  color: white;
+  font-size: 7px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  min-width: 14px;
+  text-align: center;
+}
+.device-mobile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+.device-mobile-stat {
+  background: var(--white);
+  border-radius: 4px;
+  padding: 5px 6px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.device-mobile-stat-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.device-mobile-stat-label {
+  font-size: 6px;
+  color: var(--ink-light);
+  margin-top: 1px;
+}
+.device-mobile-msg-list {
+  padding: 0 8px;
+}
+.device-mobile-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line);
+}
+.device-mobile-msg:last-child {
+  border-bottom: none;
+}
+.device-mobile-msg-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.device-mobile-msg-content {
+  flex: 1;
+  min-width: 0;
+}
+.device-mobile-msg-name {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+}
+.device-mobile-msg-time {
+  font-size: 6px;
+  color: var(--ink-light);
+  font-weight: 400;
+}
+.device-mobile-msg-text {
+  font-size: 7px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.device-mobile-tabbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.device-mobile-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: var(--ink-light);
+  font-size: 6px;
+}
+.device-mobile-tab.active {
+  color: var(--orange);
+}
+.device-sync-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--orange);
+  animation: syncPulse 2s ease-in-out infinite;
+}
+@keyframes syncPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.device-sync-line {
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(180deg, var(--orange), var(--orange-light));
+  position: relative;
+  overflow: hidden;
+}
+.device-sync-line::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.8), transparent);
+  animation: syncFlow 1.5s linear infinite;
+}
+@keyframes syncFlow {
+  0% { top: -20px; }
+  100% { top: 100%; }
+}
+}
+.device-sync-line::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--orange-light);
+}
+
+/* ===== 滚动揭示动画 ===== */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 968px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { order: -1; }
+  .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+  .cap-grid { grid-template-columns: repeat(2, 1fr); }
+  .channel-showcase { grid-template-columns: 1fr !important; gap: 30px !important; }
+  .platform-grid { grid-template-columns: 1fr; }
+  .workflow-steps { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+  .workflow-steps::before { display: none; }
+  .results-grid { grid-template-columns: 1fr; }
+  .howto-steps { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+  .howto-step:not(:last-child)::after { display: none; }
+  .howto-scenarios { grid-template-columns: repeat(2, 1fr); }
+  .feature-inner { grid-template-columns: 1fr; gap: 40px; }
+  .feature-section:nth-child(even) .feature-inner { direction: ltr; }
+  .annotation-card.top-left { top: -10px; left: 0; }
+  .annotation-card.top-right { top: -10px; right: 0; }
+  .annotation-card.bottom-left { bottom: -10px; left: 0; }
+  .annotation-card.bottom-right { bottom: -10px; right: 0; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  .panel-grid { grid-template-columns: 1fr; }
+  .panel-stats { grid-template-columns: repeat(2, 1fr); }
+  /* 通讯工具网格：移动端2列 */
+  .comm-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .comm-card { padding: 12px; gap: 10px; }
+  .comm-icon { width: 40px; height: 40px; }
+  .comm-icon img { width: 28px; height: 28px; }
+  .comm-name { font-size: 12px; }
+  .comm-desc { font-size: 10px; }
+  /* 大模型网格：移动端3列 */
+  .model-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .model-item { padding: 8px 6px; }
+  .model-item img { width: 24px; height: 24px; }
+  .model-item span { font-size: 9px; }
+  /* 多端协同：移动端上下排列，设备缩小 */
+  .device-showcase { flex-direction: column; gap: 30px; }
+  .device-sync-arrow { flex-direction: row; }
+  .device-sync-line { width: 50px; height: 2px; }
+  .device-pc { width: 100%; max-width: 340px; }
+  .device-pc-screen { height: 220px; }
+  .device-mobile { width: 160px; }
+  .device-mobile-screen { height: 260px; }
+}
+@media (max-width: 640px) {
+  .hero { padding: 110px 0 60px; }
+  .section { padding: 70px 0; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .trust-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .trust-item .num { font-size: 32px; }
+  .workflow-steps { grid-template-columns: 1fr; gap: 24px; }
+  .cta-band { padding: 48px 28px; }
+  .howto-steps { grid-template-columns: 1fr; gap: 24px; }
+  .howto-scenarios { grid-template-columns: 1fr; }
+  .scenario-card { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .hero-float-card { display: none; }
+  .panel-stats { grid-template-columns: 1fr 1fr; }
+  /* 通讯工具网格：小屏2列 */
+  .comm-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .comm-card { padding: 10px; gap: 8px; }
+  .comm-icon { width: 36px; height: 36px; }
+  .comm-icon img { width: 24px; height: 24px; }
+  .comm-name { font-size: 11px; }
+  .comm-desc { font-size: 9px; }
+  /* 大模型网格：小屏3列 */
+  .model-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .model-item { padding: 6px 4px; }
+  .model-item img { width: 20px; height: 20px; }
+  .model-item span { font-size: 8px; }
+  /* 多端协同：小屏设备进一步缩小 */
+  .device-pc { max-width: 300px; }
+  .device-pc-screen { height: 200px; }
+  .device-mobile { width: 140px; }
+  .device-mobile-screen { height: 230px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 导航栏 ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/huoer.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计
+      </a>
+      <a href="/geo.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计
+      </a>
+      <a href="/global.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计
+      </a>
+      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
+      <a class="nav-cta" href="#platforms">免费下载</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== Hero区域 ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span>v1.0.0 正式发布 · 全端覆盖</span>
+        </div>
+        <h1>你的<span class="highlight">AI获客伙计</span><br>24小时主动干活</h1>
+        <p class="hero-sub">装在官网、邮箱、小红书、抖音、手机里的智能秘书。不用你交代，他自己找客户、回消息、跟线索、写日报。让中小企业也能用得起专属获客团队。</p>
+        <div class="hero-cta">
+          <a href="#platforms" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            免费下载 PC 版
+          </a>
+          <a href="mailto:hello@workhogee.com" class="btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            预约演示
+          </a>
+        </div>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            无需信用卡
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            5分钟快速上手
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            数据本地加密存储
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="assets/product.png" alt="WorkHogee AI获客伙计产品界面">
+        <div class="hero-float-card card1">
+          <div class="label">今日新增线索</div>
+          <div class="value">+28</div>
+          <div class="sub">↑ 较昨日 +42%</div>
+        </div>
+        <div class="hero-float-card card2">
+          <div class="label">AI自动回复</div>
+          <div class="value">156条</div>
+          <div class="sub">响应率 98.7%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 信任数据条 ===== -->
+<section class="trust-bar">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item reveal">
+        <div class="num">24/7</div>
+        <div class="label">全天候在线获客</div>
+      </div>
+      <div class="trust-item reveal reveal-d1">
+        <div class="num">6大</div>
+        <div class="label">核心获客能力矩阵</div>
+      </div>
+      <div class="trust-item reveal reveal-d2">
+        <div class="num">5+</div>
+        <div class="label">全渠道自动接入</div>
+      </div>
+      <div class="trust-item reveal reveal-d3">
+        <div class="num">3端</div>
+        <div class="label">PC / 移动 / Web 全覆盖</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 核心能力区域 ===== -->
+<section class="section capabilities" id="capabilities">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">核心能力</span>
+      <h2>一个伙计，顶半个获客团队</h2>
+      <p>从理解你的生意，到生产内容、全渠道触达、智能承接、线索培育、数据复盘，AI获客伙计覆盖获客全链路，每个环节都比人工更高效、更稳定。</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card reveal">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M2 12a10 10 0 0 1 10-10v10H2z"/></svg>
+        </div>
+        <h3>生意理解</h3>
+        <p>深度掌握你的产品、客户、行业，前期导入基础资料后，持续主动学习，越用越懂你的生意。</p>
+        <ul class="cap-features">
+          <li>产品知识库自动构建</li>
+          <li>客户画像智能标签</li>
+          <li>行业话术持续优化</li>
+          <li>竞品动态主动关注</li>
+        </ul>
+      </div>
+      <div class="cap-card reveal reveal-d1">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>内容智造</h3>
+        <p>自动生成小红书笔记、公众号文章、营销文案、邮件内容，按平台调性定制，一键发布多平台。</p>
+        <ul class="cap-features">
+          <li>小红书爆款笔记生成</li>
+          <li>公众号深度好文</li>
+          <li>多场景营销文案</li>
+          <li>一周内容日历规划</li>
+        </ul>
+      </div>
+      <div class="cap-card reveal reveal-d2">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>全渠触达</h3>
+        <p>打通官网、邮箱、小红书、抖音、微信等多渠道，客户在哪里，伙计就出现在哪里，不漏掉任何一个询盘。</p>
+        <ul class="cap-features">
+          <li>官网智能客服7×24</li>
+          <li>邮箱询盘自动识别回复</li>
+          <li>社媒留言主动回复</li>
+          <li>多渠道线索统一管理</li>
+        </ul>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>智能承接</h3>
+        <p>24小时在线接待客户咨询，自动判定意向等级A/B/C，资格筛选，高意向客户自动引导预约，绝不冷场。</p>
+        <ul class="cap-features">
+          <li>意向等级智能判定</li>
+          <li>预算/决策周期识别</li>
+          <li>高意向自动预约引导</li>
+          <li>对话记录永久留存</li>
+        </ul>
+      </div>
+      <div class="cap-card reveal reveal-d1">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>线索培育</h3>
+        <p>根据意向等级制定个性化跟进SOP，自动生成跟进话术和培育内容，待跟进主动提醒，不让任何线索流失。</p>
+        <ul class="cap-features">
+          <li>个性化跟进话术生成</li>
+          <li>培育内容自动生产</li>
+          <li>跟进计划SOP执行</li>
+          <li>超期未跟进主动提醒</li>
+        </ul>
+      </div>
+      <div class="cap-card reveal reveal-d2">
+        <div class="cap-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3>数据飞轮</h3>
+        <p>日报周报自动生成，获客数据一目了然，成交结果回传优化每一个环节，获客成本越来越低，效果越用越好。</p>
+        <ul class="cap-features">
+          <li>日报周报自动生成</li>
+          <li>转化漏斗深度分析</li>
+          <li>渠道效果对比归因</li>
+          <li>成交数据回传优化</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 全渠道覆盖区域 ===== -->
+<section class="section channels" id="channels">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">全渠获客</span>
+      <h2>客户在哪里，伙计就在哪里</h2>
+      <p>不再需要人工盯着各个平台，AI获客伙计自动接入你的所有获客渠道，统一管理、统一回复、统一跟进。</p>
+    </div>
+    <div class="channel-showcase">
+      <div class="channel-list">
+        <div class="channel-item reveal">
+          <div class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </div>
+          <div>
+            <h4>官网智能客服</h4>
+            <p>一行代码嵌入你的官网，7×24小时自动接待访客，解答产品问题，收集客户线索，高意向自动引导预约。</p>
+          </div>
+        </div>
+        <div class="channel-item reveal reveal-d1">
+          <div class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div>
+            <h4>邮箱询盘自动回复</h4>
+            <p>打通企业邮箱，新询盘邮件自动识别客户需求，AI生成专业回复草稿，你审核后一键发送，再也不怕漏回邮件。</p>
+          </div>
+        </div>
+        <div class="channel-item reveal reveal-d2">
+          <div class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+          </div>
+          <div>
+            <h4>小红书/抖音留言回复</h4>
+            <p>接入你的小红书和抖音账号，有人留言或咨询自动回复，按平台语气定制话术，把公域流量主动转化为私域线索。</p>
+          </div>
+        </div>
+        <div class="channel-item reveal reveal-d3">
+          <div class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <h4>电话/聊天记录分析</h4>
+            <p>手机端自动记录工作相关通话和聊天，事后AI分析待跟进事项，重要客户沟通自动生成跟进任务，绝不遗漏任何商机。</p>
+          </div>
+        </div>
+      </div>
+      <div class="channel-visual reveal">
+        <div class="channel-visual-title">官网实时对话演示</div>
+        <div class="chat-bubble user">你好，请问这个产品怎么收费？</div>
+        <div class="chat-bubble ai">您好！我们提供灵活的定价方案：基础版免费使用，专业版¥299/月，企业版定制报价。请问您是个人使用还是企业团队呢？</div>
+        <div class="chat-bubble user">我们是一家10人的装修公司</div>
+        <div class="chat-bubble ai">了解！装修行业非常适合用我们的AI获客伙计。专业版完全够用，支持官网客服、小红书自动回复、线索管理等功能。我可以帮您预约一次15分钟的免费演示，您看本周三下午方便吗？</div>
+        <div class="chat-bubble user">可以的，周三下午3点</div>
+        <div class="chat-status">
+          <span class="dot"></span>
+          <span>AI已自动创建线索并预约到店 · 意向等级：A</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 多端产品区域 ===== -->
+<section class="section platforms" id="platforms">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">多端覆盖</span>
+      <h2>PC、手机、浏览器，伙计随时在线</h2>
+      <p>无论你在办公室用电脑，还是出门在外用手机，AI获客伙计都跟着你跑。数据实时同步，随时随地掌握获客动态。</p>
+    </div>
+    <div class="platform-grid">
+      <div class="platform-card reveal">
+        <div class="platform-header">
+          <div class="platform-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>PC 桌面客户端</h3>
+          <p class="platform-desc">Windows / macOS 双平台支持</p>
+        </div>
+        <div class="platform-body">
+          <ul class="platform-features">
+            <li>后台常驻，新线索弹窗提醒</li>
+            <li>自动启动后端服务，开箱即用</li>
+            <li>系统托盘快捷操作</li>
+            <li>支持自动更新到最新版</li>
+          </ul>
+          <a href="https://github.com/HiAeo/workhogee/releases" target="_blank" class="platform-download">
+            下载 Windows 版
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="platform-card reveal reveal-d1">
+        <div class="platform-header">
+          <div class="platform-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3>移动 APP</h3>
+          <p class="platform-desc">iOS / Android 双端支持</p>
+        </div>
+        <div class="platform-body">
+          <ul class="platform-features">
+            <li>出门在外随时查看线索</li>
+            <li>通话/聊天自动记录分析</li>
+            <li>新线索推送通知不遗漏</li>
+            <li>移动端快速回复客户</li>
+          </ul>
+          <a href="https://github.com/HiAeo/workhogee/releases" target="_blank" class="platform-download">
+            获取 Android 版
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="platform-card reveal reveal-d2">
+        <div class="platform-header">
+          <div class="platform-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>Web 管理后台</h3>
+          <p class="platform-desc">浏览器直接打开，无需下载</p>
+        </div>
+        <div class="platform-body">
+          <ul class="platform-features">
+            <li>功能最全，深度数据分析</li>
+            <li>14个功能模块全覆盖</li>
+            <li>支持多团队协作管理</li>
+            <li>数据导出与报表生成</li>
+          </ul>
+          <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer" class="platform-download">
+            立即打开后台
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 工作流程区域 ===== -->
+<section class="section workflow" id="workflow">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">工作方式</span>
+      <h2>不用你交代，他自己干活</h2>
+      <p>AI获客伙计不是被动等待指令的工具，而是主动思考、主动执行的智能秘书。前期导入基础资料后，剩下的时间他自己学习、自己优化、自己找客户。</p>
+    </div>
+    <div class="workflow-steps">
+      <div class="workflow-step reveal">
+        <div class="step-num">1</div>
+        <h4>导入资料</h4>
+        <p>5分钟填写产品、客户、行业基础信息，伙计快速理解你的生意</p>
+      </div>
+      <div class="workflow-step reveal reveal-d1">
+        <div class="step-num">2</div>
+        <h4>接入渠道</h4>
+        <p>一键接入官网、邮箱、小红书、抖音等获客渠道，伙计开始站岗</p>
+      </div>
+      <div class="workflow-step reveal reveal-d2">
+        <div class="step-num">3</div>
+        <h4>主动获客</h4>
+        <p>自动回复咨询、生成内容、跟进线索、培育客户，7×24小时不停歇</p>
+      </div>
+      <div class="workflow-step reveal reveal-d3">
+        <div class="step-num">4</div>
+        <h4>数据复盘</h4>
+        <p>日报周报自动生成，成交数据回传优化，获客效率持续提升</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 产品界面展示 ===== -->
+<section class="section showcase" id="showcase">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">产品界面</span>
+      <h2>简洁高效的管理后台</h2>
+      <p>14个功能模块，覆盖获客全链路。界面简洁直观，不用培训也能快速上手。</p>
+    </div>
+    <div class="showcase-tabs reveal">
+      <div class="showcase-tab active" data-panel="dashboard">数据仪表盘</div>
+      <div class="showcase-tab" data-panel="leads">线索管理</div>
+      <div class="showcase-tab" data-panel="chat">对话记录</div>
+      <div class="showcase-tab" data-panel="email">邮箱渠道</div>
+      <div class="showcase-tab" data-panel="report">日报周报</div>
+    </div>
+    <div class="showcase-frame reveal">
+      <div class="showcase-browser">
+        <div class="showcase-browser-bar">
+          <span class="browser-dot r"></span>
+          <span class="browser-dot y"></span>
+          <span class="browser-dot g"></span>
+          <div class="browser-url">app.workhogee.com/dashboard</div>
+        </div>
+        <div class="showcase-content">
+          <!-- 仪表盘 -->
+          <div class="showcase-panel active" id="panel-dashboard">
+            <div class="panel-grid">
+              <div class="panel-sidebar">
+                <div class="panel-menu-item active">数据仪表盘</div>
+                <div class="panel-menu-item">线索管理</div>
+                <div class="panel-menu-item">对话记录</div>
+                <div class="panel-menu-item">邮箱渠道</div>
+                <div class="panel-menu-item">内容智造</div>
+                <div class="panel-menu-item">线索培育</div>
+                <div class="panel-menu-item">数据分析</div>
+                <div class="panel-menu-item">系统设置</div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-stats">
+                  <div class="panel-stat"><div class="val">156</div><div class="lbl">今日对话</div></div>
+                  <div class="panel-stat"><div class="val">28</div><div class="lbl">新增线索</div></div>
+                  <div class="panel-stat"><div class="val">12</div><div class="lbl">A类意向</div></div>
+                  <div class="panel-stat"><div class="val">98.7%</div><div class="lbl">响应率</div></div>
+                </div>
+                <div class="panel-table">
+                  <div class="panel-table-row head">
+                    <span>客户名称</span><span>来源</span><span>意向</span><span>状态</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>张先生 - 新房装修</span><span>官网</span><span><span class="tag a">A</span></span><span>已预约</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>李女士 - 二手房改造</span><span>小红书</span><span><span class="tag a">A</span></span><span>跟进中</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>王总 - 办公室装修</span><span>邮箱</span><span><span class="tag b">B</span></span><span>待跟进</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>陈女士 - 别墅设计</span><span>抖音</span><span><span class="tag b">B</span></span><span>培育中</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>刘先生 - 商铺装修</span><span>官网</span><span><span class="tag c">C</span></span><span>已流失</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 线索管理 -->
+          <div class="showcase-panel" id="panel-leads">
+            <div class="panel-grid">
+              <div class="panel-sidebar">
+                <div class="panel-menu-item">数据仪表盘</div>
+                <div class="panel-menu-item active">线索管理</div>
+                <div class="panel-menu-item">对话记录</div>
+                <div class="panel-menu-item">邮箱渠道</div>
+                <div class="panel-menu-item">内容智造</div>
+                <div class="panel-menu-item">线索培育</div>
+                <div class="panel-menu-item">数据分析</div>
+                <div class="panel-menu-item">系统设置</div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-stats">
+                  <div class="panel-stat"><div class="val">248</div><div class="lbl">全部线索</div></div>
+                  <div class="panel-stat"><div class="val">36</div><div class="lbl">A类意向</div></div>
+                  <div class="panel-stat"><div class="val">89</div><div class="lbl">B类意向</div></div>
+                  <div class="panel-stat"><div class="val">42</div><div class="lbl">已成交</div></div>
+                </div>
+                <div class="panel-table">
+                  <div class="panel-table-row head">
+                    <span>客户</span><span>电话</span><span>意向</span><span>下次跟进</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>张先生</span><span>138****5678</span><span><span class="tag a">A</span></span><span>今天 15:00</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>李女士</span><span>139****1234</span><span><span class="tag a">A</span></span><span>明天 10:00</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>王总</span><span>136****9876</span><span><span class="tag b">B</span></span><span>后天 14:00</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>陈女士</span><span>137****4321</span><span><span class="tag b">B</span></span><span>3天后</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 对话记录 -->
+          <div class="showcase-panel" id="panel-chat">
+            <div class="panel-grid">
+              <div class="panel-sidebar">
+                <div class="panel-menu-item">数据仪表盘</div>
+                <div class="panel-menu-item">线索管理</div>
+                <div class="panel-menu-item active">对话记录</div>
+                <div class="panel-menu-item">邮箱渠道</div>
+                <div class="panel-menu-item">内容智造</div>
+                <div class="panel-menu-item">线索培育</div>
+                <div class="panel-menu-item">数据分析</div>
+                <div class="panel-menu-item">系统设置</div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-stats">
+                  <div class="panel-stat"><div class="val">1,286</div><div class="lbl">总对话数</div></div>
+                  <div class="panel-stat"><div class="val">89%</div><div class="lbl">AI解决率</div></div>
+                  <div class="panel-stat"><div class="val">12s</div><div class="lbl">平均响应</div></div>
+                  <div class="panel-stat"><div class="val">4.8</div><div class="lbl">客户评分</div></div>
+                </div>
+                <div class="panel-table">
+                  <div class="panel-table-row head">
+                    <span>访客</span><span>来源</span><span>意向</span><span>时长</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>访客#2847</span><span>官网首页</span><span><span class="tag a">A</span></span><span>8分32秒</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>访客#2846</span><span>产品页</span><span><span class="tag b">B</span></span><span>5分18秒</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>访客#2845</span><span>案例页</span><span><span class="tag a">A</span></span><span>12分05秒</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>访客#2844</span><span>价格页</span><span><span class="tag c">C</span></span><span>2分40秒</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 邮箱渠道 -->
+          <div class="showcase-panel" id="panel-email">
+            <div class="panel-grid">
+              <div class="panel-sidebar">
+                <div class="panel-menu-item">数据仪表盘</div>
+                <div class="panel-menu-item">线索管理</div>
+                <div class="panel-menu-item">对话记录</div>
+                <div class="panel-menu-item active">邮箱渠道</div>
+                <div class="panel-menu-item">内容智造</div>
+                <div class="panel-menu-item">线索培育</div>
+                <div class="panel-menu-item">数据分析</div>
+                <div class="panel-menu-item">系统设置</div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-stats">
+                  <div class="panel-stat"><div class="val">3</div><div class="lbl">邮箱账户</div></div>
+                  <div class="panel-stat"><div class="val">128</div><div class="lbl">本月询盘</div></div>
+                  <div class="panel-stat"><div class="val">95%</div><div class="lbl">自动回复率</div></div>
+                  <div class="panel-stat"><div class="val">2h</div><div class="lbl">平均响应</div></div>
+                </div>
+                <div class="panel-table">
+                  <div class="panel-table-row head">
+                    <span>发件人</span><span>主题</span><span>类型</span><span>状态</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>zhang@***.com</span><span>装修报价咨询</span><span>询盘</span><span>已回复</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>li@***.com</span><span>设计方案需求</span><span>询盘</span><span>草稿待审</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>wang@***.com</span><span>合同确认</span><span>成交</span><span>已回复</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>chen@***.com</span><span>售后服务</span><span>售后</span><span>已回复</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 日报周报 -->
+          <div class="showcase-panel" id="panel-report">
+            <div class="panel-grid">
+              <div class="panel-sidebar">
+                <div class="panel-menu-item">数据仪表盘</div>
+                <div class="panel-menu-item">线索管理</div>
+                <div class="panel-menu-item">对话记录</div>
+                <div class="panel-menu-item">邮箱渠道</div>
+                <div class="panel-menu-item">内容智造</div>
+                <div class="panel-menu-item">线索培育</div>
+                <div class="panel-menu-item active">数据分析</div>
+                <div class="panel-menu-item">系统设置</div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-stats">
+                  <div class="panel-stat"><div class="val">+42%</div><div class="lbl">线索环比</div></div>
+                  <div class="panel-stat"><div class="val">-28%</div><div class="lbl">获客成本</div></div>
+                  <div class="panel-stat"><div class="val">+15%</div><div class="lbl">转化率</div></div>
+                  <div class="panel-stat"><div class="val">8.5万</div><div class="lbl">本月营收</div></div>
+                </div>
+                <div class="panel-table">
+                  <div class="panel-table-row head">
+                    <span>渠道</span><span>线索数</span><span>成交数</span><span>ROI</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>官网客服</span><span>98</span><span>18</span><span>1:4.2</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>小红书</span><span>76</span><span>12</span><span>1:3.8</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>邮箱询盘</span><span>42</span><span>8</span><span>1:5.1</span>
+                  </div>
+                  <div class="panel-table-row">
+                    <span>抖音</span><span>32</span><span>4</span><span>1:2.6</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 效果数据区域 ===== -->
+<section class="section results" id="results">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">效果数据</span>
+      <h2>用数据说话，效果看得见</h2>
+      <p>AI获客伙计不是概念产品，而是实实在在帮中小企业降本增效的工具。以下是首批用户的真实数据反馈。</p>
+    </div>
+    <div class="results-grid">
+      <div class="result-card reveal">
+        <div class="big-num">3<span class="unit">倍</span></div>
+        <h4>获客效率提升</h4>
+        <p>AI 7×24小时在线接待，响应速度从平均2小时缩短到10秒内，线索转化率提升3倍</p>
+      </div>
+      <div class="result-card reveal reveal-d1">
+        <div class="big-num">60<span class="unit">%</span></div>
+        <h4>人力成本节省</h4>
+        <p>一个AI伙计顶3个客服+1个文案+1个销售助理，中小企业每年节省人力成本超10万元</p>
+      </div>
+      <div class="result-card reveal reveal-d2">
+        <div class="big-num">98<span class="unit">%</span></div>
+        <h4>线索响应率</h4>
+        <p>不再遗漏任何一个客户咨询，无论是凌晨还是节假日，AI伙计都能第一时间专业回复</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 如何使用板块 ===== -->
+<section class="section howto" id="howto">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">如何使用</span>
+      <h2>5分钟上手，AI伙计开始干活</h2>
+      <p>下载安装后，只需4步，WorkHogee就能开始为你获客。不用培训，不用配置复杂参数，开箱即用。</p>
+    </div>
+
+    <!-- 4步操作流程 -->
+    <div class="howto-steps">
+      <div class="howto-step reveal">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <h4>下载安装</h4>
+        <p>PC桌面端、移动端、Web端三端可选，5分钟完成安装注册，免费版永久可用</p>
+      </div>
+      <div class="howto-step reveal reveal-d1">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h4>导入资料</h4>
+        <p>填写产品、客户、行业基础信息，上传产品资料和FAQ，AI自动构建你的生意知识库</p>
+      </div>
+      <div class="howto-step reveal reveal-d2">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h4>接入渠道</h4>
+        <p>一键嵌入官网智能客服，绑定企业邮箱，授权小红书/抖音账号，打通所有获客入口</p>
+      </div>
+      <div class="howto-step reveal reveal-d3">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+        </div>
+        <h4>开始获客</h4>
+        <p>AI 7×24小时自动接待咨询，线索自动跟进培育，每天早上自动生成获客日报</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 场景1：官网智能客服 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">01</div>
+        <h3>官网智能客服</h3>
+        <p>一行代码嵌入你的官网，AI伙计7×24小时自动接待访客。基于产品知识库专业解答，实时识别高意向客户，自动收集线索并推送至销售工作台，让每一个访客都不流失。</p>
+        <ul class="feature-points">
+          <li>基于产品知识库的专业问答，支持多轮对话深度沟通</li>
+          <li>AI实时识别客户意向等级，高意向客户自动标记推送</li>
+          <li>对话中智能收集联系方式，自动形成结构化线索</li>
+          <li>7×24小时在线，凌晨和节假日也不漏接任何咨询</li>
+        </ul>
+        <span class="feature-tag">24小时在线 · 线索自动收集</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-left">
+          <div class="ann-label">平均响应时间</div>
+          <div class="ann-value" data-count="3">0</div>
+          <div class="ann-sub">秒级响应，远超人工</div>
+        </div>
+        <div class="annotation-card bottom-right">
+          <div class="ann-label">今日收集线索</div>
+          <div class="ann-value" data-count="12">0</div>
+          <div class="ann-sub">较昨日 +28%</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">app.workhogee.com/dashboard</span>
+          </div>
+          <div class="mockup-content">
+            <div class="dashboard-grid">
+              <div class="dash-card">
+                <div class="dash-card-label">今日对话</div>
+                <div class="dash-card-value">156</div>
+                <div class="dash-card-change up">↑ 12.5%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">新增线索</div>
+                <div class="dash-card-value">28</div>
+                <div class="dash-card-change up">↑ 28.0%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">高意向(A级)</div>
+                <div class="dash-card-value">12</div>
+                <div class="dash-card-change up">↑ 8.3%</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-label">已转化</div>
+                <div class="dash-card-value">5</div>
+                <div class="dash-card-change up">↑ 25.0%</div>
+              </div>
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              实时线索看板
+            </div>
+            <div class="lead-list">
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-saas">张</div>
+                <div class="lead-info">
+                  <div class="lead-name">张明 · 科技有限公司</div>
+                  <div class="lead-meta">询问企业版定价 · 来自官网 · 2分钟前</div>
+                </div>
+                <span class="lead-badge hot">A级</span>
+              </div>
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-trade">李</div>
+                <div class="lead-info">
+                  <div class="lead-name">李华 · 跨境电商</div>
+                  <div class="lead-meta">咨询API接入 · 来自官网 · 8分钟前</div>
+                </div>
+                <span class="lead-badge warm">B级</span>
+              </div>
+              <div class="lead-item">
+                <div class="avatar-cartoon avatar-beauty">王</div>
+                <div class="lead-info">
+                  <div class="lead-name">王芳 · 美妆品牌</div>
+                  <div class="lead-meta">了解功能演示 · 来自官网 · 15分钟前</div>
+                </div>
+                <span class="lead-badge warm">B级</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 场景2：邮箱自动回复 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">02</div>
+        <h3>邮箱自动回复</h3>
+        <p>打通企业邮箱，新询盘邮件进来后，AI自动识别客户需求和意向等级，基于产品资料和历史话术生成专业回复草稿。支持多语言自动翻译，外贸客户也能秒回，再也不怕漏回邮件或回复不及时。</p>
+        <ul class="feature-points">
+          <li>自动识别询盘邮件，智能区分垃圾邮件和真实客户</li>
+          <li>AI生成专业回复草稿，基于产品资料和历史话术定制</li>
+          <li>支持多语言自动翻译，外贸客户也能秒回</li>
+          <li>所有邮件往来自动记录，形成完整客户沟通档案</li>
+        </ul>
+        <span class="feature-tag">询盘不漏 · 回复效率提升3倍</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-right">
+          <div class="ann-label">今日处理询盘</div>
+          <div class="ann-value" data-count="28">0</div>
+          <div class="ann-sub">AI草稿生成率 95%</div>
+        </div>
+        <div class="annotation-card bottom-left">
+          <div class="ann-label">平均回复时间</div>
+          <div class="ann-value" data-count="5">0</div>
+          <div class="ann-sub">分钟，从2小时降到5分钟</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">mail.workhogee.com/inbox</span>
+          </div>
+          <div class="mockup-content">
+            <div class="email-interface">
+              <div class="email-header">
+                <div class="avatar-cartoon avatar-trade">J</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 700; color: var(--ink);">John Smith <span style="color: #dc2626; font-size: 9px; margin-left: 6px; background: #fef2f2; padding: 1px 6px; border-radius: 8px;">新询盘</span></div>
+                  <div style="font-size: 10px; color: var(--ink-light);">john.smith@usatrading.com · 美国 · 3分钟前</div>
+                </div>
+                <span class="lead-badge hot">A级</span>
+              </div>
+              <div class="email-subject">Re: Inquiry about Wholesale LED Lighting Products</div>
+              <div class="email-body">
+                Hi, I'm interested in your LED panel lights. We're a distributor in California, looking for 500 units monthly. Could you send me your catalog, MOQ, and best FOB price? Also, do you offer OEM branding? Thanks.
+              </div>
+              <div class="email-ai-draft">
+                <div class="email-ai-label">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                  AI 已生成回复草稿（英文）· 点击可编辑
+                </div>
+                <div class="email-ai-text">
+                  Hi John, thanks for your inquiry! We're glad to hear about your interest in our LED panel lights. For 500 units monthly, we can offer FOB Shenzhen price at $12.50/unit (MOQ 200pcs). OEM branding is available with your logo. I've attached our full catalog and spec sheet. Would you be available for a quick call this week to discuss details? Best regards.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 场景3：社媒评论回复 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">03</div>
+        <h3>社媒评论回复</h3>
+        <p>授权小红书、抖音账号，有人留言或咨询时，AI自动识别评论内容和意向等级，基于产品资料生成专业回复。不错过任何一个潜在客户，评论区就是你的获客入口，24小时自动维护账号活跃度。</p>
+        <ul class="feature-points">
+          <li>自动识别评论中的咨询意向，区分灌水和真实客户</li>
+          <li>基于产品资料生成专业回复，不是模板化套话</li>
+          <li>高意向评论自动标记并推送通知，优先跟进</li>
+          <li>支持小红书、抖音多平台统一管理</li>
+        </ul>
+        <span class="feature-tag">全平台覆盖 · 评论区变获客入口</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-left">
+          <div class="ann-label">今日回复评论</div>
+          <div class="ann-value" data-count="47">0</div>
+          <div class="ann-sub">响应率 98.7%</div>
+        </div>
+        <div class="annotation-card bottom-right">
+          <div class="ann-label">评论转线索</div>
+          <div class="ann-value" data-count="8">0</div>
+          <div class="ann-sub">转化率 17%</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">social.workhogee.com/xiaohongshu</span>
+          </div>
+          <div class="mockup-content">
+            <div class="xhs-interface">
+              <div class="xhs-post">
+                <div class="xhs-post-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); position: relative; overflow: hidden;">
+                  <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                      <radialGradient id="glow1" cx="20%" cy="30%" r="40%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.4);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+                      </radialGradient>
+                      <radialGradient id="glow2" cx="80%" cy="70%" r="35%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.3);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+                      </radialGradient>
+                    </defs>
+                    <rect width="400" height="120" fill="url(#glow1)"/>
+                    <rect width="400" height="120" fill="url(#glow2)"/>
+                    <g opacity="0.25" fill="white">
+                      <circle cx="50" cy="30" r="3"/>
+                      <circle cx="80" cy="80" r="2"/>
+                      <circle cx="350" cy="25" r="4"/>
+                      <circle cx="320" cy="90" r="2.5"/>
+                      <circle cx="200" cy="15" r="2"/>
+                      <circle cx="280" cy="50" r="3"/>
+                    </g>
+                    <g opacity="0.3" stroke="white" stroke-width="1.5" fill="none">
+                      <path d="M30 60 Q45 45 60 60 T90 60"/>
+                      <path d="M310 70 Q325 55 340 70 T370 70"/>
+                      <circle cx="370" cy="40" r="12"/>
+                      <path d="M364 40 L368 44 L376 36"/>
+                    </g>
+                    <g opacity="0.35" fill="white">
+                      <path d="M60 95 Q65 85 70 95 Q75 85 80 95 L80 100 L60 100 Z"/>
+                      <path d="M340 30 L345 20 L350 30 L355 20 L360 30 L360 35 L340 35 Z"/>
+                    </g>
+                    <g transform="translate(180, 35)" opacity="0.4">
+                      <circle cx="0" cy="0" r="18" fill="none" stroke="white" stroke-width="1.5"/>
+                      <circle cx="0" cy="0" r="12" fill="none" stroke="white" stroke-width="1"/>
+                      <circle cx="0" cy="0" r="6" fill="white"/>
+                      <line x1="-25" y1="0" x2="-18" y2="0" stroke="white" stroke-width="1.5"/>
+                      <line x1="25" y1="0" x2="18" y2="0" stroke="white" stroke-width="1.5"/>
+                      <line x1="0" y1="-25" x2="0" y2="-18" stroke="white" stroke-width="1.5"/>
+                      <line x1="0" y1="25" x2="0" y2="18" stroke="white" stroke-width="1.5"/>
+                    </g>
+                  </svg>
+                  <div class="xhs-post-title" style="z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">敏感肌换季护肤攻略｜这5个成分一定要避开</div>
+                </div>
+                <div class="xhs-post-body">
+                  <div class="xhs-post-text">换季敏感肌又开始作妖了？整理了5个敏感肌一定要避开的成分，以及3个修护好物推荐，最后附敏感肌护肤步骤～</div>
+                  <div class="xhs-post-tags">
+                    <span class="xhs-post-tag">#敏感肌护肤</span>
+                    <span class="xhs-post-tag">#换季护肤</span>
+                    <span class="xhs-post-tag">#成分党</span>
+                    <span class="xhs-post-tag">#护肤攻略</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin: 10px 0 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                评论管理（AI自动回复）
+              </div>
+              <div class="xhs-comment">
+                <div class="avatar-cartoon avatar-beauty">小</div>
+                <div class="xhs-comment-content">
+                  <div class="xhs-comment-user">小美的护肤日记 <span style="color: #dc2626; font-size: 9px; margin-left: 4px; background: #fef2f2; padding: 1px 5px; border-radius: 6px;">高意向</span></div>
+                  <div class="xhs-comment-text">请问敏感肌可以用烟酰胺吗？你们家的修护精华多少钱？</div>
+                  <div class="xhs-ai-reply">
+                    <span style="font-weight: 700; color: var(--orange);">AI回复：</span>敏感肌可以用低浓度烟酰胺（2-3%），建议先建立耐受～我们的修护精华198元/30ml，含神经酰胺和B5，专门针对敏感肌修护，现在下单还送小样试用装哦！
+                  </div>
+                </div>
+              </div>
+              <div class="xhs-comment">
+                <div class="avatar-cartoon avatar-fitness">护</div>
+                <div class="xhs-comment-content">
+                  <div class="xhs-comment-user">护肤小白</div>
+                  <div class="xhs-comment-text">收藏了，正好需要！</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 场景4：线索智能跟进 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">04</div>
+        <h3>线索智能跟进</h3>
+        <p>客户留资后自动进入SOP跟进流程。AI根据客户意向等级、行为数据和行业特征，个性化推送跟进内容和话术，自动提醒销售跟进时机，把潜在客户一步步培育成成交客户，不再让线索躺在通讯录里发霉。</p>
+        <ul class="feature-points">
+          <li>自动按意向等级分级，A/B/C级客户不同跟进策略</li>
+          <li>个性化SOP跟进流程，不是群发模板消息</li>
+          <li>自动识别客户行为信号（打开邮件、访问官网），触发跟进</li>
+          <li>超期未跟进自动提醒，销售主管可查看跟进情况</li>
+        </ul>
+        <span class="feature-tag">自动培育 · 线索转化率提升2倍</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-right">
+          <div class="ann-label">跟进完成率</div>
+          <div class="ann-value" data-count="96">0</div>
+          <div class="ann-sub">从45%提升到96%</div>
+        </div>
+        <div class="annotation-card bottom-left">
+          <div class="ann-label">培育周期缩短</div>
+          <div class="ann-value" data-count="40">0</div>
+          <div class="ann-sub">%，平均从30天到18天</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">app.workhogee.com/leads/nurture</span>
+          </div>
+          <div class="mockup-content">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line);">
+              <div class="avatar-cartoon avatar-edu">李</div>
+              <div style="flex: 1;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink);">李同学 · 雅思备考</div>
+                <div style="font-size: 10px; color: var(--ink-light);">目标7分 · 计划3个月内考试 · 来自官网留资</div>
+              </div>
+              <span class="lead-badge hot">A级</span>
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              智能SOP跟进流程
+            </div>
+            <div class="sop-interface">
+              <div class="sop-step">
+                <div class="sop-step-num">1</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第1天：发送欢迎消息+备考资料包</div>
+                  <div class="sop-step-desc">AI已自动发送个性化欢迎语和雅思备考资料包，包含词汇表、听力技巧、写作模板</div>
+                  <span class="sop-step-status done">已完成</span>
+                </div>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">2</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第3天：推送学员案例+课程介绍</div>
+                  <div class="sop-step-desc">根据客户目标分数，推送相似基础学员的提分案例和对应课程介绍</div>
+                  <span class="sop-step-status done">已完成</span>
+                </div>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">3</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第5天：电话跟进+邀约试听（AI已生成话术）</div>
+                  <div class="sop-step-desc">检测到客户打开了课程介绍邮件，AI自动生成个性化电话话术，建议今天下午跟进</div>
+                  <span class="sop-step-status doing">进行中</span>
+                </div>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">4</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第7天：发送试听课程链接+优惠方案</div>
+                  <div class="sop-step-desc">根据电话沟通结果，自动发送对应级别的试听课程链接和限时优惠方案</div>
+                  <span class="sop-step-status pending">待执行</span>
+                </div>
+              </div>
+              <div class="sop-step">
+                <div class="sop-step-num">5</div>
+                <div class="sop-step-content">
+                  <div class="sop-step-title">第10天：促单跟进+报名引导</div>
+                  <div class="sop-step-desc">试听后根据反馈，AI生成促单话术，引导客户完成报名缴费</div>
+                  <span class="sop-step-status pending">待执行</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 场景5：内容自动生成 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">05</div>
+        <h3>内容自动生成</h3>
+        <p>小红书图文笔记、公众号文章、营销文案、邮件模板一键生成。AI基于你的产品资料、行业特征和目标客户，生成符合平台调性的原创内容，不是通用模板。还能根据历史内容数据，推荐发布时间和话题标签，让内容获客效果最大化。</p>
+        <ul class="feature-points">
+          <li>小红书笔记：标题+正文+标签+配图建议，符合小红书调性</li>
+          <li>公众号文章：深度长文，结构化排版，可直接发布</li>
+          <li>营销文案：朋友圈、短信、邮件模板，多版本可选</li>
+          <li>基于历史数据优化，越用越懂你的客户喜欢什么</li>
+        </ul>
+        <span class="feature-tag">一键生成 · 内容效率提升5倍</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-left">
+          <div class="ann-label">本月生成内容</div>
+          <div class="ann-value" data-count="156">0</div>
+          <div class="ann-sub">篇，平均10分钟/篇</div>
+        </div>
+        <div class="annotation-card bottom-right">
+          <div class="ann-label">内容互动率</div>
+          <div class="ann-value" data-count="8">0</div>
+          <div class="ann-sub">%，高于行业平均3%</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">content.workhogee.com/generate</span>
+          </div>
+          <div class="mockup-content">
+            <div class="content-gen-interface">
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                输入需求
+              </div>
+              <div class="content-input">
+                写一篇关于新手健身入门的小红书笔记，目标客户是25-35岁上班族女性，突出我们健身房的专业私教和小班课优势，风格要亲切实用
+              </div>
+              <button class="content-gen-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
+                AI 生成笔记
+              </button>
+              <div class="content-result">
+                <div class="content-result-header">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff2442" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M8 10h8M8 14h5"/></svg>
+                  小红书 · 笔记预览
+                </div>
+                <div class="content-result-body">
+                  <div class="xhs-post-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); height: 100px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" viewBox="0 0 400 100" preserveAspectRatio="xMidYMid slice">
+                      <defs>
+                        <radialGradient id="glow3" cx="25%" cy="25%" r="45%">
+                          <stop offset="0%" style="stop-color:rgba(255,255,255,0.35);stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+                        </radialGradient>
+                        <radialGradient id="glow4" cx="75%" cy="75%" r="40%">
+                          <stop offset="0%" style="stop-color:rgba(255,255,255,0.25);stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+                        </radialGradient>
+                      </defs>
+                      <rect width="400" height="100" fill="url(#glow3)"/>
+                      <rect width="400" height="100" fill="url(#glow4)"/>
+                      <g opacity="0.3" fill="white">
+                        <circle cx="40" cy="25" r="3"/>
+                        <circle cx="70" cy="70" r="2"/>
+                        <circle cx="360" cy="20" r="4"/>
+                        <circle cx="330" cy="80" r="2.5"/>
+                        <circle cx="200" cy="10" r="2"/>
+                      </g>
+                      <g transform="translate(70, 50)" opacity="0.35">
+                        <rect x="-15" y="-8" width="8" height="16" rx="2" fill="white"/>
+                        <rect x="7" y="-8" width="8" height="16" rx="2" fill="white"/>
+                        <rect x="-4" y="-12" width="8" height="24" rx="2" fill="white"/>
+                      </g>
+                      <g transform="translate(330, 50)" opacity="0.35">
+                        <path d="M-15 0 L-5 -10 L5 0 L15 -10" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="-15" cy="0" r="3" fill="white"/>
+                        <circle cx="15" cy="-10" r="3" fill="white"/>
+                      </g>
+                      <g transform="translate(200, 50)" opacity="0.4">
+                        <path d="M-30 0 Q-20 -15 -10 0 T10 0 T30 0" stroke="white" stroke-width="2" fill="none"/>
+                        <circle cx="-30" cy="0" r="3" fill="white"/>
+                        <circle cx="0" cy="0" r="3" fill="white"/>
+                        <circle cx="30" cy="0" r="3" fill="white"/>
+                      </g>
+                      <g opacity="0.25" stroke="white" stroke-width="1.5" fill="none">
+                        <path d="M100 20 L115 35 L100 50"/>
+                        <path d="M300 60 L285 75 L300 90"/>
+                      </g>
+                    </svg>
+                    <div style="color: white; font-size: 14px; font-weight: 800; text-align: center; line-height: 1.4; z-index: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">新手健身入门<br>上班族女生必看</div>
+                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 2px 8px; border-radius: 10px; color: white; font-size: 9px; font-weight: 700; z-index: 2;">健身干货</div>
+                  </div>
+                  <div class="content-result-title">新手健身入门｜上班族女生必看的5个关键点，少走半年弯路！</div>
+                  <div class="content-result-text">
+                    作为一名带过500+学员的健身教练，今天给各位上班族姐妹分享新手健身最容易踩的5个坑，看完至少少走半年弯路！1️⃣ 一上来就猛练，第二天全身酸痛放弃 2️⃣ 只做有氧不练力量，越减越松垮 3️⃣ 饮食不控制，练完一顿火锅白练 4️⃣ 动作不标准，练了半天没效果还受伤 5️⃣ 一个人瞎练，没有计划没有反馈...
+                  </div>
+                  <div class="content-result-tags">
+                    <span class="xhs-post-tag">#新手健身</span>
+                    <span class="xhs-post-tag">#健身入门</span>
+                    <span class="xhs-post-tag">#上班族健身</span>
+                    <span class="xhs-post-tag">#女生健身</span>
+                    <span class="xhs-post-tag">#健身干货</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 场景6：数据自动复盘 ===== -->
+<section class="feature-section">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-content reveal">
+        <div class="feature-num">06</div>
+        <h3>数据自动复盘</h3>
+        <p>每天早上8点自动送达获客日报，每周一生成周报。核心数据、线索详情、待办事项、AI洞察建议一目了然。不用再手动整理Excel，不用再回忆昨天做了什么，AI帮你把所有获客数据结构化呈现，让管理决策有数据支撑。</p>
+        <ul class="feature-points">
+          <li>日报：昨日对话量、新增线索、成交情况、待跟进事项</li>
+          <li>周报：周度数据对比、渠道效果排名、转化漏斗分析</li>
+          <li>AI洞察：自动发现数据异常，给出优化建议</li>
+          <li>支持导出PDF/Excel，可直接用于团队会议和汇报</li>
+        </ul>
+        <span class="feature-tag">自动报告 · 管理效率提升3倍</span>
+      </div>
+      <div class="feature-visual reveal reveal-d1">
+        <div class="annotation-card top-right">
+          <div class="ann-label">报告自动生成</div>
+          <div class="ann-value">8:00</div>
+          <div class="ann-sub">每天准时送达邮箱</div>
+        </div>
+        <div class="annotation-card bottom-left">
+          <div class="ann-label">数据准确率</div>
+          <div class="ann-value" data-count="99">0</div>
+          <div class="ann-sub">%，自动统计无遗漏</div>
+        </div>
+        <div class="product-mockup">
+          <div class="mockup-topbar">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+            <span class="mockup-url">report.workhogee.com/daily</span>
+          </div>
+          <div class="mockup-content">
+            <div class="report-interface">
+              <div class="report-header">
+                <div class="report-title">每日获客日报</div>
+                <div class="report-date">2026.09.14 周一</div>
+              </div>
+              <div class="report-stats-row">
+                <div class="report-stat">
+                  <div class="report-stat-num">156</div>
+                  <div class="report-stat-label">总对话</div>
+                </div>
+                <div class="report-stat">
+                  <div class="report-stat-num">28</div>
+                  <div class="report-stat-label">新增线索</div>
+                </div>
+                <div class="report-stat">
+                  <div class="report-stat-num">5</div>
+                  <div class="report-stat-label">成交</div>
+                </div>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--ink-soft); margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                近7天线索趋势
+              </div>
+              <div class="mini-chart">
+                <div class="mini-bar" style="height: 40%;"></div>
+                <div class="mini-bar" style="height: 55%;"></div>
+                <div class="mini-bar" style="height: 45%;"></div>
+                <div class="mini-bar" style="height: 70%;"></div>
+                <div class="mini-bar" style="height: 60%;"></div>
+                <div class="mini-bar" style="height: 85%;"></div>
+                <div class="mini-bar" style="height: 100%; background: linear-gradient(180deg, var(--orange), var(--orange-deep));"></div>
+              </div>
+              <div class="report-insight" style="margin-top: 12px;">
+                <div class="report-insight-label">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+                  AI 洞察建议
+                </div>
+                <div class="report-insight-text">
+                  本周小红书渠道线索量环比增长42%，建议增加内容发布频率；官网渠道转化率下降15%，可能与落地页加载速度有关，建议检查优化；A级线索跟进及时率92%，继续保持。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </div>
+</section>
+
+  </div>
+</section>
+
+<!-- ===== 板块7：全渠道通讯连通 ===== -->
+<section class="section" id="communication" style="background: var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">全渠道连通</span>
+      <h2>打通你常用的每一个通讯工具</h2>
+      <p>WorkHogee 不只是一个独立软件，而是深度融入你的工作流。重要消息即时推送，手机上就能查看关键数据，甚至远程操作 PC 端，让获客管理随时随地。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1.2fr 1fr; align-items: center;">
+      <div>
+        <div class="comm-grid">
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-wechat.svg" alt="微信">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">个人微信</div>
+              <div class="comm-desc">消息推送 · 数据查看</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-wecom.svg" alt="企业微信">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">企业微信</div>
+              <div class="comm-desc">客户管理 · 协同跟进</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-qq.svg" alt="QQ">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">QQ</div>
+              <div class="comm-desc">群消息 · 通知推送</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-feishu.svg" alt="飞书">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">飞书</div>
+              <div class="comm-desc">审批流 · 数据报表</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-dingtalk.svg" alt="钉钉">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">钉钉</div>
+              <div class="comm-desc">工作通知 · 任务协同</div>
+            </div>
+          </div>
+          <div class="comm-card">
+            <div class="comm-icon">
+              <img src="assets/logo-sms.svg" alt="短信通知">
+            </div>
+            <div class="comm-info">
+              <div class="comm-name">短信通知</div>
+              <div class="comm-desc">重要线索 · 即时提醒</div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--orange-bg); border: 1px solid var(--orange-border); border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" style="flex-shrink: 0; margin-top: 1px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--orange-deep); margin-bottom: 3px;">手机端远程操作 PC 端</div>
+            <div style="font-size: 11px; color: var(--ink-soft); line-height: 1.5;">不在电脑前也能管理获客。手机上查看实时数据、审批线索、回复客户，甚至远程唤醒 PC 端执行复杂任务，工作效率不打烊。</div>
+          </div>
+        </div>
+      </div>
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">微信 · WorkHogee 通知</span>
+        </div>
+        <div class="mockup-content">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: #16a34a; color: white; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">新线索</span>
+                <span style="font-size: 10px; color: #6b7280;">2分钟前</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px;">张明 · 科技有限公司</div>
+              <div style="font-size: 10.5px; color: var(--ink-soft); line-height: 1.4;">询问企业版定价，意向等级 A 级，已自动分配给销售李华</div>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <button style="background: var(--orange); color: white; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 600; cursor: pointer;">立即跟进</button>
+                <button style="background: white; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 600; cursor: pointer;">查看详情</button>
+              </div>
+            </div>
+            <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: var(--orange); color: white; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">日报</span>
+                <span style="font-size: 10px; color: #6b7280;">今天 08:00</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">9月14日获客日报</div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">156</div><div style="font-size: 9px; color: var(--ink-light);">对话</div></div>
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">28</div><div style="font-size: 9px; color: var(--ink-light);">线索</div></div>
+                <div><div style="font-size: 14px; font-weight: 800; color: var(--orange);">5</div><div style="font-size: 9px; color: var(--ink-light);">成交</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块8：技术底座与模型 ===== -->
+<section class="section" id="technology" style="background: var(--paper);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">技术底座</span>
+      <h2>基于 DeepSeek Harness 开源打造</h2>
+      <p>我们不避讳技术底座，反而以此为荣。WorkHogee 基于 DeepSeek Harness 开源框架构建，支持接入多种主流大模型，技术透明、安全可控、持续迭代。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1fr 1.2fr; align-items: center;">
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">app.workhogee.com/settings/models</span>
+        </div>
+        <div class="mockup-content">
+          <div style="font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 10px;">模型配置中心</div>
+          <div class="tech-stack">
+            <div class="tech-layer">
+              <div class="tech-layer-label">默认模型 · 当前使用</div>
+              <div class="tech-layer-content">
+                <span class="tech-tag primary"><span class="dot"></span>DeepSeek V3</span>
+                <span class="tech-tag">上下文 128K</span>
+                <span class="tech-tag">响应 &lt;2s</span>
+              </div>
+            </div>
+            <div class="tech-layer">
+              <div class="tech-layer-label">支持接入的大模型</div>
+              <div class="model-grid">
+                <div class="model-item">
+                  <img src="assets/logo-deepseek.svg" alt="DeepSeek">
+                  <span>DeepSeek R1</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-openai.svg" alt="OpenAI">
+                  <span>GPT-4o</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-claude.svg" alt="Claude">
+                  <span>Claude 3.5</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-wenxin.svg" alt="文心一言">
+                  <span>文心一言</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-qwen.svg" alt="通义千问">
+                  <span>通义千问</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-chatglm.svg" alt="智谱GLM">
+                  <span>智谱 GLM</span>
+                </div>
+                <div class="model-item">
+                  <img src="assets/logo-kimi.svg" alt="Kimi">
+                  <span>Kimi</span>
+                </div>
+              </div>
+            </div>
+            <div class="tech-layer">
+              <div class="tech-layer-label">开源框架与技术栈</div>
+              <div class="tech-layer-content">
+                <span class="tech-tag primary"><span class="dot"></span>DeepSeek Harness</span>
+                <span class="tech-tag">Node.js</span>
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Electron</span>
+                <span class="tech-tag">React Native</span>
+                <span class="tech-tag">PostgreSQL</span>
+                <span class="tech-tag">Redis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">开源底座，技术透明</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">基于 DeepSeek Harness 开源框架构建，核心逻辑可审计、可验证。不搞黑盒，让客户用得明白、用得放心。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">多模型支持，灵活切换</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">默认使用 DeepSeek V3，同时支持接入 GPT-4o、Claude、文心一言等主流大模型。根据任务类型自动选择最优模型，成本与效果兼得。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">持续迭代，紧跟前沿</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">开源社区的每一次进步都能快速融入产品。新模型发布、新能力涌现，WorkHogee 第一时间适配，让你的获客工具始终站在技术最前沿。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块9：安全与隐私 ===== -->
+<section class="section" id="security" style="background: var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">安全与隐私</span>
+      <h2>企业级安全，数据主权在你手中</h2>
+      <p>获客数据是企业的核心资产。WorkHogee 采用银行级加密技术，严格的数据权限管理，完整的合规认证体系，让你的客户数据安全可控。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1.2fr 1fr; align-items: center;">
+      <div class="security-grid">
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">端到端加密传输</div>
+            <div class="security-desc">TLS 1.3 加密传输，AES-256 静态加密，客户对话和线索数据全程加密保护</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">数据主权归客户</div>
+            <div class="security-desc">你的客户数据永远属于你，支持一键导出，随时可迁移，绝不用于训练模型</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">细粒度权限管理</div>
+            <div class="security-desc">管理员、销售、客服多角色权限隔离，数据访问全程留痕，操作可审计可追溯</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">合规认证齐全</div>
+            <div class="security-desc">符合《个人信息保护法》《数据安全法》，等保三级认证，ISO 27001 信息安全管理</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">数据自动备份</div>
+            <div class="security-desc">每日自动备份，异地容灾存储，数据保留期可自定义，误删可一键恢复</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="security-content">
+            <div class="security-title">私有化部署可选</div>
+            <div class="security-desc">企业版支持私有化部署，数据完全存储在你的服务器，满足金融、医疗等强监管行业需求</div>
+          </div>
+        </div>
+      </div>
+      <div class="product-mockup">
+        <div class="mockup-topbar">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+          <span class="mockup-url">app.workhogee.com/security</span>
+        </div>
+        <div class="mockup-content">
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--orange-deep)); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">安全状态：全部通过</div>
+            <div style="font-size: 10.5px; color: var(--ink-light); margin-bottom: 16px;">最后检测：2026-09-14 08:00</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">传输加密</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">TLS 1.3</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">静态加密</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">AES-256</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">数据备份</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">每日自动</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line);">
+              <span style="font-size: 11px; color: var(--ink-soft);">合规认证</span>
+              <span style="font-size: 10px; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 8px;">等保三级</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 板块10：多端协同 ===== -->
+<section class="section" id="multi-device" style="background: var(--paper);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">多端协同</span>
+      <h2>PC、手机、网页，数据实时同步</h2>
+      <p>一个账号，三端通用。无论你在办公室用电脑，还是外出用手机，所有数据实时同步，获客管理不中断。</p>
+    </div>
+    <div class="channel-showcase reveal" style="grid-template-columns: 1fr 1fr; align-items: center;">
+      <div class="device-showcase">
+        <div class="device-pc">
+          <div class="device-pc-screen">
+            <div class="device-pc-topbar">
+              <span class="device-pc-dot" style="background:#ff5f57;"></span>
+              <span class="device-pc-dot" style="background:#febc2e;"></span>
+              <span class="device-pc-dot" style="background:#28c840;"></span>
+              <span style="color:#a9a196; font-size:7px; margin-left:8px;">WorkHogee - 数据仪表盘</span>
+            </div>
+            <div class="device-pc-body">
+              <div class="device-pc-sidebar">
+                <div class="device-pc-nav-item active">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="device-pc-nav-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+              </div>
+              <div class="device-pc-main">
+                <div class="device-pc-stats">
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" id="pcStat1">156</div>
+                    <div class="device-pc-stat-label">今日对话</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" id="pcStat2">28</div>
+                    <div class="device-pc-stat-label">新增线索</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" style="color:#16a34a;">98.7%</div>
+                    <div class="device-pc-stat-label">响应率</div>
+                  </div>
+                  <div class="device-pc-stat">
+                    <div class="device-pc-stat-num" style="color:#16a34a;">5</div>
+                    <div class="device-pc-stat-label">今日成交</div>
+                  </div>
+                </div>
+                <div class="device-pc-list">
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c);">张</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">张先生 · 新房装修</div>
+                      <div class="device-pc-list-desc">来自官网 · 2分钟前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#fef3c7; color:#d97706;">A级</span>
+                  </div>
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#ec4899,#db2777);">李</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">李女士 · 医美咨询</div>
+                      <div class="device-pc-list-desc">来自小红书 · 15分钟前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#dbeafe; color:#2563eb;">B级</span>
+                  </div>
+                  <div class="device-pc-list-item">
+                    <div class="device-pc-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">王</div>
+                    <div class="device-pc-list-info">
+                      <div class="device-pc-list-name">王总 · 企业采购</div>
+                      <div class="device-pc-list-desc">来自抖音 · 1小时前</div>
+                    </div>
+                    <span class="device-pc-badge" style="background:#dcfce7; color:#16a34a;">已成交</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 6px; font-weight: 600;">Windows / macOS</div>
+        </div>
+        <div class="device-sync-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <div class="device-sync-line"></div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div class="device-mobile">
+          <div class="device-mobile-screen">
+            <div class="device-mobile-notch"></div>
+            <div class="device-mobile-header">
+              <span class="device-mobile-title">WorkHogee</span>
+              <span class="device-mobile-badge">3</span>
+            </div>
+            <div class="device-mobile-stats">
+              <div class="device-mobile-stat">
+                <div class="device-mobile-stat-num" id="mobileStat1">156</div>
+                <div class="device-mobile-stat-label">对话</div>
+              </div>
+              <div class="device-mobile-stat">
+                <div class="device-mobile-stat-num" id="mobileStat2">28</div>
+                <div class="device-mobile-stat-label">线索</div>
+              </div>
+            </div>
+            <div class="device-mobile-msg-list">
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c);">张</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">张先生 <span class="device-mobile-msg-time">2分钟</span></div>
+                  <div class="device-mobile-msg-text">请问报价单能发我吗？</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#ec4899,#db2777);">李</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">李女士 <span class="device-mobile-msg-time">15分钟</span></div>
+                  <div class="device-mobile-msg-text">AI已自动回复，待确认</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">王</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">王总 <span class="device-mobile-msg-time">1小时</span></div>
+                  <div class="device-mobile-msg-text">已完成签约，恭喜！</div>
+                </div>
+              </div>
+              <div class="device-mobile-msg">
+                <div class="device-mobile-msg-avatar" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">系</div>
+                <div class="device-mobile-msg-content">
+                  <div class="device-mobile-msg-name">系统通知 <span class="device-mobile-msg-time">今天</span></div>
+                  <div class="device-mobile-msg-text">今日获客日报已生成</div>
+                </div>
+              </div>
+            </div>
+            <div class="device-mobile-tabbar">
+              <div class="device-mobile-tab active">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>首页</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <span>线索</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>消息</span>
+              </div>
+              <div class="device-mobile-tab">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>我的</span>
+              </div>
+            </div>
+          </div>
+          <div style="text-align: center; color: #a9a196; font-size: 9px; margin-top: 6px; font-weight: 600;">iOS / Android</div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">PC 客户端：功能最全</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">支持 Windows 和 macOS，完整功能体验。多窗口操作、批量处理、深度数据分析，是你的主力获客工作台。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">移动 APP：随时随地</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">支持 iOS 和 Android，外出见客户也能实时查看线索、回复消息、审批跟进。重要消息推送，不错过任何一个客户。</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--orange-bg); color: var(--orange); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Web 网页版：即开即用</div>
+              <div style="font-size: 12.5px; color: var(--ink-soft); line-height: 1.6;">不用下载安装，浏览器打开就能用。适合临时使用、客户演示、跨设备办公，数据与客户端实时同步。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA区域 ===== -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2>你的生意，值得一个靠谱的伙计</h2>
+      <p>现在下载，5分钟快速上手，让AI获客伙计从今天开始帮你找客户。免费版永久可用，不绑信用卡。</p>
+      <div class="cta-buttons">
+        <a href="#platforms" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          免费下载使用
+        </a>
+        <a href="mailto:hello@workhogee.com" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          联系我们
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" aria-label="WorkHogee Home">
+        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
+          <g transform="translate(-1.06 -28.16)">
+            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+          </g>
+        </svg>
+        </a>
+        <p>AI获客伙计，24小时主动干活。让中小企业也能用得起专属获客团队。</p>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+        <ul>
+          <li><a href="#capabilities">核心能力</a></li>
+          <li><a href="#channels">全渠获客</a></li>
+          <li><a href="#platforms">多端下载</a></li>
+          <li><a href="#workflow">工作方式</a></li>
+          <li><a href="#results">效果数据</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
+          <li><a href="https://github.com/HiAeo/workhogee/releases" target="_blank">版本更新</a></li>
+          <li><a href="docs/index.html#overview">使用文档</a></li>
+          <li><a href="docs/index.html#quickstart">快速开始</a></li>
+          <li><a href="docs/index.html#api">API 接口</a></li>
+          <li><a href="docs/index.html#faq">常见问题</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>关于</h5>
+        <ul>
+          <li><a href="#">关于我们</a></li>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 WorkHogee. All rights reserved. 让每个中小企业都有AI获客伙计</div>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 导航栏滚动效果
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 20) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+});
+
+// 移动端菜单
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+  navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+  navLinks.style.flexDirection = 'column';
+  navLinks.style.position = 'absolute';
+  navLinks.style.top = '68px';
+  navLinks.style.left = '0';
+  navLinks.style.right = '0';
+  navLinks.style.background = 'var(--paper)';
+  navLinks.style.padding = '20px';
+  navLinks.style.borderBottom = '1px solid var(--line)';
+});
+
+// 滚动揭示动画
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+revealElements.forEach(el => revealObserver.observe(el));
+
+// 数字滚动动画
+function animateCount(el) {
+  const target = parseInt(el.dataset.count);
+  const duration = 1500;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(target * easeOut);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const countElements = document.querySelectorAll('[data-count]');
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.animated) {
+      entry.target.dataset.animated = 'true';
+      animateCount(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+countElements.forEach(el => countObserver.observe(el));
+
+// 对话演示循环动画
+function loopChatDemo(chatId, typingId, interval) {
+  const chatArea = document.getElementById(chatId);
+  const typing = document.getElementById(typingId);
+  if (!chatArea || !typing) return;
+  const bubbles = chatArea.querySelectorAll('.chat-bubble');
+  setInterval(() => {
+    bubbles.forEach(b => { b.style.opacity = '0'; b.style.animation = 'none'; });
+    typing.style.display = 'inline-flex';
+    setTimeout(() => {
+      bubbles.forEach((b, i) => {
+        setTimeout(() => {
+          b.style.animation = 'bubbleIn 0.4s ease forwards';
+          b.style.animationDelay = (i * 0.6) + 's';
+        }, i * 100);
+      });
+      setTimeout(() => { typing.style.display = 'none'; }, bubbles.length * 600 + 500);
+    }, 500);
+  }, interval);
+}
+loopChatDemo('chat-demo-1', 'typing-1', 12000);
+
+// 内容生成按钮点击效果
+const genBtn = document.getElementById('gen-btn-demo');
+const genResult = document.getElementById('gen-result-demo');
+if (genBtn && genResult) {
+  genResult.style.opacity = '1';
+  genResult.style.transform = 'translateY(0)';
+  genResult.style.transition = 'all 0.5s ease';
+  genBtn.addEventListener('click', () => {
+    genBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="50 20"/></svg> 生成中...';
+    genBtn.disabled = true;
+    genResult.style.opacity = '0.3';
+    setTimeout(() => {
+      genResult.style.opacity = '1';
+      genResult.style.transform = 'translateY(0)';
+      genBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg> 重新生成';
+      genBtn.disabled = false;
+    }, 1500);
+  });
+}
+
+// SOP步骤动画
+const sopDemo = document.getElementById('sop-demo');
+if (sopDemo) {
+  const steps = sopDemo.querySelectorAll('.sop-step');
+  const sopObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        steps.forEach((step, i) => {
+          step.style.opacity = '0';
+          step.style.transform = 'translateX(-10px)';
+          step.style.transition = 'all 0.4s ease';
+          setTimeout(() => {
+            step.style.opacity = '1';
+            step.style.transform = 'translateX(0)';
+          }, i * 300);
+        });
+        sopObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  sopObserver.observe(sopDemo);
+}
+
+// 产品界面Tab切换
+const tabs = document.querySelectorAll('.showcase-tab');
+const panels = document.querySelectorAll('.showcase-panel');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panelId = 'panel-' + tab.dataset.panel;
+    document.getElementById(panelId).classList.add('active');
+  });
+});
+
+// 平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 关闭移动端菜单
+      if (window.innerWidth <= 968) {
+        navLinks.style.display = 'none';
+      }
+    }
+  });
+});
+
+// 多端协同 - 数据实时同步动画
+(function() {
+  const pcStat1 = document.getElementById('pcStat1');
+  const pcStat2 = document.getElementById('pcStat2');
+  const mobileStat1 = document.getElementById('mobileStat1');
+  const mobileStat2 = document.getElementById('mobileStat2');
+  
+  if (!pcStat1 || !mobileStat1) return;
+  
+  let baseDialog = 156;
+  let baseLead = 28;
+  
+  function updateStats() {
+    // 随机增加数据，模拟实时获客
+    baseDialog += Math.floor(Math.random() * 3);
+    if (Math.random() > 0.6) baseLead += 1;
+    
+    // PC 和手机端数据同步更新
+    pcStat1.textContent = baseDialog;
+    pcStat2.textContent = baseLead;
+    mobileStat1.textContent = baseDialog;
+    mobileStat2.textContent = baseLead;
+    
+    // 添加闪烁动画
+    [pcStat1, pcStat2, mobileStat1, mobileStat2].forEach(el => {
+      el.style.transition = 'color 0.3s';
+      el.style.color = '#16a34a';
+      setTimeout(() => { el.style.color = ''; }, 500);
+    });
+  }
+  
+  // 每5秒更新一次数据
+  setInterval(updateStats, 5000);
+  
+  // 设备 hover 时的微交互
+  document.querySelectorAll('.device-pc, .device-mobile').forEach(device => {
+    device.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-6px) scale(1.02)';
+    });
+    device.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+})();
+
+// 滚动揭示动画增强
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    observer.observe(el);
+  });
+})();
+</script>
+
+<!-- WorkHogee AI 获客伙计 - 对话浮窗组件 -->
+<script src="widget.js"></script>
+<script>
+  // 自动检测 API 地址
+  // - 本地开发: http://localhost:3000
+  // - 生产环境: https://api.workhogee.com
+  function getApiUrl() {
+    var hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '') {
+      return 'http://localhost:3000';
+    }
+    // 生产环境使用 api.workhogee.com
+    return 'https://api.workhogee.com';
+  }
+
+  if (typeof WorkHogeeWidget !== 'undefined') {
+    WorkHogeeWidget.init({
+      apiUrl: getApiUrl(),
+      position: 'bottom-right',
+      primaryColor: '#ea580c',
+      secondaryColor: '#1c1917',
+      welcomeMessage: '您好！我是 WorkHogee AI 获客伙计，24小时在线为您服务。想了解产品功能、定价或试用方式，随时问我～',
+      buttonText: 'AI 获客顾问',
+      source: 'workhogee_official_site'
+    });
+  }
+</script>
+
+</body>
+</html>
