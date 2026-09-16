@@ -29,18 +29,21 @@
   <div class="trial-wb-inner">
     <div class="trial-wb-header">
       <div class="trial-wb-title">
-        <span class="trial-wb-badge">官网体验版</span>
-        <h2>Hogee生图伙计免费内测中，欢迎传图来测</h2>
+        <div class="trial-wb-title-row">
+          <span class="trial-wb-badge"><span class="trial-wb-badge-dot"></span>Beta 免费内测</span>
+          <h2>AI 生图工作台</h2>
+        </div>
+        <p class="trial-wb-subtitle">上传手机实拍图，20秒生成可直接上架的专业商品图，内测期间无限免费</p>
       </div>
       <button class="trial-header-btn" id="trialHistoryBtn">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
         历史记录
       </button>
     </div>
 
     <!-- 步骤指示器 -->
     <div class="trial-steps">
-      <div class="trial-step active" data-step="1"><div class="trial-step-num">1</div><div class="trial-step-label">选择用途·上传图片</div></div>
+      <div class="trial-step active" data-step="1"><div class="trial-step-num">1</div><div class="trial-step-label">选择用途 · 上传图片</div></div>
       <div class="trial-step-line"></div>
       <div class="trial-step" data-step="2"><div class="trial-step-num">2</div><div class="trial-step-label">参数设置</div></div>
       <div class="trial-step-line"></div>
@@ -352,25 +355,29 @@
 /* ===== 官网体验版工作台（4步流程新版） ===== */
 .trial-wb { padding: 80px 0; background: var(--paper); }
 .trial-wb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.trial-wb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
-.trial-wb-title { display: flex; align-items: center; gap: 14px; }
-.trial-wb-badge { display: inline-block; padding: 6px 16px; background: white; color: var(--ink); font-size: 12px; font-weight: 800; border-radius: 7px; letter-spacing: 0.5px; border: 1.5px solid var(--orange); position: relative; overflow: hidden; }
-.trial-wb-badge::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent); transform: translateX(-100%); animation: trialShimmer 2.5s infinite; }
-.trial-wb-title h2 { font-size: 22px; font-weight: 800; color: var(--ink); background: linear-gradient(135deg, var(--ink), #44403c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.trial-header-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: white; border: 1.5px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-header-btn:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(234,88,12,0.15); background: rgba(234,88,12,0.02); }
-.trial-header-btn:active { transform: translateY(0); }
+.trial-wb-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 16px; }
+.trial-wb-title { display: flex; flex-direction: column; gap: 8px; }
+.trial-wb-title-row { display: flex; align-items: center; gap: 12px; }
+.trial-wb-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(234,88,12,0.08); color: var(--orange); font-size: 11px; font-weight: 800; border-radius: 100px; letter-spacing: 0.3px; border: 1px solid rgba(234,88,12,0.2); }
+.trial-wb-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); position: relative; }
+.trial-wb-badge-dot::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; background: var(--orange); opacity: 0.3; animation: trialBadgePulse 1.8s ease-out infinite; }
+@keyframes trialBadgePulse { 0% { transform: scale(0.8); opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
+.trial-wb-title h2 { font-size: 24px; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; line-height: 1.2; }
+.trial-wb-subtitle { font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0; }
+.trial-header-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: white; border: 1px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--ink-soft); cursor: pointer; transition: all 0.25s ease; margin-top: 2px; }
+.trial-header-btn:hover { border-color: var(--orange); color: var(--orange); box-shadow: 0 2px 10px rgba(234,88,12,0.12); }
+.trial-header-btn:active { transform: scale(0.97); }
 
 /* 步骤指示器 */
-.trial-steps { display: flex; align-items: flex-start; justify-content: center; margin-bottom: 24px; gap: 0; }
-.trial-step { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; z-index: 1; }
-.trial-step-num { width: 38px; height: 38px; border-radius: 50%; background: white; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #a8a29e; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
-.trial-step.active .trial-step-num { background: var(--orange); border-color: var(--orange); color: white; box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
+.trial-steps { display: flex; align-items: flex-start; justify-content: center; margin-bottom: 26px; gap: 0; }
+.trial-step { display: flex; flex-direction: column; align-items: center; gap: 7px; position: relative; z-index: 1; }
+.trial-step-num { width: 32px; height: 32px; border-radius: 50%; background: white; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #a8a29e; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+.trial-step.active .trial-step-num { background: var(--orange); border-color: var(--orange); color: white; box-shadow: 0 3px 12px rgba(234,88,12,0.3); }
 .trial-step.done .trial-step-num { background: var(--ink); border-color: var(--ink); color: white; }
-.trial-step-label { font-size: 12px; font-weight: 600; color: #a8a29e; transition: all 0.3s; white-space: nowrap; }
+.trial-step-label { font-size: 11.5px; font-weight: 600; color: #a8a29e; transition: all 0.3s; white-space: nowrap; }
 .trial-step.active .trial-step-label { color: var(--orange); font-weight: 800; }
 .trial-step.done .trial-step-label { color: var(--ink); font-weight: 700; }
-.trial-step-line { width: 90px; height: 2px; background: var(--line); margin: 19px 12px 0; transition: all 0.4s; position: relative; overflow: hidden; border-radius: 1px; flex-shrink: 0; }
+.trial-step-line { width: 80px; height: 1.5px; background: var(--line); margin: 16px 14px 0; transition: all 0.4s; position: relative; overflow: hidden; border-radius: 1px; flex-shrink: 0; }
 .trial-step-line::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--orange), #fb923c); transform: translateX(-100%); transition: transform 0.5s; }
 .trial-step-line.done { background: var(--ink); }
 .trial-step-line.done::after { transform: translateX(0); }
