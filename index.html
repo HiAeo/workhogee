@@ -9,292 +9,380 @@
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
 :root{
-  --ink:#1c1917; --ink-soft:#57534e; --ink-muted:#a8a29e;
+  --ink:#181410; --coal:#100d0a; --coal-2:#1a1612;
+  --ink-soft:#5c554b; --ink-muted:#a39a8c;
   --orange:#ea580c; --orange-deep:#c2410c; --orange-light:#fb923c; --orange-soft:#fff3eb;
-  --paper:#faf8f4; --sand:#f0e9db; --line:#e7e0d4; --line-strong:#d6cdbd; --white:#fff; --green:#16a34a;
-  --shadow-sm:0 1px 3px rgba(28,25,23,.06); --shadow-md:0 4px 16px rgba(28,25,23,.08);
-  --shadow-lg:0 12px 40px rgba(28,25,23,.12);
-  --radius-sm:8px; --radius-md:14px; --radius-lg:22px; --radius-xl:32px;
+  --paper:#faf8f4; --sand:#f1ebe0; --sand-2:#ece4d5; --line:#e5ddce; --line-strong:#d3c8b5; --white:#fff;
+  --green:#16a34a;
+  --shadow-sm:0 1px 3px rgba(24,20,16,.07); --shadow-md:0 6px 22px rgba(24,20,16,.09);
+  --shadow-lg:0 18px 50px rgba(24,20,16,.16);
+  --r:10px; --r-md:14px; --r-lg:18px;
+  --maxw:1180px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
-.container{max-width:1200px;margin:0 auto;padding:0 24px;}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
 a{text-decoration:none;color:inherit;}
 img{max-width:100%;display:block;}
+ul{list-style:none;}
 
-/* ===== 导航 ===== */
-.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(250,248,244,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid transparent;transition:all .3s ease;}
-.nav.scrolled{background:rgba(250,248,244,.95);border-bottom-color:var(--line);box-shadow:var(--shadow-sm);}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;max-width:1200px;margin:0 auto;padding:0 24px;}
-.nav-logo{display:flex;align-items:center;gap:10px;}
+/* ===== 导航（首屏深色态 atop，滚动后纸底） ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .3s ease,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px;max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+.nav-logo{display:flex;align-items:center;}
 .nav-logo svg{height:28px;width:auto;}
-.nav-links{display:flex;align-items:center;gap:14px;}
-.nav-links a{font-size:15px;color:var(--ink-soft);font-weight:500;transition:color .2s;}
-.nav-links a:hover{color:var(--orange);}
-.nav-pill{position:relative;display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:14px;font-weight:500;line-height:1;padding:9px 15px;border-radius:8px;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.nav-pill.on{background:var(--orange);color:var(--white);font-weight:600;box-shadow:0 4px 12px rgba(234,88,12,.25);}
-.nav-pill.on:hover{color:var(--white);background:var(--orange-deep);}
-.nav-pill.soon{color:var(--ink-soft);background:transparent;border-color:var(--line-strong);}
-.nav-pill.soon:hover{color:var(--ink);border-color:var(--ink-muted);background:rgba(28,25,23,.03);}
-.nav-pill .soon-badge{display:inline-flex;align-items:center;background:var(--orange-soft);color:var(--orange-deep);font-size:10px;font-weight:600;line-height:1;padding:3px 7px;border-radius:999px;border:1px solid rgba(234,88,12,.28);white-space:nowrap;letter-spacing:.2px;}
-.nav-toast{position:fixed;top:84px;left:50%;transform:translate(-50%,-12px);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 10px 30px rgba(28,25,23,.25);opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.22,1,.36,1);z-index:9999;max-width:88vw;text-align:center;}
+.nav-links{display:flex;align-items:center;gap:12px;}
+.nav-pill{position:relative;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14px;font-weight:500;line-height:1;padding:10px 16px;border-radius:9px;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;background:transparent;}
+.nav-pill.on{background:var(--orange);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(234,88,12,.28);}
+.nav-pill.on:hover{background:var(--orange-deep);color:#fff;}
+.nav-pill .soon-badge{display:inline-flex;align-items:center;background:rgba(251,146,60,.18);color:var(--orange-light);font-size:10px;font-weight:600;line-height:1;padding:3px 7px;border-radius:999px;white-space:nowrap;}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:11px;background:none;border:none;}
+.nav-toggle span{width:22px;height:2px;border-radius:2px;background:#fff;transition:.3s;}
+.nav-toast{position:fixed;top:88px;left:50%;transform:translate(-50%,-12px);background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 12px 34px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.22,1,.36,1);z-index:9999;max-width:88vw;text-align:center;}
 .nav-toast.show{opacity:1;transform:translate(-50%,0);}
-.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
-.nav-toggle span{width:22px;height:2px;background:var(--ink);transition:all .3s;border-radius:2px;}
+/* 深色首屏态 */
+.nav.atop{background:transparent;}
+.nav.atop .wl1{fill:#ffffff;}
+.nav.atop .nav-pill.soon{color:rgba(255,255,255,.82);border-color:rgba(255,255,255,.26);}
+.nav.atop .nav-pill.soon .soon-badge{background:rgba(251,146,60,.22);color:#ffd9bd;}
+.nav.atop .nav-pill.soon:hover{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08);}
+/* 滚动后纸底态 */
+.nav.solid{background:rgba(250,248,244,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--line);box-shadow:var(--shadow-sm);}
+.nav.solid .wl1{fill:#1c1917;}
+.nav.solid .nav-pill.soon{color:var(--ink-soft);border-color:var(--line-strong);}
+.nav.solid .nav-pill.soon .soon-badge{background:var(--orange-soft);color:var(--orange-deep);}
+.nav.solid .nav-pill.soon:hover{color:var(--ink);border-color:var(--ink-muted);background:rgba(24,20,16,.04);}
+.nav.solid .nav-toggle span{background:var(--ink);}
+/* 移动端展开面板强制纸底 */
+.nav.panel-open{background:var(--paper);border-bottom-color:var(--line);}
+.nav.panel-open .wl1{fill:#1c1917;}
+.nav.panel-open .nav-toggle span{background:var(--ink);}
+.nav.panel-open .nav-pill.soon{color:var(--ink-soft);border-color:var(--line-strong);}
+.nav.panel-open .nav-pill.soon .soon-badge{background:var(--orange-soft);color:var(--orange-deep);}
 
 /* ===== 按钮 ===== */
-.btn-primary,.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .25s;border:none;}
-.btn-primary{background:var(--orange);color:#fff;box-shadow:0 8px 24px rgba(234,88,12,.28);}
-.btn-primary:hover{background:var(--orange-deep);transform:translateY(-2px);box-shadow:0 12px 30px rgba(234,88,12,.36);}
-.btn-secondary{background:var(--white);color:var(--ink);border:1.5px solid var(--line);}
-.btn-secondary:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow-md);}
-.btn-primary svg,.btn-secondary svg{width:18px;height:18px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:15px 30px;border-radius:11px;font-size:16px;font-weight:600;cursor:pointer;transition:all .25s;border:1.5px solid transparent;font-family:inherit;}
+.btn svg{width:18px;height:18px;}
+.btn-org{background:var(--orange);color:#fff;box-shadow:0 10px 26px rgba(234,88,12,.3);}
+.btn-org:hover{background:var(--orange-deep);transform:translateY(-2px);box-shadow:0 14px 32px rgba(234,88,12,.4);}
+.btn-ghost-light{background:transparent;color:#fff;border-color:rgba(255,255,255,.4);}
+.btn-ghost-light:hover{border-color:#fff;background:rgba(255,255,255,.08);transform:translateY(-2px);}
+.btn-dark{background:var(--ink);color:#fff;}
+.btn-dark:hover{background:#000;transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.btn-line{background:#fff;color:var(--ink);border-color:var(--line-strong);}
+.btn-line:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow-md);}
 
-/* ===== Hero ===== */
-.hero{padding:140px 0 72px;background:linear-gradient(180deg,var(--paper) 0%,var(--sand) 100%);position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-220px;right:-180px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(234,88,12,.12) 0%,transparent 70%);pointer-events:none;}
-.hero-inner{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;position:relative;z-index:1;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);padding:8px 16px;border-radius:100px;font-size:13px;color:var(--ink-soft);margin-bottom:22px;box-shadow:var(--shadow-sm);}
-.hero-badge .dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.hero h1{font-size:clamp(36px,4.8vw,54px);font-weight:900;line-height:1.14;letter-spacing:-.5px;margin-bottom:20px;}
-.highlight{color:var(--orange);position:relative;}
-.hero-sub{font-size:17px;color:var(--ink-soft);line-height:1.8;margin-bottom:30px;max-width:550px;}
-.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
-.hero-meta{display:flex;gap:22px;flex-wrap:wrap;}
-.hero-meta-item{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-muted);}
-.hero-meta-item svg{width:16px;height:16px;color:var(--orange);}
-.hero-visual{position:relative;}
-.hero-stage{position:relative;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3;background:var(--ink);}
-.hero-stage .scene{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease;transform:scale(1.06);}
-.hero-stage .scene.on{opacity:1;animation:kenburns 7s ease-out forwards;}
-@keyframes kenburns{from{transform:scale(1.12);}to{transform:scale(1.02);}}
-.hero-stage img{width:100%;height:100%;object-fit:cover;}
-.scene-tag{position:absolute;left:18px;bottom:18px;background:rgba(28,25,23,.62);backdrop-filter:blur(8px);color:#fff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:100px;display:flex;align-items:center;gap:7px;z-index:3;}
-.scene-tag .sdot{width:7px;height:7px;border-radius:50%;background:var(--orange-light);}
-.hero-float{position:absolute;background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);padding:13px 16px;z-index:4;}
-.hero-float .fl-label{font-size:12px;color:var(--ink-muted);margin-bottom:2px;}
-.hero-float .fl-value{font-size:21px;font-weight:800;color:var(--ink);line-height:1.1;}
-.hero-float .fl-value em{font-style:normal;color:var(--orange);}
-.hero-float .fl-sub{font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
-.hf1{top:-22px;left:-26px;animation:floaty 5s ease-in-out infinite;}
-.hf2{bottom:-20px;right:-20px;animation:floaty 6s ease-in-out infinite .8s;}
-.hf3{top:42%;right:-30px;animation:floaty 5.6s ease-in-out infinite .4s;}
-@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
-.hf-shield{display:flex;align-items:center;gap:9px;}
-.hf-shield .ic{width:34px;height:34px;border-radius:9px;background:rgba(234,88,12,.12);color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.hf-shield .ic svg{width:19px;height:19px;}
-.hf-shield .t{font-size:13px;font-weight:700;color:var(--ink);}
-.hf-shield .s{font-size:11px;color:var(--ink-muted);}
+/* ===== 深色品牌 Hero ===== */
+.mhero{background:radial-gradient(1200px 620px at 78% -8%,rgba(234,88,12,.20),transparent 60%),linear-gradient(180deg,#0d0b09 0%,var(--coal) 58%,var(--coal-2) 100%);color:#fff;padding:168px 0 0;position:relative;overflow:hidden;}
+.mhero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);-webkit-mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);pointer-events:none;}
+.mhero-in{position:relative;z-index:2;display:grid;grid-template-columns:7fr 5fr;gap:60px;align-items:center;}
+.mh-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:999px;margin-bottom:30px;}
+.mh-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:mpulse 2.2s infinite;}
+@keyframes mpulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.55);}70%{box-shadow:0 0 0 9px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
+.mh-title{font-size:clamp(46px,6.6vw,86px);font-weight:900;line-height:1.04;letter-spacing:-1.5px;}
+.mh-title .ac{color:var(--orange-light);position:relative;}
+.mh-title .ac::after{content:"";position:absolute;left:2%;right:2%;bottom:.08em;height:.10em;background:rgba(251,146,60,.32);}
+.mh-sub{margin-top:26px;font-size:17.5px;line-height:1.85;color:rgba(255,255,255,.74);max-width:560px;}
+.mh-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;}
+.mh-tenets{display:flex;gap:0;margin-top:40px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);}
+.mh-tenets div{flex:1;min-width:150px;padding:18px 22px 4px 0;color:rgba(255,255,255,.82);font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;}
+.mh-tenets div+div{border-left:1px solid rgba(255,255,255,.12);padding-left:22px;}
+.mh-tenets svg{width:17px;height:17px;color:var(--orange-light);flex-shrink:0;}
+/* 右侧品类状态轨 */
+.rail{border:1px solid rgba(255,255,255,.13);border-radius:var(--r-lg);background:rgba(255,255,255,.045);backdrop-filter:blur(6px);padding:12px;}
+.rail-h{display:flex;align-items:baseline;justify-content:space-between;padding:10px 12px 12px;}
+.rail-h .rt{font-size:14px;font-weight:700;letter-spacing:.5px;}
+.rail-h .rs{font-size:11.5px;color:rgba(255,255,255,.5);}
+.rail-item{display:flex;align-items:center;gap:13px;padding:13px 13px;border-radius:var(--r);border:1px solid transparent;transition:all .22s;cursor:pointer;text-align:left;width:100%;background:transparent;font-family:inherit;color:#fff;}
+.rail-item .ric{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);}
+.rail-item .ric svg{width:20px;height:20px;}
+.rail-item .rnm{display:block;font-size:14.5px;font-weight:600;}
+.rail-item .rcf{display:block;font-size:11.5px;color:rgba(255,255,255,.46);margin-top:1px;}
+.rail-item .rst{margin-left:auto;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+.rail-item.live{background:linear-gradient(90deg,rgba(234,88,12,.18),rgba(234,88,12,.05));border-color:rgba(251,146,60,.4);}
+.rail-item.live .ric{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 6px 16px rgba(234,88,12,.4);}
+.rail-item.live .rst{background:var(--orange);color:#fff;}
+.rail-item.live:hover{border-color:var(--orange-light);transform:translateX(3px);}
+.rail-item.soon .rst{background:rgba(255,255,255,.1);color:rgba(255,255,255,.78);}
+.rail-item.plan{opacity:.5;}
+.rail-item.plan .rst{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.16);}
+.rail-item.soon:hover,.rail-item.plan:hover{background:rgba(255,255,255,.06);}
+.rail-photo{margin:10px 4px 4px;border-radius:var(--r);overflow:hidden;position:relative;aspect-ratio:16/8;}
+.rail-photo img{width:100%;height:100%;object-fit:cover;}
+.rail-photo .cap{position:absolute;left:12px;bottom:10px;background:rgba(13,11,9,.66);backdrop-filter:blur(6px);font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:999px;display:flex;align-items:center;gap:7px;}
+.rail-photo .cap::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange-light);}
+.mh-creed{position:relative;z-index:2;margin-top:64px;border-top:1px solid rgba(255,255,255,.12);padding:30px 0 34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
+.mh-creed .big{font-size:clamp(20px,2.4vw,27px);font-weight:800;letter-spacing:-.3px;}
+.mh-creed .big em{font-style:normal;color:var(--orange-light);}
+.mh-creed .sm{font-size:14px;color:rgba(255,255,255,.55);margin-left:auto;max-width:380px;line-height:1.7;}
 
-/* ===== 数据条 ===== */
-.trust-bar{background:var(--ink);padding:42px 0;}
-.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
-.trust-item{text-align:center;color:#fff;}
-.trust-item .num{font-size:36px;font-weight:900;color:var(--orange-light);line-height:1;}
-.trust-item .num small{font-size:17px;font-weight:800;}
-.trust-item .label{font-size:14px;color:rgba(255,255,255,.72);margin-top:10px;line-height:1.5;}
-
-/* ===== 通用 section ===== */
-.section{padding:92px 0;}
-.section.alt{background:var(--white);}
+/* ===== 通用编辑式章节头（左对齐） ===== */
+.section{padding:96px 0;}
+.section.white{background:var(--white);}
 .section.sand{background:var(--sand);}
-.section-head{text-align:center;max-width:760px;margin:0 auto 56px;}
-.section-kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:14px;}
-.section-head h2{font-size:clamp(28px,3.4vw,40px);font-weight:900;line-height:1.22;letter-spacing:-.4px;margin-bottom:16px;}
-.section-head p{font-size:16.5px;color:var(--ink-soft);line-height:1.8;}
+.shead{display:grid;grid-template-columns:3fr 9fr;gap:36px;align-items:end;margin-bottom:54px;}
+.shead .kick{font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;padding-bottom:8px;}
+.shead h2{font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.18;letter-spacing:-.8px;text-align:left;}
+.shead p{font-size:16px;color:var(--ink-soft);line-height:1.85;margin-top:16px;max-width:700px;text-align:left;}
 
-/* ===== 品类矩阵 ===== */
-.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.cat-card{position:relative;border-radius:var(--radius-lg);overflow:hidden;background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;transition:all .3s;}
-a.cat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(234,88,12,.4);}
-.cat-ph{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--sand);}
-.cat-ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
-a.cat-card:hover .cat-ph img{transform:scale(1.06);}
-.cat-ph.ic{display:flex;align-items:center;justify-content:center;color:var(--ink);}
-.cat-ph.ic svg{width:56px;height:56px;opacity:.5;}
-.cat-status{position:absolute;top:14px;left:14px;z-index:3;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:999px;letter-spacing:.3px;}
-.cat-status.live{background:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(234,88,12,.35);}
-.cat-status.soon{background:rgba(28,25,23,.8);color:#fff;}
-.cat-status.plan{background:#fff;color:var(--ink-muted);border:1px solid var(--line);}
-.cat-bd{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1;}
-.cat-bd h3{font-size:19px;font-weight:800;margin-bottom:8px;}
-.cat-conflict{font-size:13.5px;color:var(--ink-muted);line-height:1.65;margin-bottom:16px;}
-.cat-conflict b{color:var(--ink-soft);font-weight:600;}
-.cat-go{margin-top:auto;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;color:var(--orange);}
-.cat-go svg{width:16px;height:16px;transition:transform .25s;}
-a.cat-card:hover .cat-go svg{transform:translateX(4px);}
-.cat-locked{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-muted);}
-.cat-locked svg{width:14px;height:14px;}
-.cat-note{margin-top:26px;text-align:center;font-size:13.5px;color:var(--ink-muted);line-height:1.8;}
-.cat-note b{color:var(--ink-soft);font-weight:600;}
+/* ===== 品类矩阵（不对称） ===== */
+.mx-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
+.mx-feat{grid-column:span 7;position:relative;border-radius:var(--r-lg);overflow:hidden;background:var(--ink);color:#fff;display:flex;flex-direction:column;min-height:420px;transition:transform .35s,box-shadow .35s;}
+.mx-feat:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.mx-feat .ph{position:relative;flex:1;min-height:250px;overflow:hidden;}
+.mx-feat .ph img{width:100%;height:100%;object-fit:cover;transition:transform .7s ease;}
+.mx-feat:hover .ph img{transform:scale(1.05);}
+.mx-feat .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,9,0) 34%,rgba(13,11,9,.92) 100%);}
+.mx-feat .badge{position:absolute;top:18px;left:18px;z-index:3;background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(234,88,12,.4);}
+.mx-feat .cap{position:absolute;left:24px;right:24px;bottom:22px;z-index:3;}
+.mx-feat .cap h3{font-size:25px;font-weight:800;}
+.mx-feat .cap .cf{font-size:13.5px;color:rgba(255,255,255,.72);margin:7px 0 15px;}
+.mx-feat .cap .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--orange-light);}
+.mx-feat .cap .go svg{width:16px;height:16px;transition:transform .25s;}
+.mx-feat:hover .cap .go svg{transform:translateX(4px);}
+.mx-side{grid-column:span 5;display:grid;grid-template-rows:1fr 1fr;gap:22px;}
+.mx-mid{position:relative;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--paper);padding:26px 26px 22px;display:flex;flex-direction:column;overflow:hidden;transition:all .3s;cursor:pointer;font-family:inherit;text-align:left;}
+.mx-mid:hover{border-color:rgba(234,88,12,.4);box-shadow:var(--shadow-md);transform:translateY(-4px);}
+.mx-mid .top{display:flex;align-items:center;gap:15px;margin-bottom:auto;}
+.mx-mid .mic{width:50px;height:50px;border-radius:12px;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;color:var(--ink);background:#fff;flex-shrink:0;}
+.mx-mid .mic svg{width:25px;height:25px;}
+.mx-mid h3{font-size:19px;font-weight:800;}
+.mx-mid .cf{font-size:13px;color:var(--ink-muted);margin-top:3px;}
+.mx-mid .st{position:absolute;top:20px;right:22px;font-size:11px;font-weight:700;color:var(--ink-muted);border:1px solid var(--line-strong);padding:4px 11px;border-radius:999px;}
+.mx-mid .desc{font-size:13.5px;color:var(--ink-soft);line-height:1.7;margin-top:16px;}
+.mx-index{grid-column:span 12;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#fff;}
+.mx-row{display:flex;align-items:center;gap:16px;padding:24px 26px;cursor:pointer;transition:background .2s;text-align:left;width:100%;background:transparent;border:none;font-family:inherit;color:var(--ink);border-right:1px solid var(--line);}
+.mx-row:last-child{border-right:none;}
+.mx-row:hover{background:var(--orange-soft);}
+.mx-row .ric{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);border:1px solid var(--line);flex-shrink:0;}
+.mx-row .ric svg{width:21px;height:21px;}
+.mx-row .rn{font-size:16px;font-weight:700;}
+.mx-row .rc{font-size:12.5px;color:var(--ink-muted);margin-top:2px;}
+.mx-row .rst{margin-left:auto;font-size:11px;color:var(--ink-muted);border:1px solid var(--line);padding:3px 10px;border-radius:999px;white-space:nowrap;}
+.mx-nodo{grid-column:span 12;margin-top:4px;border:1px dashed var(--line-strong);border-radius:var(--r-lg);background:var(--paper);padding:22px 26px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+.mx-nodo .nd-t{font-size:13.5px;font-weight:800;color:var(--ink-soft);white-space:nowrap;display:flex;align-items:center;gap:8px;}
+.mx-nodo .nd-t svg{width:17px;height:17px;}
+.mx-nodo .nd-list{display:flex;gap:12px;flex-wrap:wrap;}
+.mx-nodo .nd{font-size:13.5px;color:var(--ink-muted);text-decoration:line-through;text-decoration-color:rgba(234,88,12,.55);text-decoration-thickness:1.5px;}
+.mx-nodo .nd b{color:var(--ink-soft);font-weight:600;}
+.mx-nodo .nd-r{font-size:12.5px;color:var(--ink-muted);margin-left:auto;}
 
-/* ===== 合规态度 ===== */
-.compliance{background:var(--ink);border-radius:var(--radius-xl);padding:58px 48px;color:#fff;}
-.compliance .section-head h2{color:#fff;}
-.compliance .section-head p{color:rgba(255,255,255,.72);}
-.comp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:8px;}
-.comp-item{display:flex;gap:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-md);padding:24px;}
-.comp-item .ic{flex-shrink:0;width:44px;height:44px;border-radius:11px;background:rgba(251,146,60,.16);color:var(--orange-light);display:flex;align-items:center;justify-content:center;}
-.comp-item .ic svg{width:23px;height:23px;}
-.comp-item h4{font-size:16.5px;font-weight:700;margin-bottom:6px;color:#fff;}
-.comp-item p{font-size:13.5px;color:rgba(255,255,255,.66);line-height:1.65;}
-.compliance .motto{margin-top:30px;text-align:center;font-size:15px;color:var(--orange-light);font-weight:700;letter-spacing:1px;}
+/* ===== 图骗 vs 真实 对峙（深色） ===== */
+.standoff{background:linear-gradient(180deg,var(--coal-2),#0d0b09);color:#fff;padding:100px 0;}
+.standoff .shead .kick{color:var(--orange-light);}
+.standoff .shead h2{color:#fff;}
+.standoff .shead p{color:rgba(255,255,255,.66);}
+.so-grid{display:grid;grid-template-columns:1fr 56px 1fr;gap:0;align-items:stretch;}
+.so-col{border-radius:var(--r-lg);padding:36px 34px;}
+.so-bad{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1);}
+.so-good{background:linear-gradient(180deg,rgba(234,88,12,.16),rgba(234,88,12,.05));border:1px solid rgba(251,146,60,.34);}
+.so-tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;letter-spacing:1px;padding:6px 14px;border-radius:999px;margin-bottom:22px;}
+.so-bad .so-tag{background:rgba(255,255,255,.08);color:rgba(255,255,255,.62);}
+.so-good .so-tag{background:var(--orange);color:#fff;}
+.so-col h3{font-size:23px;font-weight:800;margin-bottom:8px;}
+.so-bad h3{color:rgba(255,255,255,.78);}
+.so-col .sub{font-size:13.5px;color:rgba(255,255,255,.5);margin-bottom:24px;}
+.so-list li{display:flex;gap:13px;padding:14px 0;border-bottom:1px dashed rgba(255,255,255,.1);font-size:14.5px;color:rgba(255,255,255,.78);line-height:1.6;}
+.so-list li:last-child{border-bottom:none;}
+.so-list .ic{flex-shrink:0;width:22px;height:22px;margin-top:2px;}
+.so-bad .ic{color:#9ca3af;}
+.so-good .ic{color:var(--orange-light);}
+.so-list b{font-weight:700;color:#fff;}
+.ban-words{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;}
+.ban-words span{font-size:12.5px;color:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.16);padding:5px 12px;border-radius:8px;text-decoration:line-through;text-decoration-color:rgba(234,88,12,.6);}
+.so-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+.so-mid .vline{width:1px;flex:1;background:linear-gradient(180deg,transparent,rgba(255,255,255,.25),transparent);}
+.so-mid .vs{width:46px;height:46px;border-radius:50%;border:1px solid rgba(251,146,60,.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--orange-light);background:var(--coal);flex-shrink:0;}
+.so-foot{margin-top:40px;text-align:center;font-size:clamp(18px,2.2vw,25px);font-weight:800;letter-spacing:-.3px;text-wrap:balance;word-break:keep-all;}
+.so-foot em{font-style:normal;color:var(--orange-light);white-space:nowrap;}
 
-/* ===== 五层能力 ===== */
-.layer-stack{display:flex;flex-direction:column;gap:12px;max-width:940px;margin:0 auto;}
-.layer-row{display:grid;grid-template-columns:84px 1fr 158px;align-items:center;gap:22px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:var(--radius-md);padding:20px 28px;transition:all .3s;}
-.layer-row:hover{box-shadow:var(--shadow-md);transform:translateX(4px);}
-.layer-row .lvl{font-size:21px;font-weight:900;color:var(--orange);letter-spacing:.5px;}
-.layer-row .lname{font-size:17px;font-weight:800;margin-bottom:3px;}
-.layer-row .ldesc{font-size:13.5px;color:var(--ink-soft);line-height:1.55;}
-.layer-row .lpct{justify-self:end;text-align:center;}
-.layer-row .pct{font-size:16px;font-weight:800;color:var(--orange-deep);line-height:1.1;}
-.layer-row .ptag{font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
-.layer-row.remake{border-left-color:var(--ink-muted);}
-.layer-row.remake .lvl{color:var(--ink-muted);}
-.layer-row.remake .pct{color:var(--ink-soft);}
-.layer-up{text-align:center;margin-top:24px;font-size:13.5px;color:var(--ink-muted);}
-.layer-up svg{width:15px;height:15px;vertical-align:-2px;color:var(--orange);margin-right:4px;}
+/* ===== 五层能力地层 ===== */
+.lstack{max-width:980px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:12px;}
+.lband{width:100%;display:grid;grid-template-columns:88px 1fr auto;align-items:center;gap:24px;border-radius:var(--r-md);padding:22px 30px;border:1px solid var(--line);background:#fff;transition:all .3s;}
+.lband:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);}
+.lband .lv{font-size:13px;font-weight:900;letter-spacing:.5px;color:var(--orange-deep);}
+.lband .lv b{display:block;font-size:22px;font-weight:900;color:var(--orange);line-height:1;}
+.lband .ln{font-size:17px;font-weight:800;margin-bottom:3px;}
+.lband .ld{font-size:13.5px;color:var(--ink-soft);line-height:1.55;}
+.lband .lp{text-align:right;}
+.lband .lp b{font-size:19px;font-weight:900;color:var(--orange-deep);}
+.lband .lp span{display:block;font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
+.lband.w100{width:100%;}
+.lband.w92{width:94%;}
+.lband.w78{width:82%;}
+.lband.w46{width:60%;border-style:dashed;border-color:var(--orange);background:var(--orange-soft);}
+.lband.w46 .lv b,.lband.w46 .lv{color:var(--orange-deep);}
+.lband.w46 .lp b{color:var(--orange-deep);}
+.lband.alt{background:var(--paper);}
+.layer-note{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:26px;font-size:13.5px;color:var(--ink-muted);}
+.layer-note svg{width:16px;height:16px;color:var(--orange);}
 
-/* ===== 三步工作流 / 能力卡 ===== */
-.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.cap-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:34px 30px;transition:all .3s;display:flex;flex-direction:column;}
-.cap-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(234,88,12,.35);}
-.cap-icon{width:54px;height:54px;border-radius:14px;background:rgba(234,88,12,.09);color:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.cap-icon svg{width:27px;height:27px;}
-.cap-card .step-no{font-size:12px;font-weight:800;letter-spacing:1.5px;color:var(--orange);margin-bottom:8px;}
-.cap-card h3{font-size:20px;font-weight:800;margin-bottom:12px;}
-.cap-card p{font-size:14.5px;color:var(--ink-soft);line-height:1.75;margin-bottom:16px;}
-.cap-features{list-style:none;margin-top:auto;}
-.cap-features li{position:relative;padding-left:20px;font-size:13.5px;color:var(--ink-soft);margin-bottom:8px;}
-.cap-features li::before{content:'';position:absolute;left:0;top:7px;width:9px;height:9px;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:rotate(45deg);}
+/* ===== 一条工作流 ===== */
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:8px;}
+.fstep{position:relative;padding:0 30px;text-align:center;}
+.fstep:not(:last-child)::after{content:"";position:absolute;top:36px;right:-32px;width:64px;height:0;border-top:2px dashed rgba(234,88,12,.5);z-index:0;}
+.fstep:not(:last-child)::before{content:"";position:absolute;top:32px;right:-6px;width:9px;height:9px;border-top:2px solid var(--orange);border-right:2px solid var(--orange);transform:rotate(45deg);z-index:1;opacity:.7;}
+.fnode{width:74px;height:74px;border-radius:50%;background:#fff;border:1.5px solid var(--orange);display:flex;align-items:center;justify-content:center;color:var(--orange);margin:0 auto 22px;position:relative;z-index:2;box-shadow:0 0 0 8px var(--white);transition:all .3s;}
+.fstep:hover .fnode{background:var(--orange);color:#fff;transform:translateY(-4px);box-shadow:0 12px 26px rgba(234,88,12,.3),0 0 0 8px var(--white);}
+.fnode svg{width:32px;height:32px;}
+.fstep .fno{font-size:12px;font-weight:800;letter-spacing:1.5px;color:var(--orange-deep);margin-bottom:7px;}
+.fstep h3{font-size:20px;font-weight:800;margin-bottom:12px;}
+.fstep p{font-size:14px;color:var(--ink-soft);line-height:1.75;margin-bottom:16px;}
+.ftags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.ftags span{font-size:12.5px;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);padding:5px 12px;border-radius:999px;}
 
-/* ===== 四端 ===== */
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
-.end-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px 24px;transition:all .3s;display:flex;flex-direction:column;}
-.end-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(234,88,12,.35);}
-.end-card .e-tag{align-self:flex-start;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;background:var(--orange-soft);color:var(--orange-deep);margin-bottom:16px;letter-spacing:.5px;}
-.end-card .e-tag.gray{background:var(--sand);color:var(--ink-muted);}
-.end-icon{width:50px;height:50px;border-radius:13px;background:rgba(234,88,12,.09);color:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
-.end-icon svg{width:25px;height:25px;}
-.end-card h3{font-size:17px;font-weight:800;margin-bottom:4px;}
-.end-card .esub{font-size:12.5px;color:var(--orange-deep);font-weight:600;margin-bottom:12px;}
-.end-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;}
+/* ===== 平台矩阵：四端 + 用户阶梯 ===== */
+.ends{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#fff;}
+.end{padding:30px 26px;border-right:1px solid var(--line);position:relative;transition:background .25s;}
+.end:last-child{border-right:none;}
+.end:hover{background:var(--orange-soft);}
+.end .eic{width:48px;height:48px;border-radius:12px;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;color:var(--ink);margin-bottom:16px;background:var(--paper);}
+.end .eic svg{width:24px;height:24px;}
+.end .pri{position:absolute;top:24px;right:22px;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;}
+.end .pri.p0{background:var(--orange);color:#fff;}
+.end .pri.p1,.end .pri.p2{background:var(--sand);color:var(--ink-muted);}
+.end h3{font-size:17px;font-weight:800;margin-bottom:4px;}
+.end .erole{font-size:12.5px;color:var(--orange-deep);font-weight:600;margin-bottom:10px;}
+.end p{font-size:13px;color:var(--ink-soft);line-height:1.65;}
+.users-title{margin:54px 0 22px;font-size:15px;font-weight:800;letter-spacing:.5px;color:var(--ink-soft);display:flex;align-items:center;gap:12px;}
+.users-title::after{content:"";flex:1;height:1px;background:var(--line);}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.rung{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:24px;position:relative;transition:all .3s;}
+.rung:hover{border-color:rgba(234,88,12,.4);transform:translateY(-4px);box-shadow:var(--shadow-md);}
+.rung .cid{font-size:12px;font-weight:800;color:var(--orange-deep);letter-spacing:1px;}
+.rung h4{font-size:16.5px;font-weight:800;margin:7px 0 8px;}
+.rung p{font-size:13px;color:var(--ink-soft);line-height:1.6;}
+.rung .pay{margin-top:14px;font-size:12px;color:var(--ink-muted);border-top:1px dashed var(--line);padding-top:12px;}
 
-/* ===== 入口选择 ===== */
-.entry-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;}
-.entry-card{border-radius:var(--radius-lg);padding:40px;position:relative;overflow:hidden;display:flex;flex-direction:column;}
-.entry-card.web{background:var(--ink);color:#fff;box-shadow:var(--shadow-lg);}
-.entry-card.mp{background:var(--white);border:1.5px solid var(--line);}
-.entry-card .rec{position:absolute;top:20px;right:20px;background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;}
-.entry-card .eicon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.entry-card.web .eicon{background:rgba(255,255,255,.12);color:var(--orange-light);}
-.entry-card.mp .eicon{background:rgba(234,88,12,.1);color:var(--orange);}
-.entry-card .eicon svg{width:28px;height:28px;}
-.entry-card h3{font-size:23px;font-weight:800;margin-bottom:10px;}
-.entry-card.web h3{color:#fff;}
-.entry-card p{font-size:14.5px;line-height:1.7;margin-bottom:22px;}
-.entry-card.web p{color:rgba(255,255,255,.72);}
-.entry-card.mp p{color:var(--ink-soft);}
-.entry-feats{list-style:none;margin-bottom:26px;}
-.entry-feats li{display:flex;gap:9px;align-items:center;font-size:14px;margin-bottom:10px;}
-.entry-feats svg{width:17px;height:17px;flex-shrink:0;}
-.entry-card.web .entry-feats{color:rgba(255,255,255,.85);}
-.entry-card.web .entry-feats svg{color:var(--orange-light);}
-.entry-card.mp .entry-feats{color:var(--ink-soft);}
-.entry-card.mp .entry-feats svg{color:var(--orange);}
-.entry-card .btn-primary{width:100%;justify-content:center;margin-top:auto;}
-.entry-card.mp .btn-line{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;border:1.5px solid var(--line-strong);color:var(--ink);background:#fff;cursor:pointer;transition:all .25s;}
-.entry-card.mp .btn-line svg{width:18px;height:18px;flex-shrink:0;}
-.entry-card.mp .btn-line:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft);transform:translateY(-2px);}
-.mp-cta{margin-top:auto;}
-.qr-note{font-size:12.5px;color:var(--ink-muted);text-align:center;margin:0 0 14px;line-height:1.6;}
+/* ===== 路线图时间轴 ===== */
+.tl{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:24px;}
+.tl::before{content:"";position:absolute;top:19px;left:9%;right:9%;height:2px;background:linear-gradient(90deg,var(--orange) 0%,var(--orange) 22%,var(--line-strong) 22%,var(--line-strong) 100%);}
+.tln{position:relative;padding-top:52px;}
+.tln .dot{position:absolute;top:10px;left:0;width:20px;height:20px;border-radius:50%;background:#fff;border:2.5px solid var(--line-strong);z-index:2;}
+.tln.now .dot{background:var(--orange);border-color:var(--orange);box-shadow:0 0 0 6px rgba(234,88,12,.16);}
+.tln .when{font-size:12.5px;font-weight:800;color:var(--orange-deep);letter-spacing:.5px;margin-bottom:7px;}
+.tln.now .when{color:var(--orange);}
+.tln h4{font-size:17px;font-weight:800;margin-bottom:9px;}
+.tln p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;}
+.tln .card{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:20px 20px 22px;transition:all .3s;height:100%;}
+.tln.now .card{border-color:rgba(234,88,12,.4);background:var(--orange-soft);}
+.tln .card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);}
 
-/* ===== 最终 CTA ===== */
-.final-cta{background:linear-gradient(135deg,var(--orange-deep),var(--orange));border-radius:var(--radius-xl);padding:66px 48px;text-align:center;color:#fff;position:relative;overflow:hidden;}
-.final-cta::before{content:'';position:absolute;top:-120px;right:-80px;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.1);}
-.final-cta h2{font-size:clamp(26px,3.2vw,38px);font-weight:900;margin-bottom:14px;position:relative;}
-.final-cta p{font-size:16.5px;color:rgba(255,255,255,.92);margin-bottom:30px;position:relative;}
-.final-cta .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
-.final-cta .btn-white{background:#fff;color:var(--orange-deep);}
-.final-cta .btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.2);}
-.final-cta .btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.5);}
-.final-cta .btn-ghost:hover{background:rgba(255,255,255,.25);}
+/* ===== 深色收尾 CTA ===== */
+.mcta{background:radial-gradient(900px 460px at 50% -10%,rgba(234,88,12,.22),transparent 60%),linear-gradient(180deg,#0d0b09,var(--coal));color:#fff;text-align:center;padding:110px 0 96px;}
+.mcta .k2{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--orange-light);margin-bottom:22px;}
+.mcta h2{font-size:clamp(32px,4.6vw,58px);font-weight:900;line-height:1.12;letter-spacing:-1px;}
+.mcta p{font-size:17px;color:rgba(255,255,255,.7);margin:22px auto 38px;max-width:600px;line-height:1.8;}
+.mcta .crow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.mcta .mp-line{margin-top:22px;font-size:13px;color:rgba(255,255,255,.45);}
+.mcta .mp-line button{background:none;border:none;color:rgba(255,255,255,.65);font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:inherit;}
+.mcta .mp-line button:hover{color:var(--orange-light);}
 
 /* ===== Footer ===== */
-.footer{background:var(--ink);padding:64px 0 28px;color:rgba(255,255,255,.7);}
-.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1);}
-.footer-brand p{font-size:14px;color:rgba(255,255,255,.6);margin-top:18px;max-width:310px;line-height:1.7;}
+.footer{background:var(--coal);padding:66px 0 28px;color:rgba(255,255,255,.7);}
+.footer-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1);}
+.footer-brand p{font-size:14px;color:rgba(255,255,255,.58);margin-top:18px;max-width:320px;line-height:1.75;}
 .footer-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px;}
-.footer-col ul{list-style:none;}
 .footer-col li{margin-bottom:11px;}
 .footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s;}
 .footer-col a:hover{color:var(--orange-light);}
-.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;font-size:13px;color:rgba(255,255,255,.45);flex-wrap:wrap;gap:12px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;font-size:13px;color:rgba(255,255,255,.43);flex-wrap:wrap;gap:12px;}
 .footer-links{display:flex;gap:22px;}
-.footer-links a{color:rgba(255,255,255,.45);}
+.footer-links a{color:rgba(255,255,255,.43);}
 .footer-links a:hover{color:var(--orange-light);}
 
 /* ===== 揭示动效 ===== */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
 .reveal.in{opacity:1;transform:none;}
-.reveal-d1{transition-delay:.08s;}.reveal-d2{transition-delay:.16s;}.reveal-d3{transition-delay:.24s;}.reveal-d4{transition-delay:.32s;}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.hero-stage .scene{animation:none!important;}.hf1,.hf2,.hf3{animation:none!important;}}
+.mh-anim{opacity:0;transform:translateY(24px);animation:mhin .8s cubic-bezier(.22,1,.36,1) forwards;}
+@keyframes mhin{to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+  .mh-anim{animation:none;opacity:1;transform:none;}
+  .mh-eyebrow .dot{animation:none;}
+  html{scroll-behavior:auto;}
+}
 
 /* ===== 响应式 ===== */
-@media(max-width:960px){
-  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;gap:0;padding:12px 24px 20px;border-bottom:1px solid var(--line);box-shadow:var(--shadow-md);}
-  .nav-links.open{display:flex;}
-  .nav-links a{padding:12px 0;}
-  .nav-pill{align-self:flex-start;padding:10px 15px;margin:5px 0;}
-  .nav-toggle{display:flex;}
-  .hero-inner{grid-template-columns:1fr;gap:40px;}
-  .hero-visual{max-width:480px;margin:0 auto;width:100%;}
-  .hf3{display:none;}
-  .trust-grid{grid-template-columns:repeat(2,1fr);gap:30px;}
-  .cat-grid{grid-template-columns:1fr;max-width:520px;margin:0 auto;}
-  .cat-ph.ic{aspect-ratio:auto;padding:34px 0;}
-  .cat-ph.ic svg{width:58px;height:58px;}
-  .comp-grid{grid-template-columns:1fr;}
-  .layer-row{grid-template-columns:60px 1fr;gap:4px 14px;padding:18px 20px;}
-  .layer-row .lpct{grid-column:2;justify-self:start;display:flex;align-items:baseline;gap:8px;}
-  .cap-grid{grid-template-columns:1fr;}
-  .grid-4{grid-template-columns:1fr 1fr;}
-  .entry-grid{grid-template-columns:1fr;}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
-  .nav-toggle{min-width:44px;min-height:44px;}
-  .section-head p{font-size:14.5px;}
-  .cat-conflict,.cat-note{font-size:13.5px;line-height:1.7;}
-  .cap-card p,.end-card p,.entry-card p{font-size:14px;line-height:1.75;}
-  .layer-row .ldesc{font-size:13.5px;line-height:1.65;}
-  .hero-meta div{font-size:13.5px;}
+@media (max-width:960px){
+  .mhero{padding-top:132px;}
+  .mhero-in{grid-template-columns:1fr;gap:40px;}
+  .mh-creed{margin-top:46px;}
+  .mh-creed .sm{margin-left:0;}
+  .shead{grid-template-columns:1fr;gap:14px;margin-bottom:38px;}
+  .mx-feat{grid-column:span 12;min-height:360px;}
+  .mx-side{grid-column:span 12;grid-template-rows:none;grid-template-columns:1fr 1fr;}
+  .mx-index{grid-template-columns:1fr;}
+  .mx-row{border-right:none;border-bottom:1px solid var(--line);}
+  .mx-row:last-child{border-bottom:none;}
+  .mx-nodo .nd-r{margin-left:0;width:100%;}
+  .so-grid{grid-template-columns:1fr;}
+  .so-mid{flex-direction:row;padding:14px 0;}
+  .so-mid .vline{display:none;}
+  .so-mid .vs{width:40px;height:40px;}
+  .lband{grid-template-columns:64px 1fr;gap:14px;padding:18px 20px;}
+  .lband .lp{grid-column:2;text-align:left;}
+  .lband.w92,.lband.w78,.lband.w46{width:100%;}
+  .flow{grid-template-columns:1fr;gap:36px;}
+  .fstep{padding:0;text-align:left;display:grid;grid-template-columns:74px 1fr;gap:0 20px;align-items:start;}
+  .fstep .fnode{margin:0;grid-row:span 4;}
+  .fstep:not(:last-child)::after,.fstep:not(:last-child)::before{display:none;}
+  .fstep .fno,.fstep h3,.fstep p,.ftags{text-align:left;justify-content:flex-start;}
+  .ends{grid-template-columns:1fr 1fr;}
+  .end:nth-child(2n){border-right:none;}
+  .end:nth-child(-n+2){border-bottom:1px solid var(--line);}
+  .ladder{grid-template-columns:1fr 1fr;}
+  .tl{grid-template-columns:1fr;gap:0;}
+  .tl::before{left:9px;right:auto;top:14px;bottom:14px;width:2px;height:auto;background:linear-gradient(180deg,var(--orange) 0%,var(--orange) 160px,var(--line-strong) 160px);}
+  .tln{padding-top:0;padding-left:40px;padding-bottom:26px;}
+  .tln .dot{top:4px;left:0;}
 }
-@media(max-width:560px){
-  .section{padding:64px 0;}
-  .grid-4{grid-template-columns:1fr;}
-  .footer-grid{grid-template-columns:1fr;}
-  .compliance{padding:40px 24px;}
-  .hf1{left:-8px;}.hf2{right:-8px;}
+@media (max-width:640px){
+  .container{padding:0 20px;}
+  .nav-inner{padding:0 20px;height:64px;}
+  .nav-toggle{display:flex;}
+  .nav-links{position:fixed;top:64px;left:0;right:0;flex-direction:column;align-items:stretch;gap:8px;padding:16px 20px 22px;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow-md);transform:translateY(-130%);transition:transform .32s cubic-bezier(.22,1,.36,1);}
+  .nav-links.open{transform:translateY(0);}
+  .nav-pill{justify-content:flex-start;font-size:15px;padding:13px 16px;}
+  .nav.atop .nav-pill.soon,.nav.solid .nav-pill.soon{color:var(--ink-soft);border-color:var(--line-strong);}
+  .section{padding:72px 0;}
+  .standoff{padding:72px 0;}
+  .mh-cta .btn,.mcta .crow .btn{width:100%;}
+  .mh-tenets div{min-width:100%;border-left:none!important;padding-left:0!important;}
+  .mx-side{grid-template-columns:1fr;}
+  .mx-feat{min-height:330px;}
+  .so-col{padding:28px 22px;}
+  .ends{grid-template-columns:1fr;}
+  .end{border-right:none;border-bottom:1px solid var(--line);}
+  .end:last-child{border-bottom:none;}
+  .ladder{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:30px;}
+  .footer-brand{grid-column:1/-1;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;}
+  .rail-item .rcf{font-size:12.5px;}
+  .rail-item .rst{font-size:11.5px;}
+  .rail-photo .cap{font-size:12.5px;}
+  .mx-mid .desc,.mx-feat .cap .cf{font-size:13.5px;}
+  .mcta .mp-line button{padding:8px 4px;}
 }
 </style>
 </head>
 <body>
 
 <!-- ===== 导航 ===== -->
-<header class="nav" id="nav">
+<header class="nav atop" id="nav">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
       <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
-        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <defs><style>.wl1{fill:#ffffff;}.wl2{fill:#ea580c;}</style></defs>
         <g transform="translate(-1.06 -28.16)">
           <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
           <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
           <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
-          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
           <path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
-          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
         </g>
       </svg>
     </a>
@@ -307,342 +395,380 @@ a.cat-card:hover .cat-go svg{transform:translateX(4px);}
   </div>
 </header>
 
-<!-- ===== Hero ===== -->
-<section class="hero">
+<!-- ===== 深色品牌 Hero ===== -->
+<section class="mhero">
   <div class="container">
-    <div class="hero-inner">
-      <div class="hero-content">
-        <div class="hero-badge"><span class="dot"></span><span>WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span></div>
-        <h1>二手生意，<br><span class="highlight">从图开始。</span></h1>
-        <p class="hero-sub">WorkHogee 是只做二手行业的 AI 物料工作台。卖家拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案。从二手车起步，逐步覆盖二手房、潮玩、乐器、3C、办公等“图片决定成交”的二手品类——好货，不该输在图上。</p>
-        <div class="hero-cta">
-          <a href="/huoer-online.html" class="btn-primary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    <div class="mhero-in">
+      <div class="mh-left">
+        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span>WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span></div>
+        <h1 class="mh-title mh-anim" style="animation-delay:.10s">二手生意，<br>从<span class="ac">图</span>开始。</h1>
+        <p class="mh-sub mh-anim" style="animation-delay:.20s">WorkHogee 是只做二手行业的 AI 物料工作台。卖家拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案——从二手车起步，长成覆盖多个二手品类的产品矩阵。</p>
+        <div class="mh-cta mh-anim" style="animation-delay:.30s">
+          <a href="/huoer-online.html" class="btn btn-org">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             打开 Web 工作台
           </a>
-          <a href="/usedcar.html" class="btn-secondary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          <a href="/usedcar.html" class="btn btn-ghost-light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
             看看二手车伙计
           </a>
         </div>
-        <div class="hero-meta">
-          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>不修图，修信任</div>
-          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>行业知识库驱动</div>
-          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>合规红线不可关闭</div>
+        <div class="mh-tenets mh-anim" style="animation-delay:.40s">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>不修图，修信任</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>行业知识库驱动</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>合规红线不可关闭</div>
         </div>
       </div>
-      <div class="hero-visual">
-        <div class="hero-stage">
-          <div class="scene on"><img src="images/car-suv-showroom.jpg" alt="二手车展厅精修图"></div>
-          <div class="scene"><img src="images/car-suv-city.jpg" alt="二手车城市道路场景图"></div>
-          <div class="scene"><img src="images/car-suv-outdoor.jpg" alt="二手车户外生活场景图"></div>
-          <div class="scene-tag" id="sceneTag"><span class="sdot"></span>二手车伙计 · 展厅精修图</div>
-        </div>
-        <div class="hero-float hf1">
-          <div class="fl-label">品类矩阵</div>
-          <div class="fl-value"><em>6</em> 大二手品类</div>
-          <div class="fl-sub">只做图片决定成交的非标品</div>
-        </div>
-        <div class="hero-float hf2">
-          <div class="fl-label">能力底座</div>
-          <div class="fl-value"><em>5</em> 层能力模型</div>
-          <div class="fl-sub">知识库 · 合规 · 全平台</div>
-        </div>
-        <div class="hero-float hf3">
-          <div class="hf-shield">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.2" y1="4.2" x2="19.8" y2="19.8"/></svg></span>
-            <span><span class="t">拒绝图骗</span><br><span class="s">不修图，修信任</span></span>
+      <div class="mh-right mh-anim" style="animation-delay:.26s">
+        <div class="rail">
+          <div class="rail-h"><span class="rt">品类矩阵</span><span class="rs">只做图片决定成交的非标品</span></div>
+          <a href="/usedcar.html" class="rail-item live">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
+            <span><span class="rnm">二手车伙计</span><span class="rcf">车况 vs 图骗</span></span>
+            <span class="rst">已上线</span>
+          </a>
+          <button type="button" class="rail-item soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+            <span><span class="rnm">二手房伙计</span><span class="rcf">格局 vs 美化失真</span></span>
+            <span class="rst">即将上线</span>
+          </button>
+          <button type="button" class="rail-item soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
+            <span><span class="rnm">二手潮玩伙计</span><span class="rcf">成色 vs 瑕疵抹除</span></span>
+            <span class="rst">即将上线</span>
+          </button>
+          <button type="button" class="rail-item plan" data-soon="二手乐器伙计已在产品路线图中，将在复制期后启动，敬请期待">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+            <span><span class="rnm">二手乐器伙计</span><span class="rcf">品相 vs 证据隐藏</span></span>
+            <span class="rst">规划中</span>
+          </button>
+          <button type="button" class="rail-item plan" data-soon="二手 3C 伙计已在产品路线图中，将在扩展期启动，敬请期待">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+            <span><span class="rnm">二手 3C 伙计</span><span class="rcf">序列号 vs 隐瞒故障</span></span>
+            <span class="rst">规划中</span>
+          </button>
+          <button type="button" class="rail-item plan" data-soon="二手办公伙计已在产品路线图中，将在规模化阶段启动，敬请期待">
+            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="9" width="12" height="8"/><path d="M6 17H4v4h16v-4h-2"/><path d="M10 13h.01M14 13h.01"/></svg></span>
+            <span><span class="rnm">二手办公伙计</span><span class="rcf">批量 vs 效率低</span></span>
+            <span class="rst">规划中</span>
+          </button>
+          <div class="rail-photo">
+            <img src="images/car-suv-outdoor.jpg" alt="二手车伙计生成的户外生活场景图">
+            <span class="cap">二手车伙计 · 真实车况场景图</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ===== 数据条 ===== -->
-<section class="trust-bar">
-  <div class="container">
-    <div class="trust-grid">
-      <div class="trust-item reveal"><div class="num">6<small> 个</small></div><div class="label">只做“图片决定成交”的二手品类</div></div>
-      <div class="trust-item reveal reveal-d1"><div class="num">5<small> 层</small></div><div class="label">从生图到数据反馈的能力模型</div></div>
-      <div class="trust-item reveal reveal-d2"><div class="num">4<small> 端</small></div><div class="label">小程序 · Web · 后台 · API 协同</div></div>
-      <div class="trust-item reveal reveal-d3"><div class="num">1<small> 条</small></div><div class="label">不可关闭的合规底线</div></div>
+    <div class="mh-creed mh-anim" style="animation-delay:.52s">
+      <div class="big">好货，不该输在<em>图</em>上。</div>
+      <div class="sm">WorkHogee 只做二手行业，不碰新品、不做通用生图——把“真实”变成“信任”，把“好货”变成“好卖”。</div>
     </div>
   </div>
 </section>
-
 <!-- ===== 品类矩阵 ===== -->
-<section class="section alt" id="categories">
+<section class="section white">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">品类矩阵</span>
-      <h2>只做图片决定成交的二手品类</h2>
-      <p>二手非标品的成色、瑕疵与证据，直接决定成交与纠纷。WorkHogee 只进入“过度美化会出事”的行业，用行业知识库把“真实”变成“信任”。</p>
+    <div class="shead reveal">
+      <div class="kick">产品矩阵 · Categories</div>
+      <div>
+        <h2>只做“图片决定成交”的二手品类</h2>
+        <p>二手非标品的成色、瑕疵与证据，直接决定成交与纠纷。WorkHogee 只进入“过度美化会出事”的行业，用行业知识库把“真实”变成“信任”。</p>
+      </div>
     </div>
-    <div class="cat-grid">
-      <a href="/usedcar.html" class="cat-card reveal">
-        <span class="cat-status live">已上线</span>
-        <div class="cat-ph"><img src="images/car-suv-showroom.jpg" alt="二手车伙计展厅精修图"></div>
-        <div class="cat-bd">
+    <div class="mx-grid">
+      <a href="/usedcar.html" class="mx-feat reveal">
+        <span class="badge">已上线 · P0</span>
+        <div class="ph"><img src="images/car-suv-showroom.jpg" alt="二手车伙计展厅精修图"></div>
+        <div class="cap">
           <h3>二手车伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>车况 vs 图骗</b>。外观内饰细节拍几张，自动出精修图、场景图、360、短视频与车源文案。</p>
-          <span class="cat-go">进入二手车伙计 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+          <div class="cf">核心矛盾：车况 vs 图骗。外观/内饰/细节智能拍摄，自动出精修图、场景图、360、短视频与车源文案。</div>
+          <span class="go">进入二手车伙计
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
         </div>
       </a>
-      <div class="cat-card reveal reveal-d1">
-        <span class="cat-status soon">即将上线</span>
-        <div class="cat-ph ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></div>
-        <div class="cat-bd">
-          <h3>二手房伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>格局 vs 美化失真</b>。还原真实户型与采光，拒绝广角变形与色差误导。</p>
-          <span class="cat-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>内测筹备中</span>
-        </div>
+      <div class="mx-side">
+        <button type="button" class="mx-mid reveal" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">
+          <span class="st">即将上线 · P1</span>
+          <span class="top">
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+            <span><h3>二手房伙计</h3><div class="cf">格局 vs 美化失真</div></span>
+          </span>
+          <p class="desc">还原真实户型、朝向与采光，拒绝广角畸变、调色失真引发的带看落差与纠纷。</p>
+        </button>
+        <button type="button" class="mx-mid reveal" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">
+          <span class="st">即将上线 · P1</span>
+          <span class="top">
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
+            <span><h3>二手潮玩伙计</h3><div class="cf">成色 vs 瑕疵抹除</div></span>
+          </span>
+          <p class="desc">盒卡、漆面、磨损如实呈现，不抹瑕疵、不造“全新成色”，让买家所见即所得。</p>
+        </button>
       </div>
-      <div class="cat-card reveal reveal-d2">
-        <span class="cat-status soon">即将上线</span>
-        <div class="cat-ph ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8.5" width="16" height="12.5" rx="2.2"/><path d="M9 8.5a3 3 0 0 1 6 0"/><circle cx="9" cy="14.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="15" cy="14.2" r="1.05" fill="currentColor" stroke="none"/><path d="M9.5 17.5h5"/></svg></div>
-        <div class="cat-bd">
-          <h3>二手潮玩伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>成色 vs 瑕疵抹除</b>。盒卡、漆面、磨损如实呈现，不把瑕疵“修没了”。</p>
-          <span class="cat-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>内测筹备中</span>
-        </div>
+      <div class="mx-index reveal">
+        <button type="button" class="mx-row" data-soon="二手乐器伙计已在产品路线图中，将在复制期后启动，敬请期待">
+          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <span><span class="rn">二手乐器伙计</span><div class="rc">品相 vs 证据隐藏 · 漆面、磕碰、序列号与配件留证</div></span>
+          <span class="rst">规划中 · P2</span>
+        </button>
+        <button type="button" class="mx-row" data-soon="二手 3C 伙计已在产品路线图中，将在扩展期启动，敬请期待">
+          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+          <span><span class="rn">二手 3C 伙计</span><div class="rc">序列号 vs 隐瞒故障 · 机身、接口、屏幕与序列号留证</div></span>
+          <span class="rst">规划中 · P2</span>
+        </button>
+        <button type="button" class="mx-row" data-soon="二手办公伙计已在产品路线图中，将在规模化阶段启动，敬请期待">
+          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="9" width="12" height="8"/><path d="M6 17H4v4h16v-4h-2"/></svg></span>
+          <span><span class="rn">二手办公伙计</span><div class="rc">批量 vs 效率低 · 批量设备、家用统一规格出图与素材管理</div></span>
+          <span class="rst">规划中 · P3</span>
+        </button>
       </div>
-      <div class="cat-card reveal">
-        <span class="cat-status plan">规划中</span>
-        <div class="cat-ph ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16.5" r="4.2"/><path d="M12.4 13.1 20.5 5"/><path d="M17.6 2.4 20.5 5 22.6 2.9"/><circle cx="9" cy="16.5" r="1"/></svg></div>
-        <div class="cat-bd">
-          <h3>二手乐器伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>品相 vs 证据隐藏</b>。漆面、磕碰、序列号与配件留证，音色卖点专业表达。</p>
-          <span class="cat-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="12"/><line x1="9" y1="4" x2="15" y2="4"/></svg>路线规划中</span>
+      <div class="mx-nodo reveal">
+        <div class="nd-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>明确不做</div>
+        <div class="nd-list">
+          <span class="nd"><b>二手服饰</b> · 核心是真假</span>
+          <span class="nd"><b>二手奢品</b> · 需专业鉴定</span>
+          <span class="nd"><b>二手家具</b> · 物流重、决策链长</span>
         </div>
-      </div>
-      <div class="cat-card reveal reveal-d1">
-        <span class="cat-status plan">规划中</span>
-        <div class="cat-ph ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><line x1="10.8" y1="18.2" x2="13.2" y2="18.2"/></svg></div>
-        <div class="cat-bd">
-          <h3>二手 3C 伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>序列号 vs 隐瞒故障</b>。机身、接口、屏幕与序列号清晰留档，故障不修饰。</p>
-          <span class="cat-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="12"/><line x1="9" y1="4" x2="15" y2="4"/></svg>路线规划中</span>
-        </div>
-      </div>
-      <div class="cat-card reveal reveal-d2">
-        <span class="cat-status plan">规划中</span>
-        <div class="cat-ph ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><rect x="3" y="9" width="18" height="7.5" rx="1.5"/><rect x="7" y="13.5" width="10" height="7" rx="1"/><line x1="8" y1="20.5" x2="16" y2="20.5"/></svg></div>
-        <div class="cat-bd">
-          <h3>二手办公伙计</h3>
-          <p class="cat-conflict">核心矛盾：<b>批量 vs 效率低</b>。批量设备、家具统一规格出图与素材管理，适合寄卖与渠道。</p>
-          <span class="cat-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="12"/><line x1="9" y1="4" x2="15" y2="4"/></svg>路线规划中</span>
-        </div>
+        <div class="nd-r">这些都不是“图好”能解决的，坚决不碰。</div>
       </div>
     </div>
-    <p class="cat-note reveal">WorkHogee 有明确的<b>不做清单</b>：二手服饰的核心是“真假”、奢品需要鉴定能力、家具物流重且决策链长——这些都不是“图好不好”能解决的，坚决不做。</p>
   </div>
 </section>
-
-<!-- ===== 合规态度 ===== -->
-<section class="section">
+<!-- ===== 图骗 vs 真实 对峙 ===== -->
+<section class="standoff">
   <div class="container">
-    <div class="compliance reveal">
-      <div class="section-head">
-        <span class="section-kicker" style="color:var(--orange-light);">不修图，修信任</span>
+    <div class="shead reveal">
+      <div class="kick">品牌态度 · Trust</div>
+      <div>
         <h2>好货，不该输在图上；但 AI 不能帮你造假</h2>
-        <p>二手是信任生意。过度美化只会带来退货、纠纷和差评。Hogee 该补齐的是“卖相”，不是车况、成色和证据——这套合规引擎跨品类 70% 复用，且不可关闭。</p>
+        <p>二手是信任生意。行业靠“图骗”换来的点击，最终都会变成退货、纠纷和差评。WorkHogee 的选择是：该补的光补上，该留的瑕疵一个都不能少。</p>
       </div>
-      <div class="comp-grid">
-        <div class="comp-item">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-          <div><h4>绝不改变商品原色</h4><p>生成后用颜色直方图后验比对，成品与原图色差超阈值，直接拦截重生成。</p></div>
-        </div>
-        <div class="comp-item">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.2" y1="4.2" x2="19.8" y2="19.8"/></svg></span>
-          <div><h4>不抹除瑕疵与证据</h4><p>划痕、磨损、磕碰、故障与序列号原样保留，不做消除式精修，避免交付纠纷。</p></div>
-        </div>
-        <div class="comp-item">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <div><h4>车牌 / 人脸 / 隐私脱敏</h4><p>自动识别并模糊车牌、随车人员人脸、车架号与序列号，保护买卖双方隐私。</p></div>
-        </div>
-        <div class="comp-item">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-          <div><h4>AI 标识 + 文案红线</h4><p>成品带“AI 生成”标识与元数据；文案拦截“无事故”“原版原漆”“极品”等无依据绝对化承诺。</p></div>
-        </div>
-      </div>
-      <div class="motto">拒绝图骗 · 把“真实”变成“信任”，把“好货”变成“好卖”</div>
     </div>
+    <div class="so-grid reveal">
+      <div class="so-col so-bad">
+        <span class="so-tag">行业里的“图骗”</span>
+        <h3>越拍越美，越美越退</h3>
+        <div class="sub">过度美化只换来短期点击，代价是退货、纠纷与差评。</div>
+        <ul class="so-list">
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>调亮漆面、套用统一滤镜，<b>掩盖色差与新旧程度</b></span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>磨皮式精修，<b>抹掉划痕、磕碰、磨损</b></span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>靠广角与刁钻角度，<b>隐藏事故、维修与硬伤</b></span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>堆砌“无事故、原版原漆、极品”等<b>违禁话术</b></span></li>
+        </ul>
+        <div class="ban-words">
+          <span>无事故</span><span>零事故</span><span>原版原漆</span><span>原车原漆</span><span>极品</span><span>完美</span><span>百分百</span><span>终身</span>
+        </div>
+      </div>
+      <div class="so-mid">
+        <span class="vline"></span>
+        <span class="vs">VS</span>
+        <span class="vline"></span>
+      </div>
+      <div class="so-col so-good">
+        <span class="so-tag">WorkHogee 的底线</span>
+        <h3>不修图，修信任</h3>
+        <div class="sub">合规引擎跨品类约 70% 复用，默认开启、不可关闭。</div>
+        <ul class="so-list">
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>不改商品颜色</b>：成品与原图色差超阈值，自动拦截重做</span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>不抹瑕疵与证据</b>：划痕、磕碰、故障、磨损原样保留</span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>车牌 / 人脸 / VIN 脱敏</b>：自动模糊，保护买卖双方隐私</span></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>AI 标识 + 文案红线</b>：成品带生成标识，违禁词不出稿</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="so-foot reveal">拒绝图骗，把<em>“真实”</em>变成<em>“信任”</em>，把<em>“好货”</em>变成<em>“好卖”</em>。</div>
   </div>
 </section>
-
-<!-- ===== 五层能力 ===== -->
-<section class="section sand" id="layers">
+<!-- ===== 五层能力地层 ===== -->
+<section class="section sand">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">能力矩阵</span>
-      <h2>不是出图工具，是一套分层的 AI 工作流</h2>
-      <p>基础层全品类共用，知识层按行业重做，合规层可配置。新品类进入时，方法论复用约 70%，只需重做 30% 的行业适配。</p>
-    </div>
-    <div class="layer-stack">
-      <div class="layer-row reveal">
-        <div class="lvl">L5</div>
-        <div><div class="lname">数据层 · 反馈闭环</div><div class="ldesc">卖家评分、最佳输出选择、知识库持续优化，越用越懂这门生意。</div></div>
-        <div class="lpct"><div class="pct">100%</div><div class="ptag">全品类复用</div></div>
-      </div>
-      <div class="layer-row reveal reveal-d1">
-        <div class="lvl">L4</div>
-        <div><div class="lname">渠道层 · 多平台适配</div><div class="ldesc">闲鱼、得物、小红书、朋友圈、抖音、懂车帝、贝壳等规格自动适配。</div></div>
-        <div class="lpct"><div class="pct">90%</div><div class="ptag">跨品类复用</div></div>
-      </div>
-      <div class="layer-row reveal reveal-d2">
-        <div class="lvl">L3</div>
-        <div><div class="lname">合规层 · 合规引擎</div><div class="ldesc">不改颜色、不抹瑕疵、不藏证据、AI 标识，导出前强制质检。</div></div>
-        <div class="lpct"><div class="pct">70%</div><div class="ptag">跨品类复用</div></div>
-      </div>
-      <div class="layer-row remake reveal reveal-d3">
-        <div class="lvl">L2</div>
-        <div><div class="lname">知识层 · 行业知识库</div><div class="ldesc">品类库、卖点库、成色标准、话术库——这是每个行业的护城河。</div></div>
-        <div class="lpct"><div class="pct">30%</div><div class="ptag">按品类重做</div></div>
-      </div>
-      <div class="layer-row reveal reveal-d4">
-        <div class="lvl">L1</div>
-        <div><div class="lname">基础层 · 生图工具</div><div class="ldesc">拍摄引导、质量预检、图像精修、多平台导出，全品类共用的底座。</div></div>
-        <div class="lpct"><div class="pct">100%</div><div class="ptag">全品类复用</div></div>
+    <div class="shead reveal">
+      <div class="kick">能力矩阵 · Stack</div>
+      <div>
+        <h2>不是出图工具，是一套分层的 AI 工作流</h2>
+        <p>基础层全品类共用，知识层按行业重做，合规层可配置。新品类进入时方法论复用约 70%，只需重做 30% 的行业适配——这是矩阵能持续扩张的原因。</p>
       </div>
     </div>
-    <p class="layer-up reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>能力自下而上层层沉淀，数据反过来让每一层更准</p>
-  </div>
-</section>
-
-<!-- ===== 三步工作流 ===== -->
-<section class="section alt" id="workflow">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">一条工作流</span>
-      <h2>收进来，拍几张，卖出去</h2>
-      <p>不是单点出图，而是把二手卖家从拍摄、质检、识别、生成、合规到多平台导出的整条物料链路自动化。</p>
-    </div>
-    <div class="cap-grid">
-      <div class="cap-card reveal">
-        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-        <div class="step-no">STEP 01 · 收进来</div>
-        <h3>点位引导，拍几张就够</h3>
-        <p>小程序按品类给出标准拍摄点位，举起手机就拍；每张图自动质检模糊、曝光、角度与遮挡，不合格当场提示重拍。</p>
-        <ul class="cap-features"><li>分品类标准点位引导</li><li>清晰度 / 曝光 / 完整度评分</li><li>缺拍漏拍自动提醒</li></ul>
+    <div class="lstack reveal">
+      <div class="lband w100 alt">
+        <div class="lv"><b>L5</b></div>
+        <div><div class="ln">数据层 · 反馈闭环</div><div class="ld">卖家评分、最佳输出选择、知识库持续优化，越用越懂这门生意。</div></div>
+        <div class="lp"><b>100%</b><span>全品类复用</span></div>
       </div>
-      <div class="cap-card reveal reveal-d1">
-        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.9L21.6 17.6 19.7 18.3 19 20.2l-.7-1.9L16.4 17.6l1.9-.7z"/></svg></div>
-        <div class="step-no">STEP 02 · 拍几张</div>
-        <h3>行业大脑，出全套物料</h3>
-        <p>识别品类、型号与成色，调取该行业的卖点库、成色标准与平台规则，一次生成精修图、场景图、短视频与文案。</p>
-        <ul class="cap-features"><li>品类 / 型号 / 成色识别</li><li>精修图 · 场景图 · 视频 · 文案</li><li>行业知识库驱动，不套通用模板</li></ul>
+      <div class="lband w92">
+        <div class="lv"><b>L4</b></div>
+        <div><div class="ln">渠道层 · 多平台适配</div><div class="ld">闲鱼、得物、小红书、朋友圈、抖音、懂车帝、贝壳等渠道规格自动适配。</div></div>
+        <div class="lp"><b>90%</b><span>跨品类复用</span></div>
       </div>
-      <div class="cap-card reveal reveal-d2">
-        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-        <div class="step-no">STEP 03 · 卖出去</div>
-        <h3>合规把关，全平台上架</h3>
-        <p>导出前逐项过合规红线，再按各平台比例与尺寸自动裁切，横竖版一次备齐，打包或草稿箱一键分发上架。</p>
-        <ul class="cap-features"><li>合规红线强制质检</li><li>多平台规格自动裁切</li><li>打包 / 二维码 / 草稿箱分发</li></ul>
+      <div class="lband w78 alt">
+        <div class="lv"><b>L3</b></div>
+        <div><div class="ln">合规层 · 合规引擎</div><div class="ld">不改颜色、不抹瑕疵、不藏事故、AI 标识，输出前强制质检，默认不可关闭。</div></div>
+        <div class="lp"><b>70%</b><span>跨品类复用</span></div>
+      </div>
+      <div class="lband w46">
+        <div class="lv"><b>L2</b></div>
+        <div><div class="ln">知识层 · 行业知识库</div><div class="ld">品类库、卖点库、成色标准、话术库——每个行业独有的护城河，按品类插拔重做。</div></div>
+        <div class="lp"><b>30%</b><span>按品类重做</span></div>
+      </div>
+      <div class="lband w100">
+        <div class="lv"><b>L1</b></div>
+        <div><div class="ln">基础层 · 生图工具</div><div class="ld">拍摄引导、质量预检、图像精修、多平台导出，全品类共用的生产底座。</div></div>
+        <div class="lp"><b>100%</b><span>全品类复用</span></div>
+      </div>
+      <div class="layer-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+        能力自下而上沉淀，成交数据反向回流，让每一层越用越准。
       </div>
     </div>
   </div>
 </section>
-
-<!-- ===== 四端协同 ===== -->
-<section class="section" id="platforms">
+<!-- ===== 一条工作流 ===== -->
+<section class="section white">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">平台矩阵</span>
-      <h2>小程序采集，Web 生产，后台运营，API 集成</h2>
-      <p>同一套行业知识库与物料库在四端打通，从个人卖家到平台渠道，各用各的入口。</p>
+    <div class="shead reveal">
+      <div class="kick">一条工作流 · Workflow</div>
+      <div>
+        <h2>收进来，拍几张，卖出去</h2>
+        <p>不是单点出图工具，而是把二手卖家从拍摄、质检、识别、生成、合规到多平台导出的整条物料链路自动化。</p>
+      </div>
     </div>
-    <div class="grid-4">
-      <div class="end-card reveal">
-        <span class="e-tag">P0</span>
-        <div class="end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+    <div class="flow reveal">
+      <div class="fstep">
+        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.5 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.5A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.5Z"/></svg></div>
+        <div class="fno">STEP 01</div>
+        <h3>收进来</h3>
+        <p>多渠道货源统一收口，小程序点位引导、举起手机就知道怎么拍，不合格当场提示重拍。</p>
+        <div class="ftags"><span>多渠道货源收口</span><span>点位引导拍摄</span><span>多张智能质检</span></div>
+      </div>
+      <div class="fstep">
+        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3.2"/></svg></div>
+        <div class="fno">STEP 02</div>
+        <h3>拍几张</h3>
+        <p>行业大脑识别品类与成色，一次生成精修图、场景图、短视频与文案，合规预检全程兜底。</p>
+        <div class="ftags"><span>品类 / 成色识别</span><span>精修·场景·视频·文案</span><span>合规强制质检</span></div>
+      </div>
+      <div class="fstep">
+        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg></div>
+        <div class="fno">STEP 03</div>
+        <h3>卖出去</h3>
+        <p>自动校正各平台比例与尺寸，合规水印、AI 标识一次齐备，多平台一键分发上架。</p>
+        <div class="ftags"><span>各平台尺寸适配</span><span>水印 / AI 标识</span><span>打包 / 草稿分发</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== 平台矩阵：四端 + 用户分层 ===== -->
+<section class="section sand">
+  <div class="container">
+    <div class="shead reveal">
+      <div class="kick">平台矩阵 · Platform</div>
+      <div>
+        <h2>小程序采集，Web 生产，后台运营，API 集成</h2>
+        <p>同一套行业知识库与物料库在四端打通，从个人卖家到平台渠道，各用各的入口。</p>
+      </div>
+    </div>
+    <div class="ends reveal">
+      <div class="end">
+        <span class="pri p0">P0</span>
+        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
         <h3>微信小程序</h3>
-        <div class="esub">移动采集端</div>
+        <div class="erole">移动采集端</div>
         <p>拍摄引导、上传、任务进度、结果预览，收货现场举起手机就能干活。</p>
       </div>
-      <div class="end-card reveal reveal-d1">
-        <span class="e-tag">P0</span>
-        <div class="end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <div class="end">
+        <span class="pri p0">P0</span>
+        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
         <h3>Web 工作台</h3>
-        <div class="esub">管理生产端</div>
-        <p>商品管理、生成配置、批量生成、素材库与多平台导出，适合在店里批量生产。</p>
+        <div class="erole">管理生产端</div>
+        <p>商品管理、生成配置、批量生成、素材库与多平台导出，适合在店里批量处理。</p>
       </div>
-      <div class="end-card reveal reveal-d2">
-        <span class="e-tag gray">P1</span>
-        <div class="end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="#fff"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="#fff"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="18" r="2.2" fill="#fff"/></svg></div>
+      <div class="end">
+        <span class="pri p1">P1</span>
+        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="18" r="2.2"/></svg></span>
         <h3>管理后台</h3>
-        <div class="esub">平台运营端</div>
+        <div class="erole">平台运营端</div>
         <p>知识库、模板、平台规格、合规规则与用户订单统一管理。</p>
       </div>
-      <div class="end-card reveal reveal-d3">
-        <span class="e-tag gray">P2</span>
-        <div class="end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+      <div class="end">
+        <span class="pri p2">P2</span>
+        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
         <h3>API / SDK</h3>
-        <div class="esub">第三方集成</div>
+        <div class="erole">第三方集成</div>
         <p>面向平台与渠道的批量生成、白标与定制能力，成为行业基础设施。</p>
       </div>
     </div>
+    <div class="users-title reveal">从个人卖家到平台渠道，一套体系全覆盖</div>
+    <div class="ladder reveal">
+      <div class="rung"><div class="cid">C1</div><h4>个人卖家</h4><p>偶尔卖闲置，即拍即用。</p><div class="pay">需求重心 · 零门槛快速出图</div></div>
+      <div class="rung"><div class="cid">C2</div><h4>专业卖家</h4><p>专职二手卖家，走量经营。</p><div class="pay">需求重心 · 批量与多平台效率</div></div>
+      <div class="rung"><div class="cid">C3</div><h4>寄卖店 / 门店</h4><p>车行、中介、潮玩店。</p><div class="pay">需求重心 · 协作、素材库与计费</div></div>
+      <div class="rung"><div class="cid">C4</div><h4>平台 / 渠道</h4><p>闲鱼、得物、懂车帝等。</p><div class="pay">需求重心 · 批量、白标与系统集成</div></div>
+    </div>
   </div>
 </section>
-
-<!-- ===== 入口选择 ===== -->
-<section class="section sand" id="entry">
+<!-- ===== 路线图 ===== -->
+<section class="section white">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="section-kicker">两种用法，随你选</span>
-      <h2>店里用 Web，收货用小程序</h2>
-      <p>功能完整的浏览器工作台，和收货现场随手拍的微信小程序，物料在同一套行业知识库里打通。</p>
-    </div>
-    <div class="entry-grid">
-      <div class="entry-card web reveal">
-        <span class="rec">推荐 · 内测开放</span>
-        <div class="eicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <h3>Web 工作台</h3>
-        <p>浏览器打开即用，内测期免注册、不限量。完整的上传质检、品类识别、场景生成、多平台尺寸导出与文案，适合在店里批量处理二手物料。</p>
-        <ul class="entry-feats">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>多图上传与逐张智能质检</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>精修图 / 场景图 / 视频 / 文案</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>多平台尺寸一键导出</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>内测期免注册、不限量</li>
-        </ul>
-        <a href="/huoer-online.html" class="btn-primary">立即打开 Web 工作台
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
+    <div class="shead reveal">
+      <div class="kick">产品路线图 · Roadmap</div>
+      <div>
+        <h2>从一个品类，到一个二手行业矩阵</h2>
+        <p>先把二手车这一个品类打透，再用约 70% 复用的方法论逐层复制——不追热点，只进入“图片决定成交、且过度美化会出事”的二手品类。</p>
       </div>
-      <div class="entry-card mp reveal reveal-d1">
-        <div class="eicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-        <h3>微信小程序</h3>
-        <p>收货现场举起手机就拍，点位引导、质检、上传一气呵成，回到店里在 Web 端继续精修与导出，专为移动收货场景设计。</p>
-        <ul class="entry-feats">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>收货现场点位引导拍摄</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>拍照即质检、即上传</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>与 Web 端物料库打通</li>
-        </ul>
-        <div class="mp-cta">
-          <p class="qr-note">小程序正在内测筹备中，开放后优先通知预约商家</p>
-          <button class="btn-line" onclick="mpNotify()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            预约小程序内测
-          </button>
+    </div>
+    <div class="tl reveal">
+      <div class="tln now">
+        <span class="dot"></span>
+        <div class="card">
+          <div class="when">验证期 · 当前</div>
+          <h4>二手车伙计 MVP</h4>
+          <p>二手车伙计上线，跑通小程序采集 + Web 工作台，验证“真实也能好卖”的核心闭环。</p>
+        </div>
+      </div>
+      <div class="tln">
+        <span class="dot"></span>
+        <div class="card">
+          <div class="when">复制期 · 3–6 个月</div>
+          <h4>二手房 / 潮玩 + 后台</h4>
+          <p>二手房、二手潮玩伙计上线，管理后台建成，验证方法论跨品类复制能力。</p>
+        </div>
+      </div>
+      <div class="tln">
+        <span class="dot"></span>
+        <div class="card">
+          <div class="when">扩展期 · 6–12 个月</div>
+          <h4>乐器 / 3C + API</h4>
+          <p>二手乐器、二手 3C 伙计上线，API/SDK 开放，接入更多交易渠道与平台。</p>
+        </div>
+      </div>
+      <div class="tln">
+        <span class="dot"></span>
+        <div class="card">
+          <div class="when">规模化 · 12–24 个月</div>
+          <h4>办公 + 企业版</h4>
+          <p>二手办公伙计上线，企业版推出，成为二手行业的物料基础设施。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- ===== 最终 CTA ===== -->
-<section class="section" style="padding-top:0;">
+<!-- ===== 收尾 CTA ===== -->
+<section class="mcta">
   <div class="container">
-    <div class="final-cta reveal">
-      <h2>二手生意，从图开始</h2>
-      <p>上传一张手机随手拍的二手商品图，看看 Hogee 怎么把它变成能直接上架的物料。内测期免注册。</p>
-      <div class="cta-row">
-        <a href="/huoer-online.html" class="btn-primary btn-white">打开 Web 工作台
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <button class="btn-primary btn-ghost" onclick="mpNotify()">预约小程序内测</button>
-      </div>
+    <div class="k2 reveal">WorkHogee · 二手生图伙计</div>
+    <h2 class="reveal">让二手产品的好，<br>被看见。</h2>
+    <p class="reveal">二手生意，从图开始。上传一张手机随手拍的二手商品图，看看 Hogee 怎么把它变成能直接上架的物料。内测期无需注册。</p>
+    <div class="crow reveal">
+      <a href="/huoer-online.html" class="btn btn-org">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        打开 Web 工作台
+      </a>
+      <a href="/usedcar.html" class="btn btn-ghost-light">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        进入二手车伙计
+      </a>
     </div>
+    <div class="mp-line reveal">微信小程序正在内测筹备中，<button type="button" onclick="mpNotify()">预约小程序内测</button></div>
   </div>
 </section>
 
@@ -658,8 +784,8 @@ a.cat-card:hover .cat-go svg{transform:translateX(4px);}
               <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
               <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
               <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
-              <path class="fl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
-              <path class="fl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+              <path class="fl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+              <path class="fl1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
               <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
             </g>
           </svg>
@@ -704,38 +830,29 @@ a.cat-card:hover .cat-go svg{transform:translateX(4px);}
 </footer>
 
 <script>
-const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20);});
-const navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
-navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));
-navLinks.querySelectorAll('a,button').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+const nav=document.getElementById('nav'),navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
+function applyNav(){
+  const open=navLinks.classList.contains('open');
+  nav.classList.toggle('panel-open',open);
+  if(open){nav.classList.remove('atop','solid');}
+  else if(window.scrollY>40){nav.classList.remove('atop','panel-open');nav.classList.add('solid');}
+  else{nav.classList.remove('solid','panel-open');nav.classList.add('atop');}
+}
+window.addEventListener('scroll',applyNav,{passive:true});
+navToggle.addEventListener('click',()=>{navLinks.classList.toggle('open');applyNav();});
+navLinks.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',()=>{navLinks.classList.remove('open');applyNav();});});
+applyNav();
 function navToast(msg){
   var t=document.getElementById('navToast');
   if(!t){t=document.createElement('div');t.id='navToast';t.className='nav-toast';document.body.appendChild(t);}
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2600);
 }
-document.querySelectorAll('.nav-pill.soon[data-soon]').forEach(function(b){
-  b.addEventListener('click',function(){navLinks.classList.remove('open');navToast(b.getAttribute('data-soon'));});
+document.querySelectorAll('[data-soon]').forEach(function(b){
+  b.addEventListener('click',function(){navLinks.classList.remove('open');applyNav();navToast(b.getAttribute('data-soon'));});
 });
-
-// 滚动揭示
-const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-// Hero 三场景轮播
-(function(){
-  const scenes=document.querySelectorAll('.hero-stage .scene');
-  const tag=document.getElementById('sceneTag');
-  const names=['二手车伙计 · 展厅精修图','二手车伙计 · 城市道路场景','二手车伙计 · 户外生活场景'];
-  if(!scenes.length)return;
-  let i=0;
-  function show(n){scenes.forEach((s,k)=>s.classList.toggle('on',k===n));if(tag)tag.innerHTML='<span class="sdot"></span>'+names[n];}
-  show(0);
-  setInterval(()=>{i=(i+1)%scenes.length;show(i);},3800);
-})();
-
-// 小程序内测提示
+const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 function mpNotify(){alert('微信小程序正在内测筹备中，请通过 Web 版先行体验；如需小程序内测资格，邮件联系 hello@workhogee.com');}
 </script>
 </body>
