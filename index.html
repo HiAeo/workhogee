@@ -37,7 +37,7 @@ img{max-width:100%;display:block;}
 .nav-pill.on:hover{color:var(--white);background:var(--orange-deep);}
 .nav-pill.soon{color:var(--ink-soft);background:transparent;border-color:var(--line-strong);}
 .nav-pill.soon:hover{color:var(--ink);border-color:var(--ink-muted);background:rgba(28,25,23,.03);}
-.nav-pill .soon-badge{position:absolute;top:-9px;right:-9px;background:var(--orange-soft);color:var(--orange-deep);font-size:10px;font-weight:600;line-height:1;padding:3px 6px;border-radius:999px;border:1px solid rgba(234,88,12,.28);white-space:nowrap;letter-spacing:.2px;}
+.nav-pill .soon-badge{display:inline-flex;align-items:center;margin-left:0;background:var(--orange-soft);color:var(--orange-deep);font-size:10px;font-weight:600;line-height:1;padding:3px 7px;border-radius:999px;border:1px solid rgba(234,88,12,.28);white-space:nowrap;letter-spacing:.2px;}
 .nav-admin{margin-left:8px;}
 .nav-toast{position:fixed;top:84px;left:50%;transform:translate(-50%,-12px);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 10px 30px rgba(28,25,23,.25);opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.22,1,.36,1);z-index:9999;max-width:88vw;text-align:center;}
 .nav-toast.show{opacity:1;transform:translate(-50%,0);}
@@ -248,9 +248,7 @@ img{max-width:100%;display:block;}
   .nav-links.open{display:flex;}
   .nav-links a{padding:12px 0;}
   .nav-pill{align-self:flex-start;padding:10px 15px;margin:5px 0;}
-  .nav-pill .soon-badge{position:static;margin-left:8px;}
   .nav-admin{margin-left:0;}
-  .nav-cta{justify-content:center;margin-top:8px;}
   .nav-toggle{display:flex;}
   .hero-inner{grid-template-columns:1fr;gap:40px;}
   .hero-visual{max-width:480px;margin:0 auto;width:100%;}
@@ -297,7 +295,6 @@ img{max-width:100%;display:block;}
       <button type="button" class="nav-pill soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">二手房伙计<span class="soon-badge">即将上线</span></button>
       <button type="button" class="nav-pill soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">二手潮玩伙计<span class="soon-badge">即将上线</span></button>
       <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer" class="nav-admin">管理后台</a>
-      <a class="nav-cta" href="/huoer-online.html">免费使用 Web 版</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
@@ -314,7 +311,7 @@ img{max-width:100%;display:block;}
         <div class="hero-cta">
           <a href="/huoer-online.html" class="btn-primary">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            免费使用 Web 版
+            打开 Web 工作台
           </a>
           <a href="#entry" class="btn-secondary" onclick="mpNotify();return false;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
@@ -623,7 +620,7 @@ img{max-width:100%;display:block;}
       <h2>下一台车，让伙计帮你出物料</h2>
       <p>上传一张手机随手拍的车图，20 秒看看 Hogee 能把它变成什么样。内测期免费，不用注册。</p>
       <div class="cta-row">
-        <a href="/huoer-online.html" class="btn-primary btn-white">免费开始处理车图
+        <a href="/huoer-online.html" class="btn-primary btn-white">开始处理车图
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <button class="btn-primary btn-ghost" onclick="mpNotify()">预约小程序内测</button>
