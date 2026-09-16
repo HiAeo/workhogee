@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee 工作台 · 选择行业</title>
+<meta name="description" content="WorkHogee 二手生图伙计 Web 工作台：先选择二手品类，进入对应的 AI 物料工作台。内测期率先开放二手车伙计，二手房、潮玩、乐器、3C、办公陆续上线。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
+<style>
+:root{
+  --ink:#1c1917;--ink-soft:#57534e;--ink-muted:#a8a29e;--line:#e7e0d4;--line-strong:#d8cfbf;
+  --orange:#ea580c;--orange-deep:#c2410c;--orange-light:#fb923c;--orange-bg:#fff4ec;
+  --paper:#f6f4f0;--card:#ffffff;--sand:#efe9dd;
+  --shadow:0 1px 2px rgba(28,25,23,.05),0 8px 24px -12px rgba(28,25,23,.12);
+  --shadow-lg:0 24px 60px -24px rgba(28,25,23,.22);
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+::selection{background:var(--orange);color:#fff}
+
+/* ===== 顶栏（与操作台一致） ===== */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1080px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:16px}
+.tb-logo{display:flex;align-items:center;flex-shrink:0}
+.tb-logo svg{height:22px;width:auto;display:block}
+.tb-divider{width:1px;height:22px;background:var(--line)}
+.tb-title{font-size:15px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.tb-title small{font-weight:400;color:var(--ink-muted);font-size:12px;margin-left:6px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.beta-tag{font-size:11px;font-weight:700;color:var(--orange-deep);background:var(--orange-bg);border:1px solid #fed7aa;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.tb-back{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;transition:color .2s}
+.tb-back:hover{color:var(--orange)}
+.tb-back svg{width:15px;height:15px}
+
+/* ===== 主体 ===== */
+.wrap{max-width:1080px;margin:0 auto;padding:60px 24px 90px}
+.head{max-width:680px;margin-bottom:40px}
+.kick{font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;margin-bottom:14px}
+.head h1{font-size:clamp(28px,3.6vw,40px);font-weight:900;letter-spacing:-.8px;line-height:1.2}
+.head p{margin-top:16px;font-size:15.5px;color:var(--ink-soft);line-height:1.85}
+.head p b{color:var(--ink);font-weight:700}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cat{position:relative;display:flex;flex-direction:column;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;box-shadow:var(--shadow);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;font-family:inherit;color:var(--ink)}
+.cat .top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.ci{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft)}
+.ci svg{width:24px;height:24px}
+.st{font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.st.live{background:var(--orange);color:#fff}
+.st.soon{background:var(--sand);color:var(--ink-soft)}
+.st.plan{background:transparent;color:var(--ink-muted);border:1px solid var(--line-strong)}
+.cat h3{font-size:18.5px;font-weight:800;letter-spacing:-.01em}
+.cf{font-size:12.5px;font-weight:600;color:var(--orange-deep);margin-top:3px}
+.cat .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.65;margin-top:12px;flex:1}
+.foot{margin-top:18px;display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700}
+.foot svg{width:16px;height:16px;transition:transform .25s}
+.cat.live{border-color:rgba(234,88,12,.45);background:linear-gradient(180deg,var(--orange-bg),#fff 46%)}
+.cat.live .ci{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 8px 20px -6px rgba(234,88,12,.55)}
+.cat.live .foot{color:var(--orange-deep)}
+.cat.live:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--orange)}
+.cat.live:hover .foot svg{transform:translateX(4px)}
+.cat.soon .ci,.cat.plan .ci{color:var(--ink-muted)}
+.cat.soon:hover,.cat.plan:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong)}
+.cat.soon .foot,.cat.plan .foot{color:var(--ink-muted);font-weight:600}
+.cat.soon .foot svg,.cat.plan .foot svg{width:15px;height:15px}
+
+/* ===== 底部承诺 ===== */
+.pledge{margin-top:26px;display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 26px;box-shadow:var(--shadow)}
+.pledge .pic{width:44px;height:44px;border-radius:11px;background:var(--orange-bg);border:1px solid #fed7aa;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pledge .pic svg{width:23px;height:23px}
+.pledge .pt{font-size:14px;color:var(--ink-soft);line-height:1.7}
+.pledge .pt b{color:var(--ink);font-weight:700}
+.pledge .go{margin-left:auto;flex-shrink:0;font-size:13.5px;font-weight:700;color:var(--orange-deep);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pledge .go svg{width:16px;height:16px;transition:transform .25s}
+.pledge .go:hover svg{transform:translateX(4px)}
+
+/* ===== Toast ===== */
+.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,16px);background:var(--ink);color:#fff;font-size:14px;line-height:1.55;padding:13px 22px;border-radius:11px;box-shadow:0 18px 46px rgba(28,25,23,.34);max-width:88vw;opacity:0;pointer-events:none;transition:opacity .28s,transform .28s cubic-bezier(.22,1,.36,1);z-index:9999;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast b{color:var(--orange-light);font-weight:700}
+
+/* ===== 动效 ===== */
+.rise{opacity:0;transform:translateY(18px);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .rise{animation:none;opacity:1;transform:none}
+  html{scroll-behavior:auto}
+  .cat:hover,.cat.live:hover{transform:none}
+}
+
+/* ===== 响应式 ===== */
+@media (max-width:860px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .wrap{padding:40px 18px 70px}
+  .grid{grid-template-columns:1fr}
+  .head{margin-bottom:30px}
+  .pledge{flex-direction:column;align-items:flex-start;gap:14px}
+  .pledge .go{margin-left:0;padding:8px 0}
+  .beta-tag{display:none}
+  .cat .ds{font-size:14px}
+  .cf{font-size:13px}
+  .tb-back{padding:8px 4px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="tb-logo" href="/" title="返回 WorkHogee 首页">
+      <svg viewBox="0 0 118 19.13" xmlns="http://www.w3.org/2000/svg" aria-label="WorkHogee"><defs><style>.wl1{fill:#1c1917}.wl2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text></g></svg>
+    </a>
+    <div class="tb-divider"></div>
+    <div class="tb-title">Web 工作台<small>选择行业</small></div>
+    <div class="tb-right">
+      <span class="beta-tag">内测中 · 二手车先行</span>
+      <a class="tb-back" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>介绍页</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="head rise">
+    <div class="kick">Workspace · 选择品类</div>
+    <h1>先选一个二手品类，<br>进入对应的 AI 物料工作台</h1>
+    <p>同一套 WorkHogee 工作台，按品类独立配置<b>拍摄点位、行业知识库、合规红线与渠道尺寸</b>。内测期率先开放二手车伙计，其余品类按路线图陆续上线——不做新品、不做通用生图，只做“图片决定成交”的二手非标品。</p>
+  </div>
+
+  <section class="grid" aria-label="选择行业工作台">
+    <!-- 二手车：已上线 -->
+    <a class="cat live rise" href="/huoer-online.html" style="animation-delay:.04s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
+        <span class="st live">已上线 · P0</span>
+      </span>
+      <h3>二手车伙计</h3>
+      <div class="cf">车况 vs 图骗</div>
+      <p class="ds">外观、内饰、细节智能拍摄引导与质检，自动产出精修图、场景图、360 展示、看车短视频与车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。</p>
+      <span class="foot">进入工作台<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+    </a>
+
+    <!-- 二手房：即将上线 -->
+    <button type="button" class="cat soon rise" data-soon="二手房伙计正在内测筹备，即将开放，敬请期待。当前可先使用二手车伙计。" style="animation-delay:.08s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+        <span class="st soon">即将上线 · P1</span>
+      </span>
+      <h3>二手房伙计</h3>
+      <div class="cf">格局 vs 美化失真</div>
+      <p class="ds">还原真实户型、朝向与采光，拒绝广角畸变、调色失真引发的带看落差与纠纷，自动适配贝壳、闲鱼、小红书等渠道。</p>
+      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>内测筹备中</span>
+    </button>
+
+    <!-- 二手潮玩：即将上线 -->
+    <button type="button" class="cat soon rise" data-soon="二手潮玩伙计正在内测筹备，即将开放，敬请期待。当前可先使用二手车伙计。" style="animation-delay:.12s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
+        <span class="st soon">即将上线 · P1</span>
+      </span>
+      <h3>二手潮玩伙计</h3>
+      <div class="cf">成色 vs 瑕疵抹除</div>
+      <p class="ds">盒卡、漆面、磨损如实呈现，不抹瑕疵、不造“全新成色”，让买家所见即所得，适配得物、闲鱼、小红书的种草与上架图。</p>
+      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>内测筹备中</span>
+    </button>
+
+    <!-- 二手乐器：规划中 -->
+    <button type="button" class="cat plan rise" data-soon="二手乐器伙计已在产品路线图中，将在扩展期启动，敬请期待。" style="animation-delay:.16s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+        <span class="st plan">规划中 · P2</span>
+      </span>
+      <h3>二手乐器伙计</h3>
+      <div class="cf">品相 vs 证据隐藏</div>
+      <p class="ds">品相见证据：漆面、磕碰、序列号与配件逐项留证，不隐藏保养与维修历史，适配闲鱼、小红书与垂直乐器社区。</p>
+      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>路线图中</span>
+    </button>
+
+    <!-- 二手 3C：规划中 -->
+    <button type="button" class="cat plan rise" data-soon="二手 3C 伙计已在产品路线图中，将在扩展期启动，敬请期待。" style="animation-delay:.20s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+        <span class="st plan">规划中 · P2</span>
+      </span>
+      <h3>二手 3C 伙计</h3>
+      <div class="cf">序列号 vs 隐瞒故障</div>
+      <p class="ds">序列号、机身、接口、屏幕与保修状态留证，故障不隐藏，成色分级可追溯，适配转转、闲鱼、找靓机等渠道。</p>
+      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>路线图中</span>
+    </button>
+
+    <!-- 二手办公：规划中 -->
+    <button type="button" class="cat plan rise" data-soon="二手办公伙计已在产品路线图中，将在规模化阶段启动，敬请期待。" style="animation-delay:.24s">
+      <span class="top">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="9" width="12" height="8"/><path d="M6 17H4v4h16v-4h-2"/><path d="M10 13h.01M14 13h.01"/></svg></span>
+        <span class="st plan">规划中 · P3</span>
+      </span>
+      <h3>二手办公伙计</h3>
+      <div class="cf">批量 vs 效率低</div>
+      <p class="ds">批量设备、家用统一规格出图与素材管理，门店/渠道一次性完成几十上百件办公物资的标准化上架物料。</p>
+      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>路线图中</span>
+    </button>
+  </section>
+
+  <div class="pledge rise" style="animation-delay:.3s">
+    <span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <div class="pt"><b>不修图，修信任。</b> 每个品类的合规红线内置且不可关闭：不改颜色、不抹瑕疵、不藏事故，车牌/人脸/序列号自动脱敏，AI 生成内容统一带标识。</div>
+    <a class="go" href="/">了解 WorkHogee<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var toast=document.getElementById('toast'),timer=null;
+  function show(msg){
+    toast.textContent=msg;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer=setTimeout(function(){toast.classList.remove('show');},2800);
+  }
+  document.querySelectorAll('[data-soon]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      show(el.getAttribute('data-soon'));
+    });
+  });
+})();
+</script>
+</body>
+</html>
