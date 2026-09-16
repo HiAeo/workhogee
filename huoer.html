@@ -1340,7 +1340,7 @@
         if (genImg) genImg.src = item.generated;
         $$('.trial-stage').forEach(s => s.classList.remove('active'));
         $('#trialStageResult').classList.add('active');
-        state.currentStep = 4;
+        state.currentStep = 3;
         updateFooter();
         document.getElementById('trialHistoryModal').classList.remove('active');
       });
@@ -1355,8 +1355,11 @@
       if (state.currentStep > 1) goToStep(state.currentStep - 1);
     });
     if (nextBtn) nextBtn.addEventListener('click', () => {
-      if (state.currentStep === 3) { startGeneration(); return; }
-      if (state.currentStep < 4) goToStep(state.currentStep + 1);
+      if (state.currentStep === 2) { startGeneration(); return; }
+      if (state.currentStep === 1) {
+        if (!state.uploadedImages || state.uploadedImages.length === 0) { alert('请先上传产品图片'); return; }
+        goToStep(2);
+      }
     });
   }
 
