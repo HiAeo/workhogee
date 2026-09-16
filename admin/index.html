@@ -205,14 +205,16 @@ table.data tbody tr:last-child td{border-bottom:none}
 .x-btn svg{width:19px;height:19px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-grid .full{grid-column:1/-1}
-.prod-auth{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px}
-.prod-auth-row{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.prod-auth{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px;background:#fff}
+.prod-auth-row{padding:13px 14px}
 .prod-auth-row + .prod-auth-row{border-top:1px solid var(--line)}
-.prod-auth-name{flex:1;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px}
-.prod-auth-quota{width:96px}
-.prod-auth-quota input{width:100%;padding:7px 9px;border:1px solid var(--line-strong);border-radius:8px;font-size:12.5px;text-align:center}
-.prod-auth-date{width:140px}
-.prod-auth-date input{width:100%;padding:7px 9px;border:1px solid var(--line-strong);border-radius:8px;font-size:12.5px}
+.pa-top{display:flex;align-items:center;gap:12px}
+.prod-auth-name{flex:1;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;min-width:0}
+.pa-bottom{display:flex;gap:12px;margin-top:11px;padding-left:40px}
+.pa-f{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.pa-f > span{font-size:11px;color:var(--ink-muted);font-weight:500}
+.prod-auth-quota,.prod-auth-date{width:100%;padding:8px 10px;border:1px solid var(--line-strong);border-radius:8px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff;box-sizing:border-box}
+.prod-auth-quota{text-align:center}
 .switch{position:relative;width:40px;height:22px;flex:none}
 .switch input{opacity:0;width:0;height:0}
 .switch i{position:absolute;inset:0;background:var(--line-strong);border-radius:99px;transition:background .18s;cursor:pointer}
@@ -259,7 +261,7 @@ table.data tbody tr:last-child td{border-bottom:none}
   .content{padding:20px 16px 48px}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .form-grid{grid-template-columns:1fr}
-  .prod-auth-row{flex-wrap:wrap}
+  .pa-bottom{padding-left:0;flex-direction:column}
 }
 </style>
 </head>
@@ -483,7 +485,7 @@ table.data tbody tr:last-child td{border-bottom:none}
     return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
   function name(arr,id){var f=(arr||[]).filter(function(x){return x.id===id;})[0];return f?f.name:id;}
   function toast(msg,type){type=type||'ok';var box=$('toast');var el=document.createElement('div');el.className='toast '+type;
-    el.innerHTML=(type==='err'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>')+'<span>'+esc(msg)+'</span>');
+    el.innerHTML=(type==='err'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>')+'<span>'+esc(msg)+'</span>';
     box.appendChild(el);requestAnimationFrame(function(){el.classList.add('show');});
     setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},250);},2800);}
 
@@ -679,10 +681,14 @@ table.data tbody tr:last-child td{border-bottom:none}
       var qt=pa.quotaTotal===-1?-1:pa.quotaTotal;
       var dt=pa.expiresAt?String(pa.expiresAt).slice(0,10):'';
       return '<div class="prod-auth-row">'+
+        '<div class="pa-top">'+
         '<label class="switch"><input type="checkbox" data-p="'+p.id+'" data-k="enabled" '+(pa.enabled?'checked':'')+'><i></i></label>'+
         '<div class="prod-auth-name">'+esc(p.name)+(p.status!=='available'?'<span class="plan-tag off">规划中</span>':'')+'</div>'+
-        '<input class="prod-auth-quota" data-p="'+p.id+'" data-k="quota" type="number" min="-1" value="'+qt+'" title="配额，-1 不限">'+
-        '<input class="prod-auth-date" data-p="'+p.id+'" data-k="date" type="date" value="'+dt+'">'+
+        '</div>'+
+        '<div class="pa-bottom">'+
+        '<div class="pa-f"><span>生成配额（-1 不限）</span><input class="prod-auth-quota" data-p="'+p.id+'" data-k="quota" type="number" min="-1" value="'+qt+'" placeholder="-1 不限"></div>'+
+        '<div class="pa-f"><span>授权到期日（留空长期）</span><input class="prod-auth-date" data-p="'+p.id+'" data-k="date" type="date" value="'+dt+'"></div>'+
+        '</div>'+
         '</div>';
     }).join('');
     showDrawer(true);
@@ -791,9 +797,9 @@ table.data tbody tr:last-child td{border-bottom:none}
       return api('GET','/api/admin/meta');
     }).then(function(meta){
       state.meta=meta;
-      fillSelect($('fStatus'),meta.statuses,'全部状态');
-      fillSelect($('fPlan'),meta.plans,'全部套餐');
-      fillSelect($('fProduct'),meta.products.map(function(p){return{id:p.id,name:SHORT[p.id]||p.name};}),'全部产品');
+      fillSelect($('fStatus'),meta.statuses||[],'全部状态');
+      fillSelect($('fPlan'),meta.plans||[],'全部套餐');
+      fillSelect($('fProduct'),(meta.products||[]).map(function(p){return{id:p.id,name:SHORT[p.id]||p.name};}),'全部产品');
       showApp();switchView('dashboard');
     }).catch(function(){showLogin();});
   }
