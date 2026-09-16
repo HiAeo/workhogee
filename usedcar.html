@@ -671,16 +671,16 @@ img{max-width:100%;display:block;}
             </g>
           </svg>
         </a>
-        <p>WorkHogee 二手生图伙计，只做二手行业的 AI 物料工作台：拍几张手机图，生成可上架、可传播、可合规的图片、视频和文案。二手生意，从图开始。</p>
+        <p>只做二手行业的 AI 物料工作台：拍几张手机图，生成可上架、可传播、可合规的图片、视频和文案。</p>
       </div>
       <div class="footer-col">
         <h5>产品</h5>
-        <ul>
-          <li><a href="/usedcar.html">二手车伙计 · 已上线</a></li>
-          <li><a href="/workbench.html">Web 工作台</a></li>
-          <li><span style="color:var(--ink-muted);cursor:default;">二手房伙计 · 即将上线</span></li>
-          <li><span style="color:var(--ink-muted);cursor:default;">二手潮玩伙计 · 即将上线</span></li>
-        </ul>
+          <ul>
+            <li><a href="/usedcar.html">二手车伙计</a></li>
+            <li><a href="/workbench.html">Web 工作台</a></li>
+            <li><span style="font-size:14px;color:rgba(255,255,255,.4);cursor:default;">二手房伙计</span></li>
+            <li><span style="font-size:14px;color:rgba(255,255,255,.4);cursor:default;">二手潮玩伙计</span></li>
+          </ul>
       </div>
       <div class="footer-col">
         <h5>资源</h5>
@@ -758,7 +758,21 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 
 // 小程序内测提示
-function mpNotify(){alert('微信小程序正在内测筹备中，请通过 Web 版先行体验；如需小程序内测资格，邮件联系 hello@workhogee.com');}
+function mpNotify(){
+  var old=document.getElementById('mpMask');
+  if(old){return;}
+  var css='#mpMask{position:fixed;inset:0;background:rgba(20,17,14,.58);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .25s cubic-bezier(.22,1,.36,1);}#mpMask.show{opacity:1;pointer-events:auto;}#mpCard{background:#1c1917;color:#faf8f4;max-width:424px;width:100%;border-radius:18px;padding:32px 28px 26px;text-align:center;border:1px solid rgba(255,255,255,.09);box-shadow:0 28px 70px rgba(0,0,0,.5);transform:translateY(16px) scale(.98);transition:transform .3s cubic-bezier(.22,1,.36,1);}#mpMask.show #mpCard{transform:translateY(0) scale(1);}#mpIco{width:54px;height:54px;margin:0 auto 18px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:rgba(234,88,12,.14);color:#fb923c;}#mpIco svg{width:29px;height:29px;}#mpTitle{font-size:18px;font-weight:700;margin:0 0 10px;color:#fff;}#mpDesc{font-size:14px;line-height:1.8;color:rgba(250,248,244,.72);margin:0 0 24px;}#mpDesc a{color:#fb923c;text-decoration:none;}#mpDesc a:hover{text-decoration:underline;}#mpBtn{appearance:none;-webkit-appearance:none;border:0;cursor:pointer;background:#ea580c;color:#fff;font-size:15px;font-weight:600;padding:12px 38px;border-radius:11px;transition:background .2s,transform .15s;}#mpBtn:hover{background:#c2410c;}#mpBtn:active{transform:scale(.97);}@media (prefers-reduced-motion:reduce){#mpMask,#mpCard{transition:none}}';
+  var st=document.getElementById('mpModalStyle');
+  if(!st){st=document.createElement('style');st.id='mpModalStyle';st.textContent=css;document.head.appendChild(st);}
+  var mask=document.createElement('div');mask.id='mpMask';mask.setAttribute('role','dialog');mask.setAttribute('aria-modal','true');mask.setAttribute('aria-label','微信小程序内测提示');
+  mask.innerHTML='<div id="mpCard"><div id="mpIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="9" cy="9.4" rx="7" ry="5.4"/><path d="M5.1 13.5 3.3 16.1 7.4 14.3"/><path d="M6.8 8.7h.01M10.8 8.7h.01"/><ellipse cx="16" cy="15.2" rx="6.2" ry="4.7"/><path d="M18.7 18.6 20.9 21 17.1 18.9"/><path d="M13.9 14.5h.01M17.9 14.5h.01"/></svg></div><h3 id="mpTitle">微信小程序 · 内测中</h3><p id="mpDesc">小程序正在内测筹备，请先使用 Web 版工作台。如需内测资格，邮件联系 <a href="mailto:hello@workhogee.com">hello@workhogee.com</a></p><button type="button" id="mpBtn">我知道了</button></div>';
+  document.body.appendChild(mask);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){mask.classList.add('show');});});
+  function hide(){mask.classList.remove('show');setTimeout(function(){if(mask.parentNode)mask.parentNode.removeChild(mask);},260);}
+  mask.addEventListener('click',function(e){if(e.target===mask)hide();});
+  mask.querySelector('#mpBtn').addEventListener('click',hide);
+  document.addEventListener('keydown',function h(e){if(e.key==='Escape'){hide();document.removeEventListener('keydown',h);}});
+}
 </script>
 </body>
 </html>
