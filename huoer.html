@@ -30,7 +30,7 @@
     <div class="trial-wb-header">
       <div class="trial-wb-title">
         <span class="trial-wb-badge">官网体验版</span>
-        <h2>免费体验 3 张，无需注册</h2>
+        <h2>内测无限生图，无需注册</h2>
       </div>
       <div class="trial-wb-credits">
         <div class="trial-credits-bar">
@@ -616,7 +616,7 @@
 <script>
 (function() {
   'use strict';
-  const FREE_LIMIT = 3;
+  const FREE_LIMIT = 999999;
   let usedCount = parseInt(localStorage.getItem('workhogee_trial_used') || '0');
   let currentImage = null;
   let generatedImage = null;
@@ -684,7 +684,7 @@
 
   function startGeneration() {
     if (isProcessing) return;
-    if (usedCount >= FREE_LIMIT) { switchStage('limit'); return; }
+    if (false) { switchStage('limit'); return; }
     isProcessing = true;
     switchStage('processing');
     const previewImg = $('#trialProcessingImg');
@@ -724,7 +724,7 @@
   async function finishGeneration() {
     isProcessing = false;
     usedCount++;
-    localStorage.setItem('workhogee_trial_used', usedCount.toString());
+    
     updateCredits();
 
     // 调用真实API
@@ -849,7 +849,7 @@
 
   function init() {
     updateCredits();
-    if (usedCount >= FREE_LIMIT) { switchStage('limit'); }
+    if (false) { switchStage('limit'); }
     initUpload();
     initCompare();
     initControls();
