@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -132,7 +132,7 @@ img { max-width: 100%; display: block; }
 .panel { width: 240px; background: white; border-left: 1px solid var(--line); padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
 .panel-section { background: var(--paper); border-radius: 10px; overflow: hidden; }
 .panel-title { display: flex; align-items: center; gap: 6px; padding: 10px 12px; font-size: 11px; font-weight: 700; border-bottom: 1px solid var(--line); background: white; }
-.panel-title svg { color: var(--orange); width: 14px; height: 14px; }
+.panel-title svg { color: var(--ink-soft); width: 14px; height: 14px; }
 .panel-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
 .form-item { display: flex; flex-direction: column; gap: 6px; }
 .form-label { font-size: 10px; font-weight: 600; color: var(--ink-muted); }
@@ -234,18 +234,27 @@ img { max-width: 100%; display: block; }
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo" onclick="location.href='huoer.html'">
-      <div class="logo-mark">W</div>
-      <div class="logo-text">Work<span>Hogee</span></div>
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:22px;width:auto;">
+        <defs><style>.wl1{fill:#ffffff;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ea580c">Hogee</text>
+        </g>
+      </svg>
     </div>
     <div class="version-switcher" id="versionSwitcher" onclick="toggleVersionDropdown(event)">
       <span id="currentVersionText">电商通用版</span>
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       <div class="version-dropdown" id="versionDropdown">
-        <div class="version-option active" data-version="ecommerce" onclick="setVersion('ecommerce', event)"><span>🛒</span>电商通用版</div>
-        <div class="version-option" data-version="xianyu" onclick="setVersion('xianyu', event)"><span>🐟</span>闲鱼专版</div>
-        <div class="version-option" data-version="food" onclick="setVersion('food', event)"><span>🍜</span>餐饮专版</div>
-        <div class="version-option" data-version="cloth" onclick="setVersion('cloth', event)"><span>👕</span>服装专版</div>
-        <div class="version-option" data-version="global" onclick="setVersion('global', event)"><span>🌍</span>外贸专版</div>
+        <div class="version-option active" data-version="ecommerce" onclick="setVersion('ecommerce', event)"><span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>电商通用版</div>
+        <div class="version-option" data-version="xianyu" onclick="setVersion('xianyu', event)"><span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6z"/><path d="M2 12c.5-1 .5-2 0-3"/><path d="M2 9v6"/><circle cx="16" cy="12" r="0.5" fill="currentColor"/></svg></span>闲鱼专版</div>
+        <div class="version-option" data-version="food" onclick="setVersion('food', event)"><span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 10h8M8 14h8M10 6v4M14 6v4"/></svg></span>餐饮专版</div>
+        <div class="version-option" data-version="cloth" onclick="setVersion('cloth', event)"><span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></span>服装专版</div>
+        <div class="version-option" data-version="global" onclick="setVersion('global', event)"><span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>外贸专版</div>
       </div>
     </div>
   </div>
@@ -264,11 +273,11 @@ img { max-width: 100%; display: block; }
   <div class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-title">行业版本</div>
-      <div class="version-item active" data-version="ecommerce" onclick="setVersion('ecommerce')"><span class="icon">🛒</span>电商通用版</div>
-      <div class="version-item" data-version="xianyu" onclick="setVersion('xianyu')"><span class="icon">🐟</span>闲鱼专版</div>
-      <div class="version-item" data-version="food" onclick="setVersion('food')"><span class="icon">🍜</span>餐饮专版</div>
-      <div class="version-item" data-version="cloth" onclick="setVersion('cloth')"><span class="icon">👕</span>服装专版</div>
-      <div class="version-item" data-version="global" onclick="setVersion('global')"><span class="icon">🌍</span>外贸专版</div>
+      <div class="version-item active" data-version="ecommerce" onclick="setVersion('ecommerce')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>电商通用版</div>
+      <div class="version-item" data-version="xianyu" onclick="setVersion('xianyu')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6z"/><path d="M2 12c.5-1 .5-2 0-3"/><path d="M2 9v6"/><circle cx="16" cy="12" r="0.5" fill="currentColor"/></svg></span>闲鱼专版</div>
+      <div class="version-item" data-version="food" onclick="setVersion('food')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 10h8M8 14h8M10 6v4M14 6v4"/></svg></span>餐饮专版</div>
+      <div class="version-item" data-version="cloth" onclick="setVersion('cloth')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></span>服装专版</div>
+      <div class="version-item" data-version="global" onclick="setVersion('global')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>外贸专版</div>
     </div>
     <div class="sidebar-section" style="border-bottom:none; flex:1;">
       <div class="sidebar-title">任务历史</div>
