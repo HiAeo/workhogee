@@ -1414,8 +1414,12 @@ function bindOnsiteBg(){
 }
 function restoreOnsiteBg(){try{const v=localStorage.getItem('workhogee_onsite_bg');if(v)state.onsiteBg=v;}catch(e){}setOnsitePreview();}
 function bindLightbox(){
-  const lb=$('#lightbox');if(!lb)return;
-  lb.addEventListener('click',e=>{if(e.target===lb||e.target.closest('.lb-close'))closeLightbox();});
+  if(window.__lbBound)return;window.__lbBound=1;
+  document.addEventListener('click',e=>{
+    const lb=document.getElementById('lightbox');
+    if(!lb||!lb.classList.contains('show'))return;
+    if(e.target.closest('.lb-close')||e.target===lb)closeLightbox();
+  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
 }
 $('#restartBtn').onclick=()=>{location.reload();};
