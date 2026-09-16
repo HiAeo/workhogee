@@ -216,6 +216,9 @@ img{display:block;max-width:100%}
 .size-chip{border:1.5px solid var(--line);border-radius:9px;padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer;background:#fff;transition:all .2s}
 .size-chip.sel{border-color:var(--orange);background:var(--orange-bg);color:var(--orange-deep)}
 .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.result-grid .rz-title{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;font-size:15px;font-weight:800;margin:8px 0 -2px;color:var(--ink)}
+.result-grid .rz-title:first-child{margin-top:0}
+.result-grid .rz-title span{font-size:12px;font-weight:600;color:var(--ink-muted)}
 .result-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
 .result-card .rc-img{position:relative;aspect-ratio:1;background:var(--sand)}
 .result-card .rc-img img{width:100%;height:100%;object-fit:cover}
@@ -473,7 +476,7 @@ img{display:block;max-width:100%}
   <div class="card">
     <div class="card-head">
       <h2><span class="stepno">4</span>正在生成车源物料</h2>
-      <p>伙计正在依次完成背景精修、场景合成与车源文案。单张场景图约需 15–25 秒，请勿关闭页面；失败会自动重试。</p>
+      <p>你上传的每张外观图都会生成对应角度的场景图，内饰与细节图逐张做画质增强（不改成色、不抹瑕疵、不篡改读数），并另出一套车源文案。每张约 15–25 秒，多张会依次生成，请勿关闭页面；失败可单独重试。</p>
     </div>
     <div class="gen-overview" id="genOverview"></div>
     <div id="genTaskList"></div>
@@ -559,6 +562,8 @@ const SCENES={
   outdoor:{name:'户外生活场景',prompt:'晴朗白天的湖边山景公路，蓝天白云，远处是连绵青山与平静湖面，路边有自然绿植，明亮自然日光，专业户外汽车生活摄影，氛围开阔自由。严格保持参考图中车辆本身的车身颜色、车型、轮毂样式、车窗、车牌位置、车身比例、镜头透视与车头朝向完全不变，仅替换背景环境并统一光影，严禁水平翻转或镜像，不改变车辆任何细节，真实摄影质感，高分辨率。'}
 };
 
+const ENHANCE_INT='专业二手车内饰实拍画质增强：仅做自然的曝光与白平衡校正、轻微提亮和适度清晰度提升，真实还原皮革、塑料、屏幕等材质与正常使用痕迹。严格保持参考图中的内饰布局、部件数量、颜色、磨损与污渍、镜头透视和取景范围完全不变，不新增、不删除、不替换任何物品，不遮盖或美化瑕疵，不改变成色与配置，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
+const ENHANCE_DET='专业二手车细节实拍画质增强：仅做自然曝光校正、轻微提亮与适度清晰度提升，真实还原部件成色、磨损与标识。严格保持参考图中的部件、数量、颜色、里程读数与标识文字、镜头透视完全不变，不新增、不删除、不替换任何部件，不美化瑕疵，不篡改任何数字或读数，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
 const state={step:1,maxStep:1,images:[],curGroup:'ext',brand:'',series:'',year:'',trim:'',mileage:'',price:'',gearbox:'',city:'',extra:'',scenes:new Set(['showroom']),platforms:new Set(['dcd','autohome','xhs']),style:'professional',results:[],copies:{},curSize:'dcd',genJobs:[],caps:{}};
 
 /* ================= 工具 ================= */
@@ -734,7 +739,9 @@ async function handleFiles(files){
     if(f.size>20*1024*1024){toast('单张图片请控制在 20MB 内','err');continue;}
     try{
       const data=await prepareImage(f);const qc=await analyzeImage(data);
-      state.images.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),data,group:state.curGroup,name:f.name,qc});
+      const gIdx=state.images.filter(i=>i.group===state.curGroup).length;
+      const point=(SHOT_GROUPS[state.curGroup].points[gIdx]||[])[0]||'';
+      state.images.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),data,group:state.curGroup,gIdx,point,name:f.name,qc});
       added++;
     }catch(e){toast('有图片无法读取，建议换 JPG 格式重试','err');}
   }
@@ -796,45 +803,61 @@ function renderPlatforms(){
 $$('#styleCards .opt-card').forEach(c=>c.onclick=()=>{state.style=c.dataset.style;$$('#styleCards .opt-card').forEach(x=>x.classList.toggle('sel',x===c));});
 
 /* ================= Step4 生成 ================= */
-const SCENE_ICO={showroom:'<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/>',city:'<path d="M3 21h18"/><path d="M5 21V7l5-3v17"/><path d="M10 21V11l5-2v12"/><path d="M15 21V9l4 2v10"/>',outdoor:'<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>'};
+const SCENE_ICO={showroom:'<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/>',city:'<path d="M3 21h18"/><path d="M5 21V7l5-3v17"/><path d="M10 21V11l5-2v12"/><path d="M15 21V9l4 2v10"/>',outdoor:'<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',in:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.6"/><path d="M12 14.6V21"/><path d="M4.6 9.6 9.4 11.2"/><path d="M19.4 9.6 14.6 11.2"/>',det:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.4" y2="16.4"/>'};
 let genAbort=false;
 $('#startGen').onclick=()=>{
   if(!state.scenes.size){toast('请至少选择一个场景','err');return;}
   if(!state.platforms.size){toast('请至少选择一个平台尺寸','err');return;}
   state.results=[];state.maxStep=Math.max(state.maxStep,4);goStep(4);runGeneration();
 };
-function mainExterior(){const ext=state.images.filter(i=>i.group==='ext');return (ext[0]||state.images[0]).data;}
+function pad2(n){return (n<10?'0':'')+n;}
 async function runGeneration(){
   genAbort=false;$('#toStep5').disabled=true;$('#genTaskList').innerHTML='';
   const scenes=[...state.scenes];
-  $('#genOverview').innerHTML='<div class="gen-stat"><div class="n">'+scenes.length+'</div><div class="l">张场景成品图</div></div><div class="gen-stat"><div class="n">'+state.platforms.size+'</div><div class="l">个平台尺寸</div></div><div class="gen-stat"><div class="n">1 套</div><div class="l">车源文案</div></div>';
-  const jobs=scenes.map(s=>({type:'img',scene:s}));
+  const mainScene=scenes[0];
+  const extImgs=state.images.filter(i=>i.group==='ext');
+  const intImgs=state.images.filter(i=>i.group==='int');
+  const detImgs=state.images.filter(i=>i.group==='det');
+  const jobs=[];
+  extImgs.forEach((im,k)=>{
+    const nm=(k===0?'外观主图':'外观'+pad2(k+1))+(im.point?' · '+im.point:'');
+    jobs.push({kind:'ext',ico:mainScene,image:im.data,name:nm,prompt:SCENES[mainScene].prompt,sub:'保持车身一致 · 替换背景 · 合规质检'});
+  });
+  for(let s=1;s<scenes.length;s++){
+    jobs.push({kind:'ext',ico:scenes[s],image:extImgs[0].data,name:'主图 · '+SCENES[scenes[s]].name,prompt:SCENES[scenes[s]].prompt,sub:'同一主图 · 多场景备选'});
+  }
+  intImgs.forEach((im,k)=>{jobs.push({kind:'int',ico:'in',image:im.data,name:'内饰'+(im.point?' · '+im.point:pad2(k+1)),prompt:ENHANCE_INT,sub:'画质增强 · 不改成色 · 不抹瑕疵'});});
+  detImgs.forEach((im,k)=>{jobs.push({kind:'det',ico:'det',image:im.data,name:'细节'+(im.point?' · '+im.point:pad2(k+1)),prompt:ENHANCE_DET,sub:'画质增强 · 不篡改读数 · 不抹瑕疵'});});
+  const imgJobs=jobs.length;
   jobs.push({type:'copy'});
   state.genJobs=jobs;
-  const main=mainExterior();
-  let okCount=0;
+  $('#genOverview').innerHTML='<div class="gen-stat"><div class="n">'+imgJobs+'</div><div class="l">张成品图</div></div><div class="gen-stat"><div class="n">'+state.platforms.size+'</div><div class="l">个平台尺寸</div></div><div class="gen-stat"><div class="n">1 套</div><div class="l">车源文案</div></div>';
+  let done=0;
+  const enableNext=()=>{if(state.results.length){$('#toStep5').disabled=false;state.maxStep=Math.max(state.maxStep,5);}};
   for(let i=0;i<jobs.length;i++){
     const job=jobs[i];
     if(job.type==='copy'){
       const el=makeTaskEl('doc','车源文案','标题 / 短描述 / 长描述 / 小红书 / 闲鱼');
-      try{state.copies=buildCopies();el.state.className='gt-state ok';el.state.textContent='已生成';el.bar.style.width='100%';okCount++;}
+      try{state.copies=buildCopies();el.state.className='gt-state ok';el.state.textContent='已生成';el.bar.style.width='100%';}
       catch(e){el.state.className='gt-state err';el.state.textContent='生成失败';}
       continue;
     }
-    const sc=SCENES[job.scene];const el=makeTaskEl(job.scene,sc.name,'保持车身一致 · 替换背景 · 合规质检');
+    const el=makeTaskEl(job.ico,job.name,job.sub);
     let p=0;const tick=setInterval(()=>{p=Math.min(88,p+Math.max(1,Math.round((88-p)*0.08)));el.bar.style.width=p+'%';},350);
     try{
-      el.state.className='gt-state run';el.state.textContent='生成中…';
-      const data=await callSceneAPI(sc.prompt,main,(kind,att)=>{el.state.textContent='第 '+att+' 次重试…';});
+      el.state.className='gt-state run';el.state.textContent='生成中…（'+(done+1)+'/'+imgJobs+'）';
+      const data=await callSceneAPI(job.prompt,job.image,(kind,att)=>{el.state.textContent='第 '+att+' 次重试…';});
       clearInterval(tick);el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';
-      state.results.push({scene:job.scene,name:sc.name,data});okCount++;
-    }catch(e){clearInterval(tick);el.bar.style.width='0%';el.bar.style.background='var(--red)';el.state.className='gt-state err';el.state.textContent='失败：'+(e.message||'网络异常');el.box.style.borderColor='#fecaca';
-      const rb=document.createElement('button');rb.className='btn btn-ghost btn-sm';rb.style.marginTop='10px';rb.textContent='重试';rb.onclick=async()=>{rb.remove();el.bar.style.background='';el.box.style.borderColor='';el.state.className='gt-state run';el.state.textContent='重试中…';
-        try{const d=await callSceneAPI(SCENES[job.scene].prompt,main);el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';state.results.push({scene:job.scene,name:SCENES[job.scene].name,data:d});okCount++;maybeEnable();}catch(err){el.state.className='gt-state err';el.state.textContent='重试失败';}};
-      el.box.appendChild(rb);}
+      state.results.push({kind:job.kind,name:job.name,data});done++;
+    }catch(e){
+      clearInterval(tick);el.bar.style.width='0%';el.bar.style.background='var(--red)';el.state.className='gt-state err';el.state.textContent='失败：'+(e.message||'网络异常');el.box.style.borderColor='#fecaca';
+      const rb=document.createElement('button');rb.className='btn btn-ghost btn-sm';rb.style.marginTop='10px';rb.textContent='重试';
+      rb.onclick=async()=>{rb.remove();el.bar.style.background='';el.box.style.borderColor='';el.state.className='gt-state run';el.state.textContent='重试中…';
+        try{const d=await callSceneAPI(job.prompt,job.image);el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';state.results.push({kind:job.kind,name:job.name,data:d});done++;enableNext();}catch(err){el.state.className='gt-state err';el.state.textContent='重试失败';}};
+      el.box.appendChild(rb);
+    }
   }
-  function maybeEnable(){if(state.results.length){$('#toStep5').disabled=false;state.maxStep=Math.max(state.maxStep,5);}}
-  setTimeout(()=>{if(state.results.length){$('#toStep5').disabled=false;state.maxStep=Math.max(state.maxStep,5);toast('物料生成完成，可查看导出');}else toast('全部任务失败，请检查网络后重试','err');},500);
+  setTimeout(()=>{if(state.results.length){enableNext();toast('物料生成完成，共 '+state.results.length+' 张，可查看导出');}else toast('全部任务失败，请检查网络后重试','err');},500);
 }
 function makeTaskEl(ico,name,sub){
   const div=document.createElement('div');div.className='gen-task';
@@ -851,8 +874,12 @@ function renderResults(){
   $('#sizeChips').innerHTML=plats.map(p=>'<button class="size-chip'+(p.id===state.curSize?' sel':'')+'" data-p="'+p.id+'">'+p.name+' · '+p.ratio+'</button>').join('');
   $$('#sizeChips .size-chip').forEach(b=>b.onclick=()=>{state.curSize=b.dataset.p;renderResults();});
   const pf=PLATFORMS.find(p=>p.id===state.curSize);
-  const grid=$('#resultGrid');grid.innerHTML=state.results.map((r,i)=>'<div class="result-card"><div class="rc-img"><span class="rc-tag">'+r.name+'</span><img id="ri'+i+'" alt="'+r.name+'"><span class="rc-watermark">AI 生成</span></div><div class="rc-body"><div class="rc-name">'+r.name+'</div><div class="rc-size">'+pf.name+' · '+pf.w+'×'+pf.h+' · '+pf.ratio+'</div><div class="rc-actions"><button class="btn btn-primary" data-dl="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载</button></div></div></div>').join('');
-  state.results.forEach(async(r,i)=>{const out=await coverResize(r.data,pf.w,pf.h);const im=$('#ri'+i);if(im)im.src=out;r['crop_'+pf.id]=out;});
+  const grid=$('#resultGrid');
+  const card=r=>{const i=state.results.indexOf(r);const tag=r.kind==='ext'?'外观场景':'内饰 / 细节';
+    return '<div class="result-card"><div class="rc-img"><span class="rc-tag">'+tag+'</span><img id="ri'+i+'" alt="'+r.name+'"><span class="rc-watermark">AI 生成</span></div><div class="rc-body"><div class="rc-name">'+r.name+'</div><div class="rc-size">'+pf.name+' · '+pf.w+'×'+pf.h+' · '+pf.ratio+'</div><div class="rc-actions"><button class="btn btn-primary" data-dl="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载</button></div></div></div>';};
+  const zones=[{title:'外观场景图',rs:state.results.filter(r=>r.kind==='ext')},{title:'内饰 / 细节增强图',rs:state.results.filter(r=>r.kind!=='ext')}].filter(z=>z.rs.length);
+  grid.innerHTML=zones.map(z=>'<div class="rz-title">'+z.title+'<span>'+z.rs.length+' 张</span></div>'+z.rs.map(card).join('')).join('');
+  state.results.forEach(async(r)=>{const i=state.results.indexOf(r);const out=await coverResize(r.data,pf.w,pf.h);const im=$('#ri'+i);if(im)im.src=out;r['crop_'+pf.id]=out;});
   $$('[data-dl]').forEach(b=>b.onclick=async()=>{const r=state.results[+b.dataset.dl];let out=r['crop_'+pf.id];if(!out){out=await coverResize(r.data,pf.w,pf.h);r['crop_'+pf.id]=out;}downloadDataUrl(out,fileBase()+'_'+r.name+'_'+pf.name+'_'+pf.w+'x'+pf.h+'.jpg');toast('已下载 '+r.name);});
   renderCopies();
 }
