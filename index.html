@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee 生图伙计 · 二手车行版 — 收车拍几张，上架物料全自动</title>
+<title>WorkHogee 二手车伙计 · 二手生意，从图开始 — 收车拍几张，上架物料全自动</title>
 <meta name="description" content="面向中小二手车行的AI车源物料工作台。手机拍几张外观、内饰、细节，自动产出精修图、场景图、360展示、短视频和车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -29,13 +29,18 @@ img{max-width:100%;display:block;}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;max-width:1200px;margin:0 auto;padding:0 24px;}
 .nav-logo{display:flex;align-items:center;gap:10px;}
 .nav-logo svg{height:28px;width:auto;}
-.nav-links{display:flex;align-items:center;gap:30px;}
+.nav-links{display:flex;align-items:center;gap:14px;}
 .nav-links a{font-size:15px;color:var(--ink-soft);font-weight:500;transition:color .2s;}
 .nav-links a:hover{color:var(--orange);}
-.nav-product-link{display:inline-flex;align-items:center;gap:5px;font-size:14px;padding:7px 14px;border-radius:8px;transition:all .2s;}
-.nav-product-link:hover{color:var(--orange);background:rgba(234,88,12,.06);}
-.nav-product-link.active{background:var(--orange);color:var(--white)!important;font-weight:600;box-shadow:0 4px 12px rgba(234,88,12,.25);}
-.nav-product-link svg{width:15px;height:15px;flex-shrink:0;}
+.nav-pill{position:relative;display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:14px;font-weight:500;line-height:1;padding:9px 15px;border-radius:8px;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.nav-pill.on{background:var(--orange);color:var(--white);font-weight:600;box-shadow:0 4px 12px rgba(234,88,12,.25);}
+.nav-pill.on:hover{color:var(--white);background:var(--orange-deep);}
+.nav-pill.soon{color:var(--ink-soft);background:transparent;border-color:var(--line-strong);}
+.nav-pill.soon:hover{color:var(--ink);border-color:var(--ink-muted);background:rgba(28,25,23,.03);}
+.nav-pill .soon-badge{position:absolute;top:-9px;right:-9px;background:var(--orange-soft);color:var(--orange-deep);font-size:10px;font-weight:600;line-height:1;padding:3px 6px;border-radius:999px;border:1px solid rgba(234,88,12,.28);white-space:nowrap;letter-spacing:.2px;}
+.nav-admin{margin-left:8px;}
+.nav-toast{position:fixed;top:84px;left:50%;transform:translate(-50%,-12px);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 10px 30px rgba(28,25,23,.25);opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.22,1,.36,1);z-index:9999;max-width:88vw;text-align:center;}
+.nav-toast.show{opacity:1;transform:translate(-50%,0);}
 .nav-cta{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--paper)!important;padding:10px 22px;border-radius:10px;font-size:14px!important;font-weight:600!important;transition:all .25s;}
 .nav-cta:hover{background:var(--orange);transform:translateY(-1px);}
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
@@ -242,7 +247,9 @@ img{max-width:100%;display:block;}
   .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;gap:0;padding:12px 24px 20px;border-bottom:1px solid var(--line);box-shadow:var(--shadow-md);}
   .nav-links.open{display:flex;}
   .nav-links a{padding:12px 0;}
-  .nav-product-link{padding:12px 0;}
+  .nav-pill{align-self:flex-start;padding:10px 15px;margin:5px 0;}
+  .nav-pill .soon-badge{position:static;margin-left:8px;}
+  .nav-admin{margin-left:0;}
   .nav-cta{justify-content:center;margin-top:8px;}
   .nav-toggle{display:flex;}
   .hero-inner{grid-template-columns:1fr;gap:40px;}
@@ -286,10 +293,10 @@ img{max-width:100%;display:block;}
       </svg>
     </a>
     <nav class="nav-links" id="navLinks">
-      <a href="/" class="nav-product-link active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12,0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计
-      </a>
-      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
+      <a href="/" class="nav-pill on">二手车伙计</a>
+      <button type="button" class="nav-pill soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">二手房伙计<span class="soon-badge">即将上线</span></button>
+      <button type="button" class="nav-pill soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">二手潮玩伙计<span class="soon-badge">即将上线</span></button>
+      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer" class="nav-admin">管理后台</a>
       <a class="nav-cta" href="/huoer-online.html">免费使用 Web 版</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
@@ -301,7 +308,7 @@ img{max-width:100%;display:block;}
   <div class="container">
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="hero-badge"><span class="dot"></span><span>WorkHogee 生图伙计 · 二手车行版 · 内测中</span></div>
+        <div class="hero-badge"><span class="dot"></span><span>WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span></div>
         <h1>收车拍几张，<br><span class="highlight">上架物料全自动</span></h1>
         <p class="hero-sub">面向中小二手车行的 AI 车源物料工作台。手机随手拍外观、内饰、细节，自动产出精修图、场景图、360 展示、短视频和车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。收车到上架，一个伙计全包。</p>
         <div class="hero-cta">
@@ -647,13 +654,15 @@ img{max-width:100%;display:block;}
             </g>
           </svg>
         </a>
-        <p>WorkHogee 生图伙计 · 二手车行版，让中小二手车行也能 10 分钟产出能上架、能传播、能合规的车源物料。</p>
+        <p>WorkHogee 二手生图伙计，只做二手行业的 AI 物料工作台：拍几张手机图，生成可上架、可传播、可合规的图片、视频和文案。二手生意，从图开始。</p>
       </div>
       <div class="footer-col">
         <h5>产品</h5>
         <ul>
-          <li><a href="/">生图伙计 · 二手车行版</a></li>
+          <li><a href="/">二手车伙计 · 已上线</a></li>
           <li><a href="/huoer-online.html">Web 工作台</a></li>
+          <li><span style="color:var(--ink-muted);cursor:default;">二手房伙计 · 即将上线</span></li>
+          <li><span style="color:var(--ink-muted);cursor:default;">二手潮玩伙计 · 即将上线</span></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -673,7 +682,7 @@ img{max-width:100%;display:block;}
       </div>
     </div>
     <div class="footer-bottom">
-      <div>© 2026 WorkHogee. All rights reserved. 让每个二手车行都有 AI 车源物料伙计</div>
+      <div>© 2026 WorkHogee. All rights reserved. 二手生意，从图开始。</div>
       <div class="footer-links">
         <a href="privacy.html">隐私政策</a>
         <a href="terms.html">服务条款</a>
@@ -688,7 +697,17 @@ const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20);});
 const navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
 navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));
-navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+navLinks.querySelectorAll('a,button').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+// 未上线品类：顶部轻提示（非死链、非弹窗）
+function navToast(msg){
+  var t=document.getElementById('navToast');
+  if(!t){t=document.createElement('div');t.id='navToast';t.className='nav-toast';document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2600);
+}
+document.querySelectorAll('.nav-pill.soon[data-soon]').forEach(function(b){
+  b.addEventListener('click',function(){navLinks.classList.remove('open');navToast(b.getAttribute('data-soon'));});
+});
 
 // 滚动揭示
 const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
