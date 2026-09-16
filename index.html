@@ -135,6 +135,39 @@ ul{list-style:none;}
 .rail-photo img{width:100%;height:100%;object-fit:cover;}
 .rail-photo .cap{position:absolute;left:12px;bottom:10px;background:rgba(13,11,9,.66);backdrop-filter:blur(6px);font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:999px;display:flex;align-items:center;gap:7px;}
 .rail-photo .cap::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange-light);}
+/* hero 行业 AI 工作台入口卡 */
+.wcard{-webkit-appearance:none;appearance:none;display:block;width:100%;text-align:left;margin:0 0 10px;padding:0;border:1px solid rgba(255,255,255,.12);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);cursor:pointer;color:#fff;font-family:inherit;position:relative;transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .32s,background .32s,box-shadow .32s;}
+.wcard:last-child{margin-bottom:0;}
+.wcard .wc-head{display:flex;align-items:center;gap:11px;padding:11px 12px;}
+.wcard .ric{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.78);transition:.32s;}
+.wcard .ric svg{width:19px;height:19px;}
+.wcard .wc-txt{min-width:0;flex:1;}
+.wcard .rnm{display:block;font-size:13.5px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wcard .rcf{display:block;font-size:11px;color:rgba(255,255,255,.46);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wcard .wc-go{width:26px;height:26px;flex-shrink:0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.14);opacity:.5;transform:translateX(-4px);transition:.32s cubic-bezier(.22,1,.36,1);}
+.wcard .wc-go svg{width:14px;height:14px;}
+.wcard .wc-ph{position:relative;margin:0 8px 8px;border-radius:10px;overflow:hidden;aspect-ratio:8/3;background:#15110d;}
+.wcard .wc-ph img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.05);animation:wcKen 17s ease-in-out infinite alternate;will-change:transform;}
+.rail .wcard:nth-child(3) .wc-ph img{animation-delay:-6s;}
+.rail .wcard:nth-child(4) .wc-ph img{animation-delay:-12s;}
+@keyframes wcKen{0%{transform:scale(1.05);}100%{transform:scale(1.13);}}
+.wcard:hover .wc-ph img{animation-play-state:paused;}
+.wcard .cap{position:absolute;left:9px;bottom:8px;z-index:2;background:rgba(13,11,9,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:6px;color:#fff;transition:transform .32s;}
+.wcard .cap::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--orange-light);}
+.wcard .wc-tag{position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:700;letter-spacing:.3px;padding:3px 9px;border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.wcard .wc-tag.live{background:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(234,88,12,.45);}
+.wcard .wc-tag.soon{background:rgba(13,11,9,.6);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.22);}
+.wcard.live .ric{background:var(--orange);border-color:var(--orange);color:#fff;}
+.wcard.live:hover{transform:translateY(-3px);border-color:rgba(251,146,60,.6);box-shadow:0 18px 36px -18px rgba(234,88,12,.6);background:linear-gradient(180deg,rgba(234,88,12,.14),rgba(255,255,255,.03));}
+.wcard.live:hover .ric{box-shadow:0 6px 16px rgba(234,88,12,.5);}
+.wcard.live:hover .wc-go{background:var(--orange);border-color:var(--orange);color:#fff;opacity:1;transform:translateX(0);}
+.wcard.live:hover .cap{transform:translateY(-2px);}
+.wcard.soon .ric{color:rgba(255,255,255,.62);}
+.wcard.soon:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06);}
+.wcard.soon:hover .ric{border-color:rgba(251,146,60,.55);color:var(--orange-light);}
+.wcard.soon:hover .wc-go{color:var(--orange-light);border-color:rgba(251,146,60,.5);opacity:1;transform:translateX(0);}
+.wcard.soon:hover .cap{transform:translateY(-2px);}
+@media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard,.wcard *{transition:none!important;}}
 .mh-creed{position:relative;z-index:2;margin-top:64px;border-top:1px solid rgba(255,255,255,.12);padding:30px 0 34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
 .mh-creed .big{font-size:clamp(20px,2.4vw,27px);font-weight:800;letter-spacing:-.3px;}
 .mh-creed .big em{font-style:normal;color:var(--orange-light);}
@@ -399,9 +432,10 @@ ul{list-style:none;}
   .footer-grid{grid-template-columns:1fr 1fr;gap:30px;}
   .footer-brand{grid-column:1/-1;}
   .footer-bottom{flex-direction:column;align-items:flex-start;}
-  .rail-item .rcf{font-size:12.5px;}
-  .rail-item .rst{font-size:11.5px;}
-  .rail-photo .cap{font-size:12.5px;}
+  .wcard .rcf{font-size:12px;}
+  .wcard .rnm{font-size:14px;}
+  .wcard .cap{font-size:11.5px;}
+  .wcard .wc-ph{aspect-ratio:16/7;}
   .mx-mid .desc,.mx-feat .cap .cf{font-size:13.5px;}
   .mcta .mp-line button{padding:8px 4px;}
 }
@@ -426,10 +460,12 @@ ul{list-style:none;}
   .mh-creed{margin-top:40px;padding:22px 0 26px;gap:18px;}
   .rail{padding:10px;}
   .rail-h{padding:8px 10px 9px;}
-  .rail-item{padding:9px 10px;gap:11px;}
-  .rail-item .ric{width:34px;height:34px;}
-  .rail-item .ric svg{width:18px;height:18px;}
-  .rail-photo{aspect-ratio:16/7;margin:8px 3px 3px;}
+  .wcard{margin-bottom:8px;}
+  .wcard .wc-head{padding:8px 10px;gap:10px;}
+  .wcard .ric{width:30px;height:30px;}
+  .wcard .ric svg{width:17px;height:17px;}
+  .wcard .rnm{font-size:13px;}
+  .wcard .wc-ph{aspect-ratio:3/1;margin:0 6px 6px;}
   .mx-grid{gap:18px;}
   .mx-feat{min-height:368px;}
   .mx-feat .ph{min-height:210px;}
@@ -483,9 +519,11 @@ ul{list-style:none;}
   .mh-cta{margin-top:20px;}
   .mh-tenets{margin-top:20px;}
   .mh-creed{margin-top:30px;padding:18px 0 22px;}
-  .rail-item{padding:7px 10px;}
-  .rail-item .ric{width:32px;height:32px;}
-  .rail-photo{aspect-ratio:16/6;}
+  .wcard{margin-bottom:7px;}
+  .wcard .wc-head{padding:7px 9px;gap:9px;}
+  .wcard .ric{width:28px;height:28px;}
+  .wcard .ric svg{width:16px;height:16px;}
+  .wcard .wc-ph{aspect-ratio:10/3;margin:0 6px 6px;}
   .mx-feat{min-height:330px;}
   .mx-feat .ph{min-height:180px;}
   .fnode{width:58px;height:58px;}
@@ -555,41 +593,43 @@ ul{list-style:none;}
       </div>
       <div class="mh-right mh-anim" style="animation-delay:.26s">
         <div class="rail">
-          <div class="rail-h"><span class="rt">品类矩阵</span><span class="rs">只做图片决定成交的非标品</span></div>
-          <a href="/usedcar.html" class="rail-item live">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
-            <span><span class="rnm">二手车伙计</span><span class="rcf">车况 vs 图骗</span></span>
-            <span class="rst">已上线</span>
+          <div class="rail-h"><span class="rt">行业 AI 工作台</span><span class="rs">选个品类，直接开干</span></div>
+          <a href="/huoer-online.html" class="wcard live">
+            <div class="wc-head">
+              <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
+              <span class="wc-txt"><span class="rnm">二手车 AI 生图工作台</span><span class="rcf">车况 vs 图骗 · 真实场景图</span></span>
+              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+            </div>
+            <div class="wc-ph">
+              <img src="images/car-suv-outdoor.jpg" alt="二手车 AI 生图工作台生成的真实车况户外场景图">
+              <span class="wc-tag live">已上线</span>
+              <span class="cap">真实车况场景图</span>
+            </div>
           </a>
-          <button type="button" class="rail-item soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
-            <span><span class="rnm">二手房伙计</span><span class="rcf">格局 vs 美化失真</span></span>
-            <span class="rst">即将上线</span>
+          <button type="button" class="wcard soon" data-soon="二手房 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
+            <div class="wc-head">
+              <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+              <span class="wc-txt"><span class="rnm">二手房 AI 生图工作台</span><span class="rcf">格局 vs 美化失真 · 真实户型</span></span>
+              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+            </div>
+            <div class="wc-ph">
+              <img src="images/room-nordic.jpg" alt="二手房 AI 生图工作台生成的真实户型采光图">
+              <span class="wc-tag soon">即将上线</span>
+              <span class="cap">真实户型 · 采光图</span>
+            </div>
           </button>
-          <button type="button" class="rail-item soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
-            <span><span class="rnm">二手潮玩伙计</span><span class="rcf">成色 vs 瑕疵抹除</span></span>
-            <span class="rst">即将上线</span>
+          <button type="button" class="wcard soon" data-soon="二手潮玩 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
+            <div class="wc-head">
+              <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
+              <span class="wc-txt"><span class="rnm">二手潮玩 AI 生图工作台</span><span class="rcf">成色 vs 瑕疵抹除 · 藏品陈列</span></span>
+              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+            </div>
+            <div class="wc-ph">
+              <img src="images/usedtoy-collection.jpg" alt="二手潮玩 AI 生图工作台生成的藏品成色陈列图">
+              <span class="wc-tag soon">即将上线</span>
+              <span class="cap">藏品成色陈列图</span>
+            </div>
           </button>
-          <button type="button" class="rail-item plan" data-soon="二手乐器伙计已在产品路线图中，将在复制期后启动，敬请期待">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
-            <span><span class="rnm">二手乐器伙计</span><span class="rcf">品相 vs 证据隐藏</span></span>
-            <span class="rst">规划中</span>
-          </button>
-          <button type="button" class="rail-item plan" data-soon="二手 3C 伙计已在产品路线图中，将在扩展期启动，敬请期待">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
-            <span><span class="rnm">二手 3C 伙计</span><span class="rcf">序列号 vs 隐瞒故障</span></span>
-            <span class="rst">规划中</span>
-          </button>
-          <button type="button" class="rail-item plan" data-soon="二手办公伙计已在产品路线图中，将在规模化阶段启动，敬请期待">
-            <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="9" width="12" height="8"/><path d="M6 17H4v4h16v-4h-2"/><path d="M10 13h.01M14 13h.01"/></svg></span>
-            <span><span class="rnm">二手办公伙计</span><span class="rcf">批量 vs 效率低</span></span>
-            <span class="rst">规划中</span>
-          </button>
-          <div class="rail-photo">
-            <img src="images/car-suv-outdoor.jpg" alt="二手车伙计生成的户外生活场景图">
-            <span class="cap">二手车伙计 · 真实车况场景图</span>
-          </div>
         </div>
       </div>
     </div>
