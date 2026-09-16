@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee GEO伙计 · 使用指南</title>
+<style>
+  :root {
+    --ink: #1c1917;
+    --ink-soft: #57534e;
+    --ink-muted: #a8a29e;
+    --orange: #ea580c;
+    --orange-deep: #c2410c;
+    --orange-light: #fb923c;
+    --paper: #faf8f4;
+    --sand: #f0e9db;
+    --line: #e7e0d4;
+    --white: #ffffff;
+    --green: #16a34a;
+    --red: #dc2626;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 20px;
+  }
+  /* Sidebar TOC */
+  .toc {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+  .toc h4 {
+    font-size: 13px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .toc ul { list-style: none; }
+  .toc li { margin-bottom: 2px; }
+  .toc a {
+    display: block;
+    padding: 6px 10px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+  }
+  .toc a:hover { background: var(--sand); color: var(--ink); }
+  .toc a.sub { padding-left: 24px; font-size: 13px; color: var(--ink-muted); }
+  /* Main */
+  .main { min-width: 0; }
+  header.hero {
+    background: var(--ink);
+    color: var(--white);
+    padding: 48px 40px;
+    border-radius: 16px;
+    margin-bottom: 28px;
+  }
+  header.hero h1 { font-size: 30px; margin-bottom: 10px; }
+  header.hero p { color: var(--ink-muted); font-size: 15px; max-width: 640px; }
+  .badge {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--white);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 16px;
+  }
+  section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid var(--line);
+  }
+  h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .num {
+    background: var(--orange);
+    color: var(--white);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  h3 { font-size: 17px; margin: 24px 0 10px; color: var(--ink); }
+  h4 { font-size: 15px; margin: 16px 0 8px; color: var(--ink-soft); }
+  p { margin-bottom: 12px; font-size: 15px; }
+  ul, ol { margin: 10px 0 14px 24px; }
+  li { margin-bottom: 6px; font-size: 15px; }
+  code {
+    background: var(--sand);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: var(--orange-deep);
+  }
+  pre {
+    background: var(--ink);
+    color: #e7e5e4;
+    padding: 18px 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 12px 0 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--sand); font-weight: 600; font-size: 13px; }
+  tr:hover { background: var(--paper); }
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag-get { background: #dcfce7; color: #166534; }
+  .tag-post { background: #dbeafe; color: #1e40af; }
+  .tag-put { background: #fef3c7; color: #92400e; }
+  .tag-del { background: #fee2e2; color: #991b1b; }
+  .callout {
+    background: #fff7ed;
+    border-left: 4px solid var(--orange);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--orange-deep); }
+  .callout-green {
+    background: #f0fdf4;
+    border-left-color: var(--green);
+  }
+  .callout-green strong { color: #166534; }
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 18px 0;
+  }
+  .step-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .step-card .step-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--orange);
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step-card h4 { margin: 0 0 6px; }
+  .step-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+  }
+  .faq-item h4 { color: var(--ink); margin-bottom: 6px; }
+  .faq-item p { font-size: 14.5px; color: var(--ink-soft); margin: 0; }
+  footer {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 13px;
+    padding: 24px;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { position: static; max-height: none; }
+    .step-grid { grid-template-columns: 1fr; }
+    header.hero { padding: 28px 22px; }
+    section { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc">
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#sec1">1. 什么是GEO</a></li>
+    <li><a href="#sec1-1" class="sub">GEO vs SEO</a></li>
+    <li><a href="#sec1-2" class="sub">为什么需要GEO</a></li>
+    <li><a href="#sec2">2. 快速开始</a></li>
+    <li><a href="#sec2-1" class="sub">开通模块</a></li>
+    <li><a href="#sec2-2" class="sub">添加关键词</a></li>
+    <li><a href="#sec2-3" class="sub">首次监测</a></li>
+    <li><a href="#sec2-4" class="sub">生成内容</a></li>
+    <li><a href="#sec3">3. 功能详解</a></li>
+    <li><a href="#sec3-1" class="sub">3.1 多引擎监测</a></li>
+    <li><a href="#sec3-2" class="sub">3.2 内容生成器</a></li>
+    <li><a href="#sec3-3" class="sub">3.3 归因落地页</a></li>
+    <li><a href="#sec3-4" class="sub">3.4 自动周报</a></li>
+    <li><a href="#sec4">4. 最佳实践</a></li>
+    <li><a href="#sec5">5. 常见问题</a></li>
+    <li><a href="#sec6">6. API参考</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<header class="hero">
+  <h1>WorkHogee GEO伙计 · 使用指南</h1>
+  <p>面向 AI 搜索时代的获客闭环工具：监测你的品牌在各大 AI 引擎中的提及表现，自动生成可被 AI 引用的优质内容，通过归因落地页承接流量并回流到伙计成交。</p>
+  <span class="badge">GEO伙计特别版 · v0.1</span>
+</header>
+
+<!-- 1. 什么是GEO -->
+<section id="sec1">
+  <h2><span class="num">1</span>什么是 GEO</h2>
+  <p><strong>GEO（Generative Engine Optimization，生成式引擎优化）</strong>是针对 ChatGPT、Perplexity、Google AI Overviews、文心一言、豆包等 AI 回答引擎的优化方法。传统 SEO 优化的是"搜索结果排名"，而 GEO 优化的是<strong>"AI 回答中是否引用、如何引用你的品牌"</strong>。</p>
+
+  <h3 id="sec1-1">1.1 GEO vs SEO 的区别</h3>
+  <table>
+    <thead><tr><th>维度</th><th>传统 SEO</th><th>GEO</th></tr></thead>
+    <tbody>
+      <tr><td>优化目标</td><td>搜索引擎结果页排名</td><td>AI 生成回答中的引用与提及</td></tr>
+      <tr><td>流量形态</td><td>蓝色链接，用户点击跳转</td><td>AI 直接给出答案，用户不一定点击链接</td></tr>
+      <tr><td>核心指标</td><td>排名、点击率、自然流量</td><td>提及率、引用率、情感倾向、品牌被回答覆盖</td></tr>
+      <tr><td>内容策略</td><td>关键词堆砌、外链、标题标签</td><td>结构化、权威、可被 LLM 直接抽取引用的内容</td></tr>
+      <tr><td>竞争逻辑</td><td>与同页其他结果竞争点击</td><td>与竞品品牌争夺"AI 答案里的那个名字"</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="sec1-2">1.2 为什么 AI 搜索时代需要 GEO</h3>
+  <ul>
+    <li><strong>用户行为迁移</strong>：越来越多用户直接问 AI"XX 品牌哪个好""XX 产品推荐"，而不是翻搜索结果。</li>
+    <li><strong>答案即入口</strong>：当 AI 回答里提到的是竞品而不是你，你在这个用户的决策起点就出局了。</li>
+    <li><strong>品牌资产沉淀</strong>：被 AI 反复、正面引用，会形成新的品牌认知资产，且成本远低于持续投广告。</li>
+    <li><strong>闭环可度量</strong>：WorkHogee GEO 伙计不只看"被提到"，还能追踪到落地页访客、线索、成交，把 GEO 从玄学变成可算账的获客渠道。</li>
+  </ul>
+  <div class="callout">
+    <strong>WorkHogee 的差异化：</strong>不做又一个监测看板。我们做的是 <strong>"GEO 种草 → 归因落地页承接 → 伙计对话成交 → 数据回流周报"</strong> 的完整闭环。
+  </div>
+</section>
+
+<!-- 2. 快速开始 -->
+<section id="sec2">
+  <h2><span class="num">2</span>快速开始</h2>
+  <p>4 步跑通你的第一个 GEO 闭环。</p>
+
+  <div class="step-grid">
+    <div class="step-card" id="sec2-1">
+      <span class="step-num">1</span>
+      <h4>开通 GEO 模块</h4>
+      <p>联系 WorkHogee 客户成功或在管理后台左侧菜单点击 <strong>"GEO 伙计"</strong>。模块默认随 GEO 特别版开通，进入后先看到的是"GEO 概览"Tab。</p>
+    </div>
+    <div class="step-card" id="sec2-2">
+      <span class="step-num">2</span>
+      <h4>添加第一个监测关键词</h4>
+      <p>切换到 <strong>"关键词管理"</strong> Tab，点击"添加关键词"。建议第一周先加 3-5 个词：1 个品牌词 + 2 个行业词 + 1 个竞品词。</p>
+    </div>
+    <div class="step-card" id="sec2-3">
+      <span class="step-num">3</span>
+      <h4>运行首次监测</h4>
+      <p>在关键词列表点击 <strong>"立即监测"</strong>，或调用 <code>POST /api/geo/monitor/run</code>。系统会针对每个关键词在支持的 AI 引擎中执行查询并记录提及。</p>
+    </div>
+    <div class="step-card" id="sec2-4">
+      <span class="step-num">4</span>
+      <h4>生成第一篇 GEO 内容</h4>
+      <p>切换到 <strong>"内容生成器"</strong> Tab，选择内容类型（行业科普 / 产品对比 / FAQ 问答 / 客户案例），输入主题，点击生成。生成后可一键发布到归因落地页。</p>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>小提示：</strong>首次使用建议先跑一次监测拿到基线数据，再开始批量生成内容——这样后续周报里的"提及率变化"才有对照。
+  </div>
+</section>
+
+<!-- 3. 功能详解 -->
+<section id="sec3">
+  <h2><span class="num">3</span>功能详解</h2>
+
+  <h3 id="sec3-1">3.1 多引擎 GEO 监测</h3>
+  <p>同时跟踪你的品牌在多个 AI 搜索引擎中的表现。</p>
+  <h4>支持的引擎</h4>
+  <ul>
+    <li>国内：文心一言、豆包、通义千问、Kimi、DeepSeek</li>
+    <li>海外：ChatGPT、Perplexity、Google AI Overviews、Claude</li>
+  </ul>
+  <h4>关键词管理</h4>
+  <ul>
+    <li>支持品牌词、行业词、竞品词三类标签，便于分组分析</li>
+    <li>批量添加、批量删除，关键词可标记启用/暂停</li>
+    <li>每个关键词可设置监测频率（每日 / 每周）</li>
+  </ul>
+  <h4>提及分析</h4>
+  <ul>
+    <li>每次监测返回：你的品牌是否被提及、被几次提及、在回答中的位置</li>
+    <li>竞品提及对比：同一查询下，你的品牌 vs 竞品谁被提到了</li>
+    <li>提及原文摘录 + 引用来源 URL</li>
+  </ul>
+  <h4>排名追踪</h4>
+  <ul>
+    <li>记录每次监测的"品牌出现位次"和"是否被推荐"评分</li>
+    <li>趋势曲线：近 30 天提及率、排名变化、情感分变化</li>
+  </ul>
+  <h4>情感分析</h4>
+  <ul>
+    <li>每条提及自动判定正面 / 中性 / 负面</li>
+    <li>负面提及会高亮提示，方便及时公关响应</li>
+  </ul>
+
+  <h3 id="sec3-2">3.2 GEO 内容生成器</h3>
+  <p>基于 E-E-A-T 原则（经验、专业、权威、可信）批量生成容易被 AI 引擎引用的内容。</p>
+  <h4>内容类型</h4>
+  <table>
+    <tr><th>类型</th><th>适用场景</th></tr>
+    <tr><td>行业科普文章</td><td>建立行业话语权，被 AI 用作通用知识引用</td></tr>
+    <tr><td>产品对比 / 选购指南</td><td>抢占"XX 哪个好""XX 推荐"类查询</td></tr>
+    <tr><td>FAQ 问答集</td><td>结构化问答最容易被 LLM 直接抽取</td></tr>
+    <tr><td>客户案例 / 成功故事</td><td>提升 E-E-A-T 中的 Experience 与 Trust</td></tr>
+  </table>
+  <h4>E-E-A-T 原则落地</h4>
+  <ul>
+    <li><strong>Experience（经验）</strong>：内容中加入具体数据、使用场景、真实客户画像</li>
+    <li><strong>Expertise（专业）</strong>：结构化步骤、专业术语、对比表格</li>
+    <li><strong>Authoritativeness（权威）</strong>：引用行业标准、第三方报告、专家观点</li>
+    <li><strong>Trustworthiness（可信）</strong>：明确署名、数据来源、更新时间</li>
+  </ul>
+  <h4>批量生成</h4>
+  <p>选择一组关键词或一个主题，系统会自动为每个关键词生成一篇内容草稿，支持一键批量编辑与导出。</p>
+  <h4>内容优化</h4>
+  <p>对已有内容输入 URL 或粘贴正文，系统会按 GEO 标准给出优化建议：结构化程度、问答覆盖、关键词密度、引用可信度等。</p>
+
+  <h3 id="sec3-3">3.3 归因落地页</h3>
+  <p>把 GEO 内容产生的流量承接下来，并识别访客来源。</p>
+  <h4>模板管理</h4>
+  <ul>
+    <li>内置多套落地页模板：科普型、对比型、留资型、试用型</li>
+    <li>每套模板支持自定义标题、副标题、CTA、表单字段</li>
+  </ul>
+  <h4>A/B 测试</h4>
+  <ul>
+    <li>同一个落地页可创建多个变体（不同标题 / CTA / 表单长度）</li>
+    <li>系统自动按流量分流，统计各变体的访问数、转化率</li>
+    <li>达到统计显著性后推荐胜出变体</li>
+  </ul>
+  <h4>流量来源识别</h4>
+  <ul>
+    <li>自动识别访客来自哪个 AI 引擎、由哪个关键词触发</li>
+    <li>URL 参数 <code>?geo_kw=xxx&geo_engine=xxx</code> 自动记录</li>
+    <li>访客首次落地后写入 Cookie，后续多次访问归因到同一 GEO 来源</li>
+  </ul>
+  <h4>与伙计承接打通</h4>
+  <ul>
+    <li>落地页内嵌 WorkHogee 伙计对话挂件，访客点击即进入对话</li>
+    <li>对话中自动携带 GEO 来源参数，销售在后台能看到"这个客户是从哪个 AI、哪个词进来的"</li>
+    <li>成交后回传到 GEO 周报，形成完整 ROI 闭环</li>
+  </ul>
+
+  <h3 id="sec3-4">3.4 自动周报</h3>
+  <h4>数据汇总</h4>
+  <ul>
+    <li>每周自动汇总：关键词数、被提及次数、平均排名、情感分布</li>
+    <li>内容产出数、落地页访问数、线索数、成交数</li>
+  </ul>
+  <h4>转化漏斗</h4>
+  <p>完整漏斗：AI 引擎曝光 → 提及 → 落地页访问 → 伙计对话 → 留资 → 成交，每一层转化率一目了然。</p>
+  <h4>推送设置</h4>
+  <ul>
+    <li>每周一上午自动生成上周周报</li>
+    <li>支持推送到邮箱、企业微信、飞书群</li>
+    <li>可在后台手动触发生成、查看历史周报</li>
+  </ul>
+</section>
+
+<!-- 4. 最佳实践 -->
+<section id="sec4">
+  <h2><span class="num">4</span>最佳实践</h2>
+
+  <h3>4.1 关键词选择策略</h3>
+  <p>建议初始比例 <strong>品牌词 : 行业词 : 竞品词 = 2 : 5 : 3</strong>。</p>
+  <table>
+    <tr><th>类型</th><th>作用</th><th>示例</th></tr>
+    <tr><td>品牌词</td><td>守住基本盘，监控口碑</td><td>"WorkHogee 怎么样"</td></tr>
+    <tr><td>行业词</td><td>抢增量，建立品类认知</td><td>"AI 客服哪家好""SaaS 客服推荐"</td></tr>
+    <tr><td>竞品词</td><td>截流，对比中胜出</td><td>"XX 和 YY 哪个好""XX 替代方案"</td></tr>
+  </table>
+  <div class="callout">
+    <strong>建议：</strong>第一周先跑 3-5 个词建立基线，第二周再扩到 10-20 个。关键词不是越多越好，先把核心词做透。
+  </div>
+
+  <h3>4.2 内容生成技巧：如何让 AI 引用你的内容</h3>
+  <ul>
+    <li><strong>用问答体开头</strong>：AI 最容易抽取"问题 + 直接答案"结构</li>
+    <li><strong>结论前置</strong>：第一段就给出明确答案，再展开论证</li>
+    <li><strong>多用结构化格式</strong>：表格、列表、对比项、步骤编号</li>
+    <li><strong>给具体数字</strong>：有数字的内容比泛泛而谈更容易被引用</li>
+    <li><strong>明确署名和更新时间</strong>：AI 偏好"看起来新、看起来权威"的内容</li>
+    <li><strong>覆盖长尾问题</strong>：把 FAQ 做全，一个页面回答 20 个相关问题</li>
+  </ul>
+
+  <h3>4.3 落地页优化建议</h3>
+  <ul>
+    <li><strong>首屏即 CTA</strong>：访客从 AI 过来意向已经比较明确，不要让他滑到第二屏才看到联系方式</li>
+    <li><strong>表单尽量短</strong>：GEO 来源访客建议先只留手机号/邮箱，深度信息放到对话环节</li>
+    <li><strong>嵌入伙计挂件</strong>：比起让访客填表，直接弹出对话转化率通常高 2-3 倍</li>
+    <li><strong>跑 A/B 测试</strong>：先同时测 2 个标题版本，2 周后看数据再迭代</li>
+    <li><strong>落地页内容和监测关键词对齐</strong>：监测"XX 推荐"关键词的落地页，就应该重点回答"为什么推荐我们"</li>
+  </ul>
+</section>
+
+<!-- 5. FAQ -->
+<section id="sec5">
+  <h2><span class="num">5</span>常见问题 FAQ</h2>
+
+  <div class="faq-item">
+    <h4>Q1：GEO 和 SEO 冲突吗？需要放弃 SEO 吗？</h4>
+    <p>不冲突。SEO 仍服务于传统搜索流量，GEO 服务于 AI 回答流量。两者内容策略有重叠（结构化、权威、可信），可以一起做。WorkHogee GEO 生成的内容本身也是好的 SEO 内容。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q2：监测数据是实时的吗？</h4>
+    <p>当前版本（P0）监测为按关键词批量执行，支持手动触发和按计划频率运行。实时逐次查询暂不支持，P1 会接入真实 AI 搜索引擎 API。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q3：我需要自己写内容吗？</h4>
+    <p>不需要。内容生成器会根据你的行业、关键词和产品信息自动生成草稿。你可以在后台编辑、润色后再发布。建议对关键内容做人工审核，确保事实准确。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q4：落地页一定要用 WorkHogee 的吗？可以用我自己的网站吗？</h4>
+    <p>建议使用 WorkHogee 归因落地页模板，因为只有这样才能自动记录 GEO 来源参数并回传到周报。如果你坚持用自己的网站，需要手动加几行跟踪代码（见 API 参考中的 visit / conversion 接口）。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q5：多久能看到效果？</h4>
+    <p>通常 4-8 周。GEO 是内容资产的累积——AI 引擎需要时间抓取和索引你发布的新内容，然后才会在回答中引用。第一周跑基线，第一个月开始稳定产出内容，第二个月通常能看到提及率上升。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q6：负面提及怎么办？</h4>
+    <p>系统会在监测结果中高亮负面情感提及。建议响应方式：不要直接去 AI 引擎"申诉"，而是针对负面主题生成新的正面、权威内容，让 AI 在下次回答时能引用到更准确的信息。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Q7：支持多少个关键词？</h4>
+    <p>当前版本不限关键词数量，监测频率按套餐限制（定价待确认）。建议中小企业初期 10-30 个关键词即可覆盖核心场景。</p>
+  </div>
+</section>
+
+<!-- 6. API参考 -->
+<section id="sec6">
+  <h2><span class="num">6</span>API 参考</h2>
+  <p>GEO 伙计模块共提供 <strong>31 个 API 端点</strong>，统一前缀 <code>/api/geo</code>。以下按功能分组列出。</p>
+
+  <h3>6.1 多引擎监测（8 个）</h3>
+  <table>
+    <tr><th>方法</th><th>端点</th><th>说明</th></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/monitor/keywords</code></td><td>关键词列表</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/monitor/keywords</code></td><td>添加关键词</td></tr>
+    <tr><td><span class="tag tag-del">DELETE</span></td><td><code>/api/geo/monitor/keywords/:id</code></td><td>删除关键词</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/monitor/run</code></td><td>立即触发监测</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/monitor/mentions</code></td><td>提及记录列表</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/monitor/rankings</code></td><td>排名追踪数据</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/monitor/trends</code></td><td>趋势数据</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/monitor/stats</code></td><td>监测统计概览</td></tr>
+  </table>
+
+  <h3>6.2 内容生成（7 个）</h3>
+  <table>
+    <tr><th>方法</th><th>端点</th><th>说明</th></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/content/generate</code></td><td>生成单篇 GEO 内容</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/content/batch</code></td><td>批量生成内容</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/content/optimize</code></td><td>优化已有内容</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/content/templates</code></td><td>内容模板列表</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/content/list</code></td><td>已生成内容列表</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/content/:id</code></td><td>查看单篇内容详情</td></tr>
+    <tr><td><span class="tag tag-del">DELETE</span></td><td><code>/api/geo/content/:id</code></td><td>删除内容</td></tr>
+  </table>
+
+  <h3>6.3 归因落地页（10 个）</h3>
+  <table>
+    <tr><th>方法</th><th>端点</th><th>说明</th></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/landing/list</code></td><td>落地页列表</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/landing/create</code></td><td>创建落地页</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/landing/stats</code></td><td>落地页汇总统计</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/landing/:id</code></td><td>获取落地页详情</td></tr>
+    <tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/geo/landing/:id</code></td><td>更新落地页</td></tr>
+    <tr><td><span class="tag tag-del">DELETE</span></td><td><code>/api/geo/landing/:id</code></td><td>删除落地页</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/landing/abtest</code></td><td>创建 A/B 测试</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/landing/:id/visit</code></td><td>记录落地页访问</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/landing/:id/conversion</code></td><td>记录落地页转化</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/landing/:id/abtest-results</code></td><td>A/B 测试结果</td></tr>
+  </table>
+
+  <h3>6.4 自动周报（6 个）</h3>
+  <table>
+    <tr><th>方法</th><th>端点</th><th>说明</th></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/report/generate</code></td><td>生成周报</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/report/list</code></td><td>周报列表</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/report/data</code></td><td>周报原始数据</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/report/funnel</code></td><td>转化漏斗数据</td></tr>
+    <tr><td><span class="tag tag-get">GET</span></td><td><code>/api/geo/report/:id</code></td><td>查看单份周报</td></tr>
+    <tr><td><span class="tag tag-post">POST</span></td><td><code>/api/geo/report/:id/send</code></td><td>推送周报到邮件/企微/飞书</td></tr>
+  </table>
+
+  <h3>示例：触发一次监测</h3>
+  <pre><code>curl -X POST http://localhost:3000/api/geo/monitor/run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "keywordIds": ["kw_001", "kw_002"],
+    "engines": ["chatgpt", "perplexity", "wenxin"]
+  }'</code></pre>
+
+  <h3>示例：记录一次落地页访问</h3>
+  <pre><code>curl -X POST http://localhost:3000/api/geo/landing/lan_001/visit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "visitorId": "vst_abc123",
+    "engine": "chatgpt",
+    "keyword": "AI客服推荐",
+    "referrer": "https://chat.openai.com/"
+  }'</code></pre>
+</section>
+
+<footer>
+  WorkHogee GEO伙计 · 使用指南 &nbsp;|&nbsp; v0.1 &nbsp;|&nbsp; 2026-09-14
+</footer>
+
+</main>
+</div>
+</body>
+</html>
