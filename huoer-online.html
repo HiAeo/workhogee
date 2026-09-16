@@ -395,7 +395,7 @@ img { max-width: 100%; display: block; }
         </div>
         <div class="sizes-grid" id="sizesGrid">
           <div class="size-card"><div class="size-preview"><span style="font-size:9px;color:var(--ink-muted);">800×800</span></div><div class="size-info"><span class="size-name">淘宝主图</span><button class="size-dl" onclick="downloadSize('淘宝主图',800,800)">下载</button></div></div>
-          <div class="size-card"><div class="size-preview"><span style="font-size:9px;color:var(--ink-muted);">800×800</span></div><div class="size-info"><span class="size-name">美团菜品</span><button class="size-dl" onclick="downloadSize('美团菜品',800,800)">下载</button></div></div>
+          <div class="size-card"><div class="size-preview"><span style="font-size:9px;color:var(--ink-muted);">1920×1080</span></div><div class="size-info"><span class="size-name">横版主图</span><button class="size-dl" onclick="downloadSize('横版主图',1920,1080)">下载</button></div></div>
           <div class="size-card"><div class="size-preview"><span style="font-size:9px;color:var(--ink-muted);">1080×1440</span></div><div class="size-info"><span class="size-name">小红书</span><button class="size-dl" onclick="downloadSize('小红书',1080,1440)">下载</button></div></div>
           <div class="size-card"><div class="size-preview"><span style="font-size:9px;color:var(--ink-muted);">1080×1920</span></div><div class="size-info"><span class="size-name">抖音</span><button class="size-dl" onclick="downloadSize('抖音',1080,1920)">下载</button></div></div>
         </div>
@@ -446,7 +446,7 @@ img { max-width: 100%; display: block; }
       <div class="panel-body">
         <div class="size-checks">
           <label class="size-check active"><input type="checkbox" checked> 淘宝主图 800×800</label>
-          <label class="size-check active"><input type="checkbox" checked> 美团菜品 800×800</label>
+          <label class="size-check active"><input type="checkbox" checked> 小红书 1080×1440</label>
           <label class="size-check"><input type="checkbox"> 小红书 1080×1440</label>
           <label class="size-check"><input type="checkbox"> 抖音 1080×1920</label>
         </div>
@@ -990,7 +990,7 @@ function downloadOriginal() {
 
 async function downloadAll() {
   if (!state.generatedImage) return;
-  const sizes = [['淘宝主图',800,800],['美团菜品',800,800],['小红书',1080,1440],['抖音',1080,1920]];
+  const sizes = [['淘宝主图',800,800],['横版主图',1920,1080],['小红书',1080,1440],['抖音',1080,1920]];
   for (const [name, w, h] of sizes) {
     const resized = await resizeImage(state.generatedImage, w, h);
     downloadImage(resized, 'workhogee-' + name + '-' + w + 'x' + h + '.jpg');
