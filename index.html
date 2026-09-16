@@ -186,7 +186,7 @@ img{max-width:100%;display:block;}
 
 /* ===== 入口选择 ===== */
 .entry-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;}
-.entry-card{border-radius:var(--radius-lg);padding:40px;position:relative;overflow:hidden;}
+.entry-card{border-radius:var(--radius-lg);padding:40px;position:relative;overflow:hidden;display:flex;flex-direction:column;}
 .entry-card.web{background:var(--ink);color:#fff;box-shadow:var(--shadow-lg);}
 .entry-card.mp{background:var(--white);border:1.5px solid var(--line);}
 .entry-card .rec{position:absolute;top:20px;right:20px;background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;}
@@ -206,10 +206,12 @@ img{max-width:100%;display:block;}
 .entry-card.web .entry-feats svg{color:var(--orange-light);}
 .entry-card.mp .entry-feats{color:var(--ink-soft);}
 .entry-card.mp .entry-feats svg{color:var(--orange);}
-.entry-card .btn-primary{width:100%;justify-content:center;}
-.entry-card.mp .btn-line{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;border:1.5px solid var(--line);color:var(--ink);background:#fff;cursor:pointer;transition:all .25s;}
-.entry-card.mp .btn-line:hover{border-color:var(--orange);color:var(--orange);}
-.qr-note{font-size:12px;color:var(--ink-muted);text-align:center;margin-top:14px;line-height:1.6;}
+.entry-card .btn-primary{width:100%;justify-content:center;margin-top:auto;}
+.entry-card.mp .btn-line{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;border:1.5px solid var(--line-strong);color:var(--ink);background:#fff;cursor:pointer;transition:all .25s;}
+.entry-card.mp .btn-line svg{width:18px;height:18px;flex-shrink:0;}
+.entry-card.mp .btn-line:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft);transform:translateY(-2px);}
+.mp-cta{margin-top:auto;}
+.qr-note{font-size:12.5px;color:var(--ink-muted);text-align:center;margin:0 0 14px;line-height:1.6;}
 
 /* ===== 最终 CTA ===== */
 .final-cta{background:linear-gradient(135deg,var(--orange-deep),var(--orange));border-radius:var(--radius-xl);padding:64px 48px;text-align:center;color:#fff;position:relative;overflow:hidden;}
@@ -294,7 +296,6 @@ img{max-width:100%;display:block;}
       <a href="/" class="nav-pill on">二手车伙计</a>
       <button type="button" class="nav-pill soon" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">二手房伙计<span class="soon-badge">即将上线</span></button>
       <button type="button" class="nav-pill soon" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">二手潮玩伙计<span class="soon-badge">即将上线</span></button>
-      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer" class="nav-admin">管理后台</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
@@ -603,11 +604,13 @@ img{max-width:100%;display:block;}
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>拍照即质检、即上传</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>与 Web 端物料库打通</li>
         </ul>
-        <button class="btn-line" onclick="mpNotify()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          预约小程序内测
-        </button>
-        <p class="qr-note">小程序正在内测筹备中，开放后优先通知预约车商</p>
+        <div class="mp-cta">
+          <p class="qr-note">小程序正在内测筹备中，开放后优先通知预约车商</p>
+          <button class="btn-line" onclick="mpNotify()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            预约小程序内测
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -667,6 +670,7 @@ img{max-width:100%;display:block;}
         <ul>
           <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
           <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
         </ul>
       </div>
       <div class="footer-col">
