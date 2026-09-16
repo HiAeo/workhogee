@@ -12,7 +12,7 @@
   },
   "llm": {
     "provider": "deepseek",
-    "apiKey": "sk-07883b97493b41f08cbe173f84b8a030",
+    "apiKey": "",
     "baseUrl": "https://api.deepseek.com/v1",
     "model": "deepseek-chat",
     "maxTokens": 2048,
