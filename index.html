@@ -181,15 +181,12 @@ ul{list-style:none;}
 .wcard.live:hover .rnm{color:var(--orange-light);}
 .wcard.soon:hover .rnm{color:#fff;}
 .wcard:focus-visible{outline:2px solid var(--orange-light);outline-offset:2px;}
-/* 未上线品类：灰色等距线稿占位，hover 线条变橙、重描、上浮 */
-.wcard .wc-ph.ph-ghost{display:flex;align-items:center;justify-content:center;background:radial-gradient(130% 130% at 50% 16%,#1d1813 0%,#100d0a 78%);border:1px solid rgba(255,255,255,.08);transition:border-color .35s,background .35s;}
-.wcard.soon:hover .wc-ph.ph-ghost{border-color:rgba(251,146,60,.55);background:radial-gradient(130% 130% at 50% 16%,#241b12 0%,#130f0a 78%);}
-.wcard .ghost-ic{width:76px;height:76px;color:rgba(255,255,255,.27);transition:color .35s,transform .48s cubic-bezier(.22,1,.36,1);}
-.wcard .ghost-ic :where(path,line,rect,polyline){stroke-dasharray:1;stroke-dashoffset:0;}
-.wcard.soon:hover .ghost-ic{color:var(--orange-light);transform:translateY(-3px) scale(1.07);}
-.wcard.soon:hover .ghost-ic :where(path,line,rect,polyline){animation:gDraw .62s ease forwards;}
-@keyframes gDraw{from{stroke-dashoffset:1;}to{stroke-dashoffset:0;}}
-@media (prefers-reduced-motion:reduce){.wcard.soon:hover .ghost-ic :where(path,line,rect,polyline){animation:none;}.wcard .ghost-ic{transform:none;}}
+/* 矩阵未上线卡：平面细线稿插画，铺满中部空白，hover 线条变橙 */
+.mx-mid .mx-art{flex:1;display:flex;align-items:center;justify-content:center;margin:12px 0 2px;min-height:74px;color:rgba(28,25,23,.24);}
+.mx-mid .mx-art svg{width:100%;height:100%;max-height:106px;display:block;transition:color .35s,transform .48s cubic-bezier(.22,1,.36,1);}
+.mx-mid:hover .mx-art{color:var(--orange);}
+.mx-mid:hover .mx-art svg{transform:translateY(-2px);}
+@media (prefers-reduced-motion:reduce){.mx-mid:hover .mx-art svg{transform:none;}}
 @media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard .wc-cta.live svg{animation:none;}.wcard,.wcard *{transition:none!important;}}
 .mh-creed{position:relative;z-index:2;margin-top:64px;border-top:1px solid rgba(255,255,255,.12);padding:30px 0 34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
 .mh-creed .big{font-size:clamp(20px,2.4vw,27px);font-weight:800;letter-spacing:-.3px;}
@@ -634,15 +631,10 @@ ul{list-style:none;}
               <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
               <span class="wc-txt"><span class="rnm">二手房 AI 生图工作台</span><span class="rcf">格局 vs 美化失真 · 真实户型</span></span>
             </div>
-            <div class="wc-ph ph-ghost">
-              <svg class="ghost-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path pathLength="1" d="M32 15 L13 34 L32 43.5 L51 34 Z"/>
-                <path pathLength="1" d="M32 15 L32 25.5"/>
-                <path pathLength="1" d="M13 34 L32 43.5 L32 58 L13 48.5 Z"/>
-                <path pathLength="1" d="M51 34 L32 43.5 L32 58 L51 48.5 Z"/>
-                <path pathLength="1" d="M19 42.6 L25.5 45.8 L25.5 53.4 L19 50.2 Z"/>
-                <path pathLength="1" d="M42 40.6 L47 43.1 L47 47.8 L42 45.3 Z"/>
-              </svg>
+            <div class="wc-ph">
+              <img src="images/room-nordic.jpg" alt="二手房 AI 生图工作台生成的真实户型采光图">
+              <span class="wc-veil"></span>
+              <span class="cap">真实户型 · 采光图</span>
               <span class="wc-cta soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>即将上线</span>
             </div>
           </button>
@@ -651,18 +643,10 @@ ul{list-style:none;}
               <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
               <span class="wc-txt"><span class="rnm">二手潮玩 AI 生图工作台</span><span class="rcf">成色 vs 瑕疵抹除 · 藏品陈列</span></span>
             </div>
-            <div class="wc-ph ph-ghost">
-              <svg class="ghost-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path pathLength="1" d="M13 37.5 L32 47 L32 57 L13 47.5 Z"/>
-                <path pathLength="1" d="M51 37.5 L32 47 L32 57 L51 47.5 Z"/>
-                <rect pathLength="1" x="25" y="15" width="14" height="18" rx="3.6"/>
-                <circle pathLength="1" cx="27" cy="15.6" r="2.6"/>
-                <circle pathLength="1" cx="37" cy="15.6" r="2.6"/>
-                <circle cx="29.4" cy="22" r="1.15" fill="currentColor" stroke="none"/>
-                <circle cx="34.6" cy="22" r="1.15" fill="currentColor" stroke="none"/>
-                <path pathLength="1" d="M30 24.8 Q32 26.2 34 24.8"/>
-                <path pathLength="1" d="M32 28 L51 37.5 L32 47 L13 37.5 Z"/>
-              </svg>
+            <div class="wc-ph">
+              <img src="images/usedtoy-collection.jpg" alt="二手潮玩 AI 生图工作台生成的藏品成色陈列图">
+              <span class="wc-veil"></span>
+              <span class="cap">藏品成色陈列图</span>
               <span class="wc-cta soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>即将上线</span>
             </div>
           </button>
@@ -704,6 +688,44 @@ ul{list-style:none;}
             <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
             <span><h3>二手房伙计</h3><div class="cf">格局 vs 美化失真</div></span>
           </span>
+          <span class="mx-art" aria-hidden="true">
+            <svg viewBox="0 0 268 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="8" y="9" width="246" height="46" rx="1.6" stroke-width="1.3"/>
+              <line x1="74" y1="9" x2="74" y2="32" stroke-width="1.1"/><line x1="74" y1="40" x2="74" y2="55" stroke-width="1.1"/>
+              <line x1="176" y1="9" x2="176" y2="26" stroke-width="1.1"/><line x1="176" y1="34" x2="176" y2="55" stroke-width="1.1"/>
+              <line x1="176" y1="32" x2="202" y2="32" stroke-width="1.1"/><line x1="210" y1="32" x2="254" y2="32" stroke-width="1.1"/>
+              <line x1="74" y1="40" x2="82" y2="32" stroke-width="0.9"/>
+              <line x1="176" y1="34" x2="184" y2="26" stroke-width="0.9"/>
+              <line x1="202" y1="32" x2="202" y2="40" stroke-width="0.9"/>
+              <rect x="16" y="16" width="30" height="20" rx="1.5" stroke-width="0.95"/>
+              <rect x="18" y="18" width="26" height="6" rx="1" stroke-width="0.85"/>
+              <line x1="16" y1="30" x2="46" y2="30" stroke-width="0.85"/>
+              <rect x="56" y="14" width="12" height="22" rx="1" stroke-width="0.95"/>
+              <line x1="62" y1="14" x2="62" y2="36" stroke-width="0.85"/>
+              <rect x="96" y="13" width="38" height="5" rx="1" stroke-width="0.95"/>
+              <rect x="104" y="30" width="20" height="7" rx="1" stroke-width="0.95"/>
+              <rect x="88" y="40" width="50" height="11" rx="2" stroke-width="0.95"/>
+              <line x1="105" y1="40" x2="105" y2="51" stroke-width="0.85"/><line x1="121" y1="40" x2="121" y2="51" stroke-width="0.85"/>
+              <rect x="182" y="12" width="8" height="4" rx="0.8" stroke-width="0.85"/>
+              <rect x="181.5" y="16" width="9" height="11" rx="2" stroke-width="0.9"/>
+              <rect x="196" y="13" width="11" height="8" rx="1" stroke-width="0.9"/>
+              <rect x="214" y="13" width="34" height="13" rx="2" stroke-width="0.95"/>
+              <rect x="217" y="15.5" width="28" height="8" rx="2" stroke-width="0.8"/>
+              <rect x="182" y="45" width="64" height="7" rx="1" stroke-width="0.95"/>
+              <circle cx="195" cy="48.5" r="1.5" stroke-width="0.85"/><circle cx="203" cy="48.5" r="1.5" stroke-width="0.85"/>
+              <rect x="228" y="46.5" width="12" height="4" rx="0.8" stroke-width="0.85"/>
+              <rect x="246" y="36" width="6" height="16" rx="1" stroke-width="0.9"/>
+              <line x1="24" y1="8.3" x2="46" y2="8.3" stroke-width="0.9"/><line x1="24" y1="9.7" x2="46" y2="9.7" stroke-width="0.9"/>
+              <line x1="96" y1="54.3" x2="138" y2="54.3" stroke-width="0.9"/><line x1="96" y1="55.7" x2="138" y2="55.7" stroke-width="0.9"/>
+              <line x1="253.3" y1="15" x2="253.3" y2="27" stroke-width="0.9"/><line x1="254.7" y1="15" x2="254.7" y2="27" stroke-width="0.9"/>
+              <line x1="250" y1="22" x2="257" y2="20.6" stroke-width="0.9"/>
+              <path d="M254.6 18.8 L257.2 20.6 L254.8 22.4" stroke-width="0.9"/>
+              <circle cx="262" cy="20" r="3" stroke-width="1"/>
+              <line x1="262" y1="14.5" x2="262" y2="16.3" stroke-width="0.9"/><line x1="262" y1="23.7" x2="262" y2="25.5" stroke-width="0.9"/>
+              <line x1="266.5" y1="20" x2="264.7" y2="20" stroke-width="0.9"/><line x1="257.5" y1="20" x2="259.3" y2="20" stroke-width="0.9"/>
+              <line x1="265.4" y1="16.6" x2="264.1" y2="17.9" stroke-width="0.9"/><line x1="265.4" y1="23.4" x2="264.1" y2="22.1" stroke-width="0.9"/>
+            </svg>
+          </span>
           <p class="desc">还原真实户型、朝向与采光，拒绝广角畸变、调色失真引发的带看落差与纠纷。</p>
         </button>
         <button type="button" class="mx-mid reveal" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">
@@ -711,6 +733,46 @@ ul{list-style:none;}
           <span class="top">
             <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
             <span><h3>二手潮玩伙计</h3><div class="cf">成色 vs 瑕疵抹除</div></span>
+          </span>
+          <span class="mx-art" aria-hidden="true">
+            <svg viewBox="0 0 268 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="24" x2="256" y2="24" stroke-width="1.2"/>
+              <line x1="12" y1="24" x2="12" y2="28" stroke-width="1.1"/><line x1="256" y1="24" x2="256" y2="28" stroke-width="1.1"/>
+              <line x1="74" y1="27" x2="74" y2="50" stroke-width="0.9"/><line x1="184" y1="27" x2="184" y2="50" stroke-width="0.9"/>
+              <line x1="8" y1="50" x2="260" y2="50" stroke-width="1.2"/>
+              <line x1="8" y1="50" x2="8" y2="57" stroke-width="1.1"/><line x1="260" y1="50" x2="260" y2="57" stroke-width="1.1"/><line x1="8" y1="57" x2="260" y2="57" stroke-width="1.1"/>
+              <path d="M28 6 L40 1 L52 6" stroke-width="0.9"/>
+              <rect x="28" y="6" width="24" height="18" rx="1" stroke-width="0.95"/>
+              <line x1="28" y1="10" x2="52" y2="10" stroke-width="0.8"/>
+              <circle cx="40" cy="16" r="2.6" stroke-width="0.85"/>
+              <circle cx="90" cy="6" r="3" stroke-width="0.9"/><circle cx="102" cy="6" r="3" stroke-width="0.9"/>
+              <rect x="85" y="5" width="22" height="19" rx="4" stroke-width="0.95"/>
+              <circle cx="91.5" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="100.5" cy="14" r="1.3" fill="currentColor" stroke="none"/>
+              <path d="M93 17.5 Q96 19.5 99 17.5" stroke-width="0.85"/>
+              <line x1="151" y1="7" x2="151" y2="3.6" stroke-width="0.85"/><circle cx="151" cy="3" r="1.2" stroke-width="0.85"/>
+              <rect x="139" y="12" width="3" height="5" rx="1" stroke-width="0.85"/><rect x="160" y="12" width="3" height="5" rx="1" stroke-width="0.85"/>
+              <rect x="142" y="7" width="18" height="15" rx="2.5" stroke-width="0.95"/>
+              <line x1="151" y1="22" x2="151" y2="24" stroke-width="0.85"/>
+              <circle cx="147" cy="13.5" r="1.5" stroke-width="0.85"/><circle cx="155" cy="13.5" r="1.5" stroke-width="0.85"/>
+              <line x1="147" y1="18" x2="155" y2="18" stroke-width="0.8"/>
+              <path d="M208 8 L206 2 L213 7" stroke-width="0.9"/><path d="M220 8 L222 2 L215 7" stroke-width="0.9"/>
+              <rect x="204" y="6" width="20" height="18" rx="7" stroke-width="0.95"/>
+              <circle cx="210" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="218" cy="14" r="1.3" fill="currentColor" stroke="none"/>
+              <path d="M211.5 17.5 Q214 19.3 216.5 17.5" stroke-width="0.85"/>
+              <circle cx="56" cy="40" r="10" stroke-width="0.95"/>
+              <path d="M47.5 42.5 Q56 47 64.5 42.5" stroke-width="0.8"/>
+              <circle cx="52.5" cy="38" r="1.3" fill="currentColor" stroke="none"/><circle cx="59.5" cy="38" r="1.3" fill="currentColor" stroke="none"/>
+              <path d="M53.5 42 Q56 44 58.5 42" stroke-width="0.85"/>
+              <rect x="116" y="30" width="18" height="20" rx="1.5" stroke-width="0.95"/>
+              <rect x="118.5" y="32.5" width="13" height="11" rx="1" stroke-width="0.8"/>
+              <circle cx="125" cy="37.5" r="2.6" stroke-width="0.85"/>
+              <line x1="120" y1="46" x2="130" y2="46" stroke-width="0.8"/><line x1="120" y1="48.4" x2="130" y2="48.4" stroke-width="0.8"/>
+              <rect x="196" y="36" width="12" height="14" rx="2" stroke-width="0.95"/>
+              <circle cx="200" cy="41" r="1.2" fill="currentColor" stroke="none"/><circle cx="204" cy="41" r="1.2" fill="currentColor" stroke="none"/>
+              <line x1="200" y1="45" x2="204" y2="45" stroke-width="0.8"/>
+              <circle cx="224" cy="38" r="8" stroke-width="1.05"/>
+              <line x1="229.7" y1="43.7" x2="238" y2="52" stroke-width="1.05"/>
+            </svg>
           </span>
           <p class="desc">盒卡、漆面、磨损如实呈现，不抹瑕疵、不造“全新成色”，让买家所见即所得。</p>
         </button>
