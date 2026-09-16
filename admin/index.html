@@ -136,10 +136,12 @@ svg{display:block}
 .prod-bar-name{width:170px;flex:none;font-size:13.5px}
 .prod-track{flex:1;height:7px;background:var(--bg);border-radius:99px;overflow:hidden}
 .prod-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.prod-fill.soon{background:#fdba74}
 .prod-fill.plan{background:var(--line-strong)}
 .prod-bar-num{width:42px;text-align:right;font-weight:600;font-size:13.5px}
-.plan-tag{font-size:11px;padding:1px 7px;border-radius:99px;margin-left:8px;font-weight:500}
+.plan-tag{font-size:11px;padding:1px 7px;border-radius:99px;margin-left:8px;font-weight:500;white-space:nowrap}
 .plan-tag.on{background:var(--green-soft);color:var(--green)}
+.plan-tag.soon{background:var(--orange-soft);color:var(--orange-deep)}
 .plan-tag.off{background:#f1ede6;color:var(--ink-muted)}
 
 /* ---------- 工具栏 / 表格 ---------- */
@@ -284,7 +286,7 @@ table.data tbody tr:last-child td{border-bottom:none}
       </svg>
     </div>
     <div class="login-title">会员管理后台</div>
-    <div class="login-sub">WorkHogee 全产品会员与授权管理 · 仅限管理员</div>
+    <div class="login-sub">WorkHogee 二手生图伙计 · 会员与授权管理 · 仅限管理员</div>
     <div class="login-error" id="loginError"></div>
     <form id="loginForm">
       <div class="field">
@@ -322,7 +324,7 @@ table.data tbody tr:last-child td{border-bottom:none}
     <nav class="nav" id="sideNav">
       <a class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>概览</span></a>
       <a class="nav-item" data-view="members"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>会员管理</span></a>
-      <a class="nav-item" data-view="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>产品与套餐</span></a>
+      <a class="nav-item" data-view="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>品类与套餐</span></a>
       <a class="nav-item" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>账号设置</span></a>
     </nav>
     <div class="sidebar-foot">
@@ -340,7 +342,7 @@ table.data tbody tr:last-child td{border-bottom:none}
       <!-- 概览 -->
       <section class="view active" id="view-dashboard">
         <div class="page-head">
-          <div><h1>概览</h1><p>WorkHogee 全产品注册会员与授权情况</p></div>
+          <div><h1>概览</h1><p>WorkHogee 二手生图伙计 · 注册会员与授权情况</p></div>
         </div>
         <div class="stat-grid" id="statGrid"></div>
         <div class="grid-2">
@@ -349,7 +351,7 @@ table.data tbody tr:last-child td{border-bottom:none}
             <div class="mini-list" id="recentList"></div>
           </div>
           <div class="card">
-            <div class="sec-title" style="padding:16px 18px 0;margin:0">各产品授权分布</div>
+            <div class="sec-title" style="padding:16px 18px 0;margin:0">各品类授权分布</div>
             <div id="prodDist"></div>
           </div>
         </div>
@@ -358,13 +360,13 @@ table.data tbody tr:last-child td{border-bottom:none}
       <!-- 会员管理 -->
       <section class="view" id="view-members">
         <div class="page-head">
-          <div><h1>会员管理</h1><p>管理所有在 WorkHogee 注册的会员、套餐与各产品授权</p></div>
+          <div><h1>会员管理</h1><p>管理所有注册会员、统一套餐与品类授权</p></div>
         </div>
         <div class="toolbar">
           <input class="input q" id="fQ" type="search" placeholder="搜索商户名 / 联系人 / 手机 / 邮箱 / 会员ID">
           <select class="input" id="fStatus"><option value="">全部状态</option></select>
           <select class="input" id="fPlan"><option value="">全部套餐</option></select>
-          <select class="input" id="fProduct"><option value="">全部产品</option></select>
+          <select class="input" id="fProduct"><option value="">全部品类</option></select>
           <button class="btn btn-ghost btn-sm" id="filterBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>查询</button>
           <button class="icon-btn" id="resetBtn">重置</button>
           <div class="spacer"></div>
@@ -374,7 +376,7 @@ table.data tbody tr:last-child td{border-bottom:none}
         <div class="card table-wrap">
           <table class="data">
             <thead><tr>
-              <th>会员</th><th>联系方式</th><th>套餐</th><th>产品授权</th><th>状态</th><th>生图用量</th><th>注册时间</th><th>最近登录</th><th style="text-align:right">操作</th>
+              <th>会员</th><th>联系方式</th><th>套餐</th><th>品类授权</th><th>状态</th><th>额度用量</th><th>注册时间</th><th>最近登录</th><th style="text-align:right">操作</th>
             </tr></thead>
             <tbody id="memberRows"></tbody>
           </table>
@@ -396,15 +398,15 @@ table.data tbody tr:last-child td{border-bottom:none}
       <!-- 产品与套餐 -->
       <section class="view" id="view-products">
         <div class="page-head">
-          <div><h1>产品与套餐</h1><p>WorkHogee 伙计产品矩阵与会员套餐定义</p></div>
+          <div><h1>品类与套餐</h1><p>WorkHogee 二手品类矩阵与统一会员套餐（一套套餐，全品类通用）</p></div>
         </div>
-        <div class="sec-title">产品矩阵</div>
+        <div class="sec-title">二手品类矩阵</div>
         <div class="prod-grid" id="prodGrid"></div>
-        <div class="sec-title">会员套餐</div>
+        <div class="sec-title">会员套餐（全品类通用）</div>
         <div class="plan-grid" id="planGrid"></div>
         <div class="note-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <div>一个会员账号可被授权多个「伙计」产品，授权与配额按产品分别记录。当前上线产品为「生图伙计·二手车行版」，内测期注册会员默认不限生成量；其余产品为规划中，可在会员资料中预先开通。套餐定价在内测结束后统一开放，现阶段不在前台展示价格。</div>
+          <div>WorkHogee 只做「图片决定成交」的二手品类，套餐不按品类拆分，一个会员账号一套额度，已授权品类通用。品类开关仅用于灰度与即将上线品类的预开通。当前「二手车伙计」已上线，二手房、二手潮玩为即将上线，其余品类规划中。内测期注册会员默认不限生成量，套餐定价在内测结束后统一开放，现阶段不在客户前台展示价格。</div>
         </div>
       </section>
 
@@ -444,10 +446,13 @@ table.data tbody tr:last-child td{border-bottom:none}
       <div class="field"><label>状态</label><select class="input" id="mStatus"></select></div>
       <div class="field"><label>套餐</label><select class="input" id="mPlan"></select></div>
       <div class="field"><label>来源</label><select class="input" id="mSource"></select></div>
+      <div class="field"><label>总额度（件，-1 不限）</label><input class="input" id="mQuotaTotal" type="number" placeholder="-1 表示不限量"></div>
+      <div class="field"><label>已用额度（件）</label><input class="input" id="mQuotaUsed" type="number" min="0" placeholder="0"></div>
+      <div class="field full"><label>套餐到期日（留空长期有效）</label><input class="input" id="mExpires" type="date"></div>
       <div class="field full">
-        <label>产品授权与配额</label>
+        <label>品类授权</label>
         <div class="prod-auth" id="prodAuth"></div>
-        <p style="font-size:12px;color:var(--ink-muted);margin-top:7px">配额填 -1 表示不限量（内测）；到期日留空表示长期有效。</p>
+        <p style="font-size:12px;color:var(--ink-muted);margin-top:7px">套餐与额度全品类通用；品类开关仅用于灰度与即将上线品类的预开通，不再按品类分别计配额。</p>
       </div>
       <div class="field full"><label>备注</label><textarea class="input" id="mNote" rows="3" placeholder="内部备注，仅管理员可见"></textarea></div>
     </div>
@@ -477,7 +482,14 @@ table.data tbody tr:last-child td{border-bottom:none}
   var TOKEN_KEY='wh_admin_token';
   var state={meta:null,stats:null,items:[],page:1,pageSize:20,total:0,totalPages:1,
     filters:{q:'',status:'',plan:'',product:''},editing:null};
-  var SHORT={usedcar:'二手车生图',image:'通用生图',geo:'GEO',global:'出海',acquire:'AI获客'};
+  function pname(p){return p?(p.short||p.name):'';}
+  function statusMeta(s){
+    if(s==='available')return {cls:'on',label:'已上线',fill:''};
+    if(s==='soon')return {cls:'soon',label:'即将上线',fill:'soon'};
+    return {cls:'off',label:'规划中',fill:'plan'};
+  }
+  function memberUsed(m){return Number(m.quotaUsed)||0;}
+  function memberTotal(m){var t=Number(m.quotaTotal);return (!Number.isFinite(t)||t===-1)?'不限':t;}
 
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -588,7 +600,7 @@ table.data tbody tr:last-child td{border-bottom:none}
       {v:s.pending,l:'待激活',ic:IC.clock,cls:''},
       {v:s.suspended,l:'已停用',ic:IC.pause,cls:'gray'},
       {v:s.new7d,l:'近 7 天新增',ic:IC.spark,cls:''},
-      {v:s.totalUsed,l:'二手车生图总量',ic:IC.image,cls:'gray'}
+      {v:s.totalUsed,l:'累计生图用量',ic:IC.image,cls:'gray'}
     ];
     $('statGrid').innerHTML=cards.map(function(c){
       return '<div class="card stat"><div class="stat-top"><div class="stat-ic '+c.cls+'">'+iconSvg(c.ic)+'</div></div>'+
@@ -600,7 +612,7 @@ table.data tbody tr:last-child td{border-bottom:none}
     $('recentList').innerHTML=items.map(function(m){
       var dot=m.status==='active'?'var(--green)':m.status==='pending'?'var(--orange)':'var(--ink-muted)';
       var firstProd=state.meta.products.filter(function(p){return m.products&&m.products[p.id]&&m.products[p.id].enabled;})[0];
-      var prodLabel=firstProd?(SHORT[firstProd.id]||firstProd.name):'未开通';
+      var prodLabel=firstProd?pname(firstProd):'未开通';
       return '<div class="mini-row"><span class="mini-dot" style="background:'+dot+'"></span>'+
         '<div class="mini-main"><b>'+esc(m.merchantName||m.contactName||m.phone||m.id)+'</b><span>'+esc(name(state.meta.plans,m.plan))+' · '+esc(prodLabel)+'</span></div>'+
         '<span class="mini-time">'+fmt(m.createdAt)+'</span></div>';
@@ -609,10 +621,10 @@ table.data tbody tr:last-child td{border-bottom:none}
   function renderProdDist(stats,meta){
     if(!stats||!meta)return;var max=Math.max(1,stats.total);
     $('prodDist').innerHTML=meta.products.map(function(p){
-      var n=stats.byProduct[p.id]||0;
+      var n=stats.byProduct[p.id]||0,st=statusMeta(p.status);
       return '<div class="prod-bar-row"><div class="prod-bar-name">'+esc(p.name)+
-        '<span class="plan-tag '+(p.status==='available'?'on':'off')+'">'+(p.status==='available'?'已上线':'规划中')+'</span></div>'+
-        '<div class="prod-track"><div class="prod-fill '+(p.status==='available'?'':'plan')+'" style="width:'+(n/max*100)+'%"></div></div>'+
+        '<span class="plan-tag '+st.cls+'">'+st.label+'</span></div>'+
+        '<div class="prod-track"><div class="prod-fill '+st.fill+'" style="width:'+(n/max*100)+'%"></div></div>'+
         '<div class="prod-bar-num num">'+n+'</div></div>';
     }).join('');
   }
@@ -634,9 +646,8 @@ table.data tbody tr:last-child td{border-bottom:none}
     $('emptyState').style.display='none';
     tb.innerHTML=items.map(function(m){
       var granted=state.meta.products.filter(function(p){return m.products&&m.products[p.id]&&m.products[p.id].enabled;});
-      var badges=granted.map(function(p){return '<span class="tag'+(p.id==='usedcar'?' orange':'')+'">'+esc(SHORT[p.id]||p.name)+'</span>';}).join('')||'<span class="tag">未开通</span>';
-      var uc=m.products&&m.products.usedcar?m.products.usedcar:{quotaUsed:0,quotaTotal:0};
-      var quota=uc.quotaTotal===-1?'不限':uc.quotaTotal;
+      var badges=granted.map(function(p){return '<span class="tag'+(p.id==='usedcar'?' orange':'')+'">'+esc(pname(p))+'</span>';}).join('')||'<span class="tag">未开通</span>';
+      var used=memberUsed(m),total=memberTotal(m);
       var contact=(m.phone?esc(m.phone):'')+(m.email?'<br>'+esc(m.email):'')||'—';
       var toggle=m.status==='suspended'
         ? '<button class="icon-btn" data-act="enable" data-id="'+m.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>启用</button>'
@@ -647,7 +658,7 @@ table.data tbody tr:last-child td{border-bottom:none}
         '<td><span class="tag">'+esc(name(state.meta.plans,m.plan))+'</span></td>'+
         '<td><div class="badges">'+badges+'</div></td>'+
         '<td>'+statusBadge(m.status)+'</td>'+
-        '<td class="num">'+(uc.quotaUsed||0)+' / '+quota+'</td>'+
+        '<td class="num">'+used+' / '+total+'</td>'+
         '<td class="num" style="white-space:nowrap">'+fmt(m.createdAt)+'</td>'+
         '<td class="num" style="white-space:nowrap">'+fmt(m.lastLoginAt)+'</td>'+
         '<td><div class="row-actions" style="justify-content:flex-end">'+
@@ -694,21 +705,18 @@ table.data tbody tr:last-child td{border-bottom:none}
     $('mPlan').value=m?m.plan:'free';
     $('mSource').value=m?m.source:'manual';
     $('mNote').value=m&&m.note||'';
-    // 产品授权行
+    // 统一额度（会员层级，全品类通用）；内测默认不限量
+    $('mQuotaTotal').value=(m&&m.quotaTotal!=null)?m.quotaTotal:-1;
+    $('mQuotaUsed').value=m?memberUsed(m):0;
+    $('mExpires').value=(m&&m.expiresAt)?String(m.expiresAt).slice(0,10):'';
+    // 品类授权行（仅开关，用于灰度 / 预开通）
     $('prodAuth').innerHTML=state.meta.products.map(function(p){
-      var pa=(m&&m.products&&m.products[p.id])||{enabled:p.id==='usedcar',quotaTotal:p.id==='usedcar'?-1:0,expiresAt:null};
-      var qt=pa.quotaTotal===-1?-1:pa.quotaTotal;
-      var dt=pa.expiresAt?String(pa.expiresAt).slice(0,10):'';
-      return '<div class="prod-auth-row">'+
-        '<div class="pa-top">'+
+      var pa=(m&&m.products&&m.products[p.id])||{enabled:p.status==='available'};
+      var st=statusMeta(p.status);
+      return '<div class="prod-auth-row"><div class="pa-top">'+
         '<label class="switch"><input type="checkbox" data-p="'+p.id+'" data-k="enabled" '+(pa.enabled?'checked':'')+'><i></i></label>'+
-        '<div class="prod-auth-name">'+esc(p.name)+(p.status!=='available'?'<span class="plan-tag off">规划中</span>':'')+'</div>'+
-        '</div>'+
-        '<div class="pa-bottom">'+
-        '<div class="pa-f"><span>生成配额（-1 不限）</span><input class="prod-auth-quota" data-p="'+p.id+'" data-k="quota" type="number" min="-1" value="'+qt+'" placeholder="-1 不限"></div>'+
-        '<div class="pa-f"><span>授权到期日（留空长期）</span><input class="prod-auth-date" data-p="'+p.id+'" data-k="date" type="date" value="'+dt+'"></div>'+
-        '</div>'+
-        '</div>';
+        '<div class="prod-auth-name">'+esc(p.name)+'<span class="plan-tag '+st.cls+'">'+st.label+'</span></div>'+
+        '</div></div>';
     }).join('');
     showDrawer(true);
   }
@@ -716,15 +724,18 @@ table.data tbody tr:last-child td{border-bottom:none}
     var products={};
     state.meta.products.forEach(function(p){
       var en=$('prodAuth').querySelector('[data-p="'+p.id+'"][data-k="enabled"]').checked;
-      var qRaw=$('prodAuth').querySelector('[data-p="'+p.id+'"][data-k="quota"]').value;
-      var dt=$('prodAuth').querySelector('[data-p="'+p.id+'"][data-k="date"]').value;
-      var q=parseInt(qRaw,10);if(isNaN(q))q=0;if(q===-1)q=-1;else q=Math.max(0,q);
-      products[p.id]={enabled:en,quotaTotal:q,expiresAt:dt||null};
+      products[p.id]={enabled:en};
     });
+    var qtRaw=$('mQuotaTotal').value.trim();
+    var qt=qtRaw===''?-1:parseInt(qtRaw,10);
+    if(isNaN(qt))qt=-1; if(qt!==-1)qt=Math.max(0,qt);
+    var qu=parseInt($('mQuotaUsed').value.trim(),10); if(isNaN(qu)||qu<0)qu=0;
+    var ex=$('mExpires').value;
     return {
       merchantName:$('mMerchant').value.trim(),contactName:$('mContact').value.trim(),
       phone:$('mPhone').value.trim(),email:$('mEmail').value.trim(),username:$('mUsername').value.trim(),
       status:$('mStatus').value,plan:$('mPlan').value,source:$('mSource').value,note:$('mNote').value.trim(),
+      quotaTotal:qt,quotaUsed:qu,expiresAt:ex||null,
       products:products
     };
   }
@@ -781,26 +792,25 @@ table.data tbody tr:last-child td{border-bottom:none}
     dl();
   });
 
-  /* ---------- 产品 / 套餐页 ---------- */
+  /* ---------- 品类 / 套餐页 ---------- */
   function renderProducts(){
     if(!state.meta)return;
+    var platMap={web:'Web 工作台',client:'PC 客户端',mobile:'移动客户端',miniprogram:'微信小程序'};
+    var statusText={available:'已上线，可对会员开通授权。',soon:'即将上线，可在会员资料中预开通。',planned:'规划中，暂不开通。'};
     $('prodGrid').innerHTML=state.meta.products.map(function(p){
+      var st=statusMeta(p.status);
       return '<div class="card prod-card"><h3>'+esc(p.name)+
-        '<span class="plan-tag '+(p.status==='available'?'on':'off')+'">'+(p.status==='available'?'已上线':'规划中')+'</span></h3>'+
-        '<p>'+(p.status==='available'?'当前可对会员开通授权。':'产品规划中，可在会员资料中预先开通。')+'</p>'+
+        '<span class="plan-tag '+st.cls+'">'+st.label+'</span></h3>'+
+        '<p>'+esc(p.desc||'')+'</p>'+
+        '<p style="color:var(--ink-muted);font-size:12.5px;margin-top:2px">'+(statusText[p.status]||'')+'</p>'+
         '<div class="prod-meta">'+(p.platform||[]).map(function(x){
-          var t={web:'Web',client:'PC 客户端',mobile:'移动客户端',miniprogram:'微信小程序'}[x]||x;
-          return '<span class="tag">'+t+'</span>';}).join('')+'</div></div>';
+          return '<span class="tag">'+(platMap[x]||x)+'</span>';}).join('')+'</div></div>';
     }).join('');
-    var defs=[
-      {n:'内测版',f:true,price:'内测期免费 · 不限量',items:['当前注册会员默认套餐','二手车生图不限生成次数','全平台尺寸适配','会员数据与授权管理']},
-      {n:'Hogee 学徒',f:false,price:'内测后开放定价',items:['入门会员套餐','基础生成额度','标准行业知识库','Web 与小程序使用']},
-      {n:'Hogee 师傅',f:false,price:'内测后开放定价',items:['进阶会员套餐','更高生成额度','多平台批量适配','团队协作与飞书同步']},
-      {n:'Hogee 大师',f:false,price:'内测后开放定价',items:['旗舰会员套餐','最高额度 / 不限量','全部行业知识库','专属支持与批量交付']}
-    ];
-    $('planGrid').innerHTML=defs.map(function(d){
-      return '<div class="card plan-card'+(d.f?' featured':'')+'"><h3>'+d.n+'</h3><div class="price">'+d.price+'</div>'+
-        '<ul>'+d.items.map(function(it){return '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'+it+'</li>';}).join('')+'</ul></div>';
+    $('planGrid').innerHTML=state.meta.plans.map(function(pl){
+      var quota=pl.quotaText?('<div class="price">'+esc(pl.price)+'</div><div style="font-size:12.5px;color:var(--ink-muted);margin-top:2px">'+esc(pl.quotaText)+(pl.watermark?' · 成品带 AI 标识':' · 无水印')+'</div>'):('<div class="price">'+esc(pl.price)+'</div>');
+      return '<div class="card plan-card'+(pl.id==='monthly'?' featured':'')+'"><h3>'+esc(pl.name)+'</h3>'+quota+
+        '<p style="color:var(--ink-soft);font-size:13px;margin:6px 0 10px">'+esc(pl.desc||'')+'</p>'+
+        '<ul>'+(pl.features||[]).map(function(it){return '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'+esc(it)+'</li>';}).join('')+'</ul></div>';
     }).join('');
   }
 
@@ -827,7 +837,7 @@ table.data tbody tr:last-child td{border-bottom:none}
       state.meta=meta;
       fillSelect($('fStatus'),meta.statuses||[],'全部状态');
       fillSelect($('fPlan'),meta.plans||[],'全部套餐');
-      fillSelect($('fProduct'),(meta.products||[]).map(function(p){return{id:p.id,name:SHORT[p.id]||p.name};}),'全部产品');
+      fillSelect($('fProduct'),(meta.products||[]).map(function(p){return{id:p.id,name:pname(p)};}),'全部品类');
       showApp();switchView('dashboard');
     }).catch(function(){showLogin();});
   }
