@@ -40,68 +40,135 @@
 
     <!-- 步骤指示器 -->
     <div class="trial-steps">
-      <div class="trial-step active" data-step="1"><div class="trial-step-num">1</div><div class="trial-step-label">选择用途</div></div>
+      <div class="trial-step active" data-step="1"><div class="trial-step-num">1</div><div class="trial-step-label">选择用途·上传图片</div></div>
       <div class="trial-step-line"></div>
-      <div class="trial-step" data-step="2"><div class="trial-step-num">2</div><div class="trial-step-label">上传图片</div></div>
+      <div class="trial-step" data-step="2"><div class="trial-step-num">2</div><div class="trial-step-label">参数设置</div></div>
       <div class="trial-step-line"></div>
-      <div class="trial-step" data-step="3"><div class="trial-step-num">3</div><div class="trial-step-label">参数设置</div></div>
-      <div class="trial-step-line"></div>
-      <div class="trial-step" data-step="4"><div class="trial-step-num">4</div><div class="trial-step-label">下载成品</div></div>
+      <div class="trial-step" data-step="3"><div class="trial-step-num">3</div><div class="trial-step-label">下载成品</div></div>
     </div>
 
     <div class="trial-wb-body">
-      <!-- 第1步：用途选择 -->
+      <!-- 第1步：选择用途 + 上传图片（合并） -->
       <div class="trial-stage active" id="trialStagePurpose">
-        <div class="trial-purpose-grid">
-          <div class="trial-purpose-card" data-purpose="product">
-            <div class="trial-purpose-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div>
-            <div class="trial-purpose-name">产品主图</div>
-            <div class="trial-purpose-desc">白底/纯色背景，产品清晰突出，适合电商平台主图</div>
-          </div>
-          <div class="trial-purpose-card" data-purpose="detail">
-            <div class="trial-purpose-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div>
-            <div class="trial-purpose-name">产品详情图</div>
-            <div class="trial-purpose-desc">产品+参数/卖点排版，适合电商详情页、产品介绍</div>
-          </div>
-          <div class="trial-purpose-card" data-purpose="scene">
-            <div class="trial-purpose-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <div class="trial-purpose-name">场景效果图</div>
-            <div class="trial-purpose-desc">产品+真实使用场景，氛围感强，适合小红书/营销</div>
-          </div>
-          <div class="trial-purpose-card" data-purpose="lifestyle">
-            <div class="trial-purpose-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg></div>
-            <div class="trial-purpose-name">生活方式图</div>
-            <div class="trial-purpose-desc">产品+人物/生活场景，品牌调性，适合社交媒体封面</div>
-          </div>
-          <div class="trial-purpose-card" data-purpose="ad">
-            <div class="trial-purpose-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
-            <div class="trial-purpose-name">广告创意图</div>
-            <div class="trial-purpose-desc">产品+创意文案/视觉设计，强冲击，适合信息流广告/Banner</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 第2步：上传图片 -->
-      <div class="trial-stage" id="trialStageUpload">
-        <div class="trial-upload-main">
-          <div class="trial-upload-zone" id="trialUploadZone">
-            <input type="file" id="trialFileInput" accept="image/*" multiple hidden>
-            <div class="trial-upload-icon">
-              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
+        <div class="trial-purpose-layout">
+          <!-- 左侧：用途列表 -->
+          <div class="trial-purpose-sidebar">
+            <div class="trial-sidebar-title">选择图片用途</div>
+            <div class="trial-purpose-list">
+              <div class="trial-purpose-item selected" data-purpose="product">
+                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div>
+                <div class="trial-purpose-item-info">
+                  <div class="trial-purpose-item-name">产品主图</div>
+                  <div class="trial-purpose-item-desc">白底/纯色背景，产品清晰突出</div>
+                </div>
+                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="trial-purpose-item" data-purpose="detail">
+                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div>
+                <div class="trial-purpose-item-info">
+                  <div class="trial-purpose-item-name">产品详情图</div>
+                  <div class="trial-purpose-item-desc">产品+参数/卖点排版</div>
+                </div>
+                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="trial-purpose-item" data-purpose="scene">
+                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                <div class="trial-purpose-item-info">
+                  <div class="trial-purpose-item-name">场景效果图</div>
+                  <div class="trial-purpose-item-desc">产品+真实使用场景，氛围感强</div>
+                </div>
+                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="trial-purpose-item" data-purpose="lifestyle">
+                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg></div>
+                <div class="trial-purpose-item-info">
+                  <div class="trial-purpose-item-name">生活方式图</div>
+                  <div class="trial-purpose-item-desc">产品+人物/生活场景，品牌调性</div>
+                </div>
+                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="trial-purpose-item" data-purpose="ad">
+                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+                <div class="trial-purpose-item-info">
+                  <div class="trial-purpose-item-name">广告创意图</div>
+                  <div class="trial-purpose-item-desc">产品+创意文案/视觉设计，强冲击</div>
+                </div>
+                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              </div>
             </div>
-            <div class="trial-upload-title">拖拽图片到这里，或点击上传</div>
-            <div class="trial-upload-desc">支持上传 1-5 张图片（不同角度更佳），JPG/PNG/WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
           </div>
-          <div class="trial-upload-thumbs" id="trialUploadThumbs"></div>
-        </div>
-        <div class="trial-smart-check" id="trialSmartCheck" style="display:none;"></div>
-        <div class="trial-product-info" id="trialProductInfo" style="display:none;">
-          <div class="trial-product-info-title">产品信息（可选，帮助AI更精准生成）</div>
-          <textarea class="trial-product-info-text" id="trialProductInfoText" placeholder="例如：这是一款陶瓷花瓶，高25cm，米白色，适合北欧风格家居..."></textarea>
+
+          <!-- 右侧：演示/上传区域 -->
+          <div class="trial-purpose-main">
+            <div class="trial-demo-area" id="trialDemoArea">
+              <!-- 动态演示窗口 -->
+              <div class="trial-demo-window" id="trialDemoWindow">
+                <div class="trial-demo-slides">
+                  <div class="trial-demo-slide active" data-slide="0">
+                    <div class="trial-demo-slide-content">
+                      <div class="trial-demo-icon"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div>
+                      <div class="trial-demo-title">产品主图生成</div>
+                      <div class="trial-demo-desc">上传手机实拍，AI自动抠图+白底生成<br>20秒出专业电商主图</div>
+                    </div>
+                  </div>
+                  <div class="trial-demo-slide" data-slide="1">
+                    <div class="trial-demo-slide-content">
+                      <div class="trial-demo-icon"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                      <div class="trial-demo-title">场景效果图生成</div>
+                      <div class="trial-demo-desc">行业知识库匹配最佳场景<br>产品自然融入真实使用环境</div>
+                    </div>
+                  </div>
+                  <div class="trial-demo-slide" data-slide="2">
+                    <div class="trial-demo-slide-content">
+                      <div class="trial-demo-icon"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                      <div class="trial-demo-title">全平台尺寸适配</div>
+                      <div class="trial-demo-desc">一次生成，自动适配美团/淘宝/小红书/抖音<br>直接下载上架</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="trial-demo-dots">
+                  <span class="trial-demo-dot active"></span>
+                  <span class="trial-demo-dot"></span>
+                  <span class="trial-demo-dot"></span>
+                </div>
+                <div class="trial-demo-hint">演示中 · 点击右下角上传图片开始体验</div>
+              </div>
+
+              <!-- 上传区域（默认隐藏） -->
+              <div class="trial-upload-area" id="trialUploadArea" style="display:none;">
+                <div class="trial-upload-zone-large" id="trialUploadZoneLarge">
+                  <input type="file" id="trialFileInput" accept="image/*" multiple hidden>
+                  <div class="trial-upload-icon-large">
+                    <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="trial-upload-title-large">拖拽图片到这里，或点击上传</div>
+                  <div class="trial-upload-desc-large">支持上传 1-5 张图片（不同角度更佳），JPG/PNG/WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
+                </div>
+                <div class="trial-upload-thumbs-large" id="trialUploadThumbsLarge"></div>
+                <div class="trial-smart-check" id="trialSmartCheck" style="display:none;"></div>
+                <div class="trial-product-info" id="trialProductInfo" style="display:none;">
+                  <div class="trial-product-info-title">产品信息（可选，帮助AI更精准生成）</div>
+                  <textarea class="trial-product-info-text" id="trialProductInfoText" placeholder="例如：这是一款陶瓷花瓶，高25cm，米白色，适合北欧风格家居..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右下角上传按钮 -->
+            <div class="trial-upload-btn-wrap">
+              <button class="trial-upload-main-btn" id="trialUploadMainBtn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                上传图片
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -235,10 +302,10 @@
 <style>
 /* ===== 官网体验版工作台（4步流程新版） ===== */
 .trial-wb { padding: 80px 0; background: var(--paper); }
-.trial-wb-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+.trial-wb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .trial-wb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
 .trial-wb-title { display: flex; align-items: center; gap: 14px; }
-.trial-wb-badge { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, var(--orange), #f97316); color: white; font-size: 12px; font-weight: 800; border-radius: 7px; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(234,88,12,0.3); position: relative; overflow: hidden; }
+.trial-wb-badge { display: inline-block; padding: 6px 16px; background: white; color: var(--ink); font-size: 12px; font-weight: 800; border-radius: 7px; letter-spacing: 0.5px; border: 1.5px solid var(--orange); position: relative; overflow: hidden; }
 .trial-wb-badge::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent); transform: translateX(-100%); animation: trialShimmer 2.5s infinite; }
 .trial-wb-title h2 { font-size: 22px; font-weight: 800; color: var(--ink); background: linear-gradient(135deg, var(--ink), #44403c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .trial-header-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: white; border: 1.5px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -270,19 +337,61 @@
 @keyframes trialFadeIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* 用途选择 */
-.trial-purpose-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-.trial-purpose-card { background: white; border: 2px solid var(--line); border-radius: 14px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
-.trial-purpose-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--orange), #fb923c); transform: scaleX(0); transition: transform 0.35s ease; transform-origin: left; }
-.trial-purpose-card:hover { border-color: var(--orange); transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 32px rgba(234,88,12,0.15); }
-.trial-purpose-card:hover::before { transform: scaleX(1); }
-.trial-purpose-card.selected { border-color: var(--orange); background: linear-gradient(180deg, rgba(234,88,12,0.06), rgba(234,88,12,0.02)); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(234,88,12,0.12); }
-.trial-purpose-card.selected::before { transform: scaleX(1); }
-.trial-purpose-icon { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 14px; background: rgba(234,88,12,0.08); color: var(--orange); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-purpose-card:hover .trial-purpose-icon { transform: scale(1.1) rotate(-3deg); background: var(--orange); color: white; }
-.trial-purpose-card.selected .trial-purpose-icon { background: var(--orange); color: white; transform: scale(1.05); }
-.trial-purpose-name { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 6px; transition: color 0.3s; }
-.trial-purpose-card:hover .trial-purpose-name { color: var(--orange); }
-.trial-purpose-desc { font-size: 12px; color: #64748b; line-height: 1.5; transition: color 0.3s; }
+/* 用途选择+上传 合并布局 */
+.trial-purpose-layout { display: grid; grid-template-columns: 280px 1fr; gap: 28px; min-height: 480px; }
+.trial-purpose-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.trial-sidebar-title { font-size: 13px; font-weight: 800; color: var(--ink-muted); letter-spacing: 1px; text-transform: uppercase; padding-left: 4px; }
+.trial-purpose-list { display: flex; flex-direction: column; gap: 8px; }
+.trial-purpose-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--line); background: white; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
+.trial-purpose-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--orange); transform: scaleY(0); transition: transform 0.25s; }
+.trial-purpose-item:hover { border-color: rgba(234,88,12,0.3); transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.trial-purpose-item.selected { border-color: var(--orange); background: linear-gradient(135deg, rgba(234,88,12,0.04), white); box-shadow: 0 4px 16px rgba(234,88,12,0.1); }
+.trial-purpose-item.selected::before { transform: scaleY(1); }
+.trial-purpose-item-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--paper); display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; transition: all 0.25s; }
+.trial-purpose-item.selected .trial-purpose-item-icon { background: rgba(234,88,12,0.1); color: var(--orange); }
+.trial-purpose-item-info { flex: 1; min-width: 0; }
+.trial-purpose-item-name { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.trial-purpose-item-desc { font-size: 11px; color: var(--ink-muted); line-height: 1.4; }
+.trial-purpose-item-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: transparent; flex-shrink: 0; transition: all 0.25s; }
+.trial-purpose-item.selected .trial-purpose-item-check { background: var(--orange); border-color: var(--orange); color: white; }
+
+/* 右侧主区域 */
+.trial-purpose-main { position: relative; display: flex; flex-direction: column; }
+.trial-demo-area { flex: 1; position: relative; min-height: 380px; }
+
+/* 演示窗口 */
+.trial-demo-window { position: absolute; inset: 0; background: linear-gradient(135deg, var(--ink), #292524); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 12px 40px rgba(28,25,23,0.15); }
+.trial-demo-window::before { content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 65%); }
+.trial-demo-slides { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.trial-demo-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.6s ease; }
+.trial-demo-slide.active { opacity: 1; }
+.trial-demo-slide-content { text-align: center; padding: 40px; max-width: 400px; }
+.trial-demo-icon { width: 72px; height: 72px; border-radius: 20px; background: rgba(234,88,12,0.15); color: var(--orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: trialIconFloat 3s ease-in-out infinite; }
+@keyframes trialIconFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.trial-demo-title { font-size: 24px; font-weight: 900; color: white; margin-bottom: 12px; letter-spacing: -0.5px; }
+.trial-demo-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.8; }
+.trial-demo-dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2; }
+.trial-demo-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; cursor: pointer; }
+.trial-demo-dot.active { background: var(--orange); width: 24px; border-radius: 4px; }
+.trial-demo-hint { position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1px; white-space: nowrap; }
+
+/* 上传区域 */
+.trial-upload-area { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 16px; }
+.trial-upload-zone-large { flex: 1; border: 2px dashed var(--line); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--paper); cursor: pointer; transition: all 0.3s; min-height: 280px; position: relative; overflow: hidden; }
+.trial-upload-zone-large:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }
+.trial-upload-zone-large.dragover { border-color: var(--orange); background: rgba(234,88,12,0.05); border-style: solid; }
+.trial-upload-icon-large { width: 80px; height: 80px; border-radius: 24px; background: white; color: var(--orange); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(234,88,12,0.12); animation: trialPulse 2s ease-in-out infinite; }
+.trial-upload-title-large { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.trial-upload-desc-large { font-size: 13px; color: var(--ink-muted); text-align: center; line-height: 1.8; }
+.trial-upload-thumbs-large { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* 右下角上传按钮 */
+.trial-upload-btn-wrap { position: absolute; bottom: 0; right: 0; z-index: 10; }
+.trial-upload-main-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: linear-gradient(135deg, var(--orange), #f97316); color: white; font-size: 15px; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 8px 24px rgba(234,88,12,0.3); position: relative; overflow: hidden; }
+.trial-upload-main-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent); transform: translateX(-100%); animation: trialShimmer 2.5s infinite; }
+.trial-upload-main-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 32px rgba(234,88,12,0.4); }
+.trial-upload-main-btn:active { transform: translateY(0) scale(0.98); }
+.trial-upload-main-btn.uploading { background: linear-gradient(135deg, #16a34a, #22c55e); box-shadow: 0 8px 24px rgba(22,163,74,0.3); }
 
 /* 上传 */
 .trial-upload-main { margin-bottom: 16px; }
@@ -438,7 +547,10 @@
 .trial-history-empty { text-align: center; padding: 48px 20px; color: #94a3b8; font-size: 14px; }
 
 @media (max-width: 768px) {
-  .trial-purpose-grid { grid-template-columns: repeat(2, 1fr); }
+  .trial-purpose-layout { grid-template-columns: 1fr; }
+  .trial-purpose-sidebar { order: 2; }
+  .trial-purpose-main { order: 1; min-height: 320px; }
+  .trial-demo-area { min-height: 280px; }
   .trial-params-layout { grid-template-columns: 1fr; }
   .trial-steps { flex-wrap: wrap; gap: 8px; }
   .trial-step-line { display: none; }
@@ -502,12 +614,12 @@
       else if (s === step) el.classList.add('active');
     });
     $$('.trial-step-line').forEach((el, i) => { el.classList.toggle('done', i + 1 < step); });
-    const stageMap = { 1: 'Purpose', 2: 'Upload', 3: 'Params', 4: 'Result' };
+    const stageMap = { 1: 'Purpose', 2: 'Params', 3: 'Result' };
     $$('.trial-stage').forEach(s => s.classList.remove('active'));
     const stage = $('#trialStage' + stageMap[step]);
     if (stage) stage.classList.add('active');
     updateFooter();
-    if (step === 3 && state.uploadedImages.length > 0) {
+    if (step === 2 && state.uploadedImages.length > 0) {
       const preview = $('#trialParamsPreviewImg');
       if (preview) preview.src = state.uploadedImages[state.mainImageIndex];
     }
@@ -519,17 +631,13 @@
     if (!prevBtn || !nextBtn) return;
     if (state.currentStep === 1) {
       prevBtn.style.display = 'none';
-      nextBtn.textContent = '下一步：上传图片';
-      nextBtn.style.display = state.selectedPurpose ? 'inline-block' : 'none';
-    } else if (state.currentStep === 2) {
-      prevBtn.style.display = 'inline-block';
       nextBtn.textContent = '下一步：参数设置';
       nextBtn.style.display = state.uploadedImages.length > 0 ? 'inline-block' : 'none';
-    } else if (state.currentStep === 3) {
+    } else if (state.currentStep === 2) {
       prevBtn.style.display = 'inline-block';
       nextBtn.textContent = '开始生成';
       nextBtn.style.display = 'inline-block';
-    } else if (state.currentStep === 4) {
+    } else if (state.currentStep === 3) {
       prevBtn.style.display = 'inline-block';
       nextBtn.style.display = 'none';
     }
@@ -537,11 +645,11 @@
 
   // ===== 用途选择 =====
   function initPurpose() {
-    $$('.trial-purpose-card').forEach(card => {
-      card.addEventListener('click', () => {
-        $$('.trial-purpose-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        state.selectedPurpose = card.dataset.purpose;
+    $$('.trial-purpose-item').forEach(item => {
+      item.addEventListener('click', () => {
+        $$('.trial-purpose-item').forEach(c => c.classList.remove('selected'));
+        item.classList.add('selected');
+        state.selectedPurpose = item.dataset.purpose;
         const cfg = PURPOSE_CONFIG[state.selectedPurpose];
         if (cfg) { state.selectedStyle = cfg.defaultStyle; state.selectedSize = cfg.defaultSize; }
         updateFooter();
@@ -549,9 +657,49 @@
     });
   }
 
+  // ===== 演示窗口自动轮播 =====
+  let demoSlideIndex = 0;
+  let demoTimer = null;
+  function startDemoSlideshow() {
+    if (demoTimer) return;
+    demoTimer = setInterval(() => {
+      const slides = $$('.trial-demo-slide');
+      const dots = $$('.trial-demo-dot');
+      if (slides.length === 0) return;
+      slides[demoSlideIndex].classList.remove('active');
+      if (dots[demoSlideIndex]) dots[demoSlideIndex].classList.remove('active');
+      demoSlideIndex = (demoSlideIndex + 1) % slides.length;
+      slides[demoSlideIndex].classList.add('active');
+      if (dots[demoSlideIndex]) dots[demoSlideIndex].classList.add('active');
+    }, 3000);
+  }
+  function stopDemoSlideshow() {
+    if (demoTimer) { clearInterval(demoTimer); demoTimer = null; }
+  }
+
+  // ===== 上传按钮点击 =====
+  function initUploadBtn() {
+    const btn = $('#trialUploadMainBtn');
+    const demoWindow = $('#trialDemoWindow');
+    const uploadArea = $('#trialUploadArea');
+    if (!btn || !demoWindow || !uploadArea) return;
+    btn.addEventListener('click', () => {
+      if (uploadArea.style.display === 'none') {
+        stopDemoSlideshow();
+        demoWindow.style.display = 'none';
+        uploadArea.style.display = 'flex';
+        btn.classList.add('uploading');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>已选择图片';
+      } else {
+        const input = $('#trialFileInput');
+        if (input) input.click();
+      }
+    });
+  }
+
   // ===== 多图上传 =====
   function initUpload() {
-    const zone = $('#trialUploadZone');
+    const zone = $('#trialUploadZoneLarge');
     const input = $('#trialFileInput');
     if (!zone || !input) return;
     zone.addEventListener('click', () => input.click());
@@ -560,7 +708,7 @@
     zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
     zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
     document.addEventListener('paste', e => {
-      if (state.currentStep !== 2) return;
+      if (state.currentStep !== 1) return;
       const items = e.clipboardData?.items;
       if (!items) return;
       const files = [];
@@ -587,7 +735,7 @@
   }
 
   function renderThumbs() {
-    const container = $('#trialUploadThumbs');
+    const container = $('#trialUploadThumbsLarge');
     if (!container) return;
     container.innerHTML = '';
     state.uploadedImages.forEach((img, idx) => {
@@ -977,6 +1125,7 @@
   function init() {
     loadHistory();
     initPurpose();
+    initUploadBtn();
     initUpload();
     initParams();
     initCompare();
@@ -984,6 +1133,7 @@
     initHistory();
     initFooter();
     goToStep(1);
+    startDemoSlideshow();
   }
 
   if (document.readyState === 'loading') {
