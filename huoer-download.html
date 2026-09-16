@@ -195,7 +195,7 @@ img { max-width: 100%; display: block; }
 <section class="dl-hero">
   <div class="dl-hero-inner">
     <div>
-      <div class="dl-hero-tag"><span class="dot"></span>客户端 · 注册送 20 张免费额度</div>
+      <div class="dl-hero-tag"><span class="dot"></span>客户端 · 下载即装，注册送 20 张免费额度</div>
       <h1>下载客户端，<br><span class="highlight">解锁全部生图能力</span></h1>
       <p>桌面客户端支持批量生图、离线任务、一键上架、飞书协同等完整功能。注册即送 20 张免费额度，会员享无限生成。</p>
       <div class="dl-hero-stats">
@@ -462,8 +462,7 @@ function logout() {
 }
 
 function downloadClient(os) {
-  if (!isLoggedIn) { openLogin(); return; }
-  alert('开始下载 ' + (os === 'win' ? 'Windows' : 'macOS') + ' 客户端（演示模式，实际安装包开发中）');
+  alert('开始下载 ' + (os === 'win' ? 'Windows' : 'macOS') + ' 客户端（演示模式，实际安装包开发中）\n\n下载完成后安装并注册登录，即可领取 20 张免费额度。');
 }
 
 function selectPlan(name, price) {
