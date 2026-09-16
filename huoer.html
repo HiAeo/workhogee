@@ -1,1397 +1,737 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WorkHogee · 生图伙计 — 小商家的AI工作流伙计</title><style>:root {  --orange: #ea580c;  --orange-light: #fb923c;  --orange-dark: #c2410c;  --ink: #1c1917;  --ink-soft: #57534e;  --ink-muted: #a8a29e;  --paper: #faf8f4;  --sand: #f5f0e8;  --white: #ffffff;  --line: #e7e5e4;  --green: #16a34a;}* { margin: 0; padding: 0; box-sizing: border-box; }html { scroll-behavior: smooth; }body {  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;  color: var(--ink); background: var(--white); line-height: 1.6;  -webkit-font-smoothing: antialiased;}a { color: inherit; text-decoration: none; }img { max-width: 100%; display: block; }/* ===== 导航（与首页一致） ===== */.nav {  position: fixed; top: 0; left: 0; right: 0; z-index: 100;  background: rgba(255,255,255,0.88); backdrop-filter: blur(20px);  border-bottom: 1px solid var(--line);}.nav-inner {  display: flex; align-items: center; justify-content: space-between;  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px;}.nav-logo { display: flex; align-items: center; gap: 10px; }.nav-logo svg { height: 28px; width: auto; }.nav-links { display: flex; align-items: center; gap: 36px; }.nav-links a {  font-size: 15px; color: var(--ink-soft); font-weight: 500;  transition: color 0.2s; position: relative;}.nav-links a:hover { color: var(--orange); }.nav-cta {  display: inline-flex; align-items: center; gap: 6px;  background: var(--ink); color: var(--paper) !important;  padding: 10px 22px; border-radius: 10px; font-size: 14px !important;  font-weight: 600 !important; transition: all 0.25s;}.nav-cta:hover { background: var(--orange); transform: translateY(-1px); }.nav-product-link {  display: inline-flex; align-items: center; gap: 5px;  font-size: 14px; color: var(--ink-soft); font-weight: 500;  padding: 7px 14px; border-radius: 8px; transition: all 0.2s;}.nav-product-link:hover { color: var(--orange); background: rgba(234,88,12,0.06); }.nav-product-link.active {  background: var(--orange); color: var(--white) !important;  font-weight: 600; box-shadow: 0 4px 12px rgba(234,88,12,0.25);}.nav-product-link.active:hover { background: var(--orange-light); }.nav-product-link svg { width: 15px; height: 15px; flex-shrink: 0; }.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }.nav-toggle span { width: 22px; height: 2px; background: var(--ink); transition: all 0.3s; border-radius: 2px; }/* ===== Hero ===== */.hero {  padding: 140px 0 100px;  background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%);  position: relative; overflow: hidden;}.hero::before {  content: ''; position: absolute; top: -200px; right: -200px;  width: 700px; height: 700px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 65%);}.hero-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;  position: relative; z-index: 1;}.hero-tag {  display: inline-flex; align-items: center; gap: 8px;  background: white; border: 1px solid var(--line); border-radius: 100px;  padding: 7px 18px; font-size: 13px; font-weight: 600; color: var(--ink-soft);  margin-bottom: 28px;}.hero-tag .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }.hero h1 {  font-size: 56px; font-weight: 900; line-height: 1.1; letter-spacing: -2px;  margin-bottom: 24px;}.hero h1 .highlight { color: var(--orange); }.hero-desc { font-size: 18px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 40px; max-width: 500px; }.hero-buttons { display: flex; gap: 16px; margin-bottom: 56px; }.btn-primary {  background: var(--orange); color: white; padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 700; border: none;  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;}.btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }.btn-secondary {  background: white; color: var(--ink); padding: 16px 36px;  border-radius: 12px; font-size: 16px; font-weight: 600; border: 1px solid var(--line);  cursor: pointer; transition: all 0.2s;}.btn-secondary:hover { border-color: var(--ink); }.hero-stats { display: flex; gap: 48px; }.hero-stat .num { font-size: 36px; font-weight: 900; color: var(--ink); line-height: 1; }.hero-stat .num span { color: var(--orange); }.hero-stat .label { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }/* Hero 自动播放幻灯片 */.hero-slideshow {  background: var(--ink); border-radius: 24px; overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.18); position: relative;}.slides-container { position: relative; width: 100%; padding-top: 80%; }.slide {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;  opacity: 0; transition: opacity 0.5s ease; display: flex; flex-direction: column;}.slide.active { opacity: 1; }.slide-header {  display: flex; align-items: center; justify-content: space-between;  padding: 18px 22px; flex-shrink: 0;}.slide-industry { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.5px; }.slide-status {  font-size: 11px; font-weight: 700; color: var(--orange);  background: rgba(234,88,12,0.15); padding: 5px 12px; border-radius: 6px;  display: flex; align-items: center; gap: 6px;}.slide-status::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }.slide-body {  flex: 1; display: flex; flex-direction: column; align-items: center;  justify-content: center; padding: 0 24px 24px; gap: 16px;}.slide-img-box {  position: relative; width: 82%; aspect-ratio: 16/10; border-radius: 14px; overflow: hidden;  box-shadow: 0 20px 50px rgba(0,0,0,0.3);}.slide-before-img, .slide-after-img {  position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;}.slide-after-img { opacity: 0; transition: opacity 0.5s ease; }.slide.active.done .slide-after-img { opacity: 1; }.slide-progress-ring {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 56px; height: 56px; opacity: 0; transition: opacity 0.3s; z-index: 2;}.slide.active.generating .slide-progress-ring { opacity: 1; }.slide-progress-arc { transition: stroke-dashoffset 2s linear; }.slide.active.generating .slide-progress-arc { stroke-dashoffset: 0; }.slide-caption {  font-size: 13px; color: rgba(255,255,255,0.55); text-align: center; letter-spacing: 0.5px;}.slide-dots {  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);  display: flex; gap: 6px; z-index: 3;}.dot {  width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.25);  transition: all 0.3s; cursor: pointer;}.dot.active { background: var(--orange); width: 18px; border-radius: 3px; }/* Hero 视觉区 */.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }.hv-main {  width: 100%; background: var(--ink); border-radius: 24px; padding: 32px 28px;  box-shadow: 0 30px 80px rgba(28,25,23,0.18);}.hv-ba { display: flex; align-items: center; gap: 12px; }.hv-ba-side {  flex: 1; position: relative; border-radius: 14px; overflow: hidden;  aspect-ratio: 1/1; background: #f5f5f4;}.hv-ba-side img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }.hv-ba-side:hover img { transform: scale(1.05); }.hv-ba-tag {  position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 700;  padding: 4px 10px; border-radius: 6px; z-index: 2;}.hv-before .hv-ba-tag { background: rgba(28,25,23,0.7); color: #fff; }.hv-after .hv-ba-tag { background: var(--orange); color: #fff; }.hv-ba-arrow {  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;  background: var(--orange); color: #fff; display: flex; align-items: center;  justify-content: center; animation: arrowPulse 2s infinite;}.hv-ba-arrow svg { width: 18px; height: 18px; }@keyframes arrowPulse {  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234,88,12,0.4); }  50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(234,88,12,0); }}.hv-float {  position: absolute; display: flex; align-items: center; gap: 10px;  background: #fff; padding: 12px 16px; border-radius: 14px;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); z-index: 3;}.hv-float svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }.hv-float div { display: flex; flex-direction: column; line-height: 1.3; }.hv-float strong { font-size: 15px; font-weight: 800; color: var(--ink); }.hv-float span { font-size: 11px; color: var(--ink-soft); }.hv-f1 { top: -16px; left: -20px; animation: floatY 3s ease-in-out infinite; }.hv-f2 { top: 40%; right: -24px; animation: floatY 3.5s ease-in-out infinite 0.5s; }.hv-f3 { bottom: -16px; left: 30%; animation: floatY 4s ease-in-out infinite 1s; }@keyframes floatY {  0%, 100% { transform: translateY(0); }  50% { transform: translateY(-8px); }}/* Hero 插画 */.hv-illustration {  position: relative;  width: 100%;  aspect-ratio: 4/3;  border-radius: 24px;  overflow: hidden;  box-shadow: 0 30px 80px rgba(28,25,23,0.15);}.hv-illustration img {  width: 100%;  height: 100%;  object-fit: cover;  display: block;  transition: transform 0.6s ease;}.hv-illustration:hover img {  transform: scale(1.05);}/* Hero CTA按钮 */.hero-cta {  display: flex;  gap: 14px;  margin-top: 30px;  flex-wrap: wrap;}.btn-primary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: var(--orange);  color: white;  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: none;  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-primary:hover {  background: var(--orange-dark);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(234,88,12,0.32);}.btn-primary:active {  transform: translateY(0);}.btn-secondary {  display: inline-flex;  align-items: center;  gap: 8px;  padding: 14px 28px;  background: white;  color: var(--ink);  font-size: 15px;  font-weight: 700;  border-radius: 12px;  border: 1.5px solid var(--line);  cursor: pointer;  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);  text-decoration: none;}.btn-secondary:hover {  border-color: var(--orange);  color: var(--orange);  transform: translateY(-2px);  box-shadow: 0 10px 28px rgba(28,25,23,0.08);}.btn-secondary:active {  transform: translateY(0);}
-
-/* Hero 浮动标签 */.hv-float-tag {  position: absolute;  display: flex;  align-items: center;  gap: 8px;  background: white;  padding: 10px 16px;  border-radius: 100px;  box-shadow: 0 8px 24px rgba(28,25,23,0.12);  border: 1px solid var(--line);  z-index: 3;  transition: all 0.3s ease;}.hv-float-tag:hover {  transform: translateY(-3px);  box-shadow: 0 12px 32px rgba(28,25,23,0.18);}.hv-float-tag svg {  width: 15px;  height: 15px;  color: var(--orange);  flex-shrink: 0;}.hv-float-tag span {  font-size: 12px;  font-weight: 700;  color: var(--ink);  white-space: nowrap;}.hv-ft1 {  top: -12px;  left: -16px;  animation: floatY 4s ease-in-out infinite;}.hv-ft2 {  bottom: 28px;  right: -16px;  animation: floatY 4.5s ease-in-out infinite 0.8s;}.hv-ft3 {  bottom: -12px;  left: 26%;  animation: floatY 5s ease-in-out infinite 1.6s;}.hfc-value-sm {  font-size: 14px;  font-weight: 800;  color: var(--orange);  line-height: 1.3;  letter-spacing: 0.3px;}.hfc-value-full {  font-size: 13px;  font-weight: 700;  color: var(--ink);  line-height: 1.4;  white-space: nowrap;}.hv-float-card {  min-width: 160px;}/* ===== 痛点 ===== */.pain { padding: 100px 0; background: var(--ink); color: white; position: relative; overflow: hidden; }.pain::before {  content: ''; position: absolute; top: 50%; left: -150px; transform: translateY(-50%);  width: 500px; height: 500px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 65%);}.pain-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }.pain-header { text-align: center; margin-bottom: 64px; }.pain-tag { font-size: 14px; font-weight: 700; color: var(--orange-light); letter-spacing: 3px; margin-bottom: 20px; }.pain h2 { font-size: 42px; font-weight: 900; line-height: 1.3; max-width: 700px; margin: 0 auto; letter-spacing: -1px; }.pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }.pain-card {  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);  border-radius: 20px; padding: 40px 32px; transition: all 0.3s;}.pain-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-6px); border-color: rgba(234,88,12,0.3); }.pain-num { font-size: 56px; font-weight: 900; color: var(--orange); opacity: 0.5; margin-bottom: 20px; line-height: 1; letter-spacing: -2px; }.pain-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }.pain-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.9; margin-bottom: 24px; }.pain-card .cost { font-size: 36px; font-weight: 900; color: #ef4444; line-height: 1; }.pain-card .cost span { font-size: 15px; color: rgba(255,255,255,0.4); font-weight: 400; margin-left: 4px; }/* ===== 核心能力通用 ===== */.feature { padding: 120px 0; background: var(--white); }.feature-alt { background: var(--paper); }.feature-inner {  max-width: 1200px; margin: 0 auto; padding: 0 24px;  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;}.feature-inner.reverse { direction: rtl; }.feature-inner.reverse > * { direction: ltr; }.feature-num {  font-size: 14px; font-weight: 800; color: var(--orange);  letter-spacing: 4px; margin-bottom: 20px;}.feature-title { font-size: 40px; font-weight: 900; line-height: 1.2; margin-bottom: 24px; letter-spacing: -1px; }.feature-title .highlight { color: var(--orange); }.feature-desc { font-size: 17px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 36px; }.feature-points { display: flex; flex-direction: column; gap: 18px; }.feature-point { display: flex; gap: 14px; align-items: flex-start; }.point-icon {  width: 26px; height: 26px; background: rgba(234,88,12,0.1); color: var(--orange);  border-radius: 50%; display: flex; align-items: center; justify-content: center;  font-size: 14px; font-weight: 900; flex-shrink: 0; margin-top: 2px;}.feature-point div { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }.feature-point strong { color: var(--ink); font-weight: 700; }/* 核心能力1：对比卡片 */.compare-card {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }.compare-label { font-size: 16px; font-weight: 700; }.compare-time { font-size: 13px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.1); padding: 6px 14px; border-radius: 8px; }.compare-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 28px; }.compare-img { aspect-ratio: 1; border-radius: 16px; overflow: hidden; }.compare-img img { width: 100%; height: 100%; object-fit: cover; }.compare-img.after { box-shadow: 0 12px 32px rgba(234,88,12,0.18); }.compare-caption { text-align: center; font-size: 12px; color: var(--ink-muted); margin-top: 10px; font-weight: 500; }.compare-arrow { font-size: 24px; color: var(--orange); font-weight: 900; }.compare-footer { display: flex; justify-content: space-around; padding-top: 24px; border-top: 1px solid var(--line); }.compare-metric { text-align: center; }.metric-num { display: block; font-size: 24px; font-weight: 900; color: var(--ink); }.metric-label { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }/* 核心能力2：平台展示 */.platform-showcase {  background: white; border-radius: 24px; padding: 32px;  box-shadow: 0 30px 80px rgba(28,25,23,0.1); border: 1px solid var(--line);}.platform-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }.platform-title { font-size: 16px; font-weight: 700; }.platform-count { font-size: 13px; color: var(--orange); font-weight: 700; }.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }.platform-item { text-align: center; transition: transform 0.2s; }.platform-item:hover { transform: translateY(-4px); }.platform-img { aspect-ratio: 1; border-radius: 14px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0,0,0,0.1); position: relative; }.platform-img img { width: 100%; height: 100%; object-fit: cover; }.platform-tag {  position: absolute; top: 8px; left: 8px; color: white;  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;}.platform-tag.meituan { background: rgba(255,193,7,0.95); color: #333; }.platform-tag.taobao { background: rgba(255,106,0,0.95); }.platform-tag.xhs { background: rgba(254,44,85,0.95); }.platform-tag.douyin { background: rgba(0,0,0,0.8); }.platform-name { font-size: 13px; font-weight: 700; }.platform-size { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }.platform-action { text-align: center; }.btn-platform {  background: var(--orange); color: white; padding: 14px 32px;  border: none; border-radius: 12px; font-size: 15px; font-weight: 700;  cursor: pointer; transition: all 0.2s; width: 100%;}.btn-platform:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(234,88,12,0.3); }/* 更多能力 */.more { padding: 100px 0; background: var(--paper); }.more-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.more-header { text-align: center; margin-bottom: 56px; }.more-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.more h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }.more-card {  background: white; border-radius: 16px; padding: 28px 24px;  border: 1px solid var(--line); transition: all 0.3s;}.more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.more-icon {  width: 44px; height: 44px; border-radius: 12px; background: rgba(234,88,12,0.08);  display: flex; align-items: center; justify-content: center;  font-size: 18px; font-weight: 800; color: var(--orange); margin-bottom: 16px;}.more-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }.more-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.8; }/* 行业场景 */.scenarios { padding: 100px 0; background: var(--white); }.scenarios-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.scenarios-header { text-align: center; margin-bottom: 56px; }.scenarios-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.scenarios h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }.scenarios-desc { font-size: 16px; color: var(--ink-soft); max-width: 500px; margin: 12px auto 0; }.scenarios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }.scenario-card {  background: var(--paper); border-radius: 20px; padding: 32px;  border: 1px solid var(--line); transition: all 0.3s;  display: flex; gap: 24px; align-items: flex-start;}.scenario-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,25,23,0.08); border-color: rgba(234,88,12,0.2); }.scenario-icon {  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;  display: flex; align-items: center; justify-content: center;  font-size: 22px; font-weight: 800; color: var(--ink);}.scenario-icon.food { background: rgba(234,88,12,0.1); color: var(--orange); }.scenario-icon.home { background: rgba(139,92,246,0.1); color: #8b5cf6; }.scenario-icon.car { background: rgba(59,130,246,0.1); color: #3b82f6; }.scenario-icon.deco { background: rgba(16,185,129,0.1); color: #10b981; }.scenario-content h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }.scenario-content p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }.scenario-tags { display: flex; gap: 8px; flex-wrap: wrap; }.scenario-tag { font-size: 11px; color: var(--ink-muted); background: white; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); }.scenario-soon { font-size: 11px; color: var(--orange); font-weight: 700; background: rgba(234,88,12,0.08); padding: 3px 8px; border-radius: 6px; margin-left: 8px; }/* CTA */.cta { padding: 120px 0; background: var(--ink); position: relative; overflow: hidden; }.cta::before {  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 900px; height: 900px; border-radius: 50%;  background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 60%);}.cta-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; text-align: center; position: relative; z-index: 1; }.cta h2 { font-size: 48px; font-weight: 900; color: white; line-height: 1.2; margin-bottom: 24px; letter-spacing: -2px; }.cta h2 .highlight { color: var(--orange-light); }.cta p { font-size: 19px; color: rgba(255,255,255,0.6); margin-bottom: 48px; line-height: 1.8; }.cta-buttons { display: flex; gap: 16px; justify-content: center; }.cta .btn-primary { font-size: 18px; padding: 18px 44px; }.cta .btn-secondary { background: transparent; color: white; border-color: rgba(255,255,255,0.3); font-size: 18px; padding: 18px 44px; }.cta .btn-secondary:hover { border-color: white; }/* 页脚 */.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 60px 0 30px; }.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; color: rgba(255,255,255,0.45); }.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 18px; }.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 12px; transition: color 0.2s; }.footer-col a:hover { color: var(--orange-light); }.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.35); }.footer-links { display: flex; gap: 24px; }.footer-links a { font-size: 12px; color: rgba(255,255,255,0.35); }/* Grain噪点overlay - 提升印刷质感 */body::after {  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;  pointer-events: none; z-index: 9999; opacity: 0.04;  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}/* 在线操作体验台 */.live-demo { padding: 120px 0; background: var(--white); }.live-demo-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }.live-demo-header { text-align: center; margin-bottom: 56px; }.live-demo-tag { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 3px; margin-bottom: 16px; }.live-demo h2 { font-size: 40px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }.live-demo-desc { font-size: 17px; color: var(--ink-soft); max-width: 600px; margin: 0 auto; }.live-demo-card {  background: var(--paper); border-radius: 24px; padding: 40px;  border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(28,25,23,0.08);}.demo-toolbar {  display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; align-items: center;}.demo-industry-btn {  padding: 10px 20px; border-radius: 10px; border: 1px solid var(--line);  background: white; font-size: 14px; font-weight: 600; cursor: pointer;  transition: all 0.2s; color: var(--ink-soft);}.demo-industry-btn:hover { border-color: var(--orange); color: var(--orange); }.demo-industry-btn.active { background: var(--orange); color: white; border-color: var(--orange); }.demo-style-slider {  flex: 1; min-width: 200px; display: flex; align-items: center; gap: 12px;}.demo-style-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }.demo-style-slider input[type="range"] {  flex: 1; -webkit-appearance: none; height: 6px; background: var(--line);  border-radius: 3px; outline: none;}.demo-style-slider input[type="range"]::-webkit-slider-thumb {  -webkit-appearance: none; width: 20px; height: 20px; background: var(--orange);  border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(234,88,12,0.4);}.demo-style-value { font-size: 13px; font-weight: 700; color: var(--orange); min-width: 60px; }.demo-workspace {  display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center;}.demo-upload-zone {  aspect-ratio: 1; border-radius: 16px; border: 2px dashed var(--line);  display: flex; flex-direction: column; align-items: center; justify-content: center;  background: white; transition: all 0.3s; cursor: pointer; overflow: hidden; position: relative;}.demo-upload-zone:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }.demo-upload-zone img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }.upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 1; text-align: center; padding: 20px; }.upload-text { font-size: 13px; color: var(--ink-soft); font-weight: 600; }.upload-hint { font-size: 11px; color: var(--ink-muted); }.demo-generate-wrap {  display: flex; flex-direction: column; align-items: center; gap: 10px;  cursor: pointer; flex-shrink: 0; user-select: none;}.demo-circle-btn {  width: 60px; height: 60px; position: relative;  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-circle-btn:hover { transform: scale(1.1); }.demo-progress-ring {  position: absolute; top: 0; left: 0; width: 100%; height: 100%;}.progress-bg { fill: none; stroke: #e7e5e4; stroke-width: 3; }.progress-arc {  fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round;  stroke-dasharray: 175.93; stroke-dashoffset: 175.93;  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);}.demo-generate-wrap.generating .progress-arc,.demo-generate-wrap.done .progress-arc { stroke-dashoffset: 0; }.demo-circle-inner {  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);  width: 30px; height: 30px; border-radius: 50%;  background: #f5f5f4; display: flex; align-items: center; justify-content: center;  transition: background 0.3s ease;}.demo-generate-wrap.generating .demo-circle-inner,.demo-generate-wrap.done .demo-circle-inner { background: var(--orange); }.demo-circle-inner svg {  width: 15px; height: 15px; position: absolute;  transition: opacity 0.25s ease, transform 0.25s ease;}.icon-default { fill: var(--orange); opacity: 1; transform: scale(1); }.icon-done { fill: white; opacity: 0; transform: scale(0.5); }.demo-generate-wrap.generating .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-default { opacity: 0; transform: scale(0.5); }.demo-generate-wrap.done .icon-done { opacity: 1; transform: scale(1); }.demo-generate-hint {  font-size: 12px; color: #a8a29e; letter-spacing: 1.5px; transition: color 0.3s;}.demo-generate-wrap.generating .demo-generate-hint,.demo-generate-wrap.done .demo-generate-hint { color: var(--orange); }.demo-result-zone {  aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative;  box-shadow: 0 12px 32px rgba(28,25,23,0.12); background: var(--line);}.demo-result-zone img { width: 100%; height: 100%; object-fit: cover; }.demo-result-placeholder {  width: 100%; height: 100%; display: flex; flex-direction: column;  align-items: center; justify-content: center; color: var(--ink-muted);}.demo-result-placeholder .spinner {  width: 32px; height: 32px; border: 3px solid var(--line);  border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite;  margin-bottom: 12px;}@keyframes spin { to { transform: rotate(360deg); } }.demo-result-label {  position: absolute; bottom: 0; left: 0; right: 0;  background: linear-gradient(transparent, rgba(0,0,0,0.75));  padding: 24px 12px 10px; color: white; font-size: 12px; font-weight: 600; text-align: center;}.demo-progress-bar {  margin-top: 24px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden;}.demo-progress-fill {  height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light));  border-radius: 4px; width: 0%; transition: width 0.3s;}.demo-progress-text {  text-align: center; margin-top: 10px; font-size: 13px; color: var(--ink-muted); font-weight: 500;}/* 响应式 */@media (max-width: 900px) {  .hero-inner, .feature-inner, .feature-inner.reverse { grid-template-columns: 1fr; gap: 48px; }  .hero h1 { font-size: 40px; }  .feature-title { font-size: 30px; }  .pain h2, .more h2, .scenarios h2 { font-size: 28px; }  .pain-cards, .scenarios-grid { grid-template-columns: 1fr; }  .more-grid { grid-template-columns: repeat(2, 1fr); }  .platform-grid { grid-template-columns: repeat(2, 1fr); }  .footer-top { grid-template-columns: 1fr 1fr; }  .nav-links { display: none; }  .nav-toggle { display: flex; }  .hero-stats { gap: 28px; }  .cta h2 { font-size: 32px; }}
-
-/* Hero 三按钮 */
-
-.hero-cta-three { gap: 12px; }
-
-.hero-cta-three .btn-primary, .hero-cta-three .btn-secondary { padding: 13px 22px; font-size: 14px; }
-
-@media (max-width: 768px) {
-
-  .hero-cta-three { flex-direction: column; align-items: stretch; }
-
-  .hero-cta-three a { justify-content: center; }
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkHogee 生图伙计 · 二手车行版 — 收车拍几张，上架物料全自动</title>
+<meta name="description" content="面向中小二手车行的AI车源物料工作台。手机拍几张外观、内饰、细节，自动产出精修图、场景图、360展示、短视频和车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<style>
+:root{
+  --ink:#1c1917; --ink-soft:#57534e; --ink-muted:#a8a29e;
+  --orange:#ea580c; --orange-deep:#c2410c; --orange-light:#fb923c;
+  --paper:#faf8f4; --sand:#f0e9db; --line:#e7e0d4; --white:#fff; --green:#16a34a;
+  --shadow-sm:0 1px 3px rgba(28,25,23,.06); --shadow-md:0 4px 16px rgba(28,25,23,.08);
+  --shadow-lg:0 12px 40px rgba(28,25,23,.12);
+  --radius-sm:8px; --radius-md:14px; --radius-lg:22px; --radius-xl:32px;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.container{max-width:1200px;margin:0 auto;padding:0 24px;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
 
-</style></head><body><!-- 导航（与首页一致） --><header class="nav" id="nav">  <div class="nav-inner">    <a href="/index.html" class="nav-logo">      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>        <g transform="translate(-1.06 -28.16)">          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>          <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>          <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>        </g>      </svg>    </a>    <nav class="nav-links" id="navLinks">      <a href="/huoer.html" class="nav-product-link active">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计      </a>      <a href="/geo.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计      </a>      <a href="/global.html" class="nav-product-link">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计      </a>      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>      <a class="nav-cta" href="#download">免费下载</a>    </nav>    <button class="nav-toggle" id="navToggle" aria-label="菜单">      <span></span><span></span><span></span>    </button>  </div></header><!-- Hero --><section class="hero">  <div class="hero-inner">    <div>      <div class="hero-tag"><span class="dot"></span>基于火山引擎Seedream 4.5 · 已服务10000+小商家</div>      <h1>不止是生图，<br>是<span class="highlight">懂行业</span>的AI工作流</h1>      <p class="hero-desc">Hogee生图伙伴自动识别上传图片、调用行业知识库、20秒生成能直接上架的商品图。Seedream 5.0大模型驱动，飞书多维表格协同，一次生成全平台适配。</p>      <div class="hero-cta">
-        <a href="huoer-download.html" class="btn-primary">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          免费下载
-        </a>
-        <a href="huoer-online.html" class="btn-secondary">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          在线体验
-        </a></div>    </div>    <div class="hero-visual">      <div class="hv-illustration">        <img src="images/hero-illustration.jpg" alt="生图Hogee工作场景">      </div>      <div class="hv-float-tag hv-ft1">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>        <span>Seedream 5.0大模型驱动</span>      </div>      <div class="hv-float-tag hv-ft2">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>        <span>飞书多维表格协同共享</span>      </div>      <div class="hv-float-tag hv-ft3">        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>        <span>自研5大行业生图知识库</span>      </div>    </div></div></section><style>
+/* ===== 导航 ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(250,248,244,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid transparent;transition:all .3s ease;}
+.nav.scrolled{background:rgba(250,248,244,.95);border-bottom-color:var(--line);box-shadow:var(--shadow-sm);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;max-width:1200px;margin:0 auto;padding:0 24px;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo svg{height:28px;width:auto;}
+.nav-links{display:flex;align-items:center;gap:30px;}
+.nav-links a{font-size:15px;color:var(--ink-soft);font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-product-link{display:inline-flex;align-items:center;gap:5px;font-size:14px;padding:7px 14px;border-radius:8px;transition:all .2s;}
+.nav-product-link:hover{color:var(--orange);background:rgba(234,88,12,.06);}
+.nav-product-link.active{background:var(--orange);color:var(--white)!important;font-weight:600;box-shadow:0 4px 12px rgba(234,88,12,.25);}
+.nav-product-link svg{width:15px;height:15px;flex-shrink:0;}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--paper)!important;padding:10px 22px;border-radius:10px;font-size:14px!important;font-weight:600!important;transition:all .25s;}
+.nav-cta:hover{background:var(--orange);transform:translateY(-1px);}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
+.nav-toggle span{width:22px;height:2px;background:var(--ink);transition:all .3s;border-radius:2px;}
 
+/* ===== 按钮 ===== */
+.btn-primary,.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .25s;border:none;}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 8px 24px rgba(234,88,12,.28);}
+.btn-primary:hover{background:var(--orange-deep);transform:translateY(-2px);box-shadow:0 12px 30px rgba(234,88,12,.36);}
+.btn-secondary{background:var(--white);color:var(--ink);border:1.5px solid var(--line);}
+.btn-secondary:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.btn-primary svg,.btn-secondary svg{width:18px;height:18px;}
+
+/* ===== Hero ===== */
+.hero{padding:140px 0 72px;background:linear-gradient(180deg,var(--paper) 0%,var(--sand) 100%);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-220px;right:-180px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(234,88,12,.12) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);padding:8px 16px;border-radius:100px;font-size:13px;color:var(--ink-soft);margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.hero-badge .dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.hero h1{font-size:clamp(34px,4.6vw,52px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:20px;}
+.highlight{color:var(--orange);position:relative;}
+.hero-sub{font-size:17px;color:var(--ink-soft);line-height:1.75;margin-bottom:30px;max-width:540px;}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+.hero-meta{display:flex;gap:22px;flex-wrap:wrap;}
+.hero-meta-item{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-muted);}
+.hero-meta-item svg{width:16px;height:16px;color:var(--orange);}
+/* hero 视觉：三场景轮播 + 浮动卡 */
+.hero-visual{position:relative;}
+.hero-stage{position:relative;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3;background:var(--ink);}
+.hero-stage .scene{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease;transform:scale(1.06);}
+.hero-stage .scene.on{opacity:1;animation:kenburns 7s ease-out forwards;}
+@keyframes kenburns{from{transform:scale(1.12);}to{transform:scale(1.02);}}
+.hero-stage img{width:100%;height:100%;object-fit:cover;}
+.scene-tag{position:absolute;left:18px;bottom:18px;background:rgba(28,25,23,.62);backdrop-filter:blur(8px);color:#fff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:100px;display:flex;align-items:center;gap:7px;z-index:3;}
+.scene-tag .sdot{width:7px;height:7px;border-radius:50%;background:var(--orange-light);}
+.hero-float{position:absolute;background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);padding:13px 16px;z-index:4;}
+.hero-float .fl-label{font-size:12px;color:var(--ink-muted);margin-bottom:2px;}
+.hero-float .fl-value{font-size:22px;font-weight:800;color:var(--ink);line-height:1.1;}
+.hero-float .fl-value em{font-style:normal;color:var(--orange);}
+.hero-float .fl-sub{font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
+.hf1{top:-22px;left:-26px;animation:floaty 5s ease-in-out infinite;}
+.hf2{bottom:-20px;right:-20px;animation:floaty 6s ease-in-out infinite .8s;}
+.hf3{top:42%;right:-30px;animation:floaty 5.6s ease-in-out infinite .4s;}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+.hf-shield{display:flex;align-items:center;gap:9px;}
+.hf-shield .ic{width:34px;height:34px;border-radius:9px;background:rgba(22,163,74,.12);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hf-shield .ic svg{width:19px;height:19px;}
+.hf-shield .t{font-size:13px;font-weight:700;color:var(--ink);}
+.hf-shield .s{font-size:11px;color:var(--ink-muted);}
+
+/* ===== 数据条 ===== */
+.trust-bar{background:var(--ink);padding:40px 0;}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.trust-item{text-align:center;color:#fff;}
+.trust-item .num{font-size:38px;font-weight:900;color:var(--orange-light);line-height:1;}
+.trust-item .label{font-size:14px;color:rgba(255,255,255,.72);margin-top:9px;}
+
+/* ===== 通用 section ===== */
+.section{padding:88px 0;}
+.section.alt{background:var(--white);}
+.section.sand{background:var(--sand);}
+.section-head{text-align:center;max-width:720px;margin:0 auto 56px;}
+.section-kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:14px;}
+.section-head h2{font-size:clamp(28px,3.4vw,40px);font-weight:900;line-height:1.22;letter-spacing:-.4px;margin-bottom:16px;}
+.section-head p{font-size:16.5px;color:var(--ink-soft);line-height:1.75;}
+
+/* ===== 前后对比滑块 ===== */
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center;}
+.compare{position:relative;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:1/1;background:#fff;user-select:none;touch-action:none;}
+.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.compare .after{clip-path:inset(0 0 0 50%);}
+.compare .handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.12);z-index:5;}
+.compare .handle .grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;color:var(--orange);}
+.compare .handle .grip svg{width:22px;height:22px;}
+.compare .tag{position:absolute;top:16px;padding:6px 13px;border-radius:100px;font-size:12.5px;font-weight:700;z-index:4;}
+.compare .tag.before{left:16px;background:rgba(28,25,23,.6);color:#fff;}
+.compare .tag.after{right:16px;background:var(--orange);color:#fff;}
+.compare-text h3{font-size:26px;font-weight:800;margin-bottom:18px;line-height:1.3;}
+.compare-list{list-style:none;margin-bottom:28px;}
+.compare-list li{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:15.5px;color:var(--ink-soft);}
+.compare-list li:last-child{border-bottom:none;}
+.compare-list .ic{flex-shrink:0;width:22px;height:22;margin-top:2px;}
+.compare-list .bad .ic{color:var(--ink-muted);}
+.compare-list .good .ic{color:var(--orange);}
+.compare-list b{color:var(--ink);font-weight:700;}
+
+/* ===== 流程时间轴 ===== */
+.flow{display:grid;grid-template-columns:repeat(7,1fr);gap:0;position:relative;margin-top:10px;}
+.flow::before{content:'';position:absolute;top:31px;left:8%;right:8%;height:2px;background:linear-gradient(90deg,var(--orange-light),var(--orange));z-index:0;}
+.flow-step{position:relative;text-align:center;z-index:1;padding:0 6px;}
+.flow-step .dot{width:62px;height:62px;border-radius:50%;background:var(--white);border:2px solid var(--orange);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:var(--orange);box-shadow:var(--shadow-sm);transition:all .3s;}
+.flow-step:hover .dot{background:var(--orange);color:#fff;transform:translateY(-4px);}
+.flow-step .dot svg{width:27px;height:27px;}
+.flow-step .n{font-size:12px;font-weight:800;color:var(--orange);letter-spacing:1px;margin-bottom:3px;}
+.flow-step h4{font-size:14.5px;font-weight:700;margin-bottom:5px;}
+.flow-step p{font-size:12px;color:var(--ink-muted);line-height:1.5;}
+
+/* ===== 能力卡 ===== */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.cap-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 28px;transition:all .3s;}
+.cap-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(234,88,12,.35);}
+.cap-icon{width:52px;height:52px;border-radius:13px;background:rgba(234,88,12,.09);color:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.cap-icon svg{width:26px;height:26px;}
+.cap-card h3{font-size:19px;font-weight:800;margin-bottom:11px;}
+.cap-card p{font-size:14.5px;color:var(--ink-soft);line-height:1.7;margin-bottom:15px;}
+.cap-features{list-style:none;}
+.cap-features li{position:relative;padding-left:20px;font-size:13.5px;color:var(--ink-soft);margin-bottom:7px;}
+.cap-features li::before{content:'';position:absolute;left:0;top:7px;width:9px;height:9px;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:rotate(45deg);}
+.cap-tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-muted);background:var(--sand);padding:3px 10px;border-radius:100px;margin-top:6px;}
+
+/* ===== 三场景 ===== */
+.scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.scene-card{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);background:#fff;transition:all .35s;}
+.scene-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg);}
+.scene-card .ph{aspect-ratio:4/3;overflow:hidden;}
+.scene-card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
+.scene-card:hover .ph img{transform:scale(1.06);}
+.scene-card .bd{padding:20px 22px;}
+.scene-card h4{font-size:18px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
+.scene-card h4 .pin{width:9px;height:9px;border-radius:50%;background:var(--orange);}
+.scene-card p{font-size:14px;color:var(--ink-soft);line-height:1.65;}
+
+/* ===== 合规 ===== */
+.compliance{background:var(--ink);border-radius:var(--radius-xl);padding:56px;color:#fff;}
+.compliance .section-head h2{color:#fff;}
+.compliance .section-head p{color:rgba(255,255,255,.7);}
+.comp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:8px;}
+.comp-item{display:flex;gap:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-md);padding:24px;}
+.comp-item .ic{flex-shrink:0;width:44px;height:44px;border-radius:11px;background:rgba(251,146,60,.16);color:var(--orange-light);display:flex;align-items:center;justify-content:center;}
+.comp-item .ic svg{width:23px;height:23px;}
+.comp-item h4{font-size:16.5px;font-weight:700;margin-bottom:6px;color:#fff;}
+.comp-item p{font-size:13.5px;color:rgba(255,255,255,.66);line-height:1.6;}
+
+/* ===== 平台规格表 ===== */
+.platform-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);table-layout:fixed;}
+.platform-table th{background:var(--ink);color:#fff;font-size:14px;font-weight:700;padding:16px 18px;text-align:left;}
+.platform-table td{padding:15px 18px;font-size:14.5px;border-bottom:1px solid var(--line);color:var(--ink-soft);}
+.platform-table tr:last-child td{border-bottom:none;}
+.platform-table td:first-child{font-weight:700;color:var(--ink);}
+.platform-table .ratio{display:inline-block;font-family:'Trebuchet MS',monospace;background:var(--sand);padding:3px 10px;border-radius:7px;font-size:13px;color:var(--orange-deep);font-weight:700;}
+.table-note{text-align:center;font-size:13px;color:var(--ink-muted);margin-top:18px;}
+
+/* ===== 入口选择 ===== */
+.entry-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;}
+.entry-card{border-radius:var(--radius-lg);padding:40px;position:relative;overflow:hidden;}
+.entry-card.web{background:var(--ink);color:#fff;box-shadow:var(--shadow-lg);}
+.entry-card.mp{background:var(--white);border:1.5px solid var(--line);}
+.entry-card .rec{position:absolute;top:20px;right:20px;background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;}
+.entry-card .eicon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.entry-card.web .eicon{background:rgba(255,255,255,.12);color:var(--orange-light);}
+.entry-card.mp .eicon{background:rgba(234,88,12,.1);color:var(--orange);}
+.entry-card .eicon svg{width:28px;height:28px;}
+.entry-card h3{font-size:23px;font-weight:800;margin-bottom:10px;}
+.entry-card.web h3{color:#fff;}
+.entry-card p{font-size:14.5px;line-height:1.7;margin-bottom:22px;}
+.entry-card.web p{color:rgba(255,255,255,.72);}
+.entry-card.mp p{color:var(--ink-soft);}
+.entry-feats{list-style:none;margin-bottom:26px;}
+.entry-feats li{display:flex;gap:9px;align-items:center;font-size:14px;margin-bottom:10px;}
+.entry-feats svg{width:17px;height:17px;flex-shrink:0;}
+.entry-card.web .entry-feats{color:rgba(255,255,255,.85);}
+.entry-card.web .entry-feats svg{color:var(--orange-light);}
+.entry-card.mp .entry-feats{color:var(--ink-soft);}
+.entry-card.mp .entry-feats svg{color:var(--orange);}
+.entry-card .btn-primary{width:100%;justify-content:center;}
+.entry-card.mp .btn-line{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:600;border:1.5px solid var(--line);color:var(--ink);background:#fff;cursor:pointer;transition:all .25s;}
+.entry-card.mp .btn-line:hover{border-color:var(--orange);color:var(--orange);}
+.qr-note{font-size:12px;color:var(--ink-muted);text-align:center;margin-top:14px;line-height:1.6;}
+
+/* ===== 最终 CTA ===== */
+.final-cta{background:linear-gradient(135deg,var(--orange-deep),var(--orange));border-radius:var(--radius-xl);padding:64px 48px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+.final-cta::before{content:'';position:absolute;top:-120px;right:-80px;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.1);}
+.final-cta h2{font-size:clamp(26px,3.2vw,38px);font-weight:900;margin-bottom:14px;position:relative;}
+.final-cta p{font-size:16.5px;color:rgba(255,255,255,.9);margin-bottom:30px;position:relative;}
+.final-cta .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
+.final-cta .btn-white{background:#fff;color:var(--orange-deep);}
+.final-cta .btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.2);}
+.final-cta .btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.5);}
+.final-cta .btn-ghost:hover{background:rgba(255,255,255,.25);}
+
+/* ===== Footer ===== */
+.footer{background:var(--ink);padding:64px 0 28px;color:rgba(255,255,255,.7);}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1);}
+.footer-brand p{font-size:14px;color:rgba(255,255,255,.6);margin-top:18px;max-width:300px;line-height:1.7;}
+.footer-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col li{margin-bottom:11px;}
+.footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s;}
+.footer-col a:hover{color:var(--orange-light);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;font-size:13px;color:rgba(255,255,255,.45);flex-wrap:wrap;gap:12px;}
+.footer-links{display:flex;gap:22px;}
+.footer-links a{color:rgba(255,255,255,.45);}
+.footer-links a:hover{color:var(--orange-light);}
+
+/* ===== 揭示动效 ===== */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+.reveal.in{opacity:1;transform:none;}
+.reveal-d1{transition-delay:.08s;}.reveal-d2{transition-delay:.16s;}.reveal-d3{transition-delay:.24s;}.reveal-d4{transition-delay:.32s;}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.hero-stage .scene{animation:none!important;}.hf1,.hf2,.hf3{animation:none!important;}}
+
+/* ===== 响应式 ===== */
+@media(max-width:960px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;gap:0;padding:12px 24px 20px;border-bottom:1px solid var(--line);box-shadow:var(--shadow-md);}
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:12px 0;}
+  .nav-product-link{padding:12px 0;}
+  .nav-cta{justify-content:center;margin-top:8px;}
+  .nav-toggle{display:flex;}
+  .hero-inner{grid-template-columns:1fr;gap:40px;}
+  .hero-visual{max-width:480px;margin:0 auto;width:100%;}
+  .hf3{display:none;}
+  .trust-grid{grid-template-columns:repeat(2,1fr);gap:30px;}
+  .compare-wrap{grid-template-columns:1fr;}
+  .flow{grid-template-columns:repeat(2,1fr);gap:28px 12px;}
+  .flow::before{display:none;}
+  .cap-grid{grid-template-columns:1fr;}
+  .scene-grid{grid-template-columns:1fr;max-width:440px;margin:0 auto;}
+  .comp-grid{grid-template-columns:1fr;}
+  .entry-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
+}
+@media(max-width:560px){
+  .section{padding:64px 0;}
+  .flow{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .platform-table th:nth-child(4),.platform-table td:nth-child(4){display:none;}
+  .hf1{left:-8px;}.hf2{right:-8px;}
+}
 </style>
+</head>
+<body>
 
+<!-- ===== 导航 ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/huoer.html" class="nav-product-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12,0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计
+      </a>
+      <a href="/geo.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计
+      </a>
+      <a href="/global.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计
+      </a>
+      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
+      <a class="nav-cta" href="/huoer-online.html">免费使用 Web 版</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
 
-
-<!-- 在线生图伙伴工作台 -->
-<!-- ===== 官网体验版工作台（4步流程新版） ===== -->
-<section class="trial-wb" id="workbench">
-  <div class="trial-wb-inner">
-    <div class="trial-wb-header">
-      <div class="trial-wb-title">
-        <div class="trial-wb-title-row">
-          <span class="trial-wb-badge"><span class="trial-wb-badge-dot"></span>Beta 免费内测</span>
-          <h2>Hogee生图伙计工作台</h2>
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="dot"></span><span>WorkHogee 生图伙计 · 二手车行版 · 内测中</span></div>
+        <h1>收车拍几张，<br><span class="highlight">上架物料全自动</span></h1>
+        <p class="hero-sub">面向中小二手车行的 AI 车源物料工作台。手机随手拍外观、内饰、细节，自动产出精修图、场景图、360 展示、短视频和车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。收车到上架，一个伙计全包。</p>
+        <div class="hero-cta">
+          <a href="/huoer-online.html" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            免费使用 Web 版
+          </a>
+          <a href="#entry" class="btn-secondary" onclick="mpNotify();return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            微信小程序内测
+          </a>
         </div>
-        <p class="trial-wb-subtitle">上传手机实拍图，20秒生成可直接上架的专业商品图，内测期间无限免费</p>
-      </div>
-      <button class="trial-header-btn" id="trialHistoryBtn">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-        历史记录
-      </button>
-    </div>
-
-    <!-- 步骤指示器 -->
-    <div class="trial-steps">
-      <div class="trial-step active" data-step="1"><div class="trial-step-num">1</div><div class="trial-step-label">选择用途 · 上传图片</div></div>
-      <div class="trial-step-line"></div>
-      <div class="trial-step" data-step="2"><div class="trial-step-num">2</div><div class="trial-step-label">参数设置</div></div>
-      <div class="trial-step-line"></div>
-      <div class="trial-step" data-step="3"><div class="trial-step-num">3</div><div class="trial-step-label">下载成品</div></div>
-    </div>
-
-    <div class="trial-wb-body">
-      <!-- 第1步：选择用途 + 上传图片（合并） -->
-      <div class="trial-stage active" id="trialStagePurpose">
-        <div class="trial-purpose-layout">
-          <!-- 左侧：用途列表 -->
-          <div class="trial-purpose-sidebar">
-            <div class="trial-sidebar-title">选择图片用途</div>
-            <div class="trial-purpose-list">
-              <div class="trial-purpose-item selected" data-purpose="product">
-                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div>
-                <div class="trial-purpose-item-info">
-                  <div class="trial-purpose-item-name">产品主图</div>
-                  <div class="trial-purpose-item-desc">白底纯色背景，产品突出</div>
-                </div>
-                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-              <div class="trial-purpose-item" data-purpose="detail">
-                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div>
-                <div class="trial-purpose-item-info">
-                  <div class="trial-purpose-item-name">产品详情图</div>
-                  <div class="trial-purpose-item-desc">产品参数卖点排版</div>
-                </div>
-                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-              <div class="trial-purpose-item" data-purpose="scene">
-                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                <div class="trial-purpose-item-info">
-                  <div class="trial-purpose-item-name">场景效果图</div>
-                  <div class="trial-purpose-item-desc">真实使用场景，氛围感</div>
-                </div>
-                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-              <div class="trial-purpose-item" data-purpose="lifestyle">
-                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg></div>
-                <div class="trial-purpose-item-info">
-                  <div class="trial-purpose-item-name">生活方式图</div>
-                  <div class="trial-purpose-item-desc">人物生活场景，品牌感</div>
-                </div>
-                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-              <div class="trial-purpose-item" data-purpose="ad">
-                <div class="trial-purpose-item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
-                <div class="trial-purpose-item-info">
-                  <div class="trial-purpose-item-name">广告创意图</div>
-                  <div class="trial-purpose-item-desc">创意文案视觉，强冲击</div>
-                </div>
-                <div class="trial-purpose-item-check"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-            </div>
-            <button class="trial-sidebar-upload-btn" id="trialUploadSidebarBtn">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              上传图片
-            </button>
-            <div class="trial-sidebar-upload-hint">支持 1-5 张多角度实拍 · JPG / PNG / WebP</div>
-          </div>
-
-          <!-- 右侧：演示/上传区域 -->
-          <div class="trial-purpose-main">
-            <div class="trial-demo-area" id="trialDemoArea">
-              <!-- 动态演示窗口 -->
-              <div class="trial-demo-window" id="trialDemoWindow">
-                <div class="trial-demo-topbar">
-                  <div class="trial-demo-topbar-dots"><span></span><span></span><span></span></div>
-                  <div class="trial-demo-topbar-title">Hogee 生图演示</div>
-                  <div class="trial-demo-topbar-badge">自动播放</div>
-                </div>
-                <div class="trial-demo-slides">
-                  <!-- Slide 1: 花瓶场景 -->
-                  <div class="trial-demo-slide active" data-slide="0">
-                    <div class="trial-demo-compare">
-                      <div class="trial-demo-img-wrap">
-                        <img src="images/home-vase-white.jpg" alt="原图" class="trial-demo-before">
-                        <div class="trial-demo-img-tag">手机实拍</div>
-                      </div>
-                      <div class="trial-demo-process">
-                        <div class="trial-demo-process-ring"><svg viewBox="0 0 60 60"><circle class="dpr-bg" cx="30" cy="30" r="26"/><circle class="dpr-arc" cx="30" cy="30" r="26"/></svg><span>AI</span></div>
-                        <div class="trial-demo-process-label">行业知识库匹配中</div>
-                      </div>
-                      <div class="trial-demo-img-wrap trial-demo-after-wrap">
-                        <img src="images/home-vase-pro.jpg" alt="成品" class="trial-demo-after">
-                        <div class="trial-demo-img-tag trial-demo-img-tag-pro">20秒成品</div>
-                        <div class="trial-demo-scan-line"></div>
-                      </div>
-                    </div>
-                    <div class="trial-demo-meta">
-                      <div class="trial-demo-meta-name">家居饰品 · 场景效果图</div>
-                      <div class="trial-demo-meta-tags"><span>淘宝</span><span>小红书</span><span>抖音</span></div>
-                    </div>
-                  </div>
-                  <!-- Slide 2: 咖啡场景 -->
-                  <div class="trial-demo-slide" data-slide="1">
-                    <div class="trial-demo-compare">
-                      <div class="trial-demo-img-wrap">
-                        <img src="images/drink-coffee-white.jpg" alt="原图" class="trial-demo-before">
-                        <div class="trial-demo-img-tag">手机实拍</div>
-                      </div>
-                      <div class="trial-demo-process">
-                        <div class="trial-demo-process-ring"><svg viewBox="0 0 60 60"><circle class="dpr-bg" cx="30" cy="30" r="26"/><circle class="dpr-arc" cx="30" cy="30" r="26"/></svg><span>AI</span></div>
-                        <div class="trial-demo-process-label">风格智能匹配</div>
-                      </div>
-                      <div class="trial-demo-img-wrap trial-demo-after-wrap">
-                        <img src="images/drink-coffee-pro.jpg" alt="成品" class="trial-demo-after">
-                        <div class="trial-demo-img-tag trial-demo-img-tag-pro">20秒成品</div>
-                        <div class="trial-demo-scan-line"></div>
-                      </div>
-                    </div>
-                    <div class="trial-demo-meta">
-                      <div class="trial-demo-meta-name">餐饮饮品 · 产品主图</div>
-                      <div class="trial-demo-meta-tags"><span>美团</span><span>饿了么</span><span>大众点评</span></div>
-                    </div>
-                  </div>
-                  <!-- Slide 3: 运动鞋场景 -->
-                  <div class="trial-demo-slide" data-slide="2">
-                    <div class="trial-demo-compare">
-                      <div class="trial-demo-img-wrap">
-                        <img src="images/cloth-sneaker-white.jpg" alt="原图" class="trial-demo-before">
-                        <div class="trial-demo-img-tag">手机实拍</div>
-                      </div>
-                      <div class="trial-demo-process">
-                        <div class="trial-demo-process-ring"><svg viewBox="0 0 60 60"><circle class="dpr-bg" cx="30" cy="30" r="26"/><circle class="dpr-arc" cx="30" cy="30" r="26"/></svg><span>AI</span></div>
-                        <div class="trial-demo-process-label">全平台尺寸适配</div>
-                      </div>
-                      <div class="trial-demo-img-wrap trial-demo-after-wrap">
-                        <img src="images/cloth-sneaker-pro.jpg" alt="成品" class="trial-demo-after">
-                        <div class="trial-demo-img-tag trial-demo-img-tag-pro">20秒成品</div>
-                        <div class="trial-demo-scan-line"></div>
-                      </div>
-                    </div>
-                    <div class="trial-demo-meta">
-                      <div class="trial-demo-meta-name">服装鞋包 · 广告创意图</div>
-                      <div class="trial-demo-meta-tags"><span>淘宝</span><span>京东</span><span>拼多多</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="trial-demo-dots">
-                  <span class="trial-demo-dot active"></span>
-                  <span class="trial-demo-dot"></span>
-                  <span class="trial-demo-dot"></span>
-                </div>
-              </div>
-
-              <!-- 上传区域（默认隐藏） -->
-              <div class="trial-upload-area" id="trialUploadArea" style="display:none;">
-                <div class="trial-upload-zone-large" id="trialUploadZoneLarge">
-                  <input type="file" id="trialFileInput" accept="image/*" multiple hidden>
-                  <div class="trial-upload-icon-large">
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="17 8 12 3 7 8"/>
-                      <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                  </div>
-                  <div class="trial-upload-zone-text">
-                    <div class="trial-upload-title-large">拖拽图片到这里，或点击选择</div>
-                    <div class="trial-upload-desc-large">1-5 张多角度实拍效果更佳 · JPG / PNG / WebP · 也可 Ctrl+V 粘贴</div>
-                  </div>
-                  <span class="trial-upload-zone-btn">选择图片</span>
-                </div>
-                <div class="trial-upload-thumbs-large" id="trialUploadThumbsLarge"></div>
-                <div class="trial-smart-check" id="trialSmartCheck" style="display:none;"></div>
-                <div class="trial-product-info" id="trialProductInfo" style="display:none;">
-                  <div class="trial-product-info-title">产品信息（可选，帮助AI更精准生成）</div>
-                  <textarea class="trial-product-info-text" id="trialProductInfoText" placeholder="例如：这是一款陶瓷花瓶，高25cm，米白色，适合北欧风格家居..."></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="hero-meta">
+          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>内测期免注册、不限量</div>
+          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>懂二手车的行业大脑</div>
+          <div class="hero-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>合规红线自动把关</div>
         </div>
       </div>
-
-      <!-- 处理中 -->
-      <div class="trial-stage" id="trialStageProcessing">
-        <div class="trial-processing-wrap">
-          <div class="trial-processing-preview">
-            <img id="trialProcessingImg" src="" alt="">
-            <div class="trial-processing-overlay"><div class="trial-spinner"></div></div>
-          </div>
-          <div class="trial-processing-text">
-            <div class="trial-processing-title" id="trialProcessingTitle">AI 正在识别图片...</div>
-            <div class="trial-processing-sub" id="trialProcessingSub">分析主体、材质与颜色</div>
-          </div>
-          <div class="trial-progress-bar" id="trialProgressBar"><div class="trial-progress-fill" id="trialProgressFill"></div></div>
-          <div class="trial-processing-error" id="trialProcessingError" style="display:none;">
-            <div class="trial-processing-error-title" id="trialProcessingErrorTitle">生成未完成</div>
-            <div class="trial-processing-error-msg" id="trialProcessingErrorMsg">网络波动，请重试</div>
-          </div>
-          <div class="trial-processing-actions" id="trialProcessingActions">
-            <button class="trial-cancel-btn" id="trialCancelBtn">取消</button>
-            <button class="trial-retry-btn" id="trialRetryBtn" style="display:none;">重新生成</button>
+      <div class="hero-visual">
+        <div class="hero-stage">
+          <div class="scene on"><img src="images/car-suv-showroom.jpg" alt="二手车展厅精修图"></div>
+          <div class="scene"><img src="images/car-suv-city.jpg" alt="二手车城市道路场景图"></div>
+          <div class="scene"><img src="images/car-suv-outdoor.jpg" alt="二手车户外生活场景图"></div>
+          <div class="scene-tag" id="sceneTag"><span class="sdot"></span>展厅精修图</div>
+        </div>
+        <div class="hero-float hf1">
+          <div class="fl-label">单台车源物料</div>
+          <div class="fl-value"><em>≤10</em> 分钟</div>
+          <div class="fl-sub">精修 · 场景 · 文案 · 视频</div>
+        </div>
+        <div class="hero-float hf2">
+          <div class="fl-label">一次生成</div>
+          <div class="fl-value"><em>7</em> 大平台</div>
+          <div class="fl-sub">规格自动适配，直接上架</div>
+        </div>
+        <div class="hero-float hf3">
+          <div class="hf-shield">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span><span class="t">AI 合规质检</span><br><span class="s">改色 · 遮痕 · 承诺词拦截</span></span>
           </div>
         </div>
-      </div>
-
-      <!-- 第3步：参数设置 -->
-      <div class="trial-stage" id="trialStageParams">
-        <div class="trial-params-layout">
-          <div class="trial-params-preview">
-            <div class="trial-params-preview-label">原图预览（主图）</div>
-            <img id="trialParamsPreviewImg" src="" alt="">
-          </div>
-          <div class="trial-params-panel">
-            <div class="trial-param-group">
-              <label class="trial-param-label">行业版本 <span>（影响场景匹配）</span></label>
-              <div class="trial-param-options">
-                <button class="trial-param-btn active" data-industry="ecommerce">电商通用版</button>
-                <button class="trial-param-btn" data-industry="xianyu">闲鱼专版</button>
-                <button class="trial-param-btn" data-industry="food">餐饮专版</button>
-                <button class="trial-param-btn" data-industry="cloth">服装专版</button>
-                <button class="trial-param-btn" data-industry="global">外贸专版</button>
-              </div>
-            </div>
-            <div class="trial-param-group">
-              <label class="trial-param-label">风格选择</label>
-              <div class="trial-param-options">
-                <button class="trial-param-btn active" data-style="minimal">极简电商</button>
-                <button class="trial-param-btn" data-style="premium">高级质感</button>
-                <button class="trial-param-btn" data-style="japanese">日系清新</button>
-                <button class="trial-param-btn" data-style="retro">复古胶片</button>
-                <button class="trial-param-btn" data-style="guochao">国潮</button>
-              </div>
-            </div>
-            <div class="trial-param-group">
-              <label class="trial-param-label">风格强度 <span id="trialStrengthVal">60%</span></label>
-              <input type="range" class="trial-range" id="trialStrengthRange" min="0" max="100" value="60">
-            </div>
-            <div class="trial-param-group">
-              <label class="trial-param-label">输出尺寸</label>
-              <div class="trial-param-options">
-                <button class="trial-param-btn active" data-size="800x800">方形 800×800</button>
-                <button class="trial-param-btn" data-size="1080x1440">竖版 1080×1440</button>
-                <button class="trial-param-btn" data-size="1920x1080">横版 1920×1080</button>
-              </div>
-            </div>
-            <div class="trial-param-group">
-              <label class="trial-param-label">自定义提示词（可选）</label>
-              <textarea class="trial-textarea" id="trialCustomPrompt" placeholder="例如：背景加入木质元素，暖光，产品居中..."></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 第4步：结果 -->
-      <div class="trial-stage" id="trialStageResult">
-        <div class="trial-result-compare">
-          <div class="trial-compare-container" id="trialCompareContainer">
-            <div class="trial-compare-original">
-              <img id="trialOriginalImg" src="" alt="原图">
-              <span class="trial-compare-label">原图</span>
-            </div>
-            <div class="trial-compare-generated" id="trialCompareGenerated">
-              <img id="trialGeneratedImg" src="" alt="成品">
-              <span class="trial-compare-label trial-compare-label-gen">AI 成品</span>
-            </div>
-            <div class="trial-compare-slider" id="trialCompareSlider">
-              <div class="trial-compare-handle">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" transform="translate(12 0)"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="trial-result-controls">
-          <div class="trial-control-group">
-            <label class="trial-control-label">输出尺寸</label>
-            <div class="trial-size-options">
-              <button class="trial-size-btn active" data-size="800x800">方形 800×800</button>
-              <button class="trial-size-btn" data-size="1080x1440">竖版 1080×1440</button>
-              <button class="trial-size-btn" data-size="1920x1080">横版 1920×1080</button>
-            </div>
-          </div>
-          <div class="trial-control-group">
-            <label class="trial-control-label">下载格式</label>
-            <div class="trial-format-options">
-              <button class="trial-format-btn active" data-format="jpg">JPG</button>
-              <button class="trial-format-btn" data-format="png">PNG</button>
-              <button class="trial-format-btn" data-format="webp">WebP</button>
-              <button class="trial-format-btn trial-format-btn-disabled" data-format="psd" title="仅客户端支持">PSD 🔒</button>
-            </div>
-          </div>
-          <div class="trial-result-actions">
-            <button class="trial-btn-secondary" id="trialRegenBtn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-              重新生成
-            </button>
-            <button class="trial-btn-secondary" id="trialFeishuBtn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              保存到飞书
-            </button>
-            <button class="trial-btn-primary" id="trialDownloadBtn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              下载成品图
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 卡片内部底部操作栏 -->
-      <div class="trial-wb-footer">
-        <button class="trial-footer-btn trial-footer-prev" id="trialPrevBtn" style="display:none;">上一步</button>
-        <button class="trial-footer-btn trial-footer-next" id="trialNextBtn" style="display:none;">下一步</button>
       </div>
     </div>
   </div>
 </section>
 
-<style>
-/* ===== 官网体验版工作台（4步流程新版） ===== */
-.trial-wb { padding: 80px 0; background: var(--paper); }
-.trial-wb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.trial-wb-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 16px; }
-.trial-wb-title { display: flex; flex-direction: column; gap: 8px; }
-.trial-wb-title-row { display: flex; align-items: center; gap: 12px; }
-.trial-wb-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(234,88,12,0.08); color: var(--orange); font-size: 11px; font-weight: 800; border-radius: 100px; letter-spacing: 0.3px; border: 1px solid rgba(234,88,12,0.2); }
-.trial-wb-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); position: relative; }
-.trial-wb-badge-dot::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; background: var(--orange); opacity: 0.3; animation: trialBadgePulse 1.8s ease-out infinite; }
-@keyframes trialBadgePulse { 0% { transform: scale(0.8); opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
-.trial-wb-title h2 { font-size: 24px; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; line-height: 1.2; }
-.trial-wb-subtitle { font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0; }
-.trial-header-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: white; border: 1px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--ink-soft); cursor: pointer; transition: all 0.25s ease; margin-top: 2px; }
-.trial-header-btn:hover { border-color: var(--orange); color: var(--orange); box-shadow: 0 2px 10px rgba(234,88,12,0.12); }
-.trial-header-btn:active { transform: scale(0.97); }
+<!-- ===== 数据条 ===== -->
+<section class="trust-bar">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item reveal"><div class="num">3 组</div><div class="label">外观 / 内饰 / 细节 拍摄引导</div></div>
+      <div class="trust-item reveal reveal-d1"><div class="num">6 类</div><div class="label">精修图 · 场景图 · 360 · 视频 · 文案</div></div>
+      <div class="trust-item reveal reveal-d2"><div class="num">7+</div><div class="label">主流二手车与社媒平台规格</div></div>
+      <div class="trust-item reveal reveal-d3"><div class="num">4 道</div><div class="label">合规红线自动把关</div></div>
+    </div>
+  </div>
+</section>
 
-/* 步骤指示器 */
-.trial-steps { display: flex; align-items: flex-start; justify-content: center; margin-bottom: 26px; gap: 0; }
-.trial-step { display: flex; flex-direction: column; align-items: center; gap: 7px; position: relative; z-index: 1; }
-.trial-step-num { width: 32px; height: 32px; border-radius: 50%; background: white; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #a8a29e; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
-.trial-step.active .trial-step-num { background: var(--orange); border-color: var(--orange); color: white; box-shadow: 0 3px 12px rgba(234,88,12,0.3); }
-.trial-step.done .trial-step-num { background: var(--ink); border-color: var(--ink); color: white; }
-.trial-step-label { font-size: 11.5px; font-weight: 600; color: #a8a29e; transition: all 0.3s; white-space: nowrap; }
-.trial-step.active .trial-step-label { color: var(--orange); font-weight: 800; }
-.trial-step.done .trial-step-label { color: var(--ink); font-weight: 700; }
-.trial-step-line { width: 80px; height: 1.5px; background: var(--line); margin: 16px 14px 0; transition: all 0.4s; position: relative; overflow: hidden; border-radius: 1px; flex-shrink: 0; }
-.trial-step-line::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--orange), #fb923c); transform: translateX(-100%); transition: transform 0.5s; }
-.trial-step-line.done { background: var(--ink); }
-.trial-step-line.done::after { transform: translateX(0); }
+<!-- ===== 前后对比 ===== -->
+<section class="section alt" id="compare-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">所见即所得</span>
+      <h2>手机随手拍，到能直接上架，只差一个伙计</h2>
+      <p>拖动中间滑块，对比同一台车在 Hogee 处理前后的差别。不换车、不美颜车况，只补齐二手车卖的是"卖相"这一课。</p>
+    </div>
+    <div class="compare-wrap">
+      <div class="compare reveal" id="compare">
+        <img class="before-img" src="images/car-suv-white.jpg" alt="手机随手拍的白底原图">
+        <img class="after" src="images/car-suv-showroom.jpg" alt="Hogee 生成的展厅精修图">
+        <span class="tag before">手机随手拍</span>
+        <span class="tag after">Hogee 出品</span>
+        <div class="handle"><span class="grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6" transform="translate(-6 0)"/></svg></span></div>
+      </div>
+      <div class="compare-text reveal reveal-d1">
+        <h3>不是滤镜，是二手车商的物料生产线</h3>
+        <ul class="compare-list">
+          <li class="bad"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span><span><b>自己拍：</b>白墙、杂乱背景、光线不均，同一批车风格各异，买家划走。</span></li>
+          <li class="good"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Hogee 精修：</b>统一布光、抠图去杂、展厅级背景，全店车源一个调性。</span></li>
+          <li class="good"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>多场景：</b>同一台车自动出展厅、城市、户外多版背景，适配不同平台调性。</span></li>
+          <li class="good"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>保真实：</b>车身颜色、车况痕迹原样保留，AI 生成明确标识，卖得安心。</span></li>
+        </ul>
+        <a href="/huoer-online.html" class="btn-primary">上传我的车图试试
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-.trial-wb-body { position: relative; min-height: 400px; background: white; border-radius: 20px; box-shadow: 0 8px 40px rgba(28,25,23,0.06); overflow: hidden; border: 1px solid rgba(0,0,0,0.03); }
-.trial-wb-body::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--orange), #fb923c, #f97316, var(--orange)); background-size: 200% 100%; animation: trialGradientMove 3s linear infinite; z-index: 1; }
-@keyframes trialGradientMove { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-.trial-stage { display: none; padding: 40px; animation: trialFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-stage.active { display: block; }
-@keyframes trialFadeIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+<!-- ===== 收车到上架流程 ===== -->
+<section class="section sand" id="workflow">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">完整工作流</span>
+      <h2>从收车拍摄到多平台上架，一条线跑完</h2>
+      <p>不是单点出图工具，而是把二手车商从拍摄、质检、识别、配文到导出的整条物料链路自动化。</p>
+    </div>
+    <div class="flow">
+      <div class="flow-step reveal">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div class="n">STEP 01</div><h4>收车拍摄</h4><p>按外观/内饰/细节三组引导点位拍摄</p>
+      </div>
+      <div class="flow-step reveal reveal-d1">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="n">STEP 02</div><h4>上传质检</h4><p>模糊、曝光、角度、遮挡逐张检测</p>
+      </div>
+      <div class="flow-step reveal reveal-d2">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="n">STEP 03</div><h4>车型识别</h4><p>品牌车系年款自动识别，低置信度人工确认</p>
+      </div>
+      <div class="flow-step reveal reveal-d3">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <div class="n">STEP 04</div><h4>知识检索</h4><p>调取车型卖点、配置差异、平台规则</p>
+      </div>
+      <div class="flow-step reveal">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg></div>
+        <div class="n">STEP 05</div><h4>物料生成</h4><p>精修图、场景图、360、短视频、文案</p>
+      </div>
+      <div class="flow-step reveal reveal-d1">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <div class="n">STEP 06</div><h4>合规质检</h4><p>改色、遮痕、承诺词、脱敏逐项拦截</p>
+      </div>
+      <div class="flow-step reveal reveal-d2">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        <div class="n">STEP 07</div><h4>多平台导出</h4><p>规格自动裁切，打包/二维码/草稿箱分发</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* 用途选择 */
-/* 用途选择+上传 合并布局 */
-.trial-purpose-layout { display: grid; grid-template-columns: 280px 1fr; gap: 28px; min-height: 480px; }
-.trial-purpose-sidebar { display: flex; flex-direction: column; gap: 16px; }
-.trial-sidebar-title { font-size: 13px; font-weight: 800; color: var(--ink-muted); letter-spacing: 1px; text-transform: uppercase; padding-left: 4px; }
-.trial-purpose-list { display: flex; flex-direction: column; gap: 8px; }
-.trial-purpose-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--line); background: white; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
-.trial-purpose-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--orange); transform: scaleY(0); transition: transform 0.25s; }
-.trial-purpose-item:hover { border-color: rgba(234,88,12,0.3); transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-.trial-purpose-item.selected { border-color: var(--orange); background: linear-gradient(135deg, rgba(234,88,12,0.04), white); box-shadow: 0 4px 16px rgba(234,88,12,0.1); }
-.trial-purpose-item.selected::before { transform: scaleY(1); }
-.trial-purpose-item-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--paper); display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; transition: all 0.25s; }
-.trial-purpose-item.selected .trial-purpose-item-icon { background: rgba(234,88,12,0.1); color: var(--orange); }
-.trial-purpose-item-info { flex: 1; min-width: 0; }
-.trial-purpose-item-name { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
-.trial-purpose-item-desc { font-size: 11px; color: var(--ink-muted); line-height: 1.4; }
-.trial-purpose-item-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: transparent; flex-shrink: 0; transition: all 0.25s; }
-.trial-purpose-item.selected .trial-purpose-item-check { background: var(--orange); border-color: var(--orange); color: white; }
+<!-- ===== 核心能力 ===== -->
+<section class="section alt" id="capabilities">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">六大核心能力</span>
+      <h2>为二手车这门生意专门打磨</h2>
+      <p>通用生图工具不懂车况、不懂平台、不懂合规。Hogee 的每一步都内置二手车行业知识与规则。</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card reveal">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <h3>拍摄引导与智能质检</h3>
+        <p>外观前 45°/侧 45°/正后/正侧、内饰、细节三组点位引导；每张图自动检测模糊、过曝欠曝、角度偏差与杂物遮挡，不合格当场提示重拍。</p>
+        <ul class="cap-features"><li>12 个标准拍摄点位</li><li>清晰度/曝光/完整度评分</li><li>缺拍漏拍自动提醒</li></ul>
+      </div>
+      <div class="cap-card reveal reveal-d1">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div>
+        <h3>车型识别 + 二手车知识库</h3>
+        <p>识别品牌、车系、年款、配置，自动调取该车型的核心卖点、配置差异、常见话术与各平台规则，让文案不像套模板，更像懂车的人写的。</p>
+        <ul class="cap-features"><li>品牌车系年款识别</li><li>车型卖点/配置差异库</li><li>低置信度人工确认兜底</li></ul>
+      </div>
+      <div class="cap-card reveal reveal-d2">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <h3>精修图与背景统一</h3>
+        <p>自动校正透视与白平衡、抠除杂乱背景、提升清晰度，统一布光与色调。全店车源一个调性，告别同一批车拍出十种风格。</p>
+        <ul class="cap-features"><li>抠图去杂 / 超分增强</li><li>统一布光与色调</li><li>车身颜色严格不改变</li></ul>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg></div>
+        <h3>场景图生成</h3>
+        <p>同一台车自动生成展厅、城市道路、家庭户外等多版场景背景，匹配不同平台与人群调性；车还是那台车，只是换了更好卖的舞台。</p>
+        <ul class="cap-features"><li>展厅 / 城市 / 户外多场景</li><li>车身、轮毂、朝向保持一致</li><li>AI 生成自动标识</li></ul>
+      </div>
+      <div class="cap-card reveal reveal-d1">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+        <h3>360 展示与短视频</h3>
+        <p>用多张外观图统一光照、合成旋转序列，零额外成本生成 8–12 秒横竖版看车视频，比九张静图更能留住买家，适合抖音、视频号。</p>
+        <ul class="cap-features"><li>外观图序列合成伪 360</li><li>横版/竖版一键出片</li><li>车型信息水印自动叠加</li></ul>
+        <span class="cap-tag">内测逐步开放</span>
+      </div>
+      <div class="cap-card reveal reveal-d2">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></div>
+        <h3>多风格车源文案</h3>
+        <p>标题、150 字短描述、检测报告风长描述、小红书笔记、闲鱼文案一次生成，专业检测风、亲和卖家风、性价比引流风随平台切换。</p>
+        <ul class="cap-features"><li>标题/短描述/长描述</li><li>小红书、闲鱼平台化文案</li><li>绝对化承诺词自动规避</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* 右侧主区域 */
-.trial-purpose-main { position: relative; display: flex; flex-direction: column; }
-.trial-demo-area { flex: 1; position: relative; min-height: 380px; }
+<!-- ===== 三场景 ===== -->
+<section class="section" id="scenes">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">一台车，多版场景</span>
+      <h2>展厅、城市、户外，同一台车各就各位</h2>
+      <p>不同平台、不同买家吃不同的"画面感"。Hogee 一次生成多版场景，车身颜色、车型、轮毂、朝向严格保持一致。</p>
+    </div>
+    <div class="scene-grid">
+      <div class="scene-card reveal">
+        <div class="ph"><img src="images/car-suv-showroom.jpg" alt="展厅精修场景图"></div>
+        <div class="bd"><h4><span class="pin"></span>展厅精修图</h4><p>专业布光与地面反射，突出品质感与高级感，适合懂车帝、汽车之家主图与详情页。</p></div>
+      </div>
+      <div class="scene-card reveal reveal-d1">
+        <div class="ph"><img src="images/car-suv-city.jpg" alt="城市道路场景图"></div>
+        <div class="bd"><h4><span class="pin"></span>城市道路场景</h4><p>黄昏城市街区的通勤画面，营造商务与日常使用想象，适合瓜子、闲鱼等交易平台。</p></div>
+      </div>
+      <div class="scene-card reveal reveal-d2">
+        <div class="ph"><img src="images/car-suv-outdoor.jpg" alt="户外生活场景图"></div>
+        <div class="bd"><h4><span class="pin"></span>户外生活场景</h4><p>郊野、湖边、家庭出游氛围，放大空间与通过性卖点，适合小红书、朋友圈种草传播。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* 演示窗口 */
-.trial-demo-window { position: absolute; inset: 0; background: linear-gradient(145deg, #1c1917, #292524); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 12px 40px rgba(28,25,23,0.15); }
-.trial-demo-window::before { content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(234,88,12,0.12) 0%, transparent 65%); pointer-events: none; }
-.trial-demo-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
-.trial-demo-topbar-dots { display: flex; gap: 6px; }
-.trial-demo-topbar-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); }
-.trial-demo-topbar-dots span:first-child { background: #ef4444; }
-.trial-demo-topbar-dots span:nth-child(2) { background: #f59e0b; }
-.trial-demo-topbar-dots span:nth-child(3) { background: #22c55e; }
-.trial-demo-topbar-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
-.trial-demo-topbar-badge { font-size: 10px; font-weight: 700; color: var(--orange); background: rgba(234,88,12,0.15); padding: 3px 10px; border-radius: 100px; display: flex; align-items: center; gap: 5px; }
-.trial-demo-topbar-badge::before { content: ''; width: 5px; height: 5px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; }
-.trial-demo-slides { position: relative; flex: 1; display: flex; flex-direction: column; }
-.trial-demo-slide { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 20px; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
-.trial-demo-slide.active { opacity: 1; pointer-events: auto; }
-.trial-demo-compare { flex: 1; display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; }
-.trial-demo-img-wrap { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.04); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-.trial-demo-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.trial-demo-before { opacity: 0.75; filter: saturate(0.4) contrast(0.95); }
-.trial-demo-after-wrap { box-shadow: 0 8px 32px rgba(234,88,12,0.2); }
-.trial-demo-after { opacity: 0; transform: scale(1.08); filter: blur(12px) saturate(0); transition: opacity 1s ease 0.3s, transform 1s ease 0.3s, filter 1s ease 0.3s; }
-.trial-demo-slide.active .trial-demo-after { opacity: 1; transform: scale(1); filter: blur(0) saturate(1); }
-.trial-demo-img-tag { position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: rgba(28,25,23,0.75); color: rgba(255,255,255,0.8); backdrop-filter: blur(4px); z-index: 2; }
-.trial-demo-img-tag-pro { background: var(--orange); color: white; }
-.trial-demo-scan-line { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--orange-light), transparent); opacity: 0; z-index: 3; }
-.trial-demo-slide.active .trial-demo-scan-line { animation: trialScan 2.5s ease-in-out infinite; }
-@keyframes trialScan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-.trial-demo-process { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; width: 72px; }
-.trial-demo-process-ring { position: relative; width: 56px; height: 56px; }
-.trial-demo-process-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.dpr-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 3; }
-.dpr-arc { fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 163.4; stroke-dashoffset: 163.4; }
-.trial-demo-slide.active .dpr-arc { animation: trialRingFill 2s ease-out forwards; }
-@keyframes trialRingFill { to { stroke-dashoffset: 0; } }
-.trial-demo-process-ring span { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; font-weight: 900; color: var(--orange); }
-.trial-demo-process-label { font-size: 9px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.3; white-space: nowrap; }
-.trial-demo-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); padding-right: 130px; }
-.trial-demo-meta-name { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.75); }
-.trial-demo-meta-tags { display: flex; gap: 6px; }
-.trial-demo-meta-tags span { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
-.trial-demo-dots { display: flex; gap: 7px; z-index: 5; justify-content: center; padding: 8px 130px 10px 16px; position: relative; }
-.trial-demo-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; cursor: pointer; }
-.trial-demo-dot.active { background: var(--orange); width: 22px; border-radius: 4px; }
+<!-- ===== 合规 ===== -->
+<section class="section alt">
+  <div class="container">
+    <div class="compliance reveal">
+      <div class="section-head">
+        <span class="section-kicker" style="color:var(--orange-light);">合规先行</span>
+        <h2>二手车是信任生意，AI 不能帮你造假</h2>
+        <p>所有物料在导出前强制经过合规质检。该美化的是卖相，不是车况——这是 Hogee 不可关闭的底线。</p>
+      </div>
+      <div class="comp-grid">
+        <div class="comp-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <div><h4>绝不改变车身颜色</h4><p>生成后用颜色直方图后验比对，成品与原图色差超阈值直接拦截重生成。</p></div>
+        </div>
+        <div class="comp-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.2" y1="4.2" x2="19.8" y2="19.8"/></svg></span>
+          <div><h4>不隐藏事故与瑕疵</h4><p>划痕、补漆、磨损等车况痕迹原样保留，不做消除式精修，避免交付纠纷。</p></div>
+        </div>
+        <div class="comp-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <div><h4>车牌 / 人脸 / VIN 脱敏</h4><p>自动识别并模糊车牌、随车人员人脸与车架号，保护原车主与买家隐私。</p></div>
+        </div>
+        <div class="comp-item">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          <div><h4>AI 标识 + 文案红线</h4><p>成品图带"AI 生成"标识与元数据；文案拦截"无事故""原版原漆"等无依据绝对化承诺。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* 上传区域 */
-.trial-upload-area { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; background: white; border-radius: 16px; padding: 24px; overflow-y: auto; }
-.trial-upload-zone-large { flex-shrink: 0; border: 2px dashed var(--line); border-radius: 14px; display: flex; flex-direction: row; align-items: center; gap: 16px; background: var(--paper); cursor: pointer; transition: all 0.3s; min-height: 96px; padding: 16px 20px; position: relative; overflow: hidden; }
-.trial-upload-zone-large:hover { border-color: var(--orange); background: rgba(234,88,12,0.02); }
-.trial-upload-zone-large.dragover { border-color: var(--orange); background: rgba(234,88,12,0.05); border-style: solid; }
-.trial-upload-icon-large { width: 52px; height: 52px; border-radius: 14px; background: white; color: var(--orange); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(234,88,12,0.12); flex-shrink: 0; animation: none; }
-.trial-upload-zone-text { flex: 1; min-width: 0; }
-.trial-upload-title-large { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-.trial-upload-desc-large { font-size: 12px; color: var(--ink-muted); line-height: 1.6; }
-.trial-upload-zone-btn { flex-shrink: 0; padding: 9px 20px; background: var(--orange); color: white; border-radius: 9px; font-size: 13px; font-weight: 800; transition: all 0.25s; }
-.trial-upload-zone-large:hover .trial-upload-zone-btn { background: var(--orange-dark); box-shadow: 0 4px 14px rgba(234,88,12,0.35); }
-.trial-upload-thumbs-large { display: flex; gap: 12px; flex-wrap: wrap; }
+<!-- ===== 平台规格 ===== -->
+<section class="section" id="platforms">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">一次生成，全平台适配</span>
+      <h2>各平台尺寸规格，伙计替你记着</h2>
+      <p>不用再查每个平台要什么比例、多大尺寸。选定平台，自动裁切导出，横竖版一次备齐。</p>
+    </div>
+    <div class="reveal" style="overflow-x:auto;">
+    <table class="platform-table">
+      <colgroup><col style="width:22%"><col style="width:20%"><col style="width:22%"><col style="width:36%"></colgroup>
+      <thead><tr><th>平台 / 渠道</th><th>比例</th><th>建议尺寸</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td>懂车帝</td><td><span class="ratio">1 : 1</span></td><td>1080 × 1080</td><td>车源主图</td></tr>
+        <tr><td>瓜子二手车</td><td><span class="ratio">1 : 1</span></td><td>1080 × 1080</td><td>车源主图 / 列表图</td></tr>
+        <tr><td>闲鱼</td><td><span class="ratio">1 : 1</span></td><td>1080 × 1080</td><td>商品主图</td></tr>
+        <tr><td>汽车之家</td><td><span class="ratio">4 : 3</span></td><td>1440 × 1080</td><td>详情页组图</td></tr>
+        <tr><td>小红书</td><td><span class="ratio">3 : 4</span></td><td>1080 × 1440</td><td>种草笔记封面</td></tr>
+        <tr><td>朋友圈九宫格</td><td><span class="ratio">1 : 1</span></td><td>1080 × 1080</td><td>车商朋友圈发图</td></tr>
+        <tr><td>抖音 / 视频号</td><td><span class="ratio">9 : 16</span></td><td>1080 × 1920</td><td>看车短视频封面 / 竖版视频</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="table-note">规格随各平台规则更新，Hogee 知识库会同步维护；内测期支持单张下载与批量打包。</p>
+  </div>
+</section>
 
-/* 左侧栏上传按钮 */
-.trial-sidebar-upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: linear-gradient(135deg, var(--orange), #f97316); color: white; font-size: 15px; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; transition: all 0.25s; box-shadow: 0 6px 18px rgba(234,88,12,0.32); margin-top: auto; }
-.trial-sidebar-upload-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(234,88,12,0.42); }
-.trial-sidebar-upload-btn:active { transform: translateY(0); }
-.trial-sidebar-upload-hint { font-size: 11px; color: var(--ink-muted); text-align: center; line-height: 1.5; }
+<!-- ===== 入口选择 ===== -->
+<section class="section sand" id="entry">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-kicker">两种用法，随你选</span>
+      <h2>店里用 Web，收车用小程序</h2>
+      <p>功能完整的浏览器工作台，和收车现场随手拍的微信小程序，物料在同一套行业知识库里打通。</p>
+    </div>
+    <div class="entry-grid">
+      <div class="entry-card web reveal">
+        <span class="rec">推荐 · 内测开放</span>
+        <div class="eicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Web 工作台</h3>
+        <p>浏览器打开即用，免注册、内测期不限量。完整的上传质检、车型确认、场景生成、多平台尺寸导出与车源文案，适合在店里批量处理车源物料。</p>
+        <ul class="entry-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>多图上传与逐张智能质检</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>精修图 / 多场景图 / 车源文案</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>7 大平台尺寸一键导出</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>内测期免注册、不限量</li>
+        </ul>
+        <a href="/huoer-online.html" class="btn-primary">立即打开 Web 工作台
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="entry-card mp reveal reveal-d1">
+        <div class="eicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <h3>微信小程序</h3>
+        <p>收车现场举起手机就拍，拍摄引导、质检、上传一气呵成，回到店里在 Web 端继续精修与导出，专为车商移动收车场景设计。</p>
+        <ul class="entry-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>收车现场点位引导拍摄</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>拍照即质检、即上传</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>与 Web 端物料库打通</li>
+        </ul>
+        <button class="btn-line" onclick="mpNotify()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          预约小程序内测
+        </button>
+        <p class="qr-note">小程序正在内测筹备中，开放后优先通知预约车商</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* 上传 */
-.trial-upload-main { margin-bottom: 16px; }
-.trial-upload-zone { border: 2px dashed var(--line); border-radius: 14px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--paper); position: relative; overflow: hidden; }
-.trial-upload-zone::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(234,88,12,0.04), transparent 70%); opacity: 0; transition: opacity 0.3s; }
-.trial-upload-zone:hover, .trial-upload-zone.dragover { border-color: var(--orange); background: rgba(234,88,12,0.02); transform: scale(1.01); }
-.trial-upload-zone:hover::before, .trial-upload-zone.dragover::before { opacity: 1; }
-.trial-upload-zone.dragover { animation: trialPulse 1s ease-in-out infinite; }
-@keyframes trialPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(234,88,12,0.2); } 50% { box-shadow: 0 0 0 12px rgba(234,88,12,0); } }
-.trial-upload-icon { color: #cbd5e1; margin-bottom: 12px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-upload-zone:hover .trial-upload-icon { color: var(--orange); transform: translateY(-4px) scale(1.1); }
-.trial-upload-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; transition: color 0.3s; }
-.trial-upload-zone:hover .trial-upload-title { color: var(--orange); }
-.trial-upload-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; }
-.trial-upload-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.trial-thumb { position: relative; width: 88px; height: 88px; border-radius: 10px; overflow: hidden; border: 2px solid var(--line); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
-.trial-thumb:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.15); z-index: 2; }
-.trial-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-.trial-thumb:hover img { transform: scale(1.1); }
-.trial-thumb-remove { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1; transition: all 0.2s; opacity: 0; }
-.trial-thumb:hover .trial-thumb-remove { opacity: 1; }
-.trial-thumb-remove:hover { background: var(--orange); transform: scale(1.15); }
-.trial-thumb-main { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(234,88,12,0.15); }
-.trial-thumb-main::after { content: '主图'; position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, var(--orange), #f97316); color: white; font-size: 10px; font-weight: 800; padding: 2px 0; text-align: center; }
-
-/* 智能排查 */
-.trial-smart-check { margin-top: 16px; padding: 16px 20px; background: white; border: 1px solid var(--line); border-radius: 12px; animation: trialSlideUp 0.4s ease; }
-@keyframes trialSlideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.trial-smart-check-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.trial-smart-check-title::before { content: ''; width: 4px; height: 16px; background: linear-gradient(180deg, var(--orange), #f97316); border-radius: 2px; }
-.trial-check-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b; padding: 4px 0; transition: all 0.2s; }
-.trial-check-item:hover { padding-left: 4px; }
-.trial-check-ok { color: #16a34a; font-weight: 700; }
-.trial-check-warn { color: #d97706; font-weight: 700; }
-.trial-check-error { color: #dc2626; font-weight: 700; }
-
-/* 产品信息 */
-.trial-product-info { margin-top: 16px; }
-.trial-product-info-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.trial-product-info-text { width: 100%; min-height: 60px; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 13px; color: var(--ink); resize: vertical; font-family: inherit; box-sizing: border-box; transition: all 0.25s; background: white; }
-.trial-product-info-text:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px rgba(234,88,12,0.1); }
-
-/* 处理中 */
-.trial-processing-wrap { display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-.trial-processing-preview { position: relative; width: 200px; height: 200px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); animation: trialFloat 3s ease-in-out infinite; }
-@keyframes trialFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.trial-processing-preview img { width: 100%; height: 100%; object-fit: cover; }
-.trial-processing-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,25,23,0.5), rgba(234,88,12,0.3)); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-.trial-spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.25); border-top-color: white; border-radius: 50%; animation: trialSpin 0.8s linear infinite; position: relative; }
-.trial-spinner::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); border-top-color: rgba(255,255,255,0.4); animation: trialSpin 1.2s linear infinite reverse; }
-@keyframes trialSpin { to { transform: rotate(360deg); } }
-.trial-processing-text { text-align: center; margin-bottom: 20px; }
-.trial-processing-title { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-.trial-processing-sub { font-size: 13px; color: #94a3b8; }
-.trial-progress-bar { width: 100%; max-width: 400px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 20px; position: relative; }
-.trial-progress-bar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px); pointer-events: none; }
-.trial-progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), #fb923c, #f97316); border-radius: 4px; width: 0%; transition: width 0.3s; position: relative; overflow: hidden; }
-.trial-progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: trialShimmer 1.5s infinite; }
-@keyframes trialShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-.trial-cancel-btn { padding: 10px 28px; background: white; border: 1.5px solid var(--line); border-radius: 10px; font-size: 13px; font-weight: 700; color: #64748b; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-cancel-btn:hover { border-color: #ef4444; color: #ef4444; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(239,68,68,0.15); }
-.trial-processing-actions { display: flex; gap: 12px; align-items: center; }
-.trial-retry-btn { padding: 10px 28px; background: linear-gradient(135deg, var(--orange), #f97316); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
-.trial-retry-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(234,88,12,0.4); }
-.trial-processing-error { max-width: 420px; text-align: center; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px 20px; margin-bottom: 18px; }
-.trial-processing-error-title { font-size: 14px; font-weight: 800; color: #b91c1c; margin-bottom: 4px; }
-.trial-processing-error-msg { font-size: 12.5px; color: #7f1d1d; line-height: 1.6; word-break: break-word; }
-
-/* 参数设置 */
-.trial-params-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
-.trial-params-preview { background: white; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.trial-params-preview:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
-.trial-params-preview-label { padding: 12px 16px; font-size: 12px; font-weight: 800; color: var(--ink); border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #f8fafc, #f1f5f9); letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px; }
-.trial-params-preview-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
-.trial-params-preview img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; transition: transform 0.5s; }
-.trial-params-preview:hover img { transform: scale(1.05); }
-.trial-params-panel { display: flex; flex-direction: column; gap: 18px; }
-.trial-param-group { }
-.trial-param-label { display: block; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.trial-param-label span { color: var(--orange); font-weight: 600; }
-.trial-param-options { display: flex; flex-wrap: wrap; gap: 8px; }
-.trial-param-btn { padding: 8px 16px; background: white; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--ink); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
-.trial-param-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(234,88,12,0.08), transparent); opacity: 0; transition: opacity 0.2s; }
-.trial-param-btn:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(234,88,12,0.12); }
-.trial-param-btn:hover::after { opacity: 1; }
-.trial-param-btn.active { background: var(--orange); border-color: var(--orange); color: white; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
-.trial-param-btn.active::after { opacity: 0; }
-.trial-range { width: 100%; height: 8px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--orange) 0%, var(--orange) 60%, var(--line) 60%, var(--line) 100%); border-radius: 4px; outline: none; cursor: pointer; }
-.trial-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; cursor: pointer; border: 3px solid var(--orange); box-shadow: 0 2px 8px rgba(234,88,12,0.3); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.trial-range::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 4px 16px rgba(234,88,12,0.4); }
-.trial-range::-webkit-slider-thumb:active { transform: scale(1.1); }
-.trial-textarea { width: 100%; min-height: 56px; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 13px; color: var(--ink); resize: vertical; font-family: inherit; box-sizing: border-box; transition: all 0.25s; background: white; }
-.trial-textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px rgba(234,88,12,0.1); }
-
-/* 结果对比 */
-.trial-result-compare { margin-bottom: 24px; }
-.trial-compare-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; aspect-ratio: 1; border-radius: 16px; overflow: hidden; cursor: ew-resize; user-select: none; box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: box-shadow 0.3s; }
-.trial-compare-container:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
-.trial-compare-original, .trial-compare-generated { position: absolute; inset: 0; }
-.trial-compare-original img, .trial-compare-generated img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.trial-compare-generated { clip-path: inset(0 0 0 50%); transition: clip-path 0.05s linear; }
-.trial-compare-label { position: absolute; top: 12px; left: 12px; padding: 5px 12px; background: rgba(0,0,0,0.65); color: white; font-size: 11px; font-weight: 800; border-radius: 6px; z-index: 2; backdrop-filter: blur(4px); letter-spacing: 0.5px; }
-.trial-compare-label-gen { left: auto; right: 12px; background: linear-gradient(135deg, var(--orange), #f97316); box-shadow: 0 2px 8px rgba(234,88,12,0.4); }
-.trial-compare-slider { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: white; z-index: 3; pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,0.3); }
-.trial-compare-handle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; border-radius: 50%; background: white; box-shadow: 0 4px 16px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; color: var(--ink); transition: transform 0.2s; }
-.trial-compare-container:hover .trial-compare-handle { transform: translate(-50%, -50%) scale(1.15); }
-
-/* 结果控制 */
-.trial-result-controls { display: flex; flex-direction: column; gap: 16px; }
-.trial-control-group { }
-.trial-control-label { display: block; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.trial-size-options, .trial-quality-options, .trial-format-options { display: flex; flex-wrap: wrap; gap: 8px; }
-.trial-size-btn, .trial-quality-btn, .trial-format-btn { padding: 9px 18px; background: white; border: 1.5px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
-.trial-size-btn:hover, .trial-quality-btn:hover, .trial-format-btn:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(234,88,12,0.12); }
-.trial-size-btn.active, .trial-quality-btn.active, .trial-format-btn.active { background: linear-gradient(135deg, var(--orange), #f97316); border-color: var(--orange); color: white; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
-.trial-format-btn-disabled { opacity: 0.5; cursor: not-allowed; }
-.trial-format-btn-disabled:hover { border-color: var(--line); color: var(--ink); transform: none; box-shadow: none; }
-.trial-result-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-.trial-btn-primary, .trial-btn-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); border: none; position: relative; overflow: hidden; }
-.trial-btn-primary { background: linear-gradient(135deg, var(--orange), #f97316); color: white; box-shadow: 0 4px 14px rgba(234,88,12,0.25); }
-.trial-btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #f97316, #ea580c); opacity: 0; transition: opacity 0.25s; }
-.trial-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,0.4); }
-.trial-btn-primary:hover::before { opacity: 1; }
-.trial-btn-primary:active { transform: translateY(0); }
-.trial-btn-primary > * { position: relative; z-index: 1; }
-.trial-btn-secondary { background: white; color: var(--ink); border: 1.5px solid var(--line); }
-.trial-btn-secondary:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(234,88,12,0.1); background: rgba(234,88,12,0.02); }
-.trial-btn-secondary:active { transform: translateY(0); }
-.trial-btn-primary:hover { background: #c2410c; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(234,88,12,0.3); }
-.trial-btn-secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
-.trial-btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
-
-/* 底部操作栏 */
-.trial-wb-footer { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 0; padding: 16px 40px; border-top: 1px solid var(--line); background: #fdfcfa; border-radius: 0 0 20px 20px; }
-.trial-footer-btn { padding: 11px 28px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); border: none; }
-.trial-footer-prev { background: white; color: var(--ink); border: 1.5px solid var(--line); }
-.trial-footer-prev:hover { border-color: var(--orange); color: var(--orange); transform: translateX(-3px); box-shadow: -4px 4px 14px rgba(234,88,12,0.1); }
-.trial-footer-next { background: linear-gradient(135deg, var(--orange), #f97316); color: white; box-shadow: 0 4px 14px rgba(234,88,12,0.25); }
-.trial-footer-next:hover { transform: translateX(3px); box-shadow: 0 8px 24px rgba(234,88,12,0.4); }
-
-/* 历史记录弹窗 */
-.trial-history-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; align-items: center; justify-content: center; }
-.trial-history-modal.active { display: flex; }
-.trial-history-panel { background: white; border-radius: 20px; width: 90%; max-width: 700px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: trialModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-@keyframes trialModalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-.trial-history-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #faf8f4, white); }
-.trial-history-header h3 { font-size: 18px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 10px; }
-.trial-history-header h3::before { content: ''; width: 4px; height: 20px; background: linear-gradient(180deg, var(--orange), #f97316); border-radius: 2px; }
-.trial-history-close { width: 36px; height: 36px; border-radius: 10px; border: none; background: #f1f5f9; color: #64748b; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.trial-history-close:hover { background: #fee2e2; color: #ef4444; transform: rotate(90deg); }
-.trial-history-list { flex: 1; overflow-y: auto; padding: 16px 24px; }
-.trial-history-item { display: flex; gap: 14px; padding: 14px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--line); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); background: white; }
-.trial-history-item:hover { border-color: var(--orange); background: linear-gradient(135deg, rgba(234,88,12,0.03), white); transform: translateX(4px); box-shadow: 0 4px 16px rgba(234,88,12,0.1); }
-.trial-history-thumb { width: 72px; height: 72px; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.trial-history-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.trial-history-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.trial-history-purpose { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-.trial-history-meta { font-size: 12px; color: #94a3b8; }
-.trial-history-empty { text-align: center; padding: 48px 20px; color: #94a3b8; font-size: 14px; }
-
-@media (max-width: 768px) {
-  .trial-purpose-layout { grid-template-columns: 1fr; }
-  .trial-purpose-sidebar { order: 2; }
-  .trial-purpose-main { order: 1; min-height: 320px; }
-  .trial-demo-area { min-height: 280px; }
-  .trial-params-layout { grid-template-columns: 1fr; }
-  .trial-steps { flex-wrap: wrap; gap: 8px; }
-  .trial-step-line { display: none; }
-  .trial-result-actions { flex-direction: column; }
-  .trial-result-actions button { justify-content: center; }
-  .trial-stage { padding: 24px; }
-  .trial-wb-footer { padding: 14px 24px; }
-  .trial-upload-zone-large { flex-wrap: wrap; gap: 10px; padding: 14px; }
-  .trial-upload-zone-btn { width: 100%; text-align: center; }
-  .trial-upload-zone-text { flex: 1 1 auto; }
-}
-
-</style>
+<!-- ===== 最终 CTA ===== -->
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="final-cta reveal">
+      <h2>下一台车，让伙计帮你出物料</h2>
+      <p>上传一张手机随手拍的车图，20 秒看看 Hogee 能把它变成什么样。内测期免费，不用注册。</p>
+      <div class="cta-row">
+        <a href="/huoer-online.html" class="btn-primary btn-white">免费开始处理车图
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <button class="btn-primary btn-ghost" onclick="mpNotify()">预约小程序内测</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 
+
+
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" aria-label="WorkHogee Home">
+          <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:30px;width:auto;">
+            <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
+            <g transform="translate(-1.06 -28.16)">
+              <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+              <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+              <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+              <path class="fl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+              <path class="fl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+              <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+            </g>
+          </svg>
+        </a>
+        <p>WorkHogee 生图伙计 · 二手车行版，让中小二手车行也能 10 分钟产出能上架、能传播、能合规的车源物料。</p>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+        <ul>
+          <li><a href="/huoer.html">生图伙计 · 二手车行版</a></li>
+          <li><a href="/huoer-online.html">Web 工作台</a></li>
+          <li><a href="/geo.html">GEO 伙计</a></li>
+          <li><a href="/global.html">出海伙计</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
+          <li><a href="docs/index.html#overview">使用文档</a></li>
+          <li><a href="docs/index.html#faq">常见问题</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>关于</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 WorkHogee. All rights reserved. 让每个二手车行都有 AI 车源物料伙计</div>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <script>
-(function() {
-  'use strict';
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20);});
+const navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
+navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
 
-  // ===== 状态 =====
-  const state = {
-    currentStep: 1,
-    selectedPurpose: null,
-    uploadedImages: [],
-    mainImageIndex: 0,
-    selectedIndustry: 'ecommerce',
-    selectedStyle: 'minimal',
-    styleStrength: 60,
-    selectedSize: '800x800',
-    selectedQuality: 'hd',
-    selectedFormat: 'jpg',
-    customPrompt: '',
-    generatedImage: null,
-    isProcessing: false,
-    cancelled: false,
-    activeController: null,
-    history: []
-  };
+// 滚动揭示
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  const PURPOSE_CONFIG = {
-    product: { name: '产品主图', defaultStyle: 'minimal', defaultSize: '800x800', prompt: '纯白底专业电商产品主图，柔和无影光，产品居中清晰，高分辨率，保持产品本身完全不变' },
-    detail: { name: '产品详情图', defaultStyle: 'minimal', defaultSize: '1080x1440', prompt: '专业电商产品详情图，产品清晰展示，简洁信息排版区域，高分辨率商业摄影质感，保持产品本身完全不变' },
-    scene: { name: '场景效果图', defaultStyle: 'premium', defaultSize: '1080x1440', prompt: '专业电商场景效果图，将产品放置在真实使用场景中，商业级布光氛围，高分辨率，保持产品本身完全不变' },
-    lifestyle: { name: '生活方式图', defaultStyle: 'japanese', defaultSize: '1080x1440', prompt: '生活方式产品摄影，产品融入生活场景，自然光线，氛围感强，高分辨率，保持产品本身完全不变' },
-    ad: { name: '广告创意图', defaultStyle: 'premium', defaultSize: '1920x1080', prompt: '创意广告产品图，强视觉冲击，商业级布光，高分辨率广告摄影质感，保持产品本身完全不变' }
-  };
-
-  const INDUSTRY_PROMPTS = {
-    ecommerce: '极简电商展示场景，柔和照明，浅灰色渐变背景',
-    xianyu: '生活化实拍场景，自然光，真实感手机拍摄风格',
-    food: '中式餐厅暖光场景，木质餐桌，热气腾腾的氛围',
-    cloth: '专业电商服装主图场景，纯白背景，柔和无影光',
-    global: '亚马逊纯白底产品图场景，纯白背景，专业产品摄影'
-  };
-
-  const STYLE_NAMES = { minimal: '极简电商', premium: '高级质感', japanese: '日系清新', retro: '复古胶片', guochao: '国潮' };
-
-  function $(s) { return document.querySelector(s); }
-  function $$(s) { return Array.from(document.querySelectorAll(s)); }
-
-  // ===== 步骤切换 =====
-  function goToStep(step) {
-    state.currentStep = step;
-    $$('.trial-step').forEach(el => {
-      const s = parseInt(el.dataset.step);
-      el.classList.remove('active', 'done');
-      if (s < step) el.classList.add('done');
-      else if (s === step) el.classList.add('active');
-    });
-    $$('.trial-step-line').forEach((el, i) => { el.classList.toggle('done', i + 1 < step); });
-    const stageMap = { 1: 'Purpose', 2: 'Params', 3: 'Result' };
-    $$('.trial-stage').forEach(s => s.classList.remove('active'));
-    const stage = $('#trialStage' + stageMap[step]);
-    if (stage) stage.classList.add('active');
-    updateFooter();
-    if (step === 2 && state.uploadedImages.length > 0) {
-      const preview = $('#trialParamsPreviewImg');
-      if (preview) preview.src = state.uploadedImages[state.mainImageIndex];
-    }
-  }
-
-  function updateFooter() {
-    const prevBtn = $('#trialPrevBtn');
-    const nextBtn = $('#trialNextBtn');
-    if (!prevBtn || !nextBtn) return;
-    if (state.currentStep === 1) {
-      prevBtn.style.display = 'none';
-      nextBtn.textContent = '下一步：参数设置';
-      nextBtn.style.display = state.uploadedImages.length > 0 ? 'inline-block' : 'none';
-    } else if (state.currentStep === 2) {
-      prevBtn.style.display = 'inline-block';
-      nextBtn.textContent = '开始生成';
-      nextBtn.style.display = 'inline-block';
-    } else if (state.currentStep === 3) {
-      prevBtn.style.display = 'inline-block';
-      nextBtn.style.display = 'none';
-    }
-  }
-
-  // ===== 用途选择 =====
-  function initPurpose() {
-    $$('.trial-purpose-item').forEach(item => {
-      item.addEventListener('click', () => {
-        $$('.trial-purpose-item').forEach(c => c.classList.remove('selected'));
-        item.classList.add('selected');
-        state.selectedPurpose = item.dataset.purpose;
-        const cfg = PURPOSE_CONFIG[state.selectedPurpose];
-        if (cfg) { state.selectedStyle = cfg.defaultStyle; state.selectedSize = cfg.defaultSize; }
-        updateFooter();
-      });
-    });
-  }
-
-  // ===== 演示窗口自动轮播 =====
-  let demoSlideIndex = 0;
-  let demoTimer = null;
-  function startDemoSlideshow() {
-    if (demoTimer) return;
-    demoTimer = setInterval(() => {
-      const slides = $$('.trial-demo-slide');
-      const dots = $$('.trial-demo-dot');
-      if (slides.length === 0) return;
-      slides[demoSlideIndex].classList.remove('active');
-      if (dots[demoSlideIndex]) dots[demoSlideIndex].classList.remove('active');
-      demoSlideIndex = (demoSlideIndex + 1) % slides.length;
-      slides[demoSlideIndex].classList.add('active');
-      if (dots[demoSlideIndex]) dots[demoSlideIndex].classList.add('active');
-    }, 5000);
-  }
-  function stopDemoSlideshow() {
-    if (demoTimer) { clearInterval(demoTimer); demoTimer = null; }
-  }
-
-  // ===== 左侧栏上传按钮：直接展开上传区并选图 =====
-  function initUploadBtn() {
-    const btn = $('#trialUploadSidebarBtn');
-    const demoWindow = $('#trialDemoWindow');
-    const uploadArea = $('#trialUploadArea');
-    const input = $('#trialFileInput');
-    if (!btn || !demoWindow || !uploadArea || !input) return;
-    btn.addEventListener('click', () => {
-      if (uploadArea.style.display === 'none') {
-        stopDemoSlideshow();
-        demoWindow.style.display = 'none';
-        uploadArea.style.display = 'flex';
-      }
-      input.click();
-    });
-  }
-
-  // ===== 多图上传 =====
-  function initUpload() {
-    const zone = $('#trialUploadZoneLarge');
-    const input = $('#trialFileInput');
-    if (!zone || !input) return;
-    zone.addEventListener('click', () => input.click());
-    input.addEventListener('change', e => { handleFiles(e.target.files); input.value = ''; });
-    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-    document.addEventListener('paste', e => {
-      if (state.currentStep !== 1) return;
-      const items = e.clipboardData?.items;
-      if (!items) return;
-      const files = [];
-      for (const item of items) { if (item.type.startsWith('image/')) { const f = item.getAsFile(); if (f) files.push(f); } }
-      if (files.length > 0) handleFiles(files);
-    });
-  }
-
-  // ===== 图片预处理：统一缩放/转JPEG/纠正EXIF方向/控体积，规避大图与格式导致的生成失败 =====
-  function prepareImage(file) {
-    return new Promise((resolve) => {
-      const fallback = () => {
-        const r = new FileReader();
-        r.onload = ev => resolve(ev.target.result);
-        r.onerror = () => resolve(null);
-        r.readAsDataURL(file);
-      };
-      const drawFromImage = (src) => {
-        const im = new Image();
-        im.onload = () => {
-          const MAX = 2048;
-          let w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
-          if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-          const c = document.createElement('canvas'); c.width = w; c.height = h;
-          const cx = c.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h); cx.drawImage(im, 0, 0, w, h);
-          let url = c.toDataURL('image/jpeg', 0.9);
-          if (url.length > 2.4 * 1024 * 1024) url = c.toDataURL('image/jpeg', 0.8);
-          resolve(url);
-        };
-        im.onerror = fallback;
-        im.src = src;
-      };
-      if (typeof createImageBitmap === 'function') {
-        createImageBitmap(file, { imageOrientation: 'from-image' }).then(bmp => {
-          const MAX = 2048;
-          let w = bmp.width, h = bmp.height;
-          if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-          const c = document.createElement('canvas'); c.width = w; c.height = h;
-          const cx = c.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h); cx.drawImage(bmp, 0, 0, w, h);
-          if (bmp.close) try { bmp.close(); } catch(e) {}
-          let url = c.toDataURL('image/jpeg', 0.9);
-          if (url.length > 2.4 * 1024 * 1024) url = c.toDataURL('image/jpeg', 0.8);
-          resolve(url);
-        }).catch(() => {
-          const r = new FileReader();
-          r.onload = ev => drawFromImage(ev.target.result);
-          r.onerror = fallback;
-          r.readAsDataURL(file);
-        });
-      } else {
-        const r = new FileReader();
-        r.onload = ev => drawFromImage(ev.target.result);
-        r.onerror = fallback;
-        r.readAsDataURL(file);
-      }
-    });
-  }
-
-  async function handleFiles(files) {
-    const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
-    if (arr.length === 0) { alert('请上传图片文件'); return; }
-    if (state.uploadedImages.length + arr.length > 5) { alert('最多上传5张图片'); return; }
-    let okCount = 0;
-    for (const file of arr) {
-      if (file.size > 20 * 1024 * 1024) { alert('单张图片不能超过 20MB'); continue; }
-      const dataUrl = await prepareImage(file);
-      if (dataUrl) { state.uploadedImages.push(dataUrl); okCount++; }
-    }
-    if (okCount > 0) { renderThumbs(); runSmartCheck(); updateFooter(); }
-  }
-
-  function renderThumbs() {
-    const container = $('#trialUploadThumbsLarge');
-    if (!container) return;
-    container.innerHTML = '';
-    state.uploadedImages.forEach((img, idx) => {
-      const thumb = document.createElement('div');
-      thumb.className = 'trial-thumb' + (idx === state.mainImageIndex ? ' trial-thumb-main' : '');
-      thumb.innerHTML = '<img src="' + img + '" alt=""><button class="trial-thumb-remove" data-idx="' + idx + '">×</button>';
-      thumb.addEventListener('click', e => {
-        if (e.target.classList.contains('trial-thumb-remove')) return;
-        state.mainImageIndex = idx;
-        renderThumbs();
-      });
-      container.appendChild(thumb);
-    });
-    $$('.trial-thumb-remove').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const idx = parseInt(btn.dataset.idx);
-        state.uploadedImages.splice(idx, 1);
-        if (state.mainImageIndex >= state.uploadedImages.length) state.mainImageIndex = 0;
-        renderThumbs();
-        runSmartCheck();
-        updateFooter();
-      });
-    });
-  }
-
-  // ===== 智能排查 =====
-  function runSmartCheck() {
-    const container = $('#trialSmartCheck');
-    const productInfo = $('#trialProductInfo');
-    if (!container) return;
-    if (state.uploadedImages.length === 0) {
-      container.style.display = 'none';
-      if (productInfo) productInfo.style.display = 'none';
-      return;
-    }
-    const checks = [];
-    if (state.uploadedImages.length === 1) {
-      checks.push({ type: 'warn', text: '仅上传1张图片，建议上传多张不同角度的图片以获得更好效果' });
-    } else {
-      checks.push({ type: 'ok', text: '已上传 ' + state.uploadedImages.length + ' 张图片' });
-    }
-    const mainImg = new Image();
-    mainImg.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const w = Math.min(mainImg.width, 200);
-      const h = Math.min(mainImg.height, 200);
-      canvas.width = w; canvas.height = h;
-      ctx.drawImage(mainImg, 0, 0, w, h);
-      const data = ctx.getImageData(0, 0, w, h).data;
-      let sum = 0;
-      for (let i = 0; i < data.length; i += 4) sum += (data[i] + data[i+1] + data[i+2]) / 3;
-      const avg = sum / (data.length / 4);
-      if (avg < 40) checks.push({ type: 'error', text: '主图过暗，可能影响生成效果' });
-      else if (avg > 230) checks.push({ type: 'warn', text: '主图过亮，建议调整曝光' });
-      else checks.push({ type: 'ok', text: '主图亮度正常' });
-      let variance = 0;
-      const gray = [];
-      for (let i = 0; i < data.length; i += 4) gray.push((data[i] + data[i+1] + data[i+2]) / 3);
-      for (let y = 1; y < h - 1; y++) {
-        for (let x = 1; x < w - 1; x++) {
-          const idx = y * w + x;
-          const lap = gray[idx-1] + gray[idx+1] + gray[idx-w] + gray[idx+w] - 4 * gray[idx];
-          variance += lap * lap;
-        }
-      }
-      variance /= (w * h);
-      if (variance < 50) checks.push({ type: 'warn', text: '主图可能较模糊，建议使用更清晰的图片' });
-      else checks.push({ type: 'ok', text: '主图清晰度正常' });
-      renderChecks(checks);
-    };
-    mainImg.src = state.uploadedImages[state.mainImageIndex];
-    if (productInfo && state.uploadedImages.length > 1) productInfo.style.display = 'block';
-    else if (productInfo) productInfo.style.display = 'none';
-  }
-
-  function renderChecks(checks) {
-    const container = $('#trialSmartCheck');
-    if (!container) return;
-    container.style.display = 'block';
-    let html = '<div class="trial-smart-check-title">智能排查结果</div>';
-    checks.forEach(c => {
-      const icon = c.type === 'ok' ? '✓' : c.type === 'warn' ? '⚠' : '✗';
-      html += '<div class="trial-check-item trial-check-' + c.type + '"><span>' + icon + '</span><span>' + c.text + '</span></div>';
-    });
-    container.innerHTML = html;
-  }
-
-  // ===== 参数设置 =====
-  function initParams() {
-    $$('.trial-param-btn[data-industry]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.trial-param-btn[data-industry]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedIndustry = btn.dataset.industry;
-      });
-    });
-    $$('.trial-param-btn[data-style]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.trial-param-btn[data-style]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedStyle = btn.dataset.style;
-      });
-    });
-    const range = $('#trialStrengthRange');
-    const val = $('#trialStrengthVal');
-    if (range && val) {
-      function updateRangeBg() {
-        const pct = parseInt(range.value);
-        range.style.background = 'linear-gradient(90deg, var(--orange) 0%, var(--orange) ' + pct + '%, var(--line) ' + pct + '%, var(--line) 100%)';
-      }
-      updateRangeBg();
-      range.addEventListener('input', () => {
-        state.styleStrength = parseInt(range.value);
-        val.textContent = state.styleStrength + '%';
-        updateRangeBg();
-      });
-    }
-    $$('.trial-param-btn[data-size]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.trial-param-btn[data-size]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedSize = btn.dataset.size;
-      });
-    });
-    const ta = $('#trialCustomPrompt');
-    if (ta) ta.addEventListener('input', () => { state.customPrompt = ta.value; });
-  }
-
-  // ===== 生成 =====
-  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  function classifyError(e) {
-    const msg = (e && e.message) ? String(e.message) : '';
-    const low = msg.toLowerCase();
-    if (e && e.name === 'AbortError') return { title: '生成超时', msg: '图片较大或当前网络较慢，已自动重试仍未完成。请检查网络后点击「重新生成」。', retryable: true };
-    if (/failed to fetch|networkerror|network request|load failed|网络|连接|timeout/i.test(low)) return { title: '网络连接失败', msg: '无法连接到生图服务，可能是网络波动。请检查网络后点击「重新生成」。', retryable: true };
-    if (/429|rate.?limit|频繁|限流|too many/i.test(low)) return { title: '当前生成人数较多', msg: '服务暂时繁忙，请等待约 10 秒后点击「重新生成」。', retryable: true };
-    if (/sensitive|content.?risk|审核|违规|安全|risk|policy|violation|违法|不良/i.test(low)) return { title: '未通过内容安全校验', msg: '上传图片或描述可能触发了平台内容规范，请更换图片或调整风格描述后重试。', retryable: true };
-    if (/not valid|invalid|parameter|size|像素|pixels|格式|format/i.test(low)) return { title: '图片参数不被接受', msg: msg || '请更换更清晰、构图完整的商品图后重试。', retryable: true };
-    return { title: '生成未完成', msg: (msg || '服务暂时无响应') + '。请点击「重新生成」，多次失败可更换图片。', retryable: true };
-  }
-
-  function setProcessingText(title, sub) {
-    const t = $('#trialProcessingTitle'), s = $('#trialProcessingSub');
-    if (t) t.textContent = title;
-    if (s) s.textContent = sub;
-  }
-  function setProcessingProgress(pct, transition) {
-    const f = $('#trialProgressFill');
-    if (!f) return;
-    f.style.transition = transition ? transition : 'width 0.6s ease';
-    f.style.width = pct + '%';
-  }
-  function resetProcessingUI() {
-    const err = $('#trialProcessingError'), retry = $('#trialRetryBtn'), bar = $('#trialProgressBar');
-    const ov = document.querySelector('#trialStageProcessing .trial-processing-overlay');
-    if (err) err.style.display = 'none';
-    if (retry) retry.style.display = 'none';
-    if (bar) bar.style.display = '';
-    if (ov) ov.style.display = '';
-  }
-  function showProcessingError(cat) {
-    const err = $('#trialProcessingError'), et = $('#trialProcessingErrorTitle'), em = $('#trialProcessingErrorMsg');
-    const retry = $('#trialRetryBtn'), bar = $('#trialProgressBar');
-    const ov = document.querySelector('#trialStageProcessing .trial-processing-overlay');
-    if (err) err.style.display = 'block';
-    if (et) et.textContent = cat.title;
-    if (em) em.textContent = cat.msg;
-    if (retry) retry.style.display = cat.retryable ? 'inline-block' : 'none';
-    if (bar) bar.style.display = 'none';
-    if (ov) ov.style.display = 'none';
-    setProcessingText(cat.title, '');
-  }
-
-  async function startGeneration() {
-    if (state.isProcessing) return;
-    if (!state.uploadedImages || state.uploadedImages.length === 0) { alert('请先上传产品图片'); return; }
-    state.isProcessing = true;
-    state.cancelled = false;
-    resetProcessingUI();
-    $$('.trial-stage').forEach(s => s.classList.remove('active'));
-    $('#trialStageProcessing').classList.add('active');
-    const previewImg = $('#trialProcessingImg');
-    if (previewImg) previewImg.src = state.uploadedImages[state.mainImageIndex];
-    setProcessingProgress(8, 'none');
-    updateFooter();
-
-    const cancelBtn = $('#trialCancelBtn');
-    const retryBtn = $('#trialRetryBtn');
-    if (cancelBtn) cancelBtn.onclick = () => {
-      state.cancelled = true;
-      if (state.activeController) { try { state.activeController.abort(); } catch(e) {} }
-      state.isProcessing = false;
-      goToStep(2);
-    };
-    if (retryBtn) retryBtn.onclick = () => { startGeneration(); };
-
-    setProcessingText('AI 正在识别图片...', '分析主体、材质与颜色');
-    setProcessingProgress(20);
-    await sleep(450);
-    if (state.cancelled) return;
-    setProcessingText('调用行业生图知识库...', '匹配最佳风格与构图');
-    setProcessingProgress(38);
-    await sleep(450);
-    if (state.cancelled) return;
-    setProcessingText('Seedream 大模型生成中...', '通常需要 10–25 秒，请勿关闭页面');
-    setProcessingProgress(52);
-
-    let pct = 52;
-    const timer = setInterval(() => {
-      pct = Math.min(92, pct + Math.random() * 1.1 + 0.25);
-      setProcessingProgress(pct, 'width 0.9s linear');
-    }, 850);
-
-    try {
-      const dataUrl = await callAPI();
-      if (state.cancelled) return;
-      clearInterval(timer);
-      setProcessingProgress(100, 'width 0.4s ease');
-      setProcessingText('生成完成', '正在准备结果');
-      state.generatedImage = dataUrl;
-      saveToHistory();
-      const origImg = $('#trialOriginalImg'), genImg = $('#trialGeneratedImg');
-      if (origImg) origImg.src = state.uploadedImages[state.mainImageIndex];
-      if (genImg) genImg.src = state.generatedImage;
-      await sleep(400);
-      if (state.cancelled) return;
-      goToStep(3);
-      $$('.trial-size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === state.selectedSize));
-      $$('.trial-format-btn').forEach(b => b.classList.toggle('active', b.dataset.format === state.selectedFormat));
-    } catch (e) {
-      clearInterval(timer);
-      if (state.cancelled) return;
-      console.warn('生图失败:', e);
-      showProcessingError(classifyError(e));
-    } finally {
-      state.isProcessing = false;
-    }
-  }
-
-  async function callAPI() {
-    const apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');
-    const endpoint = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
-    const imageBase64 = state.uploadedImages[state.mainImageIndex];
-    const purposeCfg = PURPOSE_CONFIG[state.selectedPurpose];
-    let prompt = purposeCfg ? purposeCfg.prompt : '专业电商商品摄影图';
-    prompt += '，' + (INDUSTRY_PROMPTS[state.selectedIndustry] || '');
-    prompt += '，' + (STYLE_NAMES[state.selectedStyle] || '') + '风格';
-    if (state.styleStrength > 70) prompt += '，风格强烈';
-    else if (state.styleStrength < 30) prompt += '，风格淡雅';
-    if (state.customPrompt) prompt += '，' + state.customPrompt;
-    const payload = {
-      model: 'ep-m-20260915134242-p4rpr',
-      prompt: prompt,
-      image: imageBase64,
-      size: '2048x2048',
-      response_format: 'b64_json'
-    };
-
-    let lastErr = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      if (state.cancelled) throw new Error('已取消');
-      const controller = new AbortController();
-      state.activeController = controller;
-      const timeoutId = setTimeout(() => { try { controller.abort(); } catch(e) {} }, 95000);
-      let resp = null, data = null, fetchErr = null;
-      try {
-        resp = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        try { data = await resp.json(); } catch (_) { data = null; }
-      } catch (e) { fetchErr = e; }
-      clearTimeout(timeoutId);
-
-      if (!fetchErr && data && data.data && data.data[0] && data.data[0].b64_json) {
-        return 'data:image/jpeg;base64,' + data.data[0].b64_json;
-      }
-
-      let err;
-      if (fetchErr) {
-        err = fetchErr;
-      } else {
-        const msg = (data && data.error && data.error.message) || ('服务返回异常（HTTP ' + (resp ? resp.status : '?') + '）');
-        err = new Error(msg);
-        err.status = resp ? resp.status : 0;
-      }
-      lastErr = err;
-
-      const status = err.status || 0;
-      const isAbort = err.name === 'AbortError';
-      const isNetwork = !status && (err instanceof TypeError || /failed to fetch|network/i.test((err.message || '').toLowerCase()));
-      const retryable = isAbort || isNetwork || status === 429 || status >= 500;
-      if (!retryable) throw err;
-
-      if (attempt < 2) {
-        setProcessingText('Seedream 大模型生成中...', '网络波动，正在自动重试（' + (attempt + 1) + '/2）...');
-        await sleep(1600 * (attempt + 1));
-      }
-    }
-    throw lastErr || new Error('生成失败，请重试');
-  }
-
-
-  function initCompare() {
-    const container = $('#trialCompareContainer');
-    const slider = $('#trialCompareSlider');
-    const generated = $('#trialCompareGenerated');
-    if (!container || !slider || !generated) return;
-    let dragging = false;
-    function setPosition(x) {
-      const rect = container.getBoundingClientRect();
-      let pct = ((x - rect.left) / rect.width) * 100;
-      pct = Math.max(0, Math.min(100, pct));
-      slider.style.left = pct + '%';
-      generated.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
-    }
-    container.addEventListener('mousedown', e => { dragging = true; setPosition(e.clientX); });
-    document.addEventListener('mousemove', e => { if (dragging) setPosition(e.clientX); });
-    document.addEventListener('mouseup', () => { dragging = false; });
-    container.addEventListener('touchstart', e => { dragging = true; setPosition(e.touches[0].clientX); });
-    document.addEventListener('touchmove', e => { if (dragging) setPosition(e.touches[0].clientX); });
-    document.addEventListener('touchend', () => { dragging = false; });
-  }
-
-  // ===== 结果控制 =====
-  function initResultControls() {
-    $$('.trial-size-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.trial-size-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedSize = btn.dataset.size;
-      });
-    });
-    $$('.trial-format-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.classList.contains('trial-format-btn-disabled')) return;
-        $$('.trial-format-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedFormat = btn.dataset.format;
-      });
-    });
-    const downloadBtn = $('#trialDownloadBtn');
-    if (downloadBtn) downloadBtn.addEventListener('click', downloadImage);
-    const regenBtn = $('#trialRegenBtn');
-    if (regenBtn) regenBtn.addEventListener('click', () => { goToStep(3); });
-    const feishuBtn = $('#trialFeishuBtn');
-    if (feishuBtn) feishuBtn.addEventListener('click', () => {
-      alert('飞书多维表格同步功能\n\n内测阶段暂未开放，敬请期待。\n下载客户端后可使用完整飞书集成功能。');
-    });
-  }
-
-  function downloadImage() {
-    if (!state.generatedImage) return;
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const sizeMap = { '800x800': [800, 800], '1080x1440': [1080, 1440], '1920x1080': [1920, 1080] };
-      const [w, h] = sizeMap[state.selectedSize] || [1024, 1024];
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      const scale = Math.max(w / img.width, h / img.height);
-      const sw = w / scale, sh = h / scale;
-      const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
-      const mimeMap = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
-      const mime = mimeMap[state.selectedFormat] || 'image/jpeg';
-      const quality = state.selectedFormat === 'jpg' ? 0.92 : undefined;
-      const dataUrl = canvas.toDataURL(mime, quality);
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = 'workhogee-' + Date.now() + '.' + state.selectedFormat;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    };
-    img.src = state.generatedImage;
-  }
-
-  // ===== 历史记录 =====
-  function loadHistory() {
-    try {
-      const raw = localStorage.getItem('workhogee_trial_history');
-      state.history = raw ? JSON.parse(raw) : [];
-    } catch(e) { state.history = []; }
-  }
-
-  function saveToHistory() {
-    if (!state.generatedImage) return;
-    const item = {
-      id: Date.now(),
-      purpose: state.selectedPurpose,
-      purposeName: PURPOSE_CONFIG[state.selectedPurpose] ? PURPOSE_CONFIG[state.selectedPurpose].name : '',
-      industry: state.selectedIndustry,
-      style: state.selectedStyle,
-      size: state.selectedSize,
-      original: state.uploadedImages[state.mainImageIndex],
-      generated: state.generatedImage,
-      time: new Date().toLocaleString('zh-CN')
-    };
-    state.history.unshift(item);
-    if (state.history.length > 10) state.history = state.history.slice(0, 10);
-    try { localStorage.setItem('workhogee_trial_history', JSON.stringify(state.history)); } catch(e) {}
-  }
-
-  function initHistory() {
-    const btn = $('#trialHistoryBtn');
-    const modal = document.createElement('div');
-    modal.className = 'trial-history-modal';
-    modal.id = 'trialHistoryModal';
-    modal.innerHTML = '<div class="trial-history-panel">' +
-      '<div class="trial-history-header"><h3>生图历史记录</h3><button class="trial-history-close" id="trialHistoryClose">×</button></div>' +
-      '<div class="trial-history-list" id="trialHistoryList"></div></div>';
-    document.body.appendChild(modal);
-    if (btn) btn.addEventListener('click', () => { renderHistory(); modal.classList.add('active'); });
-    const closeBtn = document.getElementById('trialHistoryClose');
-    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
-  }
-
-  function renderHistory() {
-    const list = document.getElementById('trialHistoryList');
-    if (!list) return;
-    if (state.history.length === 0) {
-      list.innerHTML = '<div class="trial-history-empty">暂无历史记录<br>生成图片后会自动保存到这里</div>';
-      return;
-    }
-    list.innerHTML = state.history.map(item =>
-      '<div class="trial-history-item" data-id="' + item.id + '">' +
-      '<div class="trial-history-thumb"><img src="' + item.generated + '" alt=""></div>' +
-      '<div class="trial-history-info">' +
-      '<div class="trial-history-purpose">' + item.purposeName + ' · ' + item.size + '</div>' +
-      '<div class="trial-history-meta">' + item.time + '</div>' +
-      '</div></div>'
-    ).join('');
-    $$('.trial-history-item').forEach(el => {
-      el.addEventListener('click', () => {
-        const id = parseInt(el.dataset.id);
-        const item = state.history.find(h => h.id === id);
-        if (!item) return;
-        state.generatedImage = item.generated;
-        state.uploadedImages = [item.original];
-        state.mainImageIndex = 0;
-        state.selectedPurpose = item.purpose;
-        state.selectedSize = item.size;
-        const origImg = $('#trialOriginalImg');
-        const genImg = $('#trialGeneratedImg');
-        if (origImg) origImg.src = item.original;
-        if (genImg) genImg.src = item.generated;
-        $$('.trial-stage').forEach(s => s.classList.remove('active'));
-        $('#trialStageResult').classList.add('active');
-        state.currentStep = 3;
-        updateFooter();
-        document.getElementById('trialHistoryModal').classList.remove('active');
-      });
-    });
-  }
-
-  // ===== 底部按钮 =====
-  function initFooter() {
-    const prevBtn = $('#trialPrevBtn');
-    const nextBtn = $('#trialNextBtn');
-    if (prevBtn) prevBtn.addEventListener('click', () => {
-      if (state.currentStep > 1) goToStep(state.currentStep - 1);
-    });
-    if (nextBtn) nextBtn.addEventListener('click', () => {
-      if (state.currentStep === 2) { startGeneration(); return; }
-      if (state.currentStep === 1) {
-        if (!state.uploadedImages || state.uploadedImages.length === 0) { alert('请先上传产品图片'); return; }
-        goToStep(2);
-      }
-    });
-  }
-
-  // ===== 初始化 =====
-  function init() {
-    loadHistory();
-    initPurpose();
-    initUploadBtn();
-    initUpload();
-    initParams();
-    initCompare();
-    initResultControls();
-    initHistory();
-    initFooter();
-    goToStep(1);
-    startDemoSlideshow();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+// Hero 三场景轮播
+(function(){
+  const scenes=document.querySelectorAll('.hero-stage .scene');
+  const tag=document.getElementById('sceneTag');
+  const names=['展厅精修图','城市道路场景','户外生活场景'];
+  if(!scenes.length)return;
+  let i=0;
+  function show(n){scenes.forEach((s,k)=>s.classList.toggle('on',k===n));if(tag)tag.innerHTML='<span class="sdot"></span>'+names[n];}
+  show(0);
+  setInterval(()=>{i=(i+1)%scenes.length;show(i);},3800);
 })();
+
+// 前后对比滑块
+(function(){
+  const c=document.getElementById('compare');
+  if(!c)return;
+  const after=c.querySelector('.after'),handle=c.querySelector('.handle');
+  let dragging=false;
+  function setPos(x){const r=c.getBoundingClientRect();let p=((x-r.left)/r.width)*100;p=Math.max(0,Math.min(100,p));after.style.clipPath=`inset(0 0 0 ${p}%)`;handle.style.left=p+'%';}
+  function down(e){dragging=true;e.preventDefault();move(e);}
+  function move(e){if(!dragging)return;const x=e.touches?e.touches[0].clientX:e.clientX;setPos(x);}
+  function up(){dragging=false;}
+  c.addEventListener('mousedown',down);window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  c.addEventListener('touchstart',down,{passive:false});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',up);
+})();
+
+// 小程序内测提示
+function mpNotify(){alert('微信小程序正在内测筹备中，请通过 Web 版先行体验；如需小程序内测资格，邮件联系 hello@workhogee.com');}
 </script>
-
-
-
-<!-- CTA --><section class="cta" id="download">  <div class="cta-inner">    <h2>你有活儿，<span class="highlight">现在就喊伙计</span>。</h2>    <p>下载WorkHogee客户端，免费体验全部功能。第一张图，20秒后见。</p>    <div class="cta-buttons">      <button class="btn-primary">免费下载</button>      <button class="btn-secondary">在线体验</button>    </div>  </div></section><!-- 页脚 --><footer class="footer">  <div class="footer-inner">    <div class="footer-top">      <div class="footer-brand">        <a href="/index.html" aria-label="WorkHogee Home">        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>          <g transform="translate(-1.06 -28.16)">            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>          </g>        </svg>        </a>        <p>小商家的AI工作流伙计。你有活儿，喊伙计。一张图，一个行业大脑，一个伙计。不懂设计，也能出专业图。</p>      </div>      <div class="footer-col">        <h4>产品</h4>        <a href="/index.html">AI获客伙计</a>        <a href="/huoer.html">生图伙计</a>        <a href="/geo.html">GEO伙计</a>        <a href="/global.html">出海伙计</a>      </div>      <div class="footer-col">        <h4>资源</h4>        <a href="/huoer-dynamic.html">图片动态化</a>        <a href="#">使用文档</a>        <a href="#">常见问题</a>        <a href="#">更新日志</a>      </div>      <div class="footer-col">        <h4>关于</h4>        <a href="#">关于我们</a>        <a href="#">联系我们</a>        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>    <div class="footer-bottom">      <p>© 2026 WorkHogee. All rights reserved.</p>      <div class="footer-links">        <a href="#">服务条款</a>        <a href="#">隐私政策</a>      </div>    </div>  </div></footer><script>// 在线体验台数据const demoData = {  ecommerce: { before: 'images/3c-earphone-white.jpg', after: 'images/3c-earphone-pro.jpg', label: '无线耳机 · 极简电商场景' },  xianyu: { before: 'images/cloth-tshirt-white.jpg', after: 'images/cloth-tshirt-pro.jpg', label: '白T恤 · 闲鱼生活化实拍' },  food: { before: 'images/dish-hongshaorou-white.jpg', after: 'images/dish-hongshaorou-pro.jpg', label: '红烧肉 · 中式餐厅暖光' },  cloth: { before: 'images/cloth-shoes-white.jpg', after: 'images/cloth-shoes-pro.jpg', label: '小白鞋 · 专业服装主图' },  global: { before: 'images/beauty-lipstick-white.jpg', after: 'images/beauty-lipstick-pro.jpg', label: '口红 · 亚马逊纯白底' }};let currentIndustry = 'ecommerce';let isGenerating = false;function switchIndustry(industry) {  if (isGenerating) return;  currentIndustry = industry;  currentStyle = 2; // 重置为中等  document.getElementById('styleSlider').value = 3;  document.getElementById('styleValue').textContent = '中等';  document.querySelectorAll('.demo-industry-btn').forEach(btn => {    btn.classList.toggle('active', btn.dataset.industry === industry);  });  // 重置结果区和进度条  const resultZone = document.getElementById('resultZone');  resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';  document.getElementById('progressBar').style.display = 'none';  document.getElementById('progressText').style.display = 'none';  const genBtn = document.getElementById('generateBtn');  genBtn.classList.remove('generating', 'done');}// 风格强度滤镜映射const styleFilters = [  'saturate(0.5) brightness(1.1) contrast(0.9)',  'saturate(0.75) brightness(1.05)',  'none',  'saturate(1.3) contrast(1.1)',  'saturate(1.6) contrast(1.2) brightness(0.95)'];let currentStyle = 2; // 默认中等function updateStyle(value) {  const labels = ['极淡', '清淡', '中等', '浓郁', '极致'];  document.getElementById('styleValue').textContent = labels[value - 1];  currentStyle = value - 1;  // 实时应用到已生成的成品图  const resultImg = document.querySelector('#resultZone img');  if (resultImg) {    resultImg.style.filter = styleFilters[currentStyle];  }}function generateImage() {  if (isGenerating) return;    const beforeImg = document.getElementById('beforeImg');  const userUploaded = beforeImg.src && beforeImg.src.startsWith('data:');    if (!userUploaded) {    // 未上传图片：显示预设成品图（演示模式）    isGenerating = true;    const btn = document.getElementById('generateBtn');    btn.classList.remove('done');    btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');    const progressFill = document.getElementById('progressFill');    const progressText = document.getElementById('progressText');    const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';    progressText.style.display = 'block';    progressFill.style.width = '0%';    resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">演示模式...</div></div>';    setTimeout(function() {      const data = demoData[currentIndustry];      resultZone.innerHTML = '<img src="' + data.after + '" alt="成品"><div class="demo-result-label">' + data.label + '（演示图）</div>';      progressText.textContent = '演示完成！上传自己的图片体验真实AI生成';      btn.classList.remove('generating');      btn.classList.add('done');      isGenerating = false;    }, 1500);    return;  }    // 用户上传了图片：调用真正的后端API  isGenerating = true;  const btn = document.getElementById('generateBtn');  btn.classList.remove('done');  btn.classList.add('generating');    const progressBar = document.getElementById('progressBar');  const progressFill = document.getElementById('progressFill');  const progressText = document.getElementById('progressText');  const resultZone = document.getElementById('resultZone');    progressBar.style.display = 'block';  progressText.style.display = 'block';  progressFill.style.width = '0%';  resultZone.innerHTML = '<div class="demo-result-placeholder"><div class="spinner"></div><div style="font-size:13px;">AI生成中，请稍候...</div></div>';    // 模拟进度（API调用是异步的，用模拟进度提升体验）  let mockProgress = 0;  const mockInterval = setInterval(function() {    if (mockProgress < 85) {      mockProgress += Math.random() * 8;      progressFill.style.width = Math.min(mockProgress, 85) + '%';    }  }, 500);    // 图片转为data URL格式（火山引擎要求 data:image/xxx;base64,xxx 格式）  var imageData = beforeImg.src;  if (imageData.indexOf('data:') !== 0) {    imageData = 'data:image/jpeg;base64,' + imageData;  }    // 行业提示词库（前端直接调用火山引擎API）  var INDUSTRY_PROMPTS = {    ecommerce: '将这张产品图片放置在极简电商展示场景中，柔和照明，浅灰色渐变背景，专业电商产品摄影风格，高清细节，保持产品本身完全不变',    xianyu: '将这张物品图片放置在生活化闲鱼实拍场景中，自然光，木质地板或床单背景，真实感手机拍摄风格，保持物品本身完全不变',    food: '将这张菜品图片放置在中式餐厅暖光场景中，木质餐桌，热气腾腾的氛围，专业美食摄影风格，暖色调，高清细节，保持菜品本身完全不变',    cloth: '将这张鞋服产品图片放置在专业电商服装主图场景中，纯白背景，柔和无影光，专业服装摄影风格，保持产品本身完全不变',    global: '将这张产品图片放置在亚马逊纯白底产品图场景中，纯白背景，柔和无影光，专业亚马逊产品摄影风格，保持产品本身完全不变'  };    // 直接调用火山引擎图像生成API  var apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';  var apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');  var prompt = INDUSTRY_PROMPTS[currentIndustry] || INDUSTRY_PROMPTS.food;    fetch(apiUrl, {    method: 'POST',    headers: {      'Content-Type': 'application/json',      'Authorization': 'Bearer ' + apiKey    },    body: JSON.stringify({      model: 'ep-m-20260915134242-p4rpr',      prompt: prompt,      image: imageData,      size: '2048x2048',      response_format: 'url'    })  })  .then(function(response) {    return response.text().then(function(text) {      try { return JSON.parse(text); }      catch(e) { return { _rawError: text, _status: response.status }; }    });  })  .then(function(data) {    clearInterval(mockInterval);    progressFill.style.width = '100%';        if (data._rawError) {      // API返回非JSON错误      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:12px;color:#dc2626;max-width:100%;word-break:break-all;text-align:left;padding:0 16px;">API错误(' + data._status + '): ' + data._rawError + '</div></div>';      progressText.textContent = 'API调用失败，请检查推理接入点是否创建';      btn.classList.remove('generating');      isGenerating = false;      return;    }        if (data.data && data.data[0] && data.data[0].url) {      // 生成成功：显示真正的AI生成图片      resultZone.innerHTML = '<img src="' + data.data[0].url + '" alt="AI生成成品" style="cursor:pointer;" onclick="window.open(this.src)"><div class="demo-result-label">AI生成 · ' + demoData[currentIndustry].label + '（点击图片下载）</div>';      progressText.textContent = '生成完成！Seedream 4.5 真实AI生成，点击图片可下载';    } else {      // 生成失败      var errMsg = (data.error && data.error.message) ? data.error.message : JSON.stringify(data);      resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">生成失败：' + errMsg + '</div></div>';      progressText.textContent = '生成失败，请重试';    }        btn.classList.remove('generating');    btn.classList.add('done');    isGenerating = false;  })  .catch(function(error) {    clearInterval(mockInterval);    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">!</div><div style="font-size:13px;color:#dc2626;">网络错误：' + error.message + '</div></div>';    progressText.textContent = '网络错误，请检查连接后重试';    btn.classList.remove('generating');    isGenerating = false;  });}function handleFileUpload(event) {  const file = event.target.files[0];  if (!file || !file.type.startsWith('image/')) {    alert('请选择图片文件');    return;  }  const reader = new FileReader();  reader.onload = function(e) {    const placeholder = document.getElementById('uploadPlaceholder');    const beforeImg = document.getElementById('beforeImg');    if (placeholder) placeholder.style.display = 'none';    beforeImg.style.display = 'block';    beforeImg.src = e.target.result;    beforeImg.style.filter = 'none';    // 重置结果区和生成按钮    const resultZone = document.getElementById('resultZone');    resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';    const genBtn = document.getElementById('generateBtn');    genBtn.classList.remove('generating', 'done');    isGenerating = false;  };  reader.readAsDataURL(file);}function triggerUpload() {  document.getElementById('fileInput').click();}// 拖拽上传支持(function() {  const uploadZone = document.getElementById('uploadZone');  if (!uploadZone) return;  ['dragenter', 'dragover'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = 'var(--orange)';      uploadZone.style.background = 'rgba(234,88,12,0.03)';    });  });  ['dragleave', 'drop'].forEach(function(evt) {    uploadZone.addEventListener(evt, function(e) {      e.preventDefault();      e.stopPropagation();      uploadZone.style.borderColor = '';      uploadZone.style.background = '';    });  });  uploadZone.addEventListener('drop', function(e) {    const files = e.dataTransfer.files;    if (files && files.length > 0 && files[0].type.startsWith('image/')) {      const reader = new FileReader();      reader.onload = function(ev) {        const placeholder = document.getElementById('uploadPlaceholder');        const beforeImg = document.getElementById('beforeImg');        if (placeholder) placeholder.style.display = 'none';        beforeImg.style.display = 'block';        beforeImg.src = ev.target.result;        beforeImg.style.filter = 'none';        const resultZone = document.getElementById('resultZone');        resultZone.innerHTML = '<div class="demo-result-placeholder"><div style="font-size:32px;margin-bottom:8px;">?</div><div style="font-size:13px;">点击生成按钮</div></div>';        const genBtn = document.getElementById('generateBtn');        genBtn.classList.remove('generating', 'done');        isGenerating = false;      };      reader.readAsDataURL(files[0]);    }  });})();// 导航滚动效果window.addEventListener('scroll', function() {  const nav = document.getElementById('nav');  if (window.scrollY > 50) {    nav.style.boxShadow = '0 2px 20px rgba(28,25,23,0.08)';  } else {    nav.style.boxShadow = 'none';  }});// 移动端菜单document.getElementById('navToggle').addEventListener('click', function() {  const links = document.getElementById('navLinks');  if (links.style.display === 'flex') {    links.style.display = 'none';  } else {    links.style.display = 'flex';    links.style.flexDirection = 'column';    links.style.position = 'absolute';    links.style.top = '68px';    links.style.left = '0';    links.style.right = '0';    links.style.background = 'white';    links.style.padding = '20px';    links.style.borderBottom = '1px solid var(--line)';    links.style.gap = '16px';  }});/* ===== Hero 自动播放幻灯片 ===== */(function() {  const slides = document.querySelectorAll('#heroSlideshow .slide');  const dots = document.querySelectorAll('#heroSlideshow .dot');  if (!slides.length) return;  let current = 0;  function playSlide(index) {    slides.forEach(s => s.classList.remove('active', 'generating', 'done'));    dots.forEach(d => d.classList.remove('active'));    const slide = slides[index];    slide.classList.add('active');    dots[index].classList.add('active');    // 0.3秒后开始生成动画    setTimeout(function() {      slide.classList.add('generating');      // 2秒后生成完成，显示成品图      setTimeout(function() {        slide.classList.remove('generating');        slide.classList.add('done');      }, 2000);    }, 300);  }  // 点击指示器切换  dots.forEach(function(dot, i) {    dot.addEventListener('click', function() {      current = i;      playSlide(current);    });  });  // 初始化第一个  playSlide(0);  // 每3秒自动切换  setInterval(function() {    current = (current + 1) % slides.length;    playSlide(current);  }, 3000);})();</script>
-
-
-
-
-
-</body></html>
+</body>
+</html>
