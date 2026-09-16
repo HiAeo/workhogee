@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -102,6 +102,10 @@ img { max-width: 100%; display: block; }
 .processing-sub { font-size: 12px; color: var(--ink-muted); }
 .progress-bar { width: 300px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange-light), var(--orange)); border-radius: 3px; width: 0%; transition: width 0.3s ease; }
+.processing-actions { display: flex; gap: 12px; align-items: center; }
+.processing-error { max-width: 420px; text-align: center; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px 20px; }
+.processing-error-title { font-size: 14px; font-weight: 800; color: #b91c1c; margin-bottom: 4px; }
+.processing-error-msg { font-size: 12.5px; color: #7f1d1d; line-height: 1.6; word-break: break-word; }
 
 /* 结果区 */
 .result-compare { flex: 1; min-height: 0; }
@@ -316,7 +320,7 @@ img { max-width: 100%; display: block; }
           <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
         <div class="upload-title">拖拽图片到这里，或点击上传</div>
-        <div class="upload-desc">支持 JPG / PNG / WebP，最大 10MB · 也可直接 Ctrl+V 粘贴</div>
+        <div class="upload-desc">支持 JPG / PNG / WebP，最大 20MB · 也可直接 Ctrl+V 粘贴</div>
         <button type="button" class="upload-btn-inline" onclick="event.stopPropagation();document.getElementById('fileInput').click()">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           选择图片
@@ -353,8 +357,15 @@ img { max-width: 100%; display: block; }
           <div class="processing-title" id="processingTitle">AI 正在识别图片...</div>
           <div class="processing-sub" id="processingSub">预计 15 秒完成</div>
         </div>
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <button class="action-btn action-secondary" onclick="cancelGeneration()" style="padding:8px 20px;font-size:12px;">取消</button>
+        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="processing-error" id="processingError" style="display:none;">
+          <div class="processing-error-title" id="processingErrorTitle">生成未完成</div>
+          <div class="processing-error-msg" id="processingErrorMsg">网络波动，请重试</div>
+        </div>
+        <div class="processing-actions">
+          <button class="action-btn action-secondary" onclick="cancelGeneration()" style="padding:8px 20px;font-size:12px;">取消</button>
+          <button class="action-btn" onclick="retryGeneration()" id="retryBtn" style="padding:8px 22px;font-size:12px;display:none;background:var(--orange);color:#fff;">重新生成</button>
+        </div>
       </div>
     </div>
 
@@ -586,6 +597,8 @@ let state = {
   uploadedImage: null,
   generatedImage: null,
   isProcessing: false,
+  cancelled: false,
+  activeController: null,
   tasks: [],
   selectedPackage: { count: 10, price: 9.9 }
 };
@@ -655,12 +668,64 @@ function initUpload() {
   });
 }
 
-function handleFile(file) {
-  if (!file.type.startsWith('image/')) { alert('请上传图片文件'); return; }
-  const reader = new FileReader();
-  reader.onload = e => { state.uploadedImage = e.target.result; startGeneration(); };
-  reader.readAsDataURL(file);
+function prepareImageOnline(file) {
+  return new Promise((resolve) => {
+    const fallback = () => {
+      const r = new FileReader();
+      r.onload = ev => resolve(ev.target.result);
+      r.onerror = () => resolve(null);
+      r.readAsDataURL(file);
+    };
+    const drawFromImage = (src) => {
+      const im = new Image();
+      im.onload = () => {
+        const MAX = 2048;
+        let w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+        if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const cx = c.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h); cx.drawImage(im, 0, 0, w, h);
+        let url = c.toDataURL('image/jpeg', 0.9);
+        if (url.length > 2.4 * 1024 * 1024) url = c.toDataURL('image/jpeg', 0.8);
+        resolve(url);
+      };
+      im.onerror = fallback;
+      im.src = src;
+    };
+    if (typeof createImageBitmap === 'function') {
+      createImageBitmap(file, { imageOrientation: 'from-image' }).then(bmp => {
+        const MAX = 2048;
+        let w = bmp.width, h = bmp.height;
+        if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const cx = c.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h); cx.drawImage(bmp, 0, 0, w, h);
+        if (bmp.close) try { bmp.close(); } catch(e) {}
+        let url = c.toDataURL('image/jpeg', 0.9);
+        if (url.length > 2.4 * 1024 * 1024) url = c.toDataURL('image/jpeg', 0.8);
+        resolve(url);
+      }).catch(() => {
+        const r = new FileReader();
+        r.onload = ev => drawFromImage(ev.target.result);
+        r.onerror = fallback;
+        r.readAsDataURL(file);
+      });
+    } else {
+      const r = new FileReader();
+      r.onload = ev => drawFromImage(ev.target.result);
+      r.onerror = fallback;
+      r.readAsDataURL(file);
+    }
+  });
 }
+
+async function handleFile(file) {
+  if (!file.type.startsWith('image/')) { alert('请上传图片文件'); return; }
+  if (file.size > 20 * 1024 * 1024) { alert('单张图片不能超过 20MB'); return; }
+  const dataUrl = await prepareImageOnline(file);
+  if (!dataUrl) { alert('图片读取失败，请换一张试试'); return; }
+  state.uploadedImage = dataUrl;
+  startGeneration();
+}
+
 
 function loadSample(sample) {
   if (!checkLogin()) return;
@@ -679,118 +744,187 @@ function checkLogin() {
 }
 
 // 生图
-function startGeneration() {
+function sleepOnline(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function classifyErrorOnline(e) {
+  const msg = (e && e.message) ? String(e.message) : '';
+  const low = msg.toLowerCase();
+  if (e && e.name === 'AbortError') return { title: '生成超时', msg: '图片较大或当前网络较慢，已自动重试仍未完成。请检查网络后点击「重新生成」。' };
+  if (/failed to fetch|networkerror|network request|load failed|网络|连接|timeout/i.test(low)) return { title: '网络连接失败', msg: '无法连接到生图服务，可能是网络波动。请检查网络后点击「重新生成」。' };
+  if (/429|rate.?limit|频繁|限流|too many/i.test(low)) return { title: '当前生成人数较多', msg: '服务暂时繁忙，请等待约 10 秒后点击「重新生成」。' };
+  if (/sensitive|content.?risk|审核|违规|安全|risk|policy|violation|违法|不良/i.test(low)) return { title: '未通过内容安全校验', msg: '上传图片或描述可能触发了平台内容规范，请更换图片或调整描述后重试。' };
+  if (/not valid|invalid|parameter|size|像素|pixels|格式|format/i.test(low)) return { title: '图片参数不被接受', msg: msg || '请更换更清晰、构图完整的商品图后重试。' };
+  return { title: '生成未完成', msg: (msg || '服务暂时无响应') + '。请点击「重新生成」，多次失败可更换图片。' };
+}
+
+function setProc(title, sub, pct) {
+  const t = $('#processingTitle'), s = $('#processingSub'), f = $('#progressFill');
+  if (t) t.textContent = title;
+  if (s) s.textContent = sub;
+  if (f && typeof pct === 'number') { f.style.transition = 'width 0.6s ease'; f.style.width = pct + '%'; }
+}
+function resetProcOnline() {
+  const err = $('#processingError'), retry = $('#retryBtn'), bar = $('#progressBar');
+  const ov = document.querySelector('#stageProcessing .processing-overlay');
+  if (err) err.style.display = 'none';
+  if (retry) retry.style.display = 'none';
+  if (bar) bar.style.display = '';
+  if (ov) ov.style.display = '';
+}
+function showProcErrorOnline(cat) {
+  const err = $('#processingError'), et = $('#processingErrorTitle'), em = $('#processingErrorMsg');
+  const retry = $('#retryBtn'), bar = $('#progressBar');
+  const ov = document.querySelector('#stageProcessing .processing-overlay');
+  if (err) err.style.display = 'block';
+  if (et) et.textContent = cat.title;
+  if (em) em.textContent = cat.msg;
+  if (retry) retry.style.display = 'inline-block';
+  if (bar) bar.style.display = 'none';
+  if (ov) ov.style.display = 'none';
+  const t = $('#processingTitle'), s = $('#processingSub');
+  if (t) t.textContent = cat.title;
+  if (s) s.textContent = '';
+}
+
+async function startGeneration() {
   if (state.isProcessing) return;
+  if (!state.uploadedImage) { alert('请先上传图片'); return; }
   if (state.credits <= 0) { openPurchase(); return; }
   state.isProcessing = true;
+  state.cancelled = false;
+  resetProcOnline();
   switchStage('processing');
   const previewImg = $('#processingImg');
-  if (previewImg && state.uploadedImage) previewImg.src = state.uploadedImage;
+  if (previewImg) previewImg.src = state.uploadedImage;
+  setProc('AI 正在识别图片...', '分析主体、材质与颜色', 18);
+  await sleepOnline(450);
+  if (state.cancelled) return;
+  setProc('调用行业生图知识库...', '匹配最佳风格与构图', 38);
+  await sleepOnline(450);
+  if (state.cancelled) return;
+  setProc('Seedream 大模型生成中...', '通常需要 10–25 秒，请勿关闭页面', 52);
 
-  const steps = [
-    { title: 'AI 正在识别图片...', sub: '分析主体、材质与颜色', duration: 2000, pct: 20 },
-    { title: '调用行业生图知识库...', sub: '匹配最佳风格与构图', duration: 2500, pct: 45 },
-    { title: 'Seedream 大模型生成中...', sub: '预计 12 秒完成', duration: 12000, pct: 90 },
-    { title: '生成完成！', sub: '正在优化输出...', duration: 1000, pct: 100 }
-  ];
-  let stepIdx = 0;
-  function runStep() {
-    if (stepIdx >= steps.length) { finishGeneration(); return; }
-    const step = steps[stepIdx];
-    const title = $('#processingTitle');
-    const sub = $('#processingSub');
-    const fill = $('#progressFill');
-    if (title) title.textContent = step.title;
-    if (sub) sub.textContent = step.sub;
-    if (fill) { fill.style.transition = 'width ' + step.duration + 'ms linear'; fill.style.width = step.pct + '%'; }
-    stepIdx++;
-    setTimeout(runStep, step.duration);
+  let pct = 52;
+  const timer = setInterval(() => {
+    pct = Math.min(92, pct + Math.random() * 1.1 + 0.25);
+    const f = $('#progressFill');
+    if (f) { f.style.transition = 'width 0.9s linear'; f.style.width = pct + '%'; }
+  }, 850);
+
+  try {
+    const dataUrl = await callAPI();
+    if (state.cancelled) return;
+    clearInterval(timer);
+    const f = $('#progressFill');
+    if (f) { f.style.transition = 'width 0.4s ease'; f.style.width = '100%'; }
+    state.generatedImage = dataUrl;
+    const origImg = $('#originalImg'), genImg = $('#generatedImg');
+    if (origImg) origImg.src = state.uploadedImage;
+    if (genImg) genImg.src = state.generatedImage;
+    $$('.size-preview').forEach(p => {
+      const placeholder = p.querySelector('span');
+      if (placeholder) placeholder.remove();
+      if (!p.querySelector('img')) {
+        const img = document.createElement('img');
+        img.src = state.generatedImage;
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        p.appendChild(img);
+      }
+    });
+    addTask(state.generatedImage);
+    await sleepOnline(350);
+    if (state.cancelled) return;
+    state.isProcessing = false;
+    switchStage('result');
+  } catch (e) {
+    clearInterval(timer);
+    if (state.cancelled) return;
+    state.isProcessing = false;
+    console.error('生图失败:', e);
+    showProcErrorOnline(classifyErrorOnline(e));
   }
-  runStep();
 }
 
 function cancelGeneration() {
+  state.cancelled = true;
+  if (state.activeController) { try { state.activeController.abort(); } catch(e) {} }
   state.isProcessing = false;
   switchStage('upload');
 }
 
-async function finishGeneration() {
-  state.isProcessing = false;
-  try {
-    state.generatedImage = await callAPI();
-  } catch(e) {
-    console.error('API失败:', e);
-    // 显示错误提示
-    const title = $('#processingTitle');
-    const sub = $('#processingSub');
-    if (title) title.textContent = '生成失败';
-    if (sub) sub.textContent = e.message || '请稍后重试';
-    setTimeout(() => {
-      switchStage('upload');
-    }, 2000);
-    return;
-  }
-  const origImg = $('#originalImg');
-  const genImg = $('#generatedImg');
-  if (origImg) origImg.src = state.uploadedImage;
-  if (genImg) genImg.src = state.generatedImage;
-  $$('.size-preview').forEach(p => {
-    const placeholder = p.querySelector('span');
-    if (placeholder) placeholder.remove();
-    if (!p.querySelector('img')) {
-      const img = document.createElement('img');
-      img.src = state.generatedImage;
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-      p.appendChild(img);
-    }
-  });
-  addTask(state.generatedImage);
-  switchStage('result');
-}
+function retryGeneration() { startGeneration(); }
 
 async function callAPI() {
   const apiKey = atob('YXJrLTZhYmRhZjc1LWE1MTAtNDQyMC1iZWMwLWRiMzI2YjBiZDk0Zi0wMDc1Yw==');
   const endpoint = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
   let imageBase64 = state.uploadedImage;
-  if (state.uploadedImage && !state.uploadedImage.startsWith('data:')) {
+  if (imageBase64 && !imageBase64.startsWith('data:')) {
     try {
-      const resp = await fetch(state.uploadedImage);
-      if (!resp.ok) throw new Error('图片加载失败');
-      const blob = await resp.blob();
-      imageBase64 = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.readAsDataURL(blob);
-      });
-    } catch(e) {
-      console.warn('示例图片加载失败，使用原图:', e);
-    }
+      const r0 = await fetch(imageBase64);
+      if (r0.ok) {
+        const blob = await r0.blob();
+        imageBase64 = await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.readAsDataURL(blob);
+        });
+      }
+    } catch(e) { console.warn('图片加载失败，使用原图'); }
   }
-  try {
-    const resp = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({
-        model: 'ep-m-20260915134242-p4rpr',
-        prompt: '专业电商商品摄影图，严格保留原图商品主体的形状颜色细节完全不变，仅替换背景为专业电商场景，搭配商业级布光氛围，' + versionNames[state.currentVersion] + '风格，高分辨率商业摄影质感，适合直接上架',
-        image: imageBase64,
-        size: '2048x2048',
-        response_format: 'b64_json'
-      })
-    });
-    const data = await resp.json();
-    if (data.data && data.data[0] && data.data[0].b64_json) {
+  const payload = {
+    model: 'ep-m-20260915134242-p4rpr',
+    prompt: '专业电商商品摄影图，严格保留原图商品主体的形状颜色细节完全不变，仅替换背景为专业电商场景，搭配商业级布光氛围，' + versionNames[state.currentVersion] + '风格，高分辨率商业摄影质感，适合直接上架',
+    image: imageBase64,
+    size: '2048x2048',
+    response_format: 'b64_json'
+  };
+
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (state.cancelled) throw new Error('已取消');
+    const controller = new AbortController();
+    state.activeController = controller;
+    const timeoutId = setTimeout(() => { try { controller.abort(); } catch(e) {} }, 95000);
+    let resp = null, data = null, fetchErr = null;
+    try {
+      resp = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      try { data = await resp.json(); } catch (_) { data = null; }
+    } catch (e) { fetchErr = e; }
+    clearTimeout(timeoutId);
+
+    if (!fetchErr && data && data.data && data.data[0] && data.data[0].b64_json) {
       return 'data:image/jpeg;base64,' + data.data[0].b64_json;
     }
-    if (data.error) {
-      throw new Error(data.error.message || 'API错误');
+
+    let err;
+    if (fetchErr) {
+      err = fetchErr;
+    } else {
+      const msg = (data && data.error && data.error.message) || ('服务返回异常（HTTP ' + (resp ? resp.status : '?') + '）');
+      err = new Error(msg);
+      err.status = resp ? resp.status : 0;
     }
-    throw new Error('API返回数据格式错误');
-  } catch(e) {
-    console.error('生图API调用失败:', e);
-    throw e;
+    lastErr = err;
+
+    const status = err.status || 0;
+    const isAbort = err.name === 'AbortError';
+    const isNetwork = !status && (err instanceof TypeError || /failed to fetch|network/i.test((err.message || '').toLowerCase()));
+    const retryable = isAbort || isNetwork || status === 429 || status >= 500;
+    if (!retryable) throw err;
+
+    if (attempt < 2) {
+      setProc('Seedream 大模型生成中...', '网络波动，正在自动重试（' + (attempt + 1) + '/2）...');
+      await sleepOnline(1600 * (attempt + 1));
+    }
   }
+  throw lastErr || new Error('生成失败，请重试');
 }
+
 
 function regenerate() {
   if (state.uploadedImage && checkLogin()) startGeneration();
