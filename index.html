@@ -152,6 +152,21 @@ ul{list-style:none;}
 .rail .wcard:nth-child(4) .wc-ph img{animation-delay:-12s;}
 @keyframes wcKen{0%{transform:scale(1.05);}100%{transform:scale(1.13);}}
 .wcard:hover .wc-ph img{animation-play-state:paused;}
+/* 二手车卡：手机实拍 ↔ AI展厅效果 悬停切换 */
+.rail .wcard:nth-child(2) .wc-ph img{animation:none;transform:scale(1.045);}
+.wcard .wc-ph img.ph-real,.wcard .wc-ph img.ph-ai{position:absolute;inset:0;}
+.wcard .wc-ph img.ph-real{transition:opacity .55s ease;}
+.wcard .wc-ph img.ph-ai{opacity:0;transition:opacity .55s ease;}
+.rail .wcard:nth-child(2):hover .wc-ph img.ph-real{opacity:0;}
+.rail .wcard:nth-child(2):hover .wc-ph img.ph-ai{opacity:1;}
+/* 实拍/AI 切换角标（深底图通用） */
+.ph-swap{position:absolute;z-index:4;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.4px;padding:4px 10px;border-radius:999px;background:rgba(13,11,9,.62);border:1px solid rgba(255,255,255,.28);color:#fff;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;}
+.ph-swap::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange-light);box-shadow:0 0 0 3px rgba(251,146,60,.22);}
+.wcard .ph-swap{top:8px;left:8px;}
+.mx-feat .ph-swap{top:16px;right:18px;left:auto;}
+.ph-swap .ps-ai{display:none;}
+.rail .wcard:nth-child(2):hover .ph-swap .ps-real,.mx-feat:hover .ph-swap .ps-real{display:none;}
+.rail .wcard:nth-child(2):hover .ph-swap .ps-ai,.mx-feat:hover .ph-swap .ps-ai{display:inline;}
 .wcard .cap{position:absolute;left:9px;bottom:8px;z-index:2;background:rgba(13,11,9,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:6px;color:#fff;transition:transform .32s;}
 .wcard .cap::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--orange-light);}
 .wcard .wc-tag{position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:700;letter-spacing:.3px;padding:3px 9px;border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
@@ -187,7 +202,7 @@ ul{list-style:none;}
 .mx-mid:hover .mx-art{color:var(--orange);}
 .mx-mid:hover .mx-art svg{transform:translateY(-2px);}
 @media (prefers-reduced-motion:reduce){.mx-mid:hover .mx-art svg{transform:none;}}
-@media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard .wc-cta.live svg{animation:none;}.wcard,.wcard *{transition:none!important;}}
+@media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard .wc-cta.live svg{animation:none;}.wcard,.wcard *,.mx-feat,.mx-feat *{transition:none!important;}}
 .mh-creed{position:relative;z-index:2;margin-top:64px;border-top:1px solid rgba(255,255,255,.12);padding:30px 0 34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
 .mh-creed .big{font-size:clamp(20px,2.4vw,27px);font-weight:800;letter-spacing:-.3px;}
 .mh-creed .big em{font-style:normal;color:var(--orange-light);}
@@ -225,6 +240,11 @@ ul{list-style:none;}
 .mx-feat .ph{position:relative;flex:1;min-height:250px;overflow:hidden;}
 .mx-feat .ph img{width:100%;height:100%;object-fit:cover;transition:transform .7s ease;}
 .mx-feat:hover .ph img{transform:scale(1.05);}
+.mx-feat .ph img.ph-real,.mx-feat .ph img.ph-ai{position:absolute;inset:0;}
+.mx-feat .ph img.ph-real{transition:opacity .55s ease;}
+.mx-feat .ph img.ph-ai{opacity:0;transition:opacity .55s ease,transform .7s ease;}
+.mx-feat:hover .ph img.ph-real{opacity:0;}
+.mx-feat:hover .ph img.ph-ai{opacity:1;}
 .mx-feat .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,9,0) 34%,rgba(13,11,9,.92) 100%);}
 .mx-feat .badge{position:absolute;top:18px;left:18px;z-index:3;background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(234,88,12,.4);}
 .mx-feat .cap{position:absolute;left:24px;right:24px;bottom:22px;z-index:3;}
@@ -620,8 +640,10 @@ ul{list-style:none;}
               <span class="wc-txt"><span class="rnm">二手车 AI 生图工作台</span><span class="rcf">车况 vs 图骗 · 真实场景图</span></span>
             </div>
             <div class="wc-ph">
-              <img src="images/car-suv-outdoor.jpg" alt="二手车 AI 生图工作台生成的真实车况户外场景图">
+              <img class="ph-real" src="images/car-bmw-phone.jpg" alt="白色宝马3系手机实拍原图">
+              <img class="ph-ai" src="images/car-bmw-showroom.jpg" alt="白色宝马3系AI展厅效果图">
               <span class="wc-veil"></span>
+              <span class="ph-swap"><span class="ps-real">手机实拍</span><span class="ps-ai">AI 展厅效果</span></span>
               <span class="cap">真实车况场景图</span>
               <span class="wc-cta live">进入工作台<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
             </div>
@@ -672,7 +694,11 @@ ul{list-style:none;}
     <div class="mx-grid">
       <a href="/usedcar.html" class="mx-feat reveal">
         <span class="badge">已上线 · P0</span>
-        <div class="ph"><img src="images/car-suv-showroom.jpg" alt="二手车伙计展厅精修图"></div>
+        <div class="ph">
+          <img class="ph-real" src="images/car-tesla-phone.jpg" alt="白色特斯拉Model3手机实拍原图">
+          <img class="ph-ai" src="images/car-tesla-showroom.jpg" alt="白色特斯拉Model3 AI展厅效果图">
+          <span class="ph-swap"><span class="ps-real">手机实拍</span><span class="ps-ai">AI 展厅效果</span></span>
+        </div>
         <div class="cap">
           <h3>二手车伙计</h3>
           <div class="cf">核心矛盾：车况 vs 图骗。外观/内饰/细节智能拍摄，自动出精修图、场景图、360、短视频与车源文案。</div>
