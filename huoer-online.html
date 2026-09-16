@@ -316,6 +316,62 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
   .brand-dialog{width:94vw;max-height:86vh;}
   .bd-gitems{grid-template-columns:repeat(auto-fill,minmax(86px,1fr));}
 }
+
+/* ===== 批次2/3：点位归位 / 尺寸档 / 输出规格 / 实地背景 / 灯箱 ===== */
+.point-slot{cursor:pointer;position:relative}
+.point-slot:hover{border-color:var(--orange);transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(234,88,12,.4)}
+.point-slot .pthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:11px}
+.point-slot.filled{border-style:solid;border-color:var(--orange);background:#1c1917;overflow:hidden;padding:0}
+.point-slot.filled .pd,.point-slot.filled .pstatus{display:none}
+.point-slot.filled .pn{position:absolute;left:0;right:0;bottom:0;margin:0;padding:16px 7px 6px;font-size:10.5px;color:#fff;text-align:left;font-weight:700;background:linear-gradient(transparent,rgba(0,0,0,.82));z-index:2}
+.point-slot.filled::after{content:"点击替换";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;background:rgba(28,25,23,.45);opacity:0;transition:opacity .18s;z-index:3}
+.point-slot.filled:hover::after{opacity:1}
+.pf-chip{flex-direction:column;align-items:flex-start;gap:2px;min-width:158px}
+.pf-chip .pf-main{display:flex;align-items:baseline;gap:8px}
+.pf-chip .pf-media{font-size:10.5px;color:var(--ink-muted);font-weight:500}
+.pf-chip.sel .pf-media{color:var(--orange-deep);opacity:.85}
+.spec-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.spec-group .spec-label{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:9px}
+.spec-chips{display:flex;gap:9px;flex-wrap:wrap}
+.spec-chip{border:1.5px solid var(--line);border-radius:10px;padding:9px 14px;background:#fff;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink);transition:all .2s;display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-family:inherit}
+.spec-chip span{font-size:10.5px;font-weight:500;color:var(--ink-muted)}
+.spec-chip:hover{border-color:var(--orange-light)}
+.spec-chip.sel{border-color:var(--orange);background:var(--orange-bg);color:var(--orange-deep)}
+.spec-chip.sel span{color:var(--orange-deep);opacity:.85}
+.onsite-wrap{display:none;margin-top:14px;border:1.5px dashed var(--orange);background:var(--orange-bg);border-radius:13px;padding:16px}
+.onsite-wrap.show{display:block;animation:whFade .25s ease}
+.onsite-head{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px}
+.onsite-head .oc-ico{width:34px;height:34px;border-radius:9px;background:#fff;color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.onsite-head .oc-ico svg{width:18px;height:18px}
+.onsite-head .oc-name{font-size:13.5px;font-weight:700;margin-bottom:2px}
+.onsite-head .oc-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.55}
+.onsite-preview{margin-top:12px}
+.onsite-preview img{width:100%;max-height:240px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block}
+.onsite-preview .onsite-del{margin-top:9px;font-size:12px;color:var(--red);background:#fff;border:1px solid #fecaca;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit}
+.onsite-empty{font-size:12px;color:var(--ink-muted);background:#fff;border:1px dashed var(--line);border-radius:10px;padding:12px;text-align:center}
+@keyframes whFade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.gen-overview{grid-template-columns:repeat(4,1fr)}
+.result-card .rc-img img.rc-open{cursor:zoom-in}
+.rc-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.rc-actions .btn svg{width:14px;height:14px}
+.lightbox{position:fixed;inset:0;background:rgba(13,11,9,.86);backdrop-filter:blur(6px);z-index:300;display:none;align-items:center;justify-content:center;padding:40px;opacity:0;transition:opacity .22s}
+.lightbox.show{display:flex;opacity:1}
+.lb-inner{position:relative;max-width:min(92vw,780px);max-height:92vh;display:flex;flex-direction:column;align-items:center}
+.lb-img{max-width:100%;max-height:76vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);background:#fff}
+.lb-cap{margin-top:14px;color:#f5f5f4;font-size:13px;font-weight:600;text-align:center}
+.lb-close{position:absolute;top:-16px;right:-16px;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--ink);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:2}
+.lb-close svg{width:20px;height:20px}
+.lb-close:hover{background:var(--orange);color:#fff}
+@media(max-width:960px){
+  .spec-row{grid-template-columns:1fr;gap:14px}
+  .gen-overview{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .pf-chip{min-width:0;flex:1 1 calc(50% - 9px)}
+  .lightbox{padding:18px}
+  .lb-close{top:-12px;right:-6px;width:34px;height:34px}
+  .point-grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+}
 </style>
 </head>
 <body>
@@ -351,7 +407,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
   <div class="card">
     <div class="card-head">
       <h2><span class="stepno">1</span>上传车源照片</h2>
-      <p>按收车拍摄的三组点位上传照片，伙计会逐张做清晰度、曝光、角度与遮挡质检。建议拍齐外观 4 个角度，精修图与场景图将以外观主图为基础生成。</p>
+      <p>按收车拍摄的三组点位上传照片：外观 9 个机位、内饰 5 个机位、空间 4 个机位。伙计逐张做清晰度、曝光与遮挡质检并自动归位；外观主图（左前 45°）按所选背景场景生成，内饰与空间照片逐张画质增强。</p>
     </div>
     <div class="shot-tabs" id="shotTabs"></div>
     <div class="point-hint" id="pointHint"></div>
@@ -459,25 +515,46 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
       <div class="opt-cards" id="sceneCards">
         <div class="opt-card sel" data-scene="showroom">
           <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/></svg></span><span class="oc-name">展厅精修图</span></div>
-          <div class="oc-desc">统一布光、去杂背景、地面反射，适合平台主图与详情页</div>
+          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/></svg></span><span class="oc-name">AI 展厅背景图</span></div>
+          <div class="oc-desc">虚拟高端展厅、统一布光与地面微反射，平台主图与详情页首选</div>
         </div>
-        <div class="opt-card" data-scene="city">
+        <div class="opt-card" data-scene="studio">
           <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l5-3v17"/><path d="M10 21V11l5-2v12"/><path d="M15 21V9l4 2v10"/></svg></span><span class="oc-name">城市道路场景</span></div>
-          <div class="oc-desc">黄昏城市街区通勤画面，适合瓜子、闲鱼等交易平台</div>
+          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 7l8 5 8-5-8-5Z"/><path d="M4 7v6l8 5 8-5V7"/><path d="M12 12v8"/></svg></span><span class="oc-name">摄影棚背景图</span></div>
+          <div class="oc-desc">无缝浅灰无影墙与柔光箱棚拍，去除环境干扰、突出车辆本身</div>
         </div>
-        <div class="opt-card" data-scene="outdoor">
+        <div class="opt-card" data-scene="onsite">
           <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg></span><span class="oc-name">户外生活场景</span></div>
-          <div class="oc-desc">郊野湖边家庭出游氛围，放大空间与通过性，适合小红书、朋友圈</div>
+          <div class="oc-top"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="oc-name">实地展厅背景图</span></div>
+          <div class="oc-desc">把车真实合成进你的门店展厅，需上传一张展厅照片，买家更信任</div>
         </div>
+      </div>
+      <div class="onsite-wrap" id="onsiteWrap">
+        <div class="onsite-head"><span class="oc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+        <div><div class="oc-name">上传你的实地展厅背景</div><div class="oc-desc">选择“实地展厅背景图”后，伙计会把车辆真实合成进这张展厅照片；上传一次自动记忆，后续无需重复上传。</div></div></div>
+        <button type="button" class="btn btn-ghost" id="onsiteUpload">上传展厅背景照片</button>
+        <input type="file" id="onsiteFile" accept="image/*" hidden>
+        <div class="onsite-preview" id="onsitePreview"></div>
       </div>
     </div>
 
     <div class="opt-block">
-      <div class="opt-block-title">上架平台尺寸<span class="line"></span><span style="font-size:12px;color:var(--ink-muted);font-weight:400">可多选，自动裁切</span></div>
+      <div class="opt-block-title">输出尺寸<span class="line"></span><span style="font-size:12px;color:var(--ink-muted);font-weight:400">按尺寸选择，自动适配各平台</span></div>
       <div class="platform-chips" id="platformChips"></div>
+    </div>
+
+    <div class="opt-block">
+      <div class="opt-block-title">输出规格<span class="line"></span><span style="font-size:12px;color:var(--ink-muted);font-weight:400">清晰度与下载格式</span></div>
+      <div class="spec-row">
+        <div class="spec-group"><div class="spec-label">清晰度</div><div class="spec-chips" id="qualityChips">
+          <button type="button" class="spec-chip sel" data-q="std">标准清晰度<span>生成更快，满足多数平台</span></button>
+          <button type="button" class="spec-chip" data-q="hd">高清 2K<span>细节更锐，适合放大与详情页</span></button>
+        </div></div>
+        <div class="spec-group"><div class="spec-label">下载格式</div><div class="spec-chips" id="fmtChips">
+          <button type="button" class="spec-chip sel" data-f="jpg">JPG<span>体积小，平台通用</span></button>
+          <button type="button" class="spec-chip" data-f="png">PNG<span>无损画质，文件较大</span></button>
+        </div></div>
+      </div>
     </div>
 
     <div class="opt-block">
@@ -529,7 +606,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
   <div class="card">
     <div class="card-head">
       <h2><span class="stepno">4</span>正在生成车源物料</h2>
-      <p>你上传的每张外观图都会生成对应角度的场景图，内饰与细节图逐张做画质增强（不改成色、不抹瑕疵、不篡改读数），并另出一套车源文案。每张约 15–25 秒，多张会依次生成，请勿关闭页面；失败可单独重试。</p>
+      <p>外观主图（左前 45°）按你选择的背景场景逐张出图，选择“实地展厅”时会真实合成进你上传的展厅照片；其余外观、内饰与空间照片逐张做画质增强（不改成色、不抹瑕疵、不畸变空间），并另出一套车源文案。每张约 15–25 秒，多张依次生成，请勿关闭页面；失败可单独重试。</p>
     </div>
     <div class="gen-overview" id="genOverview"></div>
     <div id="genTaskList"></div>
@@ -613,11 +690,32 @@ const PROXY_ENDPOINTS=(function(){
 })();
 
 const SHOT_GROUPS={
-  ext:{name:'外观（必拍）',points:[['前 45°','车头左/右前方 45°，展现前脸与车身线条'],['侧 45°','后侧 45°，展现车尾与侧身'],['正后方','正对车尾，看清尾灯与尾门'],['正侧面','垂直车身，展现完整侧面轮廓']]},
-  int:{name:'内饰',points:[['主驾座椅','主驾座椅与门板磨损情况'],['中控台','中控整体、屏幕与挡把区域'],['方向盘','方向盘磨损与多功能按键'],['后排空间','后排座椅与腿部空间']]},
-  det:{name:'细节',points:[['仪表盘里程','点亮仪表，拍清里程读数'],['轮胎','胎纹深度与轮毂成色'],['发动机舱','发动机舱整体整洁度'],['中控屏','车机屏幕点亮与功能']]}
+  ext:{name:'外观（必拍）',points:[
+    ['左前 45°','平台首图，整车造型与成色一览，建议顺光'],
+    ['正前方','前脸、大灯、进气格栅与前保险杠是否原漆'],
+    ['正侧面（驾驶侧）','车身线条、门板、轮毂有无剐蹭凹陷'],
+    ['左后 45°','后侧整体、尾灯、肩线与后翼子板'],
+    ['正后方','尾门、尾灯、排气、后备厢缝隙与后杠'],
+    ['右前 45°','补全另一侧漆面、后视镜与车门成色'],
+    ['车顶 / 天窗','天窗、行李架、车顶漆面与胶条'],
+    ['轮毂轮胎特写','轮毂划伤、胎纹深度，辅助判断里程'],
+    ['发动机舱','舱内整洁度、有无渗漏与维保痕迹']
+  ]},
+  int:{name:'内饰',points:[
+    ['主驾座椅整体','座椅磨损塌陷与包裹，侧面看用车习惯'],
+    ['方向盘 + 仪表盘','方向盘磨损、表显里程读数清晰不反光'],
+    ['中控台 / 中控屏','车机、空调按键、中控整体成色'],
+    ['副驾仪表台','副驾侧仪表台、手套箱与内饰成色'],
+    ['挡把 / 中央扶手','高频接触区磨损、按键掉漆情况']
+  ]},
+  space:{name:'空间',points:[
+    ['后排座椅正面','后排整洁度、座椅成色与乘坐空间'],
+    ['后排腿部空间','从前排向后拍腿部余量，判断家用/营运'],
+    ['后备厢容积','后备厢储物能力、备胎与随车工具'],
+    ['车内采光 / 顶棚','全景天窗内景、顶棚洁净与通透感']
+  ]}
 };
-const GROUP_ORDER=['ext','int','det'];
+const GROUP_ORDER=['ext','int','space'];
 
 /* ============================================================
  * WorkHogee 二手车行业知识库（前端内置 · 持续扩充）
@@ -769,23 +867,22 @@ function modelSellingPoints(bn,sn){
 }
 function powLabel(p){return (CAR_POW[p]&&CAR_POW[p].name)||'';}
 const PLATFORMS=[
-  {id:'dcd',name:'懂车帝',ratio:'1:1',w:1080,h:1080},
-  {id:'gz',name:'瓜子',ratio:'1:1',w:1080,h:1080},
-  {id:'xy',name:'闲鱼',ratio:'1:1',w:1080,h:1080},
-  {id:'pyq',name:'朋友圈',ratio:'1:1',w:1080,h:1080},
-  {id:'autohome',name:'汽车之家',ratio:'4:3',w:1440,h:1080},
-  {id:'xhs',name:'小红书',ratio:'3:4',w:1080,h:1440},
-  {id:'dy',name:'抖音/视频号',ratio:'9:16',w:1080,h:1920}
+  {id:'sq',name:'方图 1:1',w:1080,h:1080,ratio:'1080×1080',media:'懂车帝 · 瓜子 · 闲鱼 · 朋友圈'},
+  {id:'hland',name:'横图 4:3',w:1440,h:1080,ratio:'1440×1080',media:'汽车之家 · 官网详情页横版'},
+  {id:'vport',name:'竖图 3:4',w:1080,h:1440,ratio:'1080×1440',media:'小红书'},
+  {id:'full',name:'全屏 9:16',w:1080,h:1920,ratio:'1080×1920',media:'抖音 · 视频号封面'}
 ];
+const SHOWROOM_PROMPT='把这辆待售二手车放进高端现代的虚拟汽车展厅：宽敞明亮的室内展厅，深灰色高光环氧地面带柔和车身倒影，浅色石材或木饰面背景墙，顶部线性灯带与射灯均匀布光，背景虚化处是简洁的展车环境，画面中无其他车辆、人物、文字与标识，商业广告级质感；严格保持车辆颜色、车型、轮毂、朝向与原图完全一致，只替换为展厅背景，不改动车身，不美化划痕、凹陷与磨损。';
+const STUDIO_PROMPT='专业汽车广告摄影棚，无缝浅灰色渐变无影背景墙，大型柔光箱均匀布光，高亮洁地面带轻微车身倒影，画面中无任何杂物、人物、文字与标识，商业棚拍级质感，突出车漆光泽、车身线条与设计细节；严格保持车辆颜色、车型、轮毂、朝向与原图完全一致，只替换为摄影棚背景，不改动车身，不美化划痕、凹陷与磨损。';
+const ONSITE_PROMPT='第一张图是待售二手车（主体，务必完整保留），第二张图是车商自己的真实汽车展厅（目标背景）。请把第一张图中的汽车完整、真实地陈列到第二张图的展厅环境中，停放在展厅内合理的展车位置，让车辆的光线、阴影、透视与地面接触和第二张展厅环境自然融合；严格保持汽车的颜色、车型、轮毂、朝向与第一张图完全一致，只融合替换背景，绝不改动车身、不更换车辆、不美化划痕瑕疵。';
 const SCENES={
-  showroom:{name:'展厅精修图',prompt:'现代豪华汽车展厅内景，抛光水泥地面带有柔和车身倒影，暖色射灯从顶部均匀打光，背景为通透玻璃幕墙与虚化的展车区，专业商业汽车广告摄影，画面干净高级。严格保持参考图中车辆本身的车身颜色、车型、轮毂样式与数量、车窗、车牌位置、车身比例、镜头透视与车头朝向完全不变，仅替换背景环境并统一光影，严禁水平翻转或镜像，不改变车辆任何细节，真实摄影质感，高分辨率。'},
-  city:{name:'城市道路场景',prompt:'黄昏时分的城市商务街区沥青道路，金色夕阳侧光，背景为虚化的城市天际线、路灯与现代建筑，专业汽车公路摄影，氛围商务而日常。严格保持参考图中车辆本身的车身颜色、车型、轮毂样式、车窗、车牌位置、车身比例、镜头透视与车头朝向完全不变，仅替换背景环境并统一光影，严禁水平翻转或镜像，不改变车辆任何细节，真实摄影质感，高分辨率。'},
-  outdoor:{name:'户外生活场景',prompt:'晴朗白天的湖边山景公路，蓝天白云，远处是连绵青山与平静湖面，路边有自然绿植，明亮自然日光，专业户外汽车生活摄影，氛围开阔自由。严格保持参考图中车辆本身的车身颜色、车型、轮毂样式、车窗、车牌位置、车身比例、镜头透视与车头朝向完全不变，仅替换背景环境并统一光影，严禁水平翻转或镜像，不改变车辆任何细节，真实摄影质感，高分辨率。'}
+  showroom:{name:'AI 展厅背景图',prompt:SHOWROOM_PROMPT},
+  studio:{name:'摄影棚背景图',prompt:STUDIO_PROMPT},
+  onsite:{name:'实地展厅背景图',prompt:ONSITE_PROMPT,needBg:true}
 };
-
-const ENHANCE_INT='专业二手车内饰实拍画质增强：仅做自然的曝光与白平衡校正、轻微提亮和适度清晰度提升，真实还原皮革、塑料、屏幕等材质与正常使用痕迹。严格保持参考图中的内饰布局、部件数量、颜色、磨损与污渍、镜头透视和取景范围完全不变，不新增、不删除、不替换任何物品，不遮盖或美化瑕疵，不改变成色与配置，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
-const ENHANCE_DET='专业二手车细节实拍画质增强：仅做自然曝光校正、轻微提亮与适度清晰度提升，真实还原部件成色、磨损与标识。严格保持参考图中的部件、数量、颜色、里程读数与标识文字、镜头透视完全不变，不新增、不删除、不替换任何部件，不美化瑕疵，不篡改任何数字或读数，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
-const state={step:1,maxStep:1,images:[],curGroup:'ext',brand:'',series:'',year:'',trim:'',mileage:'',price:'',gearbox:'',city:'',extra:'',pow:'',claims:[],modelPoints:[],mpSel:null,scenes:new Set(['showroom']),platforms:new Set(['dcd','autohome','xhs']),style:'professional',results:[],copies:{},curSize:'dcd',genJobs:[],caps:{}};
+const ENHANCE_INT='对这张二手车内饰照片做专业画质增强：校正曝光与白平衡、提升清晰度、适度降噪，真实还原内饰材质与成色；不更换内饰、不改变座椅布局与数量、不修复或移除磨损、污渍、破损等任何瑕疵，不篡改仪表盘里程读数，画面中不添加任何文字或标识。';
+const ENHANCE_SPACE='对这张二手车车内空间照片做专业画质增强：校正曝光与白平衡、提升清晰度与通透感、适度降噪，真实还原空间大小、座椅布局与内饰成色；不改变座椅数量与布局、不移除车内任何物品、不拓宽或畸变空间、不修复污渍磨损瑕疵，画面中不添加任何文字或标识。';
+const state={step:1,maxStep:1,images:[],curGroup:'ext',brand:'',series:'',year:'',trim:'',mileage:'',price:'',gearbox:'',city:'',extra:'',pow:'',claims:[],modelPoints:[],mpSel:null,scenes:new Set(['showroom']),platforms:new Set(['sq','hland','vport']),style:'professional',quality:'std',fmt:'jpg',onsiteBg:null,results:[],copies:{},curSize:'sq',genJobs:[],caps:{}};
 
 /* ================= 工具 ================= */
 const $=s=>document.querySelector(s);const $$=s=>Array.from(document.querySelectorAll(s));
@@ -823,7 +920,9 @@ async function analyzeImage(dataUrl){
   return {sharpness:Math.round(va),brightness:Math.round(bright),sharp,sharpTxt,exp,expTxt};
 }
 
-async function callSceneAPI(prompt,imageDataUrl,onTick){
+async function callSceneAPI(prompt,imagePayload,opts,onTick){
+  if(typeof opts==='function'){onTick=opts;opts=null;}
+  const size=(opts&&opts.size)?opts.size:'2048x2048';
   let lastErr;
   for(let bi=0;bi<PROXY_ENDPOINTS.length;bi++){
     const base=PROXY_ENDPOINTS[bi];
@@ -831,7 +930,7 @@ async function callSceneAPI(prompt,imageDataUrl,onTick){
       const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),110000);
       try{
         const resp=await fetch(base+'/generate',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-          body:JSON.stringify({prompt,image:imageDataUrl,size:'2048x2048'})});
+          body:JSON.stringify({prompt,image:imagePayload,size})});
         clearTimeout(timer);
         const j=await resp.json().catch(()=>null);
         if(resp.ok&&j&&j.ok&&j.b64)return 'data:image/jpeg;base64,'+j.b64;
@@ -849,7 +948,6 @@ async function callSceneAPI(prompt,imageDataUrl,onTick){
   }
   throw lastErr||new Error('生成失败，请稍后重试');
 }
-
 /* ================= 车型知识库（服务端 /kb 优先，未来接 RAG；本地通用兜底） ================= */
 const GENERIC_KB_LOCAL={matched:'generic',
   points:['一手车源、车况透明','定期保养、记录完整','配置实用、满足日常出行','价格务实、性价比突出'],
@@ -906,18 +1004,18 @@ async function loadCapabilities(){
   }
 }
 
-function coverResize(dataUrl,W,H){return new Promise(async(res)=>{
+function coverResize(dataUrl,W,H,fmt){return new Promise(async(res)=>{
+  fmt=fmt||state.fmt||'jpg';
   const img=await loadImage(dataUrl);const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
   const ir=img.width/img.height,or=W/H;let sw,sh,sx,sy;
   if(ir>or){sh=img.height;sw=sh*or;sx=(img.width-sw)/2;sy=0;}else{sw=img.width;sh=sw/or;sx=0;sy=(img.height-sh)/2;}
   ctx.drawImage(img,sx,sy,sw,sh,0,0,W,H);
-  // 左下角 AI 生成角标（合规，火山原右下自带水印，这里放左下不重叠）
   const label='AI 生成';ctx.font='600 '+Math.round(H*0.026)+'px "Noto Sans SC",sans-serif';
   const tw=ctx.measureText(label).width,pad=Math.round(H*0.018),bh=Math.round(H*0.045),bx=pad,by=H-bh-pad;
   ctx.fillStyle='rgba(28,25,23,.55)';roundRect(ctx,bx,by,tw+pad*2,bh,bh/2.4);ctx.fill();
   ctx.fillStyle='#fff';ctx.textBaseline='middle';ctx.fillText(label,bx+pad,by+bh/2+1);
-  res(c.toDataURL('image/jpeg',.92));
+  res(fmt==='png'?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.92));
 });}
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function downloadDataUrl(dataUrl,name){const a=document.createElement('a');a.href=dataUrl;a.download=name;document.body.appendChild(a);a.click();a.remove();}
@@ -933,53 +1031,78 @@ function goStep(n){
 $$('.rail-item').forEach(r=>r.addEventListener('click',()=>goStep(+r.dataset.step)));
 $$('[data-goto]').forEach(b=>b.addEventListener('click',()=>goStep(+b.dataset.goto)));
 /* ================= Step1 点位与上传 ================= */
+function pointName(g,pidx){const pts=SHOT_GROUPS[g].points;if(pidx<pts.length)return pts[pidx][0];return '补充图 '+(pidx-pts.length+1);}
+function imgAt(g,pidx){return state.images.find(i=>i.group===g&&i.pidx===pidx)||null;}
+function firstFreePidx(g){const n=SHOT_GROUPS[g].points.length;for(let k=0;k<n;k++){if(!imgAt(g,k))return k;}return n+state.images.filter(i=>i.group===g&&i.pidx>=n).length;}
 function renderShotTabs(){
   $('#shotTabs').innerHTML=GROUP_ORDER.map(g=>'<div class="shot-tab'+(g===state.curGroup?' active':'')+'" data-g="'+g+'">'+SHOT_GROUPS[g].name+'<span class="cnt" id="cnt-'+g+'">0</span></div>').join('');
-  $$('#shotTabs .shot-tab').forEach(t=>t.onclick=()=>{state.curGroup=t.dataset.g;renderShotTabs();renderPoints();});
+  $$('#shotTabs .shot-tab').forEach(t=>t.onclick=()=>{state.curGroup=t.dataset.g;renderShotTabs();renderPoints();renderThumbs();});
   GROUP_ORDER.forEach(g=>{const n=state.images.filter(i=>i.group===g).length;const el=$('#cnt-'+g);if(el)el.textContent=n;});
 }
 function renderPoints(){
-  const g=SHOT_GROUPS[state.curGroup];const uploaded=state.images.filter(i=>i.group===state.curGroup).length;
-  $('#pointHint').textContent='建议按以下点位拍齐 '+g.points.length+' 张，上传后伙计会逐张质检；也可一次多选上传。';
+  const gk=state.curGroup,g=SHOT_GROUPS[gk];
+  $('#pointHint').textContent='建议按以下 '+g.points.length+' 个标准机位拍齐，点击任意机位可直接为它上传或替换照片；也可把多张照片一起拖进下方区域，伙计会逐张质检并自动归位。';
   $('#pointGrid').innerHTML=g.points.map((p,i)=>{
-    const filled=i<uploaded;
-    return '<div class="point-slot'+(filled?' filled':'')+'"><div class="pn">'+p[0]+'</div><div class="pd">'+p[1]+'</div><div class="pstatus">'+(filled?'已上传':'待拍摄')+'</div></div>';
+    const im=imgAt(gk,i);
+    return '<div class="point-slot'+(im?' filled':'')+'" data-pidx="'+i+'">'+(im?'<img class="pthumb" src="'+im.data+'" alt="">':'')+'<div class="pn">'+p[0]+'</div><div class="pd">'+p[1]+'</div><div class="pstatus">'+(im?'点击替换':'点击上传')+'</div></div>';
   }).join('');
+  $$('#pointGrid .point-slot').forEach(s=>s.onclick=()=>{pendingTarget={group:gk,pidx:+s.dataset.pidx};fileInput.click();});
 }
+let pendingTarget=null;
 const zone=$('#uploadZone'),fileInput=$('#fileInput');
-zone.addEventListener('click',()=>fileInput.click());
+zone.addEventListener('click',()=>{pendingTarget=null;fileInput.click();});
 ['dragover','dragenter'].forEach(e=>zone.addEventListener(e,ev=>{ev.preventDefault();zone.classList.add('drag');}));
 ['dragleave','drop'].forEach(e=>zone.addEventListener(e,ev=>{ev.preventDefault();zone.classList.remove('drag');}));
-zone.addEventListener('drop',ev=>{if(ev.dataTransfer.files.length)handleFiles(ev.dataTransfer.files);});
-fileInput.addEventListener('change',()=>{if(fileInput.files.length)handleFiles(fileInput.files);fileInput.value='';});
-
-async function handleFiles(files){
+zone.addEventListener('drop',ev=>{pendingTarget=null;if(ev.dataTransfer.files.length)handleFiles(ev.dataTransfer.files);});
+fileInput.addEventListener('change',()=>{if(fileInput.files.length)handleFiles(fileInput.files,pendingTarget);fileInput.value='';});
+async function ingestOne(f,group,pidx){
+  if(!f.type.startsWith('image/'))return false;
+  if(f.size>20*1024*1024){toast('单张图片请控制在 20MB 内','err');return false;}
+  const data=await prepareImage(f);const qc=await analyzeImage(data);
+  const id=Date.now()+''+Math.random().toString(36).slice(2,6);
+  const rec={id,data,group,pidx,point:pointName(group,pidx),name:f.name,qc};
+  const ex=state.images.findIndex(i=>i.group===group&&i.pidx===pidx);
+  if(ex>=0)state.images[ex]=rec;else state.images.push(rec);
+  return true;
+}
+async function handleFiles(files,target){
   let added=0;
-  for(const f of files){
-    if(!f.type.startsWith('image/'))continue;
-    if(f.size>20*1024*1024){toast('单张图片请控制在 20MB 内','err');continue;}
-    try{
-      const data=await prepareImage(f);const qc=await analyzeImage(data);
-      const gIdx=state.images.filter(i=>i.group===state.curGroup).length;
-      const point=(SHOT_GROUPS[state.curGroup].points[gIdx]||[])[0]||'';
-      state.images.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),data,group:state.curGroup,gIdx,point,name:f.name,qc});
-      added++;
-    }catch(e){toast('有图片无法读取，建议换 JPG 格式重试','err');}
+  if(target&&target.group){
+    const f=[...files].find(x=>x.type.startsWith('image/'));
+    if(f){try{if(await ingestOne(f,target.group,target.pidx))added++;}catch(e){toast('有图片无法读取，建议换 JPG 格式重试','err');}}
+  }else{
+    for(const f of files){try{if(await ingestOne(f,state.curGroup,firstFreePidx(state.curGroup)))added++;}catch(e){toast('有图片无法读取，建议换 JPG 格式重试','err');}}
   }
-  if(added){renderThumbs();renderShotTabs();renderPoints();updateQcSummary();$('#toStep2').disabled=!state.images.some(i=>i.group==='ext');toast('已上传并完成 '+added+' 张质检');}
+  if(added)afterImagesChanged('已上传并完成 '+added+' 张质检');
+}
+function afterImagesChanged(msg){
+  renderThumbs();renderShotTabs();renderPoints();updateQcSummary();
+  $('#toStep2').disabled=!state.images.some(i=>i.group==='ext');
+  if(msg)toast(msg);
 }
 function qcWorst(qc){const order={bad:0,mid:1,good:2};const s=order[qc.sharp]<order[qc.exp]?qc.sharp:qc.exp;return s;}
+function reflowExtras(g){
+  const n=SHOT_GROUPS[g].points.length;let k=n;
+  state.images.filter(i=>i.group===g&&i.pidx>=n).sort((a,b)=>a.pidx-b.pidx).forEach(ex=>{ex.pidx=k;ex.point=pointName(g,k);k++;});
+}
 function renderThumbs(){
   const wrap=$('#thumbs');
   if(!state.images.length){wrap.innerHTML='';return;}
-  wrap.innerHTML=state.images.map(im=>{
+  const order={ext:0,int:1,space:2};
+  const list=[...state.images].sort((a,b)=>(order[a.group]-order[b.group])||(a.pidx-b.pidx));
+  wrap.innerHTML=list.map(im=>{
     const q=qcWorst(im.qc);const cls=q==='good'?'q-good':q==='mid'?'q-mid':'q-bad';
     const icon=q==='good'?'<path d="M20 6 9 17l-5-5"/>':q==='mid'?'<line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/><circle cx="12" cy="12" r="10"/>':'<line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/><circle cx="12" cy="12" r="10"/>';
     const label=im.qc.sharpTxt+' · '+im.qc.expTxt;
     const gname=SHOT_GROUPS[im.group].name.replace('（必拍）','');
-    return '<div class="thumb"><div class="imgwrap"><img src="'+im.data+'" alt="车源照片"><span class="qbadge '+cls+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px">'+icon+'</svg>'+label+'</span><button class="del" data-id="'+im.id+'" title="删除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="meta"><div class="t">'+gname+'</div><div class="s">'+im.name.slice(0,18)+'</div></div></div>';
+    return '<div class="thumb"><div class="imgwrap"><img src="'+im.data+'" alt="车源照片"><span class="qbadge '+cls+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px">'+icon+'</svg>'+label+'</span><button class="del" data-id="'+im.id+'" title="删除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="meta"><div class="t">'+im.point+'</div><div class="s">'+gname+' · '+im.name.slice(0,14)+'</div></div></div>';
   }).join('');
-  wrap.querySelectorAll('.del').forEach(b=>b.onclick=()=>{state.images=state.images.filter(i=>i.id!==b.dataset.id);renderThumbs();renderShotTabs();renderPoints();updateQcSummary();$('#toStep2').disabled=!state.images.some(i=>i.group==='ext');});
+  wrap.querySelectorAll('.del').forEach(b=>b.onclick=()=>{
+    const im=state.images.find(x=>x.id===b.dataset.id);
+    state.images=state.images.filter(i=>i.id!==b.dataset.id);
+    if(im)reflowExtras(im.group);
+    afterImagesChanged('已删除该照片');
+  });
 }
 function updateQcSummary(){
   const el=$('#qcSummary');if(!state.images.length){el.className='qc-summary';el.innerHTML='';return;}
@@ -994,7 +1117,6 @@ $('#toStep2').onclick=()=>{
   if(!ext.length){toast('请至少上传一张外观照片用于生成场景图','err');return;}
   state.maxStep=Math.max(state.maxStep,2);goStep(2);
 };
-
 /* ================= Step2 车型表单 ================= */
 (function initForms(){
   const OTHER='__other__';
@@ -1114,44 +1236,68 @@ $('#toStep3').onclick=()=>{
 };
 
 /* ================= Step3 配置 ================= */
-$$('#sceneCards .opt-card').forEach(c=>c.onclick=()=>{const s=c.dataset.scene;if(state.scenes.has(s)){if(state.scenes.size===1){toast('至少保留一个场景','err');return;}state.scenes.delete(s);c.classList.remove('sel');}else{state.scenes.add(s);c.classList.add('sel');}});
+function syncSceneCards(){
+  $$('#sceneCards .opt-card').forEach(c=>{c.classList.toggle('sel',state.scenes.has(c.dataset.scene));});
+  const wrap=$('#onsiteWrap');if(wrap)wrap.classList.toggle('show',state.scenes.has('onsite'));
+}
+$$('#sceneCards .opt-card').forEach(c=>c.onclick=()=>{
+  const s=c.dataset.scene;
+  if(state.scenes.has(s)){if(state.scenes.size===1){toast('至少保留一个背景场景','err');return;}state.scenes.delete(s);}
+  else{state.scenes.add(s);if(s==='onsite'&&!state.onsiteBg)setTimeout(()=>toast('请在下方上传你的实地展厅背景照片'),80);}
+  syncSceneCards();
+});
 function renderPlatforms(){
-  $('#platformChips').innerHTML=PLATFORMS.map(p=>'<div class="pf-chip'+(state.platforms.has(p.id)?' sel':'')+'" data-p="'+p.id+'">'+p.name+'<span class="ratio">'+p.ratio+' · '+p.w+'×'+p.h+'</span></div>').join('');
-  $$('#platformChips .pf-chip').forEach(c=>c.onclick=()=>{const p=c.dataset.p;state.platforms.has(p)?state.platforms.delete(p):state.platforms.add(p);if(!state.platforms.size){state.platforms.add(p);toast('至少选择一个平台尺寸','err');}renderPlatforms();});
+  $('#platformChips').innerHTML=PLATFORMS.map(p=>'<div class="pf-chip'+(state.platforms.has(p.id)?' sel':'')+'" data-p="'+p.id+'"><span class="pf-main">'+p.name+'<span class="ratio">'+p.ratio+'</span></span><span class="pf-media">适配 '+p.media+'</span></div>').join('');
+  $$('#platformChips .pf-chip').forEach(c=>c.onclick=()=>{const p=c.dataset.p;if(state.platforms.has(p)){if(state.platforms.size===1){toast('至少选择一个输出尺寸','err');return;}state.platforms.delete(p);}else state.platforms.add(p);renderPlatforms();});
 }
 $$('#styleCards .opt-card').forEach(c=>c.onclick=()=>{state.style=c.dataset.style;$$('#styleCards .opt-card').forEach(x=>x.classList.toggle('sel',x===c));});
 
 /* ================= Step4 生成 ================= */
-const SCENE_ICO={showroom:'<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/>',city:'<path d="M3 21h18"/><path d="M5 21V7l5-3v17"/><path d="M10 21V11l5-2v12"/><path d="M15 21V9l4 2v10"/>',outdoor:'<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',in:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.6"/><path d="M12 14.6V21"/><path d="M4.6 9.6 9.4 11.2"/><path d="M19.4 9.6 14.6 11.2"/>',det:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.4" y2="16.4"/>'};
+const ENHANCE_EXT='专业二手车外观实拍画质增强：仅做自然曝光与白平衡校正、轻微提亮、适度清晰度提升，真实还原车漆颜色、车身线条与正常使用痕迹。严格保持参考图中车辆的车身颜色、车型、轮毂样式与数量、车牌位置、车身比例、镜头透视与车头朝向完全不变，不新增、不删除、不替换任何车辆部件，不修复划痕凹陷、不美化事故痕迹、不水平翻转，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
+const SCENE_ICO={
+  showroom:'<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/>',
+  studio:'<path d="M12 2 4 7l8 5 8-5-8-5Z"/><path d="M4 7v6l8 5 8-5V7"/><path d="M12 12v8"/>',
+  onsite:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  ext:'<path d="M9 6h6l1.6 3H7.4z"/><rect x="4" y="9" width="16" height="11" rx="2"/><circle cx="12" cy="14.5" r="3.2"/>',
+  in:'<path d="M7 18v-5a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v1"/><path d="M5 18h14"/><path d="M7.5 18v2.5M16.5 18v2.5"/><path d="M8.5 9V5.5A1.5 1.5 0 0 1 10 4h2"/>',
+  space:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M9 9.5V20"/>'
+};
 let genAbort=false;
 $('#startGen').onclick=()=>{
-  if(!state.scenes.size){toast('请至少选择一个场景','err');return;}
-  if(!state.platforms.size){toast('请至少选择一个平台尺寸','err');return;}
+  if(!state.scenes.size){toast('请至少选择一个背景场景','err');return;}
+  if(!state.platforms.size){toast('请至少选择一个输出尺寸','err');return;}
+  if(state.scenes.has('onsite')&&!state.onsiteBg){toast('请先上传实地展厅背景照片','err');return;}
   state.results=[];state.maxStep=Math.max(state.maxStep,4);goStep(4);runGeneration();
 };
 function pad2(n){return (n<10?'0':'')+n;}
+function safeName(s){return (s||'').replace(/[\\/:*?"<>|·]/g,'-').replace(/\s+/g,'');}
 async function runGeneration(){
   genAbort=false;$('#toStep5').disabled=true;$('#genTaskList').innerHTML='';
   const scenes=[...state.scenes];
-  const mainScene=scenes[0];
-  const extImgs=state.images.filter(i=>i.group==='ext');
-  const intImgs=state.images.filter(i=>i.group==='int');
-  const detImgs=state.images.filter(i=>i.group==='det');
+  const extImgs=state.images.filter(i=>i.group==='ext').sort((a,b)=>a.pidx-b.pidx);
+  const intImgs=state.images.filter(i=>i.group==='int').sort((a,b)=>a.pidx-b.pidx);
+  const spaceImgs=state.images.filter(i=>i.group==='space').sort((a,b)=>a.pidx-b.pidx);
+  const size=state.quality==='hd'?'2304x2304':'2048x2048';
+  const main=extImgs[0];
   const jobs=[];
-  extImgs.forEach((im,k)=>{
-    const nm=(k===0?'外观主图':'外观'+pad2(k+1))+(im.point?' · '+im.point:'');
-    jobs.push({kind:'ext',ico:mainScene,image:im.data,name:nm,prompt:SCENES[mainScene].prompt,sub:'保持车身一致 · 替换背景 · 合规质检'});
-  });
-  for(let s=1;s<scenes.length;s++){
-    jobs.push({kind:'ext',ico:scenes[s],image:extImgs[0].data,name:'主图 · '+SCENES[scenes[s]].name,prompt:SCENES[scenes[s]].prompt,sub:'同一主图 · 多场景备选'});
+  if(main){
+    scenes.forEach(sk=>{
+      const sc=SCENES[sk];const isOn=sk==='onsite';
+      jobs.push({kind:'ext-main',ico:sk,sceneKey:sk,name:'外观主图 · '+sc.name,
+        prompt:sc.prompt,image:isOn?[main.data,state.onsiteBg]:main.data,
+        sub:isOn?'你的实地展厅 · 车与背景自然融合':'保持车身一致 · 替换背景 · 合规质检'});
+    });
   }
-  intImgs.forEach((im,k)=>{jobs.push({kind:'int',ico:'in',image:im.data,name:'内饰'+(im.point?' · '+im.point:pad2(k+1)),prompt:ENHANCE_INT,sub:'画质增强 · 不改成色 · 不抹瑕疵'});});
-  detImgs.forEach((im,k)=>{jobs.push({kind:'det',ico:'det',image:im.data,name:'细节'+(im.point?' · '+im.point:pad2(k+1)),prompt:ENHANCE_DET,sub:'画质增强 · 不篡改读数 · 不抹瑕疵'});});
+  extImgs.slice(1).forEach(im=>jobs.push({kind:'ext',ico:'ext',name:'外观 · '+im.point,prompt:ENHANCE_EXT,image:im.data,sub:'实拍增强 · 不改成色 · 不抹瑕疵'}));
+  intImgs.forEach(im=>jobs.push({kind:'int',ico:'in',name:'内饰 · '+im.point,prompt:ENHANCE_INT,image:im.data,sub:'画质增强 · 不改成色 · 不抹瑕疵'}));
+  spaceImgs.forEach(im=>jobs.push({kind:'space',ico:'space',name:'空间 · '+im.point,prompt:ENHANCE_SPACE,image:im.data,sub:'空间增强 · 不畸变 · 不抹瑕疵'}));
   const imgJobs=jobs.length;
   jobs.push({type:'copy'});
   state.genJobs=jobs;
-  $('#genOverview').innerHTML='<div class="gen-stat"><div class="n">'+imgJobs+'</div><div class="l">张成品图</div></div><div class="gen-stat"><div class="n">'+state.platforms.size+'</div><div class="l">个平台尺寸</div></div><div class="gen-stat"><div class="n">1 套</div><div class="l">车源文案</div></div>';
+  const qLabel=state.quality==='hd'?'高清 2K':'标准';
+  $('#genOverview').innerHTML='<div class="gen-stat"><div class="n">'+imgJobs+'</div><div class="l">张成品图</div></div><div class="gen-stat"><div class="n">'+state.platforms.size+'</div><div class="l">个输出尺寸</div></div><div class="gen-stat"><div class="n">'+qLabel+'</div><div class="l">清晰度</div></div><div class="gen-stat"><div class="n">1 套</div><div class="l">车源文案</div></div>';
   let done=0;
+  const recOf=job=>({kind:job.kind,name:job.name,prompt:job.prompt,image:job.image,sceneKey:job.sceneKey||null});
   const enableNext=()=>{if(state.results.length){$('#toStep5').disabled=false;state.maxStep=Math.max(state.maxStep,5);}};
   for(let i=0;i<jobs.length;i++){
     const job=jobs[i];
@@ -1165,14 +1311,14 @@ async function runGeneration(){
     let p=0;const tick=setInterval(()=>{p=Math.min(88,p+Math.max(1,Math.round((88-p)*0.08)));el.bar.style.width=p+'%';},350);
     try{
       el.state.className='gt-state run';el.state.textContent='生成中…（'+(done+1)+'/'+imgJobs+'）';
-      const data=await callSceneAPI(job.prompt,job.image,(kind,att)=>{el.state.textContent='第 '+att+' 次重试…';});
+      const data=await callSceneAPI(job.prompt,job.image,{size},(kind,att)=>{el.state.textContent='第 '+att+' 次重试…';});
       clearInterval(tick);el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';
-      state.results.push({kind:job.kind,name:job.name,data});done++;
+      state.results.push(Object.assign({data},recOf(job)));done++;
     }catch(e){
       clearInterval(tick);el.bar.style.width='0%';el.bar.style.background='var(--red)';el.state.className='gt-state err';el.state.textContent='失败：'+(e.message||'网络异常');el.box.style.borderColor='#fecaca';
       const rb=document.createElement('button');rb.className='btn btn-ghost btn-sm';rb.style.marginTop='10px';rb.textContent='重试';
       rb.onclick=async()=>{rb.remove();el.bar.style.background='';el.box.style.borderColor='';el.state.className='gt-state run';el.state.textContent='重试中…';
-        try{const d=await callSceneAPI(job.prompt,job.image);el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';state.results.push({kind:job.kind,name:job.name,data:d});done++;enableNext();}catch(err){el.state.className='gt-state err';el.state.textContent='重试失败';}};
+        try{const d=await callSceneAPI(job.prompt,job.image,{size});el.bar.style.width='100%';el.state.className='gt-state ok';el.state.textContent='完成';state.results.push(Object.assign({data:d},recOf(job)));done++;enableNext();}catch(err){el.state.className='gt-state err';el.state.textContent='重试失败';}};
       el.box.appendChild(rb);
     }
   }
@@ -1180,7 +1326,8 @@ async function runGeneration(){
 }
 function makeTaskEl(ico,name,sub){
   const div=document.createElement('div');div.className='gen-task';
-  div.innerHTML='<div class="gt-top"><span class="gt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ico==='doc'?'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>':SCENE_ICO[ico])+'</svg></span><div><div class="gt-name">'+name+'</div><div class="gt-sub">'+sub+'</div></div><span class="gt-state">排队中</span></div><div class="progress"><div class="bar"></div></div>';
+  const path=ico==='doc'?'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>':(SCENE_ICO[ico]||SCENE_ICO.ext);
+  div.innerHTML='<div class="gt-top"><span class="gt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg></span><div><div class="gt-name">'+name+'</div><div class="gt-sub">'+sub+'</div></div><span class="gt-state">排队中</span></div><div class="progress"><div class="bar"></div></div>';
   $('#genTaskList').appendChild(div);
   return {box:div,state:div.querySelector('.gt-state'),bar:div.querySelector('.bar')};
 }
@@ -1194,23 +1341,83 @@ function renderResults(){
   $$('#sizeChips .size-chip').forEach(b=>b.onclick=()=>{state.curSize=b.dataset.p;renderResults();});
   const pf=PLATFORMS.find(p=>p.id===state.curSize);
   const grid=$('#resultGrid');
-  const card=r=>{const i=state.results.indexOf(r);const tag=r.kind==='ext'?'外观场景':'内饰 / 细节';
-    return '<div class="result-card"><div class="rc-img"><span class="rc-tag">'+tag+'</span><img id="ri'+i+'" alt="'+r.name+'"><span class="rc-watermark">AI 生成</span></div><div class="rc-body"><div class="rc-name">'+r.name+'</div><div class="rc-size">'+pf.name+' · '+pf.w+'×'+pf.h+' · '+pf.ratio+'</div><div class="rc-actions"><button class="btn btn-primary" data-dl="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载</button></div></div></div>';};
-  const zones=[{title:'外观场景图',rs:state.results.filter(r=>r.kind==='ext')},{title:'内饰 / 细节增强图',rs:state.results.filter(r=>r.kind!=='ext')}].filter(z=>z.rs.length);
-  grid.innerHTML=zones.map(z=>'<div class="rz-title">'+z.title+'<span>'+z.rs.length+' 张</span></div>'+z.rs.map(card).join('')).join('');
-  state.results.forEach(async(r)=>{const i=state.results.indexOf(r);const out=await coverResize(r.data,pf.w,pf.h);const im=$('#ri'+i);if(im)im.src=out;r['crop_'+pf.id]=out;});
-  $$('[data-dl]').forEach(b=>b.onclick=async()=>{const r=state.results[+b.dataset.dl];let out=r['crop_'+pf.id];if(!out){out=await coverResize(r.data,pf.w,pf.h);r['crop_'+pf.id]=out;}downloadDataUrl(out,fileBase()+'_'+r.name+'_'+pf.name+'_'+pf.w+'x'+pf.h+'.jpg');toast('已下载 '+r.name);});
+  const qLabel=state.quality==='hd'?'高清 2K':'标准';const fmtLabel=state.fmt.toUpperCase();
+  const dlIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  const redoIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>';
+  const tagOf=r=>r.kind==='ext-main'?'主图场景':(r.kind==='ext'?'外观增强':(r.kind==='int'?'内饰':'空间'));
+  const card=r=>{const i=state.results.indexOf(r);
+    return '<div class="result-card"><div class="rc-img"><span class="rc-tag">'+tagOf(r)+'</span><img id="ri'+i+'" class="rc-open" data-i="'+i+'" alt="'+r.name+'"><span class="rc-watermark">AI 生成</span></div><div class="rc-body"><div class="rc-name">'+r.name+'</div><div class="rc-size">'+pf.name+' · '+pf.w+'×'+pf.h+' · '+qLabel+' · '+fmtLabel+'</div><div class="rc-actions"><button class="btn btn-primary" data-dl="'+i+'">'+dlIcon+'下载</button><button class="btn btn-ghost" data-redo="'+i+'">'+redoIcon+'重做</button></div></div></div>';};
+  const zones=[{title:'外观场景与实拍增强图',rs:state.results.filter(r=>r.kind==='ext-main'||r.kind==='ext')},{title:'内饰 · 空间增强图',rs:state.results.filter(r=>r.kind==='int'||r.kind==='space')}].filter(z=>z.rs.length);
+  grid.innerHTML=zones.map(z=>'<div class="rz-title">'+z.title+'<span>'+z.rs.length+' 张 · 点击图片可放大查看</span></div>'+z.rs.map(card).join('')).join('');
+  state.results.forEach(r=>refreshResultCard(r));
+  grid.onclick=async e=>{
+    const dl=e.target.closest('[data-dl]');
+    if(dl){const r=state.results[+dl.dataset.dl];const key='crop_'+pf.id+'_'+state.fmt;let out=r[key];if(!out){out=await coverResize(r.data,pf.w,pf.h,state.fmt);r[key]=out;}downloadDataUrl(out,fileBase()+'_'+safeName(r.name)+'_'+pf.name+'_'+pf.w+'x'+pf.h+'.'+(state.fmt==='png'?'png':'jpg'));toast('已下载 '+r.name);return;}
+    const rd=e.target.closest('[data-redo]');
+    if(rd){redoOne(state.results[+rd.dataset.redo],rd);return;}
+    const ov=e.target.closest('.rc-open');
+    if(ov){const r=state.results[+ov.dataset.i];const key='crop_'+pf.id+'_'+state.fmt;openLightbox(r[key]||r.data,r.name+' · '+pf.name+' · '+pf.w+'×'+pf.h);}
+  };
   renderCopies();
 }
+async function refreshResultCard(r){
+  const pf=PLATFORMS.find(p=>p.id===state.curSize);const key='crop_'+pf.id+'_'+state.fmt;
+  let out=r[key];if(!out){out=await coverResize(r.data,pf.w,pf.h,state.fmt);r[key]=out;}
+  const i=state.results.indexOf(r);const im=$('#ri'+i);if(im)im.src=out;
+}
+async function redoOne(r,btn){
+  if(btn){btn.disabled=true;btn.dataset.old=btn.textContent;btn.textContent='重做中…';}
+  const size=state.quality==='hd'?'2304x2304':'2048x2048';
+  try{
+    const data=await callSceneAPI(r.prompt,r.image,{size});
+    r.data=data;Object.keys(r).forEach(k=>{if(k.indexOf('crop_')===0)delete r[k];});
+    await refreshResultCard(r);toast('已重新生成：'+r.name);
+  }catch(e){toast('重做失败：'+(e.message||'网络异常'),'err');}
+  if(btn){btn.disabled=false;btn.textContent=btn.dataset.old||'重做';}
+}
+function openLightbox(src,cap){const lb=$('#lightbox');if(!lb)return;lb.querySelector('.lb-img').src=src;lb.querySelector('.lb-cap').textContent=cap||'';lb.classList.add('show');document.body.style.overflow='hidden';}
+function closeLightbox(){const lb=$('#lightbox');if(lb)lb.classList.remove('show');document.body.style.overflow='';}
 function fileBase(){return (state.brand||'车')+(state.series||'')+(state.year||'');}
 $('#downloadZip').onclick=async()=>{
   if(typeof JSZip==='undefined'){toast('打包组件未加载，请逐张下载','err');return;}
   toast('正在打包全部素材…');
-  const zip=new JSZip();const folder=zip.folder(fileBase()+'_车源物料');const plats=PLATFORMS.filter(p=>state.platforms.has(p.id));
-  for(const r of state.results){for(const p of plats){let out=r['crop_'+p.id];if(!out){out=await coverResize(r.data,p.w,p.h);r['crop_'+p.id]=out;}folder.file(fileBase()+'_'+r.name+'_'+p.name+'_'+p.w+'x'+p.h+'.jpg',out.split(',')[1],{base64:true});}}
+  const zip=new JSZip();const folder=zip.folder(fileBase()+'_车源物料');const plats=PLATFORMS.filter(p=>state.platforms.has(p.id));const ext=state.fmt==='png'?'png':'jpg';
+  for(const r of state.results){
+    for(const p of plats){let out=r['crop_'+p.id+'_'+state.fmt];if(!out){out=await coverResize(r.data,p.w,p.h,state.fmt);r['crop_'+p.id+'_'+state.fmt]=out;}folder.file(fileBase()+'_'+safeName(r.name)+'_'+p.name+'_'+p.w+'x'+p.h+'.'+ext,out.split(',')[1],{base64:true});}
+    if(state.quality==='hd'){folder.file(fileBase()+'_'+safeName(r.name)+'_高清源图2K.jpg',r.data.split(',')[1],{base64:true});}
+  }
   let txt='';for(const k in state.copies)txt+='【'+COPY_TITLE[k]+'】\n'+state.copies[k]+'\n\n';folder.file(fileBase()+'_车源文案.txt',txt);
   const blob=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileBase()+'_车源物料.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast('全部素材与文案已打包下载');
 };
+function bindOutputSpec(){
+  const q=$('#qualityChips'),fm=$('#fmtChips');
+  if(q)q.querySelectorAll('.spec-chip').forEach(c=>c.onclick=()=>{state.quality=c.dataset.q;q.querySelectorAll('.spec-chip').forEach(x=>x.classList.toggle('sel',x===c));});
+  if(fm)fm.querySelectorAll('.spec-chip').forEach(c=>c.onclick=()=>{state.fmt=c.dataset.f;fm.querySelectorAll('.spec-chip').forEach(x=>x.classList.toggle('sel',x===c));toast(state.fmt==='png'?'已切换 PNG（无损，文件较大）':'已切换 JPG');});
+}
+function setOnsitePreview(){
+  const box=$('#onsitePreview');if(!box)return;
+  if(state.onsiteBg){box.innerHTML='<img src="'+state.onsiteBg+'" alt="实地展厅背景"><button type="button" class="onsite-del" id="onsiteDel">更换 / 删除背景</button>';const d=$('#onsiteDel');if(d)d.onclick=()=>{state.onsiteBg=null;try{localStorage.removeItem('workhogee_onsite_bg');}catch(e){}setOnsitePreview();toast('已移除实地背景');};}
+  else box.innerHTML='<div class="onsite-empty">尚未上传展厅背景，生成“实地展厅背景图”前需上传一次</div>';
+}
+function bindOnsiteBg(){
+  const up=$('#onsiteUpload'),inp=$('#onsiteFile');
+  if(!up||!inp)return;
+  up.onclick=()=>inp.click();
+  inp.addEventListener('change',async()=>{
+    const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+    const old=up.textContent;up.textContent='背景处理中…';
+    try{const data=await prepareImage(f);state.onsiteBg=data;try{localStorage.setItem('workhogee_onsite_bg',data);}catch(e){}setOnsitePreview();toast('实地展厅背景已上传并记忆，后续无需重复上传');}
+    catch(e){toast('背景图读取失败，请换 JPG 重试','err');}
+    up.textContent=old;
+  });
+  setOnsitePreview();
+}
+function restoreOnsiteBg(){try{const v=localStorage.getItem('workhogee_onsite_bg');if(v)state.onsiteBg=v;}catch(e){}setOnsitePreview();}
+function bindLightbox(){
+  const lb=$('#lightbox');if(!lb)return;
+  lb.addEventListener('click',e=>{if(e.target===lb||e.target.closest('.lb-close'))closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+}
 $('#restartBtn').onclick=()=>{location.reload();};
 
 /* ================= 车源文案 ================= */
@@ -1278,7 +1485,8 @@ function renderCopies(){
 function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t);return new Promise((res,rej)=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')?res():rej();}catch(e){rej(e);}ta.remove();});}
 
 /* ================= 初始化 ================= */
-renderShotTabs();renderPoints();renderPlatforms();
+renderShotTabs();renderPoints();renderPlatforms();syncSceneCards();bindOutputSpec();bindOnsiteBg();restoreOnsiteBg();bindLightbox();
 </script>
+  <div class="lightbox" id="lightbox"><div class="lb-inner"><button type="button" class="lb-close" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><img class="lb-img" alt="成品大图"><div class="lb-cap"></div></div></div>
 </body>
 </html>
