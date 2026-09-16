@@ -51,20 +51,20 @@ img { max-width: 100%; display: block; }
 .main { display: flex; height: calc(100vh - 52px); }
 
 /* 左侧边栏 */
-.sidebar { width: 180px; background: white; border-right: 1px solid var(--line); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
-.sidebar-section { padding: 14px 10px; border-bottom: 1px solid var(--line); }
-.sidebar-title { font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px; }
-.version-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; font-size: 12px; }
+.sidebar { width: 210px; background: white; border-right: 1px solid var(--line); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+.sidebar-section { padding: 16px 12px; border-bottom: 1px solid var(--line); }
+.sidebar-title { font-size: 11px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; padding: 0 4px; }
+.version-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 3px; font-size: 13px; }
 .version-item:hover { background: var(--paper); }
 .version-item.active { background: rgba(234,88,12,0.08); color: var(--orange); font-weight: 700; }
-.version-item .icon { font-size: 14px; }
-.history-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; color: var(--ink-muted); font-size: 10px; text-align: center; }
-.history-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s; margin-bottom: 2px; }
+.version-item .icon { font-size: 16px; }
+.history-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 10px; color: var(--ink-muted); font-size: 11px; text-align: center; }
+.history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; margin-bottom: 3px; }
 .history-item:hover { background: var(--paper); }
-.history-item img { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; }
+.history-item img { width: 36px; height: 36px; object-fit: cover; border-radius: 4px; }
 .history-item .info { flex: 1; min-width: 0; }
-.history-item .name { font-size: 10px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.history-item .time { font-size: 9px; color: var(--ink-muted); }
+.history-item .name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item .time { font-size: 10px; color: var(--ink-muted); }
 
 /* 中央工作区 */
 .center { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
@@ -73,13 +73,13 @@ img { max-width: 100%; display: block; }
 
 /* 上传区 */
 .stage-upload { justify-content: center; align-items: center; }
-.upload-zone { width: 100%; max-width: 520px; min-height: 300px; border: 2px dashed var(--line); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.25s; background: white; padding: 24px; }
+.upload-zone { width: 100%; max-width: 420px; min-height: 260px; border: 2px dashed var(--line); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.25s; background: white; padding: 20px; }
 .upload-zone:hover, .upload-zone.dragover { border-color: var(--orange); background: rgba(234,88,12,0.02); }
 .upload-icon { color: var(--orange); opacity: 0.6; }
-.upload-title { font-size: 15px; font-weight: 700; }
-.upload-desc { font-size: 11px; color: var(--ink-muted); text-align: center; line-height: 1.6; }
-.upload-samples { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; justify-content: center; }
-.sample-btn { padding: 4px 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.2s; }
+.upload-title { font-size: 16px; font-weight: 700; }
+.upload-desc { font-size: 12px; color: var(--ink-muted); text-align: center; line-height: 1.6; }
+.upload-samples { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+.sample-btn { padding: 5px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
 .sample-btn:hover { border-color: var(--orange); color: var(--orange); }
 
 /* 生图中 */
@@ -129,39 +129,39 @@ img { max-width: 100%; display: block; }
 .action-primary:hover { background: var(--orange-dark); box-shadow: 0 4px 16px rgba(234,88,12,0.3); }
 
 /* 右侧面板 */
-.panel { width: 240px; background: white; border-left: 1px solid var(--line); padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+.panel { width: 270px; background: white; border-left: 1px solid var(--line); padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
 .panel-section { background: var(--paper); border-radius: 10px; overflow: hidden; }
-.panel-title { display: flex; align-items: center; gap: 6px; padding: 10px 12px; font-size: 11px; font-weight: 700; border-bottom: 1px solid var(--line); background: white; }
-.panel-title svg { color: var(--ink-soft); width: 14px; height: 14px; }
-.panel-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-.form-item { display: flex; flex-direction: column; gap: 6px; }
-.form-label { font-size: 10px; font-weight: 600; color: var(--ink-muted); }
-.slider-wrap { display: flex; align-items: center; gap: 8px; }
-.range-input { flex: 1; -webkit-appearance: none; height: 4px; background: var(--line); border-radius: 2px; outline: none; }
-.range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
-.range-value { font-size: 11px; font-weight: 700; color: var(--orange); min-width: 30px; text-align: right; }
-.style-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-.style-tag { padding: 4px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; font-size: 10px; cursor: pointer; transition: all 0.15s; }
+.panel-title { display: flex; align-items: center; gap: 8px; padding: 12px 14px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--line); background: white; }
+.panel-title svg { color: var(--ink-soft); width: 16px; height: 16px; }
+.panel-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+.form-item { display: flex; flex-direction: column; gap: 8px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--ink-muted); }
+.slider-wrap { display: flex; align-items: center; gap: 10px; }
+.range-input { flex: 1; -webkit-appearance: none; height: 5px; background: var(--line); border-radius: 3px; outline: none; }
+.range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+.range-value { font-size: 13px; font-weight: 700; color: var(--orange); min-width: 36px; text-align: right; }
+.style-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.style-tag { padding: 6px 10px; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.15s; }
 .style-tag:hover { border-color: var(--orange); }
 .style-tag.active { background: var(--orange); border-color: var(--orange); color: white; font-weight: 600; }
-.textarea-input { width: 100%; min-height: 50px; padding: 6px 8px; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 10px; resize: vertical; font-family: inherit; outline: none; }
+.textarea-input { width: 100%; min-height: 60px; padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; resize: vertical; font-family: inherit; outline: none; }
 .textarea-input:focus { border-color: var(--orange); }
-.size-checks { display: flex; flex-direction: column; gap: 5px; }
-.size-check { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
+.size-checks { display: flex; flex-direction: column; gap: 6px; }
+.size-check { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
 .size-check:hover { border-color: var(--orange); }
 .size-check.active { border-color: var(--orange); background: rgba(234,88,12,0.04); }
 .size-check input { accent-color: var(--orange); }
 .segmented { display: flex; background: white; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-.seg-btn { flex: 1; padding: 5px 2px; background: transparent; border: none; font-size: 10px; color: var(--ink-muted); cursor: pointer; transition: all 0.15s; border-right: 1px solid var(--line); }
+.seg-btn { flex: 1; padding: 7px 4px; background: transparent; border: none; font-size: 12px; color: var(--ink-muted); cursor: pointer; transition: all 0.15s; border-right: 1px solid var(--line); }
 .seg-btn:last-child { border-right: none; }
 .seg-btn.active { background: var(--orange); color: white; font-weight: 600; }
-.publish-platforms { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
-.pub-platform { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: white; border: 1px solid var(--line); border-radius: 5px; font-size: 10px; }
+.publish-platforms { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.pub-platform { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; }
 .pub-name { font-weight: 600; }
-.pub-status { font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 8px; }
+.pub-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
 .pub-unbound { background: rgba(239,68,68,0.1); color: #ef4444; }
 .pub-bound { background: rgba(34,197,94,0.1); color: #22c55e; }
-.bind-btn { width: 100%; padding: 7px; background: var(--ink); color: white; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.bind-btn { width: 100%; padding: 9px; background: var(--ink); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
 .bind-btn:hover { background: var(--orange); }
 
 /* 底部队列 */
@@ -302,9 +302,9 @@ img { max-width: 100%; display: block; }
         <div class="upload-desc">支持 JPG / PNG / WebP，最大 10MB<br>也可以直接 Ctrl+V 粘贴图片</div>
         <div class="upload-samples">
           <span style="font-size:11px;color:var(--ink-muted);">试试示例：</span>
-          <button class="sample-btn" onclick="loadSample('3c')">3C耳机</button>
-          <button class="sample-btn" onclick="loadSample('food')">红烧肉</button>
-          <button class="sample-btn" onclick="loadSample('home')">家居花瓶</button>
+          <button class="sample-btn" onclick="event.stopPropagation();loadSample('3c')">3C耳机</button>
+          <button class="sample-btn" onclick="event.stopPropagation();loadSample('food')">红烧肉</button>
+          <button class="sample-btn" onclick="event.stopPropagation();loadSample('home')">家居花瓶</button>
         </div>
       </div>
     </div>
@@ -625,7 +625,12 @@ function handleFile(file) {
 
 function loadSample(sample) {
   if (!checkLogin()) return;
-  const samples = { '3c': 'images/3c-earphone.jpg', 'food': 'images/food-hongshaorou.jpg', 'home': 'images/home-vase.jpg' };
+  // 使用内置SVG示例图片，确保一定能加载
+  const samples = {
+    '3c': 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="#f5f0e8"/><ellipse cx="400" cy="550" rx="180" ry="30" fill="rgba(0,0,0,0.08)"/><rect x="310" y="280" width="180" height="200" rx="40" fill="#1c1917"/><rect x="340" y="320" width="120" height="80" rx="20" fill="#2d2a26"/><circle cx="400" cy="360" r="25" fill="#ea580c"/><rect x="280" y="420" width="40" height="120" rx="20" fill="#1c1917"/><rect x="480" y="420" width="40" height="120" rx="20" fill="#1c1917"/><text x="400" y="680" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#a8a29e">3C耳机示例</text></svg>'),
+    'food': 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="#f5f0e8"/><ellipse cx="400" cy="580" rx="200" ry="35" fill="rgba(0,0,0,0.08)"/><circle cx="400" cy="420" r="180" fill="#ffffff" stroke="#e7e5e4" stroke-width="4"/><circle cx="400" cy="420" r="150" fill="#8b4513"/><ellipse cx="350" cy="380" rx="40" ry="25" fill="#d2691e"/><ellipse cx="450" cy="400" rx="35" ry="20" fill="#d2691e"/><ellipse cx="400" cy="450" rx="45" ry="28" fill="#d2691e"/><circle cx="380" cy="360" r="8" fill="#228b22"/><circle cx="430" cy="430" r="6" fill="#228b22"/><text x="400" y="700" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#a8a29e">红烧肉示例</text></svg>'),
+    'home': 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="#f5f0e8"/><ellipse cx="400" cy="620" rx="150" ry="25" fill="rgba(0,0,0,0.08)"/><path d="M350 300 L350 580 Q350 600 370 600 L430 600 Q450 600 450 580 L450 300 Z" fill="#d4c5b0"/><ellipse cx="400" cy="300" rx="60" ry="20" fill="#c4b5a0"/><path d="M370 280 Q400 200 430 280" fill="none" stroke="#8b7355" stroke-width="6"/><circle cx="385" cy="250" r="12" fill="#e8a0bf"/><circle cx="415" cy="240" r="10" fill="#f0c0d0"/><circle cx="400" cy="220" r="14" fill="#d890b0"/><text x="400" y="700" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#a8a29e">家居花瓶示例</text></svg>')
+  };
   state.uploadedImage = samples[sample] || samples['3c'];
   startGeneration();
 }
@@ -675,8 +680,16 @@ async function finishGeneration() {
   try {
     state.generatedImage = await callAPI();
   } catch(e) {
-    console.warn('API失败:', e);
-    state.generatedImage = state.uploadedImage;
+    console.error('API失败:', e);
+    // 显示错误提示
+    const title = $('#processingTitle');
+    const sub = $('#processingSub');
+    if (title) title.textContent = '生成失败';
+    if (sub) sub.textContent = e.message || '请稍后重试';
+    setTimeout(() => {
+      switchStage('upload');
+    }, 2000);
+    return;
   }
   const origImg = $('#originalImg');
   const genImg = $('#generatedImg');
@@ -703,30 +716,41 @@ async function callAPI() {
   if (state.uploadedImage && !state.uploadedImage.startsWith('data:')) {
     try {
       const resp = await fetch(state.uploadedImage);
+      if (!resp.ok) throw new Error('图片加载失败');
       const blob = await resp.blob();
       imageBase64 = await new Promise(resolve => {
         const reader = new FileReader();
         reader.onload = e => resolve(e.target.result);
         reader.readAsDataURL(blob);
       });
-    } catch(e) {}
+    } catch(e) {
+      console.warn('示例图片加载失败，使用原图:', e);
+    }
   }
-  const resp = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-    body: JSON.stringify({
-      model: 'ep-m-20260915134242-p4rpr',
-      prompt: '专业电商商品摄影图，严格保留原图商品主体的形状颜色细节完全不变，仅替换背景为专业电商场景，搭配商业级布光氛围，' + versionNames[state.currentVersion] + '风格，高分辨率商业摄影质感，适合直接上架',
-      image: imageBase64,
-      size: '2048x2048',
-      response_format: 'b64_json'
-    })
-  });
-  const data = await resp.json();
-  if (data.data && data.data[0] && data.data[0].b64_json) {
-    return 'data:image/jpeg;base64,' + data.data[0].b64_json;
+  try {
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'ep-m-20260915134242-p4rpr',
+        prompt: '专业电商商品摄影图，严格保留原图商品主体的形状颜色细节完全不变，仅替换背景为专业电商场景，搭配商业级布光氛围，' + versionNames[state.currentVersion] + '风格，高分辨率商业摄影质感，适合直接上架',
+        image: imageBase64,
+        size: '2048x2048',
+        response_format: 'b64_json'
+      })
+    });
+    const data = await resp.json();
+    if (data.data && data.data[0] && data.data[0].b64_json) {
+      return 'data:image/jpeg;base64,' + data.data[0].b64_json;
+    }
+    if (data.error) {
+      throw new Error(data.error.message || 'API错误');
+    }
+    throw new Error('API返回数据格式错误');
+  } catch(e) {
+    console.error('生图API调用失败:', e);
+    throw e;
   }
-  throw new Error('API错误');
 }
 
 function regenerate() {
