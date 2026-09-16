@@ -167,7 +167,21 @@ ul{list-style:none;}
 .wcard.soon:hover .ric{border-color:rgba(251,146,60,.55);color:var(--orange-light);}
 .wcard.soon:hover .wc-go{color:var(--orange-light);border-color:rgba(251,146,60,.5);opacity:1;transform:translateX(0);}
 .wcard.soon:hover .cap{transform:translateY(-2px);}
-@media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard,.wcard *{transition:none!important;}}
+/* 图片即入口：遮罩 + 明确 CTA 按钮，强化可点击引导 */
+.wcard .wc-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(13,11,9,0) 34%,rgba(13,11,9,.16) 58%,rgba(13,11,9,.78) 100%);transition:background .35s;pointer-events:none;}
+.wcard:hover .wc-veil{background:linear-gradient(180deg,rgba(13,11,9,.1) 0%,rgba(13,11,9,.34) 52%,rgba(13,11,9,.88) 100%);}
+.wcard .wc-cta{position:absolute;right:9px;bottom:8px;z-index:3;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.3px;padding:6px 12px;border-radius:999px;white-space:nowrap;transition:transform .32s cubic-bezier(.22,1,.36,1),background .32s,border-color .32s,color .32s,box-shadow .32s;}
+.wcard .wc-cta svg{width:13px;height:13px;flex-shrink:0;}
+.wcard .wc-cta.live{background:var(--orange);color:#fff;box-shadow:0 8px 18px -6px rgba(234,88,12,.7);}
+.wcard .wc-cta.live svg{animation:wcNudge 2.4s ease-in-out infinite;}
+@keyframes wcNudge{0%,62%,100%{transform:translateX(0);}31%{transform:translateX(3.5px);}}
+.wcard.live:hover .wc-cta.live{background:var(--orange-light);transform:translateY(-2px);box-shadow:0 12px 24px -8px rgba(234,88,12,.8);}
+.wcard .wc-cta.soon{background:rgba(13,11,9,.46);color:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);}
+.wcard.soon:hover .wc-cta.soon{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.72);color:#fff;transform:translateY(-2px);}
+.wcard.live:hover .rnm{color:var(--orange-light);}
+.wcard.soon:hover .rnm{color:#fff;}
+.wcard:focus-visible{outline:2px solid var(--orange-light);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){.wcard .wc-ph img{animation:none;transform:scale(1.06);}.wcard .wc-cta.live svg{animation:none;}.wcard,.wcard *{transition:none!important;}}
 .mh-creed{position:relative;z-index:2;margin-top:64px;border-top:1px solid rgba(255,255,255,.12);padding:30px 0 34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
 .mh-creed .big{font-size:clamp(20px,2.4vw,27px);font-weight:800;letter-spacing:-.3px;}
 .mh-creed .big em{font-style:normal;color:var(--orange-light);}
@@ -594,40 +608,40 @@ ul{list-style:none;}
       <div class="mh-right mh-anim" style="animation-delay:.26s">
         <div class="rail">
           <div class="rail-h"><span class="rt">行业 AI 工作台</span><span class="rs">选个品类，直接开干</span></div>
-          <a href="/huoer-online.html" class="wcard live">
+          <a href="/huoer-online.html" class="wcard live" title="进入二手车 AI 生图工作台">
             <div class="wc-head">
               <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
               <span class="wc-txt"><span class="rnm">二手车 AI 生图工作台</span><span class="rcf">车况 vs 图骗 · 真实场景图</span></span>
-              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
             </div>
             <div class="wc-ph">
               <img src="images/car-suv-outdoor.jpg" alt="二手车 AI 生图工作台生成的真实车况户外场景图">
-              <span class="wc-tag live">已上线</span>
+              <span class="wc-veil"></span>
               <span class="cap">真实车况场景图</span>
+              <span class="wc-cta live">进入工作台<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
             </div>
           </a>
-          <button type="button" class="wcard soon" data-soon="二手房 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
+          <button type="button" class="wcard soon" title="二手房 AI 生图工作台即将上线" data-soon="二手房 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
             <div class="wc-head">
               <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
               <span class="wc-txt"><span class="rnm">二手房 AI 生图工作台</span><span class="rcf">格局 vs 美化失真 · 真实户型</span></span>
-              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
             </div>
             <div class="wc-ph">
               <img src="images/room-nordic.jpg" alt="二手房 AI 生图工作台生成的真实户型采光图">
-              <span class="wc-tag soon">即将上线</span>
+              <span class="wc-veil"></span>
               <span class="cap">真实户型 · 采光图</span>
+              <span class="wc-cta soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>即将上线</span>
             </div>
           </button>
-          <button type="button" class="wcard soon" data-soon="二手潮玩 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
+          <button type="button" class="wcard soon" title="二手潮玩 AI 生图工作台即将上线" data-soon="二手潮玩 AI 生图工作台正在内测筹备中，即将上线，敬请期待">
             <div class="wc-head">
               <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
               <span class="wc-txt"><span class="rnm">二手潮玩 AI 生图工作台</span><span class="rcf">成色 vs 瑕疵抹除 · 藏品陈列</span></span>
-              <span class="wc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
             </div>
             <div class="wc-ph">
               <img src="images/usedtoy-collection.jpg" alt="二手潮玩 AI 生图工作台生成的藏品成色陈列图">
-              <span class="wc-tag soon">即将上线</span>
+              <span class="wc-veil"></span>
               <span class="cap">藏品成色陈列图</span>
+              <span class="wc-cta soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>即将上线</span>
             </div>
           </button>
         </div>
