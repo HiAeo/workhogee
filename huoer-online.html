@@ -250,8 +250,7 @@ img { max-width: 100%; display: block; }
     </div>
   </div>
   <div class="topbar-right">
-    <div class="credits-display">剩余 <strong id="creditsNum">10</strong> 张</div>
-    <button class="buy-btn" onclick="openPurchase()">购买额度</button>
+    <div class="credits-display"><span style="color:#4ade80;font-weight:700;">● 内测无限生图</span></div>
     <div class="user-area">
       <button class="login-btn" id="loginBtn" onclick="openLogin()">登录</button>
       <div class="avatar" id="userAvatar" style="display:none;" onclick="logout()">U</div>
@@ -529,11 +528,11 @@ img { max-width: 100%; display: block; }
 </div>
 
 <script>
-const FREE_LIMIT = 10;
+const FREE_LIMIT = 999999;
 const versionNames = { ecommerce: '电商通用版', xianyu: '闲鱼专版', food: '餐饮专版', cloth: '服装专版', global: '外贸专版' };
 let state = {
-  isLoggedIn: localStorage.getItem('workhogee_online_logged') === '1',
-  credits: parseInt(localStorage.getItem('workhogee_online_credits') || FREE_LIMIT.toString()),
+  isLoggedIn: true,
+  credits: 999999,
   currentVersion: 'ecommerce',
   uploadedImage: null,
   generatedImage: null,
@@ -554,13 +553,8 @@ function updateCredits() {
 function updateLoginUI() {
   const loginBtn = $('#loginBtn');
   const avatar = $('#userAvatar');
-  if (state.isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = 'none';
-    if (avatar) avatar.style.display = 'flex';
-  } else {
-    if (loginBtn) loginBtn.style.display = 'block';
-    if (avatar) avatar.style.display = 'none';
-  }
+  if (loginBtn) loginBtn.style.display = 'none';
+  if (avatar) avatar.style.display = 'flex';
 }
 
 function switchStage(name) {
@@ -627,8 +621,6 @@ function loadSample(sample) {
 }
 
 function checkLogin() {
-  if (!state.isLoggedIn) { openLogin(); return false; }
-  if (state.credits <= 0) { openPurchase(); return false; }
   return true;
 }
 
@@ -670,8 +662,6 @@ function cancelGeneration() {
 
 async function finishGeneration() {
   state.isProcessing = false;
-  state.credits--;
-  updateCredits();
   try {
     state.generatedImage = await callAPI();
   } catch(e) {
