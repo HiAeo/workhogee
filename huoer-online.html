@@ -273,6 +273,49 @@ img{display:block;max-width:100%}
   .result-toolbar{flex-wrap:wrap}
   #sizeChips{order:3;width:100%}
 }
+/* ================= 批次1：车型知识库表单 / 品牌选择器 ================= */
+.pick-box{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border:1px solid var(--line,#e5ddce);border-radius:10px;background:#fff;font-size:14px;color:var(--coal,#0d0b09);cursor:pointer;text-align:left;transition:border-color .18s,box-shadow .18s;font-family:inherit;}
+.pick-box:hover{border-color:var(--orange,#ea580c);box-shadow:0 0 0 3px rgba(234,88,12,.10);}
+.pick-box .pick-ph{color:#a8a29e;font-weight:400;}
+.pick-box .pick-val{font-weight:600;}
+.pow-tag{display:inline-block;margin-top:8px;padding:2px 10px;border-radius:999px;background:var(--coal,#0d0b09);color:#fff;font-size:11px;letter-spacing:.06em;}
+select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
+/* 品牌选择弹层 */
+.brand-modal{position:fixed;inset:0;z-index:1200;display:none;}
+.brand-modal.show{display:block;}
+.brand-mask{position:absolute;inset:0;background:rgba(13,11,9,.52);}
+.brand-dialog{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,92vw);max-height:82vh;display:flex;flex-direction:column;background:var(--paper,#faf8f4);border-radius:18px;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.35);}
+.bd-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line,#e5ddce);}
+.bd-title{font-weight:800;font-size:16px;color:var(--coal,#0d0b09);}
+.bd-close{width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:#57534e;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.bd-close:hover{background:#f1ebe0;color:var(--coal,#0d0b09);}
+.bd-close svg{width:18px;height:18px;}
+.bd-search{display:flex;align-items:center;gap:8px;margin:14px 20px 4px;padding:10px 12px;border:1px solid var(--line,#e5ddce);border-radius:10px;background:#fff;}
+.bd-search input{flex:1;border:0;outline:none;font-size:14px;background:transparent;color:var(--coal,#0d0b09);font-family:inherit;}
+.bd-powtabs{display:flex;gap:8px;padding:10px 20px 4px;flex-wrap:wrap;}
+.bd-powtabs button{padding:5px 16px;border-radius:999px;border:1px solid var(--line,#e5ddce);background:#fff;font-size:13px;cursor:pointer;color:#44403c;font-family:inherit;transition:.15s;}
+.bd-powtabs button.on{background:var(--coal,#0d0b09);color:#fff;border-color:var(--coal,#0d0b09);}
+.bd-letters{display:flex;flex-wrap:wrap;gap:2px;padding:8px 20px;border-bottom:1px solid var(--line,#e5ddce);}
+.bd-letters button{min-width:26px;height:26px;padding:0 6px;border-radius:7px;border:0;background:transparent;font-size:12px;color:#78716c;cursor:pointer;font-family:inherit;}
+.bd-letters button.has:hover{color:var(--orange,#ea580c);}
+.bd-letters button.on{background:var(--orange,#ea580c);color:#fff;}
+.bd-letters button:not(.has){opacity:.28;cursor:not-allowed;}
+.bd-grid{overflow-y:auto;padding:6px 20px 22px;}
+.bd-empty{padding:40px 0;text-align:center;color:#a8a29e;font-size:14px;}
+.bd-group{margin-top:12px;}
+.bd-gletter{font-size:12px;font-weight:800;color:var(--orange,#ea580c);letter-spacing:.1em;margin:0 0 8px 2px;}
+.bd-gitems{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;}
+.bd-brand{position:relative;display:flex;align-items:center;justify-content:center;padding:11px 8px 11px;border:1px solid var(--line,#e5ddce);border-radius:10px;background:#fff;font-size:13.5px;color:var(--coal,#0d0b09);cursor:pointer;transition:.15s;font-family:inherit;}
+.bd-brand:hover{border-color:var(--orange,#ea580c);background:#fff3eb;color:var(--orange,#ea580c);}
+.bd-brand .bd-sub{position:absolute;top:4px;right:6px;font-size:9px;line-height:1;color:#a8a29e;letter-spacing:.02em;}
+/* 卖点 / 声明 */
+.claim-panel .claim-warn{color:var(--orange,#ea580c);}
+.kb-chip.claim-chip.sel{background:var(--coal,#0d0b09);border-color:var(--coal,#0d0b09);color:#fff;}
+.kb-chip.claim-chip.sel::after{content:'✓';margin-left:6px;color:var(--orange,#ea580c);font-weight:700;}
+@media(max-width:640px){
+  .brand-dialog{width:94vw;max-height:86vh;}
+  .bd-gitems{grid-template-columns:repeat(auto-fill,minmax(86px,1fr));}
+}
 </style>
 </head>
 <body>
@@ -345,18 +388,20 @@ img{display:block;max-width:100%}
     </div>
     <div class="form-grid">
       <div class="field"><label>品牌<span class="req">*</span></label>
-        <select id="fBrand"></select>
-      </div>
+  <button type="button" class="pick-box" id="brandPick"><span class="pick-ph">选择品牌，可按拼音首字母查找</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;opacity:.6"><polyline points="6 9 12 15 18 9"/></svg></button>
+</div>
       <div class="field"><label>车系<span class="req">*</span></label>
-        <input id="fSeries" list="seriesList" placeholder="如 雅阁、Model 3、哈弗H6">
-        <datalist id="seriesList"></datalist>
-      </div>
+  <select id="fSeriesSel" disabled><option value="">请先选择品牌</option></select>
+  <input id="fSeriesCustom" placeholder="手动填写具体车系，如 雅阁、Model Y" style="display:none;margin-top:8px">
+  <span class="pow-tag" id="powTag" style="display:none"></span>
+</div>
       <div class="field"><label>上牌年款</label>
         <select id="fYear"></select>
       </div>
       <div class="field"><label>配置版本<span class="opt">可选</span></label>
-        <input id="fTrim" placeholder="如 260TURBO 豪华版">
-      </div>
+  <select id="fTrimSel" disabled><option value="">请先选择车系</option></select>
+  <input id="fTrimCustom" placeholder="手动填写配置版本，如 260TURBO 豪华版" style="display:none;margin-top:8px">
+</div>
       <div class="field"><label>表显里程（万公里）<span class="opt">可选</span></label>
         <input id="fMileage" type="number" min="0" step="0.1" placeholder="如 5.8">
       </div>
@@ -364,24 +409,32 @@ img{display:block;max-width:100%}
         <input id="fPrice" type="number" min="0" step="0.1" placeholder="如 12.8">
       </div>
       <div class="field"><label>变速箱 / 排量<span class="opt">可选</span></label>
-        <input id="fGearbox" placeholder="如 自动 / 1.5T">
-      </div>
+  <select id="fGearSel" disabled><option value="">请先选择车系</option></select>
+  <input id="fGearCustom" placeholder="手动填写，如 2.0T 自动挡" style="display:none;margin-top:8px">
+</div>
       <div class="field"><label>所在地<span class="opt">可选</span></label>
         <input id="fCity" placeholder="如 河北·邢台">
       </div>
       <div class="field full"><label>补充卖点或车况说明<span class="opt">可选，会融入文案，请勿填写无依据承诺</span></label>
-        <textarea id="fExtra" placeholder="如：一手车主、定期 4S 保养、带座椅加热和全景天窗；勿填写“无事故”“原版原漆”等无法保证的表述"></textarea>
+        <textarea id="fExtra" placeholder="如：带座椅加热和全景天窗、刚换四条新胎、加装行车记录仪。一手车、原版原漆、零出险等属实声明，请在下方“车主事实声明”里勾选"></textarea>
       </div>
       <div class="field full">
-        <div class="kb-panel" id="kbPanel" hidden>
+        <div class="kb-panel">
           <div class="kb-head">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            <span id="kbTitle">车型知识库</span>
-            <span class="kb-badge" id="kbMatched"></span>
+            <div class="kb-title"><span class="kbTitleIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>车型卖点 · 客观亮点</div>
+            <button type="button" class="kb-mini" id="genModelPoints">一键生成车型卖点</button>
           </div>
-          <div class="kb-section-label">点击卖点，自动加入车况说明</div>
-          <div class="kb-chips" id="kbChips"></div>
-          <div class="kb-caution" id="kbCaution" hidden></div>
+          <div class="kb-note" id="mpHint">选择品牌和车系后，按车型知识库生成客观卖点，可点选保留，用于标题与文案。</div>
+          <div class="kb-chips" id="modelPointChips"></div>
+        </div>
+      </div>
+      <div class="field full">
+        <div class="kb-panel claim-panel">
+          <div class="kb-head">
+            <div class="kb-title"><span class="kbTitleIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>车主事实声明</div>
+          </div>
+          <div class="kb-note claim-warn">仅可勾选<b>真实情况</b>（如一手、原版原漆、零出险）。这些是卖家自述，不实或夸大表述由卖家自行承担责任。</div>
+          <div class="kb-chips" id="claimChips"></div>
         </div>
       </div>
     </div>
@@ -524,6 +577,27 @@ img{display:block;max-width:100%}
   </main>
 </div>
 
+<div class="brand-modal" id="brandModal">
+  <div class="brand-mask" id="brandMask"></div>
+  <div class="brand-dialog" role="dialog" aria-label="选择品牌">
+    <div class="bd-head">
+      <div class="bd-title">选择品牌</div>
+      <button type="button" class="bd-close" id="bdClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="bd-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:#a8a29e"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="brandSearch" placeholder="搜索品牌或车系，如 奥迪 / 雅阁 / Model Y" autocomplete="off">
+    </div>
+    <div class="bd-powtabs" id="powTabs">
+      <button type="button" data-pow="" class="on">全部</button>
+      <button type="button" data-pow="ice">燃油</button>
+      <button type="button" data-pow="ev">纯电</button>
+      <button type="button" data-pow="hev">混动</button>
+    </div>
+    <div class="bd-letters" id="bdLetters"></div>
+    <div class="bd-grid" id="bdGrid"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
 /* ================= 常量与数据 ================= */
@@ -545,8 +619,155 @@ const SHOT_GROUPS={
 };
 const GROUP_ORDER=['ext','int','det'];
 
-const BRANDS=['大众','丰田','本田','日产','别克','雪佛兰','福特','现代','起亚','马自达','奔驰','宝马','奥迪','雷克萨斯','凯迪拉克','沃尔沃','特斯拉','比亚迪','吉利','长安','哈弗','五菱','理想','蔚来','小鹏','其他 / 不确定'];
-const SERIES_HINT=['雅阁','凯美瑞','卡罗拉','朗逸','轩逸','速腾','Model 3','Model Y','哈弗H6','宋PLUS','秦PLUS','理想L7','宝马3系','奔驰C级','奥迪A4L','CR-V','RAV4','途观','迈腾','天籁'];
+/* ============================================================
+ * WorkHogee 二手车行业知识库（前端内置 · 持续扩充）
+ * 品牌按拼音首字母 A-Z 排序；p 动力：ice 燃油 / ev 纯电 / hev 混动(含增程/插混/油混)
+ * t 车身：轿车 / SUV / MPV / 跑车 / 皮卡；lux=1 豪华品牌
+ * 车系可带 tag(车型卖点) / g(常见排量·变速箱) / tr(常见配置版本)
+ * 未给 g/tr 时按动力类型给通用选项，始终保留“其他/手动填写”，选项可改
+ * ============================================================ */
+const CAR_DB=[
+{n:'阿维塔',l:'A',pow:['ev','hev'],ms:[
+ {n:'阿维塔07',t:'SUV',p:'hev'},{n:'阿维塔11',t:'SUV',p:'ev',tag:['华为乾崑智驾','鸿蒙座舱','设计前卫']},{n:'阿维塔12',t:'轿车',p:'ev',tag:['华为智驾','轿跑造型','智能座舱']}]},
+{n:'埃安',l:'A',pow:['ev'],ms:[
+ {n:'AION S',t:'轿车',p:'ev',tag:['网约车保有量大','用车成本低','空间实用']},{n:'AION Y',t:'SUV',p:'ev',tag:['大空间','续航实在','家用代步']},{n:'AION V',t:'SUV',p:'ev'},{n:'昊铂GT',t:'轿车',p:'ev'},{n:'昊铂HT',t:'SUV',p:'ev'}]},
+{n:'奥迪',l:'A',pow:['ice','hev','ev'],lux:1,ms:[
+ {n:'A4L',t:'轿车',p:'ice',tag:['豪华中型车标杆','保值率高','商务家用兼顾'],g:['2.0T 7挡双离合'],tr:['40 TFSI 时尚动感型','40 TFSI 豪华动感型','45 TFSI 臻选动感型']},
+ {n:'A6L',t:'轿车',p:'ice',tag:['行政座驾','后排宽敞','商务接待有面'],g:['2.0T 7挡双离合','3.0T 7挡双离合'],tr:['40 TFSI 豪华致雅型','45 TFSI 臻选致雅型','55 TFSI 旗舰致雅型']},
+ {n:'A3',t:'轿车',p:'ice'},{n:'Q3',t:'SUV',p:'ice'},{n:'Q5L',t:'SUV',p:'ice',tag:['豪华SUV销量担当','空间均衡','quattro四驱'],g:['2.0T 7挡双离合']},{n:'Q2L',t:'SUV',p:'ice'},{n:'A8L',t:'轿车',p:'ice'},{n:'Q7',t:'SUV',p:'ice'},{n:'e-tron',t:'SUV',p:'ev'}]},
+{n:'奔驰',l:'B',pow:['ice','hev','ev'],lux:1,ms:[
+ {n:'C级',t:'轿车',p:'ice',tag:['豪华内饰','品牌力强','乘坐舒适'],g:['1.5T 9AT','2.0T 9AT'],tr:['C 200 L 动感型','C 260 L 运动版','C 260 L 皓夜版']},
+ {n:'E级',t:'轿车',p:'ice',tag:['行政豪华','立标商务','后排舒适'],g:['2.0T 9AT'],tr:['E 260 L','E 300 L 时尚型','E 300 L 尊贵型']},
+ {n:'A级',t:'轿车',p:'ice'},{n:'GLC',t:'SUV',p:'ice',tag:['豪华SUV标杆','保值','四驱'],g:['2.0T 9AT'],tr:['GLC 260 L 动感型','GLC 300 L 动感型']},{n:'GLA',t:'SUV',p:'ice'},{n:'GLB',t:'SUV',p:'ice',tag:['七座紧凑SUV','品牌入门','实用']},{n:'GLE',t:'SUV',p:'ice'},{n:'S级',t:'轿车',p:'ice'},{n:'威霆',t:'MPV',p:'ice',tag:['商务改装热门','空间巨大']},{n:'EQE',t:'轿车',p:'ev'}]},
+{n:'奔腾',l:'B',pow:['ice','ev'],ms:[{n:'B70',t:'轿车',p:'ice'},{n:'T77',t:'SUV',p:'ice'},{n:'T99',t:'SUV',p:'ice'},{n:'NAT',t:'MPV',p:'ev',tag:['网约/营运车型','侧滑门','电动低成本']}]},
+{n:'本田',l:'B',pow:['ice','hev'],ms:[
+ {n:'雅阁',t:'轿车',p:'ice',tag:['中型车保值王','省油可靠','空间大'],g:['1.5T CVT','2.0L E-CVT(混动)'],tr:['260TURBO 豪华版','260TURBO 旗舰版','锐·混动 锐领版']},
+ {n:'思域',t:'轿车',p:'ice',tag:['运动造型','操控好','年轻改装热门'],g:['1.5T CVT']},{n:'CR-V',t:'SUV',p:'ice',tag:['紧凑SUV常青树','保值率高','空间实用'],g:['1.5T CVT','2.0L E-CVT(混动)']},{n:'XR-V',t:'SUV',p:'ice'},{n:'缤智',t:'SUV',p:'ice'},{n:'皓影',t:'SUV',p:'ice'},{n:'飞度',t:'轿车',p:'ice',tag:['极致省油','好开好停','保值神器']},{n:'冠道',t:'SUV',p:'ice',tag:['大五座空间','2.0T动力']},{n:'型格',t:'轿车',p:'ice'},{n:'UR-V',t:'SUV',p:'ice'}]},
+{n:'比亚迪',l:'B',pow:['hev','ev','ice'],ms:[
+ {n:'秦PLUS',t:'轿车',p:'hev',tag:['DM-i超级混动','亏电油耗低','销量冠军'],g:['DM-i E-CVT','EV 单速电驱'],tr:['DM-i 55KM 领先型','DM-i 120KM 超越型','EV 420KM 领先型']},
+ {n:'宋PLUS',t:'SUV',p:'hev',tag:['DM-i混动SUV销冠','省油无焦虑','空间大'],g:['DM-i E-CVT','EV 单速电驱'],tr:['DM-i 71KM 豪华型','DM-i 110KM 旗舰型','EV 520KM 尊贵型']},
+ {n:'汉',t:'轿车',p:'hev',tag:['中大型旗舰','DM-p四驱','配置拉满'],g:['DM-i E-CVT','EV 单速电驱']},{n:'唐',t:'SUV',p:'hev',tag:['七座旗舰SUV','DM-p性能','大空间']},{n:'元PLUS',t:'SUV',p:'ev',tag:['e平台3.0','出口热门','续航扎实']},{n:'海豚',t:'轿车',p:'ev',tag:['城市代步','好开好停','刀片电池']},{n:'海豹',t:'轿车',p:'ev',tag:['CTB电池车身','运动轿跑','后驱操控']},{n:'海鸥',t:'轿车',p:'ev',tag:['入门纯电','代步神器','性价比']},{n:'秦L',t:'轿车',p:'hev',tag:['第五代DM-i','亏电油耗2.9L','长续航']},{n:'海豹06',t:'轿车',p:'hev'},{n:'驱逐舰05',t:'轿车',p:'hev'},{n:'宋Pro',t:'SUV',p:'hev'}]},
+{n:'标致',l:'B',pow:['ice','hev'],ms:[{n:'408',t:'轿车',p:'ice'},{n:'508L',t:'轿车',p:'ice',tag:['法系底盘','设计个性']},{n:'4008',t:'SUV',p:'ice'},{n:'5008',t:'SUV',p:'ice',tag:['七座','法系设计']},{n:'2008',t:'SUV',p:'ice'}]},
+{n:'别克',l:'B',pow:['ice','hev','ev'],ms:[
+ {n:'英朗',t:'轿车',p:'ice',tag:['保有量大','代步实惠','隔音好']},{n:'威朗',t:'轿车',p:'ice'},{n:'君威',t:'轿车',p:'ice',tag:['B级车性价比','底盘扎实']},{n:'君越',t:'轿车',p:'ice',tag:['行政舒适','隔音好']},{n:'昂科威',t:'SUV',p:'ice',tag:['中型SUV','空间舒适']},{n:'昂科拉',t:'SUV',p:'ice'},{n:'GL8',t:'MPV',p:'ice',tag:['商务MPV霸主','保值率高','二手抢手'],g:['2.0T 9AT','2.5L 混动'],tr:['陆上公务舱 652T 舒适型','ES陆尊 653T 尊享型','艾维亚 Avenir']},{n:'世纪',t:'MPV',p:'ice'},{n:'微蓝6',t:'轿车',p:'ev'}]},
+{n:'宝马',l:'B',pow:['ice','ev'],lux:1,ms:[
+ {n:'3系',t:'轿车',p:'ice',tag:['运动豪华标杆','操控王者','保值'],g:['2.0T 8AT'],tr:['320Li M运动套装','325Li M运动套装','330Li xDrive']},
+ {n:'5系',t:'轿车',p:'ice',tag:['商务运动兼顾','后排舒适','品牌力'],g:['2.0T 8AT'],tr:['525Li M运动套装','530Li 领先型','530Li 尊享型']},{n:'1系',t:'轿车',p:'ice'},{n:'X1',t:'SUV',p:'ice'},{n:'X3',t:'SUV',p:'ice',tag:['豪华中型SUV','操控好','xDrive'],g:['2.0T 8AT']},{n:'X5',t:'SUV',p:'ice'},{n:'2系',t:'轿车',p:'ice'},{n:'4系',t:'轿车',p:'ice'},{n:'i3',t:'轿车',p:'ev',tag:['纯电3系底子','操控依旧']},{n:'iX3',t:'SUV',p:'ev'}]},
+{n:'保时捷',l:'B',pow:['ice','hev','ev'],lux:1,ms:[{n:'Macan',t:'SUV',p:'ice',tag:['豪华品牌入门SUV','保值','操控']},{n:'Cayenne',t:'SUV',p:'ice'},{n:'Panamera',t:'轿车',p:'ice'},{n:'718',t:'跑车',p:'ice'},{n:'911',t:'跑车',p:'ice'},{n:'Taycan',t:'轿车',p:'ev',tag:['纯电跑车','性能强悍']}]},
+{n:'长安',l:'C',pow:['ice','hev','ev'],ms:[
+ {n:'CS75 PLUS',t:'SUV',p:'ice',tag:['自主SUV销量前列','空间大','配置高'],g:['1.5T 8AT','2.0T 8AT']},{n:'CS55 PLUS',t:'SUV',p:'ice'},{n:'CS35 PLUS',t:'SUV',p:'ice'},{n:'逸动',t:'轿车',p:'ice'},{n:'UNI-V',t:'轿车',p:'ice',tag:['运动轿跑','设计年轻']},{n:'UNI-T',t:'SUV',p:'ice'},{n:'Lumin',t:'轿车',p:'ev',tag:['微型代步电车','好停车']}]},
+{n:'长城',l:'C',pow:['ice','hev'],ms:[{n:'炮',t:'皮卡',p:'ice',tag:['乘用化皮卡','载货越野两用']},{n:'风骏7',t:'皮卡',p:'ice'}]},
+{n:'奇瑞',l:'C',pow:['ice','hev','ev'],ms:[
+ {n:'瑞虎8',t:'SUV',p:'ice',tag:['七座可选','性价比高','空间大']},{n:'瑞虎7',t:'SUV',p:'ice'},{n:'艾瑞泽8',t:'轿车',p:'ice',tag:['A+级轿车','配置高']},{n:'瑞虎5x',t:'SUV',p:'ice'},{n:'探索06',t:'SUV',p:'ice'},{n:'风云T9',t:'SUV',p:'hev',tag:['C-DM插混','省油长续航']},{n:'小蚂蚁',t:'轿车',p:'ev',tag:['微型纯电','代步好停']},{n:'QQ冰淇淋',t:'轿车',p:'ev'}]},
+{n:'大众',l:'D',pow:['ice','ev'],ms:[
+ {n:'朗逸',t:'轿车',p:'ice',tag:['家轿销冠','保值省油','维修便宜'],g:['1.5L 6AT','1.5T 7挡双离合'],tr:['1.5L 自动得逸版','1.5L 自动满逸版','1.5T DSG满逸版']},
+ {n:'速腾',t:'轿车',p:'ice',tag:['A+级家轿','空间大','底盘稳'],g:['1.4T 7挡双离合','1.5T 7挡双离合']},{n:'迈腾',t:'轿车',p:'ice',tag:['B级商务','后排大','保值'],g:['2.0T 7挡双离合']},{n:'帕萨特',t:'轿车',p:'ice',tag:['商务家轿','后排宽敞','保有量大'],g:['2.0T 7挡双离合']},{n:'宝来',t:'轿车',p:'ice'},{n:'高尔夫',t:'轿车',p:'ice',tag:['两厢经典','操控灵活','改装热门']},{n:'凌渡L',t:'轿车',p:'ice'},{n:'途观L',t:'SUV',p:'ice',tag:['合资中型SUV','七座可选','保值'],g:['2.0T 7挡双离合']},{n:'探岳',t:'SUV',p:'ice'},{n:'途昂',t:'SUV',p:'ice',tag:['大七座','空间巨大']},{n:'途岳',t:'SUV',p:'ice'},{n:'Polo',t:'轿车',p:'ice'},{n:'CC',t:'轿车',p:'ice',tag:['轿跑造型','无框车门']},{n:'ID.4 CROZZ',t:'SUV',p:'ev'},{n:'ID.3',t:'轿车',p:'ev',tag:['纯电小钢炮','好开']},{n:'威然',t:'MPV',p:'ice'}]},
+{n:'东风风神',l:'D',pow:['ice','ev'],ms:[{n:'奕炫',t:'轿车',p:'ice'},{n:'AX7',t:'SUV',p:'ice'},{n:'皓极',t:'SUV',p:'ice'},{n:'菱智',t:'MPV',p:'ice',tag:['商用拉货','空间大','便宜耐用']},{n:'风行T5',t:'SUV',p:'ice'}]},
+{n:'丰田',l:'F',pow:['ice','hev'],ms:[
+ {n:'卡罗拉',t:'轿车',p:'ice',tag:['全球家轿','省油保值','可靠耐用'],g:['1.2T CVT','1.5L CVT','1.8L E-CVT(混动)']},{n:'雷凌',t:'轿车',p:'ice',tag:['卡罗拉姊妹车','省油保值']},{n:'凯美瑞',t:'轿车',p:'ice',tag:['B级车标杆','保值率高','混动省油'],g:['2.0L CVT','2.5L 8AT','2.5L E-CVT(混动)'],tr:['2.0G 豪华版','2.5G 豪华版','双擎 2.5HG 豪华版']},
+ {n:'亚洲龙',t:'轿车',p:'ice'},{n:'RAV4荣放',t:'SUV',p:'ice',tag:['紧凑SUV保值王','可靠','混动可选'],g:['2.0L CVT','2.5L E-CVT(混动)']},{n:'威兰达',t:'SUV',p:'ice'},{n:'汉兰达',t:'SUV',p:'ice',tag:['七座SUV标杆','保值率高','混动省油'],g:['2.5L E-CVT(混动)']},{n:'锋兰达',t:'SUV',p:'ice'},{n:'卡罗拉锐放',t:'SUV',p:'ice'},{n:'皇冠陆放',t:'SUV',p:'hev'},{n:'普拉多',t:'SUV',p:'ice',tag:['硬派越野','保值神器','可靠']},{n:'赛那',t:'MPV',p:'hev',tag:['混动MPV','省油','七座家用']},{n:'威驰',t:'轿车',p:'ice'}]},
+{n:'福特',l:'F',pow:['ice','ev'],ms:[
+ {n:'福克斯',t:'轿车',p:'ice',tag:['操控好','两厢运动']},{n:'蒙迪欧',t:'轿车',p:'ice',tag:['B级运动','大屏','性价比']},{n:'福睿斯',t:'轿车',p:'ice'},{n:'锐界',t:'SUV',p:'ice',tag:['七座中型SUV','空间大']},{n:'探险者',t:'SUV',p:'ice',tag:['大七座','纵置后驱平台']},{n:'锐际',t:'SUV',p:'ice'},{n:'领裕',t:'SUV',p:'ice'},{n:'Mustang',t:'跑车',p:'ice'},{n:'电马Mach-E',t:'SUV',p:'ev'},{n:'全顺',t:'MPV',p:'ice',tag:['商用车','改装露营热门']}]},
+{n:'方程豹',l:'F',pow:['hev'],ms:[{n:'豹5',t:'SUV',p:'hev',tag:['DMO超级混动越野','硬派插混','带锁']},{n:'豹8',t:'SUV',p:'hev',tag:['华为乾崑智驾','硬派旗舰插混']},{n:'钛3',t:'SUV',p:'hev'}]},
+{n:'飞凡',l:'F',pow:['ev'],ms:[{n:'R7',t:'SUV',p:'ev'},{n:'F7',t:'轿车',p:'ev'}]},
+{n:'广汽传祺',l:'G',pow:['ice','hev'],ms:[{n:'GS4',t:'SUV',p:'ice'},{n:'GS8',t:'SUV',p:'ice',tag:['七座','双擎混动']},{n:'M8',t:'MPV',p:'ice',tag:['自主高端MPV','商务气场强','混动'],g:['2.0T 8AT','2.0L 混动']},{n:'M6',t:'MPV',p:'ice',tag:['高性价比家用MPV']},{n:'影豹',t:'轿车',p:'ice',tag:['运动轿跑','年轻']},{n:'E9',t:'MPV',p:'hev'},{n:'影酷',t:'SUV',p:'ice'}]},
+{n:'哈弗',l:'H',pow:['ice','hev'],ms:[
+ {n:'H6',t:'SUV',p:'ice',tag:['自主SUV神车','保有量巨大','维修便宜'],g:['1.5T 7挡双离合','2.0T 7挡双离合'],tr:['国潮版 1.5T 都市版','第三代 1.5T Max','2.0T 四驱Max']},{n:'大狗',t:'SUV',p:'ice',tag:['方盒子轻越野','通过性好']},{n:'M6',t:'SUV',p:'ice'},{n:'赤兔',t:'SUV',p:'ice'},{n:'神兽',t:'SUV',p:'ice'},{n:'猛龙',t:'SUV',p:'hev',tag:['Hi4插混四驱','轻越野','可油可电']},{n:'枭龙MAX',t:'SUV',p:'hev',tag:['Hi4四驱插混','省油']}]},
+{n:'红旗',l:'H',pow:['ice','ev','hev'],lux:1,ms:[{n:'H5',t:'轿车',p:'ice',tag:['国产豪华','气场足','配置高']},{n:'H9',t:'轿车',p:'ice',tag:['行政旗舰','后排豪华']},{n:'HS5',t:'SUV',p:'ice',tag:['豪华中型SUV','销量担当']},{n:'HS7',t:'SUV',p:'ice'},{n:'E-QM5',t:'轿车',p:'ev'},{n:'E-HS9',t:'SUV',p:'ev',tag:['纯电豪华大SUV','四座行政']}]},
+{n:'海马',l:'H',pow:['ice'],ms:[{n:'福美来',t:'轿车',p:'ice'},{n:'8S',t:'SUV',p:'ice'}]},
+{n:'Jeep',l:'J',pow:['ice'],ms:[{n:'自由光',t:'SUV',p:'ice'},{n:'指南者',t:'SUV',p:'ice'},{n:'自由侠',t:'SUV',p:'ice'},{n:'大切诺基',t:'SUV',p:'ice',tag:['硬派越野','V6']},{n:'牧马人',t:'SUV',p:'ice',tag:['硬派越野图腾','改装热门','保值']}]},
+{n:'吉利',l:'J',pow:['ice','hev','ev'],ms:[
+ {n:'帝豪',t:'轿车',p:'ice',tag:['自主家轿','保有量大','省油实惠']},{n:'星瑞',t:'轿车',p:'ice',tag:['A+级轿车','2.0T动力','配置高']},{n:'博越L',t:'SUV',p:'ice',tag:['紧凑SUV','空间配置均衡']},{n:'星越L',t:'SUV',p:'ice',tag:['CMA架构','内饰三联屏','越级空间'],g:['2.0T 8AT']},{n:'缤越',t:'SUV',p:'ice'},{n:'豪越L',t:'SUV',p:'ice',tag:['大七座']},{n:'银河L7',t:'SUV',p:'hev',tag:['雷神电混','可油可电','长续航']},{n:'银河E8',t:'轿车',p:'ev',tag:['45英寸大屏','SEA架构','长续航']},{n:'几何C',t:'SUV',p:'ev'},{n:'熊猫mini',t:'轿车',p:'ev',tag:['微型代步电车','便宜好停']}]},
+{n:'极氪',l:'J',pow:['ev'],ms:[{n:'001',t:'轿车',p:'ev',tag:['猎装轿跑','空气悬架','性能强'],tr:['WE版 100kWh','ME版 100kWh','YOU版 100kWh']},{n:'007',t:'轿车',p:'ev',tag:['纯电轿车','800V快充','智驾']},{n:'X',t:'SUV',p:'ev'},{n:'009',t:'MPV',p:'ev',tag:['豪华纯电MPV','六座行政','安全']}]},
+{n:'捷途',l:'J',pow:['ice','hev'],ms:[{n:'X70',t:'SUV',p:'ice',tag:['大空间高性价比','七座']},{n:'X90',t:'SUV',p:'ice'},{n:'大圣',t:'SUV',p:'ice'},{n:'旅行者',t:'SUV',p:'ice',tag:['方盒子轻越野','四驱','造型硬派']}]},
+{n:'捷豹',l:'J',pow:['ice'],lux:1,ms:[{n:'XEL',t:'轿车',p:'ice'},{n:'XFL',t:'轿车',p:'ice'},{n:'F-PACE',t:'SUV',p:'ice'},{n:'E-PACE',t:'SUV',p:'ice'}]},
+{n:'捷达',l:'J',pow:['ice'],ms:[{n:'VS5',t:'SUV',p:'ice',tag:['大众三大件','性价比']},{n:'VS7',t:'SUV',p:'ice'},{n:'VA3',t:'轿车',p:'ice'}]},
+{n:'极狐',l:'J',pow:['ev'],ms:[{n:'阿尔法S',t:'轿车',p:'ev',tag:['华为HI版智驾','长续航']},{n:'阿尔法T',t:'SUV',p:'ev'}]},
+{n:'凯迪拉克',l:'K',pow:['ice','ev'],lux:1,ms:[{n:'CT5',t:'轿车',p:'ice',tag:['后驱运动','操控好','性价比豪华']},{n:'CT4',t:'轿车',p:'ice'},{n:'XT5',t:'SUV',p:'ice'},{n:'XT4',t:'SUV',p:'ice'},{n:'CT6',t:'轿车',p:'ice',tag:['大型豪华轿车','后驱','隔音好']},{n:'XT6',t:'SUV',p:'ice',tag:['六座/七座豪华SUV']}]},
+{n:'雷克萨斯',l:'L',pow:['ice','hev'],lux:1,ms:[
+ {n:'ES',t:'轿车',p:'hev',tag:['进口豪华','混动省油','保值率极高','免费保养'],g:['2.0L CVT','2.5L E-CVT(混动)'],tr:['ES 200 卓越版','ES 260 卓越版','ES 300h 臻享版']},{n:'RX',t:'SUV',p:'hev'},{n:'NX',t:'SUV',p:'hev'},{n:'UX',t:'SUV',p:'hev'},{n:'LX',t:'SUV',p:'ice'},{n:'LS',t:'轿车',p:'hev'}]},
+{n:'路虎',l:'L',pow:['ice','hev'],lux:1,ms:[{n:'揽胜',t:'SUV',p:'ice',tag:['豪华硬派','气场强','越野能力']},{n:'揽胜运动版',t:'SUV',p:'ice'},{n:'发现',t:'SUV',p:'ice'},{n:'揽胜极光',t:'SUV',p:'ice'},{n:'发现运动版',t:'SUV',p:'ice'},{n:'卫士',t:'SUV',p:'ice',tag:['硬派方盒子','越野图腾','改装热门']},{n:'星脉',t:'SUV',p:'ice'}]},
+{n:'林肯',l:'L',pow:['ice','hev'],lux:1,ms:[{n:'冒险家',t:'SUV',p:'ice',tag:['豪华紧凑SUV','隔音舒适','性价比']},{n:'航海家',t:'SUV',p:'ice'},{n:'飞行家',t:'SUV',p:'ice'},{n:'林肯Z',t:'轿车',p:'ice'},{n:'大陆',t:'轿车',p:'ice'}]},
+{n:'理想',l:'L',pow:['hev','ev'],ms:[
+ {n:'L7',t:'SUV',p:'hev',tag:['增程五座奶爸车','冰箱彩电大沙发','家庭SUV销冠'],tr:['Pro','Max','Ultra']},{n:'L8',t:'SUV',p:'hev',tag:['增程六座家庭SUV','空间舒适']},{n:'L9',t:'SUV',p:'hev',tag:['增程六座旗舰','后排娱乐','空气悬架']},{n:'L6',t:'SUV',p:'hev',tag:['增程五座','性价比家庭SUV']},{n:'MEGA',t:'MPV',p:'ev',tag:['纯电MPV','高压快充','七座']}]},
+{n:'领克',l:'L',pow:['ice','hev','ev'],ms:[{n:'03',t:'轿车',p:'ice',tag:['运动轿车','操控好','年轻性能']},{n:'01',t:'SUV',p:'ice'},{n:'06',t:'SUV',p:'ice'},{n:'08',t:'SUV',p:'hev',tag:['EM-P插混','哈曼卡顿','长续航']},{n:'09',t:'SUV',p:'hev',tag:['中大型六/七座','旗舰SUV']},{n:'07',t:'轿车',p:'hev'},{n:'Z10',t:'轿车',p:'ev'}]},
+{n:'零跑',l:'L',pow:['ev','hev'],ms:[{n:'C11',t:'SUV',p:'ev',tag:['性价比纯电SUV','配置拉满','增程可选']},{n:'C01',t:'轿车',p:'ev'},{n:'T03',t:'轿车',p:'ev',tag:['微型代步电车','便宜']},{n:'C10',t:'SUV',p:'hev',tag:['增程/纯电','家庭SUV性价比']},{n:'C16',t:'SUV',p:'hev',tag:['六座增程家庭SUV']}]},
+{n:'岚图',l:'L',pow:['ev','hev'],ms:[{n:'FREE',t:'SUV',p:'hev',tag:['增程/纯电','空气悬架','东风高端']},{n:'梦想家',t:'MPV',p:'hev',tag:['高端电动/混动MPV','七座商务']},{n:'追光',t:'轿车',p:'ev'}]},
+{n:'劳斯莱斯',l:'L',pow:['ice','ev'],lux:1,ms:[{n:'古思特',t:'轿车',p:'ice'},{n:'库里南',t:'SUV',p:'ice'},{n:'幻影',t:'轿车',p:'ice'}]},
+{n:'马自达',l:'M',pow:['ice'],ms:[{n:'马自达3 昂克赛拉',t:'轿车',p:'ice',tag:['创驰蓝天','操控好','颜值高']},{n:'阿特兹',t:'轿车',p:'ice'},{n:'CX-5',t:'SUV',p:'ice',tag:['操控好的SUV','自然吸气可靠']},{n:'CX-30',t:'SUV',p:'ice'},{n:'CX-4',t:'SUV',p:'ice'},{n:'CX-50行也',t:'SUV',p:'ice'}]},
+{n:'名爵',l:'M',pow:['ice','ev'],ms:[{n:'MG6',t:'轿车',p:'ice'},{n:'ZS',t:'SUV',p:'ice'},{n:'MG ONE',t:'SUV',p:'ice'},{n:'领航',t:'SUV',p:'ice'},{n:'MG4 EV',t:'轿车',p:'ev',tag:['纯电小钢炮','后驱','出海热门']},{n:'MG7',t:'轿车',p:'ice',tag:['运动B级车','无框车门','颜值高']}]},
+{n:'哪吒',l:'N',pow:['ev','hev'],ms:[{n:'哪吒S',t:'轿车',p:'ev'},{n:'哪吒U',t:'SUV',p:'ev'},{n:'哪吒V',t:'SUV',p:'ev'},{n:'哪吒X',t:'SUV',p:'ev'},{n:'哪吒L',t:'SUV',p:'hev',tag:['增程大五座','冰箱彩电大沙发']},{n:'哪吒GT',t:'跑车',p:'ev'}]},
+{n:'欧拉',l:'O',pow:['ev'],ms:[{n:'好猫',t:'轿车',p:'ev',tag:['复古造型','女性用户','城市代步']},{n:'芭蕾猫',t:'轿车',p:'ev'},{n:'闪电猫',t:'轿车',p:'ev'},{n:'黑猫',t:'轿车',p:'ev'}]},
+{n:'起亚',l:'Q',pow:['ice','ev'],ms:[{n:'K3',t:'轿车',p:'ice'},{n:'K5',t:'轿车',p:'ice',tag:['B级车性价比','设计年轻']},{n:'智跑',t:'SUV',p:'ice'},{n:'索奈',t:'SUV',p:'ice'},{n:'嘉华',t:'MPV',p:'ice'},{n:'奕跑',t:'SUV',p:'ice'},{n:'EV5',t:'SUV',p:'ev'}]},
+{n:'启源',l:'Q',pow:['hev','ev'],ms:[{n:'A07',t:'轿车',p:'hev'},{n:'A05',t:'轿车',p:'hev'},{n:'Q05',t:'SUV',p:'hev'}]},
+{n:'启辰',l:'Q',pow:['ice','ev'],ms:[{n:'D60',t:'轿车',p:'ice'},{n:'T60',t:'SUV',p:'ice'},{n:'大V',t:'SUV',p:'ice'},{n:'VX6',t:'SUV',p:'ev'}]},
+{n:'荣威',l:'R',pow:['ice','ev','hev'],ms:[{n:'i5',t:'轿车',p:'ice'},{n:'RX5',t:'SUV',p:'ice',tag:['自主SUV老牌','保有量大']},{n:'i6',t:'轿车',p:'ice'},{n:'Ei5',t:'轿车',p:'ev',tag:['纯电旅行车','营运热门']},{n:'D7',t:'轿车',p:'ev'},{n:'科莱威',t:'轿车',p:'ev'}]},
+{n:'三菱',l:'S',pow:['ice'],ms:[{n:'欧蓝德',t:'SUV',p:'ice',tag:['七座合资SUV','四驱可靠','性价比']},{n:'劲炫ASX',t:'SUV',p:'ice'},{n:'奕歌',t:'SUV',p:'ice'},{n:'帕杰罗',t:'SUV',p:'ice',tag:['硬派越野','V6','山猫']}]},
+{n:'斯巴鲁',l:'S',pow:['ice'],ms:[{n:'森林人',t:'SUV',p:'ice',tag:['水平对置+全时四驱','安全可靠','进口']},{n:'傲虎',t:'SUV',p:'ice'},{n:'XV',t:'SUV',p:'ice'}]},
+{n:'斯柯达',l:'S',pow:['ice'],ms:[{n:'明锐',t:'轿车',p:'ice',tag:['大掀背','大众同平台','性价比']},{n:'速派',t:'轿车',p:'ice'},{n:'柯迪亚克',t:'SUV',p:'ice',tag:['七座','大众同平台']},{n:'柯米克',t:'SUV',p:'ice'},{n:'昕锐',t:'轿车',p:'ice'}]},
+{n:'上汽大通',l:'S',pow:['ice','ev'],ms:[{n:'G50',t:'MPV',p:'ice'},{n:'D90',t:'SUV',p:'ice'},{n:'V80',t:'MPV',p:'ice',tag:['商用轻客','改装房车热门']},{n:'G90',t:'MPV',p:'ice'},{n:'大家9',t:'MPV',p:'ev'}]},
+{n:'深蓝',l:'S',pow:['ev','hev'],ms:[{n:'SL03',t:'轿车',p:'ev',tag:['运动轿跑','增程/纯电','无框车门']},{n:'S7',t:'SUV',p:'hev',tag:['增程/纯电','家庭SUV']},{n:'L07',t:'轿车',p:'hev'},{n:'G318',t:'SUV',p:'hev',tag:['增程方盒子轻越野','带备胎','可油可电']}]},
+{n:'smart',l:'S',pow:['ev'],ms:[{n:'精灵#1',t:'SUV',p:'ev',tag:['奔驰设计','精品小车','好开']},{n:'精灵#3',t:'SUV',p:'ev'}]},
+{n:'特斯拉',l:'T',pow:['ev'],ms:[
+ {n:'Model 3',t:'轿车',p:'ev',tag:['智能辅助驾驶','OTA升级','用车成本低','保值'],tr:['后轮驱动版','长续航全轮驱动版','高性能版']},
+ {n:'Model Y',t:'SUV',p:'ev',tag:['全球纯电SUV销冠','辅助驾驶','空间实用','保值'],tr:['后轮驱动版','长续航全轮驱动版','高性能版']},{n:'Model S',t:'轿车',p:'ev'},{n:'Model X',t:'SUV',p:'ev'}]},
+{n:'坦克',l:'T',pow:['ice','hev'],ms:[{n:'坦克300',t:'SUV',p:'ice',tag:['硬派越野销冠','带锁四驱','改装热门','保值'],tr:['征服者','越野版','城市版']},{n:'坦克400 Hi4-T',t:'SUV',p:'hev',tag:['插混硬派','可油可电','带锁']},{n:'坦克500',t:'SUV',p:'ice',tag:['中大型硬派豪华','3.0T V6','商务气场']},{n:'坦克700 Hi4-T',t:'SUV',p:'hev'}]},
+{n:'腾势',l:'T',pow:['hev','ev'],ms:[{n:'D9',t:'MPV',p:'hev',tag:['高端插混MPV销冠','七座商务家用','比亚迪三电'],tr:['DM-i 970 豪华型','DM-i 1040 尊贵型','EV 600 四驱旗舰']},{n:'N7',t:'SUV',p:'ev'},{n:'N8',t:'SUV',p:'hev'},{n:'Z9GT',t:'轿车',p:'hev',tag:['猎装插混/纯电','易三方技术']}]},
+{n:'五菱',l:'W',pow:['ev','ice','hev'],ms:[{n:'宏光MINIEV',t:'轿车',p:'ev',tag:['国民代步神车','便宜好停','保有量巨大']},{n:'缤果',t:'轿车',p:'ev',tag:['复古小型电车','代步','空间比MINI大']},{n:'星光',t:'轿车',p:'hev',tag:['插混家轿','省油大空间']},{n:'星辰',t:'SUV',p:'ice'},{n:'星驰',t:'SUV',p:'ice'},{n:'凯捷',t:'MPV',p:'ice',tag:['大四座家用MPV','空间灵活']}]},
+{n:'问界',l:'W',pow:['hev','ev'],ms:[
+ {n:'问界M7',t:'SUV',p:'hev',tag:['华为ADS智驾','增程大五/六座','奶爸车销冠'],tr:['Plus 后驱','Pro 后驱','Max 智驾版','Ultra']},{n:'问界M9',t:'SUV',p:'hev',tag:['华为旗舰SUV','增程/纯电','投影大灯','空气悬架'],tr:['增程 Max','增程 Ultra','纯电 Ultra']},{n:'问界M5',t:'SUV',p:'hev'},{n:'智界R7',t:'SUV',p:'hev',tag:['华为轿跑SUV','ADS智驾','增程/纯电']},{n:'智界S7',t:'轿车',p:'ev'},{n:'享界S9',t:'轿车',p:'hev',tag:['华为×北汽行政轿车']}]},
+{n:'沃尔沃',l:'W',pow:['ice','hev','ev'],lux:1,ms:[{n:'XC60',t:'SUV',p:'ice',tag:['安全标杆','环保内饰','混动']},{n:'S90',t:'轿车',p:'ice',tag:['行政轿车','安全环保','后排大']},{n:'S60',t:'轿车',p:'ice'},{n:'XC40',t:'SUV',p:'ice'},{n:'XC90',t:'SUV',p:'ice',tag:['七座豪华SUV','安全']},{n:'EM90',t:'MPV',p:'ev'}]},
+{n:'魏牌',l:'W',pow:['hev'],ms:[{n:'蓝山',t:'SUV',p:'hev',tag:['插混大六座','冰箱彩电大沙发','DHT-PHEV']},{n:'高山',t:'MPV',p:'hev'},{n:'摩卡DHT-PHEV',t:'SUV',p:'hev'},{n:'拿铁DHT-PHEV',t:'SUV',p:'hev'}]},
+{n:'蔚来',l:'W',pow:['ev'],ms:[
+ {n:'ES6',t:'SUV',p:'ev',tag:['换电体系','服务好','智能座舱'],tr:['75kWh','100kWh']},{n:'ET5',t:'轿车',p:'ev',tag:['运动轿跑','换电','BaaS']},{n:'ET5T',t:'轿车',p:'ev',tag:['纯电旅行车','换电','颜值']},{n:'EC6',t:'SUV',p:'ev'},{n:'ES8',t:'SUV',p:'ev',tag:['六座旗舰SUV','换电','行政']},{n:'ET7',t:'轿车',p:'ev'},{n:'乐道L60',t:'SUV',p:'ev',tag:['家庭纯电SUV','换电','性价比']}]},
+{n:'现代',l:'X',pow:['ice','ev'],ms:[{n:'伊兰特',t:'轿车',p:'ice'},{n:'途胜L',t:'SUV',p:'ice'},{n:'ix35',t:'SUV',p:'ice',tag:['合资紧凑SUV','性价比']},{n:'索纳塔',t:'轿车',p:'ice'},{n:'菲斯塔',t:'轿车',p:'ice'},{n:'胜达',t:'SUV',p:'ice'},{n:'库斯途',t:'MPV',p:'ice'}]},
+{n:'小鹏',l:'X',pow:['ev'],ms:[
+ {n:'MONA M03',t:'轿车',p:'ev',tag:['高阶智驾下放','年轻轿跑','性价比']},{n:'P7',t:'轿车',p:'ev',tag:['智能轿跑','XNGP智驾','音乐座舱']},{n:'G6',t:'SUV',p:'ev',tag:['800V快充','XNGP智驾','轿跑SUV']},{n:'G9',t:'SUV',p:'ev',tag:['800V旗舰SUV','空气悬架','智驾']},{n:'X9',t:'MPV',p:'ev',tag:['纯电MPV','后轮转向','XNGP']},{n:'P5',t:'轿车',p:'ev'}]},
+{n:'雪佛兰',l:'X',pow:['ice','ev'],ms:[{n:'科鲁泽',t:'轿车',p:'ice',tag:['合资家轿性价比','实惠']},{n:'迈锐宝XL',t:'轿车',p:'ice',tag:['B级车性价比','2.0T+9AT']},{n:'探界者',t:'SUV',p:'ice'},{n:'科沃兹',t:'轿车',p:'ice'},{n:'沃兰多',t:'MPV',p:'ice'},{n:'创酷',t:'SUV',p:'ice'},{n:'畅巡',t:'轿车',p:'ev'}]},
+{n:'雪铁龙',l:'X',pow:['ice'],ms:[{n:'凡尔赛C5 X',t:'轿车',p:'ice',tag:['法系跨界','底盘舒适','设计个性']},{n:'C6',t:'轿车',p:'ice'},{n:'天逸C5',t:'SUV',p:'ice'},{n:'C3-XR',t:'SUV',p:'ice'}]},
+{n:'星途',l:'X',pow:['ice','hev','ev'],ms:[{n:'揽月',t:'SUV',p:'ice',tag:['中大型七座','奇瑞高端']},{n:'凌云',t:'SUV',p:'ice'},{n:'瑶光',t:'SUV',p:'ice',tag:['飞鱼底盘','设计豪华']},{n:'追风',t:'SUV',p:'ice'},{n:'星纪元ET',t:'SUV',p:'ev',tag:['纯电/增程旗舰SUV','空气悬架']}]},
+{n:'小米',l:'X',pow:['ev'],ms:[{n:'SU7',t:'轿车',p:'ev',tag:['流量爆款','Xiaomi Pilot智驾','生态互联','性能强'],tr:['标准版','Pro','Max','Ultra']},{n:'YU7',t:'SUV',p:'ev',tag:['智能SUV爆款','智驾','生态互联'],tr:['标准版','Pro','Max']}]},
+{n:'英菲尼迪',l:'Y',pow:['ice','hev'],lux:1,ms:[{n:'Q50L',t:'轿车',p:'ice'},{n:'QX50',t:'SUV',p:'ice'},{n:'Q70',t:'轿车',p:'ice'},{n:'QX60',t:'SUV',p:'ice'}]},
+{n:'仰望',l:'Y',pow:['ev'],lux:1,ms:[{n:'U8',t:'SUV',p:'ev',tag:['百万级硬派越野','易四方','应急浮水']},{n:'U9',t:'跑车',p:'ev'},{n:'U7',t:'SUV',p:'ev'}]},
+{n:'智己',l:'Z',pow:['ev'],ms:[{n:'LS6',t:'SUV',p:'ev',tag:['800V快充','灵蜥数字底盘','高性价比']},{n:'L6',t:'轿车',p:'ev'},{n:'L7',t:'轿车',p:'ev'},{n:'LS7',t:'SUV',p:'ev'}]}
+];
+
+/* 动力类型元数据 */
+const CAR_POW={ice:{name:'燃油',short:'燃油'},ev:{name:'纯电',short:'纯电'},hev:{name:'混动',short:'混动'}};
+/* 各动力类型的通用 变速箱/排量 与 配置等级（车系未专属指定时使用） */
+const CAR_DEFAULT_GEAR={
+ ice:['手动 6挡','6AT 手自一体','CVT 无级变速','7挡湿式双离合','8AT 手自一体'],
+ hev:['E-CVT 混动专用变速','DHT 混动双离合','增程·单速电驱','PHEV 单速电驱'],
+ ev:['单速固定齿比（纯电）']
+};
+const CAR_DEFAULT_TRIM={
+ ice:['进取/舒适型（低配）','精英/豪华型（中配）','尊享/旗舰型（高配）','运动/性能版（顶配）'],
+ hev:['入门续航版（低配）','长续航豪华版（中配）','四驱/旗舰版（高配）'],
+ ev:['标准续航版','长续航版','长续航智驾版','四驱性能版']
+};
+/* 按车身/动力的通用车型卖点（车型专属 tag 优先，再补通用） */
+const CAR_TYPE_TAGS={
+ '轿车':['造型大气耐看','乘坐舒适','高速行驶稳定'],'SUV':['空间宽敞','坐姿高视野好','通过性强','适合家用出游'],
+ 'MPV':['七座大空间','后排乘坐舒适','商务家用兼顾'],'跑车':['造型运动','操控性能强','驾驶乐趣足'],'皮卡':['能拉能装','通过性强','工具属性强'],
+ '_ice':['技术成熟维修便宜','加油方便无续航焦虑'],'_ev':['每公里用车成本低','起步平顺安静','智能座舱与OTA','免购置税/部分城市送绿牌'],'_hev':['亏电也省油','无续航焦虑','起步平顺安静','部分车型可上绿牌'],
+ '_lux':['品牌认可度高','内饰用料高级','安全与舒适配置齐全','商务接待更有面子']
+};
+/* 车主事实声明（仅可勾选真实情况，卖家自负其责；AI 不主动虚构） */
+const SELLER_CLAIMS=['个人一手车','女士一手车','本地个人一手','准新车','全车原版原漆','九成新以上','支持第三方检测','无重大事故','无大修','零出险','里程实表','定期4S保养','全程保养记录','无泡水无火烧','四条新胎','刚做完全车保养','保险随车同步','支持分期'];
+/* ---- 知识库辅助 ---- */
+function findBrand(n){return CAR_DB.find(b=>b.n===n)||null;}
+function findModel(bn,sn){const b=findBrand(bn);return b?b.ms.find(m=>m.n===sn):null;}
+/* 车型客观卖点：车系专属标签优先，再补车身/动力/豪华通用标签，去重取前7 */
+function modelSellingPoints(bn,sn){
+  const b=findBrand(bn),m=b?b.ms.find(x=>x.n===sn):null;if(!m)return [];
+  const arr=[];const push=x=>{if(x&&!arr.includes(x))arr.push(x);};
+  (m.tag||[]).forEach(push);
+  (CAR_TYPE_TAGS[m.t]||[]).forEach(push);
+  (CAR_TYPE_TAGS['_'+m.p]||[]).forEach(push);
+  if(b&&b.lux)(CAR_TYPE_TAGS['_lux']||[]).forEach(push);
+  return arr.slice(0,7);
+}
+function powLabel(p){return (CAR_POW[p]&&CAR_POW[p].name)||'';}
 const PLATFORMS=[
   {id:'dcd',name:'懂车帝',ratio:'1:1',w:1080,h:1080},
   {id:'gz',name:'瓜子',ratio:'1:1',w:1080,h:1080},
@@ -564,7 +785,7 @@ const SCENES={
 
 const ENHANCE_INT='专业二手车内饰实拍画质增强：仅做自然的曝光与白平衡校正、轻微提亮和适度清晰度提升，真实还原皮革、塑料、屏幕等材质与正常使用痕迹。严格保持参考图中的内饰布局、部件数量、颜色、磨损与污渍、镜头透视和取景范围完全不变，不新增、不删除、不替换任何物品，不遮盖或美化瑕疵，不改变成色与配置，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
 const ENHANCE_DET='专业二手车细节实拍画质增强：仅做自然曝光校正、轻微提亮与适度清晰度提升，真实还原部件成色、磨损与标识。严格保持参考图中的部件、数量、颜色、里程读数与标识文字、镜头透视完全不变，不新增、不删除、不替换任何部件，不美化瑕疵，不篡改任何数字或读数，不添加任何文字或水印，真实手机摄影质感，高分辨率。';
-const state={step:1,maxStep:1,images:[],curGroup:'ext',brand:'',series:'',year:'',trim:'',mileage:'',price:'',gearbox:'',city:'',extra:'',scenes:new Set(['showroom']),platforms:new Set(['dcd','autohome','xhs']),style:'professional',results:[],copies:{},curSize:'dcd',genJobs:[],caps:{}};
+const state={step:1,maxStep:1,images:[],curGroup:'ext',brand:'',series:'',year:'',trim:'',mileage:'',price:'',gearbox:'',city:'',extra:'',pow:'',claims:[],modelPoints:[],mpSel:null,scenes:new Set(['showroom']),platforms:new Set(['dcd','autohome','xhs']),style:'professional',results:[],copies:{},curSize:'dcd',genJobs:[],caps:{}};
 
 /* ================= 工具 ================= */
 const $=s=>document.querySelector(s);const $$=s=>Array.from(document.querySelectorAll(s));
@@ -776,20 +997,118 @@ $('#toStep2').onclick=()=>{
 
 /* ================= Step2 车型表单 ================= */
 (function initForms(){
-  $('#fBrand').innerHTML='<option value="">请选择品牌</option>'+BRANDS.map(b=>'<option>'+b+'</option>').join('');
-  $('#seriesList').innerHTML=SERIES_HINT.map(s=>'<option value="'+s+'">').join('');
+  const OTHER='__other__';
   const yr=new Date().getFullYear();let ys='<option value="">选择年款</option>';for(let y=yr;y>=yr-22;y--)ys+='<option>'+y+'</option>';$('#fYear').innerHTML=ys;
-  $('#fBrand').addEventListener('change',refreshKb);
-  $('#fYear').addEventListener('change',refreshKb);
-  $('#fSeries').addEventListener('input',refreshKb);
-  refreshKb();
+  state.claims=[];state.modelPoints=[];state.mpSel=new Set();state.pow='';
+  const chevron='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;opacity:.6"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  /* ---- 车型卖点 chips ---- */
+  function renderModelPointChips(){
+    const box=$('#modelPointChips');
+    if(!state.modelPoints.length){box.innerHTML='';return;}
+    box.innerHTML=state.modelPoints.map(p=>'<span class="kb-chip'+(state.mpSel.has(p)?' sel':'')+'" data-p="'+p+'">'+p+'</span>').join('');
+    $$('#modelPointChips .kb-chip').forEach(el=>el.onclick=()=>{const p=el.dataset.p;if(state.mpSel.has(p))state.mpSel.delete(p);else state.mpSel.add(p);el.classList.toggle('sel');});
+  }
+  $('#genModelPoints').onclick=()=>{
+    if(!state.brand||!state.series){toast('请先选择品牌和车系','err');return;}
+    const pts=modelSellingPoints(state.brand,state.series);
+    if(!pts.length){toast('该车型暂未收录专属卖点，可在补充说明里手动填写','err');return;}
+    state.modelPoints=pts;state.mpSel=new Set(pts);renderModelPointChips();toast('已按车型知识库生成卖点，可点选调整');
+  };
+
+  /* ---- 车主事实声明 chips ---- */
+  function renderClaimChips(){
+    $('#claimChips').innerHTML=SELLER_CLAIMS.map(c=>'<span class="kb-chip claim-chip'+(state.claims.includes(c)?' sel':'')+'" data-c="'+c+'">'+c+'</span>').join('');
+    $$('#claimChips .kb-chip').forEach(el=>el.onclick=()=>{const c=el.dataset.c;const i=state.claims.indexOf(c);if(i>=0)state.claims.splice(i,1);else state.claims.push(c);el.classList.toggle('sel');});
+  }
+  renderClaimChips();renderModelPointChips();
+
+  /* ---- 品牌选择器 ---- */
+  const modal=$('#brandModal');const bf={pow:'',letter:'',q:''};
+  const LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const availLetters=()=>{const s=new Set();CAR_DB.forEach(b=>{if(!bf.pow||b.pow.includes(bf.pow))s.add(b.l);});return s;};
+  function renderLetters(){
+    const av=availLetters();
+    $('#bdLetters').innerHTML=LETTERS.map(L=>'<button type="button" data-l="'+L+'" class="'+(av.has(L)?'has':'')+(bf.letter===L?' on':'')+'">'+L+'</button>').join('');
+  }
+  function badgePow(b){let s='';if(b.pow.includes('ev')&&b.pow.includes('hev'))s='纯/混';else if(b.pow.includes('ev'))s='纯电';else if(b.pow.includes('hev'))s='混动';return s;}
+  function renderGrid(){
+    const q=bf.q?bf.q.toLowerCase():'';
+    const list=CAR_DB.filter(b=>(!bf.pow||b.pow.includes(bf.pow))&&(!bf.letter||b.l===bf.letter)&&(!bf.q||b.n.includes(bf.q)||b.ms.some(m=>m.n.toLowerCase().includes(q))));
+    let html='';
+    if(!list.length){html='<div class="bd-empty">没有匹配的品牌，可在选择品牌后于车系处手动填写</div>';}
+    else{
+      const groups={};list.forEach(b=>{(groups[b.l]=groups[b.l]||[]).push(b);});
+      Object.keys(groups).sort().forEach(L=>{
+        html+='<div class="bd-group"><div class="bd-gletter">'+L+'</div><div class="bd-gitems">'+groups[L].map(b=>{const sub=badgePow(b);return '<button type="button" class="bd-brand" data-b="'+b.n+'">'+(sub?'<span class="bd-sub">'+sub+'</span>':'')+'<span>'+b.n+'</span></button>';}).join('')+'</div></div>';
+      });
+    }
+    $('#bdGrid').innerHTML=html;
+  }
+  function setPowTab(p){bf.pow=p;$$('#powTabs button').forEach(b=>b.classList.toggle('on',b.dataset.pow===p));renderLetters();renderGrid();}
+  function openModal(){modal.classList.add('show');bf.q='';bf.letter='';$('#brandSearch').value='';setPowTab('');setTimeout(()=>{$('#brandSearch').focus();},40);}
+  function closeModal(){modal.classList.remove('show');}
+  $('#brandPick').onclick=openModal;$('#bdClose').onclick=closeModal;$('#brandMask').onclick=closeModal;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  $('#brandSearch').addEventListener('input',e=>{bf.q=e.target.value.trim();renderGrid();});
+  $$('#powTabs button').forEach(btn=>btn.onclick=()=>setPowTab(btn.dataset.pow));
+  $('#bdLetters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.classList.contains('has'))return;const L=b.dataset.l;bf.letter=(bf.letter===L)?'':L;renderLetters();renderGrid();});
+  $('#bdGrid').addEventListener('click',e=>{const b=e.target.closest('.bd-brand');if(b)pickBrand(b.dataset.b,bf.pow);});
+
+  function fillSelect(sel,opts,ph){sel.disabled=false;sel.innerHTML='<option value="">'+ph+'</option>'+opts.map(o=>'<option>'+o+'</option>').join('')+'<option value="'+OTHER+'">其他 / 手动填写</option>';}
+  function resetSeriesDependent(){
+    state.series='';state.pow='';state.trim='';state.gearbox='';state.modelPoints=[];state.mpSel=new Set();
+    $('#fSeriesCustom').style.display='none';$('#fSeriesCustom').value='';$('#powTag').style.display='none';
+    $('#fTrimSel').disabled=true;$('#fTrimSel').innerHTML='<option value="">请先选择车系</option>';$('#fTrimCustom').style.display='none';$('#fTrimCustom').value='';
+    $('#fGearSel').disabled=true;$('#fGearSel').innerHTML='<option value="">请先选择车系</option>';$('#fGearCustom').style.display='none';$('#fGearCustom').value='';
+    renderModelPointChips();
+  }
+  function pickBrand(n,powFilter){
+    state.brand=n;
+    $('#brandPick').innerHTML='<span class="pick-val">'+n+'</span>'+chevron;
+    const b=findBrand(n);const ss=$('#fSeriesSel');
+    let h='<option value="">选择车系</option>';
+    const ps=powFilter?[powFilter]:['ice','ev','hev'];ps.forEach(p=>{const ms=b.ms.filter(m=>m.p===p);if(ms.length)h+='<optgroup label="'+CAR_POW[p].name+'">'+ms.map(m=>'<option value="'+m.n+'">'+m.n+'</option>').join('')+'</optgroup>';});
+    h+='<option value="'+OTHER+'">其他 / 手动填写</option>';
+    ss.disabled=false;ss.innerHTML=h;
+    resetSeriesDependent();closeModal();
+  }
+  function onSeries(){
+    const v=$('#fSeriesSel').value;const cu=$('#fSeriesCustom');
+    if(v===OTHER){cu.style.display='block';cu.focus();$('#powTag').style.display='none';state.series=cu.value.trim();state.pow='';fillSelect($('#fTrimSel'),[],'选择配置版本（可选手填）');fillSelect($('#fGearSel'),[],'选择排量 / 变速箱（可选手填）');state.modelPoints=[];state.mpSel=new Set();renderModelPointChips();return;}
+    cu.style.display='none';cu.value='';
+    if(!v){resetSeriesDependent();return;}
+    state.series=v;const m=findModel(state.brand,v);
+    if(m){
+      state.pow=m.p;const pt=$('#powTag');pt.textContent=powLabel(m.p);pt.style.display='inline-block';
+      fillSelect($('#fTrimSel'),(m.tr||CAR_DEFAULT_TRIM[m.p]),'选择配置版本');
+      fillSelect($('#fGearSel'),(m.g||CAR_DEFAULT_GEAR[m.p]),'选择排量 / 变速箱');
+      state.modelPoints=modelSellingPoints(state.brand,v);state.mpSel=new Set(state.modelPoints);
+    }
+    renderModelPointChips();
+  }
+  $('#fSeriesSel').onchange=onSeries;
+  $('#fTrimSel').onchange=function(){const c=$('#fTrimCustom');if(this.value===OTHER){c.style.display='block';c.focus();}else{c.style.display='none';c.value='';}};
+  $('#fGearSel').onchange=function(){const c=$('#fGearCustom');if(this.value===OTHER){c.style.display='block';c.focus();}else{c.style.display='none';c.value='';}};
+  $('#fSeriesCustom').addEventListener('input',e=>{state.series=e.target.value.trim();});
+  $('#fTrimCustom').addEventListener('input',e=>{state.trim=e.target.value.trim();});
+  $('#fGearCustom').addEventListener('input',e=>{state.gearbox=e.target.value.trim();});
+
   loadCapabilities();
 })();
 $('#toStep3').onclick=()=>{
-  state.brand=$('#fBrand').value;state.series=$('#fSeries').value.trim();state.year=$('#fYear').value;state.trim=$('#fTrim').value.trim();
-  state.mileage=$('#fMileage').value;state.price=$('#fPrice').value;state.gearbox=$('#fGearbox').value.trim();state.city=$('#fCity').value.trim();state.extra=$('#fExtra').value.trim();
-  if(!state.brand||state.brand==='其他 / 不确定'){if(!state.brand)toast('请选择品牌','err');else toast('请在车系中填写具体品牌车型','err');return;}
-  if(!state.series){toast('请填写车系，如 雅阁、Model 3','err');return;}
+  const OTHER='__other__';
+  if(!state.brand){toast('请选择品牌','err');return;}
+  const ss=$('#fSeriesSel').value;
+  state.series=ss===OTHER?$('#fSeriesCustom').value.trim():ss;
+  if(!state.series){toast('请选择或填写车系，如 雅阁、Model Y','err');return;}
+  state.year=$('#fYear').value;
+  const tv=$('#fTrimSel').value;
+  state.trim=tv===OTHER?$('#fTrimCustom').value.trim():(tv||'');
+  const gv=$('#fGearSel').value;
+  state.gearbox=gv===OTHER?$('#fGearCustom').value.trim():(gv||'');
+  state.mileage=$('#fMileage').value;state.price=$('#fPrice').value;state.city=$('#fCity').value.trim();state.extra=$('#fExtra').value.trim();
+  state.modelPoints=[...(state.mpSel||[])];
   state.maxStep=Math.max(state.maxStep,3);
   goStep(3);
 };
@@ -901,8 +1220,10 @@ function clean(t){let s=t;BANNED.forEach(w=>{s=s.split(w).join('');});return s.r
 function buildCopies(){
   const name=(state.year?state.year+'款 ':'')+state.brand+state.series+(state.trim?' '+state.trim:'');
   const mi=state.mileage?state.mileage+'万公里':'';const pr=state.price?state.price+'万':'';const gb=state.gearbox||'';const city=state.city||'';
-  let points=state.extra?state.extra.split(/[，,。;；\n]+/).map(s=>s.trim()).filter(Boolean):[];
+  let points=[...(state.modelPoints||[])];
+  if(state.extra)state.extra.split(/[，,。;；\n]+/).map(s=>s.trim()).filter(Boolean).forEach(s=>{if(!points.includes(s))points.push(s);});
   points=points.map(clean).filter(Boolean);
+  const claims=(state.claims||[]).slice();
   const style=state.style;
   let title,short,long,xhs,xy;
   const tail='具体车况、配置以实地看车检测为准。';
@@ -925,7 +1246,8 @@ function buildCopies(){
     xhs=name+' 到店实拍分享\n\n'+(points.length?points.map((p,i)=>(i+1)+'、'+p).join('\n')+'\n':'')+(mi?'表显里程'+mi+'。\n':'')+(pr?'报价'+pr+'，具体可到店面谈。\n':'')+'车在'+(city||'本地')+'，支持实地看车、试驾与第三方检测。\n'+tail+'\n\n#二手车 #'+state.brand+state.series+' #正规二手车 #看车试驾';
     xy=name+' '+(mi?mi+' ':'')+(gb?gb+' ':'')+(pr?pr+' ':'')+'正规车商 二手车 '+(points.slice(0,3).join(' '))+' 手续齐全 支持检测 '+(city||'');
   }
-  return {title:clean(title),short:clean(short),long:clean(long),xhs:clean(xhs),xy:clean(xy)};
+  const claimLine=claims.length?('卖家声明：'+claims.join('、')+'，具体以实地看车及第三方检测为准。'):'';
+  return {title:clean(title),short:clean(short),long:clean(long)+(claimLine?'\n'+claimLine:''),xhs:clean(xhs)+(claimLine?'\n'+claimLine:''),xy:clean(xy)};
 }
 function professionalLong(name,mi,pr,gb,city,points,tail,deal){
   return '【车辆型号】'+name+'\n'
