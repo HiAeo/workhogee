@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -37,6 +37,13 @@ img { max-width: 100%; display: block; }
 .nav-login-btn { padding: 8px 20px; background: var(--ink); color: white; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
 .nav-login-btn:hover { background: var(--orange); }
 .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; cursor: pointer; }
+.nav-product-link { display: inline-flex; align-items: center; gap: 6px; }
+.nav-product-link svg { width: 15px; height: 15px; }
+.nav-cta { padding: 9px 22px; background: var(--orange); color: white !important; border-radius: 8px; font-size: 13px; font-weight: 700; transition: all 0.2s; }
+.nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--ink); margin: 5px 0; transition: all 0.3s; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
 /* Hero */
 .dl-hero { padding: 140px 0 80px; background: linear-gradient(180deg, var(--paper) 0%, var(--sand) 100%); position: relative; overflow: hidden; }
@@ -122,17 +129,22 @@ img { max-width: 100%; display: block; }
 .cta .btn-secondary:hover { border-color: white; }
 
 /* 页脚 */
-.footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.08); padding: 48px 0 24px; }
-.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 36px; }
-.footer-brand { display: flex; flex-direction: column; gap: 12px; }
-.footer-brand svg { height: 26px; width: auto; }
-.footer-brand p { font-size: 13px; line-height: 1.7; max-width: 260px; color: rgba(255,255,255,0.45); }
-.footer-col h4 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 14px; }
-.footer-col a { display: block; font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 10px; transition: color 0.2s; }
+.footer { background: var(--ink); color: #a9a196; padding: 60px 0 30px; border-top: 1px solid #37322c; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer-brand { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.footer-brand svg { height: 28px; width: auto; display: block; margin: 0; padding: 0; }
+.footer-brand a { display: block; margin: 0; padding: 0; line-height: 0; }
+.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 280px; margin: 0; padding: 0; }
+.footer-col h5 { font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 16px; }
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a { font-size: 13.5px; color: #a9a196; transition: color 0.2s; }
 .footer-col a:hover { color: var(--orange-light); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
-.footer-bottom p { font-size: 11px; color: rgba(255,255,255,0.35); }
+.footer-bottom { border-top: 1px solid #37322c; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-size: 12.5px; color: #7c7468; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 12.5px; color: #7c7468; }
+.footer-links a:hover { color: var(--orange-light); }
 
 /* 弹窗 */
 .modal-overlay { position: fixed; inset: 0; background: rgba(28,25,23,0.6); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 24px; }
@@ -161,7 +173,7 @@ img { max-width: 100%; display: block; }
   .price-card.featured { order: -1; }
   .compare-table { font-size: 12px; }
   .compare-table th, .compare-table td { padding: 12px 10px; }
-  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
   .nav-links { display: none; }
   .cta h2 { font-size: 32px; }
 }
@@ -170,9 +182,9 @@ img { max-width: 100%; display: block; }
 <body>
 
 <!-- 导航 -->
-<nav class="nav">
+<header class="nav" id="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
         <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
         <g transform="translate(-1.06 -28.16)">
@@ -185,18 +197,24 @@ img { max-width: 100%; display: block; }
         </g>
       </svg>
     </a>
-    <div class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="global.html">出海伙计</a>
-      <a href="geo.html">GEO伙计</a>
-      <a href="huoer.html" class="active">生图伙计</a>
-    </div>
-    <div class="nav-user">
-      <button class="nav-login-btn" id="navLoginBtn" onclick="openLogin()">登录</button>
-      <div class="nav-avatar" id="navAvatar" style="display:none;" onclick="logout()">U</div>
-    </div>
+    <nav class="nav-links" id="navLinks">
+      <a href="/huoer.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>生图伙计
+      </a>
+      <a href="/geo.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>GEO伙计
+      </a>
+      <a href="/global.html" class="nav-product-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>出海伙计
+      </a>
+      <a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a>
+      <a class="nav-cta" href="#download">免费下载</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-</nav>
+</header>
 
 <!-- Hero -->
 <section class="dl-hero">
@@ -211,7 +229,7 @@ img { max-width: 100%; display: block; }
         <div class="dl-stat"><div class="num"><span>3</span>档</div><div class="label">会员方案可选</div></div>
       </div>
     </div>
-    <div class="dl-cards">
+    <div class="dl-cards" id="download">
       <div class="dl-card" onclick="downloadClient('win')">
         <div class="dl-card-icon win">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M3 5.5L10.5 4.5V11.5H3V5.5Z"/><path d="M11.5 4.35L21 3V11.5H11.5V4.35Z"/><path d="M3 12.5H10.5V19.5L3 18.5V12.5Z"/><path d="M11.5 12.5H21V21L11.5 19.65V12.5Z"/></svg>
@@ -355,39 +373,59 @@ img { max-width: 100%; display: block; }
 
 <!-- 页脚 -->
 <footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-top">
+  <div class="container">
+    <div class="footer-grid">
       <div class="footer-brand">
-        <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text x="0" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#ffffff">Work</text>
-          <text x="58" y="24" font-family="Verdana, sans-serif" font-size="22" font-weight="bold" fill="#ea580c">Hogee</text>
+        <a href="/" aria-label="WorkHogee Home">
+        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+          <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
+          <g transform="translate(-1.06 -28.16)">
+            <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+            <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+            <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+            <path class="fl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+            <path class="fl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+          </g>
         </svg>
-        <p>小商家的 AI 工作流伙计。上传一张图，选一个行业场景，行业大脑帮你生成能直接上架的专业图。</p>
+        </a>
+        <p>AI获客伙计，24小时主动干活。让中小企业也能用得起专属获客团队。</p>
       </div>
       <div class="footer-col">
-        <h4>产品</h4>
-        <a href="index.html">AI获客伙计</a>
-        <a href="global.html">出海伙计</a>
-        <a href="geo.html">GEO伙计</a>
-        <a href="huoer.html">生图伙计</a>
+        <h5>产品</h5>
+        <ul>
+          <li><a href="/huoer.html">生图伙计</a></li>
+          <li><a href="/geo.html">GEO伙计</a></li>
+          <li><a href="/global.html">出海伙计</a></li>
+          <li><a href="//www.workhogee.com/admin/" target="_blank">管理后台</a></li>
+        </ul>
       </div>
       <div class="footer-col">
-        <h4>资源</h4>
-        <a href="#">帮助中心</a>
-        <a href="#">API文档</a>
-        <a href="#">行业知识库</a>
-        <a href="#">更新日志</a>
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
+          <li><a href="https://github.com/HiAeo/workhogee/releases" target="_blank">版本更新</a></li>
+          <li><a href="docs/index.html#quickstart">快速开始</a></li>
+          <li><a href="docs/index.html#faq">常见问题</a></li>
+        </ul>
       </div>
       <div class="footer-col">
-        <h4>关于</h4>
-        <a href="#">关于我们</a>
-        <a href="#">服务条款</a>
-        <a href="#">隐私政策</a>
-        <a href="#">联系我们</a>
+        <h5>关于</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 WorkHogee. All rights reserved.</p>
+      <div class="footer-copy">© 2026 WorkHogee. All rights reserved. 让每个中小企业都有AI获客伙计</div>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
     </div>
   </div>
 </footer>
