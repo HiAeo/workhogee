@@ -489,18 +489,37 @@ table.data tbody tr:last-child td{border-bottom:none}
     box.appendChild(el);requestAnimationFrame(function(){el.classList.add('show');});
     setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},250);},2800);}
 
-  function api(method,path,body){
-    var opt={method:method,headers:{'Content-Type':'application/json'}};
+  function api(method,path,body,attempt){
+    attempt=attempt||0;
+    var ctrl=new AbortController();
+    var timer=setTimeout(function(){try{ctrl.abort();}catch(_){}},30000);
+    var opt={method:method,headers:{'Content-Type':'application/json'},signal:ctrl.signal};
     var tok=localStorage.getItem(TOKEN_KEY);if(tok)opt.headers.Authorization='Bearer '+tok;
     if(body!==undefined)opt.body=JSON.stringify(body);
     return fetch(API+path,opt).then(function(res){
+      clearTimeout(timer);
       var ct=res.headers.get('content-type')||'';
       var p=ct.indexOf('json')>=0?res.json():res.text();
       return p.then(function(data){
         if(!res.ok){if(res.status===401&&path!=='/api/admin/login'){doLogout(true);}
-          var err=(data&&data.error)||{message:'请求失败（'+res.status+'）'};throw err;}
+          var err=(data&&data.error)||{message:'请求失败（'+res.status+'）'};
+          err.status=res.status;throw err;}
         return data;});
-    }).catch(function(e){if(e&&e.message)throw e;throw{message:'网络异常，无法连接服务器'};});
+    }).catch(function(e){
+      clearTimeout(timer);
+      var isAbort=e&&e.name==='AbortError';
+      var isNet=e&&(e.name==='TypeError'||(e.message&&/Failed to fetch|NetworkError|load failed/i.test(e.message)));
+      var is5xx=e&&e.status>=500;
+      // 仅对网络抖动 / 超时 / 5xx 自动重试，最多 3 次；400/401/404/429 等确定性错误立即返回
+      if((isAbort||isNet||is5xx)&&attempt<2){
+        return new Promise(function(res){setTimeout(res,700*(attempt+1));})
+          .then(function(){return api(method,path,body,attempt+1);});
+      }
+      if(isAbort)throw{message:'连接超时，当前网络到服务器较慢，请重试'};
+      if(isNet)throw{message:'无法连接服务器，可能是网络波动，请检查网络后重试'};
+      if(e&&e.message)throw e;
+      throw{message:'网络异常，无法连接服务器'};
+    });
   }
 
   /* ---------- 登录 / 退出 ---------- */
@@ -743,14 +762,23 @@ table.data tbody tr:last-child td{border-bottom:none}
   $('exportBtn').addEventListener('click',function(){
     var f=state.filters,qs='q='+encodeURIComponent(f.q)+'&status='+f.status+'&plan='+f.plan+'&product='+f.product;
     var btn=$('exportBtn');btn.disabled=true;
-    fetch(API+'/api/admin/members/export.csv?'+qs,{headers:{Authorization:'Bearer '+localStorage.getItem(TOKEN_KEY)}})
-      .then(function(res){if(!res.ok)throw new Error('导出失败');return res.blob();})
-      .then(function(blob){
-        var a=document.createElement('a');a.href=URL.createObjectURL(blob);
-        a.download='workhogee-members.csv';document.body.appendChild(a);a.click();a.remove();
-        toast('已导出会员 CSV');})
-      .catch(function(e){toast(e.message||'导出失败','err');})
-      .finally(function(){btn.disabled=false;});
+    function dl(attempt){
+      attempt=attempt||0;
+      var ctrl=new AbortController();var timer=setTimeout(function(){try{ctrl.abort();}catch(_){}},30000);
+      fetch(API+'/api/admin/members/export.csv?'+qs,{headers:{Authorization:'Bearer '+localStorage.getItem(TOKEN_KEY)},signal:ctrl.signal})
+        .then(function(res){clearTimeout(timer);if(!res.ok)throw{status:res.status,message:'导出失败（'+res.status+'）'};return res.blob();})
+        .then(function(blob){
+          var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+          a.download='workhogee-members.csv';document.body.appendChild(a);a.click();a.remove();
+          btn.disabled=false;toast('已导出会员 CSV');})
+        .catch(function(e){
+          clearTimeout(timer);
+          var net=e&&(e.name==='AbortError'||e.name==='TypeError');
+          if(net&&attempt<2){setTimeout(function(){dl(attempt+1);},700*(attempt+1));return;}
+          btn.disabled=false;
+          toast((e&&e.name==='AbortError')?'连接超时，请重试':((e&&e.message)||'导出失败，请重试'),'err');});
+    }
+    dl();
   });
 
   /* ---------- 产品 / 套餐页 ---------- */
