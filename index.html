@@ -113,7 +113,8 @@ ul{list-style:none;}
 .btn-line:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow-md);}
 
 /* ===== 深色品牌 Hero ===== */
-.mhero{background:radial-gradient(1200px 620px at 78% -8%,rgba(234,88,12,.20),transparent 60%),linear-gradient(180deg,#0d0b09 0%,var(--coal) 58%,var(--coal-2) 100%);color:#fff;padding:168px 0 0;min-height:100vh;min-height:100dvh;box-sizing:border-box;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.mhero{background:radial-gradient(1200px 620px at 78% -8%,rgba(234,88,12,.20),transparent 60%),linear-gradient(180deg,#0d0b09 0%,var(--coal) 58%,var(--coal-2) 100%);color:#fff;padding:168px 0 0;min-height:100vh;min-height:100dvh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;}
+.mhero>.container{width:100%;max-width:var(--maxw);margin:0 auto;}
 @supports not (min-height:100dvh){.mhero{min-height:100vh;}}
 .mhero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);-webkit-mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);pointer-events:none;}
 .mhero-in{position:relative;z-index:2;display:grid;grid-template-columns:7fr 5fr;gap:60px;align-items:center;}
