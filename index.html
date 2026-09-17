@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorkHogee 二手生图伙计 · 二手生意，从图开始 — 只做二手行业的 AI 物料工作台</title>
-<meta name="description" content="WorkHogee 是只做二手行业的 AI 物料工作台：拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案。从二手车起步，逐步覆盖二手房、潮玩、乐器、3C、办公等“图片决定成交”的二手品类。">
+<meta name="description" content="WorkHogee 二手车伙计：手机拍几张车，20 秒生成能直接上架、可传播、可合规的车源图片、视频与文案。智能拍摄引导、真实留证不藏瑕疵、多平台尺寸一键适配。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
@@ -341,6 +341,36 @@ ul{list-style:none;}
 .mx-nodo .nd{font-size:13.5px;color:var(--ink-muted);text-decoration:line-through;text-decoration-color:rgba(234,88,12,.55);text-decoration-thickness:1.5px;}
 .mx-nodo .nd b{color:var(--ink-soft);font-weight:600;}
 .mx-nodo .nd-r{font-size:12.5px;color:var(--ink-muted);margin-left:auto;}
+/* ===== 首发产品·二手车（旗舰板块） ===== */
+.fp{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:60px;align-items:center;}
+.fp-title{font-size:clamp(34px,4vw,48px);font-weight:800;letter-spacing:-.5px;line-height:1.08;margin:14px 0 16px;color:var(--ink);}
+.fp-lead{font-size:17px;line-height:1.75;color:var(--ink-soft);margin:0 0 30px;max-width:520px;}
+.fp-points{list-style:none;margin:0 0 34px;padding:0;display:flex;flex-direction:column;gap:20px;}
+.fp-points li{display:flex;gap:16px;align-items:flex-start;}
+.fp-ic{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1.5px solid rgba(234,88,12,.35);background:rgba(234,88,12,.07);color:var(--orange);display:flex;align-items:center;justify-content:center;}
+.fp-ic svg{width:23px;height:23px;}
+.fp-points h4{font-size:16.5px;font-weight:800;margin:2px 0 5px;color:var(--ink);}
+.fp-points p{font-size:14px;line-height:1.65;color:var(--ink-muted);margin:0;}
+.fp-cta{display:flex;gap:14px;flex-wrap:wrap;}
+.fp-cta .btn{padding:14px 26px;}
+.ba{position:relative;aspect-ratio:16/10.5;border-radius:var(--r-lg);overflow:hidden;background:#0d0b09;box-shadow:var(--shadow-lg);--pos:50;--ba-w:100%;cursor:ew-resize;touch-action:none;user-select:none;-webkit-user-select:none;outline:none;}
+.ba:focus-visible{box-shadow:0 0 0 3px rgba(234,88,12,.45),var(--shadow-lg);}
+.ba-img{position:absolute;top:0;height:100%;object-fit:cover;object-position:center center;display:block;pointer-events:none;}
+.ba-after{left:0;width:100%;z-index:1;}
+.ba-before{position:absolute;top:0;left:0;bottom:0;width:var(--pos);overflow:hidden;z-index:2;}
+.ba-before .ba-img{left:0;width:var(--ba-w);max-width:none;}
+.ba-bar{position:absolute;top:0;bottom:0;left:var(--pos);z-index:3;width:0;pointer-events:none;}
+.ba-bar::before{content:"";position:absolute;top:0;bottom:0;left:-1px;width:2px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.45);}
+.ba-knob{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:var(--orange);border:2.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.4);transition:background .2s,transform .2s;}
+.ba:hover .ba-knob{background:var(--orange-deep);transform:translate(-50%,-50%) scale(1.08);}
+.ba-pill{position:absolute;top:14px;z-index:4;font-size:12px;font-weight:700;letter-spacing:.5px;color:#fff;background:rgba(13,11,9,.6);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:6px 13px;border-radius:999px;pointer-events:none;white-space:nowrap;}
+.ba-pill-l{left:14px;}
+.ba-pill-r{right:14px;background:rgba(234,88,12,.88);border-color:rgba(255,255,255,.35);}
+.ba-hint{text-align:center;font-size:13px;color:var(--ink-muted);margin:14px 0 0;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ba-hint svg{color:var(--orange);flex:0 0 auto;}
+@media(max-width:900px){.fp{grid-template-columns:1fr;gap:40px;}.fp-lead{max-width:none;}}
+@media(max-width:640px){.fp{gap:28px;}.fp-points{gap:16px;margin-bottom:26px;}.fp-cta{flex-direction:column;align-items:stretch;}.fp-cta .btn{width:100%;}.ba{aspect-ratio:4/3;}.ba-hint{font-size:12px;}}
+@media(prefers-reduced-motion:reduce){.ba-knob{transition:none;}}
 
 /* ===== 图骗 vs 真实 对峙（深色） ===== */
 .standoff{background:linear-gradient(180deg,var(--coal-2),#0d0b09);color:#fff;padding:100px 0;}
@@ -721,153 +751,44 @@ ul{list-style:none;}
     </div>
   </div>
 </section>
-<!-- ===== 品类矩阵 ===== -->
-<section class="section white" id="matrix">
+<!-- ===== 首发产品：二手车伙计（旗舰板块） ===== -->
+<section class="section white" id="product">
   <div class="container">
-    <div class="shead reveal">
-      <div class="kick">产品矩阵 · Categories</div>
-      <div>
-        <h2>只做“图片决定成交”的二手品类</h2>
-        <p>二手非标品的成色、瑕疵与证据，直接决定成交与纠纷。WorkHogee 只进入“过度美化会出事”的行业，用行业知识库把“真实”变成“信任”。</p>
-      </div>
-    </div>
-    <div class="mx-grid">
-      <a href="/usedcar.html" class="mx-feat reveal">
-        <span class="badge">已上线 · P0</span>
-        <div class="ph">
-          <img class="ph-real" src="images/car-tesla-phone.jpg" alt="白色特斯拉Model3手机实拍原图">
-          <img class="ph-ai" src="images/car-tesla-showroom.jpg" alt="白色特斯拉Model3 AI展厅效果图">
-          <span class="ph-swap"><span class="ps-real">手机实拍</span><span class="ps-ai">AI 展厅效果</span></span>
-        </div>
-        <div class="cap">
-          <h3>二手车伙计</h3>
-          <div class="cf">核心矛盾：车况 vs 图骗。外观/内饰/细节智能拍摄，自动出精修图、场景图、360、短视频与车源文案。</div>
-          <span class="go">进入二手车伙计
+    <div class="fp">
+      <div class="fp-text reveal">
+        <span class="kick">首发产品 · Flagship</span>
+        <h2 class="fp-title">二手车伙计</h2>
+        <p class="fp-lead">手机随手拍几张，20&nbsp;秒变成能直接上架的专业车源。<br>WorkHogee 不修图、修信任——机位一个不漏，瑕疵一个不藏。</p>
+        <ul class="fp-points">
+          <li>
+            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.8A1 1 0 0 1 9 4.7h6a1 1 0 0 1 .84.5L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+            <div><h4>智能拍摄引导</h4><p>外观 / 内饰 / 空间点位卡，前 45°、正侧、车尾、内饰细节按顺序拍，新手也能拍出车商级机位，不漏关键角度。</p></div>
+          </li>
+          <li>
+            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <div><h4>真实留证，瑕疵不藏</h4><p>不改成色、不抹划痕、不虚标里程；车牌、人脸、VIN 自动脱敏，AI 生成标识必带，从源头减少到手纠纷。</p></div>
+          </li>
+          <li>
+            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></svg></span>
+            <div><h4>一套素材，全平台上架</h4><p>精修图、AI 展厅、360、看车短视频与车源文案一次出齐，自动适配各平台尺寸，下载或一键同步飞书共享。</p></div>
+          </li>
+        </ul>
+        <div class="fp-cta">
+          <a class="btn btn-org" href="/usedcar.html">进入二手车伙计
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </span>
+          </a>
+          <a class="btn btn-line" href="/workbench.html">打开 Web 工作台</a>
         </div>
-      </a>
-      <div class="mx-side">
-        <button type="button" class="mx-mid reveal" data-soon="二手房伙计正在内测筹备中，即将上线，敬请期待">
-          <span class="st">即将上线 · P1</span>
-          <span class="top">
-            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
-            <span><h3>二手房伙计</h3><div class="cf">格局 vs 美化失真</div></span>
-          </span>
-          <span class="mx-art" aria-hidden="true">
-            <svg viewBox="0 0 268 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="8" y="9" width="246" height="46" rx="1.6" stroke-width="1.3"/>
-              <line x1="74" y1="9" x2="74" y2="32" stroke-width="1.1"/><line x1="74" y1="40" x2="74" y2="55" stroke-width="1.1"/>
-              <line x1="176" y1="9" x2="176" y2="26" stroke-width="1.1"/><line x1="176" y1="34" x2="176" y2="55" stroke-width="1.1"/>
-              <line x1="176" y1="32" x2="202" y2="32" stroke-width="1.1"/><line x1="210" y1="32" x2="254" y2="32" stroke-width="1.1"/>
-              <line x1="74" y1="40" x2="82" y2="32" stroke-width="0.9"/>
-              <line x1="176" y1="34" x2="184" y2="26" stroke-width="0.9"/>
-              <line x1="202" y1="32" x2="202" y2="40" stroke-width="0.9"/>
-              <rect x="16" y="16" width="30" height="20" rx="1.5" stroke-width="0.95"/>
-              <rect x="18" y="18" width="26" height="6" rx="1" stroke-width="0.85"/>
-              <line x1="16" y1="30" x2="46" y2="30" stroke-width="0.85"/>
-              <rect x="56" y="14" width="12" height="22" rx="1" stroke-width="0.95"/>
-              <line x1="62" y1="14" x2="62" y2="36" stroke-width="0.85"/>
-              <rect x="96" y="13" width="38" height="5" rx="1" stroke-width="0.95"/>
-              <rect x="104" y="30" width="20" height="7" rx="1" stroke-width="0.95"/>
-              <rect x="88" y="40" width="50" height="11" rx="2" stroke-width="0.95"/>
-              <line x1="105" y1="40" x2="105" y2="51" stroke-width="0.85"/><line x1="121" y1="40" x2="121" y2="51" stroke-width="0.85"/>
-              <rect x="182" y="12" width="8" height="4" rx="0.8" stroke-width="0.85"/>
-              <rect x="181.5" y="16" width="9" height="11" rx="2" stroke-width="0.9"/>
-              <rect x="196" y="13" width="11" height="8" rx="1" stroke-width="0.9"/>
-              <rect x="214" y="13" width="34" height="13" rx="2" stroke-width="0.95"/>
-              <rect x="217" y="15.5" width="28" height="8" rx="2" stroke-width="0.8"/>
-              <rect x="182" y="45" width="64" height="7" rx="1" stroke-width="0.95"/>
-              <circle cx="195" cy="48.5" r="1.5" stroke-width="0.85"/><circle cx="203" cy="48.5" r="1.5" stroke-width="0.85"/>
-              <rect x="228" y="46.5" width="12" height="4" rx="0.8" stroke-width="0.85"/>
-              <rect x="246" y="36" width="6" height="16" rx="1" stroke-width="0.9"/>
-              <line x1="24" y1="8.3" x2="46" y2="8.3" stroke-width="0.9"/><line x1="24" y1="9.7" x2="46" y2="9.7" stroke-width="0.9"/>
-              <line x1="96" y1="54.3" x2="138" y2="54.3" stroke-width="0.9"/><line x1="96" y1="55.7" x2="138" y2="55.7" stroke-width="0.9"/>
-              <line x1="253.3" y1="15" x2="253.3" y2="27" stroke-width="0.9"/><line x1="254.7" y1="15" x2="254.7" y2="27" stroke-width="0.9"/>
-              <line x1="250" y1="22" x2="257" y2="20.6" stroke-width="0.9"/>
-              <path d="M254.6 18.8 L257.2 20.6 L254.8 22.4" stroke-width="0.9"/>
-              <circle cx="262" cy="20" r="3" stroke-width="1"/>
-              <line x1="262" y1="14.5" x2="262" y2="16.3" stroke-width="0.9"/><line x1="262" y1="23.7" x2="262" y2="25.5" stroke-width="0.9"/>
-              <line x1="266.5" y1="20" x2="264.7" y2="20" stroke-width="0.9"/><line x1="257.5" y1="20" x2="259.3" y2="20" stroke-width="0.9"/>
-              <line x1="265.4" y1="16.6" x2="264.1" y2="17.9" stroke-width="0.9"/><line x1="265.4" y1="23.4" x2="264.1" y2="22.1" stroke-width="0.9"/>
-            </svg>
-          </span>
-          <p class="desc">还原真实户型、朝向与采光，拒绝广角畸变、调色失真引发的带看落差与纠纷。</p>
-        </button>
-        <button type="button" class="mx-mid reveal" data-soon="二手潮玩伙计正在内测筹备中，即将上线，敬请期待">
-          <span class="st">即将上线 · P1</span>
-          <span class="top">
-            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span>
-            <span><h3>二手潮玩伙计</h3><div class="cf">成色 vs 瑕疵抹除</div></span>
-          </span>
-          <span class="mx-art" aria-hidden="true">
-            <svg viewBox="0 0 268 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="24" x2="256" y2="24" stroke-width="1.2"/>
-              <line x1="12" y1="24" x2="12" y2="28" stroke-width="1.1"/><line x1="256" y1="24" x2="256" y2="28" stroke-width="1.1"/>
-              <line x1="74" y1="27" x2="74" y2="50" stroke-width="0.9"/><line x1="184" y1="27" x2="184" y2="50" stroke-width="0.9"/>
-              <line x1="8" y1="50" x2="260" y2="50" stroke-width="1.2"/>
-              <line x1="8" y1="50" x2="8" y2="57" stroke-width="1.1"/><line x1="260" y1="50" x2="260" y2="57" stroke-width="1.1"/><line x1="8" y1="57" x2="260" y2="57" stroke-width="1.1"/>
-              <path d="M28 6 L40 1 L52 6" stroke-width="0.9"/>
-              <rect x="28" y="6" width="24" height="18" rx="1" stroke-width="0.95"/>
-              <line x1="28" y1="10" x2="52" y2="10" stroke-width="0.8"/>
-              <circle cx="40" cy="16" r="2.6" stroke-width="0.85"/>
-              <circle cx="90" cy="6" r="3" stroke-width="0.9"/><circle cx="102" cy="6" r="3" stroke-width="0.9"/>
-              <rect x="85" y="5" width="22" height="19" rx="4" stroke-width="0.95"/>
-              <circle cx="91.5" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="100.5" cy="14" r="1.3" fill="currentColor" stroke="none"/>
-              <path d="M93 17.5 Q96 19.5 99 17.5" stroke-width="0.85"/>
-              <line x1="151" y1="7" x2="151" y2="3.6" stroke-width="0.85"/><circle cx="151" cy="3" r="1.2" stroke-width="0.85"/>
-              <rect x="139" y="12" width="3" height="5" rx="1" stroke-width="0.85"/><rect x="160" y="12" width="3" height="5" rx="1" stroke-width="0.85"/>
-              <rect x="142" y="7" width="18" height="15" rx="2.5" stroke-width="0.95"/>
-              <line x1="151" y1="22" x2="151" y2="24" stroke-width="0.85"/>
-              <circle cx="147" cy="13.5" r="1.5" stroke-width="0.85"/><circle cx="155" cy="13.5" r="1.5" stroke-width="0.85"/>
-              <line x1="147" y1="18" x2="155" y2="18" stroke-width="0.8"/>
-              <path d="M208 8 L206 2 L213 7" stroke-width="0.9"/><path d="M220 8 L222 2 L215 7" stroke-width="0.9"/>
-              <rect x="204" y="6" width="20" height="18" rx="7" stroke-width="0.95"/>
-              <circle cx="210" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="218" cy="14" r="1.3" fill="currentColor" stroke="none"/>
-              <path d="M211.5 17.5 Q214 19.3 216.5 17.5" stroke-width="0.85"/>
-              <circle cx="56" cy="40" r="10" stroke-width="0.95"/>
-              <path d="M47.5 42.5 Q56 47 64.5 42.5" stroke-width="0.8"/>
-              <circle cx="52.5" cy="38" r="1.3" fill="currentColor" stroke="none"/><circle cx="59.5" cy="38" r="1.3" fill="currentColor" stroke="none"/>
-              <path d="M53.5 42 Q56 44 58.5 42" stroke-width="0.85"/>
-              <rect x="116" y="30" width="18" height="20" rx="1.5" stroke-width="0.95"/>
-              <rect x="118.5" y="32.5" width="13" height="11" rx="1" stroke-width="0.8"/>
-              <circle cx="125" cy="37.5" r="2.6" stroke-width="0.85"/>
-              <line x1="120" y1="46" x2="130" y2="46" stroke-width="0.8"/><line x1="120" y1="48.4" x2="130" y2="48.4" stroke-width="0.8"/>
-              <rect x="196" y="36" width="12" height="14" rx="2" stroke-width="0.95"/>
-              <circle cx="200" cy="41" r="1.2" fill="currentColor" stroke="none"/><circle cx="204" cy="41" r="1.2" fill="currentColor" stroke="none"/>
-              <line x1="200" y1="45" x2="204" y2="45" stroke-width="0.8"/>
-              <circle cx="224" cy="38" r="8" stroke-width="1.05"/>
-              <line x1="229.7" y1="43.7" x2="238" y2="52" stroke-width="1.05"/>
-            </svg>
-          </span>
-          <p class="desc">盒卡、漆面、磨损如实呈现，不抹瑕疵、不造“全新成色”，让买家所见即所得。</p>
-        </button>
       </div>
-      <div class="mx-index reveal">
-        <button type="button" class="mx-row" data-soon="二手乐器伙计已在产品路线图中，将在复制期后启动，敬请期待">
-          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
-          <span><span class="rn">二手乐器伙计</span><div class="rc">品相 vs 证据隐藏 · 漆面、磕碰、序列号与配件留证</div></span>
-          <span class="rst">规划中 · P2</span>
-        </button>
-        <button type="button" class="mx-row" data-soon="二手 3C 伙计已在产品路线图中，将在扩展期启动，敬请期待">
-          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
-          <span><span class="rn">二手 3C 伙计</span><div class="rc">序列号 vs 隐瞒故障 · 机身、接口、屏幕与序列号留证</div></span>
-          <span class="rst">规划中 · P2</span>
-        </button>
-        <button type="button" class="mx-row" data-soon="二手办公伙计已在产品路线图中，将在规模化阶段启动，敬请期待">
-          <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="9" width="12" height="8"/><path d="M6 17H4v4h16v-4h-2"/></svg></span>
-          <span><span class="rn">二手办公伙计</span><div class="rc">批量 vs 效率低 · 批量设备、家用统一规格出图与素材管理</div></span>
-          <span class="rst">规划中 · P3</span>
-        </button>
-      </div>
-      <div class="mx-nodo reveal">
-        <div class="nd-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>明确不做</div>
-        <div class="nd-list">
-          <span class="nd"><b>二手服饰</b> · 核心是真假</span>
-          <span class="nd"><b>二手奢品</b> · 需专业鉴定</span>
-          <span class="nd"><b>二手家具</b> · 物流重、决策链长</span>
+      <div class="fp-visual reveal">
+        <div class="ba" id="baCar" role="slider" tabindex="0" aria-label="二手车手机实拍与 AI 展厅效果对比，可左右拖动或用方向键查看" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <img class="ba-img ba-after" src="images/car-tesla-showroom.jpg" alt="同一辆白色特斯拉 Model 3 的 AI 展厅效果图，灯箱带有 WorkHogee 伙计二手车标识">
+          <div class="ba-before"><img class="ba-img" src="images/car-tesla-phone.jpg" alt="同一辆白色特斯拉 Model 3 的手机实拍原图，停在室外停车场"></div>
+          <span class="ba-pill ba-pill-l">手机实拍</span>
+          <span class="ba-pill ba-pill-r">AI 展厅效果</span>
+          <div class="ba-bar"><span class="ba-knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-5 6 5 6"/><path d="M15 6l5 6-5 6"/></svg></span></div>
         </div>
-        <div class="nd-r">这些都不是“图好”能解决的，坚决不碰。</div>
+        <p class="ba-hint"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7 4 12l4 5"/><path d="m16 7 4 5-4 5"/></svg>拖动对比 · 同一辆车，只升级呈现，车况与瑕疵全程一致</p>
       </div>
     </div>
   </div>
@@ -1037,10 +958,10 @@ ul{list-style:none;}
     </div>
     <div class="users-title reveal">从个人卖家到平台渠道，一套体系全覆盖</div>
     <div class="ladder reveal">
-      <div class="rung"><div class="cid">C1</div><h4>个人卖家</h4><p>偶尔卖闲置，即拍即用。</p><div class="pay">需求重心 · 零门槛快速出图</div></div>
-      <div class="rung"><div class="cid">C2</div><h4>专业卖家</h4><p>专职二手卖家，走量经营。</p><div class="pay">需求重心 · 批量与多平台效率</div></div>
-      <div class="rung"><div class="cid">C3</div><h4>寄卖店 / 门店</h4><p>车行、中介、潮玩店。</p><div class="pay">需求重心 · 协作、素材库与计费</div></div>
-      <div class="rung"><div class="cid">C4</div><h4>平台 / 渠道</h4><p>闲鱼、得物、懂车帝等。</p><div class="pay">需求重心 · 批量、白标与系统集成</div></div>
+      <div class="rung"><div class="cid">C1</div><h4>个人车主</h4><p>偶尔卖自己的车，即拍即用。</p><div class="pay">需求重心 · 零门槛快速出图</div></div>
+      <div class="rung"><div class="cid">C2</div><h4>职业车商</h4><p>专职收车卖车，走量经营。</p><div class="pay">需求重心 · 批量与多平台效率</div></div>
+      <div class="rung"><div class="cid">C3</div><h4>车行 / 门店</h4><p>二手车行、车商、寄售门店。</p><div class="pay">需求重心 · 协作、素材库与计费</div></div>
+      <div class="rung"><div class="cid">C4</div><h4>平台 / 渠道</h4><p>懂车帝、汽车之家、瓜子、闲鱼等。</p><div class="pay">需求重心 · 批量、白标与系统集成</div></div>
     </div>
   </div>
 </section>
@@ -1090,8 +1011,6 @@ ul{list-style:none;}
           <ul>
             <li><a href="/usedcar.html">二手车伙计</a></li>
             <li><a href="/workbench.html">Web 工作台</a></li>
-            <li><span style="font-size:14px;color:rgba(255,255,255,.4);cursor:default;">二手房伙计</span></li>
-            <li><span style="font-size:14px;color:rgba(255,255,255,.4);cursor:default;">二手潮玩伙计</span></li>
           </ul>
       </div>
       <div class="footer-col">
@@ -1144,6 +1063,27 @@ function navToast(msg){
 document.querySelectorAll('[data-soon]').forEach(function(b){
   b.addEventListener('click',function(){navLinks.classList.remove('open');applyNav();navToast(b.getAttribute('data-soon'));});
 });
+/* 二手车 实拍↔AI 对比滑块 */
+(function(){
+  var ba=document.getElementById('baCar');
+  if(!ba) return;
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pos=50,dragging=false,touched=false,raf=null;
+  function apply(p){pos=Math.max(3,Math.min(97,p));ba.style.setProperty('--pos',pos+'%');ba.setAttribute('aria-valuenow',String(Math.round(pos)));}
+  function size(){ba.style.setProperty('--ba-w',ba.clientWidth+'px');}
+  function fromClient(x){var r=ba.getBoundingClientRect();apply((x-r.left)/r.width*100);}
+  size();window.addEventListener('resize',size);
+  ba.addEventListener('pointerdown',function(e){touched=true;dragging=true;if(raf){cancelAnimationFrame(raf);raf=null;}try{ba.setPointerCapture(e.pointerId);}catch(_){}fromClient(e.clientX);});
+  ba.addEventListener('pointermove',function(e){if(dragging)fromClient(e.clientX);});
+  function end(){dragging=false;}
+  ba.addEventListener('pointerup',end);ba.addEventListener('pointercancel',end);
+  ba.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'){touched=true;apply(pos-4);e.preventDefault();}else if(e.key==='ArrowRight'){touched=true;apply(pos+4);e.preventDefault();}});
+  if(!reduce && 'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting&&!touched){io.disconnect();hint();}});},{threshold:.45});
+    io.observe(ba);
+    function hint(){var t0=null;function step(t){if(touched)return;if(t0===null)t0=t;var k=Math.min(1,(t-t0)/1100);apply(50+Math.sin(k*Math.PI)*16);if(k<1){raf=requestAnimationFrame(step);}else{apply(50);}}raf=requestAnimationFrame(step);}
+  }
+})();
 const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
 document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 function mpNotify(){
