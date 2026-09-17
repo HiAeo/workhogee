@@ -114,11 +114,36 @@
     '.hm-chip .hm-chip-name{font-size:12.5px;color:#fff;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
     '.hm-chip button{appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;color:#fff;background:#ea580c;border-radius:999px;padding:5px 12px;}',
     '.hm-chip button:hover{background:#c2410c;}',
+    /* 「发现二手的美」品牌徽章（浅色导航 / 白色工作台版，与首页 logo 旁徽章同款） */
+    '@property --hm-tag-ang{syntax:"<angle>";initial-value:0deg;inherits:false;}',
+    '.hm-badge{position:relative;display:inline-flex;align-items:center;height:31px;padding:0 15px;margin-left:4px;border-radius:999px;border:1px solid rgba(28,25,23,.28);color:#44403c;font-size:12px;font-weight:500;letter-spacing:3px;line-height:1;white-space:nowrap;animation:hmTagFloat 3.8s ease-in-out infinite;transition:color .3s,border-color .3s;}',
+    '.hm-badge>span{position:relative;z-index:1;}',
+    '.hm-badge::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--hm-tag-ang),#ea580c,#ca8a04,#16a34a,#0891b2,#7c3aed,#db2777,#ea580c);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:0;transition:opacity .3s;animation:hmTagSpin 2.6s linear infinite;pointer-events:none;}',
+    '.hm-badge:hover{border-color:transparent;}',
+    '.hm-badge:hover::before{opacity:1;}',
+    '.hm-badge:hover>span{background:linear-gradient(90deg,#ea580c,#ca8a04,#16a34a,#0891b2,#7c3aed,#db2777,#ea580c);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:hmTagTxt 2.2s linear infinite;}',
+    '@keyframes hmTagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}',
+    '@keyframes hmTagSpin{to{--hm-tag-ang:360deg}}',
+    '@keyframes hmTagTxt{to{background-position:-220% 0}}',
+    /* 内容页浅色导航：logo 与徽章水平并排（部分旧模板 .nav-logo 非 flex） */
+    '.nav.light .nav-logo{display:inline-flex;align-items:center;gap:10px;}',
+    /* 浅色导航适配：首页滚动(.nav.solid)/移动面板(.nav.panel-open)、内容页(.nav.light)、白色工作台(.topbar) */
+    '.nav.solid .hm-navbtn-ghost,.nav.panel-open .hm-navbtn-ghost,.nav.light .hm-navbtn-ghost,.topbar .hm-navbtn-ghost{background:#fff;color:#1c1917;border:1px solid rgba(28,25,23,.28);}',
+    '.nav.solid .hm-navbtn-ghost:hover,.nav.panel-open .hm-navbtn-ghost:hover,.nav.light .hm-navbtn-ghost:hover,.topbar .hm-navbtn-ghost:hover{border-color:#1c1917;background:#f5f5f4;}',
+    '.nav.solid .hm-navuser,.nav.panel-open .hm-navuser,.nav.light .hm-navuser,.topbar .hm-navuser{color:#1c1917;background:rgba(28,25,23,.06);border:1px solid rgba(28,25,23,.16);}',
+    '.nav.solid .hm-navlogout,.nav.panel-open .hm-navlogout,.nav.light .hm-navlogout,.topbar .hm-navlogout{color:rgba(28,25,23,.62);}',
+    '.nav.solid .hm-navlogout:hover,.nav.panel-open .hm-navlogout:hover,.nav.light .hm-navlogout:hover,.topbar .hm-navlogout:hover{color:#ea580c;}',
+    '@media(max-width:860px){.hm-badge{display:none;}}',
     '@media(max-width:860px){',
-    '  .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
-    '  .hm-navbtn{width:100%;padding:13px 18px;text-align:center;}',
-    '  .hm-navuser{max-width:none;justify-content:center;}',
-    '  .hm-navlogout{text-align:center;}',
+    '  .nav .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
+    '  .nav .hm-navbtn{width:100%;padding:13px 18px;text-align:center;}',
+    '  .nav .hm-navuser{max-width:none;justify-content:center;}',
+    '  .nav .hm-navlogout{text-align:center;}',
+    '  .topbar .member-nav{flex-direction:row;align-items:center;gap:8px;}',
+    '  .topbar .hm-navbtn{padding:7px 13px;font-size:12px;}',
+    '  .topbar .hm-navuser{padding:7px 10px;font-size:12px;max-width:150px;}',
+    '  .topbar .hm-navuser span{max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
+    '  .topbar .hm-navlogout{padding:4px 2px;font-size:12px;}',
     '}'
   ].join('\n');
 
@@ -366,12 +391,16 @@
     if (!state.gate) return;
     var gate = el('hmGate');
     var chip = el('hmChip');
+    // 页面顶部导航已含会员区（data-member-nav）时，登录态由导航承担，不再弹右上角悬浮胶囊，避免重复与遮挡
+    var hasNav = document.querySelectorAll('[data-member-nav]').length > 0;
     if (state.token) {
       if (gate) gate.classList.remove('hm-show');
-      if (chip) {
+      if (chip && !hasNav) {
         chip.classList.add('hm-show');
         var n = el('hmChipName');
         if (n) n.textContent = (state.user && (state.user.contactName || state.user.merchantName || state.user.account || state.user.name)) || '会员';
+      } else if (chip) {
+        chip.classList.remove('hm-show');
       }
     } else {
       if (gate) gate.classList.add('hm-show');
