@@ -116,7 +116,13 @@ ul{list-style:none;}
 .mhero{background:radial-gradient(1200px 620px at 78% -8%,rgba(234,88,12,.20),transparent 60%),linear-gradient(180deg,#0d0b09 0%,var(--coal) 58%,var(--coal-2) 100%);color:#fff;padding:168px 0 0;position:relative;overflow:hidden;}
 .mhero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);-webkit-mask-image:radial-gradient(900px 520px at 70% 0%,#000 0%,transparent 72%);pointer-events:none;}
 .mhero-in{position:relative;z-index:2;display:grid;grid-template-columns:7fr 5fr;gap:60px;align-items:center;}
-.mh-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:999px;margin-bottom:30px;}
+.mh-left,.mh-right{min-width:0;}
+.mh-left img,.mh-right img{max-width:100%;}
+.mh-mascot{display:flex;justify-content:flex-start;margin-bottom:2px;}
+.mh-atu{height:156px;width:auto;display:block;transform-origin:50% 100%;filter:drop-shadow(0 20px 26px rgba(0,0,0,.42));animation:atuFloat 5s ease-in-out 1s infinite;}
+@keyframes atuFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.mh-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:999px;margin-bottom:30px;max-width:100%;box-sizing:border-box;}
+.mh-eyebrow .eb-mini{display:none;}
 .mh-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:mpulse 2.2s infinite;}
 @keyframes mpulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.55);}70%{box-shadow:0 0 0 9px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
 .mh-title{font-size:clamp(46px,6.6vw,86px);font-weight:900;line-height:1.04;letter-spacing:-1.5px;}
@@ -433,6 +439,7 @@ ul{list-style:none;}
   .reveal{opacity:1;transform:none;transition:none;}
   .mh-anim{animation:none;opacity:1;transform:none;}
   .mh-eyebrow .dot{animation:none;}
+  .mh-atu{animation:none;}
   html{scroll-behavior:auto;}
 }
 
@@ -498,6 +505,11 @@ ul{list-style:none;}
   .wcard .wc-ph{aspect-ratio:16/7;}
   .mx-mid .desc,.mx-feat .cap .cf{font-size:13.5px;}
   .mcta .mp-line button{padding:8px 4px;}
+  .mh-mascot{margin-bottom:0;}
+  .mh-atu{height:116px;}
+  .mh-eyebrow{margin-bottom:18px;font-size:12px;padding:6px 12px;}
+  .mh-eyebrow .eb-full{display:none;}
+  .mh-eyebrow .eb-mini{display:inline;}
 }
 
 /* ===== 矮屏笔记本纵向节奏优化（仅桌面布局 + 视口偏矮时生效，大屏与移动端不受影响） ===== */
@@ -510,7 +522,9 @@ ul{list-style:none;}
   .shead h2{font-size:clamp(26px,3vw,34px);letter-spacing:-.6px;}
   .shead p{margin-top:11px;font-size:15px;line-height:1.72;}
   .mhero{padding-top:122px;}
-  .mh-eyebrow{margin-bottom:20px;padding:6px 13px;font-size:12.5px;}
+  .mh-mascot{margin-bottom:0;}
+  .mh-atu{height:118px;}
+  .mh-eyebrow{margin-bottom:20px;}
   .mh-title{font-size:clamp(40px,5.2vw,64px);}
   .mh-sub{margin-top:18px;font-size:16px;line-height:1.72;}
   .mh-cta{margin-top:24px;}
@@ -573,6 +587,7 @@ ul{list-style:none;}
   .mcta{padding:62px 0 52px;}
   .shead{margin-bottom:28px;}
   .mhero{padding-top:104px;}
+  .mh-atu{height:96px;}
   .mh-eyebrow{margin-bottom:16px;}
   .mh-title{font-size:clamp(36px,4.6vw,54px);}
   .mh-sub{margin-top:14px;font-size:15.5px;}
@@ -633,7 +648,8 @@ ul{list-style:none;}
   <div class="container">
     <div class="mhero-in">
       <div class="mh-left">
-        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span>WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span></div>
+        <div class="mh-mascot mh-anim" style="animation-delay:0s"><img class="mh-atu" src="images/atu-half.png" alt="阿图，WorkHogee 镜头头伙计" width="1000" height="901" loading="eager"></div>
+        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span class="eb-full">WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span><span class="eb-mini">首个品类「二手车伙计」内测中</span></div>
         <h1 class="mh-title mh-anim" style="animation-delay:.10s">二手生意，<br>从<span class="ac">图</span>开始。</h1>
         <p class="mh-sub mh-anim" style="animation-delay:.20s">WorkHogee 是只做二手行业的 AI 物料工作台。卖家拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案——从二手车起步，长成覆盖多个二手品类的产品矩阵。</p>
         <div class="mh-cta mh-anim" style="animation-delay:.30s">
