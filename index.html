@@ -167,7 +167,7 @@ ul{list-style:none;}
 .mh-title{font-size:clamp(46px,6.6vw,86px);font-weight:900;line-height:1.04;letter-spacing:-1.5px;}
 .mh-title .ac{color:var(--orange-light);position:relative;}
 .mh-title .ac::after{content:"";position:absolute;left:2%;right:2%;bottom:.08em;height:.10em;background:rgba(251,146,60,.32);}
-.mh-sub{margin-top:26px;font-size:17.5px;line-height:1.85;color:rgba(255,255,255,.74);max-width:560px;}
+.mh-sub{margin-top:26px;font-size:17.5px;line-height:1.85;color:rgba(255,255,255,.74);max-width:430px;}
 .mh-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;}
 .mh-tenets{display:flex;gap:0;margin-top:40px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);}
 .mh-tenets div{flex:1;min-width:150px;padding:18px 22px 4px 0;color:rgba(255,255,255,.82);font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;}
@@ -529,6 +529,7 @@ ul{list-style:none;}
   .section{padding:72px 0;}
   .standoff{padding:72px 0;}
   .mh-cta .btn,.mcta .crow .btn{width:100%;}
+  .mh-sub{max-width:100%;}
   .mh-tenets div{min-width:100%;border-left:none!important;padding-left:0!important;}
   .mx-side{grid-template-columns:1fr;}
   .mx-feat{min-height:330px;}
@@ -1207,5 +1208,30 @@ function mpNotify(){
 })();
 </script>
 <script src="/member-auth.js" defer></script>
+<script>
+/* Hero 副标题宽度精确对齐「下载微信小程序」按钮右缘：实测按钮组包围宽度后同步，跨断点自适应 */
+(function () {
+  function fitHeroSub() {
+    var cta = document.querySelector('.mh-cta');
+    var sub = document.querySelector('.mh-sub');
+    if (!cta || !sub) return;
+    if (window.innerWidth <= 640) { sub.style.maxWidth = ''; return; }
+    var minL = Infinity, maxR = -Infinity;
+    cta.querySelectorAll('.btn').forEach(function (b) {
+      var r = b.getBoundingClientRect();
+      if (!r.width) return;
+      minL = Math.min(minL, r.left);
+      maxR = Math.max(maxR, r.right);
+    });
+    if (maxR > -Infinity) sub.style.maxWidth = Math.round(maxR - minL) + 'px';
+  }
+  function schedule() { requestAnimationFrame(fitHeroSub); }
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', function () { schedule(); setTimeout(schedule, 350); setTimeout(schedule, 1000); });
+  var rsT = null;
+  window.addEventListener('resize', function () { clearTimeout(rsT); rsT = setTimeout(schedule, 150); });
+  setTimeout(schedule, 600);
+})();
+</script>
 </body>
 </html>
