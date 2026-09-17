@@ -374,7 +374,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
 }
 </style>
 </head>
-<body>
+<body data-member-gate>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -384,7 +384,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
     <div class="tb-divider"></div>
     <div class="tb-title">二手车伙计<small>Web 工作台</small></div>
     <div class="tb-right">
-      <span class="beta-tag">内测中<span class="bf"> · 免注册不限量</span></span>
+      <span class="beta-tag">内测中<span class="bf"> · 会员工作台</span></span>
       <a class="tb-back" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>介绍页</a>
     </div>
   </div>
@@ -398,7 +398,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
     <div class="rail-item locked" data-step="3"><span class="rail-num">3</span><span class="rail-label">物料配置</span></div>
     <div class="rail-item locked" data-step="4"><span class="rail-num">4</span><span class="rail-label">生成物料</span></div>
     <div class="rail-item locked" data-step="5"><span class="rail-num">5</span><span class="rail-label">导出上架</span></div>
-    <div class="rail-hint"><b>内测提示</b>所有图片在你的浏览器中处理后直连生图大模型，内测期免费、不限生成数量，无需注册登录。</div>
+    <div class="rail-hint"><b>内测提示</b>登录会员账号后即可使用工作台生图。上传图片仅用于本次生成与合规处理，不会用于模型训练；成品自带 AI 生成标识，车况成色、里程等信息不做篡改。</div>
   </aside>
 
   <main class="main">
@@ -929,17 +929,24 @@ async function callSceneAPI(prompt,imagePayload,opts,onTick){
     for(let attempt=1;attempt<=2;attempt++){
       const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),110000);
       try{
-        const resp=await fetch(base+'/generate',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
+        const authHeaders=(window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};
+        const resp=await fetch(base+'/generate',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders),signal:ctrl.signal,
           body:JSON.stringify({prompt,image:imagePayload,size})});
         clearTimeout(timer);
         const j=await resp.json().catch(()=>null);
         if(resp.ok&&j&&j.ok&&j.b64)return 'data:image/jpeg;base64,'+j.b64;
         const code=j&&j.error&&j.error.code;const msg=j&&j.error&&j.error.message;
+        if(resp.status===401||code==='member_unauthorized'||code==='member_suspended'){
+          if(code!=='member_suspended'&&window.HogeeMember&&HogeeMember.logout){HogeeMember.logout();}
+          const ae=new Error(code==='member_suspended'?(msg||'账号已停用，请联系客服'):'登录已失效，请重新登录后再生成');
+          ae.code=code||'member_unauthorized';throw ae;
+        }
         if(code==='rate_limited'){lastErr=new Error(msg||'生成过于频繁，请稍后再试');await sleep(2500);continue;}
         if(code==='image_too_large')throw new Error(msg||'图片过大');
         throw new Error(msg||('图像服务返回 '+resp.status));
       }catch(e){
         clearTimeout(timer);
+        if(e&&typeof e.code==='string'&&e.code.indexOf('member')===0)throw e;
         lastErr=(e&&e.name==='AbortError')?new Error('生成超时，请检查网络后重试'):e;
         onTick&&onTick('retry',attempt);
         await sleep(1200*attempt);
@@ -1272,6 +1279,7 @@ $('#startGen').onclick=()=>{
 function pad2(n){return (n<10?'0':'')+n;}
 function safeName(s){return (s||'').replace(/[\\/:*?"<>|·]/g,'-').replace(/\s+/g,'');}
 async function runGeneration(){
+  if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
   genAbort=false;$('#toStep5').disabled=true;$('#genTaskList').innerHTML='';
   const scenes=[...state.scenes];
   const extImgs=state.images.filter(i=>i.group==='ext').sort((a,b)=>a.pidx-b.pidx);
@@ -1492,5 +1500,6 @@ function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navig
 renderShotTabs();renderPoints();renderPlatforms();syncSceneCards();bindOutputSpec();bindOnsiteBg();restoreOnsiteBg();bindLightbox();
 </script>
   <div class="lightbox" id="lightbox"><div class="lb-inner"><button type="button" class="lb-close" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><img class="lb-img" alt="成品大图"><div class="lb-cap"></div></div></div>
+<script src="/member-auth.js"></script>
 </body>
 </html>
