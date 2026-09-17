@@ -411,6 +411,9 @@ ul{list-style:none;}
 .footer{background:var(--coal);padding:66px 0 28px;color:rgba(255,255,255,.7);}
 .footer-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1);}
 .footer-brand p{font-size:14px;color:rgba(255,255,255,.58);margin-top:18px;max-width:320px;line-height:1.75;}
+.footer-brand{display:flex;flex-direction:column;align-items:flex-start;}
+.footer-brand .foot-tag{margin-top:24px;height:48px;padding:0 28px;font-size:16px;letter-spacing:5px;}
+@media(max-width:900px){.footer-brand .foot-tag{display:inline-flex;}}
 .footer-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px;}
 .footer-col li{margin-bottom:11px;}
 .footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s;}
@@ -1109,19 +1112,18 @@ ul{list-style:none;}
 <section class="mcta">
   <div class="container">
     <div class="k2 reveal">WorkHogee · 二手生图伙计</div>
-    <h2 class="reveal">让二手产品的好，<br>被看见。</h2>
-    <p class="reveal">二手生意，从图开始。上传一张手机随手拍的二手商品图，看看 Hogee 怎么把它变成能直接上架的物料。内测期无需注册。</p>
+    <h2 class="reveal">Hogee阿图，让世界<br>发现二手的美。</h2>
+    <p class="reveal">一张好图，让好货开口说话。<br>阿图是角色，好图是武器，好货是主角，世界是舞台。</p>
     <div class="crow reveal">
       <a href="/workbench.html" class="btn btn-org">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         打开 Web 工作台
       </a>
-      <a href="/usedcar.html" class="btn btn-ghost-light">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-        进入二手车伙计
+      <a href="#mpp" class="btn btn-ghost-light" onclick="mpNotify();return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="9" cy="9.4" rx="7" ry="5.4"/><path d="M5.1 13.5 3.3 16.1 7.4 14.3"/><path d="M6.8 8.7h.01M10.8 8.7h.01"/><ellipse cx="16" cy="15.2" rx="6.2" ry="4.7"/><path d="M18.7 18.6 20.9 21 17.1 18.9"/><path d="M13.9 14.5h.01M17.9 14.5h.01"/></svg>
+        下载微信小程序
       </a>
     </div>
-    <div class="mp-line reveal">微信小程序正在内测筹备中，<button type="button" onclick="mpNotify()">预约小程序内测</button></div>
   </div>
 </section>
 
@@ -1143,7 +1145,7 @@ ul{list-style:none;}
             </g>
           </svg>
         </a>
-        <p>只做二手行业的 AI 物料工作台：拍几张手机图，生成可上架、可传播、可合规的图片、视频和文案。</p>
+        <span class="nav-tag foot-tag"><span class="nav-tag-txt">发现二手的美</span></span>
       </div>
       <div class="footer-col">
         <h5>产品</h5>
