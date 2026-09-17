@@ -289,7 +289,7 @@ img{max-width:100%;display:block;}
 <body>
 
 <!-- ===== 导航 ===== -->
-<header class="nav" id="nav">
+<header class="nav light" id="nav">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
       <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
@@ -303,15 +303,9 @@ img{max-width:100%;display:block;}
           <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
         </g>
       </svg>
-    </a>
+    <span class="hm-badge"><span>发现二手的美</span></span></a>
         <nav class="nav-links" id="navLinks">
-      <div class="nav-menu">
-        <a class="nav-link" href="/">首页</a>
-        <a class="nav-link" href="/#matrix">产品矩阵</a>
-        <a class="nav-link" href="/#how">如何使用</a>
-        <a class="nav-link" href="/#roadmap">发展历程</a>
-        <a class="nav-link" href="/#about">关于我们</a>
-      </div>
+      <div class="member-nav" data-member-nav></div>
       <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
@@ -774,5 +768,6 @@ function mpNotify(){
   document.addEventListener('keydown',function h(e){if(e.key==='Escape'){hide();document.removeEventListener('keydown',h);}});
 }
 </script>
+<script src="/member-auth.js" defer></script>
 </body>
 </html>
