@@ -674,13 +674,7 @@ ul{list-style:none;}
       <span class="nav-tag"><span class="nav-tag-txt">发现二手的美</span></span>
     </a>
     <nav class="nav-links" id="navLinks">
-      <div class="nav-menu">
-        <a class="nav-link" href="/">首页</a>
-        <a class="nav-link" href="#matrix">产品矩阵</a>
-        <a class="nav-link" href="#how">如何使用</a>
-        <a class="nav-link" href="#roadmap">发展历程</a>
-        <a class="nav-link" href="#about">关于我们</a>
-      </div>
+      <div class="member-nav" data-member-nav></div>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
@@ -710,7 +704,7 @@ ul{list-style:none;}
         </div>
         <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span class="eb-full">WorkHogee 二手生图伙计</span><span class="eb-mini">WorkHogee 二手生图伙计</span></div>
         <h1 class="mh-title mh-anim" style="animation-delay:.10s">二手生意，<br>从<span class="ac">图</span>开始。</h1>
-        <p class="mh-sub mh-anim" style="animation-delay:.20s">WorkHogee 是只做二手行业的 AI 物料工作台。卖家拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案——从二手车起步，长成覆盖多个二手品类的产品矩阵。</p>
+        <p class="mh-sub mh-anim" style="animation-delay:.20s">Hogee不是出图工具，而是把二手卖家从拍摄、质检、识别、生成、合规到多平台导出的AI 工作流。</p>
         <div class="mh-cta mh-anim" style="animation-delay:.30s">
           <a href="/workbench.html" class="btn btn-org">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -1048,90 +1042,6 @@ ul{list-style:none;}
     </div>
   </div>
 </section>
-<!-- ===== 路线图 ===== -->
-<section class="section white" id="roadmap">
-  <div class="container">
-    <div class="shead reveal">
-      <div class="kick">产品路线图 · Roadmap</div>
-      <div>
-        <h2>从一个品类，到一个二手行业矩阵</h2>
-        <p>先把二手车这一个品类打透，再用约 70% 复用的方法论逐层复制——不追热点，只进入“图片决定成交、且过度美化会出事”的二手品类。</p>
-      </div>
-    </div>
-    <div class="tl reveal">
-      <div class="tln now">
-        <span class="dot"></span>
-        <div class="card">
-          <div class="when">验证期 · 当前</div>
-          <h4>二手车伙计 MVP</h4>
-          <p>二手车伙计上线，跑通小程序采集 + Web 工作台，验证“真实也能好卖”的核心闭环。</p>
-        </div>
-      </div>
-      <div class="tln">
-        <span class="dot"></span>
-        <div class="card">
-          <div class="when">复制期 · 3–6 个月</div>
-          <h4>二手房 / 潮玩 + 后台</h4>
-          <p>二手房、二手潮玩伙计上线，管理后台建成，验证方法论跨品类复制能力。</p>
-        </div>
-      </div>
-      <div class="tln">
-        <span class="dot"></span>
-        <div class="card">
-          <div class="when">扩展期 · 6–12 个月</div>
-          <h4>乐器 / 3C + API</h4>
-          <p>二手乐器、二手 3C 伙计上线，API/SDK 开放，接入更多交易渠道与平台。</p>
-        </div>
-      </div>
-      <div class="tln">
-        <span class="dot"></span>
-        <div class="card">
-          <div class="when">规模化 · 12–24 个月</div>
-          <h4>办公 + 企业版</h4>
-          <p>二手办公伙计上线，企业版推出，成为二手行业的物料基础设施。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 关于我们 ===== -->
-<section class="section sand" id="about">
-  <div class="container">
-    <div class="shead reveal">
-      <div class="kick">关于我们 · About</div>
-      <div>
-        <h2 style="text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;">让每一件二手商品，被真实、专业、<span style="white-space:nowrap">合规地展示</span></h2>
-        <p>WorkHogee（二手生图伙计）是只做二手行业的 AI 物料工作台。我们相信「好货，不该输在图上」——二手非标品的成交，图片几乎决定了信任与转化，而行业里大量「图骗」正在透支买家的信任。我们不做美化失真的滤镜，只做如实呈现的专业表达。</p>
-      </div>
-    </div>
-    <div class="ab-grid">
-      <div class="ab-col reveal">
-        <h3>我们只做这些</h3>
-        <p>只服务「图片决定成交」的二手非标品类：二手车、二手房、二手潮玩、二手乐器、二手 3C、二手办公。按品类逐个打磨，每个品类都有专属的拍摄点位、行业知识库、合规红线与渠道尺寸。内测期从二手车起步，跑通一个再复制下一个。</p>
-        <ul class="ab-list">
-          <li>手机随手拍，AI 引导拍摄点位与成片质检</li>
-          <li>行业知识库生成卖点、话术与真实场景图</li>
-          <li>一次生成，多平台尺寸与格式直接上架</li>
-        </ul>
-      </div>
-      <div class="ab-col reveal">
-        <h3>我们明确不做</h3>
-        <p>不做新品、不做通用生图；不碰需要专业鉴定或重物流的品类。合规红线内置且不可关闭：不改变商品真实颜色、不抹除瑕疵、不掩盖事故与故障，所有 AI 生成物料统一加注标识。</p>
-        <ul class="ab-list ab-list-no">
-          <li>不做服饰（真假难辨）、奢品（需鉴定）、家具（重物流）</li>
-          <li>不做「零事故 / 原版原漆」这类禁用与夸大话术</li>
-          <li>不做隐瞒车况、成色与故障的「图骗」</li>
-        </ul>
-      </div>
-    </div>
-    <div class="ab-creed reveal">
-      <span class="ab-mark">不修图，修信任</span>
-      <span class="ab-sub">收进来，拍几张，卖出去。二手生意，从图开始。</span>
-    </div>
-  </div>
-</section>
-
 <!-- ===== 收尾 CTA ===== -->
 <section class="mcta">
   <div class="container">
@@ -1296,5 +1206,6 @@ function mpNotify(){
   mascot.addEventListener('click',play);
 })();
 </script>
+<script src="/member-auth.js" defer></script>
 </body>
 </html>
