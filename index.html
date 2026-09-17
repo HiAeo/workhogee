@@ -119,6 +119,7 @@ ul{list-style:none;}
 .mh-left,.mh-right{min-width:0;}
 .mh-left img,.mh-right img{max-width:100%;}
 .mh-mascot{display:inline-flex;justify-content:flex-start;margin-bottom:2px;position:relative;width:max-content;max-width:100%;}
+.mh-atu-wrap{position:relative;display:inline-block;max-width:100%;transform:translateY(14px);}
 .mh-atu{height:156px;width:auto;display:block;transform-origin:50% 100%;filter:drop-shadow(0 20px 26px rgba(0,0,0,.42));animation:atuFloat 5s ease-in-out 1s infinite;}
 @keyframes atuFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
 /* ===== 阿图演出：侧身 / 闪光 / 天线 / 对话气泡 ===== */
@@ -140,7 +141,7 @@ ul{list-style:none;}
 .mh-atu-stage.talking .atu-tip{animation:atuTip .42s ease-in-out infinite;}
 .mh-atu-stage.talking .atu-tip.t2{animation-delay:.21s;}
 @keyframes atuTip{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(.7);}50%{opacity:1;transform:translate(-50%,calc(-50% - 6px)) scale(1.15);}}
-.atu-bubble{position:absolute;left:66%;bottom:48%;width:clamp(186px,17vw,244px);background:#f7f4ee;color:#1c1917;border:1px solid rgba(234,88,12,.32);border-radius:14px;padding:11px 15px;font-size:14px;font-weight:600;line-height:1.55;letter-spacing:.2px;box-shadow:0 18px 42px rgba(0,0,0,.42);opacity:0;transform:scale(.6) translateY(8px);transform-origin:bottom left;pointer-events:none;z-index:6;transition:opacity .26s ease,transform .28s cubic-bezier(.34,1.56,.64,1),filter .3s;}
+.atu-bubble{position:absolute;left:66%;bottom:48%;width:auto;max-width:clamp(190px,20vw,262px);min-width:0;white-space:nowrap;background:#f7f4ee;color:#1c1917;border:1px solid rgba(234,88,12,.32);border-radius:14px;padding:11px 15px;font-size:14px;font-weight:600;line-height:1.55;letter-spacing:.2px;box-shadow:0 18px 42px rgba(0,0,0,.42);opacity:0;transform:scale(.6) translateY(8px);transform-origin:bottom left;pointer-events:none;z-index:6;transition:opacity .26s ease,transform .28s cubic-bezier(.34,1.56,.64,1),filter .3s;}
 .atu-bubble.bub-show{opacity:1;transform:scale(1) translateY(0);}
 .atu-bubble.bub-hide{opacity:0;transform:scale(.72) translateY(6px);transition:opacity .18s,transform .18s;}
 .atu-bubble .bub-text{min-height:1.55em;}
@@ -546,7 +547,7 @@ ul{list-style:none;}
   .mcta .mp-line button{padding:8px 4px;}
   .mh-mascot{margin-bottom:0;}
   .mh-atu{height:116px;}
-  .atu-bubble{left:56%;bottom:45%;width:clamp(150px,52vw,200px);font-size:13px;padding:9px 13px;}
+  .atu-bubble{left:56%;bottom:45%;width:auto;max-width:min(60vw,214px);white-space:nowrap;font-size:13px;padding:9px 13px;}
   .atu-bubble .bub-caret{left:22px;}
   .mh-eyebrow{margin-bottom:18px;font-size:12px;padding:6px 12px;}
   .mh-eyebrow .eb-full{display:none;}
@@ -690,21 +691,23 @@ ul{list-style:none;}
     <div class="mhero-in">
       <div class="mh-left">
         <div class="mh-mascot mh-anim" style="animation-delay:0s">
-          <div class="mh-atu-stage" id="atuStage">
-            <img class="mh-atu" src="images/atu-half.png" alt="阿图，WorkHogee 镜头头伙计" width="1000" height="901" loading="eager">
-            <span class="atu-flash" aria-hidden="true"></span>
-            <span class="atu-tip t1" aria-hidden="true"></span>
-            <span class="atu-tip t2" aria-hidden="true"></span>
-          </div>
-          <div class="atu-bubble" id="atuBubble" aria-hidden="true">
-            <span class="bub-text" id="atuBubText"></span>
-            <span class="bub-caret" aria-hidden="true"></span>
-            <span class="smk s1" aria-hidden="true"></span>
-            <span class="smk s2" aria-hidden="true"></span>
-            <span class="smk s3" aria-hidden="true"></span>
+          <div class="mh-atu-wrap">
+            <div class="mh-atu-stage" id="atuStage">
+              <img class="mh-atu" src="images/atu-half.png" alt="阿图，WorkHogee 镜头头伙计" width="1000" height="901" loading="eager">
+              <span class="atu-flash" aria-hidden="true"></span>
+              <span class="atu-tip t1" aria-hidden="true"></span>
+              <span class="atu-tip t2" aria-hidden="true"></span>
+            </div>
+            <div class="atu-bubble" id="atuBubble" aria-hidden="true">
+              <span class="bub-text" id="atuBubText"></span>
+              <span class="bub-caret" aria-hidden="true"></span>
+              <span class="smk s1" aria-hidden="true"></span>
+              <span class="smk s2" aria-hidden="true"></span>
+              <span class="smk s3" aria-hidden="true"></span>
+            </div>
           </div>
         </div>
-        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span class="eb-full">WorkHogee 二手生图伙计 · 首个品类「二手车伙计」内测中</span><span class="eb-mini">首个品类「二手车伙计」内测中</span></div>
+        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span class="eb-full">WorkHogee 二手生图伙计</span><span class="eb-mini">WorkHogee 二手生图伙计</span></div>
         <h1 class="mh-title mh-anim" style="animation-delay:.10s">二手生意，<br>从<span class="ac">图</span>开始。</h1>
         <p class="mh-sub mh-anim" style="animation-delay:.20s">WorkHogee 是只做二手行业的 AI 物料工作台。卖家拍几张手机图，就能生成可上架、可传播、可合规的图片、视频和文案——从二手车起步，长成覆盖多个二手品类的产品矩阵。</p>
         <div class="mh-cta mh-anim" style="animation-delay:.30s">
