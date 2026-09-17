@@ -31,8 +31,24 @@ ul{list-style:none;}
 /* ===== 导航（首屏深色态 atop，滚动后纸底） ===== */
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .3s ease,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent;}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px;max-width:var(--maxw);margin:0 auto;padding:0 28px;}
-.nav-logo{display:flex;align-items:center;}
+.nav-logo{display:flex;align-items:center;gap:15px;}
 .nav-logo svg{height:28px;width:auto;}
+/* 品牌宣传语：巨型细线圈 + 悬停彩虹流动 */
+@property --tag-ang{syntax:'<angle>';initial-value:0deg;inherits:false;}
+.nav-tag{position:relative;display:inline-flex;align-items:center;height:33px;padding:0 17px;border-radius:999px;border:1px solid rgba(255,255,255,.42);color:rgba(255,255,255,.94);font-size:12.5px;font-weight:500;letter-spacing:3px;line-height:1;white-space:nowrap;animation:tagFloat 3.8s ease-in-out infinite;transition:color .3s,border-color .3s;}
+.nav-tag-txt{position:relative;z-index:1;}
+.nav-tag::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--tag-ang),#fb923c,#facc15,#4ade80,#22d3ee,#a78bfa,#f472b6,#fb923c);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:0;transition:opacity .3s;animation:tagSpin 2.6s linear infinite;pointer-events:none;}
+.nav-tag:hover{border-color:transparent;}
+.nav-tag:hover::before{opacity:1;}
+.nav-tag:hover .nav-tag-txt{background:linear-gradient(90deg,#fdba74,#fde047,#86efac,#67e8f9,#c4b5fd,#f9a8d4,#fdba74);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:tagTxt 2.2s linear infinite;}
+@keyframes tagFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-2.5px);}}
+@keyframes tagSpin{to{--tag-ang:360deg;}}
+@keyframes tagTxt{to{background-position:-220% 0;}}
+.nav.solid .nav-tag,.nav.panel-open .nav-tag{border-color:var(--line-strong);color:var(--ink-soft);}
+.nav.solid .nav-tag:hover,.nav.panel-open .nav-tag:hover{border-color:transparent;}
+.nav.solid .nav-tag:hover .nav-tag-txt,.nav.panel-open .nav-tag:hover .nav-tag-txt{background:linear-gradient(90deg,#ea580c,#ca8a04,#16a34a,#0891b2,#7c3aed,#db2777,#ea580c);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;}
+@media(max-width:900px){.nav-tag{display:none;}}
+@media(prefers-reduced-motion:reduce){.nav-tag,.nav-tag::before,.nav-tag:hover .nav-tag-txt{animation:none;}}
 .nav-links{display:flex;align-items:center;gap:12px;}
 /* 品牌导航：文字菜单 + 右侧主 CTA */
 .nav-menu{display:flex;align-items:center;gap:2px;}
@@ -593,6 +609,7 @@ ul{list-style:none;}
           <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" class="wlhog">Hogee</text>
         </g>
       </svg>
+      <span class="nav-tag"><span class="nav-tag-txt">发现二手的美</span></span>
     </a>
     <nav class="nav-links" id="navLinks">
       <div class="nav-menu">
