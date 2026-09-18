@@ -777,7 +777,12 @@ function renderSpecCard(){
 function buildJobs(){
  var used=state.identity.type==='usedcar',jobs=[];
  var main=state.images[0].dataUrl;
- var extra=state.extra?('；额外要求：'+state.extra.slice(0,120)):'';
+ var extra='';
+ if(state.extra){
+  var ce=cleanBanned(state.extra.slice(0,120));
+  var ex=ce.text.trim();
+  if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品/车辆本身原有标识除外）：'+ex;
+ }
  state.outputs.forEach(function(k){
   if(used){
    if(k==='showroom')jobs.push({k:k,label:'AI 展厅背景图',prompt:P_showroom+extra,image:main});
