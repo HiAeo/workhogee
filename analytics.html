@@ -645,7 +645,7 @@ function renderShowcases(){
   if(!rows.length){$('showcaseRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:34px">还没有画册，去工作台为车源生成一本</td></tr>';return;}
   $('showcaseRows').innerHTML=rows.map(function(r){
     var thumb=r.thumb?'<img class="thumb" src="'+esc(r.thumb)+'" alt="" loading="lazy"/>':'<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--m2)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 14l5-4 4 3 3-2 6 4"/></svg></div>';
-    var url=WWW+'/s/'+r.code;
+    var url=API+'/s/'+r.code;
     return '<tr><td><div class="sc-title">'+thumb+'<div class="meta"><div class="t">'+esc(r.title)+'</div><div class="c">'+esc(r.code)+'</div></div></div></td>'+
       '<td class="tnum">'+n0(r.pv)+'</td><td class="tnum">'+n0(r.uv)+'</td>'+
       '<td class="tnum">'+fmtDur(r.avg_duration_ms)+'</td><td class="tnum">'+n0(r.cta)+'</td>'+
