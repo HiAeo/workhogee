@@ -182,6 +182,20 @@ img{display:block;max-width:100%}
 .brand-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .brand-quick button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-soft);transition:.15s}
 .brand-quick button:hover{border-color:var(--orange);color:var(--orange-deep)}
+.car-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.car-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;font-size:12px;color:var(--ink-soft);transition:.15s}
+.car-tabs button.sel{border-color:var(--orange);background:var(--orange);color:#fff;font-weight:700}
+.car-abc{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 8px}
+.car-abc button{min-width:25px;padding:3px 6px;font-size:11px;border:1px solid var(--line);background:#fff;border-radius:7px;color:var(--faint);transition:.15s}
+.car-abc button.sel{border-color:var(--orange);color:var(--orange-deep);font-weight:700}
+.car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:6px;max-height:196px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fcfbf9}
+.car-grid button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 4px;font-size:12px;color:var(--ink-soft);transition:.15s}
+.car-grid button:hover{border-color:var(--orange);color:var(--orange-deep)}
+.car-grid button.sel{border-color:var(--orange);background:rgba(234,88,12,.08);color:var(--orange-deep);font-weight:700}
+.sell-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.sell-chips button{border:1px dashed var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12px;color:var(--ink-soft);transition:.15s}
+.sell-chips button:hover{border-color:var(--orange);color:var(--orange-deep)}
+.sell-chips button.on{border-style:solid;border-color:var(--orange);background:rgba(234,88,12,.08);color:var(--orange-deep)}
 
 /* 进度 */
 .prog-task{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px dashed var(--line2)}
@@ -499,7 +513,10 @@ var IDENTITIES=[
  {type:'general',cat:'珠宝配饰',icon:IC.gem,line:'质感棚拍、佩戴与礼盒场景'},
  {type:'general',cat:'本地生活/服务',icon:IC.shop,line:'门店与服务场景、团购封面'}
 ];
-var CAR_BRANDS=['奔驰','宝马','奥迪','大众','丰田','本田','日产','特斯拉','比亚迪','理想','蔚来','小鹏','吉利','长安','哈弗','五菱','别克','现代','保时捷','路虎'];
+var CAR_DB=[{n:'奔驰',p:'B',t:['ice','hybrid'],s:['A级','C级','E级','S级','GLA','GLB','GLC','GLE','GLS','G级','CLA','V级']},{n:'宝马',p:'B',t:['ice','hybrid','ev'],s:['1系','3系','5系','7系','X1','X3','X5','X6','X7','i3','iX1','iX3']},{n:'奥迪',p:'A',t:['ice','hybrid','ev'],s:['A3','A4L','A6L','A8L','Q2L','Q3','Q5L','Q7','Q8','Q4 e-tron']},{n:'保时捷',p:'B',t:['ice','hybrid','ev'],s:['911','718','Panamera','Cayenne','Macan','Taycan']},{n:'雷克萨斯',p:'L',t:['ice','hybrid'],s:['ES','IS','LS','NX','RX','UX','LX','LC']},{n:'沃尔沃',p:'W',t:['ice','hybrid','ev'],s:['S60','S90','XC40','XC60','XC90','EX30','EM90']},{n:'路虎',p:'L',t:['ice','hybrid'],s:['揽胜','揽胜运动版','发现','发现运动版','揽胜星脉','卫士']},{n:'捷豹',p:'J',t:['ice','ev'],s:['XEL','XFL','F-PACE','E-PACE','I-PACE']},{n:'凯迪拉克',p:'K',t:['ice','hybrid','ev'],s:['CT4','CT5','CT6','XT4','XT5','XT6','GT4','LYRIQ锐歌']},{n:'林肯',p:'L',t:['ice','hybrid'],s:['Z','冒险家','航海家','飞行家','领航员']},{n:'英菲尼迪',p:'Y',t:['ice','hybrid'],s:['Q50L','QX50','QX60']},{n:'讴歌',p:'O',t:['ice','hybrid'],s:['CDX','RDX','TLX-L']},{n:'大众',p:'D',t:['ice','ev'],s:['朗逸','速腾','迈腾','帕萨特','高尔夫','宝来','凌渡','CC','途观L','探岳','途昂','揽巡','威然','ID.3','ID.4','ID.6']},{n:'丰田',p:'F',t:['ice','hybrid'],s:['卡罗拉','雷凌','凯美瑞','亚洲龙','RAV4荣放','威兰达','锋兰达','汉兰达','皇冠陆放','赛那','普拉多','兰德酷路泽']},{n:'本田',p:'H',t:['ice','hybrid','ev'],s:['思域','型格','雅阁','英仕派','XR-V','缤智','ZR-V致在','CR-V','皓影','奥德赛','艾力绅','e:NP1极湃']},{n:'日产',p:'R',t:['ice','hybrid','ev'],s:['轩逸','骐达','天籁','蓝鸟','逍客','奇骏','楼兰','途达','艾睿雅']},{n:'马自达',p:'M',t:['ice'],s:['马自达3昂克赛拉','阿特兹','CX-30','CX-4','CX-5','CX-50','CX-8']},{n:'斯巴鲁',p:'S',t:['ice','hybrid'],s:['森林人','傲虎','XV','BRZ','力狮']},{n:'三菱',p:'S',t:['ice','hybrid','ev'],s:['欧蓝德','劲炫','奕歌','阿图柯','帕杰罗']},{n:'现代',p:'X',t:['ice','hybrid','ev'],s:['伊兰特','索纳塔','菲斯塔','ix35','途胜','胜达','库斯途','IONIQ 5']},{n:'起亚',p:'Q',t:['ice','hybrid','ev'],s:['K3','K5','赛图斯','智跑','狮铂拓界','索兰托','嘉华','EV6']},{n:'别克',p:'B',t:['ice','hybrid','ev'],s:['威朗','英朗','君威','君越','昂科拉','昂科威','昂科旗','GL8','世纪','别克E5']},{n:'雪佛兰',p:'X',t:['ice','ev'],s:['科鲁泽','迈锐宝XL','探界者','星迈罗','畅巡']},{n:'福特',p:'F',t:['ice','hybrid','ev'],s:['福克斯','蒙迪欧','锐际','锐界','探险者','领裕','烈马','电马Mustang Mach-E','全顺']},{n:'Jeep',p:'J',t:['ice','hybrid'],s:['指南者','自由光','大切诺基','牧马人','角斗士']},{n:'标致',p:'B',t:['ice','hybrid','ev'],s:['408','408X','508L','2008','3008','4008','5008','e2008']},{n:'雪铁龙',p:'X',t:['ice','ev'],s:['凡尔赛C5X','C6','天逸C5','云逸C4','C3-XR']},{n:'斯柯达',p:'S',t:['ice'],s:['明锐','速派','柯米克','柯珞克','柯迪亚克']},{n:'比亚迪',p:'B',t:['ev','hybrid'],s:['秦PLUS','秦L','汉','驱逐舰05','海鸥','海豚','海豹','宋Pro','宋PLUS','元PLUS','唐','海狮07']},{n:'吉利',p:'J',t:['ice','hybrid','ev'],s:['帝豪','星瑞','星越L','博越L','豪越L','缤越','熊猫骑士','银河L6','银河L7','银河E5','银河E8']},{n:'长安',p:'C',t:['ice','hybrid','ev'],s:['逸动','UNI-V','UNI-T','CS35PLUS','CS55PLUS','CS75PLUS','CS95','览拓者','Lumin糯玉米']},{n:'哈弗',p:'H',t:['ice','hybrid'],s:['H6','H9','M6','大狗','神兽','赤兔','枭龙MAX']},{n:'坦克',p:'T',t:['ice','hybrid'],s:['坦克300','坦克400','坦克500','坦克700']},{n:'五菱',p:'W',t:['ice','ev'],s:['宏光MINI EV','缤果','星光','星辰','星驰','凯捷']},{n:'宝骏',p:'B',t:['ice','ev'],s:['悦也','云朵','云海','KiWi EV','RS-3','RM-5']},{n:'奇瑞',p:'Q',t:['ice','hybrid','ev'],s:['艾瑞泽5','艾瑞泽8','瑞虎3x','瑞虎5x','瑞虎7','瑞虎8','探索06','风云A8','QQ冰淇淋']},{n:'广汽传祺',p:'C',t:['ice','hybrid','ev'],s:['影豹','影速','GS3','GS4','GS8','M6','M8','E8','E9']},{n:'荣威',p:'R',t:['ice','ev'],s:['i5','i6','RX5','RX9','D7','D5X','科莱威']},{n:'名爵',p:'M',t:['ice','ev'],s:['MG5','MG6','MG7','ZS','MG ONE','MG4木兰']},{n:'红旗',p:'H',t:['ice','hybrid','ev'],s:['H5','H6','H9','HS3','HS5','HS7','E-QM5','EH7']},{n:'领克',p:'L',t:['ice','hybrid','ev'],s:['领克01','领克03','领克05','领克06','领克07','领克08','领克09','Z10','Z20']},{n:'极氪',p:'J',t:['ev'],s:['极氪001','极氪007','极氪009','极氪X','极氪7X']},{n:'埃安',p:'A',t:['ev'],s:['AION S','AION Y','AION V','AION LX','昊铂GT','昊铂HT']},{n:'特斯拉',p:'T',t:['ev'],s:['Model 3','Model Y','Model S','Model X']},{n:'理想',p:'L',t:['hybrid','ev'],s:['理想L6','理想L7','理想L8','理想L9','MEGA']},{n:'蔚来',p:'W',t:['ev'],s:['ET5','ET7','EC6','ES6','ES7','ES8','EC7']},{n:'小鹏',p:'X',t:['ev'],s:['MONA M3','P5','P7','G6','G9','X9','G3i']},{n:'问界',p:'W',t:['hybrid','ev'],s:['问界M5','问界M7','问界M9']},{n:'智界',p:'Z',t:['ev','hybrid'],s:['智界S7','智界R7']},{n:'零跑',p:'L',t:['ev','hybrid'],s:['T03','C01','C10','C11','C16','B10']},{n:'哪吒',p:'N',t:['ev'],s:['哪吒AYA','哪吒X','哪吒U','哪吒S','哪吒L','哪吒GT']},{n:'岚图',p:'L',t:['ev','hybrid'],s:['岚图FREE','梦想家','追光','知音']},{n:'阿维塔',p:'A',t:['ev'],s:['阿维塔07','阿维塔11','阿维塔12']},{n:'智己',p:'Z',t:['ev'],s:['智己L6','智己L7','智己LS6','智己LS7']},{n:'极星',p:'J',t:['ev'],s:['Polestar 2','Polestar 3','Polestar 4']},{n:'smart',p:'S',t:['ev'],s:['fortwo','精灵#1','精灵#3','精灵#5']},{n:'飞凡',p:'F',t:['ev'],s:['飞凡F7','飞凡R7','Marvel R']},{n:'腾势',p:'T',t:['ev','hybrid'],s:['腾势D9','腾势N7','腾势N8','腾势Z9GT']},{n:'方程豹',p:'F',t:['hybrid','ev'],s:['豹5','豹8','钛3','钛7']},{n:'仰望',p:'Y',t:['ev','hybrid'],s:['仰望U7','仰望U8','仰望U9']},{n:'深蓝',p:'S',t:['ev','hybrid'],s:['深蓝SL03','深蓝S7','深蓝S05','深蓝L07','深蓝G318']}];
+var CAR_BRANDS=CAR_DB.map(function(x){return x.n;});
+var CAR_CATS=[{k:'all',t:'全部'},{k:'ice',t:'燃油'},{k:'hybrid',t:'混动·增程'},{k:'ev',t:'纯电'}];
+var SELL_POINTS=['本地一手车','美女一手车','准新车','全车原版原漆','9成新','支持第三方检测','无重大事故','无大修','零出险','里程实表','全程4S店保养','内饰干净整洁'];
 
 /* ---------- 产出 / 场景 / 规格 ---------- */
 var OUTPUTS={
@@ -720,12 +737,16 @@ function renderConfirmCard(){
  if(used){
   inner='<div class="card-title">认一认这是哪台车</div>'
    +'<div class="card-desc">视觉识别正在接入，这一步你帮阿图核对一下，认对了出图才准。</div>'
-   +'<div class="fld-row"><div class="fld"><label>品牌</label><input id="carBrand" list="brandList" placeholder="如：奔驰"></div>'
-   +'<div class="fld"><label>车系</label><input id="carSeries" placeholder="如：C 级"></div></div>'
+   +'<datalist id="brandList">'+CAR_BRANDS.map(function(b){return '<option value="'+b+'">';}).join('')+'</datalist>'
+   +'<datalist id="seriesList"></datalist>'
+   +'<div class="fld"><label>品牌</label><input id="carBrand" list="brandList" placeholder="可搜索，或在下方按类别 / 字母点选" autocomplete="off"></div>'
+   +'<div class="car-tabs" id="carTabs"></div><div class="car-abc" id="carAbc"></div><div class="car-grid" id="carGrid"></div>'
+   +'<div class="fld" style="margin-top:11px"><label>车系</label><input id="carSeries" list="seriesList" placeholder="先选品牌，再选车系（也可手输）" autocomplete="off"></div>'
    +'<div class="fld-row"><div class="fld"><label>年款</label><input id="carYear" placeholder="如：2021 款"></div>'
    +'<div class="fld"><label>配置 / 排量（选填）</label><input id="carTrim" placeholder="如：C260L"></div></div>'
-   +'<datalist id="brandList">'+CAR_BRANDS.map(function(b){return '<option value="'+b+'">';}).join('')+'</datalist>'
-   +'<div class="brand-quick">'+CAR_BRANDS.slice(0,12).map(function(b){return '<button type="button" data-act="fillBrand" data-b="'+b+'">'+b+'</button>';}).join('')+'</div>';
+   +'<div class="fld-row"><div class="fld"><label>能源类型</label><select id="carEnergy"><option value="燃油">燃油</option><option value="油电混动">油电混动</option><option value="插混/增程">插混 / 增程</option><option value="纯电">纯电</option></select></div>'
+   +'<div class="fld"><label>变速箱</label><select id="carGear"><option value="">不确定 / 不限</option><option value="手动挡">手动挡</option><option value="自动挡(AT)">自动挡 · AT</option><option value="CVT无级">CVT 无级</option><option value="双离合">双离合</option><option value="单速(纯电)">单速（纯电）</option></select></div></div>'
+   +'<div class="fld" style="margin-top:6px"><label>常用车况卖点（点选，自动加入补充要求）</label><div class="sell-chips" id="sellChips">'+SELL_POINTS.map(function(t){return '<button type="button" data-act="fillSell" data-v="'+t+'">'+t+'</button>';}).join('')+'</div></div>';
  }else{
   var guess=state.identity.cat||'你的商品';
   inner='<div class="card-title">认一认你卖的是什么货</div>'
@@ -735,7 +756,33 @@ function renderConfirmCard(){
  inner+='<div class="fld" style="margin-top:13px"><label>补充要求（选填）</label><input id="extraInstr" placeholder="如：想要暖一点的光 / 突出某个卖点 / 不要出现人物"></div>';
  inner+='<div class="card-actions"><button class="btn btn-primary" data-act="confirmProduct">对，就这个</button><button class="btn btn-ghost" data-act="backUpload">返回加图</button></div>';
  card('<div class="card-pad">'+inner+'</div>');
+ if(used){setTimeout(renderCarPicker,0);}
  state.stage='confirm';
+}
+var carFilter={cat:'all',letter:''};
+function renderCarPicker(){
+ var g=document.getElementById('carGrid');if(!g)return;
+ var base=CAR_DB.filter(function(d){return carFilter.cat==='all'||d.t.indexOf(carFilter.cat)>=0;});
+ var list=base.slice();if(carFilter.letter)list=list.filter(function(d){return d.p===carFilter.letter;});
+ try{var _zh=new Intl.Collator('zh-Hans-CN',{sensitivity:'base'});list.sort(function(a,b){return a.p===b.p?_zh.compare(a.n,b.n):(a.p<b.p?-1:1);});}catch(e){list.sort(function(a,b){return a.p===b.p?(a.n<b.n?-1:a.n>b.n?1:0):(a.p<b.p?-1:1);});}
+ var cur=document.getElementById('carBrand');var curV=cur?cur.value.trim():'';
+ g.innerHTML=list.map(function(d){return '<button type="button" class="'+(d.n===curV?'sel':'')+'" data-act="fillBrand" data-b="'+d.n+'">'+d.n+'</button>';}).join('');
+ document.getElementById('carTabs').innerHTML=CAR_CATS.map(function(c){return '<button type="button" class="'+(carFilter.cat===c.k?'sel':'')+'" data-act="carCat" data-c="'+c.k+'">'+c.t+'</button>';}).join('');
+ var letters=[];base.forEach(function(d){if(letters.indexOf(d.p)<0)letters.push(d.p);});letters.sort();
+ var abc=[{l:'',t:'全'}].concat(letters.map(function(l){return {l:l,t:l};}));
+ document.getElementById('carAbc').innerHTML=abc.map(function(o){return '<button type="button" class="'+(carFilter.letter===o.l?'sel':'')+'" data-act="carAbc" data-l="'+o.l+'">'+o.t+'</button>';}).join('');
+ var cb=document.getElementById('carBrand');
+ if(cb&&!cb._bound){cb._bound=true;cb.addEventListener('change',function(){var v=this.value.trim();var d=CAR_DB.filter(function(x){return x.n===v;})[0];if(d){pickCarBrand(v);}else{var sl=document.getElementById('seriesList');if(sl)sl.innerHTML='';renderCarPicker();}});}
+}
+function pickCarBrand(name){
+ var cb=document.getElementById('carBrand');if(cb)cb.value=name;
+ var d=CAR_DB.filter(function(x){return x.n===name;})[0];
+ var sl=document.getElementById('seriesList');
+ if(sl)sl.innerHTML=d?d.s.map(function(x){return '<option value="'+x+'">';}).join(''):'';
+ var cs=document.getElementById('carSeries');if(cs)cs.value='';
+ var en=document.getElementById('carEnergy');
+ if(en&&d){if(d.t.length===1&&d.t[0]==='ev'){en.value='纯电';}else if(d.t.indexOf('ice')<0&&d.t.indexOf('hybrid')>=0){en.value='插混/增程';}else{en.value='燃油';}}
+ renderCarPicker();
 }
 function renderOutputsCard(){
  var used=state.identity.type==='usedcar';
@@ -1097,7 +1144,7 @@ async function doPublish(){
   var imgs=await Promise.all(state.results.slice(0,8).map(function(r){return compressForShowcase(r.url,1280,.82);}));
   var assets=imgs.map(function(u,i){return {asset_id:'a'+(i+1),kind:i===0?'main':'detail',url:u};});
   var params={};
-  if(state.identity.type==='usedcar'&&state.product){var p=state.product;if(p.brand)params['品牌']=p.brand;if(p.series)params['车系']=p.series;if(p.year)params['年款']=p.year;}
+  if(state.identity.type==='usedcar'&&state.product){var p=state.product;if(p.brand)params['品牌']=p.brand;if(p.series)params['车系']=p.series;if(p.year)params['年款']=p.year;if(p.energy&&p.energy!=='燃油')params['能源']=p.energy;if(p.gear)params['变速箱']=p.gear;}
   else if(state.identity.cat){params['品类']=state.identity.cat;}
   var sc=await authPost('/showcases',{title:title,assets:assets,copy:{title:title,selling_points:points,params:params},contact:{phone:phone,wechat:wechat,show_call:!!phone}});
   if(!sc.ok)throw new Error((sc.error&&sc.error.message)||'画册生成失败');
@@ -1171,13 +1218,17 @@ document.addEventListener('click',function(ev){
  else if(act==='delShot'){var di=+b.dataset.i;state.images.splice(di,1);refreshShots();}
  else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}userSay('传好了，共 '+state.images.length+' 张');var st=botTyping();setTimeout(function(){st();renderConfirmCard();},450);}
  else if(act==='backUpload'){renderUploadCard();state.stage='upload';refreshShots();}
- else if(act==='fillBrand'){$('#carBrand').value=b.dataset.b;}
+ else if(act==='fillBrand'){pickCarBrand(b.dataset.b);}
+ else if(act==='carCat'){carFilter.cat=b.dataset.c;carFilter.letter='';renderCarPicker();}
+ else if(act==='carAbc'){carFilter.letter=b.dataset.l;renderCarPicker();}
+ else if(act==='fillSell'){var ex=document.getElementById('extraInstr');var v=b.dataset.v;var arr=ex?ex.value.split(/[、,，\n]/).map(function(x){return x.trim();}).filter(Boolean):[];if(b.classList.contains('on')){b.classList.remove('on');arr=arr.filter(function(x){return x!==v;});}else{if(arr.indexOf(v)<0)arr.push(v);b.classList.add('on');}if(ex)ex.value=arr.join('、');}
  else if(act==='confirmProduct'){
   var used=state.identity.type==='usedcar';
   if(used){
    var brand=$('#carBrand').value.trim(),series=$('#carSeries').value.trim();
    if(!brand||!series){toast('品牌和车系至少填一下，阿图才认得准','err');return;}
-   state.product={brand:brand,series:series,year:$('#carYear').value.trim(),trim:$('#carTrim').value.trim(),name:[$('#carYear').value.trim(),brand,series].filter(Boolean).join(' ')};
+   var enEl=$('#carEnergy'),grEl=$('#carGear');
+   state.product={brand:brand,series:series,year:$('#carYear').value.trim(),trim:$('#carTrim').value.trim(),energy:enEl?enEl.value:'',gear:grEl?grEl.value:'',name:[$('#carYear').value.trim(),brand,series].filter(Boolean).join(' ')};
   }else{
    var nm=$('#productName').value.trim();
    if(!nm){toast('写一下商品名称，阿图才好出图','err');return;}
