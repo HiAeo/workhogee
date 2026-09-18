@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>效果中心 · WorkHogee</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111'/%3E%3Ctext x='16' y='22' font-family='Verdana,sans-serif' font-size='18' font-weight='700' fill='%23ea580c' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E"/>
+<style>
+:root{
+  --o:#ea580c; --o-d:#c2410c; --o-soft:#fff7ed; --o-line:#fed7aa;
+  --ink:#1c1917; --ink2:#44403c; --m:#78716c; --m2:#a8a29e;
+  --l:#f5f5f4; --l2:#fafaf9; --line:#e7e5e4; --white:#fff;
+  --ok:#1c1917; --shadow:0 1px 2px rgba(28,25,23,.04),0 8px 24px -12px rgba(28,25,23,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--l2);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+button{font-family:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:#fed7aa}
+
+/* ---------- 顶部导航 ---------- */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1240px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;gap:20px}
+.brand{display:inline-flex;align-items:baseline;font-family:"Trebuchet MS","Trebuchet",Verdana,sans-serif;font-size:22px;font-weight:700;letter-spacing:.2px;line-height:1;white-space:nowrap}
+.brand b{color:var(--ink)} .brand i{font-style:normal;color:var(--o)}
+.crumb{display:flex;align-items:center;gap:8px;color:var(--m);font-size:13.5px;font-weight:500}
+.crumb .sep{color:var(--m2)}
+.crumb .cur{color:var(--ink);font-weight:600}
+.topbar-sp{flex:1}
+.btn{appearance:none;border:0;cursor:pointer;border-radius:9px;font-size:13.5px;font-weight:600;padding:9px 16px;line-height:1;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;transition:background .18s,border-color .18s,color .18s,transform .12s,box-shadow .18s}
+.btn:active{transform:translateY(1px)}
+.btn-ghost{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink);background:var(--l)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:#000}
+.btn-o{background:var(--o);color:#fff}
+.btn-o:hover{background:var(--o-d)}
+.btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.ic{width:15px;height:15px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* member-auth 浅色适配（顶栏内） */
+.topbar .member-nav{gap:8px}
+.topbar .hm-navbtn{padding:8px 15px;font-size:13px}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:24px 24px 80px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.page-head h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em;font-weight:700}
+.page-head p{margin:0;color:var(--m);font-size:13px}
+.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--white);border:1px solid var(--line);border-radius:9px;padding:3px}
+.seg button{appearance:none;border:0;background:transparent;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--m);padding:6px 13px;border-radius:6px;transition:.16s;white-space:nowrap}
+.seg button.on{background:var(--ink);color:#fff}
+
+/* 页签 */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:6px 0 22px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;background:none;border:0;cursor:pointer;padding:11px 15px;font-size:14px;font-weight:600;color:var(--m);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;transition:color .16s,border-color .16s}
+.tab .ic{width:16px;height:16px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--o)}
+.tab .dot{background:var(--o);color:#fff;font-size:10.5px;font-weight:700;border-radius:99px;min-width:17px;height:17px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
+.view{display:none}
+.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:15px 16px 14px;position:relative;overflow:hidden}
+.kpi .lab{font-size:12px;color:var(--m);display:flex;align-items:center;gap:6px;font-weight:500}
+.kpi .num{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:7px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:11.5px;color:var(--m2);margin-top:5px;line-height:1.4}
+.kpi .sub b{color:var(--o);font-weight:600}
+.kpi.accent{background:var(--ink);border-color:var(--ink)}
+.kpi.accent .lab,.kpi.accent .sub{color:rgba(255,255,255,.62)}
+.kpi.accent .num{color:#fff}
+.kpi.accent .sub b{color:#fdba74}
+.kpi .approx{font-size:10px;border:1px solid var(--line);color:var(--m2);border-radius:4px;padding:0 4px;margin-left:2px;font-weight:500}
+.kpi.accent .approx{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.55)}
+
+.grid{display:grid;gap:16px}
+.g-2{grid-template-columns:1.55fr 1fr}
+.g-2b{grid-template-columns:1fr 1fr}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.panel-h h3{margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.panel-h .hint{font-size:11.5px;color:var(--m2);font-weight:400}
+.chart{width:100%;height:280px}
+.chart.sm{height:230px}
+.chart.tall{height:340px}
+
+/* 列表：渠道/画册 mini */
+.rank{display:flex;flex-direction:column}
+.rank-row{display:grid;grid-template-columns:88px 1fr 56px;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.rank-row:last-child{border-bottom:0}
+.rank-row .nm{font-size:12.5px;color:var(--ink2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:7px;background:var(--l);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--o),#fb923c);border-radius:99px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.rank-row .val{font-size:12.5px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.rank-row .val small{display:block;font-weight:400;color:var(--m2);font-size:10.5px}
+
+/* 表格 */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:760px}
+thead th{background:var(--l);color:var(--m);font-size:11.5px;font-weight:600;text-align:left;padding:10px 14px;white-space:nowrap;border-bottom:1px solid var(--line)}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{transition:background .14s}
+tbody tr:hover{background:var(--o-soft)}
+td .strong{font-weight:600;color:var(--ink)}
+td .dim{color:var(--m);font-size:12px}
+.tag-status{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;cursor:default}
+.st-new{background:var(--l);color:var(--ink2)}
+.st-following{background:#ffedd5;color:#9a3412}
+.st-visited{background:#fff7ed;color:var(--o);border:1px solid var(--o-line)}
+.st-deal{background:var(--ink);color:#fff}
+.st-lost{background:var(--l);color:var(--m2)}
+.src-tag{font-size:11px;color:var(--m);background:var(--l);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.linklike{color:var(--o);cursor:pointer;font-weight:600}
+.linklike:hover{text-decoration:underline}
+.row-act{display:inline-flex;gap:6px}
+.iconbtn{appearance:none;border:1px solid var(--line);background:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--ink2);transition:.15s}
+.iconbtn:hover{border-color:var(--o);color:var(--o)}
+.iconbtn .ic{width:15px;height:15px}
+.thumb{width:52px;height:39px;object-fit:cover;border-radius:6px;background:var(--l);border:1px solid var(--line)}
+.sc-title{display:flex;align-items:center;gap:11px;min-width:0}
+.sc-title .meta{min-width:0}
+.sc-title .meta .t{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.sc-title .meta .c{font-size:11px;color:var(--m2);font-family:ui-monospace,Menlo,monospace}
+
+/* 筛选条 */
+.filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filterbar .st-tabs{display:inline-flex;gap:4px;flex-wrap:wrap}
+.filterbar .st-tabs button{appearance:none;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 13px;font-size:12.5px;color:var(--m);cursor:pointer;font-weight:600;transition:.15s;display:inline-flex;gap:6px;align-items:center}
+.filterbar .st-tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.search{flex:1;min-width:180px;max-width:260px;display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:7px 11px;background:#fff}
+.search input{border:0;outline:0;flex:1;font-size:13px;font-family:inherit;background:transparent;min-width:0}
+.search .ic{width:14px;height:14px;color:var(--m2)}
+.sp{flex:1}
+
+/* 抽屉/模态 */
+.mask{position:fixed;inset:0;background:rgba(28,25,23,.4);backdrop-filter:blur(2px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.mask.show{display:flex;animation:fade .2s}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:440px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28);animation:pop .24s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.modal-h{padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-h h3{margin:0;font-size:17px;font-weight:700}
+.modal-h p{margin:4px 0 0;font-size:12.5px;color:var(--m)}
+.modal-b{padding:18px 22px 22px}
+.xbtn{appearance:none;border:0;background:var(--l);width:32px;height:32px;border-radius:50%;cursor:pointer;color:var(--m);display:flex;align-items:center;justify-content:center;flex:none}
+.xbtn:hover{background:var(--line);color:var(--ink)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;color:var(--m);margin-bottom:6px;font-weight:500}
+.field select,.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);outline:0;transition:border-color .15s,box-shadow .15s}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--o);box-shadow:0 0 0 3px rgba(234,88,12,.14)}
+.field textarea{min-height:64px;resize:vertical}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chips button{appearance:none;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600;transition:.15s}
+.chips button.on{background:var(--o-soft);border-color:var(--o);color:var(--o-d)}
+.qr-box{text-align:center;padding:8px 0 4px}
+.qr-box .qr{width:216px;height:216px;margin:0 auto 12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+.qr-box .qr svg{width:100%;height:100%;display:block}
+.qr-box .short{display:flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:9px;padding:9px 12px;background:var(--l2);font-size:12.5px;font-family:ui-monospace,Menlo,monospace;color:var(--ink2);margin-bottom:14px}
+.qr-box .short span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-actions{display:flex;gap:10px;margin-top:8px}
+.modal-actions .btn{flex:1;justify-content:center}
+
+/* 抽屉 */
+.drawer-mask{position:fixed;inset:0;background:rgba(28,25,23,.4);z-index:320;display:none}
+.drawer-mask.show{display:block;animation:fade .2s}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:430px;max-width:92vw;background:#fff;z-index:321;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.18)}
+.drawer.show{transform:none}
+.drawer-h{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.drawer-h h3{margin:0;font-size:16px;font-weight:700}
+.drawer-b{flex:1;overflow-y:auto;padding:18px 22px}
+.drawer-f{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;background:var(--l2)}
+.dl{display:grid;grid-template-columns:78px 1fr;gap:9px 12px;font-size:13px;margin-bottom:16px}
+.dl dt{color:var(--m);font-size:12.5px}
+.dl dd{margin:0;min-width:0;word-break:break-word}
+.contact-line{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.timeline{border-left:2px solid var(--line);margin:8px 0 4px 6px;padding-left:16px;display:flex;flex-direction:column;gap:14px}
+.tl-item{position:relative;font-size:12.5px}
+.tl-item::before{content:"";position:absolute;left:-24px;top:3px;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--m2)}
+.tl-item.lead::before{border-color:var(--o);background:var(--o)}
+.tl-item .t{color:var(--m2);font-size:11px}
+.tl-item .x{color:var(--ink2);margin-top:2px;white-space:pre-wrap}
+.sec-label{font-size:12px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px}
+.statelist{display:grid;gap:8px}
+.staterow{display:grid;grid-template-columns:74px 1fr 46px;align-items:center;gap:10px;font-size:12.5px}
+.staterow .bar{height:9px}
+.steprate{grid-template-columns:112px 1fr 50px;margin-bottom:15px}
+.steprate .sn{font-size:12.5px;font-weight:600;color:var(--ink2);line-height:1.25}
+.steprate .sn small{display:block;font-weight:400;color:var(--m2);font-size:10.5px;margin-top:2px;line-height:1.35}
+.steprate .bar i{transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.steprate .rt{text-align:right;font-weight:700;font-size:12.5px;color:var(--ink2)}
+
+/* 空状态 */
+.empty{display:none;text-align:center;padding:56px 24px;background:#fff;border:1px dashed var(--line);border-radius:14px}
+.empty.show{display:block}
+.empty .big{width:74px;height:74px;margin:0 auto 18px;color:var(--m2)}
+.empty .big .ic{width:100%;height:100%;stroke-width:1.2}
+.empty h3{margin:0 0 8px;font-size:17px}
+.empty p{color:var(--m);font-size:13px;margin:0 auto 22px;max-width:440px;line-height:1.7}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:760px;margin:0 auto 26px;text-align:left}
+.step3{background:var(--l2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.step3 .n{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.step3 h4{margin:0 0 5px;font-size:13.5px}
+.step3 p{margin:0;font-size:12px;color:var(--m);line-height:1.6}
+.empty-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:400;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90%}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--m);font-size:13px;padding:48px 0}
+.spin{width:17px;height:17px;border:2px solid var(--line);border-top-color:var(--o);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.foot-note{font-size:11.5px;color:var(--m2);margin-top:14px;line-height:1.7;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- 响应式 ---------- */
+@media(max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}.g-2,.g-2b{grid-template-columns:1fr}}
+@media(max-width:680px){
+  .topbar-in{padding:0 14px;height:56px;gap:10px}
+  .crumb{display:none}
+  .wrap{padding:18px 14px 70px}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
+  .kpi .num{font-size:23px}
+  .steps3{grid-template-columns:1fr}
+  .page-head h1{font-size:19px}
+  .chart{height:240px}
+  .drawer{width:100%;max-width:100%}
+  .tools{width:100%}
+}
+</style>
+</head>
+<body data-member-gate>
+
+<!-- ===== 顶部导航 ===== -->
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/"><b>Work</b><i>Hogee</i></a>
+    <nav class="crumb"><a href="/workbench.html">工作台</a><span class="sep">/</span><span class="cur">效果中心</span></nav>
+    <span class="topbar-sp"></span>
+    <a class="btn btn-ghost btn-sm" href="/workbench.html"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回工作台</a>
+    <div data-member-nav></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>效果中心</h1>
+      <p>画册扫码、渠道传播与留资线索，第一方数据实时回流，仅你可见。</p>
+    </div>
+    <div class="tools">
+      <div class="seg" id="rangeSeg">
+        <button data-r="7" class="on">近 7 天</button>
+        <button data-r="30">近 30 天</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="refreshBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>刷新</button>
+    </div>
+  </div>
+
+  <!-- ===== 页签 ===== -->
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-v="overview"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>总览</button>
+    <button class="tab" data-v="channels"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>渠道与二维码</button>
+    <button class="tab" data-v="showcases"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 14l5-4 4 3 3-2 6 4M9 8.5h.01"/></svg>画册</button>
+    <button class="tab" data-v="leads"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>线索<span class="dot" id="leadDot" style="display:none">0</span></button>
+    <button class="tab" data-v="funnel"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16l-6 7v7l-4 2v-9z"/></svg>转化漏斗</button>
+  </div>
+
+  <!-- ===== 空状态（无画册时引导） ===== -->
+  <div class="empty" id="emptyBox">
+    <div class="big"><svg class="ic" viewBox="0 0 24 24" width="74" height="74"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
+    <h3>还没有可追踪的画册</h3>
+    <p>把一台车的手机实拍图，做成带留资表单的 H5 画册；再为每个获客渠道生成专属二维码。客户扫码看图、打电话、留电话，效果中心自动统计每个渠道带来了多少浏览和线索。</p>
+    <div class="steps3">
+      <div class="step3"><div class="n">1</div><h4>生成画册</h4><p>在工作台为车源精修图片后，一键发布一本在线画册。</p></div>
+      <div class="step3"><div class="n">2</div><h4>建渠道码</h4><p>为客户群、朋友圈、车窗立牌分别生成专属二维码。</p></div>
+      <div class="step3"><div class="n">3</div><h4>发出去看数</h4><p>扫码浏览、拨号、留资自动回流，哪个渠道有效一目了然。</p></div>
+    </div>
+    <div class="empty-actions">
+      <a class="btn btn-o" href="/workbench.html"><svg class="ic" viewBox="0 0 24 24"><path d="M5 3l3.5 18M19 3l-3.5 18M8 8h11l-2 13H7zM8 8L7 5H4"/></svg>打开工作台生成画册</a>
+      <button class="btn btn-ghost" id="emptyReload">我已有画册，刷新</button>
+    </div>
+  </div>
+
+  <!-- ===== 视图：总览 ===== -->
+  <section class="view" id="view-overview">
+    <div class="kpis" id="kpis"></div>
+    <div class="grid g-2">
+      <div class="panel">
+        <div class="panel-h"><h3>浏览趋势</h3><span class="hint">画册浏览 PV 与独立访客 UV（UV 为近似去重）</span></div>
+        <div class="chart" id="chTrend"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>转化漏斗</h3><span class="hint">浏览 → 留资 → 到店 → 成交</span></div>
+        <div class="chart" id="chFunnelMini"></div>
+      </div>
+    </div>
+    <div class="grid g-2" style="margin-top:16px">
+      <div class="panel">
+        <div class="panel-h"><h3>渠道效果 Top</h3><span class="hint">按留资线索排序</span></div>
+        <div class="rank" id="rankChannels"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>画册效果 Top</h3><span class="hint">按留资线索排序</span></div>
+        <div class="rank" id="rankShowcases"></div>
+      </div>
+    </div>
+    <p class="foot-note" id="metaNote"></p>
+  </section>
+
+  <!-- ===== 视图：渠道 ===== -->
+  <section class="view" id="view-channels">
+    <div class="panel" style="margin-bottom:16px">
+      <div class="panel-h">
+        <h3>各渠道转化</h3>
+        <button class="btn btn-o btn-sm" id="newQrBtn"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" height="7" width="7" rx="1"/><rect x="14" y="3" height="7" width="7" rx="1"/><rect x="3" y="14" height="7" width="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7M17 21v-4"/></svg>新建渠道二维码</button>
+      </div>
+      <div class="chart sm" id="chChannels"></div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <colgroup><col style="width:150px"><col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:100px"><col style="width:90px"><col style="width:110px"><col style="width:170px"></colgroup>
+        <thead><tr><th>渠道</th><th>扫码跳转</th><th>浏览 PV</th><th>访客 UV</th><th>意向点击</th><th>留资</th><th>留资率</th><th>渠道码</th></tr></thead>
+        <tbody id="channelRows"><tr><td colspan="8"><div class="loading"><span class="spin"></span>加载中</div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 视图：画册 ===== -->
+  <section class="view" id="view-showcases">
+    <div class="tablewrap">
+      <table>
+        <colgroup><col style="width:300px"><col style="width:90px"><col style="width:90px"><col style="width:100px"><col style="width:90px"><col style="width:110px"><col style="width:130px"></colgroup>
+        <thead><tr><th>画册 / 车源</th><th>浏览 PV</th><th>访客 UV</th><th>平均停留</th><th>意向点击</th><th>留资线索</th><th>操作</th></tr></thead>
+        <tbody id="showcaseRows"><tr><td colspan="7"><div class="loading"><span class="spin"></span>加载中</div></td></tr></tbody>
+      </table>
+    </div>
+    <p class="foot-note">画册在 Web 工作台为车源生成图片后一键发布；平均停留为该画册所有访问的均值。</p>
+  </section>
+
+  <!-- ===== 视图：线索 ===== -->
+  <section class="view" id="view-leads">
+    <div class="filterbar">
+      <div class="st-tabs" id="leadStatusTabs"></div>
+      <span class="sp"></span>
+      <label class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="leadSearch" placeholder="搜索称呼 / 备注"/></label>
+      <button class="btn btn-ghost btn-sm" id="exportCsvBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>导出 CSV</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <colgroup><col style="width:140px"><col style="width:110px"><col style="width:150px"><col style="width:110px"><col><col style="width:104px"><col style="width:96px"></colgroup>
+        <thead><tr><th>时间</th><th>称呼</th><th>联系方式</th><th>来源渠道</th><th>意向 / 备注</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody id="leadRows"><tr><td colspan="7"><div class="loading"><span class="spin"></span>加载中</div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 视图：漏斗 ===== -->
+  <section class="view" id="view-funnel">
+    <div class="grid g-2">
+      <div class="panel">
+        <div class="panel-h"><h3>全链路转化漏斗</h3><span class="hint">近 <span id="funnelRange">7</span> 天</span></div>
+        <div class="chart tall" id="chFunnelBig"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-h"><h3>逐级转化率</h3></div>
+          <div id="funnelSteps"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h3>线索状态分布</h3><span class="hint">到店 / 成交为商家手动回填</span></div>
+          <div class="statelist" id="leadStateBars"></div>
+        </div>
+      </div>
+    </div>
+    <p class="foot-note">浏览、有效浏览、意向点击来自第一方埋点；留资、到店、成交来自线索 CRM，由你跟进后手动更新状态，系统不做臆测。</p>
+  </section>
+</main>
+
+<!-- ===== 模态：新建渠道码 ===== -->
+<div class="mask" id="qrMask">
+  <div class="modal" id="qrModal">
+    <div class="modal-h">
+      <div><h3>新建渠道二维码</h3><p>同一本画册，为不同渠道建专属码，分别统计效果。</p></div>
+      <button class="xbtn" data-close><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="modal-b">
+      <div class="field">
+        <label>选择画册（车源）</label>
+        <select id="qrShowcase"></select>
+      </div>
+      <div class="field">
+        <label>投放渠道</label>
+        <div class="chips" id="qrSourceChips"></div>
+      </div>
+      <div class="field">
+        <label>备注（如：周六客户群、前窗立牌）</label>
+        <input id="qrContent" maxlength="60" placeholder="便于你区分不同投放位置"/>
+      </div>
+      <button class="btn btn-o" style="width:100%;justify-content:center" id="qrGenBtn"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" height="7" width="7" rx="1"/><rect x="14" y="3" height="7" width="7" rx="1"/><rect x="3" y="14" height="7" width="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/></svg>生成二维码</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 模态：二维码结果 ===== -->
+<div class="mask" id="qrResultMask">
+  <div class="modal">
+    <div class="modal-h">
+      <div><h3>渠道二维码已生成</h3><p id="qrResultSub">扫码即打开画册，并自动记录该渠道。</p></div>
+      <button class="xbtn" data-close><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="modal-b qr-box">
+      <div class="qr" id="qrSvgBox"></div>
+      <div class="short"><span id="qrShort"></span><button class="btn btn-ghost btn-sm" id="copyShortBtn">复制</button></div>
+      <div class="modal-actions">
+        <button class="btn btn-dark" id="downloadQrBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>下载 SVG</button>
+        <button class="btn btn-ghost" id="printQrBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>打印</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 抽屉：线索详情 ===== -->
+<div class="drawer-mask" id="drawerMask"></div>
+<aside class="drawer" id="leadDrawer">
+  <div class="drawer-h">
+    <div><h3 id="dName">线索详情</h3><p id="dTime" style="margin-top:4px"></p></div>
+    <button class="xbtn" id="drawerClose"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="drawer-b" id="drawerBody"></div>
+  <div class="drawer-f">
+    <a class="btn btn-o" id="dCallBtn" style="flex:1;justify-content:center" href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>拨打</a>
+    <button class="btn btn-ghost" id="dCopyBtn"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制联系方式</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="member-auth.js?v=20260918"></script>
+<script>
+/* ============================================================
+ * WorkHogee 效果中心 · 看板逻辑（原生 JS / ECharts）
+ * 复用 member-auth.js 的登录态（HogeeMember.authFetch）
+ * ============================================================ */
+(function(){
+'use strict';
+var API='https://api.workhogee.com';
+var WWW='https://www.workhogee.com';
+var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 字典 ---------- */
+var SRC={wechat_group:'客户微信群',moments:'朋友圈',poster:'车窗立牌/印刷',douyin:'抖音',xiaohongshu:'小红书',xianyu:'闲鱼',dongchedi:'懂车帝',kuaishou:'快手',gzh:'公众号',shipinhao:'视频号',sms:'短信',email:'邮件',direct:'直接访问',other:'其他'};
+var SRC_CHOICES=['wechat_group','moments','poster','douyin','xiaohongshu','xianyu','dongchedi','kuaishou','gzh','other'];
+function srcLabel(s){return SRC[s]||s||'直接访问';}
+var ST={new:{t:'新线索',c:'st-new'},following:{t:'跟进中',c:'st-following'},visited:{t:'已到店',c:'st-visited'},deal:{t:'已成交',c:'st-deal'},lost:{t:'已流失',c:'st-lost'}};
+function stMeta(s){return ST[s]||{t:s,c:'st-new'};}
+var SHORT=['浏览','有效浏览','意向点击','留资','已跟进','到店','成交'];
+
+/* ---------- 工具 ---------- */
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function n0(v){v=Number(v)||0;return v.toLocaleString('en-US');}
+function dash(v){return (v===null||v===undefined||v==='')?'<span style="color:var(--m2)">—</span>':v;}
+function pct(v,den){if(!den)return '<span style="color:var(--m2)">—</span>';return (v/den*100).toFixed(1)+'%';}
+function bjDate(offset){
+  var d=new Date(Date.now()+(offset||0)*864e5+8*36e5);
+  return d.toISOString().slice(0,10);
+}
+function fmtTime(ts){
+  if(!ts)return '—';var d=new Date(ts);
+  function p(x){return (x<10?'0':'')+x;}
+  return (d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function fmtDur(ms){
+  if(!ms)return '—';var s=Math.round(ms/1000);
+  if(s<60)return s+'秒';var m=Math.floor(s/60);s=s%60;return m+'分'+(s?(''+s+'秒'):'');
+}
+var toastTimer;
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2200);}
+function copy(text,okMsg){
+  function done(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast(okMsg||'已复制');},fallback);}else fallback();}
+  function fallback(){var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast(okMsg||'已复制');}catch(e){}document.body.removeChild(ta);}
+  done();
+}
+
+/* ---------- 请求 ---------- */
+function req(method,path,body,raw){
+  return HogeeMember.authFetch(API+path,{method:method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})
+    .then(function(r){if(raw)return r;return r.json().then(function(j){if(!r.ok||(j&&j.ok===false)){throw new Error((j&&j.error&&(j.error.message||j.error.code))||('请求失败 '+r.status));}return j;});});
+}
+function apiGet(path){return req('GET',path);}
+function apiPost(path,body){return req('POST',path,body);}
+function apiPatch(path,body){return req('PATCH',path,body);}
+
+/* ---------- 状态 ---------- */
+var S={range:7,view:'overview',ov:null,ch:null,sc:null,leads:[],showcases:[],links:[],leadStatus:'all',q:'',qrSource:'wechat_group',charts:{},lastQr:null};
+function dates(){return{from:bjDate(-(S.range-1)),to:bjDate(0)};}
+var chartTheme={
+  textStyle:{fontFamily:'-apple-system,"PingFang SC","Microsoft YaHei",sans-serif',color:'#44403c'},
+  axis:{axisLine:{lineStyle:{color:'#d6d3d1'}},axisTick:{show:false},axisLabel:{color:'#78716c',fontSize:11,fontVariantNumeric:'tabular-nums'},splitLine:{lineStyle:{color:'#f0efed'}}},
+  tooltip:{backgroundColor:'#1c1917',borderWidth:0,textStyle:{color:'#fff',fontSize:12},confine:true,extraCssText:'border-radius:9px;padding:8px 11px;'}
+};
+function chart(id){if(!S.charts[id]){var el=$(id);if(!el)return null;S.charts[id]=echarts.init(el,null,{renderer:'svg'});}return S.charts[id];}
+window.addEventListener('resize',function(){Object.keys(S.charts).forEach(function(k){S.charts[k]&&S.charts[k].resize();});});
+
+/* ---------- 加载 ---------- */
+function loadAll(){
+  var d=dates();
+  var qs='?from='+d.from+'&to='+d.to;
+  return Promise.all([
+    apiGet('/analytics/overview'+qs),
+    apiGet('/analytics/channels'+qs),
+    apiGet('/analytics/showcases'+qs),
+    apiGet('/leads?from='+bjDate(-89)+'&to='+bjDate(0)),
+    apiGet('/showcases'),
+    apiGet('/qr')
+  ]).then(function(rs){
+    S.ov=rs[0].data;S.ch=rs[1].data;S.sc=rs[2].data;
+    S.leads=rs[3].data||[];S.showcases=rs[4].data||[];S.links=rs[5].data||[];
+    renderAll();
+  }).catch(function(e){
+    console.error('[LOADALL_STACK]', e && e.stack ? e.stack : e);
+    if(/登录|unauthorized|401/.test(String(e.message))){/*门禁已处理*/}
+    else toast('数据加载失败：'+e.message);
+  });
+}
+
+/* ---------- 总览 ---------- */
+function kpi(lab,num,sub,accent,approx){
+  return '<div class="kpi'+(accent?' accent':'')+'"><div class="lab">'+lab+(approx?'<span class="approx">近似</span>':'')+'</div><div class="num">'+num+'</div><div class="sub">'+(sub||'')+'</div></div>';
+}
+function renderKpis(){
+  var t=S.ov.totals;
+  var dur=fmtDur(t.avg_duration_ms);
+  $('kpis').innerHTML=
+    kpi('画册浏览 PV',n0(t.pv),'<b>'+n0(t.sessions)+'</b> 次访问会话')+
+    kpi('独立访客 UV',n0(t.uv),'去重访客数',false,true)+
+    kpi('留资线索',n0(t.leads),'留资率 '+pct(t.leads,t.uv),true)+
+    kpi('意向点击',n0(t.cta),'拨号 / 加微 / 问底价')+
+    kpi('到店',n0(t.visited),'商家回填')+
+    kpi('成交',n0(t.deal),'商家回填');
+}
+function renderTrend(){
+  var c=chart('chTrend');if(!c)return;var tr=S.ov.trend||[];
+  c.setOption({
+    textStyle:chartTheme.textStyle,
+    grid:{left:42,right:18,top:36,bottom:30},
+    legend:{top:0,right:0,icon:'roundRect',itemWidth:11,itemHeight:3,textStyle:{fontSize:12,color:'#78716c'},data:['浏览 PV','访客 UV']},
+    tooltip:Object.assign({trigger:'axis'},chartTheme.tooltip),
+    xAxis:{type:'category',boundaryGap:false,data:tr.map(function(x){return x.date.slice(5);}),axisLine:chartTheme.axis.axisLine,axisTick:{show:false},axisLabel:chartTheme.axis.axisLabel},
+    yAxis:{type:'value',minInterval:1,splitLine:chartTheme.axis.splitLine,axisLabel:chartTheme.axis.axisLabel},
+    series:[
+      {name:'浏览 PV',type:'line',smooth:!REDUCE,symbol:'circle',symbolSize:5,showSymbol:false,data:tr.map(function(x){return x.pv;}),lineStyle:{color:'#1c1917',width:2.2},itemStyle:{color:'#1c1917'},areaStyle:{color:'rgba(28,25,23,.05)'}},
+      {name:'访客 UV',type:'line',smooth:!REDUCE,symbol:'circle',symbolSize:4,showSymbol:false,data:tr.map(function(x){return x.uv;}),lineStyle:{color:'#ea580c',width:2},itemStyle:{color:'#ea580c'}}
+    ]
+  });
+}
+function funnelOption(funnel,big){
+  var rows=(funnel||[]).map(function(f,i){return{label:f.label,short:SHORT[i]||f.label,count:f.count};});
+  var colors=['#1c1917','#44403c','#78716c','#ea580c','#f97316','#fb923c','#fdba74'];
+  var data=rows.map(function(d,i){return{name:d.short,value:d.count,itemStyle:{color:colors[i%colors.length]}};});
+  var tip=Object.assign({trigger:'item',formatter:function(p){var d=rows[p.dataIndex];return d.label+'：<b>'+n0(d.count)+'</b>';}},chartTheme.tooltip);
+  if(big){
+    return{textStyle:chartTheme.textStyle,tooltip:tip,series:[{
+      type:'funnel',minSize:'36%',maxSize:'94%',gap:3,sort:'descending',
+      label:{show:true,position:'inside',color:'#fff',fontSize:12.5,fontWeight:600,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
+      labelLine:{show:false},itemStyle:{borderColor:'#fff',borderWidth:2,borderRadius:5},data:data
+    }]};
+  }
+  return{textStyle:chartTheme.textStyle,tooltip:tip,series:[{
+    type:'funnel',left:'0%',width:'55%',top:8,bottom:8,minSize:'24%',maxSize:'100%',gap:2,sort:'descending',
+    label:{show:true,position:'right',color:'#44403c',fontSize:11.5,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
+    labelLine:{show:true,length:8,length2:6,lineStyle:{color:'#d6d3d1'}},
+    itemStyle:{borderColor:'#fff',borderWidth:1.5,borderRadius:4},data:data
+  }]};
+}
+function renderRank(list,el,type){
+  if(!list||!list.length){$(el).innerHTML='<div style="color:var(--m2);font-size:12.5px;padding:24px 0;text-align:center">暂无数据，把渠道码发出去后开始统计</div>';return;}
+  var max=Math.max.apply(null,list.map(function(x){return x.pv||0;}).concat([1]));
+  $(el).innerHTML=list.slice(0,6).map(function(x){
+    var name=type==='sc'?x.title:srcLabel(x.source);
+    var sub=x.leads>0?('<b>'+x.leads+'</b> 条线索'):(n0(x.pv)+' 浏览');
+    return '<div class="rank-row"><div class="nm" title="'+esc(name)+'">'+esc(name)+'</div><div class="bar"><i style="width:'+Math.round((x.pv||0)/max*100)+'%"></i></div><div class="val">'+n0(x.pv)+'<small>'+sub+'</small></div></div>';
+  }).join('');
+}
+function renderOverview(){
+  renderKpis();renderTrend();
+  chart('chFunnelMini').setOption(funnelOption(S.ov.funnel,false));
+  renderRank(S.ov.top_channels,'rankChannels','ch');
+  renderRank(S.ov.top_showcases,'rankShowcases','sc');
+  $('metaNote').textContent=S.ov.meta&&S.ov.meta.note?S.ov.meta.note:'';
+}
+
+/* ---------- 渠道视图 ---------- */
+function renderChannelsChart(){
+  var c=chart('chChannels');if(!c)return;
+  var all=S.ch.rows||[];
+  var useLead=all.some(function(r){return r.leads>0;});
+  var rows=all.slice().sort(function(a,b){return useLead?(a.leads-b.leads):(a.pv-b.pv);}).slice(-8);
+  c.setOption({
+    textStyle:chartTheme.textStyle,grid:{left:108,right:42,top:18,bottom:24},
+    tooltip:Object.assign({trigger:'axis',axisPointer:{type:'shadow'},formatter:function(ps){var r=rows[ps[0].dataIndex];if(!r)return'';return srcLabel(r.source)+'<br/>浏览 <b>'+n0(r.pv)+'</b> · 访客 '+n0(r.uv)+'<br/>意向 '+n0(r.cta)+' · 留资 <b>'+n0(r.leads)+'</b>';}},chartTheme.tooltip),
+    xAxis:{type:'value',minInterval:1,splitLine:chartTheme.axis.splitLine,axisLabel:chartTheme.axis.axisLabel},
+    yAxis:{type:'category',data:rows.map(function(r){return srcLabel(r.source);}),axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#44403c',fontSize:12}},
+    series:[{
+      name:useLead?'留资线索':'浏览 PV',type:'bar',barWidth:13,
+      data:rows.map(function(r){return useLead?r.leads:r.pv;}),
+      itemStyle:{color:useLead?'#ea580c':'#d6d3d1',borderRadius:[0,4,4,0]},
+      label:{show:true,position:'right',color:'#44403c',fontSize:11,fontVariantNumeric:'tabular-nums'}
+    }]
+  });
+}
+function qrIconBtn(link){
+  return '<button class="iconbtn" title="查看二维码 '+esc(link.code)+'" data-qr="'+esc(link.code)+'"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/></svg></button>';
+}
+function renderChannelsTable(){
+  var rows=(S.ch.rows||[]).slice().sort(function(a,b){return b.leads-a.leads||b.pv-a.pv;});
+  if(!rows.length){$('channelRows').innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--m2);padding:34px">暂无渠道数据，先新建一个渠道二维码</td></tr>';return;}
+  var bySrc={};
+  S.links.forEach(function(l){(bySrc[l.source]=bySrc[l.source]||[]).push(l);});
+  $('channelRows').innerHTML=rows.map(function(r){
+    var codes=bySrc[r.source]||[];
+    var codeCell=codes.length?(codes.slice(0,4).map(qrIconBtn).join(' ')+(codes.length>4?('<span class="dim" style="margin-left:4px">+'+(codes.length-4)+'</span>'):'')):'<span class="dim">—</span>';
+    return '<tr><td><span class="strong">'+esc(srcLabel(r.source))+'</span></td>'+
+      '<td class="tnum">'+n0(r.redirect)+'</td><td class="tnum">'+n0(r.pv)+'</td><td class="tnum">'+n0(r.uv)+'</td>'+
+      '<td class="tnum">'+n0(r.cta)+'</td><td class="tnum"><b style="color:var(--o)">'+n0(r.leads)+'</b></td>'+
+      '<td class="tnum">'+(r.uv?(r.lead_rate.toFixed(1)+'%'):dash(''))+'</td>'+
+      '<td><div class="row-act">'+codeCell+'</div></td></tr>';
+  }).join('');
+}
+function renderChannels(){renderChannelsChart();renderChannelsTable();}
+
+/* ---------- 画册视图 ---------- */
+function renderShowcases(){
+  var rows=(S.sc&&S.sc.rows)||[];
+  if(!rows.length){$('showcaseRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:34px">还没有画册，去工作台为车源生成一本</td></tr>';return;}
+  $('showcaseRows').innerHTML=rows.map(function(r){
+    var thumb=r.thumb?'<img class="thumb" src="'+esc(r.thumb)+'" alt="" loading="lazy"/>':'<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--m2)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 14l5-4 4 3 3-2 6 4"/></svg></div>';
+    var url=WWW+'/s/'+r.code;
+    return '<tr><td><div class="sc-title">'+thumb+'<div class="meta"><div class="t">'+esc(r.title)+'</div><div class="c">'+esc(r.code)+'</div></div></div></td>'+
+      '<td class="tnum">'+n0(r.pv)+'</td><td class="tnum">'+n0(r.uv)+'</td>'+
+      '<td class="tnum">'+fmtDur(r.avg_duration_ms)+'</td><td class="tnum">'+n0(r.cta)+'</td>'+
+      '<td class="tnum"><b style="color:var(--o)">'+n0(r.leads)+'</b></td>'+
+      '<td><div class="row-act"><a class="iconbtn" title="打开画册" href="'+esc(url)+'" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg></a>'+
+      '<button class="iconbtn" title="复制画册链接" data-copy="'+esc(url)+'"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></td></tr>';
+  }).join('');
+}
+
+/* ---------- 漏斗视图 ---------- */
+function renderFunnelView(){
+  $('funnelRange').textContent=S.range;
+  chart('chFunnelBig').setOption(funnelOption(S.ov.funnel,true));
+  var f=S.ov.funnel||[];
+  $('funnelSteps').innerHTML=f.map(function(x,i){
+    var prev=i?f[i-1].count:null;
+    var rate=prev?((x.count/prev)*100).toFixed(1)+'%':'100%';
+    var w=prev?Math.max((x.count/Math.max(prev,1))*100,4):100;
+    return '<div class="staterow steprate"><span class="sn">'+(SHORT[i]||esc(x.label))+'<small>'+n0(x.count)+' · '+esc(x.label)+'</small></span><div class="bar" style="height:8px"><i style="display:block;height:100%;background:'+(i>=3?'#ea580c':'#a8a29e')+';border-radius:99px;width:'+w.toFixed(1)+'%"></i></div><span class="rt tnum">'+rate+'</span></div>';
+  }).join('');
+  var by={new:0,following:0,visited:0,deal:0,lost:0};
+  S.leads.forEach(function(l){by[l.status]=(by[l.status]||0)+1;});
+  var tot=S.leads.length||1;
+  $('leadStateBars').innerHTML=Object.keys(ST).map(function(k){
+    var v=by[k]||0;
+    return '<div class="staterow"><span class="src-tag" style="background:transparent;padding:0">'+ST[k].t+'</span><div class="bar" style="height:9px"><i style="display:block;height:100%;background:'+(k==='deal'?'#1c1917':k==='visited'?'#ea580c':'#d6d3d1')+';border-radius:99px;width:'+Math.round(v/tot*100)+'%"></i></div><span class="tnum" style="text-align:right;font-weight:600">'+v+'</span></div>';
+  }).join('');
+}
+
+/* ---------- 线索 CRM ---------- */
+var LEAD_TABS=[['all','全部'],['new','新线索'],['following','跟进中'],['visited','已到店'],['deal','已成交'],['lost','已流失']];
+function scTitle(code){var s=S.showcases.find(function(x){return x.code===code;});return s?s.title:(code||'—');}
+function contactIcon(type){
+  var p={phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.2 4.3 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z',wechat:'M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-3.4A8 8 0 1 1 21 11.5zM9.2 11.3h.01M12 11.3h.01M14.8 11.3h.01',email:'M4 4h16v16H4zM4 6l8 6 8-6'};
+  return '<svg class="ic" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="'+(p[type]||p.phone)+'"/></svg>';
+}
+function renderLeadTabs(){
+  var cnt={all:S.leads.length};
+  ['new','following','visited','deal','lost'].forEach(function(k){cnt[k]=S.leads.filter(function(l){return l.status===k;}).length;});
+  $('leadStatusTabs').innerHTML=LEAD_TABS.map(function(t){
+    return '<button data-st="'+t[0]+'" class="'+(S.leadStatus===t[0]?'on':'')+'">'+t[1]+(t[0]==='all'||cnt[t[0]]?'<span style="opacity:.7"> '+cnt[t[0]]+'</span>':'')+'</button>';
+  }).join('');
+}
+function statusSelect(cur,id){
+  return '<select data-status="'+esc(id)+'" style="border:1px solid var(--line);border-radius:99px;padding:4px 8px;font-size:12px;font-weight:600;background:#fff;cursor:pointer">'+
+    Object.keys(ST).map(function(k){return '<option value="'+k+'" '+(k===cur?'selected':'')+'>'+ST[k].t+'</option>';}).join('')+'</select>';
+}
+function renderLeads(){
+  renderLeadTabs();
+  var q=(S.q||'').trim().toLowerCase();
+  var rows=S.leads.filter(function(l){
+    if(S.leadStatus!=='all'&&l.status!==S.leadStatus)return false;
+    if(q&&!((l.name||'').toLowerCase().includes(q)||(l.note||'').toLowerCase().includes(q)))return false;
+    return true;
+  });
+  $('leadDot').style.display=S.leads.length?'inline-flex':'none';
+  $('leadDot').textContent=S.leads.filter(function(l){return l.status==='new';}).length||'';
+  if(!S.leads.length){
+    $('leadRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:40px">还没有线索。客户在画册里点“问底价”并留下联系方式后，会出现在这里。</td></tr>';return;
+  }
+  if(!rows.length){$('leadRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:34px">该筛选下暂无线索</td></tr>';return;}
+  $('leadRows').innerHTML=rows.map(function(l){
+    var nm=esc(l.name||'未留名');
+    var ct=l.contact||{type:'phone',value:''};
+    var intent=scTitle(l.intent_showcase);
+    return '<tr>'+
+      '<td class="dim tnum" style="white-space:nowrap">'+fmtTime(l.created_at)+'</td>'+
+      '<td><span class="strong">'+nm+'</span></td>'+
+      '<td><span style="display:inline-flex;align-items:center;gap:6px;color:var(--ink2)">'+contactIcon(ct.type)+'<span class="tnum">'+esc(ct.value||'—')+'</span></span></td>'+
+      '<td><span class="src-tag">'+esc(srcLabel(l.source))+'</span></td>'+
+      '<td style="max-width:260px"><div class="strong" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(intent)+'</div>'+(l.note?'<div class="dim" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.note)+'</div>':'')+'</td>'+
+      '<td>'+statusSelect(l.status,l.lead_id)+'</td>'+
+      '<td><div class="row-act"><button class="iconbtn" title="查看详情 / 跟进" data-lead="'+esc(l.lead_id)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>'+
+    '</tr>';
+  }).join('');
+}
+function openLead(id){
+  apiGet('/leads/'+id).then(function(r){
+    var l=r.data;if(!l)return toast('线索不存在');
+    $('dName').textContent=l.name||'未留名客户';
+    $('dTime').textContent=fmtTime(l.created_at)+' · '+srcLabel(l.source);
+    var ct=l.contact||{type:'phone',value:''};
+    var isPhone=ct.type==='phone';
+    $('dCallBtn').href=isPhone?('tel:'+ct.value):'#';
+    $('dCallBtn').style.display=isPhone?'':'none';
+    var tl=[{at:l.created_at,t:'客户在画册提交留资',x:l.note||'（无备注）',lead:true}].concat((l.followups||[]).slice().reverse().map(function(f){return{at:f.at,t:'商家跟进',x:f.text};}));
+    var stars=[1,2,3,4,5].map(function(i){return '<button class="iconbtn" data-rate="'+i+'" style="width:32px;height:32px;color:'+(i<=(l.rating||0)?'var(--o)':'var(--m2)')+'"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3 6.6 7 .8-5.2 4.7 1.5 6.9L12 17.5 5.7 21l1.5-6.9L2 9.4l7-.8z"/></svg></button>';}).join('');
+    $('drawerBody').innerHTML=
+      '<div class="contact-line" style="margin-bottom:16px">'+contactIcon(ct.type)+'<span class="tnum">'+esc(ct.value)+'</span></div>'+
+      '<dl class="dl">'+
+        '<dt>意向画册</dt><dd>'+esc(scTitle(l.intent_showcase))+'</dd>'+
+        '<dt>来源渠道</dt><dd><span class="src-tag">'+esc(srcLabel(l.source))+'</span></dd>'+
+        '<dt>客户备注</dt><dd>'+esc(l.note||'—')+'</dd>'+
+        '<dt>意向评级</dt><dd><div style="display:flex;gap:4px" id="rateRow">'+stars+'</div></dd>'+
+        '<dt>当前状态</dt><dd>'+statusSelect(l.status,l.lead_id)+'</dd>'+
+      '</dl>'+
+      '<div class="sec-label">跟进记录</div>'+
+      '<div class="timeline">'+tl.map(function(x){return '<div class="tl-item'+(x.lead?' lead':'')+'"><div class="t">'+fmtTime(x.at)+' · '+esc(x.t)+'</div><div class="x">'+esc(x.x)+'</div></div>';}).join('')+'</div>'+
+      '<div class="sec-label">添加跟进</div>'+
+      '<div class="field"><textarea id="followText" placeholder="记录沟通内容，如：已加微信，约周末到店看车"></textarea></div>'+
+      '<button class="btn btn-dark" style="width:100%;justify-content:center" id="followSave">保存跟进</button>';
+    $('leadDrawer').classList.add('show');$('drawerMask').classList.add('show');
+    $('drawerBody').querySelectorAll('[data-rate]').forEach(function(b){b.onclick=function(){
+      apiPatch('/leads/'+id,{rating:Number(b.dataset.rate)}).then(function(){toast('评级已更新');l.rating=Number(b.dataset.rate);openLead(id);}).catch(function(e){toast(e.message);});
+    };});
+    $('followSave').onclick=function(){
+      var txt=$('followText').value.trim();if(!txt)return toast('先写点跟进内容');
+      apiPost('/leads/'+id+'/followup',{text:txt}).then(function(){toast('跟进已保存');var idx=S.leads.findIndex(function(x){return x.lead_id===id;});if(idx>=0)S.leads[idx].status='following';openLead(id);loadAll();}).catch(function(e){toast(e.message);});
+    };
+  }).catch(function(e){toast(e.message);});
+}
+function closeDrawer(){$('leadDrawer').classList.remove('show');$('drawerMask').classList.remove('show');}
+function exportCsv(){
+  if(!HogeeMember.isLoggedIn())return HogeeMember.requireAuth();
+  var d=dates();
+  HogeeMember.authFetch(API+'/leads/export?from='+bjDate(-89)+'&to='+d.to).then(function(r){
+    if(!r.ok)throw new Error('导出失败');return r.blob();
+  }).then(function(blob){
+    var url=URL.createObjectURL(blob);var a=document.createElement('a');
+    a.href=url;a.download='workhogee-线索-'+bjDate(0)+'.csv';document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);toast('CSV 已导出');
+  }).catch(function(e){toast(e.message||'导出失败');});
+}
+function bindLeadUI(){
+  $('leadStatusTabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.leadStatus=b.dataset.st;renderLeads();});
+  var st;$('leadSearch').addEventListener('input',function(e){S.q=e.target.value;clearTimeout(st);st=setTimeout(renderLeads,200);});
+  $('exportCsvBtn').addEventListener('click',exportCsv);
+  document.addEventListener('change',function(e){
+    var sel=e.target.closest&&e.target.closest('[data-status]');if(!sel)return;
+    var id=sel.getAttribute('data-status');
+    apiPatch('/leads/'+id,{status:sel.value}).then(function(r){
+      toast('状态已更新为「'+stMeta(sel.value).t+'」');
+      var l=S.leads.find(function(x){return x.lead_id===id;});if(l)l.status=sel.value;
+      renderLeads();
+    }).catch(function(err){toast(err.message);renderLeads();});
+  });
+  document.addEventListener('click',function(e){
+    var lb=e.target.closest&&e.target.closest('[data-lead]');if(lb){openLead(lb.getAttribute('data-lead'));return;}
+    var cp=e.target.closest&&e.target.closest('[data-copy]');if(cp){copy(cp.getAttribute('data-copy'),'画册链接已复制');return;}
+    var qb=e.target.closest&&e.target.closest('[data-qr]');if(qb){var code=qb.getAttribute('data-qr');var link=S.links.find(function(x){return x.code===code;});if(link)showQrResult({short_url:link.short_url,qr_svg_url:link.qr_svg_url,source:link.source,content:link.content});return;}
+  });
+  $('drawerClose').addEventListener('click',closeDrawer);
+  $('drawerMask').addEventListener('click',closeDrawer);
+  $('dCopyBtn').addEventListener('click',function(){var v=document.querySelector('#drawerBody .contact-line .tnum');if(v)copy(v.textContent,'联系方式已复制');});
+}
+
+/* ---------- 渠道二维码 ---------- */
+function bindQrUI(){
+  $('newQrBtn').addEventListener('click',function(){
+    if(!S.showcases.length){toast('请先在工作台生成一本画册');return;}
+    var sel=$('qrShowcase');
+    sel.innerHTML=S.showcases.map(function(s,i){return '<option value="'+esc(s.code)+'">'+esc(s.title)+'</option>';}).join('');
+    $('qrContent').value='';S.qrSource='wechat_group';
+    document.querySelectorAll('#qrSourceChips button').forEach(function(b){b.classList.toggle('on',b.dataset.s==='wechat_group');});
+    $('qrMask').classList.add('show');
+  });
+  var chips=document.createElement('div');chips.style.display='none';
+  $('qrSourceChips').innerHTML=SRC_CHOICES.map(function(s){return '<button type="button" data-s="'+s+'" class="'+(s==='wechat_group'?'on':'')+'">'+SRC[s]+'</button>';}).join('');
+  $('qrSourceChips').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.qrSource=b.dataset.s;this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});});
+  $('qrGenBtn').addEventListener('click',function(){
+    var target_code=$('qrShowcase').value,content=$('qrContent').value.trim();
+    var btn=this;btn.disabled=true;btn.textContent='生成中…';
+    apiPost('/qr',{target_code:target_code,kind:'qr',source:S.qrSource,content:content}).then(function(r){
+      $('qrMask').classList.remove('show');
+      showQrResult(r);
+      return apiGet('/qr');
+    }).then(function(r){S.links=r.data||[];renderChannelsTable();}).catch(function(e){toast(e.message);})
+    .finally(function(){btn.disabled=false;btn.innerHTML='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" height="7" width="7" rx="1"/><rect x="14" y="3" height="7" width="7" rx="1"/><rect x="3" y="14" height="7" width="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/></svg>生成二维码';});
+  });
+  $('copyShortBtn').addEventListener('click',function(){if(S.lastQr)copy(S.lastQr.short_url,'短链已复制');});
+  $('downloadQrBtn').addEventListener('click',function(){
+    if(!S.lastQr)return;
+    function save(svg){
+      var blob=new Blob([svg],{type:'image/svg+xml'});var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download='workhogee-qr-'+S.lastQr.short_url.split('/').pop()+'.svg';
+      document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);
+    }
+    if(S.lastQr.qr_svg){save(S.lastQr.qr_svg);}
+    else{fetch(S.lastQr.qr_svg_url).then(function(r){return r.text();}).then(save).catch(function(){window.open(S.lastQr.qr_svg_url,'_blank');});}
+  });
+  $('printQrBtn').addEventListener('click',function(){
+    if(!S.lastQr)return;
+    var w=window.open('','_blank');
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>渠道二维码</title><style>body{font-family:-apple-system,"PingFang SC",sans-serif;text-align:center;padding:40px}img{width:300px;height:300px}h2{margin:18px 0 6px}p{color:#78716c;font-size:14px}.b{font-weight:700;color:#ea580c}</style></head><body><img src="'+S.lastQr.imgSrc+'"/><h2>扫码看车 · WorkHogee</h2><p>投放渠道：<b class="b">'+esc(srcLabel(S.lastQr.source))+(S.lastQr.content?(' · '+esc(S.lastQr.content)):'')+'</b></p><p style="font-family:monospace">'+esc(S.lastQr.short_url)+'</p><scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},300);};<\/scr'+'ipt></body></html>');
+    w.document.close();
+  });
+  document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){b.closest('.mask').classList.remove('show');});});
+  document.querySelectorAll('.mask').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('show');});});
+}
+function showQrResult(r){
+  var source=r.source||(r.link&&r.link.source)||'other';
+  var content=r.content||(r.link&&r.link.content)||'';
+  var svg=r.qr_svg||'';
+  var imgSrc=svg?('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)):r.qr_svg_url;
+  S.lastQr={short_url:r.short_url,qr_svg_url:r.qr_svg_url,qr_svg:svg,source:source,content:content,imgSrc:imgSrc};
+  $('qrSvgBox').innerHTML='<img src="'+imgSrc+'" alt="渠道二维码" style="width:100%;height:100%"/>';
+  $('qrShort').textContent=r.short_url;
+  $('qrResultSub').textContent='投放渠道：'+srcLabel(source)+(content?(' · '+content):'')+'。扫码即打开画册并自动归因。';
+  $('qrResultMask').classList.add('show');
+}
+
+
+/* ---------- 渲染总入口 ---------- */
+function renderAll(){
+  var has=S.showcases.length>0;
+  $('emptyBox').classList.toggle('show',!has);
+  document.querySelectorAll('.tabs,.view').forEach(function(e){e.style.display=has?'':'none';});
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
+  if(!has)return;
+  $('view-'+S.view).classList.add('on');
+  renderOverview();
+  renderChannels();
+  renderShowcases();
+  renderFunnelView();
+  renderLeads();
+  // 延迟让当前页图表拿到正确宽度
+  setTimeout(function(){Object.keys(S.charts).forEach(function(k){S.charts[k]&&S.charts[k].resize();});},60);
+}
+
+/* ---------- 初始化 ---------- */
+function boot(){
+  // 页签
+  $('tabs').addEventListener('click',function(e){
+    var b=e.target.closest('.tab');if(!b)return;
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t===b);});
+    S.view=b.dataset.v;
+    document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
+    $('view-'+S.view).classList.add('on');
+    setTimeout(function(){Object.keys(S.charts).forEach(function(k){S.charts[k]&&S.charts[k].resize();});},40);
+    if(S.view==='leads')renderLeads();
+  });
+  // 时间范围
+  $('rangeSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+    S.range=Number(b.dataset.r);loadAll();
+  });
+  $('refreshBtn').addEventListener('click',function(){loadAll();toast('已刷新');});
+  $('emptyReload').addEventListener('click',function(){loadAll();});
+  bindLeadUI();bindQrUI();
+  // 登录后加载
+  function start(){if(window.HogeeMember&&HogeeMember.isLoggedIn()){loadAll();}else{document.addEventListener('hogee:auth',loadAll);}}
+  if(window.HogeeMember){HogeeMember.verify?HogeeMember.verify().then(start):start();}
+  else{document.addEventListener('hogee:auth',loadAll);}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+
+</script>
+</body>
+</html>
