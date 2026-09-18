@@ -278,9 +278,9 @@ td .dim{color:var(--m);font-size:12px}
   <div class="empty" id="emptyBox">
     <div class="big"><svg class="ic" viewBox="0 0 24 24" width="74" height="74"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
     <h3>还没有可追踪的画册</h3>
-    <p>把一台车的手机实拍图，做成带留资表单的 H5 画册；再为每个获客渠道生成专属二维码。客户扫码看图、打电话、留电话，效果中心自动统计每个渠道带来了多少浏览和线索。</p>
+    <p>把一件商品的手机实拍图，做成带留资表单的 H5 画册；再为每个获客渠道生成专属二维码。客户扫码看图、打电话、留联系方式，效果中心自动统计每个渠道带来了多少浏览和线索。</p>
     <div class="steps3">
-      <div class="step3"><div class="n">1</div><h4>生成画册</h4><p>在工作台为车源精修图片后，一键发布一本在线画册。</p></div>
+      <div class="step3"><div class="n">1</div><h4>生成画册</h4><p>在工作台为商品精修图片后，一键发布一本在线画册。</p></div>
       <div class="step3"><div class="n">2</div><h4>建渠道码</h4><p>为客户群、朋友圈、车窗立牌分别生成专属二维码。</p></div>
       <div class="step3"><div class="n">3</div><h4>发出去看数</h4><p>扫码浏览、拨号、留资自动回流，哪个渠道有效一目了然。</p></div>
     </div>
@@ -339,11 +339,11 @@ td .dim{color:var(--m);font-size:12px}
     <div class="tablewrap">
       <table>
         <colgroup><col style="width:300px"><col style="width:90px"><col style="width:90px"><col style="width:100px"><col style="width:90px"><col style="width:110px"><col style="width:130px"></colgroup>
-        <thead><tr><th>画册 / 车源</th><th>浏览 PV</th><th>访客 UV</th><th>平均停留</th><th>意向点击</th><th>留资线索</th><th>操作</th></tr></thead>
+        <thead><tr><th>画册 / 商品</th><th>浏览 PV</th><th>访客 UV</th><th>平均停留</th><th>意向点击</th><th>留资线索</th><th>操作</th></tr></thead>
         <tbody id="showcaseRows"><tr><td colspan="7"><div class="loading"><span class="spin"></span>加载中</div></td></tr></tbody>
       </table>
     </div>
-    <p class="foot-note">画册在 Web 工作台为车源生成图片后一键发布；平均停留为该画册所有访问的均值。</p>
+    <p class="foot-note">画册在 Web 工作台为商品生成图片后一键发布；平均停留为该画册所有访问的均值。</p>
   </section>
 
   <!-- ===== 视图：线索 ===== -->
@@ -394,7 +394,7 @@ td .dim{color:var(--m);font-size:12px}
     </div>
     <div class="modal-b">
       <div class="field">
-        <label>选择画册（车源）</label>
+        <label>选择画册（商品）</label>
         <select id="qrShowcase"></select>
       </div>
       <div class="field">
@@ -445,11 +445,11 @@ td .dim{color:var(--m);font-size:12px}
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-<script src="member-auth.js?v=20260918"></script>
+<script src="member-auth.js?v=brand20260918"></script>
 <script>
 /* ============================================================
  * WorkHogee 效果中心 · 看板逻辑（原生 JS / ECharts）
- * 复用 member-auth.js 的登录态（HogeeMember.authFetch）
+ * 复用 member-auth.js?v=brand20260918 的登录态（HogeeMember.authFetch）
  * ============================================================ */
 (function(){
 'use strict';
@@ -640,7 +640,7 @@ function renderChannels(){renderChannelsChart();renderChannelsTable();}
 /* ---------- 画册视图 ---------- */
 function renderShowcases(){
   var rows=(S.sc&&S.sc.rows)||[];
-  if(!rows.length){$('showcaseRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:34px">还没有画册，去工作台为车源生成一本</td></tr>';return;}
+  if(!rows.length){$('showcaseRows').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--m2);padding:34px">还没有画册，去工作台为商品生成一本</td></tr>';return;}
   $('showcaseRows').innerHTML=rows.map(function(r){
     var thumb=r.thumb?'<img class="thumb" src="'+esc(r.thumb)+'" alt="" loading="lazy"/>':'<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--m2)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 14l5-4 4 3 3-2 6 4"/></svg></div>';
     var url=API+'/s/'+r.code;
