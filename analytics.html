@@ -454,7 +454,6 @@ td .dim{color:var(--m);font-size:12px}
 (function(){
 'use strict';
 var API='https://api.workhogee.com';
-var WWW='https://www.workhogee.com';
 var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- 字典 ---------- */
@@ -528,9 +527,8 @@ function loadAll(){
     S.leads=rs[3].data||[];S.showcases=rs[4].data||[];S.links=rs[5].data||[];
     renderAll();
   }).catch(function(e){
-    console.error('[LOADALL_STACK]', e && e.stack ? e.stack : e);
-    if(/登录|unauthorized|401/.test(String(e.message))){/*门禁已处理*/}
-    else toast('数据加载失败：'+e.message);
+    if(/登录|unauthorized|401/.test(String(e&&e.message))){/*门禁已处理*/}
+    else toast('数据加载失败：'+(e&&e.message?e.message:'请稍后重试'));
   });
 }
 
