@@ -116,6 +116,29 @@ img{display:block;max-width:100%}
 .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink-soft)}
 .btn-ghost:hover{border-color:var(--orange);color:var(--orange-deep)}
 .btn-sm{padding:8px 14px;font-size:13px;border-radius:9px}
+/* 让图动起来 */
+.dyn-box{margin-top:14px;border:1px solid var(--orange-line);background:linear-gradient(180deg,#fffaf6,#fff);border-radius:14px;padding:13px 14px}
+.dyn-head{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:var(--ink);flex-wrap:wrap}
+.dyn-head .dh-ico{color:var(--orange-deep);display:flex}
+.dyn-head .dh-sub{font-weight:500;font-size:11.5px;color:var(--muted)}
+.dyn-actions{display:flex;flex-wrap:wrap;gap:9px;margin:11px 0 6px}
+.dyn-btn{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:11px;padding:9px 13px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;transition:.18s}
+.dyn-btn:hover{border-color:var(--orange);color:var(--orange-deep);transform:translateY(-1px)}
+.dyn-btn:disabled{opacity:.62;cursor:wait;transform:none}
+.dyn-btn svg{color:var(--orange-deep)}
+.dyn-hint{font-size:11.5px;color:var(--faint);line-height:1.55}
+.dyn-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-top:12px}
+.dyn-item{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.dyn-item .di-view{background:var(--sand);aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.dyn-item .di-view img{width:100%;height:100%;object-fit:contain}
+.dyn-item .di-nine{display:grid;grid-template-columns:repeat(3,1fr);aspect-ratio:1;background:#fff}
+.dyn-item .di-nine img{width:100%;height:100%;object-fit:cover}
+.dyn-item .di-meta{padding:7px 9px 4px;font-size:11px;color:var(--muted);line-height:1.45}
+.dyn-item .di-name{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:1px}
+.dyn-item .di-btns{display:flex;gap:6px;padding:4px 9px 10px}
+.di-btn{flex:1;appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:6px;font-size:11.5px;font-weight:700;color:var(--ink-soft);display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:.15s}
+.di-btn:hover{border-color:var(--orange);color:var(--orange-deep)}
+.di-btn svg{color:var(--orange-deep)}
 
 /* 上传 */
 .drop{border:1.5px dashed var(--line);border-radius:14px;background:var(--sand);padding:26px 18px;text-align:center;transition:.2s;cursor:pointer}
@@ -177,6 +200,24 @@ img{display:block;max-width:100%}
 .copy-head button{margin-left:auto}
 .copy-box textarea{width:100%;border:0;resize:vertical;min-height:120px;padding:12px 13px;font-size:13px;line-height:1.75;color:var(--ink-soft);font-family:inherit;background:#fcfbf9}
 .copy-box textarea:focus{outline:none}
+.copy-chans{display:flex;flex-wrap:wrap;gap:7px;padding:9px 11px 2px}
+.copy-chan{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:5px 13px;font-size:12px;font-weight:700;transition:.16s}
+.copy-chan:hover{border-color:var(--orange);color:var(--orange-deep)}
+.copy-chan.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.copy-warn{display:none;margin:9px 11px 0;padding:8px 11px;border-radius:9px;background:var(--orange-bg);border:1px solid var(--orange-line);color:var(--orange-deep);font-size:11.5px;line-height:1.55}
+.copy-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 11px 9px}
+.copy-ok{font-size:11px;color:#16a34a}
+.copy-box textarea{min-height:108px}
+.reach-box{margin-top:15px;border:1px solid var(--line2);border-radius:12px;padding:13px}
+.reach-head{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;flex-wrap:wrap}
+.reach-head>svg{color:var(--orange);flex-shrink:0}
+.rh-sub{font-weight:600;font-size:11px;color:var(--faint)}
+.reach-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.reach-btn{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:10px;padding:8px 13px;font-size:12.5px;font-weight:700;transition:.16s;cursor:pointer}
+.reach-btn svg{color:var(--faint);transition:.16s}
+.reach-btn:hover{border-color:var(--orange);color:var(--orange-deep);transform:translateY(-1px)}
+.reach-btn:hover svg{color:var(--orange)}
+.reach-tip{margin-top:11px;font-size:11px;color:var(--faint);line-height:1.6}
 .fld textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.7;background:#fcfbf9;color:var(--ink);font-family:inherit;resize:vertical}
 .fld textarea:focus{outline:none;border-color:var(--orange);background:#fff}
 .pub-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin-top:12px}
@@ -227,21 +268,21 @@ img{display:block;max-width:100%}
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
 
-/* ===== 页脚（与全站一致） ===== */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:26px}
+/* ===== 页脚（与全站一致 · 深色） ===== */
+.footer{background:#100d0a;margin-top:26px;color:rgba(255,255,255,.7)}
 .footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:46px 0 34px}
 @media(max-width:820px){.footer-grid{grid-template-columns:1fr 1fr;gap:26px}}
 .fb-logo{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.footer-col h5{font-size:13px;font-weight:800;margin-bottom:14px;color:var(--ink)}
+.footer-col h5{font-size:13px;font-weight:800;margin-bottom:14px;color:#fff}
 .footer-col ul{list-style:none}
 .footer-col li{margin-bottom:9px}
-.footer-col a{font-size:13px;color:var(--muted);transition:color .2s}
-.footer-col a:hover{color:var(--orange-deep)}
-.foot-tag{height:24px;padding:0 11px;font-size:11.5px}
-.footer-bottom{border-top:1px solid var(--line2);padding:18px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
+.footer-col a{font-size:13px;color:rgba(255,255,255,.6);transition:color .2s}
+.footer-col a:hover{color:#fb923c}
+.foot-tag{height:24px;padding:0 11px;font-size:11.5px;border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.78);background:transparent}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:18px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.43)}
 .footer-links{display:flex;gap:18px}
-.footer-links a{color:var(--faint)}
-.footer-links a:hover{color:var(--orange-deep)}
+.footer-links a{color:rgba(255,255,255,.55)}
+.footer-links a:hover{color:#fb923c}
 </style>
 </head>
 <body>
@@ -291,10 +332,6 @@ img{display:block;max-width:100%}
     <a class="rail-link" href="/analytics.html">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
       效果中心
-    </a>
-    <a class="rail-link" href="/usedcar.html">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
-      二手车场景示例
     </a>
   </aside>
 
@@ -350,7 +387,7 @@ img{display:block;max-width:100%}
         <ul>
           <li><a href="/workbench.html">Web 工作台</a></li>
           <li><a href="/analytics.html">效果中心</a></li>
-          <li><a href="/usedcar.html">二手车场景示例</a></li>
+          <li><a href="/#mpp" onclick="if(typeof mpNotify==='function'){mpNotify();return false;}">微信小程序</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -358,7 +395,7 @@ img{display:block;max-width:100%}
         <ul>
           <li><a href="https://github.com/HiAeo/workhogee" target="_blank" rel="noopener">GitHub 仓库</a></li>
           <li><a href="mailto:support@workhogee.com">技术支持</a></li>
-          <li><a href="https://www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
+          <li><a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -394,6 +431,13 @@ img{display:block;max-width:100%}
 (function(){
 'use strict';
 var API='https://api.workhogee.com';
+/* gifenc MIT (mattdesl) bundled, isolated scope */
+var HGif=(function(){
+var X={signature:"GIF",version:"89a",trailer:59,extensionIntroducer:33,applicationExtensionLabel:255,graphicControlExtensionLabel:249,imageSeparator:44,signatureSize:3,versionSize:3,globalColorTableFlagMask:128,colorResolutionMask:112,sortFlagMask:8,globalColorTableSizeMask:7,applicationIdentifierSize:8,applicationAuthCodeSize:3,disposalMethodMask:28,userInputFlagMask:2,transparentColorFlagMask:1,localColorTableFlagMask:128,interlaceFlagMask:64,idSortFlagMask:32,localColorTableSizeMask:7};function F(t=256){let e=0,s=new Uint8Array(t);return{get buffer(){return s.buffer},reset(){e=0},bytesView(){return s.subarray(0,e)},bytes(){return s.slice(0,e)},writeByte(r){n(e+1),s[e]=r,e++},writeBytes(r,o=0,i=r.length){n(e+i);for(let c=0;c<i;c++)s[e++]=r[c+o]},writeBytesView(r,o=0,i=r.byteLength){n(e+i),s.set(r.subarray(o,o+i),e),e+=i}};function n(r){var o=s.length;if(o>=r)return;var i=1024*1024;r=Math.max(r,o*(o<i?2:1.125)>>>0),o!=0&&(r=Math.max(r,256));let c=s;s=new Uint8Array(r),e>0&&s.set(c.subarray(0,e),0)}}var O=12,J=5003,lt=[0,1,3,7,15,31,63,127,255,511,1023,2047,4095,8191,16383,32767,65535];function at(t,e,s,n,r=F(512),o=new Uint8Array(256),i=new Int32Array(J),c=new Int32Array(J)){let x=i.length,a=Math.max(2,n);o.fill(0),c.fill(0),i.fill(-1);let l=0,f=0,g=a+1,h=g,b=!1,w=h,_=(1<<w)-1,u=1<<g-1,k=u+1,B=u+2,p=0,A=s[0],z=0;for(let y=x;y<65536;y*=2)++z;z=8-z,r.writeByte(a),I(u);let d=s.length;for(let y=1;y<d;y++){t:{let m=s[y],v=(m<<O)+A,M=m<<z^A;if(i[M]===v){A=c[M];break t}let V=M===0?1:x-M;for(;i[M]>=0;)if(M-=V,M<0&&(M+=x),i[M]===v){A=c[M];break t}I(A),A=m,B<1<<O?(c[M]=B++,i[M]=v):(i.fill(-1),B=u+2,b=!0,I(u))}}return I(A),I(k),r.writeByte(0),r.bytesView();function I(y){for(l&=lt[f],f>0?l|=y<<f:l=y,f+=w;f>=8;)o[p++]=l&255,p>=254&&(r.writeByte(p),r.writeBytesView(o,0,p),p=0),l>>=8,f-=8;if((B>_||b)&&(b?(w=h,_=(1<<w)-1,b=!1):(++w,_=w===O?1<<w:(1<<w)-1)),y==k){for(;f>0;)o[p++]=l&255,p>=254&&(r.writeByte(p),r.writeBytesView(o,0,p),p=0),l>>=8,f-=8;p>0&&(r.writeByte(p),r.writeBytesView(o,0,p),p=0)}}}var $=at;function D(t,e,s){return t<<8&63488|e<<2&992|s>>3}function G(t,e,s,n){return t>>4|e&240|(s&240)<<4|(n&240)<<8}function j(t,e,s){return t>>4<<8|e&240|s>>4}function R(t,e,s){return t<e?e:t>s?s:t}function T(t){return t*t}function tt(t,e,s){var n=0,r=1e100;let o=t[e],i=o.cnt,c=o.ac,x=o.rc,a=o.gc,l=o.bc;for(var f=o.fw;f!=0;f=t[f].fw){let h=t[f],b=h.cnt,w=i*b/(i+b);if(!(w>=r)){var g=0;s&&(g+=w*T(h.ac-c),g>=r)||(g+=w*T(h.rc-x),!(g>=r)&&(g+=w*T(h.gc-a),!(g>=r)&&(g+=w*T(h.bc-l),!(g>=r)&&(r=g,n=f))))}}o.err=r,o.nn=n}function Q(){return{ac:0,rc:0,gc:0,bc:0,cnt:0,nn:0,fw:0,bk:0,tm:0,mtm:0,err:0}}function ut(t,e){let s=e==="rgb444"?4096:65536,n=new Array(s),r=t.length;if(e==="rgba4444")for(let o=0;o<r;++o){let i=t[o],c=i>>24&255,x=i>>16&255,a=i>>8&255,l=i&255,f=G(l,a,x,c),g=f in n?n[f]:n[f]=Q();g.rc+=l,g.gc+=a,g.bc+=x,g.ac+=c,g.cnt++}else if(e==="rgb444")for(let o=0;o<r;++o){let i=t[o],c=i>>16&255,x=i>>8&255,a=i&255,l=j(a,x,c),f=l in n?n[l]:n[l]=Q();f.rc+=a,f.gc+=x,f.bc+=c,f.cnt++}else for(let o=0;o<r;++o){let i=t[o],c=i>>16&255,x=i>>8&255,a=i&255,l=D(a,x,c),f=l in n?n[l]:n[l]=Q();f.rc+=a,f.gc+=x,f.bc+=c,f.cnt++}return n}function H(t,e,s={}){let{format:n="rgb565",clearAlpha:r=!0,clearAlphaColor:o=0,clearAlphaThreshold:i=0,oneBitAlpha:c=!1}=s;if(!t||!t.buffer)throw new Error("quantize() expected RGBA Uint8Array data");if(!(t instanceof Uint8Array)&&!(t instanceof Uint8ClampedArray))throw new Error("quantize() expected RGBA Uint8Array data");let x=new Uint32Array(t.buffer),a=s.useSqrt!==!1,l=n==="rgba4444",f=ut(x,n),g=f.length,h=g-1,b=new Uint32Array(g+1);for(var w=0,u=0;u<g;++u){let C=f[u];if(C!=null){var _=1/C.cnt;l&&(C.ac*=_),C.rc*=_,C.gc*=_,C.bc*=_,f[w++]=C}}T(e)/w<.022&&(a=!1);for(var u=0;u<w-1;++u)f[u].fw=u+1,f[u+1].bk=u,a&&(f[u].cnt=Math.sqrt(f[u].cnt));a&&(f[u].cnt=Math.sqrt(f[u].cnt));var k,B,p;for(u=0;u<w;++u){tt(f,u,!1);var A=f[u].err;for(B=++b[0];B>1&&(p=B>>1,!(f[k=b[p]].err<=A));B=p)b[B]=k;b[B]=u}var z=w-e;for(u=0;u<z;){for(var d;;){var I=b[1];if(d=f[I],d.tm>=d.mtm&&f[d.nn].mtm<=d.tm)break;d.mtm==h?I=b[1]=b[b[0]--]:(tt(f,I,!1),d.tm=u);var A=f[I].err;for(B=1;(p=B+B)<=b[0]&&(p<b[0]&&f[b[p]].err>f[b[p+1]].err&&p++,!(A<=f[k=b[p]].err));B=p)b[B]=k;b[B]=I}var y=f[d.nn],m=d.cnt,v=y.cnt,_=1/(m+v);l&&(d.ac=_*(m*d.ac+v*y.ac)),d.rc=_*(m*d.rc+v*y.rc),d.gc=_*(m*d.gc+v*y.gc),d.bc=_*(m*d.bc+v*y.bc),d.cnt+=y.cnt,d.mtm=++u,f[y.bk].fw=y.fw,f[y.fw].bk=y.bk,y.mtm=h}let M=[];var V=0;for(u=0;;++V){let L=R(Math.round(f[u].rc),0,255),C=R(Math.round(f[u].gc),0,255),Y=R(Math.round(f[u].bc),0,255),E=255;if(l){if(E=R(Math.round(f[u].ac),0,255),c){let st=typeof c=="number"?c:127;E=E<=st?0:255}r&&E<=i&&(L=C=Y=o,E=0)}let K=l?[L,C,Y,E]:[L,C,Y];if(xt(M,K)||M.push(K),(u=f[u].fw)==0)break}return M}function xt(t,e){for(let s=0;s<t.length;s++){let n=t[s],r=n[0]===e[0]&&n[1]===e[1]&&n[2]===e[2],o=n.length>=4&&e.length>=4?n[3]===e[3]:!0;if(r&&o)return!0}return!1}function U(t,e){var s=0,n;for(n=0;n<t.length;n++){let r=t[n]-e[n];s+=r*r}return s}function P(t,e){return e>1?Math.round(t/e)*e:t}function et(t,{roundRGB:e=5,roundAlpha:s=10,oneBitAlpha:n=null}={}){let r=new Uint32Array(t.buffer);for(let o=0;o<r.length;o++){let i=r[o],c=i>>24&255,x=i>>16&255,a=i>>8&255,l=i&255;if(c=P(c,s),n){let f=typeof n=="number"?n:127;c=c<=f?0:255}l=P(l,e),a=P(a,e),x=P(x,e),r[o]=c<<24|x<<16|a<<8|l<<0}}function nt(t,e,s="rgb565"){if(!t||!t.buffer)throw new Error("quantize() expected RGBA Uint8Array data");if(!(t instanceof Uint8Array)&&!(t instanceof Uint8ClampedArray))throw new Error("quantize() expected RGBA Uint8Array data");if(e.length>256)throw new Error("applyPalette() only works with 256 colors or less");let n=new Uint32Array(t.buffer),r=n.length,o=s==="rgb444"?4096:65536,i=new Uint8Array(r),c=new Array(o),x=s==="rgba4444";if(s==="rgba4444")for(let a=0;a<r;a++){let l=n[a],f=l>>24&255,g=l>>16&255,h=l>>8&255,b=l&255,w=G(b,h,g,f),_=w in c?c[w]:c[w]=gt(b,h,g,f,e);i[a]=_}else{let a=s==="rgb444"?j:D;for(let l=0;l<r;l++){let f=n[l],g=f>>16&255,h=f>>8&255,b=f&255,w=a(b,h,g),_=w in c?c[w]:c[w]=bt(b,h,g,e);i[l]=_}}return i}function gt(t,e,s,n,r){let o=0,i=1e100;for(let c=0;c<r.length;c++){let x=r[c],a=x[3],l=q(a-n);if(l>i)continue;let f=x[0];if(l+=q(f-t),l>i)continue;let g=x[1];if(l+=q(g-e),l>i)continue;let h=x[2];l+=q(h-s),!(l>i)&&(i=l,o=c)}return o}function bt(t,e,s,n){let r=0,o=1e100;for(let i=0;i<n.length;i++){let c=n[i],x=c[0],a=q(x-t);if(a>o)continue;let l=c[1];if(a+=q(l-e),a>o)continue;let f=c[2];a+=q(f-s),!(a>o)&&(o=a,r=i)}return r}function rt(t,e,s=5){if(!t.length||!e.length)return;let n=t.map(i=>i.slice(0,3)),r=s*s,o=t[0].length;for(let i=0;i<e.length;i++){let c=e[i];c.length<o?c=[c[0],c[1],c[2],255]:c.length>o?c=c.slice(0,3):c=c.slice();let x=N(n,c.slice(0,3),U),a=x[0],l=x[1];l>0&&l<=r&&(t[a]=c)}}function q(t){return t*t}function W(t,e,s=U){let n=Infinity,r=-1;for(let o=0;o<t.length;o++){let i=t[o],c=s(e,i);c<n&&(n=c,r=o)}return r}function N(t,e,s=U){let n=Infinity,r=-1;for(let o=0;o<t.length;o++){let i=t[o],c=s(e,i);c<n&&(n=c,r=o)}return[r,n]}function ot(t,e,s=U){return t[W(t,e,s)]}function ct(t={}){let{initialCapacity:e=4096,auto:s=!0}=t,n=F(e),r=5003,o=new Uint8Array(256),i=new Int32Array(r),c=new Int32Array(r),x=!1;return{reset(){n.reset(),x=!1},finish(){n.writeByte(X.trailer)},bytes(){return n.bytes()},bytesView(){return n.bytesView()},get buffer(){return n.buffer},get stream(){return n},writeHeader:a,writeFrame(l,f,g,h={}){let{transparent:b=!1,transparentIndex:w=0,delay:_=0,palette:u=null,repeat:k=0,colorDepth:B=8,dispose:p=-1}=h,A=!1;if(s?x||(A=!0,a(),x=!0):A=Boolean(h.first),f=Math.max(0,Math.floor(f)),g=Math.max(0,Math.floor(g)),A){if(!u)throw new Error("First frame must include a { palette } option");pt(n,f,g,u,B),it(n,u),k>=0&&dt(n,k)}let z=Math.round(_/10);wt(n,p,z,b,w);let d=Boolean(u)&&!A;ht(n,f,g,d?u:null),d&&it(n,u),yt(n,l,f,g,B,o,i,c)}};function a(){ft(n,"GIF89a")}}function wt(t,e,s,n,r){t.writeByte(33),t.writeByte(249),t.writeByte(4),r<0&&(r=0,n=!1);var o,i;n?(o=1,i=2):(o=0,i=0),e>=0&&(i=e&7),i<<=2;let c=0;t.writeByte(0|i|c|o),S(t,s),t.writeByte(r||0),t.writeByte(0)}function pt(t,e,s,n,r=8){let o=1,i=0,c=Z(n.length)-1,x=o<<7|r-1<<4|i<<3|c,a=0,l=0;S(t,e),S(t,s),t.writeBytes([x,a,l])}function dt(t,e){t.writeByte(33),t.writeByte(255),t.writeByte(11),ft(t,"NETSCAPE2.0"),t.writeByte(3),t.writeByte(1),S(t,e),t.writeByte(0)}function it(t,e){let s=1<<Z(e.length);for(let n=0;n<s;n++){let r=[0,0,0];n<e.length&&(r=e[n]),t.writeByte(r[0]),t.writeByte(r[1]),t.writeByte(r[2])}}function ht(t,e,s,n){if(t.writeByte(44),S(t,0),S(t,0),S(t,e),S(t,s),n){let r=0,o=0,i=Z(n.length)-1;t.writeByte(128|r|o|0|i)}else t.writeByte(0)}function yt(t,e,s,n,r=8,o,i,c){$(s,n,e,r,t,o,i,c)}function S(t,e){t.writeByte(e&255),t.writeByte(e>>8&255)}function ft(t,e){for(var s=0;s<e.length;s++)t.writeByte(e.charCodeAt(s))}function Z(t){return Math.max(Math.ceil(Math.log2(t)),1)}var Bt=ct;return {GIFEncoder:ct, applyPalette:nt, quantize:H, nearestColorIndex:W};
+
+
+})();
+
 var $=function(s,r){return (r||document).querySelector(s);};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
 var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
@@ -418,7 +462,13 @@ var IC={
  pack:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>',
  share:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>',
  qr:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7M14 21h3M17 17h4v4"/></svg>',
- chart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
+ chart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+ motion:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>',
+ stack:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5"/></svg>',
+ rotate:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.7-6.4"/><path d="M21 3v6h-6"/></svg>',
+ grid:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>',
+ send:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>',
+ external:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg>'
 };
 var AVATAR_HTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h2l1.5-2h7L17 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13.5" r="3.4"/></svg>';
 $('#railAvatar').innerHTML=AVATAR_HTML;$('#chAvatar').innerHTML=AVATAR_HTML;
@@ -474,7 +524,7 @@ var P_onsite='第一张图是待售二手车（主体，务必完整保留），
 /* ---------- 状态 ---------- */
 function resetState(){
  return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:''},outputs:new Set(),scene:null,bgImage:null,
-  sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],stage:'welcome',genToken:0};
+  sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],dyn:[],dynGrid:null,copyChannel:'general',stage:'welcome',genToken:0};
 }
 var state=resetState();
 function saveId(){try{localStorage.setItem('hogee_identity',JSON.stringify(state.identity));}catch(e){}}
@@ -780,7 +830,9 @@ function resultCardHtml(){
  return '<div class="card-pad"><div class="card-title">齐了，你看看哪张要单独重做</div>'
   +'<div class="card-desc">点图看大图；不满意可单张重做，不用整批重来。</div>'
   +'<div class="res-grid">'+items+'</div>'
-  +'<div class="copy-box"><div class="copy-head">'+IC.check+' 配套文案（阿图草拟，请核对真实后再用）<button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div><textarea id="copyText">'+esc(copy)+'</textarea></div>'
+  +copyBoxHtml()
+  +dynBoxHtml()
+  +reachBoxHtml()
   +'<div class="compliance">'+IC.check+'<span>文案已规避无依据的绝对化承诺；车况/功效等请按实际核对。发布到各平台由你本人点最后一下。</span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="pack">'+IC.pack+' 按所选尺寸一键打包</button>'
   +'<button class="btn btn-dark" data-act="publishShowcase">'+IC.share+' 生成分享画册</button>'
@@ -791,19 +843,112 @@ function renderResult(){
  state.stage='result';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以点「再来一单」。');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>');return;}
  botSay('齐活。<b>'+state.results.length+' 张成品</b>都在这儿，配了一版文案。要发哪个平台，按你选的尺寸打包好，<b>你点一下就能发</b>。');
- card(resultCardHtml());requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,300);setTimeout(scrollBottom,900);
+ card(resultCardHtml());requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,300);setTimeout(scrollBottom,900);setTimeout(refreshCopyScan,150);
 }
-function buildCopy(){
- var used=state.identity.type==='usedcar';
- if(used){
-  var p=state.product,head=[p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ');
-  return '【'+(head||'精品二手车')+'】\n'
-   +'车况板正，成色如图，实拍呈现、不遮不掩；图片由 WorkHogee 做背景与画质优化，车身原貌未改动。\n'
-   +'看车方便，支持第三方检测；具体里程、配置与车况以现场看车、检测报告为准。\n'
-   +'有意私聊，发你更多细节与实拍。\n\n（提示：请把真实里程、过户次数、保养情况等补全后再发布；勿使用与实际不符的承诺词。）';
- }
- var name=state.product.name||state.identity.cat||'商品';
- return '【'+name+'】\n· 实拍主体，专业场景呈现，颜色版型/质地如图\n· 细节经得起放大，发货与图一致\n· 现货好发，喜欢可以私聊/下单\n\n（话题标签可按平台补充；卖点请按商品实际修改，勿夸大。）';
+/* ---------- 阿文：分渠道成稿 + 广告法绝对化词机审（前端确定性；真实 LLM 待文本推理点开通即插） ---------- */
+var COPY_BANNED=['最好','最佳','最优','最强','最大','最低价','最便宜','最优惠','最高级','最先进','最受欢迎','最靠谱','第一','唯一','首个','首选','顶级','顶尖','极品','极致','国家级','世界级','王牌','销量冠军','遥遥领先','独家','独创','独一无二','绝无仅有','万能','百分百','百分之百','100％','100%','零风险','包过','永久','终身','之王','之最','领导品牌','一流','绝版','稀世','史无前例'];
+var BANNED_FIX={'最好':'不错','最佳':'口碑之选','最优':'优质','最强':'出色','最低价':'实惠价','最便宜':'价格实在','最优惠':'优惠','最先进':'先进','最受欢迎':'受欢迎','最靠谱':'靠谱','顶级':'高端','顶尖':'优秀','极品':'精选','极致':'用心','第一':'靠前','唯一':'少见','首个':'早期','首选':'值得考虑','独家':'特色','王牌':'主力','一流':'专业','万能':'多功能','销量冠军':'热销','遥遥领先':'表现突出','100%':'','100％':'','百分百':'','百分之百':'','零风险':'','永久':'长期','终身':'长期','之王':'','之最':'','绝版':'少见','国家级':'','世界级':'','领导品牌':'','史无前例':'','独一无二':'有特色','绝无仅有':'少见','独创':'自主'};
+function scanBanned(t){var hits=[];COPY_BANNED.forEach(function(w){if(t.indexOf(w)>=0&&hits.indexOf(w)<0)hits.push(w);});return hits;}
+function cleanBanned(t){var removed=[];COPY_BANNED.forEach(function(w){if(t.indexOf(w)>=0){t=t.split(w).join(BANNED_FIX.hasOwnProperty(w)?BANNED_FIX[w]:'');removed.push(w);}});t=t.replace(/[ \t]{2,}/g,' ').replace(/，\s*，+/g,'，').replace(/、\s*、+/g,'、').replace(/\s+([。，、；])/g,'$1').replace(/\n{3,}/g,'\n\n');return {text:t.trim(),removed:removed};}
+function productLabel(){var p=state.product||{};if(state.identity&&state.identity.type==='usedcar'){return [p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ')||'这台车';}return p.name||(state.identity&&state.identity.cat)||'这款商品';}
+function sellPoints(){
+ var used=state.identity&&state.identity.type==='usedcar',extra=(state.extra||'').trim(),pts=[];
+ if(used){pts=['车况如实呈现，外观内饰细节都在图里，车身原貌未改动','支持第三方检测，里程、配置、车况以实车与检测报告为准','看车方便，价格与过户流程可私信沟通'];}
+ else{pts=['手机实拍做专业呈现，商品本身一点没动','细节、材质、使用场景见配图，所见即所得','现货可发，具体规格以商品说明为准'];}
+ if(extra)pts.unshift(extra);
+ return pts.slice(0,5);
+}
+function tagSet(){
+ var used=state.identity&&state.identity.type==='usedcar',cat=(state.identity&&state.identity.cat)||'';
+ if(used)return ['#二手车','#代步车','#提车日常','#懂车帝','#二手车怎么选','#高性价比代步车','#同城看车'];
+ if(cat.indexOf('餐')>=0)return ['#美食分享','#菜品实拍','#招牌菜','#探店','#今日份美味'];
+ if(cat.indexOf('家')>=0||cat.indexOf('饰')>=0)return ['#家居好物','#软装搭配','#家居实拍','#居家好物','#提升幸福感'];
+ if(cat.indexOf('装')>=0||cat.indexOf('服')>=0)return ['#穿搭分享','#服装实拍','#每日穿搭','#平价好物','#上新'];
+ return ['#好物推荐','#商品实拍','#好物分享','#现货','#买家秀'];
+}
+function buildCopies(){
+ var label=productLabel(),pts=sellPoints(),tags=tagSet();
+ var general='【标题】'+label+'｜实拍现货，看图如见实物\n\n【卖点】\n'+pts.map(function(x,i){return (i+1)+'. '+x;}).join('\n')+'\n\n【说明】图文由 WorkHogee 阿文辅助草拟，参数、价格、车况等请以实物与最终说明为准。\n感兴趣可留言或私信，发你更多细节图。';
+ var xhs=label+'，实拍图先睹为快，不夸大、看图说话\n\n'+pts.map(function(x){return '· '+x;}).join('\n')+'\n\n手机实拍后做的专业呈现，颜色、款式、成色尽量还原，所见即所得。\n有想问的细节直接评论，我补图补视频。\n\n'+tags.join(' ');
+ var pyq='新到 '+label+'，图都是实拍精修，东西怎么样一眼看清。\n'+pts.slice(0,3).map(function(x){return '· '+x;}).join('\n')+'\n有需要的朋友私信，细节图、视频都能发，满意再聊。';
+ return {general:general,xhs:xhs,pyq:pyq,tags:tags.join(' ')};
+}
+function buildCopy(){return buildCopies().general;}
+function copyBoxHtml(){
+ if(!state.copyChannel)state.copyChannel='general';
+ var cps=buildCopies();state._cps=cps;
+ var chans=[['general','通用文案'],['xhs','小红书笔记'],['pyq','朋友圈'],['tags','话题标签']];
+ var btns=chans.map(function(c){return '<button type="button" class="copy-chan'+(state.copyChannel===c[0]?' on':'')+'" data-act="copyChan" data-v="'+c[0]+'">'+c[1]+'</button>';}).join('');
+ return '<div class="copy-box"><div class="copy-head">'+IC.check+' 阿文配套文案（分渠道草拟，发布前核对真实）<button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div>'
+  +'<div class="copy-chans">'+btns+'</div>'
+  +'<div class="copy-warn" id="copyWarn"></div>'
+  +'<textarea id="copyText">'+esc(cps[state.copyChannel]||cps.general)+'</textarea>'
+  +'<div class="copy-foot"><span id="copyScan" class="copy-ok"></span><button type="button" class="btn btn-ghost btn-sm" id="copyCleanBtn" data-act="copyClean" style="display:none">一键净化绝对化词</button></div></div>';
+}
+function refreshCopyScan(){
+ var ta=$('#copyText'),warn=$('#copyWarn'),clean=$('#copyCleanBtn'),sc=$('#copyScan');
+ if(!ta)return;var hits=scanBanned(ta.value);
+ if(hits.length){warn.style.display='flex';warn.innerHTML='检出平台敏感的绝对化用语「<b>'+hits.join('、')+'</b>」，直接发可能被限流或判违规，建议净化。';if(clean)clean.style.display='inline-flex';if(sc)sc.textContent='';}
+ else{warn.style.display='none';if(clean)clean.style.display='none';if(sc)sc.textContent='未检出绝对化违禁词';}
+}
+/* ---------- 阿发：B类平台引导（复制适配文案+打开发布页，最后一下本人发；不代发/不碰账号） ---------- */
+var REACH_PLATFORMS=[
+ {p:'xhs',name:'小红书',url:'https://creator.xiaohongshu.com/publish/publish',ch:'xhs'},
+ {p:'douyin',name:'抖音图文',url:'https://creator.douyin.com/creator-micro/content/upload',ch:'pyq'},
+ {p:'shipinhao',name:'视频号',url:'https://channels.weixin.qq.com/platform/post/create',ch:'pyq'},
+ {p:'gongzhonghao',name:'公众号',url:'https://mp.weixin.qq.com/',ch:'general'},
+ {p:'xianyu',name:'闲鱼',url:'https://www.goofish.com/',ch:'general'},
+ {p:'taobao',name:'淘宝 / 1688',url:'https://myseller.taobao.com/home.htm',ch:'general'},
+ {p:'meituan',name:'美团 / 点评',url:'https://e.meituan.com/',ch:'general'},
+ {p:'pyq',name:'朋友圈（手机）',url:'',ch:'pyq'}
+];
+function fallbackCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+function copyPlain(t){try{if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(t).catch(function(){fallbackCopy(t);});}}catch(e){}fallbackCopy(t);return Promise.resolve();}
+function reachBoxHtml(){
+ var btns=REACH_PLATFORMS.map(function(x){return '<button type="button" class="reach-btn" data-act="reach" data-p="'+x.p+'" data-url="'+x.url+'">'+x.name+(x.url?IC.external:'')+'</button>';}).join('');
+ return '<div class="reach-box"><div class="reach-head">'+IC.send+' 阿发送达 · 选平台复制文案并打开发布页<span class="rh-sub">最后一下由你本人发布，阿发不碰账号密码</span></div><div class="reach-grid">'+btns+'</div><div class="reach-tip">图片用上方「一键打包」素材包；想在手机上发，点「生成分享画册」把链接发到微信，手机打开即可存图、复制文案。</div></div>';
+}
+
+/* ---------- 让图动起来（前端 canvas + gifenc，零 AI 成本） ---------- */
+var DYN_EDGE=440;
+function dynTick(){return new Promise(function(r){setTimeout(r,0);});}
+function dynRatio(){var s=SIZES.filter(function(x){return state.sizes.has(x.k);})[0]||SIZES[0];return s.w/s.h;}
+function dynSize(ratio,edge){return ratio>=1?{w:edge,h:Math.max(8,Math.round(edge/ratio))}:{h:edge,w:Math.max(8,Math.round(edge*ratio))};}
+function dynPaint(x,img,w,h,scale,px,py){x.fillStyle='#fff';x.fillRect(0,0,w,h);var ir=img.width/img.height,tr=w/h,bw,bh;if(ir>tr){bh=h;bw=h*ir;}else{bw=w;bh=w/ir;}bw*=scale;bh*=scale;var ox=(bw-w)/2,oy=(bh-h)/2;x.drawImage(img,(w-bw)/2+px*ox,(h-bh)/2+py*oy,bw,bh);}
+function dynFrame(img,w,h,scale,px,py,delay,newPal){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');dynPaint(x,img,w,h,scale,px,py);return {data:x.getImageData(0,0,w,h).data,delay:delay,newPalette:!!newPal};}
+function dynEase(t){return t*t*(3-2*t);}
+async function dynBuildGif(frames,w,h,onProg){var gif=HGif.GIFEncoder(),palette=null;for(var i=0;i<frames.length;i++){if(frames[i].newPalette||!palette){palette=HGif.quantize(frames[i].data,256,{format:'rgb444'});}var idx=HGif.applyPalette(frames[i].data,palette,'rgb444');gif.writeFrame(idx,w,h,{palette:palette,delay:frames[i].delay,dispose:2});if(onProg)onProg(i+1,frames.length);await dynTick();}gif.finish();var b=gif.bytes();return new Blob([b],{type:'image/gif'});}
+async function dynKen(img,ratio,setP){var z=dynSize(ratio,DYN_EDGE),N=22,fr=[];for(var i=0;i<N;i++){var ph=i/(N-1),k=ph<.5?ph*2:(1-ph)*2,e=dynEase(k);fr.push(dynFrame(img,z.w,z.h,1+0.10*e,-0.7+1.4*e,-0.5+1.0*e,70,i===0));if(i%4===0)setP(i+1,N);}var blob=await dynBuildGif(fr,z.w,z.h,setP);return {blob:blob,w:z.w,h:z.h,frames:N};}
+async function dynShow(imgs,ratio,setP){var z=dynSize(ratio,DYN_EDGE),fr=[],per=7,n=0;for(var g=0;g<imgs.length;g++){for(var f=0;f<per;f++){var e=f/(per-1);fr.push(dynFrame(imgs[g],z.w,z.h,1+0.06*e,0,0,110,f===0));n++;setP(n,imgs.length*per);}}var blob=await dynBuildGif(fr,z.w,z.h,setP);return {blob:blob,w:z.w,h:z.h,frames:n};}
+async function dynSpin(imgs,setP){var z=dynSize(1,DYN_EDGE),fr=[];for(var g=0;g<imgs.length;g++){for(var f=0;f<2;f++){fr.push(dynFrame(imgs[g],z.w,z.h,1.08,0,0,95,f===0));}setP(g+1,imgs.length);}var blob=await dynBuildGif(fr,z.w,z.h,setP);return {blob:blob,w:z.w,h:z.h,frames:fr.length};}
+function dynGrid9(img){var S=1200,c=document.createElement('canvas');c.width=S;c.height=S;var x=c.getContext('2d');dynPaint(x,img,S,S,1.06,0,0);var cell=S/3,out=[];for(var r=0;r<3;r++)for(var cc=0;cc<3;cc++){var t=document.createElement('canvas');t.width=cell;t.height=cell;var tx=t.getContext('2d');tx.drawImage(c,cc*cell,r*cell,cell,cell,0,0,cell,cell);out.push(t.toDataURL('image/jpeg',.92));}return out;}
+function dynBoxHtml(){return '<div class="dyn-box"><div class="dyn-head"><span class="dh-ico">'+IC.motion+'</span>让图动起来<span class="dh-sub">前端合成 · 不加 AI 成本 · 适合朋友圈 / 社群 / 笔记头图</span></div><div class="dyn-actions"><button class="dyn-btn" data-act="dynKen">'+IC.motion+' 动态封面</button><button class="dyn-btn" data-act="dynShow">'+IC.stack+' 成品轮播</button><button class="dyn-btn" data-act="dynSpin">'+IC.rotate+' 伪360 环绕</button><button class="dyn-btn" data-act="dynGrid">'+IC.grid+' 九宫格切图</button></div><div class="dyn-hint">动态封面＝单张缓慢推拉；成品轮播＝多张成品串播；伪360 用你拍的多角度原图（建议 4 张以上）；九宫格＝一张切成 9 格。</div><div class="dyn-out" id="dynOut"></div></div>';}
+function dynKb(n){return n>1048576?(n/1048576).toFixed(1)+'MB':Math.round(n/1024)+'KB';}
+function dynItemHtml(d,i){return '<div class="dyn-item" data-kind="'+d.kind+'"><div class="di-view"><img src="'+d.url+'" alt=""></div><div class="di-meta"><div class="di-name">'+d.name.replace(/\.gif$/,'')+'</div>'+d.w+'×'+d.h+(d.frames?' · '+d.frames+' 帧':' · 9 张')+' · '+dynKb(d.bytes)+'</div><div class="di-btns"><button class="di-btn" data-act="dlDyn" data-i="'+i+'">'+IC.download+' 下载</button></div></div>';}
+function renderDyn(){var box=$('#dynOut');if(!box)return;box.innerHTML='';state.dyn.forEach(function(d,i){var w=document.createElement('div');w.innerHTML=dynItemHtml(d,i);box.appendChild(w.firstChild);});if(state.dynGrid){var g=state.dynGrid,w=document.createElement('div');w.innerHTML='<div class="dyn-item" data-kind="grid"><div class="di-nine">'+g.items.map(function(u){return '<img src="'+u+'" alt="">';}).join('')+'</div><div class="di-meta"><div class="di-name">九宫格切图</div>每张 400×400 · 9 张 JPG</div><div class="di-btns"><button class="di-btn" data-act="dlGrid">'+IC.pack+' 打包下载</button></div></div>';box.appendChild(w.firstChild);}}
+function resetDynBtns(){var map={dynKen:IC.motion+' 动态封面',dynShow:IC.stack+' 成品轮播',dynSpin:IC.rotate+' 伪360 环绕',dynGrid:IC.grid+' 九宫格切图'};$$('.dyn-btn').forEach(function(bt){if(map[bt.dataset.act])bt.innerHTML=map[bt.dataset.act];});}
+function upsertDyn(d){var ix=-1;state.dyn.forEach(function(x,i){if(x.kind===d.kind)ix=i;});if(ix>=0){if(state.dyn[ix].url)URL.revokeObjectURL(state.dyn[ix].url);state.dyn[ix]=d;}else{state.dyn.push(d);}}
+async function dynMake(kind,btn){
+ if(!state.results||!state.results.length){toast('先出图，再做动态物料','err');return;}
+ if(btn)btn.disabled=true;
+ var setP=function(a,b){if(btn)btn.innerHTML=IC.motion+' 合成 '+a+'/'+b;};
+ try{
+  if(kind==='ken'){var im0=await loadImage(state.results[0].url);var r=await dynKen(im0,dynRatio(),setP);upsertDyn({kind:kind,name:'WorkHogee_动态封面.gif',blob:r.blob,url:URL.createObjectURL(r.blob),bytes:r.blob.size,w:r.w,h:r.h,frames:r.frames});toast('动态封面好了');}
+  else if(kind==='show'){if(state.results.length<2){toast('再出一两张不同成品，轮播更丰富','err');return;}var ims=await Promise.all(state.results.slice(0,6).map(function(x){return loadImage(x.url);}));var rs=await dynShow(ims,dynRatio(),setP);upsertDyn({kind:kind,name:'WorkHogee_成品轮播.gif',blob:rs.blob,url:URL.createObjectURL(rs.blob),bytes:rs.blob.size,w:rs.w,h:rs.h,frames:rs.frames});toast('成品轮播好了');}
+  else if(kind==='spin'){if(state.images.length<4){toast('伪360 需要围着商品多拍几张（建议 4 张以上）再传','err');return;}var sims=await Promise.all(state.images.slice(0,12).map(function(x){return loadImage(x.dataUrl);}));var rp=await dynSpin(sims,setP);upsertDyn({kind:kind,name:'WorkHogee_360环绕.gif',blob:rp.blob,url:URL.createObjectURL(rp.blob),bytes:rp.blob.size,w:rp.w,h:rp.h,frames:rp.frames});toast('伪360 环绕好了');}
+  else if(kind==='grid'){var gi=await loadImage(state.results[0].url);var items=dynGrid9(gi);state.dynGrid={name:'WorkHogee_九宫格',items:items,bytes:items.join('').length};toast('九宫格切好了');}
+  renderDyn();
+ }catch(e){toast('动态物料没合成成：'+(e.message||'重试一下'),'err');}
+ finally{if(btn)btn.disabled=false;resetDynBtns();}
+}
+async function dlGridZip(){
+ if(!state.dynGrid){toast('先生成九宫格','err');return;}
+ var JSZip=window.JSZip;
+ if(!JSZip){try{await loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');JSZip=window.JSZip;}catch(e){state.dynGrid.items.forEach(function(u,i){downloadDataUrl(u,'九宫格_'+(i+1)+'.jpg');});return;}}
+ var zip=new JSZip(),f=zip.folder('WorkHogee_九宫格');
+ state.dynGrid.items.forEach(function(u,i){f.file('九宫格_'+String(i+1).padStart(2,'0')+'.jpg',u.split(',')[1],{base64:true});});
+ var blob=await zip.generateAsync({type:'blob'}),url=URL.createObjectURL(blob);
+ downloadDataUrl(url,'WorkHogee_九宫格.zip');setTimeout(function(){URL.revokeObjectURL(url);},4000);toast('九宫格打包好了');
 }
 
 /* ---------- 导出 / 打包 ---------- */
@@ -849,6 +994,8 @@ async function packAll(){
     zip.file(safeName(r.label)+'_'+s.k+'.'+state.fmt,du.split(',')[1],{base64:true});
    }
   }
+  state.dyn.forEach(function(d){zip.folder('动图GIF').file(d.name,d.blob);});
+  if(state.dynGrid){var gf=zip.folder('九宫格');state.dynGrid.items.forEach(function(u,i){gf.file('九宫格_'+String(i+1).padStart(2,'0')+'.jpg',u.split(',')[1],{base64:true});});}
   zip.file('配套文案.txt',$('#copyText')?$('#copyText').value:buildCopy());
   var blob=await zip.generateAsync({type:'blob'});
   var url=URL.createObjectURL(blob);downloadDataUrl(url,'WorkHogee_'+stamp+'.zip');setTimeout(function(){URL.revokeObjectURL(url);},4000);
@@ -1047,6 +1194,22 @@ document.addEventListener('click',function(ev){
  else if(act==='redo'){redoOne(+b.dataset.i);}
  else if(act==='pack'){packAll();}
  else if(act==='copyText'){var ta=$('#copyText');if(ta){ta.select();try{document.execCommand('copy');toast('文案已复制');}catch(e){toast('复制失败，可手动选择');}}}
+ else if(act==='copyChan'){state.copyChannel=b.dataset.v;var cps0=state._cps||buildCopies();var ta0=$('#copyText');if(ta0)ta0.value=cps0[state.copyChannel]||cps0.general;$$('.copy-chan').forEach(function(x){x.classList.toggle('on',x.dataset.v===state.copyChannel);});refreshCopyScan();}
+ else if(act==='copyClean'){var tac=$('#copyText');if(tac){var rr=cleanBanned(tac.value);tac.value=rr.text;refreshCopyScan();toast(rr.removed.length?('已净化 '+rr.removed.length+' 处绝对化词，请通读'):'未发现需净化词');}}
+ else if(act==='reach'){
+  var pf=b.dataset.p,x2=REACH_PLATFORMS.filter(function(y){return y.p===pf;})[0];
+  if(!x2)return;
+  var cps2=state._cps||buildCopies(),txt2=cps2[x2.ch]||cps2.general;
+  copyPlain(txt2);
+  if(x2.url){try{window.open(x2.url,'_blank','noopener');}catch(e){}toast(x2.name+'：文案已复制，打开发布页粘贴，图片传素材包');}
+  else{toast(x2.name+'：文案已复制，请用手机微信发布（可用画册把图发到手机）');}
+ }
+ else if(act==='dynKen'){dynMake('ken',b);}
+ else if(act==='dynShow'){dynMake('show',b);}
+ else if(act==='dynSpin'){dynMake('spin',b);}
+ else if(act==='dynGrid'){dynMake('grid',b);}
+ else if(act==='dlDyn'){var dd=state.dyn[+b.dataset.i];if(dd){downloadDataUrl(dd.url,dd.name);toast('已下载 '+dd.name);}}
+ else if(act==='dlGrid'){dlGridZip();}
  else if(act==='newOrder'){newOrder();}
  else if(act==='moreScene'){state.results=[];renderOutputsCard();}
  else if(act==='publishShowcase'){if(!state.results||!state.results.length){toast('先出图才能做画册','err');return;}userSay('做个分享画册');renderPublishCard();}
