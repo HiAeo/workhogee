@@ -47,3 +47,9 @@ coverage/
 *.tmp
 *.temp
 _backup/
+
+# Local secrets / tooling (added)
+.dev.vars
+**/.dev.vars
+.wrangler/
+_shots/
