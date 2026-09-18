@@ -177,6 +177,23 @@ img{display:block;max-width:100%}
 .copy-head button{margin-left:auto}
 .copy-box textarea{width:100%;border:0;resize:vertical;min-height:120px;padding:12px 13px;font-size:13px;line-height:1.75;color:var(--ink-soft);font-family:inherit;background:#fcfbf9}
 .copy-box textarea:focus{outline:none}
+.fld textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.7;background:#fcfbf9;color:var(--ink);font-family:inherit;resize:vertical}
+.fld textarea:focus{outline:none;border-color:var(--orange);background:#fff}
+.pub-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin-top:12px}
+.pub-thumb{aspect-ratio:1;border-radius:9px;overflow:hidden;border:1px solid var(--line2);background:var(--sand)}
+.pub-thumb img{width:100%;height:100%;object-fit:cover}
+.pub-result{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:14px}
+.qrbox{width:168px;height:168px;flex-shrink:0;border:1px solid var(--line2);border-radius:14px;padding:11px;background:#fff}
+.qrbox svg{width:100%;height:100%;display:block}
+.pub-info{flex:1;min-width:240px}
+.pub-cover{width:100%;max-width:300px;aspect-ratio:4/3;border-radius:12px;overflow:hidden;border:1px solid var(--line2);margin-bottom:10px}
+.pub-cover img{width:100%;height:100%;object-fit:cover}
+.pub-info label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin:6px 0}
+.pub-link{display:flex;gap:8px;align-items:center}
+.pub-link input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;font-size:12.5px;background:#fcfbf9;color:var(--ink-soft)}
+.pub-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.pub-more{display:flex;align-items:center;gap:9px;margin-top:14px;padding-top:13px;border-top:1px dashed var(--line2);font-size:13px;color:var(--ink-soft);flex-wrap:wrap}
+.pub-more select{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;background:#fcfbf9;font-family:inherit}
 .compliance{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;color:var(--muted);background:var(--sand);border-radius:10px;padding:10px 12px;margin-top:12px;line-height:1.6}
 .compliance svg{color:var(--ink-soft);flex-shrink:0;margin-top:1px}
 
@@ -398,7 +415,10 @@ var IC={
  download:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>',
  redo:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>',
  zoom:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>',
- pack:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>'
+ pack:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>',
+ share:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>',
+ qr:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7M14 21h3M17 17h4v4"/></svg>',
+ chart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
 };
 var AVATAR_HTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h2l1.5-2h7L17 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13.5" r="3.4"/></svg>';
 $('#railAvatar').innerHTML=AVATAR_HTML;$('#chAvatar').innerHTML=AVATAR_HTML;
@@ -763,7 +783,8 @@ function resultCardHtml(){
   +'<div class="copy-box"><div class="copy-head">'+IC.check+' 配套文案（阿图草拟，请核对真实后再用）<button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div><textarea id="copyText">'+esc(copy)+'</textarea></div>'
   +'<div class="compliance">'+IC.check+'<span>文案已规避无依据的绝对化承诺；车况/功效等请按实际核对。发布到各平台由你本人点最后一下。</span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="pack">'+IC.pack+' 按所选尺寸一键打包</button>'
-  +'<button class="btn btn-dark" data-act="newOrder">再来一单</button>'
+  +'<button class="btn btn-dark" data-act="publishShowcase">'+IC.share+' 生成分享画册</button>'
+  +'<button class="btn btn-ghost" data-act="newOrder">再来一单</button>'
   +'<button class="btn btn-ghost" data-act="moreScene">换个背景/补图</button></div></div>';
 }
 function renderResult(){
@@ -854,6 +875,110 @@ async function redoOne(i){
  catch(e){stop();toast(e.message||'重做失败','err');}
 }
 
+/* ---------- H5 分享画册 / 渠道码 ---------- */
+var PUB_SOURCES=[['moments','微信朋友圈'],['wechat_group','微信群/好友'],['xiaohongshu','小红书'],['douyin','抖音/快手'],['print','线下打印/海报'],['other','其他渠道']];
+function pubSourceName(v){var f=PUB_SOURCES.filter(function(x){return x[0]===v;})[0];return f?f[1]:'分享渠道';}
+function compressForShowcase(dataUrl,max,q){
+ return loadImage(dataUrl).then(function(img){
+  var w=img.width,h=img.height,scale=Math.min(1,max/Math.max(w,h));
+  var cw=Math.round(w*scale),ch=Math.round(h*scale);
+  var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');
+  x.drawImage(img,0,0,cw,ch);
+  return c.toDataURL('image/jpeg',q||.82);
+ });
+}
+function defaultPoints(){
+ if(state.identity&&state.identity.type==='usedcar'){
+  return ['成色如图，实拍呈现、不遮不掩','支持第三方检测','看车方便，可发更多细节','里程与配置以现场看车为准'];}
+ return ['实拍主体，专业场景呈现','颜色质地如图，细节经得起放大','现货好发，咨询有问必答','发货与图一致，支持先沟通'];
+}
+function authPost(path,body){
+ return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)})
+  .then(function(r){return r.json();}).catch(function(){return {ok:false,error:{message:'网络异常，请稍后再试'}};});
+}
+function renderPublishCard(){
+ var n=state.results.length;
+ var thumbs=state.results.slice(0,8).map(function(r){return '<div class="pub-thumb"><img src="'+r.url+'" alt=""></div>';}).join('');
+ var opts=PUB_SOURCES.map(function(mm,i){return '<option value="'+mm[0]+'"'+(i===0?' selected':'')+'>'+mm[1]+'</option>';}).join('');
+ card('<div class="card-pad" id="publishCard"><div class="card-title">'+IC.share+' 生成可追踪的分享画册</div>'
+  +'<div class="card-desc">把这 '+n+' 张成品做成一个手机 H5 画册，生成链接和渠道二维码。谁看了、看多久、提交了咨询，都回到你的效果中心。联系信息选填，不填访客也能直接在页面留联系方式。</div>'
+  +'<div class="pub-thumbs">'+thumbs+'</div>'
+  +'<div class="fld" style="margin-top:12px"><label>画册标题</label><input id="pubTitle" value="'+esc(state.product.name||'')+'"></div>'
+  +'<div class="fld" style="margin-top:11px"><label>核心卖点（每行一条，阿图已拟，请按实际改）</label><textarea id="pubPoints" rows="4">'+esc(defaultPoints().join('\n'))+'</textarea></div>'
+  +'<div class="fld-row" style="margin-top:11px"><div class="fld"><label>联系电话（选填）</label><input id="pubPhone" inputmode="tel" placeholder="页面显示一键拨打"></div>'
+  +'<div class="fld"><label>微信号（选填）</label><input id="pubWechat" placeholder="页面可一键复制"></div></div>'
+  +'<div class="fld" style="margin-top:11px"><label>这张二维码投放在哪个渠道？</label><select id="pubSource">'+opts+'</select></div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="doPublish">'+IC.qr+' 生成画册与二维码</button><button class="btn btn-ghost" data-act="backPublish">返回</button></div></div>');
+ state.stage='publish';requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,120);
+}
+async function doPublish(){
+ if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
+ var title=($('#pubTitle').value||'').trim();
+ if(!title){toast('先填一下画册标题','err');return;}
+ var points=$('#pubPoints').value.split('\n').map(function(x){return x.trim();}).filter(Boolean).slice(0,10);
+ var phone=$('#pubPhone')?$('#pubPhone').value.trim():'';
+ var wechat=$('#pubWechat')?$('#pubWechat').value.trim():'';
+ var source=$('#pubSource').value;
+ var btn=document.querySelector('[data-act="doPublish"]');if(btn){btn.disabled=true;btn.textContent='正在生成…';}
+ var stop=botTyping();
+ try{
+  var imgs=await Promise.all(state.results.slice(0,8).map(function(r){return compressForShowcase(r.url,1280,.82);}));
+  var assets=imgs.map(function(u,i){return {asset_id:'a'+(i+1),kind:i===0?'main':'detail',url:u};});
+  var params={};
+  if(state.identity.type==='usedcar'&&state.product){var p=state.product;if(p.brand)params['品牌']=p.brand;if(p.series)params['车系']=p.series;if(p.year)params['年款']=p.year;}
+  else if(state.identity.cat){params['品类']=state.identity.cat;}
+  var sc=await authPost('/showcases',{title:title,assets:assets,copy:{title:title,selling_points:points,params:params},contact:{phone:phone,wechat:wechat,show_call:!!phone}});
+  if(!sc.ok)throw new Error((sc.error&&sc.error.message)||'画册生成失败');
+  var lk=await authPost('/qr',{target_code:sc.code,source:source,campaign:title.slice(0,50)});
+  if(!lk.ok)throw new Error((lk.error&&lk.error.message)||'渠道码生成失败');
+  stop();
+  state.showcase={code:sc.code,url:sc.url,short_url:lk.short_url,qr_svg:lk.qr_svg,source:source,title:title};
+  userSay('做个分享画册');
+  renderShowcaseCard();
+ }catch(e){stop();if(btn){btn.disabled=false;btn.innerHTML=IC.qr+' 生成画册与二维码';}toast(e.message||'生成失败，稍后再试','err');}
+}
+function showcaseCardHtml(){
+ var sh=state.showcase;
+ var cover=state.results[0]?'<div class="pub-cover"><img src="'+state.results[0].url+'" alt=""></div>':'';
+ var more=PUB_SOURCES.map(function(mm){return '<option value="'+mm[0]+'">'+mm[1]+'</option>';}).join('');
+ return '<div class="card-pad"><div class="card-title">'+IC.check+' 画册好了，扫码或转发就能承接咨询</div>'
+  +'<div class="card-desc">当前渠道：<b id="pubSourceName">'+esc(pubSourceName(sh.source))+'</b>。访客打开画册看图、提交电话或微信，都会记到这个渠道；你在效果中心看浏览与线索。</div>'
+  +'<div class="pub-result"><div class="qrbox">'+sh.qr_svg+'</div><div class="pub-info">'+cover
+   +'<label>可追踪分享链接（按渠道统计）</label><div class="pub-link"><input id="pubLinkInput" readonly value="'+esc(sh.short_url)+'"><button class="btn btn-ghost btn-sm" data-act="copyShowLink">复制</button><a class="btn btn-ghost btn-sm" href="'+esc(sh.short_url)+'" target="_blank" rel="noopener">打开</a></div>'
+   +'<label style="margin-top:9px">画册原链（不带渠道归因）</label><div class="pub-link"><input readonly value="'+esc(sh.url)+'"><a class="btn btn-ghost btn-sm" href="'+esc(sh.url)+'" target="_blank" rel="noopener">预览</a></div>'
+   +'</div></div>'
+  +'<div class="pub-actions"><button class="btn btn-primary" data-act="dlQr">'+IC.download+' 下载二维码</button>'
+   +'<a class="btn btn-dark" href="/analytics.html" target="_blank" rel="noopener">'+IC.chart+' 去效果中心看数据</a>'
+   +'<button class="btn btn-ghost" data-act="newOrder">再来一单</button></div>'
+  +'<div class="pub-more"><span>为其他渠道再出一个二维码：</span><select id="moreSource">'+more+'</select><button class="btn btn-ghost btn-sm" data-act="addChannelDo">生成</button></div></div>';
+}
+function renderShowcaseCard(){
+ botSay('画册和「'+pubSourceName(state.showcase.source)+'」渠道码都好了。链接发出去、二维码贴出去，<b>谁看了、谁留了联系方式</b>，都回到效果中心。');
+ card(showcaseCardHtml());state.stage='showcase';requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,200);setTimeout(scrollBottom,700);
+}
+async function addChannel(){
+ var sel=$('#moreSource');if(!sel||!state.showcase)return;var source=sel.value,title=state.showcase.title||'';
+ var lk=await authPost('/qr',{target_code:state.showcase.code,source:source,campaign:title.slice(0,50)});
+ if(!lk.ok){toast((lk.error&&lk.error.message)||'生成失败','err');return;}
+ state.showcase.source=source;state.showcase.short_url=lk.short_url;state.showcase.qr_svg=lk.qr_svg;
+ var box=document.querySelector('.qrbox');if(box)box.innerHTML=lk.qr_svg;
+ var inp=$('#pubLinkInput');if(inp)inp.value=lk.short_url;
+ var nm=$('#pubSourceName');if(nm)nm.textContent=pubSourceName(source);
+ toast('已生成「'+pubSourceName(source)+'」渠道码');scrollBottom();
+}
+function downloadQr(){
+ var sh=state.showcase;if(!sh||!sh.qr_svg)return;
+ var blob=new Blob([sh.qr_svg],{type:'image/svg+xml;charset=utf-8'});
+ var url=URL.createObjectURL(blob);downloadDataUrl(url,'WorkHogee-qr-'+sh.source+'.svg');setTimeout(function(){URL.revokeObjectURL(url);},3000);
+ toast('二维码已下载（SVG，可印刷）');
+}
+function copyShowLink(){
+ var inp=$('#pubLinkInput');var v=inp?inp.value:'';if(!v)return;
+ function ok(){toast('链接已复制');}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(ok).catch(fallback);else fallback();
+ function fallback(){var t=document.createElement('input');t.value=v;document.body.appendChild(t);t.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(t);}
+}
+
 /* ---------- 事件委托 ---------- */
 document.addEventListener('click',function(ev){
  var b=ev.target.closest('[data-act]');if(!b)return;
@@ -924,6 +1049,12 @@ document.addEventListener('click',function(ev){
  else if(act==='copyText'){var ta=$('#copyText');if(ta){ta.select();try{document.execCommand('copy');toast('文案已复制');}catch(e){toast('复制失败，可手动选择');}}}
  else if(act==='newOrder'){newOrder();}
  else if(act==='moreScene'){state.results=[];renderOutputsCard();}
+ else if(act==='publishShowcase'){if(!state.results||!state.results.length){toast('先出图才能做画册','err');return;}userSay('做个分享画册');renderPublishCard();}
+ else if(act==='backPublish'){var pc=$('#publishCard');if(pc){var mm=pc.closest('.msg');if(mm)mm.remove();}}
+ else if(act==='doPublish'){doPublish();}
+ else if(act==='dlQr'){downloadQr();}
+ else if(act==='copyShowLink'){copyShowLink();}
+ else if(act==='addChannelDo'){addChannel();}
 });
 
 /* 上传 input */
