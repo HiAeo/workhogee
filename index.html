@@ -701,6 +701,184 @@ ul{list-style:none;}
   .end{padding:18px 20px;}
   .ab-col{padding:24px;}
 }
+
+/* ============================================================
+   新版首页：Hero 四伙计轮播 / 接力流水线 / 让图动起来 / 送达回流 / 合规
+   ============================================================ */
+/* ===== Hero 右侧：四伙计轮播自荐舞台 ===== */
+.hstage{position:relative;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.018));padding:22px 26px 20px;overflow:hidden;box-shadow:0 44px 90px -46px rgba(0,0,0,.85);}
+.hstage-glow{position:absolute;top:-18%;left:50%;transform:translateX(-50%);width:580px;height:460px;border-radius:50%;background:radial-gradient(circle,var(--g,rgba(251,146,60,.34)) 0%,rgba(251,146,60,0) 64%);filter:blur(4px);opacity:.6;transition:background .6s ease;pointer-events:none;}
+.hstage-fig{position:relative;height:clamp(296px,40vh,414px);width:100%;max-width:372px;margin:0 auto;}
+.hstage-floor{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:58%;height:24px;background:radial-gradient(ellipse at center,rgba(0,0,0,.62) 0%,rgba(0,0,0,0) 72%);pointer-events:none;}
+.hstage-fig img{position:absolute;left:50%;bottom:0;height:100%;width:auto;transform:translateX(-50%) translateY(12px);opacity:0;filter:drop-shadow(0 26px 30px rgba(0,0,0,.5));transition:opacity .5s ease;pointer-events:none;}
+.hstage-fig img.on{opacity:1;animation:hfloat 4.8s ease-in-out infinite;}
+.hstage-fig img.afa{height:103%;}
+@keyframes hfloat{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-12px);}}
+.hstage-meta{position:relative;z-index:2;text-align:center;}
+.hstage-name{font-size:21px;font-weight:900;letter-spacing:-.3px;color:#fff;}
+.hstage-name .who{color:var(--cs,#fb923c);transition:color .5s;}
+.hstage-role{display:inline-flex;align-items:center;margin-top:7px;font-size:11.5px;font-weight:700;letter-spacing:2.5px;padding:4px 13px;border-radius:999px;border:1px solid var(--cl,rgba(251,146,60,.45));color:var(--cs,#fb923c);transition:color .5s,border-color .5s;}
+.hstage-line{position:relative;margin:14px auto 0;min-height:78px;max-width:342px;font-size:14px;line-height:1.78;color:rgba(255,255,255,.82);text-align:left;}
+.hstage-line .caret{display:inline-block;width:2px;height:1em;background:var(--cs,#fb923c);margin-left:1px;vertical-align:-.12em;animation:hblink .8s steps(1) infinite;}
+@keyframes hblink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.hstage-dots{display:flex;justify-content:center;gap:9px;margin-top:12px;}
+.hstage-dots button{appearance:none;border:0;cursor:pointer;width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.22);padding:0;transition:all .3s;}
+.hstage-dots button.on{width:26px;background:var(--cs,#fb923c);}
+.hstage-nav{position:absolute;top:36%;z-index:5;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(13,11,9,.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.25s;opacity:0;}
+.hstage:hover .hstage-nav{opacity:1;}
+.hstage-nav:hover{background:var(--cs,#fb923c);border-color:var(--cs,#fb923c);}
+.hstage-nav.prev{left:10px;}.hstage-nav.next{right:10px;}
+.hstage-nav svg{width:16px;height:16px;}
+
+/* ===== 四伙计接力流水线 ===== */
+.relay{display:grid;grid-template-columns:320px 1fr;gap:28px;align-items:stretch;}
+.relay-tabs{display:flex;flex-direction:column;gap:10px;}
+.rtab{appearance:none;text-align:left;cursor:pointer;font-family:inherit;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:center;transition:.25s;color:var(--ink);}
+.rtab .ricon{width:46px;height:46px;flex-shrink:0;border-radius:12px;border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:.25s;}
+.rtab .ricon svg{width:23px;height:23px;}
+.rtab .rt-t{min-width:0;}
+.rtab .rno{display:block;font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--ink-muted);margin-bottom:2px;}
+.rtab h4{font-size:16px;font-weight:800;line-height:1.2;}
+.rtab p{font-size:12.5px;color:var(--ink-muted);margin-top:3px;line-height:1.4;}
+.rtab.on{border-color:var(--orange);background:var(--orange-soft);box-shadow:var(--shadow-md);}
+.rtab.on .rno{color:var(--orange-deep);}
+.rtab.on .ricon{border-color:var(--orange);background:#fff;color:var(--orange);}
+.rtab:hover{transform:translateX(3px);border-color:rgba(234,88,12,.4);}
+.relay-main{position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid #241e19;background:linear-gradient(160deg,#181310,#0f0d0b);color:#fff;padding:36px 38px;min-height:430px;display:flex;}
+.rpanel{display:none;grid-template-columns:1.04fr .96fr;gap:28px;align-items:center;width:100%;}
+.rpanel.on{display:grid;animation:rfade .5s ease;}
+@keyframes rfade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+.rp-tag{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--rc,#fb923c);}
+.rpanel h3{font-size:clamp(21px,2.2vw,26px);font-weight:900;margin:11px 0 12px;letter-spacing:-.3px;line-height:1.25;}
+.rp-d{font-size:14.5px;line-height:1.85;color:rgba(255,255,255,.75);}
+.rp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.rp-chips span{font-size:12.5px;color:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);padding:6px 13px;border-radius:999px;}
+.rp-stage{position:relative;height:clamp(280px,32vw,350px);border-radius:16px;background:radial-gradient(circle at 50% 28%,var(--rg,rgba(251,146,60,.18)),rgba(255,255,255,.02) 72%);overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+.rp-stage>img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:90%;filter:drop-shadow(0 24px 30px rgba(0,0,0,.5));}
+.rpanel.on .rp-stage>img{animation:hfloat 5.2s ease-in-out infinite;}
+.fc{position:absolute;background:rgba(255,255,255,.97);color:var(--ink);border-radius:11px;box-shadow:0 16px 34px -12px rgba(0,0,0,.62);padding:9px 12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap;animation:fcFloat 5.4s ease-in-out infinite;}
+.fc.f1{top:7%;left:5%;}
+.fc.f2{top:17%;right:4%;animation-delay:.9s;}
+.fc.f3{bottom:8%;left:8%;animation-delay:1.7s;}
+@keyframes fcFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+.fc .fci{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+.fc .fci svg{width:15px;height:15px;}
+.fc .bars{display:inline-flex;gap:3px;align-items:flex-end;height:18px;}
+.fc .bars i{width:5px;border-radius:2px;background:var(--rc,#fb923c);display:block;}
+.fc .qr{width:26px;height:26px;border-radius:5px;background:linear-gradient(var(--ink) 2px,transparent 2px) 0 0/8px 8px,linear-gradient(90deg,var(--ink) 2px,transparent 2px) 0 0/8px 8px,#fff;border:1.5px solid var(--ink);}
+.fc .flines{display:inline-flex;flex-direction:column;gap:3px;}
+.fc .flines i{display:block;height:4px;border-radius:2px;background:#d8d2c8;}
+.fc .flines i:first-child{background:var(--rc,#fb923c);width:40px;}
+
+/* ===== 让图动起来 ===== */
+.motion-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;}
+.mphone-wrap{display:flex;justify-content:center;}
+.mphone{position:relative;width:272px;height:548px;border-radius:40px;background:#14100d;padding:13px;box-shadow:var(--shadow-lg);border:1px solid rgba(0,0,0,.25);flex-shrink:0;}
+.mphone::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:92px;height:22px;background:#0d0b09;border-radius:0 0 15px 15px;z-index:4;}
+.mscreen{position:relative;width:100%;height:100%;border-radius:28px;overflow:hidden;background:#221c16;}
+.mslide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;}
+.mslide.on{opacity:1;}
+.mslide i{position:absolute;inset:0;display:block;}
+.mslide.on i{animation:mken 7s ease-in-out infinite alternate;}
+@keyframes mken{from{transform:scale(1.02);}to{transform:scale(1.14);}}
+.ms1 i{background:radial-gradient(circle at 42% 34%,#f8bd86,#c2641f 58%,#5a2d10);}
+.ms2 i{background:radial-gradient(circle at 56% 38%,#93c4ff,#2f6fc0 58%,#13304e);}
+.ms3 i{background:radial-gradient(circle at 46% 36%,#a9e2b2,#3f9d57 58%,#163e23);}
+.ms4 i{background:radial-gradient(circle at 50% 40%,#d8b6f6,#8b4dc4 58%,#381c55);}
+.mslide i::after{content:"";position:absolute;left:50%;bottom:24%;transform:translateX(-50%);width:120px;height:96px;border-radius:18px 18px 10px 10px;background:rgba(255,255,255,.9);box-shadow:0 26px 50px rgba(0,0,0,.35);}
+.mslide i::before{content:"";position:absolute;left:50%;bottom:calc(24% + 78px);transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.55);z-index:1;}
+.mslide .mcap{position:absolute;left:14px;right:14px;bottom:40px;z-index:2;background:rgba(13,11,9,.6);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border-radius:12px;padding:10px 13px;color:#fff;}
+.mslide .mcap b{display:block;font-size:12.5px;margin-bottom:2px;}
+.mslide .mcap span{font-size:11px;color:rgba(255,255,255,.72);}
+.mdots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:6px;z-index:3;}
+.mdots b{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);transition:.3s;}
+.mdots b.on{width:16px;border-radius:999px;background:#fff;}
+.mfeat{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mf{background:var(--white);border:1px solid var(--line);border-radius:var(--r-md);padding:24px 22px;transition:.3s;}
+.mf:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);border-color:rgba(234,88,12,.35);}
+.mf .mic{width:46px;height:46px;border-radius:12px;border:1.5px solid rgba(234,88,12,.32);background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.mf .mic svg{width:23px;height:23px;}
+.mf h4{font-size:16.5px;font-weight:800;margin-bottom:7px;}
+.mf p{font-size:13px;color:var(--ink-soft);line-height:1.65;}
+.motion-note{margin-top:22px;display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--ink-muted);line-height:1.7;}
+.motion-note svg{width:18px;height:18px;color:var(--orange);flex-shrink:0;margin-top:2px;}
+
+/* ===== 发出去，收得回（深色） ===== */
+.reach{background:radial-gradient(1000px 520px at 82% -12%,rgba(234,88,12,.17),transparent 60%),linear-gradient(180deg,#100d0b,#15110d);color:#fff;padding:96px 0;}
+.reach .shead .kick{color:var(--orange-light);}
+.reach .shead h2{color:#fff;}
+.reach .shead p{color:rgba(255,255,255,.66);}
+.rloop{display:grid;grid-template-columns:repeat(4,1fr);margin:6px 0 44px;}
+.rl-node{text-align:center;position:relative;padding:0 16px;}
+.rl-ic{width:62px;height:62px;border-radius:50%;margin:0 auto 15px;border:1.5px solid rgba(251,146,60,.5);background:rgba(234,88,12,.1);color:var(--orange-light);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
+.rl-ic svg{width:28px;height:28px;}
+.rl-node h4{font-size:16px;font-weight:800;}
+.rl-node p{font-size:12.5px;color:rgba(255,255,255,.56);margin-top:5px;line-height:1.6;}
+.rl-node:not(:last-child)::after{content:"";position:absolute;top:30px;left:calc(50% + 40px);right:calc(-50% + 40px);height:0;border-top:2px dashed rgba(251,146,60,.5);z-index:1;}
+.rl-node:not(:last-child)::before{content:"";position:absolute;top:28px;left:calc(50% + 40px);width:12px;height:5px;border-radius:3px;background:var(--orange-light);box-shadow:0 0 12px var(--orange-light);z-index:3;animation:rdash 2.6s linear infinite;}
+@keyframes rdash{0%{left:calc(50% + 40px);opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:calc(-50% + 40px);opacity:0;}}
+.rways{display:grid;grid-template-columns:1.3fr .9fr;gap:22px;}
+.rway{border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:26px 28px;background:rgba(255,255,255,.03);}
+.rway h4{font-size:16px;font-weight:800;margin-bottom:16px;}
+.rway .rw-grp{margin-bottom:16px;}
+.rway .rw-grp:last-child{margin-bottom:0;}
+.rway .rw-gt{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;color:#fff;margin-bottom:9px;flex-wrap:wrap;}
+.rway .rw-gt .b{font-size:11px;font-weight:800;width:21px;height:21px;border-radius:6px;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rway .rw-gt small{font-weight:500;color:rgba(255,255,255,.45);font-size:11.5px;}
+.chips-mono{display:flex;flex-wrap:wrap;gap:8px;}
+.chips-mono span{font-size:12px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.17);padding:5px 11px;border-radius:999px;}
+.rway ul{display:flex;flex-direction:column;gap:12px;}
+.rway li{font-size:13.5px;color:rgba(255,255,255,.76);display:flex;gap:10px;align-items:flex-start;line-height:1.65;}
+.rway li svg{width:16px;height:16px;color:var(--orange-light);flex-shrink:0;margin-top:3px;}
+
+/* ===== 真实与合规底线 ===== */
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.tcard{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 24px;transition:.3s;}
+.tcard:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);border-color:rgba(234,88,12,.35);}
+.tcard .tic{width:48px;height:48px;border-radius:12px;border:1.5px solid rgba(234,88,12,.34);background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.tcard .tic svg{width:24px;height:24px;}
+.tcard h4{font-size:16.5px;font-weight:800;margin-bottom:8px;}
+.tcard p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;}
+
+/* ===== 新版响应式 ===== */
+@media (max-width:960px){
+  .hstage{max-width:480px;margin:0 auto;}
+  .relay{grid-template-columns:1fr;gap:18px;}
+  .relay-tabs{flex-direction:row;overflow-x:auto;padding-bottom:6px;gap:10px;}
+  .rtab{min-width:210px;flex-shrink:0;}
+  .relay-main{padding:26px 24px;min-height:0;}
+  .rpanel{grid-template-columns:1fr;gap:20px;}
+  .rp-stage{height:300px;}
+  .motion-grid{grid-template-columns:1fr;gap:34px;}
+  .rways{grid-template-columns:1fr;}
+  .rloop{grid-template-columns:1fr 1fr;gap:30px 12px;}
+  .rl-node:not(:last-child)::after,.rl-node:not(:last-child)::before{display:none;}
+  .trust-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:640px){
+  .hstage-fig{height:300px;}
+  .hstage-line{min-height:0;}
+  .hstage-nav{display:none;}
+  .relay-tabs{gap:8px;}
+  .rtab{min-width:188px;padding:14px;}
+  .rp-chips span{font-size:11.5px;padding:5px 10px;}
+  .mphone{width:246px;height:496px;}
+  .mfeat{grid-template-columns:1fr;}
+  .rloop{grid-template-columns:1fr;gap:24px;}
+  .rway{padding:22px 20px;}
+  .trust-grid{grid-template-columns:1fr;}
+  .fc{font-size:10.5px;padding:8px 10px;}
+}
+@media (min-width:961px) and (max-height:920px){
+  .hstage-fig{height:clamp(280px,42vh,360px);}
+  .relay-main{min-height:380px;padding:28px 32px;}
+  .rp-stage{height:300px;}
+  .mphone{width:248px;height:500px;}
+  .reach{padding:70px 0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hstage-fig img.on,.rpanel.on .rp-stage>img,.fc,.mslide.on i,.rl-node:not(:last-child)::before{animation:none!important;}
+}
 </style>
 </head>
 <body>
@@ -729,20 +907,15 @@ ul{list-style:none;}
   </div>
 </header>
 
-<!-- ===== 深色品牌 Hero ===== -->
+<!-- ===== 深色品牌 Hero：左文案 / 右四伙计轮播自荐 ===== -->
 <section class="mhero">
   <div class="container">
     <div class="mhero-in">
       <div class="mh-left">
-        <div class="hero-team mh-anim" style="animation-delay:0s" role="img" aria-label="WorkHogee 伙计全家福，从左到右：阿图（生图伙计）、阿文（文案伙计）、阿发（发图伙计）、阿果（效果伙计）">
-          <img src="images/hero-atu.png" alt="阿图 · 生图伙计" width="973" height="1500" loading="eager">
-          <img src="images/hero-awen.png" alt="阿文 · 文案伙计" width="1110" height="1500" loading="eager">
-          <img src="images/hero-afa.png" alt="阿发 · 发图伙计" width="918" height="1500" loading="eager">
-          <img src="images/hero-agu.png" alt="阿果 · 效果伙计" width="1110" height="1500" loading="eager">
-        </div>
-        <h1 class="mh-title mh-anim" style="animation-delay:.10s">做生意，<br>找<span class="ac">伙计</span>。</h1>
-        <p class="mh-sub mh-anim" style="animation-delay:.20s">Hogee 不是单点出图工具，而是把商家从拍摄、质检、识别、生成、合规到多平台导出的整条图文工作流跑通。一套工作台，全行业通用，阿图会按你的行当用对出图路数。</p>
-        <div class="mh-cta mh-anim" style="animation-delay:.30s">
+        <span class="mh-eyebrow mh-anim" style="animation-delay:0s"><span class="dot"></span>四个 AI 伙计，帮你把生意跑完整</span>
+        <h1 class="mh-title mh-anim" style="animation-delay:.08s">做生意，<br>离不开<span class="ac">好伙计</span>。</h1>
+        <p class="mh-sub mh-anim" style="animation-delay:.18s">阿图把实拍变成能上架的好图，阿文写出能带货的文案，阿发把素材送到客户眼前，阿果盯紧每一次浏览和询盘。从一张图到一笔成交，四个伙计接力干完——不管你卖什么。</p>
+        <div class="mh-cta mh-anim" style="animation-delay:.28s">
           <a href="/workbench.html" class="btn btn-org">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             打开 Web 工作台
@@ -752,224 +925,276 @@ ul{list-style:none;}
             下载微信小程序
           </a>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ===== 二手车场景（旗舰板块） ===== -->
-<section class="section white" id="product">
-  <div class="container">
-    <div class="fp">
-      <div class="fp-text reveal">
-        <span class="kick">二手车场景 · 实拍变商品图</span>
-        <h2 class="fp-title">二手车伙计</h2>
-        <p class="fp-lead">手机随手拍几张，20&nbsp;秒变成能直接上架的专业车源。<br>WorkHogee 不修图、修信任——机位一个不漏，瑕疵一个不藏。</p>
-        <ul class="fp-points">
-          <li>
-            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.8A1 1 0 0 1 9 4.7h6a1 1 0 0 1 .84.5L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-            <div><h4>智能拍摄引导</h4><p>外观 / 内饰 / 空间点位卡，前 45°、正侧、车尾、内饰细节按顺序拍，新手也能拍出车商级机位，不漏关键角度。</p></div>
-          </li>
-          <li>
-            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
-            <div><h4>真实留证，瑕疵不藏</h4><p>不改成色、不抹划痕、不虚标里程；车牌、人脸、VIN 自动脱敏，AI 生成标识必带，从源头减少到手纠纷。</p></div>
-          </li>
-          <li>
-            <span class="fp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></svg></span>
-            <div><h4>一套素材，全平台上架</h4><p>精修图、AI 展厅、360、看车短视频与车源文案一次出齐，自动适配各平台尺寸，下载或一键同步飞书共享。</p></div>
-          </li>
-        </ul>
-        <div class="fp-cta">
-          <a class="btn btn-org" href="/usedcar.html">进入二手车伙计
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
-          <a class="btn btn-line" href="/workbench.html">打开 Web 工作台</a>
+        <div class="mh-tenets mh-anim" style="animation-delay:.36s">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>只优化呈现，不改货</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3"/><path d="m16 5 3 3"/><path d="m19 8 1.5-1.5"/></svg>图、文、客户都归你</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>什么行当都能用</div>
         </div>
       </div>
-      <div class="fp-visual reveal">
-        <div class="ba" id="baCar" role="slider" tabindex="0" aria-label="二手车手机实拍与 AI 展厅效果对比，可左右拖动或用方向键查看" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-          <img class="ba-img ba-after" src="images/car-tesla-showroom.jpg" alt="同一辆白色特斯拉 Model 3 的 AI 展厅效果图，灯箱带有 WorkHogee 伙计二手车标识">
-          <div class="ba-before"><img class="ba-img" src="images/car-tesla-phone.jpg" alt="同一辆白色特斯拉 Model 3 的手机实拍原图，停在室外停车场"></div>
-          <span class="ba-pill ba-pill-l">手机实拍</span>
-          <span class="ba-pill ba-pill-r">AI 展厅效果</span>
-          <div class="ba-bar"><span class="ba-knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-5 6 5 6"/><path d="M15 6l5 6-5 6"/></svg></span></div>
-        </div>
-        <p class="ba-hint"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7 4 12l4 5"/><path d="m16 7 4 5-4 5"/></svg>拖动对比 · 同一辆车，只升级呈现，车况与瑕疵全程一致</p>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ===== 图骗 vs 真实 对峙 ===== -->
-<section class="standoff">
-  <div class="container">
-    <div class="shead reveal">
-      <div class="kick">品牌态度 · Trust</div>
-      <div>
-        <h2>好货，不该输在图上；但 AI 不能帮你造假</h2>
-        <p>线上看图下单，本质是信任生意。靠“图骗”换来的点击，最终都会变成退货、纠纷和差评。WorkHogee 的选择是：该补的光补上，该留的瑕疵一个都不能少。</p>
-      </div>
-    </div>
-    <div class="so-grid reveal">
-      <div class="so-col so-bad">
-        <span class="so-tag">行业里的“图骗”</span>
-        <h3>越拍越美，越美越退</h3>
-        <div class="sub">过度美化只换来短期点击，代价是退货、纠纷与差评。</div>
-        <ul class="so-list">
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>调亮漆面、套用统一滤镜，<b>掩盖色差与新旧程度</b></span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>磨皮式精修，<b>抹掉划痕、磕碰、磨损</b></span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>靠广角与刁钻角度，<b>隐藏事故、维修与硬伤</b></span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span><span>堆砌“无事故、原版原漆、极品”等<b>违禁话术</b></span></li>
-        </ul>
-        <div class="ban-words">
-          <span>无事故</span><span>零事故</span><span>原版原漆</span><span>原车原漆</span><span>极品</span><span>完美</span><span>百分百</span><span>终身</span>
+      <div class="mh-right mh-anim" style="animation-delay:.15s">
+        <div class="hstage" id="hstage">
+          <div class="hstage-glow"></div>
+          <button class="hstage-nav prev" id="hsPrev" aria-label="上一个伙计">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="hstage-nav next" id="hsNext" aria-label="下一个伙计">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <div class="hstage-fig">
+            <span class="hstage-floor"></span>
+            <img class="on" src="images/hero-atu.png" data-k="atu" alt="阿图 · 生图伙计" width="820" height="1120" loading="eager">
+            <img src="images/hero-awen.png" data-k="awen" alt="阿文 · 文案伙计" width="820" height="1120" loading="lazy">
+            <img src="images/hero-afa.png" class="afa" data-k="afa" alt="阿发 · 发图伙计" width="820" height="1120" loading="lazy">
+            <img src="images/hero-agu.png" data-k="agu" alt="阿果 · 效果伙计" width="820" height="1120" loading="lazy">
+          </div>
+          <div class="hstage-meta">
+            <div class="hstage-name">我是<span class="who" id="hsName">阿图</span></div>
+            <div class="hstage-role" id="hsRole">生图伙计</div>
+            <p class="hstage-line"><span id="hsLine"></span><span class="caret"></span></p>
+            <div class="hstage-dots" id="hsDots">
+              <button class="on" data-i="0" aria-label="阿图"></button>
+              <button data-i="1" aria-label="阿文"></button>
+              <button data-i="2" aria-label="阿发"></button>
+              <button data-i="3" aria-label="阿果"></button>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="so-mid">
-        <span class="vline"></span>
-        <span class="vs">VS</span>
-        <span class="vline"></span>
+    </div>
+  </div>
+</section>
+<!-- ===== 01 四伙计接力流水线 ===== -->
+<section class="section white" id="crew">
+  <div class="container">
+    <div class="shead reveal">
+      <span class="kick">四个伙计 · 一条流水线</span>
+      <h2>从一张实拍图，到一笔成交，四个伙计接力干完</h2>
+      <p>不是做完图就结束。出图、写文案、送出去、看效果，各有专人，一条流水线把生意跑完整。</p>
+      <span class="shead-line"></span>
+    </div>
+    <div class="relay reveal">
+      <div class="relay-tabs" id="relayTabs">
+        <button class="rtab on" data-i="0">
+          <span class="ricon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+          <span class="rt-t"><span class="rno">01</span><h4>阿图 · 生图伙计</h4><p>手机实拍变能上架的好图</p></span>
+        </button>
+        <button class="rtab" data-i="1">
+          <span class="ricon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 3.8a5.5 5.5 0 0 0-7.8 0L4 12.2V20h7.8l8.4-8.4a5.5 5.5 0 0 0 0-7.8z"/><path d="M16 8 4 20"/><path d="M14.5 9.5 18 6"/></svg></span>
+          <span class="rt-t"><span class="rno">02</span><h4>阿文 · 文案伙计</h4><p>照着货和买家写文案</p></span>
+        </button>
+        <button class="rtab" data-i="2">
+          <span class="ricon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></span>
+          <span class="rt-t"><span class="rno">03</span><h4>阿发 · 发图伙计</h4><p>把素材送到客户眼前</p></span>
+        </button>
+        <button class="rtab" data-i="3">
+          <span class="ricon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-6"/></svg></span>
+          <span class="rt-t"><span class="rno">04</span><h4>阿果 · 效果伙计</h4><p>盯住每次浏览和询盘</p></span>
+        </button>
       </div>
-      <div class="so-col so-good">
-        <span class="so-tag">WorkHogee 的底线</span>
-        <h3>只优化呈现，不造假</h3>
-        <div class="sub">合规引擎跨品类约 70% 复用，默认开启、不可关闭。</div>
-        <ul class="so-list">
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>不改商品颜色</b>：成品与原图色差超阈值，自动拦截重做</span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>不抹瑕疵与证据</b>：划痕、磕碰、故障、磨损原样保留</span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>敏感信息自动脱敏</b>：车牌、人脸、序列号、地址等自动模糊</span></li>
-          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>AI 标识 + 文案红线</b>：成品带生成标识，违禁词不出稿</span></li>
+      <div class="relay-main">
+
+        <div class="rpanel on" style="--rc:#fb923c;--rg:rgba(251,146,60,.18)">
+          <div class="rp-info">
+            <div class="rp-tag">01 · 生图伙计</div>
+            <h3>手机拍几张，阿图出一整套能上架的图</h3>
+            <p class="rp-d">上传实拍图，阿图自动质检、机位分类、抠底换景，只改背景和光影，绝不动你的货。一次出齐精修图、场景图、各平台尺寸和动态图集。</p>
+            <div class="rp-chips"><span>精修商品图</span><span>场景合成图</span><span>多平台尺寸</span><span>动态图集</span></div>
+          </div>
+          <div class="rp-stage">
+            <img src="images/hero-atu.png" alt="阿图 · 生图伙计" loading="lazy">
+            <div class="fc f1"><span class="fci" style="background:#fb923c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>精修商品图</div>
+            <div class="fc f2"><span class="fci" style="background:#fb923c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>多平台尺寸</div>
+            <div class="fc f3"><span class="fci" style="background:#fb923c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5v14M17 5v14M2 10h5M2 14h5M17 10h5M17 14h5"/></svg></span>动态图集</div>
+          </div>
+        </div>
+
+        <div class="rpanel" style="--rc:#60a5fa;--rg:rgba(96,165,250,.18)">
+          <div class="rp-info">
+            <div class="rp-tag">02 · 文案伙计</div>
+            <h3>什么平台，就用什么口吻写</h3>
+            <p class="rp-d">阿文照着你的货和买家最关心的点，写标题、卖点、笔记、朋友圈和话题标签；广告法禁词先过一遍，不夸大、不踩线。</p>
+            <div class="rp-chips"><span>商品标题</span><span>卖点话术</span><span>小红书笔记</span><span>朋友圈文案</span><span>话题标签</span></div>
+          </div>
+          <div class="rp-stage">
+            <img src="images/hero-awen.png" alt="阿文 · 文案伙计" loading="lazy">
+            <div class="fc f1"><span class="flines"><i></i><i style="width:52px"></i><i style="width:44px"></i></span>爆款标题</div>
+            <div class="fc f2"><span class="fci" style="background:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 3.8a5.5 5.5 0 0 0-7.8 0L4 12.2V20h7.8l8.4-8.4a5.5 5.5 0 0 0 0-7.8z"/><path d="M16 8 4 20"/></svg></span>种草笔记</div>
+            <div class="fc f3"><span class="fci" style="background:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg></span>话题标签</div>
+          </div>
+        </div>
+
+        <div class="rpanel" style="--rc:#4ade80;--rg:rgba(74,222,128,.18)">
+          <div class="rp-info">
+            <div class="rp-tag">03 · 发图伙计</div>
+            <h3>客户在哪，阿发就把图送到哪</h3>
+            <p class="rp-d">小红书、抖音、闲鱼、朋友圈，阿发按各平台规格打好素材包，再做能追踪的 H5 画册和渠道二维码；能直连的通道授权后半自动发，没开放的平台把素材递到你手边，最后一下你来点。</p>
+            <div class="rp-chips"><span>分平台素材包</span><span>H5 动态画册</span><span>渠道二维码</span><span>留资表单</span></div>
+          </div>
+          <div class="rp-stage">
+            <img src="images/hero-afa.png" alt="阿发 · 发图伙计" loading="lazy">
+            <div class="fc f1"><span class="fci" style="background:#22c55e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></span>分平台素材包</div>
+            <div class="fc f2"><span class="qr"></span>渠道二维码</div>
+            <div class="fc f3"><span class="fci" style="background:#22c55e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>H5 画册</div>
+          </div>
+        </div>
+
+        <div class="rpanel" style="--rc:#c084fc;--rg:rgba(192,132,252,.18)">
+          <div class="rp-info">
+            <div class="rp-tag">04 · 效果伙计</div>
+            <h3>每张图带来多少客户，阿果都有数</h3>
+            <p class="rp-d">多少人看了、谁扫了码、谁留了电话、哪张图引来询盘，阿果自动记成看板，到点提醒你该跟进谁，让每张发出去的图都有回音。</p>
+            <div class="rp-chips"><span>浏览 / 扫码统计</span><span>留资线索</span><span>询盘提醒</span><span>效果日报</span></div>
+          </div>
+          <div class="rp-stage">
+            <img src="images/hero-agu.png" alt="阿果 · 效果伙计" loading="lazy">
+            <div class="fc f1"><span class="bars"><i style="height:8px"></i><i style="height:15px"></i><i style="height:18px"></i><i style="height:11px"></i></span>浏览 1,280</div>
+            <div class="fc f2"><span class="fci" style="background:#a855f7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>新线索 36</div>
+            <div class="fc f3"><span class="fci" style="background:#a855f7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>询盘待跟进</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02 让图动起来 ===== -->
+<section class="section sand" id="motion">
+  <div class="container">
+    <div class="shead reveal">
+      <span class="kick">让图动起来 · Motion</span>
+      <h2>静态图之外，再给你一套会动的物料</h2>
+      <p>首期不做真视频，也能让你的货在信息流里被多看一眼：图集、GIF、伪 360、九宫格，平台都能直接发。</p>
+      <span class="shead-line"></span>
+    </div>
+    <div class="motion-grid reveal">
+      <div class="mphone-wrap">
+        <div class="mphone">
+          <div class="mscreen" id="mScreen">
+            <div class="mslide ms1 on"><i></i><div class="mcap"><b>360° 环绕图集</b><span>买家像绕着货看一圈，细节无死角</span></div></div>
+            <div class="mslide ms2"><i></i><div class="mcap"><b>GIF 动态展示</b><span>光影流转，商品细节自己会动</span></div></div>
+            <div class="mslide ms3"><i></i><div class="mcap"><b>幻灯片轮播</b><span>多角度自动播放，一次讲清卖点</span></div></div>
+            <div class="mslide ms4"><i></i><div class="mcap"><b>朋友圈九宫格</b><span>一张主图切成整屏，刷到就是你</span></div></div>
+            <div class="mdots" id="mDots"><b class="on"></b><b></b><b></b><b></b></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mfeat">
+          <div class="mf">
+            <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg></div>
+            <h4>伪 360° 环绕</h4><p>多角度实拍自动串成环绕看货，买家像把货拿在手里转。</p>
+          </div>
+          <div class="mf">
+            <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+            <h4>GIF 动图</h4><p>把一组图做成会动的 GIF，评论区和私信里更吸睛。</p>
+          </div>
+          <div class="mf">
+            <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M11 17h.01M3 8l4-2M3 16l4 2M21 8l-4-2M21 16l-4 2"/></svg></div>
+            <h4>幻灯片轮播</h4><p>主图位自动轮播多角度，一张主图位讲全全部卖点。</p>
+          </div>
+          <div class="mf">
+            <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+            <h4>九宫格切图</h4><p>一键切出朋友圈九宫格，整屏都是你的货。</p>
+          </div>
+        </div>
+        <div class="motion-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>首期聚焦 GIF、图集、伪 360 等轻量动态物料——制作快、成本低、各平台都能发；真视频能力在规划中，不影响现在就把货卖出去。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 03 发出去，收得回（深色闭环） ===== -->
+<section class="reach" id="reach">
+  <div class="container">
+    <div class="shead reveal">
+      <span class="kick">发出去，还要收得回 · Reach</span>
+      <h2>不是做完图就走，而是把客户带到你面前</h2>
+      <p>阿发负责把素材送达，阿果负责把效果和线索收回来，形成从曝光到成交的闭环。</p>
+      <span class="shead-line"></span>
+    </div>
+
+    <div class="rloop reveal">
+      <div class="rl-node">
+        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></div>
+        <h4>素材送达</h4><p>画册、二维码、素材包分发到各个渠道</p>
+      </div>
+      <div class="rl-node">
+        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h4>浏览 / 扫码</h4><p>买家看图、扫渠道码、翻动态图集</p>
+      </div>
+      <div class="rl-node">
+        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        <h4>留资 / 询盘</h4><p>表单留电话、私信咨询、邮件点击</p>
+      </div>
+      <div class="rl-node">
+        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h4>跟进成交</h4><p>线索进库、提醒跟进、数据复盘</p>
+      </div>
+    </div>
+
+    <div class="rways reveal">
+      <div class="rway">
+        <h4>三条送达路径，能自动的自动，不能自动的递到你手边</h4>
+        <div class="rw-grp">
+          <div class="rw-gt"><span class="b">A</span>官方可连接<small>授权后半自动</small></div>
+          <div class="chips-mono"><span>邮箱 SMTP</span><span>企业微信</span><span>微信公众号</span><span>飞书</span><span>短信</span></div>
+        </div>
+        <div class="rw-grp">
+          <div class="rw-gt"><span class="b">B</span>素材包 + 人工引导<small>最后一下本人发</small></div>
+          <div class="chips-mono"><span>小红书</span><span>抖音</span><span>快手</span><span>闲鱼</span><span>视频号</span><span>朋友圈</span></div>
+        </div>
+        <div class="rw-grp">
+          <div class="rw-gt"><span class="b">C</span>自有触点<small>零授权即可用</small></div>
+          <div class="chips-mono"><span>H5 动态画册</span><span>渠道二维码</span><span>留资表单</span><span>门店大屏</span><span>印刷导出</span></div>
+        </div>
+      </div>
+      <div class="rway">
+        <h4>线索回流，每张图都有回音</h4>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>每个渠道码、画册链接都带来源标识，客户从哪张图、哪个平台来一目了然。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>浏览、扫码、留资、邮件点击自动汇总进轻量线索库，不用手工登记。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>新询盘实时提醒，按热度排序，告诉你先跟进谁。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>数据沉淀成日报、周报，哪张图、哪条文案最能带客，持续优化。</li>
         </ul>
       </div>
     </div>
-    <div class="so-foot reveal">拒绝图骗，把<em>“真实”</em>变成<em>“信任”</em>，把<em>“好货”</em>变成<em>“好卖”</em>。</div>
   </div>
 </section>
-<!-- ===== 五层能力地层 ===== -->
-<section class="section sand">
+
+<!-- ===== 04 真实与合规底线 ===== -->
+<section class="section white" id="trust">
   <div class="container">
     <div class="shead reveal">
-      <div class="kick">能力矩阵 · Stack</div>
-      <div>
-        <h2>不是出图工具，是一套分层的 AI 工作流</h2>
-        <p>基础层全品类共用，知识层按行业重做，合规层可配置。新品类进入时方法论复用约 70%，只需重做 30% 的行业适配——这是矩阵能持续扩张的原因。</p>
-      </div>
+      <span class="kick">底线 · Trust</span>
+      <h2>只优化呈现，绝不替你的货撒谎</h2>
+      <p>AI 负责把货拍好看、讲清楚，但不改变货本身。真实、合规、归属清晰，是 WorkHogee 的四条底线。</p>
+      <span class="shead-line"></span>
     </div>
-    <div class="lstack reveal">
-      <div class="lband w100 alt">
-        <div class="lv"><b>L5</b></div>
-        <div><div class="ln">数据层 · 反馈闭环</div><div class="ld">卖家评分、最佳输出选择、知识库持续优化，越用越懂这门生意。</div></div>
-        <div class="lp"><b>100%</b><span>全品类复用</span></div>
+    <div class="trust-grid reveal">
+      <div class="tcard">
+        <div class="tic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h4>主体一致性</h4><p>只改背景、光影和排版，商品原样不动；多角度前后一致性校验，避免“图货不符”。</p>
       </div>
-      <div class="lband w92">
-        <div class="lv"><b>L4</b></div>
-        <div><div class="ln">渠道层 · 多平台适配</div><div class="ld">闲鱼、得物、小红书、朋友圈、抖音、懂车帝、贝壳等渠道规格自动适配。</div></div>
-        <div class="lp"><b>90%</b><span>跨品类复用</span></div>
+      <div class="tcard">
+        <div class="tic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 10 8 10 8a13.2 13.2 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 8 10 8a9.1 9.1 0 0 0 5.39-1.61"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg></div>
+        <h4>三重脱敏</h4><p>车牌、人脸、VIN 等隐私信息自动识别并遮挡，客户隐私不留痕。</p>
       </div>
-      <div class="lband w78 alt">
-        <div class="lv"><b>L3</b></div>
-        <div><div class="ln">合规层 · 合规引擎</div><div class="ld">不改颜色、不抹瑕疵、不藏事故、AI 标识，输出前强制质检，默认不可关闭。</div></div>
-        <div class="lp"><b>70%</b><span>跨品类复用</span></div>
+      <div class="tcard">
+        <div class="tic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 2.1 3.1-.3 1 3 2.8 1.5-1 3 1 3-2.8 1.5-1 3-3.1-.3L12 22l-2.4-2.1-3.1.3-1-3L2.7 15.7l1-3-1-3 2.8-1.5 1-3 3.1.3z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h4>AI 标识必带</h4><p>生成内容按监管要求规范标注 AI 生成，标识默认保留、不去除。</p>
       </div>
-      <div class="lband w46">
-        <div class="lv"><b>L2</b></div>
-        <div><div class="ln">知识层 · 行业知识库</div><div class="ld">品类库、卖点库、成色标准、话术库——每个行业独有的护城河，按品类插拔重做。</div></div>
-        <div class="lp"><b>30%</b><span>按品类重做</span></div>
-      </div>
-      <div class="lband w100">
-        <div class="lv"><b>L1</b></div>
-        <div><div class="ln">基础层 · 生图工具</div><div class="ld">拍摄引导、质量预检、图像精修、多平台导出，全品类共用的生产底座。</div></div>
-        <div class="lp"><b>100%</b><span>全品类复用</span></div>
-      </div>
-      <div class="layer-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
-        能力自下而上沉淀，成交数据反向回流，让每一层越用越准。
+      <div class="tcard">
+        <div class="tic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3"/><path d="m16 5 3 3"/><path d="m19 8 1.5-1.5"/></svg></div>
+        <h4>资产归商家</h4><p>图片、文案、画册和客户数据都归你，发布走你自己的账号，不绑死、不挪用。</p>
       </div>
     </div>
   </div>
 </section>
-<!-- ===== 一条工作流 ===== -->
-<section class="section white" id="how">
-  <div class="container">
-    <div class="shead reveal">
-      <div class="kick">一条工作流 · Workflow</div>
-      <div>
-        <h2>传上来，拍几张，卖出去</h2>
-        <p>不是单点出图工具，而是把商家从拍摄、质检、识别、生成、合规到多平台导出的整条物料链路自动化。</p>
-      </div>
-    </div>
-    <div class="flow reveal">
-      <div class="fstep">
-        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.5 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.5A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.5Z"/></svg></div>
-        <div class="fno">STEP 01</div>
-        <h3>传上来</h3>
-        <p>手机实拍随手上传，小程序点位引导、举起手机就知道怎么拍，不合格当场提示重拍。</p>
-        <div class="ftags"><span>手机实拍上传</span><span>点位引导拍摄</span><span>多张智能质检</span></div>
-      </div>
-      <div class="fstep">
-        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3.2"/></svg></div>
-        <div class="fno">STEP 02</div>
-        <h3>拍几张</h3>
-        <p>行业大脑识别品类与成色，一次生成精修图、场景图、动态图与文案，合规预检全程兜底。</p>
-        <div class="ftags"><span>品类 / 成色识别</span><span>精修·场景·动态图·文案</span><span>合规强制质检</span></div>
-      </div>
-      <div class="fstep">
-        <div class="fnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg></div>
-        <div class="fno">STEP 03</div>
-        <h3>卖出去</h3>
-        <p>自动校正各平台比例与尺寸，合规水印、AI 标识一次齐备，素材包就位、由你确认上架。</p>
-        <div class="ftags"><span>各平台尺寸适配</span><span>水印 / AI 标识</span><span>打包 / 草稿分发</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ===== 平台矩阵：四端 + 用户分层 ===== -->
-<section class="section sand">
-  <div class="container">
-    <div class="shead reveal">
-      <div class="kick">平台矩阵 · Platform</div>
-      <div>
-        <h2 style="text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;">小程序采集，<span style="white-space:nowrap">Web 生产</span>，后台运营，<span style="white-space:nowrap">API 集成</span></h2>
-        <p>同一套行业知识库与物料库在四端打通，从个人卖家到平台渠道，各用各的入口。</p>
-      </div>
-    </div>
-    <div class="ends reveal">
-      <div class="end">
-        <span class="pri p0">P0</span>
-        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
-        <h3>微信小程序</h3>
-        <div class="erole">移动采集端</div>
-        <p>拍摄引导、上传、任务进度、结果预览，收货现场举起手机就能干活。</p>
-      </div>
-      <div class="end">
-        <span class="pri p0">P0</span>
-        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-        <h3>Web 工作台</h3>
-        <div class="erole">管理生产端</div>
-        <p>商品管理、生成配置、批量生成、素材库与多平台导出，适合在店里批量处理。</p>
-      </div>
-      <div class="end">
-        <span class="pri p1">P1</span>
-        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="18" r="2.2"/></svg></span>
-        <h3>管理后台</h3>
-        <div class="erole">平台运营端</div>
-        <p>知识库、平台规格、合规规则与用户订单统一管理。</p>
-      </div>
-      <div class="end">
-        <span class="pri p2">P2</span>
-        <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-        <h3>API / SDK</h3>
-        <div class="erole">第三方集成</div>
-        <p>面向平台与渠道的批量生成、白标与定制能力，成为行业基础设施。</p>
-      </div>
-    </div>
-    <div class="users-title reveal">从个人卖家到平台渠道，一套体系全覆盖</div>
-    <div class="ladder reveal">
-      <div class="rung"><div class="cid">C1</div><h4>个人卖家</h4><p>偶尔出闲置或单品，即拍即用。</p><div class="pay">需求重心 · 零门槛快速出图</div></div>
-      <div class="rung"><div class="cid">C2</div><h4>个体经营者</h4><p>专职经营、走量卖货，追求效率。</p><div class="pay">需求重心 · 批量与多平台效率</div></div>
-      <div class="rung"><div class="cid">C3</div><h4>门店 / 小团队</h4><p>实体门店与小型团队，需要协作。</p><div class="pay">需求重心 · 协作、素材库与计费</div></div>
-      <div class="rung"><div class="cid">C4</div><h4>平台 / 品牌 / 渠道</h4><p>电商与垂直平台、品牌方、渠道商。</p><div class="pay">需求重心 · 批量、白标与系统集成</div></div>
-    </div>
-  </div>
-</section>
+
 <!-- ===== 收尾 CTA ===== -->
 <section class="mcta">
   <div class="container">
@@ -1016,7 +1241,7 @@ ul{list-style:none;}
           <ul>
             <li><a href="/workbench.html">Web 工作台</a></li>
             <li><a href="/analytics.html">效果中心</a></li>
-            <li><a href="/usedcar.html">二手车场景示例</a></li>
+            <li><a href="#mpp" onclick="mpNotify();return false;">微信小程序</a></li>
           </ul>
       </div>
       <div class="footer-col">
@@ -1156,28 +1381,89 @@ function mpNotify(){
 </script>
 <script src="/member-auth.js?v=brand20260918" defer></script>
 <script>
-/* Hero 副标题宽度精确对齐「下载微信小程序」按钮右缘：实测按钮组包围宽度后同步，跨断点自适应 */
-(function () {
-  function fitHeroSub() {
-    var cta = document.querySelector('.mh-cta');
-    var sub = document.querySelector('.mh-sub');
-    if (!cta || !sub) return;
-    if (window.innerWidth <= 640) { sub.style.maxWidth = ''; return; }
-    var minL = Infinity, maxR = -Infinity;
-    cta.querySelectorAll('.btn').forEach(function (b) {
-      var r = b.getBoundingClientRect();
-      if (!r.width) return;
-      minL = Math.min(minL, r.left);
-      maxR = Math.max(maxR, r.right);
-    });
-    if (maxR > -Infinity) sub.style.maxWidth = Math.round(maxR - minL) + 'px';
+/* ===== 新版首页交互：Hero 四伙计轮播自荐 / 接力 tab / 手机动效轮播 ===== */
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- Hero 四伙计轮播自荐 ---- */
+  var stage = document.getElementById('hstage');
+  if(stage){
+    var CREW = [
+      {k:'atu', name:'阿图', role:'生图伙计', cs:'#fb923c', cl:'rgba(251,146,60,.45)', g:'rgba(251,146,60,.34)',
+       line:'你手机拍几张传上来，质检、抠底、换场景、出尺寸、做动图我全包——货还是你那件货，图直接能上架。'},
+      {k:'awen', name:'阿文', role:'文案伙计', cs:'#60a5fa', cl:'rgba(96,165,250,.45)', g:'rgba(96,165,250,.34)',
+       line:'标题、卖点、笔记、朋友圈和话题标签我来写，照着你的货和买家爱听的话说，广告法禁词我先过一遍。'},
+      {k:'afa', name:'阿发', role:'发图伙计', cs:'#4ade80', cl:'rgba(74,222,128,.42)', g:'rgba(74,222,128,.32)',
+       line:'小红书、抖音、闲鱼、朋友圈，我按平台打好素材包，再做能追踪的画册和二维码，客户在哪，图就送到哪。'},
+      {k:'agu', name:'阿果', role:'效果伙计', cs:'#c084fc', cl:'rgba(192,132,252,.45)', g:'rgba(192,132,252,.34)',
+       line:'多少人看了、谁扫了码、谁留了电话、哪张图引来询盘，我都记成看板，到点提醒你该跟进谁。'}
+    ];
+    var imgs = stage.querySelectorAll('.hstage-fig img');
+    var dots = stage.querySelectorAll('#hsDots button');
+    var nameEl = document.getElementById('hsName'),
+        roleEl = document.getElementById('hsRole'),
+        lineEl = document.getElementById('hsLine');
+    var cur = 0, timer = null, typeTimer = null;
+
+    function setVars(c){
+      stage.style.setProperty('--cs', c.cs);
+      stage.style.setProperty('--cl', c.cl);
+      stage.style.setProperty('--g', c.g);
+    }
+    function typeText(t){
+      if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
+      lineEl.textContent='';
+      if(reduce){lineEl.textContent=t;return;}
+      var n=0;
+      typeTimer=setInterval(function(){
+        n++; lineEl.textContent=t.slice(0,n);
+        if(n>=t.length){clearInterval(typeTimer);typeTimer=null;}
+      },34);
+    }
+    function show(i, instant){
+      cur=(i+CREW.length)%CREW.length;
+      var c=CREW[cur];
+      imgs.forEach(function(im,idx){im.classList.toggle('on',idx===cur);});
+      dots.forEach(function(d,idx){d.classList.toggle('on',idx===cur);});
+      nameEl.textContent=c.name; roleEl.textContent=c.role; setVars(c);
+      setTimeout(function(){typeText(c.line);}, instant?0:280);
+    }
+    function stop(){if(timer){clearInterval(timer);timer=null;}}
+    function play(){stop();if(!reduce)timer=setInterval(function(){show(cur+1);},5800);}
+    dots.forEach(function(d,idx){d.addEventListener('click',function(){show(idx);play();});});
+    var pv=document.getElementById('hsPrev'), nx=document.getElementById('hsNext');
+    if(pv)pv.addEventListener('click',function(){show(cur-1);play();});
+    if(nx)nx.addEventListener('click',function(){show(cur+1);play();});
+    stage.addEventListener('mouseenter',stop);
+    stage.addEventListener('mouseleave',play);
+    show(0,true); play();
   }
-  function schedule() { requestAnimationFrame(fitHeroSub); }
-  document.addEventListener('DOMContentLoaded', schedule);
-  window.addEventListener('load', function () { schedule(); setTimeout(schedule, 350); setTimeout(schedule, 1000); });
-  var rsT = null;
-  window.addEventListener('resize', function () { clearTimeout(rsT); rsT = setTimeout(schedule, 150); });
-  setTimeout(schedule, 600);
+
+  /* ---- 接力流水线 tab 切换 ---- */
+  var tabs = document.querySelectorAll('#relayTabs .rtab');
+  var panels = document.querySelectorAll('.relay-main .rpanel');
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){x.classList.remove('on');});
+      panels.forEach(function(p){p.classList.remove('on');});
+      t.classList.add('on');
+      if(panels[i])panels[i].classList.add('on');
+    });
+  });
+
+  /* ---- 手机动效轮播 ---- */
+  var screen = document.getElementById('mScreen');
+  if(screen){
+    var slides = screen.querySelectorAll('.mslide'),
+        mdots = screen.querySelectorAll('#mDots b'), mi = 0;
+    function mshow(i){
+      mi=(i+slides.length)%slides.length;
+      slides.forEach(function(s,idx){s.classList.toggle('on',idx===mi);});
+      mdots.forEach(function(d,idx){d.classList.toggle('on',idx===mi);});
+    }
+    mshow(0);
+    if(!reduce)setInterval(function(){mshow(mi+1);},3200);
+  }
 })();
 </script>
 </body>
