@@ -518,6 +518,9 @@ function callGenerateRetry(prompt,imagePayload,size,onTick){
 /* ---------- 对话渲染 ---------- */
 var scroll=$('#chatScroll');
 function scrollBottom(){scroll.scrollTop=scroll.scrollHeight;}
+function nearBottom(){return scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<220;}
+function follow(){if(nearBottom())scrollBottom();}
+scroll.addEventListener('load',function(e){if(e.target&&e.target.tagName==='IMG')follow();},true);
 function botSay(html){
  var m=document.createElement('div');m.className='msg bot';
  m.innerHTML='<span class="m-avatar">'+AVATAR_HTML+'</span><div class="m-body"><div class="bubble">'+html+'</div></div>';
@@ -531,7 +534,7 @@ function userSay(text){
 function card(html){
  var m=document.createElement('div');m.className='msg bot';
  m.innerHTML='<span class="m-avatar">'+AVATAR_HTML+'</span><div class="m-body"><div class="m-card">'+html+'</div></div>';
- scroll.appendChild(m);scrollBottom();return m;
+ scroll.appendChild(m);scrollBottom();requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,80);return m;
 }
 function botTyping(){
  var m=botSay('<span class="typing"><i></i><i></i><i></i></span>');
@@ -734,6 +737,7 @@ function runGenerate(){
     if(token!==state.genToken)return;
     state.results.push({url:url,label:jobs[i].label,k:jobs[i].k});
     if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
+    scrollBottom();
    }catch(e){
     if(token!==state.genToken)return;
     if(row){$('.pt-state',row).textContent='失败';$('.pt-state',row).style.color='#dc2626';}
@@ -766,7 +770,7 @@ function renderResult(){
  state.stage='result';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以点「再来一单」。');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>');return;}
  botSay('齐活。<b>'+state.results.length+' 张成品</b>都在这儿，配了一版文案。要发哪个平台，按你选的尺寸打包好，<b>你点一下就能发</b>。');
- card(resultCardHtml());
+ card(resultCardHtml());requestAnimationFrame(scrollBottom);setTimeout(scrollBottom,300);setTimeout(scrollBottom,900);
 }
 function buildCopy(){
  var used=state.identity.type==='usedcar';
