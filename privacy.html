@@ -167,8 +167,8 @@ a { color: inherit; text-decoration: none; }
 /* 响应式 */
 @media (max-width: 968px) {
   .nav-toggle { display: flex; }
-  .nav-links { position: fixed; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 8px; padding: 14px 22px 20px; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 12px 30px rgba(24,20,16,.12); transform: translateY(-130%); transition: transform .3s cubic-bezier(.22,1,.36,1); }
-  .nav-links.open { transform: translateY(0); }
+  .nav-links { position: fixed; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 8px; padding: 14px 22px 20px; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 12px 30px rgba(24,20,16,.12); transform: translateY(-130%); visibility: hidden; opacity: 0; pointer-events: none; transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, visibility 0s linear .3s; }
+  .nav-links.open { transform: translateY(0); visibility: visible; opacity: 1; pointer-events: auto; transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, visibility 0s; }
   .nav-menu { flex-direction: column; align-items: stretch; gap: 4px; width: 100%; }
   .nav-link { padding: 13px 14px; font-size: 15px; border-radius: 9px; }
   .nav-link::after { display: none; }

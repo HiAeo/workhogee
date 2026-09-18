@@ -41,6 +41,21 @@ img{display:block;max-width:100%}
 .nav-home{font-size:13.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;padding:8px 10px;border-radius:9px;transition:color .2s}
 .nav-home:hover{color:var(--orange-deep)}
 @media(max-width:560px){.nav-home .nh-txt{display:none}}
+/* 移动端顶栏：工作台无汉堡面板，会员区保持紧凑横排，覆盖 member-auth 的纵向全宽规则 */
+@media(max-width:680px){
+ .nav-home{display:none;}
+ .nav .nav-links{gap:8px;}
+ .nav .nav-links .member-nav{flex-direction:row;align-items:center;width:auto;gap:8px;}
+ .nav .nav-links .hm-navbtn{width:auto;padding:8px 13px;font-size:13px;white-space:nowrap;}
+ .nav .nav-links .hm-navuser{flex-direction:row;align-items:center;max-width:128px;justify-content:flex-start;padding:7px 11px;font-size:12px;}
+ .nav .nav-links .hm-navuser span{max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ .nav .nav-links .hm-navlogout{text-align:left;font-size:12px;padding:4px 2px;}
+}
+@media(max-width:380px){
+ .nav .nav-links{gap:6px;}
+ .nav .nav-links .member-nav{gap:6px;}
+ .nav .nav-links .hm-navbtn{padding:8px 11px;font-size:12.5px;}
+}
 
 /* ===== 应用布局 ===== */
 .app{max-width:1240px;margin:0 auto;padding:22px 28px 8px;display:grid;grid-template-columns:268px minmax(0,1fr);gap:20px;align-items:start}
