@@ -114,7 +114,7 @@
     '.hm-chip .hm-chip-name{font-size:12.5px;color:#fff;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
     '.hm-chip button{appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;color:#fff;background:#ea580c;border-radius:999px;padding:5px 12px;}',
     '.hm-chip button:hover{background:#c2410c;}',
-    /* 「发现二手的美」品牌徽章（浅色导航 / 白色工作台版，与首页 logo 旁徽章同款） */
+    /* 「好货的好伙计」品牌徽章（浅色导航 / 白色工作台版，与首页 logo 旁徽章同款） */
     '@property --hm-tag-ang{syntax:"<angle>";initial-value:0deg;inherits:false;}',
     '.hm-badge{position:relative;display:inline-flex;align-items:center;height:31px;padding:0 15px;margin-left:4px;border-radius:999px;border:1px solid rgba(28,25,23,.28);color:#44403c;font-size:12px;font-weight:500;letter-spacing:3px;line-height:1;white-space:nowrap;animation:hmTagFloat 3.8s ease-in-out infinite;transition:color .3s,border-color .3s;}',
     '.hm-badge>span{position:relative;z-index:1;}',
@@ -156,7 +156,7 @@
       '<div class="hm-card" role="dialog" aria-modal="true" aria-label="WorkHogee 会员登录注册">' +
         '<button type="button" class="hm-close" id="hmClose" aria-label="关闭">' + xIcon() + '</button>' +
         '<div class="hm-brand"><span class="hm-wm"><b>Work</b><i>Hogee</i></span>' +
-        '<span class="hm-tagline">二手生图伙计 · 会员账号</span></div>' +
+        '<span class="hm-tagline">生意伙计 · 会员账号</span></div>' +
         '<div class="hm-seg">' +
           '<button type="button" id="hmTabLogin" class="hm-active">登录</button>' +
           '<button type="button" id="hmTabRegister">注册</button>' +
@@ -164,7 +164,7 @@
         '<form id="hmForm" autocomplete="on">' +
           '<div class="hm-field" id="hmNameField" style="display:none;">' +
             '<label for="hmName">联系人 / 商户名（选填）</label>' +
-            '<input class="hm-input" id="hmName" type="text" maxlength="40" placeholder="便于称呼您，如：XX车行 / 张先生">' +
+            '<input class="hm-input" id="hmName" type="text" maxlength="40" placeholder="便于称呼您，如：XX店铺 / 张先生">' +
           '</div>' +
           '<div class="hm-field">' +
             '<label for="hmAccount">手机号 / 邮箱</label>' +
@@ -190,7 +190,7 @@
       '<div class="hm-gate-badge">WORKHOGEE · 内测中</div>' +
       '<span class="hm-wm"><b>Work</b><i>Hogee</i></span>' +
       '<h3 id="hmGateTitle">登录后开始使用工作台</h3>' +
-      '<p>注册一个 WorkHogee 会员账号，即可在 Web 工作台为二手商品生成可上架、可合规的专业物料。内测期间登录即可使用。</p>' +
+      '<p>注册一个 WorkHogee 会员账号，即可在工作台为你的商品生成可上架、可合规的专业图片与图文。内测期间登录即可使用。</p>' +
       '<div class="hm-gate-btns">' +
         '<button type="button" class="hm-navbtn hm-navbtn-primary" data-hm="register">Hogee会员注册</button>' +
         '<button type="button" class="hm-navbtn hm-navbtn-ghost" data-hm="login">登录</button>' +
