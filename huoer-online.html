@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorkHogee 生意伙计 · 二手车工作台</title>
-<meta name="description" content="WorkHogee 生意伙计 · 二手车行业模板 Web 工作台：手机拍车，自动质检、车型确认、场景生成、多平台尺寸导出与车源文案。">
+<meta name="description" content="WorkHogee 生意伙计 · 二手车 Web 工作台：手机拍车，自动质检、车型确认、场景生成、多平台尺寸导出与车源文案。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://miaoda.feishu.cn">
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
@@ -974,8 +974,8 @@ function renderKb(kb){
   panel.hidden=false;
   const name=((kb.brand||'')+' '+(kb.series||'')).trim();
   $('#kbTitle').textContent=name?name+' · 知识库':'通用二手车知识库';
-  const map={series:'车型专属',brand:'品牌通用',generic:'通用模板'};
-  $('#kbMatched').textContent=map[kb.matched]||'通用模板';
+  const map={series:'车型专属',brand:'品牌通用',generic:'通用知识'};
+  $('#kbMatched').textContent=map[kb.matched]||'通用知识';
   const chips=$('#kbChips');chips.innerHTML='';
   (kb.points||[]).slice(0,6).forEach(p=>{
     const b=document.createElement('button');b.type='button';b.className='kb-chip';b.textContent='＋ '+p;
