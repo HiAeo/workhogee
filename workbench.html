@@ -555,7 +555,7 @@ var P_onsite='第一张图是待售二手车（主体，务必完整保留），
 
 /* ---------- 状态 ---------- */
 function resetState(){
- return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:''},outputs:new Set(),scene:null,bgImage:null,
+ return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:'',energy:'',gear:''},outputs:new Set(),scene:null,bgImage:null,
   sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],dyn:[],dynGrid:null,copyChannel:'general',stage:'welcome',genToken:0};
 }
 var state=resetState();
@@ -845,11 +845,15 @@ function buildJobs(){
   var ex=ce.text.trim();
   if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品/车辆本身原有标识除外）：'+ex;
  }
+ var carAnchor='';
+ if(used&&state.product&&state.product.brand){
+  carAnchor='参考图中的车辆识别为「'+productLabel()+'」'+(state.product.energy&&state.product.energy!=='燃油'?'（'+state.product.energy+'）':'')+'，车型名称仅用于帮助识别车辆；必须以参考图里的实车作为唯一准绳，严格保持车身颜色、车型轮廓、车标、轮毂、玻璃、牌照位置与全部外观细节和参考图完全一致，不得按车型名称脑补、不得更换车辆或年款外观、不得改动里程等真实车况信息。';
+ }
  state.outputs.forEach(function(k){
   if(used){
-   if(k==='showroom')jobs.push({k:k,label:'AI 展厅背景图',prompt:P_showroom+extra,image:main});
-   if(k==='studio')jobs.push({k:k,label:'摄影棚背景图',prompt:P_studio+extra,image:main});
-   if(k==='onsite'&&state.bgImage)jobs.push({k:k,label:'实地展厅合成图',prompt:P_onsite+extra,image:[main,state.bgImage]});
+   if(k==='showroom')jobs.push({k:k,label:'AI 展厅背景图',prompt:carAnchor+P_showroom+extra,image:main});
+   if(k==='studio')jobs.push({k:k,label:'摄影棚背景图',prompt:carAnchor+P_studio+extra,image:main});
+   if(k==='onsite'&&state.bgImage)jobs.push({k:k,label:'实地展厅合成图',prompt:carAnchor+P_onsite+extra,image:[main,state.bgImage]});
   }else{
    var name=state.product.name||state.identity.cat||'商品';
    if(k==='white')jobs.push({k:k,label:'纯白底主图',prompt:P_white(name)+extra,image:main});
