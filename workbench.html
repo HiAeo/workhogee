@@ -561,6 +561,9 @@ function resetState(){
 var state=resetState();
 function saveId(){try{localStorage.setItem('hogee_identity',JSON.stringify(state.identity));}catch(e){}}
 function loadId(){try{return JSON.parse(localStorage.getItem('hogee_identity')||'null');}catch(e){return null;}}
+function bgKey(t){return 'hogee_bg_'+t;}
+function saveBg(t,d){try{localStorage.setItem(bgKey(t),d);}catch(e){}}
+function loadBg(t){try{return localStorage.getItem(bgKey(t))||null;}catch(e){return null;}}
 
 /* ---------- 图片处理 ---------- */
 function fileToDataURL(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result);};r.onerror=rej;r.readAsDataURL(f);});}
@@ -676,7 +679,7 @@ function renderIdentityCard(){
   +'<div class="card-actions"><button class="btn btn-ghost btn-sm" data-act="customId">都不是，我自己输入</button></div></div>');
 }
 function setIdentity(id,sayLabel){
- state.identity=id;saveId();updateRail();
+ state.identity=id;saveId();updateRail();state.bgImage=id.type?loadBg(id.type):null;
  userSay(sayLabel||id.label);
  if(id.type==='usedcar'){
   botSay('好嘞，老板，收车了？<b>围着车拍一圈</b>：前脸、左前 45°、正侧、车尾、左右后 45°，内饰和中控也来几张，一起传给我。<br>第一张建议是<b>左前 45° 的整车图</b>，我拿它出展厅图。车身什么成色就拍成什么样，我一点不动。');
@@ -1249,6 +1252,7 @@ document.addEventListener('click',function(ev){
  else if(act==='toScene'){
   var isUsed=state.identity.type==='usedcar';
   if(isUsed&&state.outputs.has('onsite')&&!state.bgImage){userSay('选了实地展厅');renderBgCard();}
+  else if(isUsed&&state.outputs.has('onsite')&&state.bgImage){toast('用你上次传的实地展厅背景，不用再传');renderSpecCard();}
   else if(!isUsed&&state.outputs.has('scene')){renderSceneCard();}
   else{renderSpecCard();}
  }
@@ -1306,10 +1310,10 @@ $('#bgInput').addEventListener('change',function(e){handleBg(e.target.files);e.t
 function handleBg(files){
  var f=files[0];if(!f||!/^image\//.test(f.type))return;
  var stop=botTyping();
- prepareImage(f).then(function(d){stop();state.bgImage=d;
+ prepareImage(f).then(function(d){stop();state.bgImage=d;if(state.identity)saveBg(state.identity.type,d);
   var pv=$('#bgPreview');if(pv)pv.innerHTML='<div class="shot" style="max-width:240px;aspect-ratio:4/3"><img src="'+d+'" alt="展厅背景"></div>';
   var btn=$('#bgReady');if(btn)btn.disabled=false;
-  toast('展厅背景已收到');});
+  toast('展厅背景已收到，下次出单不用再传');});
 }
 /* 拖拽（卡片动态插入，捕获阶段代理） */
 document.addEventListener('dragover',function(e){var d=e.target.closest&&e.target.closest('#drop,#bgDrop');if(d){e.preventDefault();d.classList.add('drag');}},true);
@@ -1347,7 +1351,7 @@ $('#composerInput').addEventListener('input',function(){this.style.height='auto'
 
 /* 新的一单 */
 function newOrder(){
- var id=state.identity;state=resetState();state.identity=id;updateRail();
+ var id=state.identity;state=resetState();state.identity=id;if(id)state.bgImage=loadBg(id.type);updateRail();
  userSay('再来一单');
  botSay('好嘞，新的一单。把这一件货的图传上来，第一张拍清整体。');
  renderUploadCard();state.stage='upload';
