@@ -120,6 +120,14 @@ ul{list-style:none;}
 .mhero-in{position:relative;z-index:2;display:grid;grid-template-columns:7fr 5fr;gap:60px;align-items:center;}
 .mh-left,.mh-right{min-width:0;}
 .mh-left img,.mh-right img{max-width:100%;}
+/* ===== Hero 四伙计并排合影（悬浮 + 单只悬停） ===== */
+.hero-team{display:flex;align-items:flex-end;justify-content:flex-start;flex-wrap:nowrap;gap:clamp(6px,1.4vw,22px);margin:0 0 clamp(24px,3.6vh,42px);width:100%;}
+.hero-team img{height:clamp(128px,15.4vw,212px);width:auto;display:block;min-width:0;transform-origin:50% 100%;filter:drop-shadow(0 20px 28px rgba(0,0,0,.5));animation:teamFloat 5.6s ease-in-out infinite;transition:transform .32s cubic-bezier(.34,1.45,.5,1),filter .32s;will-change:transform;}
+.hero-team img:nth-child(2){animation-delay:.5s;}
+.hero-team img:nth-child(3){animation-delay:1s;}
+.hero-team img:nth-child(4){animation-delay:1.5s;}
+.hero-team img:hover{animation-play-state:paused;transform:translateY(-16px) scale(1.06);filter:drop-shadow(0 30px 42px rgba(0,0,0,.62));position:relative;z-index:3;}
+@keyframes teamFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 .mh-mascot{display:inline-flex;justify-content:flex-start;margin-bottom:2px;position:relative;width:max-content;max-width:100%;}
 .mh-atu-wrap{position:relative;display:inline-block;max-width:100%;transform:translateY(14px);}
 .mh-atu{height:156px;width:auto;display:block;transform-origin:50% 100%;filter:drop-shadow(0 20px 26px rgba(0,0,0,.42));animation:atuFloat 5s ease-in-out 1s infinite;}
@@ -512,6 +520,8 @@ ul{list-style:none;}
   .mh-atu{animation:none;}
   .mh-atu-stage{transition:none;}
   .atu-flash,.atu-tip,.atu-bubble{display:none;}
+  .hero-team img{animation:none;}
+  .hero-team img:hover{transform:none;filter:drop-shadow(0 20px 28px rgba(0,0,0,.5));}
   html{scroll-behavior:auto;}
 }
 
@@ -519,6 +529,7 @@ ul{list-style:none;}
 @media (max-width:960px){
   .mhero{padding-top:132px;}
   .mhero-in{grid-template-columns:1fr;gap:40px;}
+  .hero-team img{height:clamp(150px,22vw,212px);}
   .mh-creed{margin-top:46px;}
   .mh-creed .sm{margin-left:0;}
   .shead{grid-template-columns:1fr;gap:14px;margin-bottom:38px;}
@@ -580,6 +591,8 @@ ul{list-style:none;}
   .mcta .mp-line button{padding:8px 4px;}
   .mh-mascot{margin-bottom:0;}
   .mh-atu{height:116px;}
+  .hero-team{gap:4px;margin-bottom:20px;}
+  .hero-team img{height:clamp(92px,28vw,120px);}
   .atu-bubble{left:56%;bottom:45%;width:auto;max-width:min(60vw,214px);white-space:nowrap;font-size:13px;padding:9px 13px;}
   .atu-bubble .bub-caret{left:22px;}
   .mh-eyebrow{margin-bottom:18px;font-size:12px;padding:6px 12px;}
@@ -600,6 +613,8 @@ ul{list-style:none;}
   .mh-mascot{margin-bottom:0;}
   .mh-atu{height:118px;}
   .mh-eyebrow{margin-bottom:20px;}
+  .hero-team img{height:160px;}
+  .hero-team{margin-bottom:22px;}
   .mh-title{font-size:clamp(40px,5.2vw,64px);}
   .mh-sub{margin-top:18px;font-size:16px;line-height:1.72;}
   .mh-cta{margin-top:24px;}
@@ -664,6 +679,8 @@ ul{list-style:none;}
   .mhero{padding-top:104px;}
   .mh-atu{height:96px;}
   .mh-eyebrow{margin-bottom:16px;}
+  .hero-team img{height:132px;}
+  .hero-team{margin-bottom:18px;}
   .mh-title{font-size:clamp(36px,4.6vw,54px);}
   .mh-sub{margin-top:14px;font-size:15.5px;}
   .mh-cta{margin-top:20px;}
@@ -717,24 +734,12 @@ ul{list-style:none;}
   <div class="container">
     <div class="mhero-in">
       <div class="mh-left">
-        <div class="mh-mascot mh-anim" style="animation-delay:0s">
-          <div class="mh-atu-wrap">
-            <div class="mh-atu-stage" id="atuStage">
-              <img class="mh-atu" src="images/atu-half.png" alt="阿图，WorkHogee 镜头头伙计" width="1000" height="901" loading="eager">
-              <span class="atu-flash" aria-hidden="true"></span>
-              <span class="atu-tip t1" aria-hidden="true"></span>
-              <span class="atu-tip t2" aria-hidden="true"></span>
-            </div>
-            <div class="atu-bubble" id="atuBubble" aria-hidden="true">
-              <span class="bub-text" id="atuBubText"></span>
-              <span class="bub-caret" aria-hidden="true"></span>
-              <span class="smk s1" aria-hidden="true"></span>
-              <span class="smk s2" aria-hidden="true"></span>
-              <span class="smk s3" aria-hidden="true"></span>
-            </div>
-          </div>
+        <div class="hero-team mh-anim" style="animation-delay:0s" role="img" aria-label="WorkHogee 伙计全家福，从左到右：阿图（生图伙计）、阿文（文案伙计）、阿发（发图伙计）、阿果（效果伙计）">
+          <img src="images/hero-atu.png" alt="阿图 · 生图伙计" width="973" height="1500" loading="eager">
+          <img src="images/hero-awen.png" alt="阿文 · 文案伙计" width="1110" height="1500" loading="eager">
+          <img src="images/hero-afa.png" alt="阿发 · 发图伙计" width="918" height="1500" loading="eager">
+          <img src="images/hero-agu.png" alt="阿果 · 效果伙计" width="1110" height="1500" loading="eager">
         </div>
-        <div class="mh-eyebrow mh-anim" style="animation-delay:.02s"><span class="dot"></span><span class="eb-full">WorkHogee 生意伙计</span><span class="eb-mini">WorkHogee 生意伙计</span></div>
         <h1 class="mh-title mh-anim" style="animation-delay:.10s">做生意，<br>找<span class="ac">伙计</span>。</h1>
         <p class="mh-sub mh-anim" style="animation-delay:.20s">Hogee 不是单点出图工具，而是把商家从拍摄、质检、识别、生成、合规到多平台导出的整条图文工作流跑通。一套工作台，全行业通用，阿图会按你的行当用对出图路数。</p>
         <div class="mh-cta mh-anim" style="animation-delay:.30s">
