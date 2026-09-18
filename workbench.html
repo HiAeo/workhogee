@@ -1,205 +1,995 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkHogee 工作台 · 选择行业</title>
-<meta name="description" content="WorkHogee 生意伙计 Web 工作台：选择你的行业，进入对应的 AI 商品图与图文工作台。当前开放二手车行业模板，更多行业持续开放。">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="preconnect" href="https://miaoda.feishu.cn">
-<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WorkHogee 工作台 · 做生意，找伙计</title>
+<meta name="description" content="WorkHogee 生意伙计工作台：拍几张手机图，阿图带你出商品图、场景图与图文，一次生成、多平台适配。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231c1917'/%3E%3Cpath d='M9 12h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z' fill='none' stroke='%23ea580c' stroke-width='2'/%3E%3Ccircle cx='16' cy='17.5' r='3.2' fill='none' stroke='%23ea580c' stroke-width='2'/%3E%3C/svg%3E">
 <style>
 :root{
-  --ink:#1c1917;--ink-soft:#57534e;--ink-muted:#a8a29e;--line:#e7e0d4;--line-strong:#d8cfbf;
-  --orange:#ea580c;--orange-deep:#c2410c;--orange-light:#fb923c;--orange-bg:#fff4ec;
-  --paper:#f6f4f0;--card:#ffffff;--sand:#efe9dd;
-  --shadow:0 1px 2px rgba(28,25,23,.05),0 8px 24px -12px rgba(28,25,23,.12);
-  --shadow-lg:0 24px 60px -24px rgba(28,25,23,.22);
-  --radius:16px;
+  --orange:#ea580c;--orange-deep:#c2410c;--orange-bg:#fff4ec;--orange-line:#fed7aa;
+  --ink:#1c1917;--ink-soft:#44403c;--muted:#78716c;--faint:#a8a29e;
+  --line:#e9e4db;--line2:#f0ece4;--bg:#faf9f7;--panel:#ffffff;--sand:#f5f3ef;
+  --shadow:0 1px 2px rgba(28,25,23,.04),0 8px 28px -18px rgba(28,25,23,.18);
+  --shadow-lg:0 24px 60px -28px rgba(28,25,23,.35);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
-button{font-family:inherit;cursor:pointer;border:none;background:none}
-a{text-decoration:none;color:inherit}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
 img{display:block;max-width:100%}
-::selection{background:var(--orange);color:#fff}
+.container{max-width:1240px;margin:0 auto;padding:0 28px}
+@media(max-width:640px){.container{padding:0 16px}}
 
-/* ===== 顶栏（与操作台一致） ===== */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.topbar-inner{max-width:1080px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:16px}
-.tb-logo{display:flex;align-items:center;flex-shrink:0}
-.tb-logo svg{height:22px;width:auto;display:block}
-.tb-divider{width:1px;height:22px;background:var(--line)}
-.tb-title{font-size:15px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.tb-title small{font-weight:400;color:var(--ink-muted);font-size:12px;margin-left:6px}
-.tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
-.beta-tag{font-size:11px;font-weight:700;color:var(--orange-deep);background:var(--orange-bg);border:1px solid #fed7aa;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.tb-back{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;transition:color .2s}
-.tb-back:hover{color:var(--orange)}
-.tb-back svg{width:15px;height:15px}
+/* ===== 顶部导航（与全站一致） ===== */
+.nav{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1240px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;gap:18px}
+.nav-logo{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.nav-logo svg{height:22px;width:auto;display:block}
+.nav-tag{display:inline-flex;align-items:center;height:26px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--ink-soft);white-space:nowrap;transition:border-color .25s,color .25s}
+.nav-tag:hover{border-color:var(--orange);color:var(--orange-deep)}
+@media(max-width:760px){.nav-tag{display:none}}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:10px}
+.member-nav{display:flex;align-items:center;gap:10px}
+.hm-btn{appearance:none;border:0;border-radius:10px;padding:9px 18px;font-size:14px;font-weight:700;transition:transform .15s,background .2s,color .2s,border-color .2s;white-space:nowrap}
+.hm-btn-reg{background:var(--orange);color:#fff}
+.hm-btn-reg:hover{background:var(--orange-deep);transform:translateY(-1px)}
+.hm-btn-login{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.hm-btn-login:hover{border-color:var(--orange);color:var(--orange-deep)}
+.nav-home{font-size:13.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;padding:8px 10px;border-radius:9px;transition:color .2s}
+.nav-home:hover{color:var(--orange-deep)}
+@media(max-width:560px){.nav-home .nh-txt{display:none}}
 
-/* ===== 主体 ===== */
-.wrap{max-width:1080px;margin:0 auto;padding:60px 24px 90px}
-.head{max-width:680px;margin-bottom:40px}
-.kick{font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;margin-bottom:14px}
-.head h1{font-size:clamp(28px,3.6vw,40px);font-weight:900;letter-spacing:-.8px;line-height:1.2}
-.head p{margin-top:16px;font-size:15.5px;color:var(--ink-soft);line-height:1.85}
-.head p b{color:var(--ink);font-weight:700}
+/* ===== 应用布局 ===== */
+.app{max-width:1240px;margin:0 auto;padding:22px 28px 8px;display:grid;grid-template-columns:268px minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:920px){.app{grid-template-columns:1fr;padding:14px 14px 6px}}
 
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.cat{position:relative;display:flex;flex-direction:column;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;box-shadow:var(--shadow);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;font-family:inherit;color:var(--ink)}
-.cat .top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
-.ci{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft)}
-.ci svg{width:24px;height:24px}
-.st{font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;white-space:nowrap}
-.st.live{background:var(--orange);color:#fff}
-.st.soon{background:var(--sand);color:var(--ink-soft)}
-.st.plan{background:transparent;color:var(--ink-muted);border:1px solid var(--line-strong)}
-.cat h3{font-size:18.5px;font-weight:800;letter-spacing:-.01em}
-.cf{font-size:12.5px;font-weight:600;color:var(--orange-deep);margin-top:3px}
-.cat .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.65;margin-top:12px;flex:1}
-.foot{margin-top:18px;display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700}
-.foot svg{width:16px;height:16px;transition:transform .25s}
-.cat.live{border-color:rgba(234,88,12,.45);background:linear-gradient(180deg,var(--orange-bg),#fff 46%)}
-.cat.live .ci{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 8px 20px -6px rgba(234,88,12,.55)}
-.cat.live .foot{color:var(--orange-deep)}
-.cat.live:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--orange)}
-.cat.live:hover .foot svg{transform:translateX(4px)}
-.cat.soon .ci,.cat.plan .ci{color:var(--ink-muted)}
-.cat.soon:hover,.cat.plan:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong)}
-.cat.soon .foot,.cat.plan .foot{color:var(--ink-muted);font-weight:600}
-.cat.soon .foot svg,.cat.plan .foot svg{width:15px;height:15px}
+/* 左栏 */
+.rail{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);position:sticky;top:86px}
+@media(max-width:920px){.rail{display:none}}
+.rail-id{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid var(--line2);border-radius:12px;background:var(--sand)}
+.rail-avatar{width:38px;height:38px;border-radius:11px;background:var(--ink);color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rail-id .ri-name{font-size:14px;font-weight:800;line-height:1.3}
+.rail-id .ri-sub{font-size:11.5px;color:var(--muted);line-height:1.3}
+.rail-change{margin-left:auto;appearance:none;background:none;border:0;color:var(--faint);padding:4px;border-radius:7px;display:flex}
+.rail-change:hover{color:var(--orange-deep)}
+.rail-btn{width:100%;margin-top:11px;appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:10px;font-size:13.5px;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:7px;transition:.2s}
+.rail-btn:hover{border-color:var(--orange);color:var(--orange-deep)}
+.rail-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.rail-btn.primary:hover{background:#000}
+.rail-sep{height:1px;background:var(--line2);margin:15px 0}
+.rail-h{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--faint);margin-bottom:9px;text-transform:uppercase}
+.rail-shots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;min-height:30px}
+.rail-shots .rs{aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--sand);border:1px solid var(--line2)}
+.rail-shots .rs img{width:100%;height:100%;object-fit:cover}
+.rail-empty{font-size:12px;color:var(--faint);grid-column:1/-1;padding:6px 2px}
+.rail-link{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);padding:8px 9px;border-radius:9px;transition:.18s}
+.rail-link:hover{background:var(--sand);color:var(--orange-deep)}
+.rail-link svg{color:var(--muted)}
 
-/* ===== 底部承诺 ===== */
-.pledge{margin-top:26px;display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 26px;box-shadow:var(--shadow)}
-.pledge .pic{width:44px;height:44px;border-radius:11px;background:var(--orange-bg);border:1px solid #fed7aa;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pledge .pic svg{width:23px;height:23px}
-.pledge .pt{font-size:14px;color:var(--ink-soft);line-height:1.7}
-.pledge .pt b{color:var(--ink);font-weight:700}
-.pledge .go{margin-left:auto;flex-shrink:0;font-size:13.5px;font-weight:700;color:var(--orange-deep);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.pledge .go svg{width:16px;height:16px;transition:transform .25s}
-.pledge .go:hover svg{transform:translateX(4px)}
+/* 对话区 */
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;min-height:640px}
+.chat-head{padding:14px 20px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:11px;background:linear-gradient(180deg,#fff,#fdfcfa)}
+.ch-avatar{width:36px;height:36px;border-radius:11px;background:var(--ink);color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ch-title{font-size:15px;font-weight:800}
+.ch-sub{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.ch-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.chat-scroll{flex:1;overflow-y:auto;padding:24px 20px 12px;display:flex;flex-direction:column;gap:16px;min-height:440px;max-height:calc(100vh - 300px)}
+@media(max-width:920px){.chat-scroll{max-height:calc(100vh - 268px);min-height:420px}}
+.msg{display:flex;gap:11px;max-width:100%;animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse}
+.m-avatar{width:32px;height:32px;border-radius:10px;background:var(--ink);color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.msg.user .m-avatar{background:var(--orange);color:#fff}
+.m-body{min-width:0;max-width:78%}
+.bubble{padding:11px 15px;border-radius:14px;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.msg.bot .bubble{background:var(--sand);border:1px solid var(--line2);border-top-left-radius:5px;color:var(--ink)}
+.msg.user .bubble{background:var(--orange);color:#fff;border-top-right-radius:5px}
+.m-card{width:100%;background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}
+@media(max-width:640px){.m-body{max-width:92%}}
 
-/* ===== Toast ===== */
-.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,16px);background:var(--ink);color:#fff;font-size:14px;line-height:1.55;padding:13px 22px;border-radius:11px;box-shadow:0 18px 46px rgba(28,25,23,.34);max-width:88vw;opacity:0;pointer-events:none;transition:opacity .28s,transform .28s cubic-bezier(.22,1,.36,1);z-index:9999;text-align:center}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.toast b{color:var(--orange-light);font-weight:700}
+/* 卡片通用 */
+.card-pad{padding:16px 17px}
+.card-title{font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.card-desc{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:13px}
+.chip-grid{display:flex;flex-wrap:wrap;gap:9px}
+.chip{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:11px;padding:10px 14px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;transition:.18s;text-align:left}
+.chip:hover{border-color:var(--orange);color:var(--orange-deep);transform:translateY(-1px)}
+.chip.on{background:var(--orange);border-color:var(--orange);color:#fff}
+.chip.on .chip-sub{color:#ffe4d2}
+.chip .chip-ico{color:var(--orange-deep);display:flex}
+.chip.on .chip-ico{color:#fff}
+.chip-sub{font-size:11px;color:var(--muted);font-weight:500}
+.chip-block{margin-bottom:15px}
+.chip-block:last-child{margin-bottom:0}
+.cb-label{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.cb-label .opt{font-weight:500;color:var(--faint);font-size:11px}
+.card-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+.btn{appearance:none;border:0;border-radius:11px;padding:11px 20px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s;border:1.5px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-deep);transform:translateY(-1px)}
+.btn-primary:disabled{background:#d6d3d1;cursor:not-allowed;transform:none}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:#000}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--ink-soft)}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange-deep)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:9px}
 
-/* ===== 动效 ===== */
-.rise{opacity:0;transform:translateY(18px);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
-@keyframes rise{to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){
-  .rise{animation:none;opacity:1;transform:none}
-  html{scroll-behavior:auto}
-  .cat:hover,.cat.live:hover{transform:none}
-}
+/* 上传 */
+.drop{border:1.5px dashed var(--line);border-radius:14px;background:var(--sand);padding:26px 18px;text-align:center;transition:.2s;cursor:pointer}
+.drop:hover,.drop.drag{border-color:var(--orange);background:var(--orange-bg)}
+.drop-ico{width:46px;height:46px;margin:0 auto 10px;border-radius:13px;background:#fff;border:1px solid var(--line);color:var(--orange-deep);display:flex;align-items:center;justify-content:center}
+.drop h4{font-size:14.5px;font-weight:800;margin-bottom:4px}
+.drop p{font-size:12px;color:var(--muted)}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:9px;margin-top:13px}
+.shot{position:relative;aspect-ratio:1;border-radius:11px;overflow:hidden;border:1px solid var(--line2);background:#fff}
+.shot img{width:100%;height:100%;object-fit:cover}
+.shot .q{position:absolute;left:5px;top:5px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;backdrop-filter:blur(3px)}
+.q.ok{background:rgba(34,197,94,.85);color:#fff}
+.q.warn{background:rgba(234,88,12,.9);color:#fff}
+.q.bad{background:rgba(220,38,38,.9);color:#fff}
+.shot .del{position:absolute;right:4px;top:4px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(28,25,23,.6);color:#fff;font-size:12px;line-height:1;display:none;align-items:center;justify-content:center}
+.shot:hover .del{display:flex}
+.tip-line{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink-soft);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:11px;padding:10px 12px;margin-top:12px;line-height:1.6}
+.tip-line svg{color:var(--orange-deep);flex-shrink:0;margin-top:2px}
 
-/* ===== 响应式 ===== */
-@media (max-width:860px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .grid > .cat.plan{grid-column:1 / -1}
-}
-@media (max-width:600px){
-  .wrap{padding:40px 18px 70px}
-  .grid{grid-template-columns:1fr}
-  .head{margin-bottom:30px}
-  .pledge{flex-direction:column;align-items:flex-start;gap:14px}
-  .pledge .go{margin-left:0;padding:8px 0}
-  .beta-tag{display:none}
-  .cat .ds{font-size:14px}
-  .cf{font-size:13px}
-  .tb-back{padding:8px 4px}
-}
+/* 表单 */
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}
+.fld input,.fld select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14px;background:#fcfbf9;color:var(--ink);font-family:inherit;transition:border-color .2s}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--orange);background:#fff}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.brand-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.brand-quick button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-soft);transition:.15s}
+.brand-quick button:hover{border-color:var(--orange);color:var(--orange-deep)}
+
+/* 进度 */
+.prog-task{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px dashed var(--line2)}
+.prog-task:last-child{border-bottom:0}
+.pt-ico{width:30px;height:30px;border-radius:9px;background:var(--sand);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prog-task.done .pt-ico{background:#ecfdf5;color:#16a34a}
+.prog-task.run .pt-ico{background:var(--orange-bg);color:var(--orange-deep)}
+.pt-name{font-size:13.5px;font-weight:700}
+.pt-sub{font-size:11.5px;color:var(--muted)}
+.pt-state{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.prog-task.done .pt-state{color:#16a34a}
+.prog-task.run .pt-state{color:var(--orange-deep)}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 结果 */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.res{border:1px solid var(--line2);border-radius:13px;overflow:hidden;background:#fff;transition:.2s}
+.res:hover{border-color:var(--orange-line);box-shadow:var(--shadow)}
+.res-img{position:relative;aspect-ratio:1;background:var(--sand);cursor:zoom-in}
+.res-img img{width:100%;height:100%;object-fit:cover}
+.res-tag{position:absolute;left:7px;top:7px;font-size:10.5px;font-weight:700;color:#fff;background:rgba(28,25,23,.62);padding:3px 9px;border-radius:999px;backdrop-filter:blur(3px)}
+.res-ai{position:absolute;right:7px;bottom:7px;font-size:9.5px;font-weight:600;color:#fff;background:rgba(28,25,23,.5);padding:2px 7px;border-radius:5px}
+.res-meta{padding:9px 10px}
+.res-name{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-acts{display:flex;gap:6px;margin-top:7px}
+.res-acts button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 0;font-size:11.5px;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:4px;transition:.15s}
+.res-acts button:hover{border-color:var(--orange);color:var(--orange-deep)}
+.copy-box{margin-top:15px;border:1px solid var(--line2);border-radius:12px;overflow:hidden}
+.copy-head{display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--sand);font-size:13px;font-weight:800}
+.copy-head button{margin-left:auto}
+.copy-box textarea{width:100%;border:0;resize:vertical;min-height:120px;padding:12px 13px;font-size:13px;line-height:1.75;color:var(--ink-soft);font-family:inherit;background:#fcfbf9}
+.copy-box textarea:focus{outline:none}
+.compliance{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;color:var(--muted);background:var(--sand);border-radius:10px;padding:10px 12px;margin-top:12px;line-height:1.6}
+.compliance svg{color:var(--ink-soft);flex-shrink:0;margin-top:1px}
+
+/* 输入栏 */
+.composer{border-top:1px solid var(--line2);padding:13px 16px;background:linear-gradient(0deg,#fff,#fdfcfa)}
+.composer-row{display:flex;align-items:flex-end;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:8px 8px 8px 10px;transition:border-color .2s,box-shadow .2s}
+.composer-row:focus-within{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-bg)}
+.c-up{appearance:none;border:0;background:var(--sand);color:var(--ink-soft);width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s}
+.c-up:hover{background:var(--orange-bg);color:var(--orange-deep)}
+.c-input{flex:1;min-width:0;width:100%;border:0;resize:none;max-height:120px;min-height:24px;padding:9px 4px;font-size:16px;font-family:inherit;line-height:1.5;background:transparent;color:var(--ink)}
+@media(max-width:640px){.c-input{font-size:16px}.composer{padding:11px 12px}.composer-row{gap:8px;padding:7px}.composer-hint{font-size:10.5px}}
+.c-input:focus{outline:none}
+.c-send{appearance:none;border:0;background:var(--orange);color:#fff;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s}
+.c-send:hover{background:var(--orange-deep)}
+.composer-hint{font-size:11px;color:var(--faint);margin:8px 4px 0;text-align:center}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:200;background:rgba(28,25,23,.86);display:none;align-items:center;justify-content:center;padding:30px;animation:fade .2s}
+.lb.show{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.lb img{max-width:92vw;max-height:86vh;border-radius:12px;box-shadow:var(--shadow-lg)}
+.lb-close{position:absolute;top:22px;right:26px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+.lb-close:hover{background:rgba(255,255,255,.24)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.3s;z-index:210;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.toast.err{background:#b91c1c}
+
+.typing{display:inline-flex;gap:4px;padding:4px 2px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--faint);animation:blink 1.2s infinite both}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* ===== 页脚（与全站一致） ===== */
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:26px}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:46px 0 34px}
+@media(max-width:820px){.footer-grid{grid-template-columns:1fr 1fr;gap:26px}}
+.fb-logo{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.footer-col h5{font-size:13px;font-weight:800;margin-bottom:14px;color:var(--ink)}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:9px}
+.footer-col a{font-size:13px;color:var(--muted);transition:color .2s}
+.footer-col a:hover{color:var(--orange-deep)}
+.foot-tag{height:24px;padding:0 11px;font-size:11.5px}
+.footer-bottom{border-top:1px solid var(--line2);padding:18px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:var(--faint)}
+.footer-links a:hover{color:var(--orange-deep)}
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="tb-logo" href="/" title="返回 WorkHogee 首页">
-      <svg viewBox="0 0 118 19.13" xmlns="http://www.w3.org/2000/svg" aria-label="WorkHogee"><defs><style>.wl1{fill:#1c1917}.wl2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text></g></svg>
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" height="22">
+        <g transform="translate(-1.06 -28.16)">
+          <path fill="#1c1917" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path fill="#1c1917" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path fill="#1c1917" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path fill="#1c1917" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+      <span class="nav-tag"><span>好货的好伙计</span></span>
     </a>
-    <div class="tb-divider"></div>
-    <span class="hm-badge"><span>好货的好伙计</span></span>
-    <div class="tb-right">
+    <nav class="nav-links">
+      <a class="nav-home" href="/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg><span class="nh-txt">回首页</span></a>
       <div class="member-nav" data-member-nav></div>
-    </div>
+    </nav>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="head rise">
-    <div class="kick">Workspace · 选择行业</div>
-    <h1>先选一个行业，<br>进入你的 AI 物料工作台</h1>
-    <p>同一套 WorkHogee 工作台，按行业独立配置<b>拍摄点位、行业知识库、合规红线与渠道尺寸</b>。当前率先开放二手车行业模板，更多行业持续开放——所有产出都基于你的真实商品图，只优化呈现，不改变商品本身。</p>
-  </div>
-
-  <section class="grid" aria-label="选择行业工作台">
-    <!-- 二手车：已上线 -->
-    <a class="cat live rise" href="/huoer-online.html" style="animation-delay:.04s">
-      <span class="top">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
-        <span class="st live">首发模板 · 已上线</span>
-      </span>
-      <h3>二手车伙计</h3>
-      <div class="cf">车况 vs 图骗</div>
-      <p class="ds">外观、内饰、细节智能拍摄引导与质检，自动产出精修图、场景图、360 动态展示、GIF 动态图与车源文案，一次适配懂车帝、汽车之家、瓜子、闲鱼、小红书、朋友圈、抖音。</p>
-      <span class="foot">进入工作台<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
-    </a>
-
-    <!-- 二手房：即将上线 -->
-    <button type="button" class="cat soon rise" data-soon="二手房伙计正在内测筹备，即将开放，敬请期待。当前可先使用二手车伙计。" style="animation-delay:.08s">
-      <span class="top">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
-        <span class="st soon">即将上线 · P1</span>
-      </span>
-      <h3>二手房伙计</h3>
-      <div class="cf">格局 vs 美化失真</div>
-      <p class="ds">还原真实户型、朝向与采光，拒绝广角畸变、调色失真引发的带看落差与纠纷，自动适配贝壳、闲鱼、小红书等渠道。</p>
-      <span class="foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>内测筹备中</span>
+<main class="app">
+  <aside class="rail">
+    <div class="rail-id">
+      <span class="rail-avatar" id="railAvatar"></span>
+      <div>
+        <div class="ri-name" id="railName">阿图伙计</div>
+        <div class="ri-sub" id="railSub">先告诉伙计你做什么生意</div>
+      </div>
+      <button class="rail-change" id="railChange" title="更换行当" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      </button>
+    </div>
+    <button class="rail-btn primary" id="railNew">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      新的一单
     </button>
-
-    <!-- 更多行业：全行业持续开放 -->
-    <a class="cat plan rise" href="mailto:hello@workhogee.com?subject=%E6%88%91%E6%83%B3%E8%A6%81%E7%9A%84%E8%A1%8C%E4%B8%9A%E6%A8%A1%E6%9D%BF" style="animation-delay:.12s">
-      <span class="top">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-        <span class="st plan">持续开放 · 全行业</span>
-      </span>
-      <h3>更多行业模板</h3>
-      <div class="cf">你的行业，下一个模板</div>
-      <p class="ds">零售商品、本地生活、商业服务、外贸出海……同一套生产引擎按行业模板逐个开放。说说你在哪个行业，我们优先为你打磨。</p>
-      <span class="foot">告诉我们你的行业<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+    <div class="rail-sep"></div>
+    <div class="rail-h">本单素材</div>
+    <div class="rail-shots" id="railShots"><div class="rail-empty">还没有上传图片</div></div>
+    <div class="rail-sep"></div>
+    <a class="rail-link" href="/analytics.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+      效果中心
     </a>
-  </section>
+    <a class="rail-link" href="/usedcar.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
+      二手车场景示例
+    </a>
+  </aside>
 
-  <div class="pledge rise" style="animation-delay:.3s">
-    <span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-    <div class="pt"><b>只优化呈现，不改变商品本身。</b> 每个行业模板的合规红线内置且不可关闭：不改成色与颜色、不抹瑕疵、不藏问题，车牌、人脸、序列号等敏感信息自动脱敏，AI 生成内容统一带标识。</div>
-    <span style="display:flex;gap:18px;flex-wrap:wrap;flex-shrink:0;align-items:center"><a class="go" href="/analytics.html">效果中心<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><a class="go" href="/">了解 WorkHogee<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></span>
-  </div>
+  <section class="chat">
+    <div class="chat-head">
+      <span class="ch-avatar" id="chAvatar"></span>
+      <div>
+        <div class="ch-title">阿图 · WorkHogee 伙计</div>
+        <div class="ch-sub"><span class="ch-dot"></span><span id="chStatus">在线，传图就能开工</span></div>
+      </div>
+    </div>
+    <div class="chat-scroll" id="chatScroll"></div>
+    <div class="composer">
+      <div class="composer-row">
+        <button class="c-up" id="btnUpload" title="上传图片">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>
+        </button>
+        <textarea class="c-input" id="composerInput" rows="1" placeholder="说下要做什么图，或传图"></textarea>
+        <button class="c-send" id="btnSend" title="发送">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+        </button>
+      </div>
+      <div class="composer-hint">商品本身阿图一点不动，只优化呈现 · 成品带 AI 生成标识 · 发布由你本人完成</div>
+    </div>
+  </section>
 </main>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileInput" accept="image/*" multiple hidden>
+<input type="file" id="bgInput" accept="image/*" hidden>
 
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="fb-logo">
+          <a href="/" aria-label="WorkHogee">
+            <svg viewBox="0 0 118 19.13" height="28" aria-label="WorkHogee">
+              <g transform="translate(-1.06 -28.16)">
+                <path fill="#ffffff" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+                <path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+                <path fill="#ffffff" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+                <path fill="#ffffff" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+                <path fill="#ffffff" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+                <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" fill="#ffffff">Hogee</text>
+              </g>
+            </svg>
+          </a>
+          <span class="nav-tag foot-tag"><span>好货的好伙计</span></span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+        <ul>
+          <li><a href="/workbench.html">Web 工作台</a></li>
+          <li><a href="/analytics.html">效果中心</a></li>
+          <li><a href="/usedcar.html">二手车场景示例</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank" rel="noopener">GitHub 仓库</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="https://www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>关于</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 WorkHogee. All rights reserved. 做生意，找伙计。</div>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="lb" id="lightbox"><button class="lb-close" id="lbClose" aria-label="关闭"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button><img id="lbImg" alt="成品大图"></div>
+<div class="toast" id="toast"></div>
+
+<script src="/member-auth.js?v=brand20260918"></script>
 <script>
+/* ============================================================
+   WorkHogee 对话式工作台 · 阿图
+   打开即对话 → 问身份 → 传图 → 认货确认 → 选产出/场景/规格 → 出图 → 交付
+   全行业通用能力；二手车身份叠加车商专属能力
+   ============================================================ */
 (function(){
-  var toast=document.getElementById('toast'),timer=null;
-  function show(msg){
-    toast.textContent=msg;
-    toast.classList.add('show');
-    clearTimeout(timer);
-    timer=setTimeout(function(){toast.classList.remove('show');},2800);
-  }
-  document.querySelectorAll('[data-soon]').forEach(function(el){
-    el.addEventListener('click',function(e){
-      e.preventDefault();
-      show(el.getAttribute('data-soon'));
-    });
+'use strict';
+var API='https://api.workhogee.com';
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+
+/* ---------- 图标（黑白橙线性，无彩色/emoji） ---------- */
+var IC={
+ camera:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h2l1.5-2h7L17 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13.5" r="3.4"/></svg>',
+ car:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>',
+ shirt:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4 16 3a4 4 0 0 1-8 0L4 4 2 8l4 2v11h12V10l4-2Z"/></svg>',
+ device:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 18h6"/></svg>',
+ home:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>',
+ beauty:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1 6h-4Z"/><path d="M7 9h10l1.5 11a1.5 1.5 0 0 1-1.5 1.7H7A1.5 1.5 0 0 1 5.5 20Z"/></svg>',
+ food:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-2 2-2.5 5-2.5 8h5c0-3-.5-6-2.5-8ZM19.5 11V21"/></svg>',
+ gem:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9Z"/><path d="M2 9h20M9 3l-3 6 6 12 6-12-3-6"/></svg>',
+ shop:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 4 4h16l1 5"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></svg>',
+ check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+ image:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>',
+ download:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>',
+ redo:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>',
+ zoom:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>',
+ pack:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>'
+};
+var AVATAR_HTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h2l1.5-2h7L17 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13.5" r="3.4"/></svg>';
+$('#railAvatar').innerHTML=AVATAR_HTML;$('#chAvatar').innerHTML=AVATAR_HTML;
+
+/* ---------- 身份/行当 ---------- */
+var IDENTITIES=[
+ {type:'usedcar',label:'二手车',icon:IC.car,line:'收车拍几张，展厅/棚拍全套，车身不动'},
+ {type:'general',cat:'服装鞋包',icon:IC.shirt,line:'白底主图、上身与场景图'},
+ {type:'general',cat:'数码家电',icon:IC.device,line:'白底主图、质感细节、生活场景'},
+ {type:'general',cat:'家居百货',icon:IC.home,line:'家具家居摆场、日用百货场景图'},
+ {type:'general',cat:'美妆个护',icon:IC.beauty,line:'高级感主图、质地与使用场景'},
+ {type:'general',cat:'食品农产',icon:IC.food,line:'新鲜食欲场景、包装主图'},
+ {type:'general',cat:'珠宝配饰',icon:IC.gem,line:'质感棚拍、佩戴与礼盒场景'},
+ {type:'general',cat:'本地生活/服务',icon:IC.shop,line:'门店与服务场景、团购封面'}
+];
+var CAR_BRANDS=['奔驰','宝马','奥迪','大众','丰田','本田','日产','特斯拉','比亚迪','理想','蔚来','小鹏','吉利','长安','哈弗','五菱','别克','现代','保时捷','路虎'];
+
+/* ---------- 产出 / 场景 / 规格 ---------- */
+var OUTPUTS={
+ usedcar:[
+  {k:'showroom',t:'AI 展厅背景',sub:'换上高端虚拟展厅，车身不动'},
+  {k:'studio',t:'摄影棚背景',sub:'无缝无影棚，突出车漆线条'},
+  {k:'onsite',t:'我的实地展厅',sub:'合成进你自己的展厅，需再传一张背景'}
+ ],
+ general:[
+  {k:'white',t:'纯白底主图',sub:'去背景、商品居中，电商主图'},
+  {k:'scene',t:'生活场景图',sub:'把商品放进真实使用场景'},
+  {k:'detail',t:'细节增强',sub:'清晰化、校正曝光，保留原样'}
+ ]
+};
+var SCENES=[
+ {k:'minimal',t:'简约高级',p:'明亮极简的现代生活场景，浅色干净背景，自然柔光，浅景深虚化'},
+ {k:'warm',t:'温馨居家',p:'温馨居家环境，暖色调，木质与布艺材质，柔和自然光'},
+ {k:'outdoor',t:'户外清新',p:'户外自然光线，清新明亮，真实生活氛围，浅景深'},
+ {k:'studio',t:'质感棚拍',p:'专业产品摄影棚，渐变灰背景，柔光箱布光，突出材质与光泽'}
+];
+var SIZES=[
+ {k:'1:1',w:1,h:1,label:'方形 1:1',media:'电商主图 / 朋友圈'},
+ {k:'3:4',w:3,h:4,label:'竖图 3:4',media:'小红书 / 抖音'},
+ {k:'4:5',w:4,h:5,label:'竖图 4:5',media:'小红书 / 详情页'},
+ {k:'16:9',w:16,h:9,label:'横图 16:9',media:'视频号 / 横幅'},
+ {k:'9:16',w:9,h:16,label:'竖屏 9:16',media:'短视频封面 / 故事'}
+];
+
+/* ---------- 提示词（通用商品 + 二手车，严格保留主体） ---------- */
+function P_white(name){return '把图中的'+name+'完整保留，制作成电商纯白底主图：去除原有背景与一切杂物，将商品完整、居中放置在纯白色背景上，专业产品摄影布光，底部自然投影，商品的形状、颜色、材质、logo、包装、文字与原图完全一致，不改变商品本身，不添加多余道具与文字，画面干净、高清、商业产品摄影质感。';}
+function P_scene(name,sp){return '把图中的'+name+'作为绝对视觉主体，置入'+sp+'的环境中，商品摆放自然、比例真实、清晰锐利，光线与环境自然融合；严格保持商品的形状、颜色、材质、logo、包装、文字与原图完全一致，只替换或补充背景环境，绝不改动商品本身，不添加遮挡商品的物体与文字，商业广告级质感。';}
+function P_detail(name){return '对这张'+name+'商品照片做专业画质增强：校正曝光与白平衡、提升清晰度与细节、适度降噪，真实还原商品颜色与材质；不改变商品形状、颜色、包装与文字，不移除瑕疵与标签，不添加任何文字或标识。';}
+var P_showroom='把这辆待售二手车放进高端现代的虚拟汽车展厅：宽敞明亮的室内展厅，深灰色高光环氧地面带柔和车身倒影，浅色石材或木饰面背景墙，顶部线性灯带与射灯均匀布光，背景虚化处是简洁展车环境，画面中无其他车辆、人物、文字与标识，商业广告级质感；严格保持车辆颜色、车型、轮毂、朝向与原图完全一致，只替换为展厅背景，不改动车身，不美化划痕、凹陷与磨损。';
+var P_studio='专业汽车广告摄影棚，无缝浅灰色渐变无影背景墙，大型柔光箱均匀布光，高亮洁地面带轻微车身倒影，画面中无任何杂物、人物、文字与标识，商业棚拍级质感，突出车漆光泽、车身线条与设计细节；严格保持车辆颜色、车型、轮毂、朝向与原图完全一致，只替换为摄影棚背景，不改动车身，不美化划痕、凹陷与磨损。';
+var P_onsite='第一张图是待售二手车（主体，务必完整保留），第二张图是车商自己的真实汽车展厅（目标背景）。请把第一张图中的汽车完整、真实地陈列到第二张图的展厅环境中，停放在展厅内合理的展车位置，让车辆的光线、阴影、透视与地面接触和第二张展厅环境自然融合；严格保持汽车的颜色、车型、轮毂、朝向与第一张图完全一致，只融合替换背景，绝不改动车身、不更换车辆、不美化划痕瑕疵。';
+
+/* ---------- 状态 ---------- */
+function resetState(){
+ return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:''},outputs:new Set(),scene:null,bgImage:null,
+  sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],stage:'welcome',genToken:0};
+}
+var state=resetState();
+function saveId(){try{localStorage.setItem('hogee_identity',JSON.stringify(state.identity));}catch(e){}}
+function loadId(){try{return JSON.parse(localStorage.getItem('hogee_identity')||'null');}catch(e){return null;}}
+
+/* ---------- 图片处理 ---------- */
+function fileToDataURL(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result);};r.onerror=rej;r.readAsDataURL(f);});}
+function loadImage(src){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=src;});}
+function prepareImage(file){
+ return fileToDataURL(file).then(function(src){
+  var p=window.createImageBitmap?createImageBitmap(file,{imageOrientation:'from-image'}).catch(function(){return loadImage(src);}):loadImage(src);
+  return p.then(function(img){
+   var max=2048,w=img.width,h=img.height;
+   if(Math.max(w,h)>max){var r=max/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r);}
+   var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+   x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);
+   try{img.close&&img.close();}catch(e){}
+   return c.toDataURL('image/jpeg',.92);
   });
+ });
+}
+function analyzeImage(dataUrl){
+ return loadImage(dataUrl).then(function(img){
+  var max=480,sc=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(8,Math.round(img.width*sc)),h=Math.max(8,Math.round(img.height*sc));
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.drawImage(img,0,0,w,h);
+  var d=x.getImageData(0,0,w,h).data,g=new Float32Array(w*h),bright=0;
+  for(var i=0,j=0;i<d.length;i+=4,j++){var v=.299*d[i]+.587*d[i+1]+.114*d[i+2];g[j]=v;bright+=v;}
+  bright/=(w*h);var mean=0,n=0,lap=[];
+  for(var y=1;y<h-1;y++)for(var xx=1;xx<w-1;xx++){var idx=y*w+xx,vv=4*g[idx]-g[idx-w]-g[idx+w]-g[idx-1]-g[idx+1];lap.push(vv);mean+=vv;n++;}
+  mean/=n;var va=0;for(var k=0;k<lap.length;k++)va+=(lap[k]-mean)*(lap[k]-mean);va/=n;
+  var sharp=va<55?'bad':(va<150?'warn':'ok');
+  var exp=bright<48?'bad':(bright>212?'bad':(bright<72||bright>192?'warn':'ok'));
+  return {sharp:sharp,exp:exp};
+ });
+}
+function authHeaders(){return (window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};}
+function callGenerate(prompt,imagePayload,size){
+ var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},110000);
+ return fetch(API+'/generate',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),signal:ctrl.signal,
+  body:JSON.stringify({prompt:prompt,image:imagePayload,size:size||'2048x2048'})})
+ .then(function(resp){clearTimeout(timer);return resp.json().catch(function(){return null;}).then(function(j){
+  if(resp.ok&&j&&j.ok&&j.b64)return 'data:image/jpeg;base64,'+j.b64;
+  var code=j&&j.error&&j.error.code,msg=j&&j.error&&j.error.message;
+  if(resp.status===401||(code&&code.indexOf('member')===0)){
+   if(code!=='member_suspended'&&window.HogeeMember&&HogeeMember.logout)HogeeMember.logout();
+   var e=new Error(code==='member_suspended'?(msg||'账号已停用，请联系客服'):'登录已失效，请重新登录后再生成');e.code=code||'member_unauthorized';throw e;
+  }
+  if(code==='rate_limited'){var re=new Error(msg||'生成过于频繁，请稍后再试');re.code='rate_limited';throw re;}
+  throw new Error(msg||('图像服务返回 '+resp.status));
+ });}).catch(function(e){clearTimeout(timer);throw e;});
+}
+function callGenerateRetry(prompt,imagePayload,size,onTick){
+ function attempt(n){return callGenerate(prompt,imagePayload,size).catch(function(e){
+  if(e&&typeof e.code==='string'&&e.code.indexOf('member')===0)throw e;
+  if(e&&e.code==='rate_limited')return sleep(2600).then(function(){return attempt(n);});
+  if(n>=2)throw e;return sleep(1300).then(function(){onTick&&onTick();return attempt(n+1);});
+ });}
+ return attempt(1);
+}
+
+/* ---------- 对话渲染 ---------- */
+var scroll=$('#chatScroll');
+function scrollBottom(){scroll.scrollTop=scroll.scrollHeight;}
+function botSay(html){
+ var m=document.createElement('div');m.className='msg bot';
+ m.innerHTML='<span class="m-avatar">'+AVATAR_HTML+'</span><div class="m-body"><div class="bubble">'+html+'</div></div>';
+ scroll.appendChild(m);scrollBottom();return m;
+}
+function userSay(text){
+ var m=document.createElement('div');m.className='msg user';
+ m.innerHTML='<span class="m-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><div class="m-body"><div class="bubble">'+esc(text)+'</div></div>';
+ scroll.appendChild(m);scrollBottom();
+}
+function card(html){
+ var m=document.createElement('div');m.className='msg bot';
+ m.innerHTML='<span class="m-avatar">'+AVATAR_HTML+'</span><div class="m-body"><div class="m-card">'+html+'</div></div>';
+ scroll.appendChild(m);scrollBottom();return m;
+}
+function botTyping(){
+ var m=botSay('<span class="typing"><i></i><i></i><i></i></span>');
+ return function(){m.remove();};
+}
+function toast(msg,type){
+ var t=$('#toast');t.textContent=msg;t.className='toast'+(type==='err'?' err':' show');
+ clearTimeout(t._t);t._t=setTimeout(function(){t.className='toast';},2600);
+}
+
+/* ---------- 流程节点 ---------- */
+function start(){
+ scroll.innerHTML='';state.stage='welcome';
+ var id=loadId();updateRail();
+ if(id){state.identity=id;
+  botSay('回来了，老板。这单还是<b>'+esc(id.label)+'</b>的图吧？直接传图我就开工。');
+  card('<div class="card-pad"><div class="card-title">'+IC.camera+' 继续出图</div>'
+   +'<div class="card-desc">当前行当：'+esc(id.label)+'。阿图按这个行当的路数帮你出图。</div>'
+   +'<div class="card-actions"><button class="btn btn-primary" data-act="resumeId">对，开始传图</button>'
+   +'<button class="btn btn-ghost" data-act="changeId">换个行当</button></div></div>');
+ }else{
+  botSay('老板好，我是阿图，你的生意伙计。<b>做生意，找伙计。</b><br>先说说你是<b>做什么生意、卖什么</b>的？我好按你的行当来出图——选一个，或者直接在下面打字告诉我。');
+  renderIdentityCard();
+ }
+}
+function renderIdentityCard(){
+ var chips=IDENTITIES.map(function(d){
+  return '<button class="chip" data-act="pickId" data-type="'+d.type+'" data-cat="'+esc(d.cat||'')+'" data-label="'+esc(d.label||d.cat||'')+'">'
+   +'<span class="chip-ico">'+d.icon+'</span><span>'+esc(d.label)+'<span class="chip-sub" style="display:block">'+esc(d.line)+'</span></span></button>';
+ }).join('');
+ card('<div class="card-pad"><div class="card-title">你是做什么生意的？</div>'
+  +'<div class="card-desc">选行当只是让阿图用对路数，<b>所有行当都能出图</b>；以后随时能换。</div>'
+  +'<div class="chip-grid">'+chips+'</div>'
+  +'<div class="card-actions"><button class="btn btn-ghost btn-sm" data-act="customId">都不是，我自己输入</button></div></div>');
+}
+function setIdentity(id,sayLabel){
+ state.identity=id;saveId();updateRail();
+ userSay(sayLabel||id.label);
+ if(id.type==='usedcar'){
+  botSay('好嘞，老板，收车了？<b>围着车拍一圈</b>：前脸、左前 45°、正侧、车尾、左右后 45°，内饰和中控也来几张，一起传给我。<br>第一张建议是<b>左前 45° 的整车图</b>，我拿它出展厅图。车身什么成色就拍成什么样，我一点不动。');
+ }else{
+  botSay('好嘞，把你要卖的东西<b>用手机拍几张传上来</b>。第一张拍清楚整体，我拿它做主图；白底图、场景图都能出，<b>商品本身一点不动</b>，只把背景和呈现做专业。');
+ }
+ renderUploadCard();state.stage='upload';
+}
+function updateRail(){
+ var name=$('#railName'),sub=$('#railSub'),chg=$('#railChange'),shots=$('#railShots');
+ if(state.identity){name.textContent=state.identity.label+' · 阿图';sub.textContent='行当已选定';chg.style.display='flex';}
+ else{name.textContent='阿图伙计';sub.textContent='先告诉伙计你做什么生意';chg.style.display='none';}
+ if(state.images.length){
+  shots.innerHTML=state.images.slice(0,8).map(function(im){return '<div class="rs"><img src="'+im.dataUrl+'" alt=""></div>';}).join('');
+ }else shots.innerHTML='<div class="rail-empty">还没有上传图片</div>';
+}
+function renderUploadCard(){
+ var used=state.identity&&state.identity.type==='usedcar';
+ card('<div class="card-pad" id="uploadCard">'
+  +'<div class="card-title">'+IC.camera+' 把手机拍的图传给阿图</div>'
+  +'<div class="card-desc">'+(used?'外观、内饰、空间都可以，多张一起传，阿图逐张做清晰与曝光质检。':'多张一起传，第一张作为主图；阿图逐张做清晰与曝光质检。')+'</div>'
+  +'<div class="drop" id="drop"><div class="drop-ico">'+IC.image+'</div><h4>点击或拖拽图片到这里</h4><p>支持 JPG / PNG / WebP，可一次选多张</p></div>'
+  +'<div class="shot-grid" id="shotGrid"></div>'
+  +'<div class="tip-line" id="uploadTip" style="display:none">'+IC.check+'<span id="uploadTipTxt"></span></div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="toConfirm" id="toConfirmBtn" disabled>传好了，认认货</button>'
+  +'<button class="btn btn-ghost" data-act="chooseFile">继续加图</button></div></div>');
+}
+function refreshShots(){
+ var grid=$('#shotGrid');if(!grid)return;
+ grid.innerHTML=state.images.map(function(im,i){
+  var qc=im.qc,bad=qc.sharp==='bad'||qc.exp==='bad',warn=!bad&&(qc.sharp==='warn'||qc.exp==='warn');
+  var cls=bad?'bad':(warn?'warn':'ok'),txt=bad?'建议重拍':(warn?'可以更好':'清晰');
+  return '<div class="shot"><img src="'+im.dataUrl+'" alt=""><span class="q '+cls+'">'+txt+'</span><button class="del" data-act="delShot" data-i="'+i+'">×</button></div>';
+ }).join('');
+ var btn=$('#toConfirmBtn');if(btn)btn.disabled=state.images.length===0;
+ var tip=$('#uploadTip'),tt=$('#uploadTipTxt');
+ var badN=state.images.filter(function(im){return im.qc.sharp==='bad'||im.qc.exp==='bad';}).length;
+ if(state.images.length){
+  tip.style.display='flex';
+  tt.textContent='共收到 '+state.images.length+' 张。'+(badN?('有 '+badN+' 张偏糊或曝光不理想，建议重拍，不重拍也能继续。'):'质检通过，成色看得清，可以继续。');
+ }
+ updateRail();
+}
+function handleFiles(fileList){
+ if(!state.identity){toast('先告诉阿图你做什么生意');return;}
+ var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
+ if(!files.length)return;
+ if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+ var stop=botTyping();
+ Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
+ .then(function(arr){stop();state.images=state.images.concat(arr);refreshShots();
+  botSay('收到 <b>'+arr.length+'</b> 张，我都看过了。传齐了就点下面「认认货」，我先把你卖的是啥确认清楚，<b>绝不张冠李戴</b>。');
+ }).catch(function(){stop();toast('有图片没读出来，换一张试试','err');});
+}
+function renderConfirmCard(){
+ var used=state.identity.type==='usedcar';
+ var inner;
+ if(used){
+  inner='<div class="card-title">认一认这是哪台车</div>'
+   +'<div class="card-desc">视觉识别正在接入，这一步你帮阿图核对一下，认对了出图才准。</div>'
+   +'<div class="fld-row"><div class="fld"><label>品牌</label><input id="carBrand" list="brandList" placeholder="如：奔驰"></div>'
+   +'<div class="fld"><label>车系</label><input id="carSeries" placeholder="如：C 级"></div></div>'
+   +'<div class="fld-row"><div class="fld"><label>年款</label><input id="carYear" placeholder="如：2021 款"></div>'
+   +'<div class="fld"><label>配置 / 排量（选填）</label><input id="carTrim" placeholder="如：C260L"></div></div>'
+   +'<datalist id="brandList">'+CAR_BRANDS.map(function(b){return '<option value="'+b+'">';}).join('')+'</datalist>'
+   +'<div class="brand-quick">'+CAR_BRANDS.slice(0,12).map(function(b){return '<button type="button" data-act="fillBrand" data-b="'+b+'">'+b+'</button>';}).join('')+'</div>';
+ }else{
+  var guess=state.identity.cat||'你的商品';
+  inner='<div class="card-title">认一认你卖的是什么货</div>'
+   +'<div class="card-desc">写具体一点，阿图出图和写文案才准。例如「纯棉短袖 T 恤」「北欧实木餐桌」「蓝牙音箱」。</div>'
+   +'<div class="fld"><label>商品名称</label><input id="productName" placeholder="'+esc(guess)+'"></div>';
+ }
+ inner+='<div class="fld" style="margin-top:13px"><label>补充要求（选填）</label><input id="extraInstr" placeholder="如：想要暖一点的光 / 突出某个卖点 / 不要出现人物"></div>';
+ inner+='<div class="card-actions"><button class="btn btn-primary" data-act="confirmProduct">对，就这个</button><button class="btn btn-ghost" data-act="backUpload">返回加图</button></div>';
+ card('<div class="card-pad">'+inner+'</div>');
+ state.stage='confirm';
+}
+function renderOutputsCard(){
+ var used=state.identity.type==='usedcar';
+ var list=OUTPUTS[used?'usedcar':'general'];
+ state.outputs=new Set([list[0].k]);
+ var chips=list.map(function(o){
+  return '<button class="chip on" data-act="toggleOutput" data-k="'+o.k+'"><span class="chip-ico">'+IC.image+'</span><span>'+o.t+'<span class="chip-sub" style="display:block">'+o.sub+'</span></span></button>';
+ }).join('');
+ card('<div class="card-pad"><div class="card-title">这单要出哪些图？</div>'
+  +'<div class="card-desc">可多选。'+(used?'车辆颜色、车型、轮毂、朝向在所有图里严格一致。':'商品颜色、形状、包装在所有图里严格一致。')+'</div>'
+  +'<div class="chip-grid" id="outputGrid">'+chips+'</div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="toScene">下一步</button></div></div>');
+ state.stage='outputs';
+}
+function renderSceneCard(){
+ var chips=SCENES.map(function(s,i){
+  return '<button class="chip'+(i===0?' on':'')+'" data-act="pickScene" data-k="'+s.k+'"><span>'+s.t+'</span></button>';
+ }).join('');
+ state.scene=SCENES[0].k;
+ card('<div class="card-pad"><div class="card-title">场景图想要什么氛围？</div>'
+  +'<div class="card-desc">白底主图不受影响，只决定「生活场景图」的环境。</div>'
+  +'<div class="chip-grid">'+chips+'</div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="toSpec">下一步</button></div></div>');
+ state.stage='scene';
+}
+function renderBgCard(){
+ card('<div class="card-pad" id="bgCard"><div class="card-title">传一张你自己展厅的照片</div>'
+  +'<div class="card-desc">阿图会把车真实合成进这个展厅，光线、透视、地面接触自然融合；传一次本单有效。</div>'
+  +'<div class="drop" id="bgDrop"><div class="drop-ico">'+IC.image+'</div><h4>点击上传实地展厅背景</h4><p>一张能看清展厅地面与展车位的照片</p></div>'
+  +'<div id="bgPreview" style="margin-top:12px"></div>'
+  +'<div class="card-actions"><button class="btn btn-primary" id="bgReady" data-act="toSpec" disabled>背景好了，下一步</button>'
+  +'<button class="btn btn-ghost" data-act="cancelOnsite">不出实地版了</button></div></div>');
+ state.stage='bg';
+}
+function renderSpecCard(){
+ var sizeChips=SIZES.map(function(s,i){
+  return '<button class="chip'+(i===0?' on':'')+'" data-act="toggleSize" data-k="'+s.k+'"><span>'+s.label+'<span class="chip-sub" style="display:block">'+s.media+'</span></span></button>';
+ }).join('');
+ card('<div class="card-pad"><div class="card-title">尺寸、格式与清晰度</div>'
+  +'<div class="card-desc">按尺寸选，自动适配对应平台；可多选，打包时一次出齐。</div>'
+  +'<div class="chip-block"><div class="cb-label">输出尺寸 <span class="opt">可多选</span></div><div class="chip-grid" id="sizeGrid">'+sizeChips+'</div></div>'
+  +'<div class="chip-block"><div class="cb-label">下载格式</div><div class="chip-grid">'
+   +'<button class="chip on" data-act="pickFmt" data-v="jpg">JPG<span class="chip-sub">通用、体积小</span></button>'
+   +'<button class="chip" data-act="pickFmt" data-v="png">PNG<span class="chip-sub">无损</span></button></div></div>'
+  +'<div class="chip-block"><div class="cb-label">清晰度</div><div class="chip-grid">'
+   +'<button class="chip" data-act="pickQuality" data-v="std">标准<span class="chip-sub">更快</span></button>'
+   +'<button class="chip on" data-act="pickQuality" data-v="hd">高清<span class="chip-sub">推荐</span></button></div></div>'
+  +'<div class="compliance">'+IC.check+'<span>成品默认带 AI 生成标识；阿图只优化呈现，<b>不改变商品/车辆本身、不抹瑕疵</b>，发布动作由你本人完成。</span></div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="startGen">'+IC.camera+' 开始出图</button></div></div>');
+ state.stage='spec';
+}
+
+/* ---------- 生成 ---------- */
+function buildJobs(){
+ var used=state.identity.type==='usedcar',jobs=[];
+ var main=state.images[0].dataUrl;
+ var extra=state.extra?('；额外要求：'+state.extra.slice(0,120)):'';
+ state.outputs.forEach(function(k){
+  if(used){
+   if(k==='showroom')jobs.push({k:k,label:'AI 展厅背景图',prompt:P_showroom+extra,image:main});
+   if(k==='studio')jobs.push({k:k,label:'摄影棚背景图',prompt:P_studio+extra,image:main});
+   if(k==='onsite'&&state.bgImage)jobs.push({k:k,label:'实地展厅合成图',prompt:P_onsite+extra,image:[main,state.bgImage]});
+  }else{
+   var name=state.product.name||state.identity.cat||'商品';
+   if(k==='white')jobs.push({k:k,label:'纯白底主图',prompt:P_white(name)+extra,image:main});
+   if(k==='scene'){var sp=SCENES.filter(function(s){return s.k===state.scene;})[0]||SCENES[0];jobs.push({k:k,label:'生活场景图·'+sp.t,prompt:P_scene(name,sp.p)+extra,image:main});}
+   if(k==='detail')jobs.push({k:k,label:'细节增强图',prompt:P_detail(name)+extra,image:main});
+  }
+ });
+ return jobs;
+}
+function runGenerate(){
+ var jobs=buildJobs();
+ if(!jobs.length){toast('请至少选择一种要出的图','err');return;}
+ if(window.HogeeMember){HogeeMember.requireAuth().catch(function(){});}
+ var token=++state.genToken;state.results=[];state.stage='generating';
+ var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 15–25 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
+ var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">车身/商品一点不动，只换背景、做增强；每张出完会自动报进度。</div><div id="progList">'+rows+'</div></div>');
+ var genSize=state.quality==='hd'?'2304x2304':'2048x2048';
+ (async function(){
+  for(var i=0;i<jobs.length;i++){
+   if(token!==state.genToken)return;
+   var row=$('.prog-task[data-k="'+jobs[i].k+'"]',pc);
+   if(row){row.classList.add('run');$('.pt-state',row).textContent='出图中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
+   try{
+    var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize);
+    if(token!==state.genToken)return;
+    state.results.push({url:url,label:jobs[i].label,k:jobs[i].k});
+    if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
+   }catch(e){
+    if(token!==state.genToken)return;
+    if(row){$('.pt-state',row).textContent='失败';$('.pt-state',row).style.color='#dc2626';}
+    if(e&&typeof e.code==='string'&&e.code.indexOf('member')===0){toast(e.message,'err');return;}
+    botSay('「'+jobs[i].label+'」这张没出成：'+esc(e.message||'网络异常')+'，等会儿可以单独重做。');
+   }
+  }
+  if(token===state.genToken)renderResult();
+ })();
+}
+function resultCardHtml(){
+ var items=state.results.map(function(r,i){
+  return '<div class="res"><div class="res-img" data-act="preview" data-i="'+i+'"><img src="'+r.url+'" alt="'+esc(r.label)+'"><span class="res-tag">'+esc(r.label)+'</span><span class="res-ai">AI 生成</span></div>'
+   +'<div class="res-meta"><div class="res-name">'+esc(r.label)+'</div><div class="res-acts">'
+   +'<button data-act="preview" data-i="'+i+'">'+IC.zoom+' 看图</button>'
+   +'<button data-act="downloadOne" data-i="'+i+'">'+IC.download+'</button>'
+   +'<button data-act="redo" data-i="'+i+'">'+IC.redo+'</button></div></div></div>';
+ }).join('');
+ var copy=buildCopy();
+ return '<div class="card-pad"><div class="card-title">齐了，你看看哪张要单独重做</div>'
+  +'<div class="card-desc">点图看大图；不满意可单张重做，不用整批重来。</div>'
+  +'<div class="res-grid">'+items+'</div>'
+  +'<div class="copy-box"><div class="copy-head">'+IC.check+' 配套文案（阿图草拟，请核对真实后再用）<button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div><textarea id="copyText">'+esc(copy)+'</textarea></div>'
+  +'<div class="compliance">'+IC.check+'<span>文案已规避无依据的绝对化承诺；车况/功效等请按实际核对。发布到各平台由你本人点最后一下。</span></div>'
+  +'<div class="card-actions"><button class="btn btn-primary" data-act="pack">'+IC.pack+' 按所选尺寸一键打包</button>'
+  +'<button class="btn btn-dark" data-act="newOrder">再来一单</button>'
+  +'<button class="btn btn-ghost" data-act="moreScene">换个背景/补图</button></div></div>';
+}
+function renderResult(){
+ state.stage='result';
+ if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以点「再来一单」。');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>');return;}
+ botSay('齐活。<b>'+state.results.length+' 张成品</b>都在这儿，配了一版文案。要发哪个平台，按你选的尺寸打包好，<b>你点一下就能发</b>。');
+ card(resultCardHtml());
+}
+function buildCopy(){
+ var used=state.identity.type==='usedcar';
+ if(used){
+  var p=state.product,head=[p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ');
+  return '【'+(head||'精品二手车')+'】\n'
+   +'车况板正，成色如图，实拍呈现、不遮不掩；图片由 WorkHogee 做背景与画质优化，车身原貌未改动。\n'
+   +'看车方便，支持第三方检测；具体里程、配置与车况以现场看车、检测报告为准。\n'
+   +'有意私聊，发你更多细节与实拍。\n\n（提示：请把真实里程、过户次数、保养情况等补全后再发布；勿使用与实际不符的承诺词。）';
+ }
+ var name=state.product.name||state.identity.cat||'商品';
+ return '【'+name+'】\n· 实拍主体，专业场景呈现，颜色版型/质地如图\n· 细节经得起放大，发货与图一致\n· 现货好发，喜欢可以私聊/下单\n\n（话题标签可按平台补充；卖点请按商品实际修改，勿夸大。）';
+}
+
+/* ---------- 导出 / 打包 ---------- */
+function exportRatio(url,w,h,mode,fmt){
+ return loadImage(url).then(function(img){
+  var base=state.quality==='hd'?2048:1600;
+  var cw,ch;
+  if(w>=h){cw=base;ch=Math.round(base*h/w);}else{ch=base;cw=Math.round(base*w/h);}
+  var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,cw,ch);
+  var ir=img.width/img.height,tr=cw/ch;
+  if(mode==='cover'){
+   var sw,sh,sx,sy;
+   if(ir>tr){sh=img.height;sw=img.height*tr;sx=(img.width-sw)/2;sy=0;}else{sw=img.width;sh=img.width/tr;sx=0;sy=(img.height-sh)/2;}
+   x.drawImage(img,sx,sy,sw,sh,0,0,cw,ch);
+  }else{
+   var dw,dh;if(ir>tr){dw=cw;dh=cw/ir;}else{dh=ch;dw=ch*ir;}
+   x.drawImage(img,(cw-dw)/2,(ch-dh)/2,dw,dh);
+  }
+  return fmt==='png'?c.toDataURL('image/png'):c.toDataURL('image/jpeg',state.quality==='hd'?.96:.9);
+ });
+}
+function modeFor(k){return (k==='white')?'contain':'cover';}
+function downloadDataUrl(dataUrl,filename){
+ var a=document.createElement('a');a.href=dataUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+}
+function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'_');}
+function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+async function packAll(){
+ if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
+ if(!state.results.length)return;
+ toast('正在按尺寸导出…');
+ var JSZip=window.JSZip;
+ if(!JSZip){try{await loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');JSZip=window.JSZip;}catch(e){JSZip=null;}}
+ var sizeList=SIZES.filter(function(s){return state.sizes.has(s.k);});
+ var stamp=new Date().toISOString().slice(0,10);
+ if(JSZip){
+  var zip=new JSZip();
+  for(var i=0;i<state.results.length;i++){
+   var r=state.results[i];
+   for(var j=0;j<sizeList.length;j++){var s=sizeList[j];
+    var du=await exportRatio(r.url,s.w,s.h,modeFor(r.k),state.fmt);
+    zip.file(safeName(r.label)+'_'+s.k+'.'+state.fmt,du.split(',')[1],{base64:true});
+   }
+  }
+  zip.file('配套文案.txt',$('#copyText')?$('#copyText').value:buildCopy());
+  var blob=await zip.generateAsync({type:'blob'});
+  var url=URL.createObjectURL(blob);downloadDataUrl(url,'WorkHogee_'+stamp+'.zip');setTimeout(function(){URL.revokeObjectURL(url);},4000);
+  toast('打包好了，已开始下载');
+ }else{
+  for(var a=0;a<state.results.length;a++){var rr=state.results[a],ss=sizeList[0];
+   var d=await exportRatio(rr.url,ss.w,ss.h,modeFor(rr.k),state.fmt);
+   downloadDataUrl(d,safeName(rr.label)+'_'+ss.k+'.'+state.fmt);await sleep(400);
+  }
+  toast('已逐张下载（ZIP 组件未加载）');
+ }
+}
+async function redoOne(i){
+ var r=state.results[i];if(!r)return;
+ if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
+ var job=buildJobs().filter(function(j){return j.k===r.k;})[0];if(!job){toast('找不到原任务');return;}
+ userSay('「'+r.label+'」这张重做');
+ var stop=botTyping();
+ try{var url=await callGenerateRetry(job.prompt,job.image,state.quality==='hd'?'2304x2304':'2048x2048');stop();
+  state.results[i].url=url;
+  var grids=$$('.res-grid');var lastGrid=grids[grids.length-1];
+  if(lastGrid){var imgs=$$('.res-img img',lastGrid);if(imgs[i])imgs[i].src=url;}
+  toast('已重做，看看这张');}
+ catch(e){stop();toast(e.message||'重做失败','err');}
+}
+
+/* ---------- 事件委托 ---------- */
+document.addEventListener('click',function(ev){
+ var b=ev.target.closest('[data-act]');if(!b)return;
+ var act=b.dataset.act;
+ if(act==='pickId'){setIdentity({type:b.dataset.type,cat:b.dataset.cat||'',label:b.dataset.label},b.dataset.label);}
+ else if(act==='customId'){
+  b.closest('.m-card').remove();
+  botSay('行，你直接在下面输入框打出来，比如「卖手工皮具」「开花店的」，我就明白了。');
+  state.stage='awaitCustomId';
+ }
+ else if(act==='changeId'){state.identity=null;try{localStorage.removeItem('hogee_identity');}catch(e){}userSay('换个行当');start();}
+ else if(act==='resumeId'){userSay('对，开始传图');
+  if(state.identity.type==='usedcar')botSay('好嘞，围着车拍一圈传上来，第一张左前 45° 整车图。');
+  else botSay('好嘞，把商品拍几张传上来，第一张拍清整体。');
+  renderUploadCard();state.stage='upload';}
+ else if(act==='chooseFile'){$('#fileInput').click();}
+ else if(act==='chooseBg'){$('#bgInput').click();}
+ else if(act==='delShot'){var di=+b.dataset.i;state.images.splice(di,1);refreshShots();}
+ else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}userSay('传好了，共 '+state.images.length+' 张');var st=botTyping();setTimeout(function(){st();renderConfirmCard();},450);}
+ else if(act==='backUpload'){renderUploadCard();state.stage='upload';refreshShots();}
+ else if(act==='fillBrand'){$('#carBrand').value=b.dataset.b;}
+ else if(act==='confirmProduct'){
+  var used=state.identity.type==='usedcar';
+  if(used){
+   var brand=$('#carBrand').value.trim(),series=$('#carSeries').value.trim();
+   if(!brand||!series){toast('品牌和车系至少填一下，阿图才认得准','err');return;}
+   state.product={brand:brand,series:series,year:$('#carYear').value.trim(),trim:$('#carTrim').value.trim(),name:[$('#carYear').value.trim(),brand,series].filter(Boolean).join(' ')};
+  }else{
+   var nm=$('#productName').value.trim();
+   if(!nm){toast('写一下商品名称，阿图才好出图','err');return;}
+   state.product.name=nm;
+  }
+  state.extra=$('#extraInstr')?$('#extraInstr').value.trim():'';
+  userSay(state.product.name);
+  botSay('认下了：<b>'+esc(state.product.name||state.identity.label)+'</b>。下面挑这单要出哪些图。');
+  renderOutputsCard();
+ }
+ else if(act==='toggleOutput'){
+  var k=b.dataset.k;if(state.outputs.has(k)){if(state.outputs.size===1){toast('至少保留一种图');return;}state.outputs.delete(k);b.classList.remove('on');}else{state.outputs.add(k);b.classList.add('on');}
+ }
+ else if(act==='toScene'){
+  var isUsed=state.identity.type==='usedcar';
+  if(isUsed&&state.outputs.has('onsite')&&!state.bgImage){userSay('选了实地展厅');renderBgCard();}
+  else if(!isUsed&&state.outputs.has('scene')){renderSceneCard();}
+  else{renderSpecCard();}
+ }
+ else if(act==='pickScene'){state.scene=b.dataset.k;$$('[data-act="pickScene"]').forEach(function(c){c.classList.remove('on');});b.classList.add('on');}
+ else if(act==='cancelOnsite'){state.outputs.delete('onsite');toast('已去掉实地展厅版');renderSpecCard();}
+ else if(act==='toSpec'){
+  if(state.stage==='bg'&&!state.bgImage){toast('先传一张展厅背景，或取消实地版','err');return;}
+  renderSpecCard();
+ }
+ else if(act==='toggleSize'){var sk=b.dataset.k;if(state.sizes.has(sk)){if(state.sizes.size===1){toast('至少保留一个尺寸');return;}state.sizes.delete(sk);b.classList.remove('on');}else{state.sizes.add(sk);b.classList.add('on');}}
+ else if(act==='pickFmt'){state.fmt=b.dataset.v;$$('[data-act="pickFmt"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.fmt);});}
+ else if(act==='pickQuality'){state.quality=b.dataset.v;$$('[data-act="pickQuality"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.quality);});}
+ else if(act==='startGen'){
+  var summary=[];
+  var outs=OUTPUTS[state.identity.type==='usedcar'?'usedcar':'general'];
+  state.outputs.forEach(function(kk){var o=outs.filter(function(x){return x.k===kk;})[0];summary.push(o?o.t:kk);});
+  userSay('开始出图：'+summary.join('、')+'，尺寸 '+Array.from(state.sizes).join('/'));
+  var stopT=botTyping();setTimeout(function(){stopT();runGenerate();},450);
+ }
+ else if(act==='preview'){openLightbox(state.results[+b.dataset.i].url);}
+ else if(act==='downloadOne'){var s0=SIZES.filter(function(s){return state.sizes.has(s.k);})[0];var rr=state.results[+b.dataset.i];
+  exportRatio(rr.url,s0.w,s0.h,modeFor(rr.k),state.fmt).then(function(d){downloadDataUrl(d,safeName(rr.label)+'_'+s0.k+'.'+state.fmt);toast('已下载 '+s0.label);});}
+ else if(act==='redo'){redoOne(+b.dataset.i);}
+ else if(act==='pack'){packAll();}
+ else if(act==='copyText'){var ta=$('#copyText');if(ta){ta.select();try{document.execCommand('copy');toast('文案已复制');}catch(e){toast('复制失败，可手动选择');}}}
+ else if(act==='newOrder'){newOrder();}
+ else if(act==='moreScene'){state.results=[];renderOutputsCard();}
+});
+
+/* 上传 input */
+$('#fileInput').addEventListener('change',function(e){handleFiles(e.target.files);e.target.value='';});
+$('#bgInput').addEventListener('change',function(e){handleBg(e.target.files);e.target.value='';});
+function handleBg(files){
+ var f=files[0];if(!f||!/^image\//.test(f.type))return;
+ var stop=botTyping();
+ prepareImage(f).then(function(d){stop();state.bgImage=d;
+  var pv=$('#bgPreview');if(pv)pv.innerHTML='<div class="shot" style="max-width:240px;aspect-ratio:4/3"><img src="'+d+'" alt="展厅背景"></div>';
+  var btn=$('#bgReady');if(btn)btn.disabled=false;
+  toast('展厅背景已收到');});
+}
+/* 拖拽（卡片动态插入，捕获阶段代理） */
+document.addEventListener('dragover',function(e){var d=e.target.closest&&e.target.closest('#drop,#bgDrop');if(d){e.preventDefault();d.classList.add('drag');}},true);
+document.addEventListener('dragleave',function(e){var d=e.target.closest&&e.target.closest('#drop,#bgDrop');if(d)d.classList.remove('drag');},true);
+document.addEventListener('drop',function(e){
+ var d=e.target.closest&&e.target.closest('#drop');if(d){e.preventDefault();d.classList.remove('drag');handleFiles(e.dataTransfer.files);}
+ var bd=e.target.closest&&e.target.closest('#bgDrop');if(bd){e.preventDefault();bd.classList.remove('drag');handleBg(e.dataTransfer.files);}
+},true);
+
+/* 顶部上传按钮 */
+$('#btnUpload').addEventListener('click',function(){
+ if(!state.identity){toast('先告诉阿图你做什么生意');return;}
+ if(state.stage==='welcome'){setIdentity(state.identity);setTimeout(function(){$('#fileInput').click();},300);return;}
+ $('#fileInput').click();
+});
+
+/* 自由输入 */
+function sendFreeText(){
+ var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';
+ userSay(txt);
+ if(state.stage==='welcome'||state.stage==='awaitCustomId'){
+  setIdentity({type:'general',cat:'',label:txt},txt);
+ }else if(state.stage==='confirm'){
+  if(state.identity.type==='usedcar'){var cb=$('#carBrand');if(cb&&!cb.value)cb.value=txt;}
+  else{var pn=$('#productName');if(pn&&!pn.value)pn.value=txt;}
+  botSay('记下了：'+esc(txt)+'。确认无误就点卡片里的按钮。');
+ }else{
+  state.extra=(state.extra?state.extra+'；':'')+txt;
+  botSay('收到，'+esc(txt)+'。我会在出图时按这个来。');
+ }
+}
+$('#btnSend').addEventListener('click',sendFreeText);
+$('#composerInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeText();}});
+$('#composerInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+
+/* 新的一单 */
+function newOrder(){
+ var id=state.identity;state=resetState();state.identity=id;updateRail();
+ userSay('再来一单');
+ botSay('好嘞，新的一单。把这一件货的图传上来，第一张拍清整体。');
+ renderUploadCard();state.stage='upload';
+}
+$('#railNew').addEventListener('click',function(){
+ if(!state.identity){toast('先选一下你做什么生意');return;}
+ if(state.stage==='welcome'){setIdentity(state.identity);return;}
+ newOrder();
+});
+$('#railChange').addEventListener('click',function(){state.identity=null;try{localStorage.removeItem('hogee_identity');}catch(e){}start();});
+
+/* lightbox */
+function openLightbox(src){$('#lbImg').src=src;$('#lightbox').classList.add('show');}
+function closeLightbox(){$('#lightbox').classList.remove('show');$('#lbImg').src='';}
+$('#lbClose').addEventListener('click',closeLightbox);
+$('#lightbox').addEventListener('click',function(e){if(e.target.id==='lightbox')closeLightbox();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
+
+start();
 })();
 </script>
-<script src="/member-auth.js?v=brand20260918" defer></script>
 </body>
 </html>
