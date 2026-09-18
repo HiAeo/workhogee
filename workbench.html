@@ -772,17 +772,17 @@ function renderBgCard(){
 }
 function renderSpecCard(){
  var sizeChips=SIZES.map(function(s,i){
-  return '<button class="chip'+(i===0?' on':'')+'" data-act="toggleSize" data-k="'+s.k+'"><span>'+s.label+'<span class="chip-sub" style="display:block">'+s.media+'</span></span></button>';
+  return '<button class="chip'+(state.sizes.has(s.k)?' on':'')+'" data-act="toggleSize" data-k="'+s.k+'"><span>'+s.label+'<span class="chip-sub" style="display:block">'+s.media+'</span></span></button>';
  }).join('');
  card('<div class="card-pad"><div class="card-title">尺寸、格式与清晰度</div>'
   +'<div class="card-desc">按尺寸选，自动适配对应平台；可多选，打包时一次出齐。</div>'
   +'<div class="chip-block"><div class="cb-label">输出尺寸 <span class="opt">可多选</span></div><div class="chip-grid" id="sizeGrid">'+sizeChips+'</div></div>'
   +'<div class="chip-block"><div class="cb-label">下载格式</div><div class="chip-grid">'
-   +'<button class="chip on" data-act="pickFmt" data-v="jpg">JPG<span class="chip-sub">通用、体积小</span></button>'
-   +'<button class="chip" data-act="pickFmt" data-v="png">PNG<span class="chip-sub">无损</span></button></div></div>'
+   +'<button class="chip'+(state.fmt==='jpg'?' on':'')+'" data-act="pickFmt" data-v="jpg">JPG<span class="chip-sub">通用、体积小</span></button>'
+   +'<button class="chip'+(state.fmt==='png'?' on':'')+'" data-act="pickFmt" data-v="png">PNG<span class="chip-sub">无损</span></button></div></div>'
   +'<div class="chip-block"><div class="cb-label">清晰度</div><div class="chip-grid">'
-   +'<button class="chip" data-act="pickQuality" data-v="std">标准<span class="chip-sub">更快</span></button>'
-   +'<button class="chip on" data-act="pickQuality" data-v="hd">高清<span class="chip-sub">推荐</span></button></div></div>'
+   +'<button class="chip'+(state.quality==='std'?' on':'')+'" data-act="pickQuality" data-v="std">标准<span class="chip-sub">更快</span></button>'
+   +'<button class="chip'+(state.quality==='hd'?' on':'')+'" data-act="pickQuality" data-v="hd">高清<span class="chip-sub">推荐</span></button></div></div>'
   +'<div class="compliance">'+IC.check+'<span>成品默认带 AI 生成标识；阿图只优化呈现，<b>不改变商品/车辆本身、不抹瑕疵</b>，发布动作由你本人完成。</span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="startGen">'+IC.camera+' 开始出图</button></div></div>');
  state.stage='spec';
