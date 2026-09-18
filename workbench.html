@@ -742,7 +742,7 @@ function renderOutputsCard(){
  var list=OUTPUTS[used?'usedcar':'general'];
  state.outputs=new Set([list[0].k]);
  var chips=list.map(function(o){
-  return '<button class="chip on" data-act="toggleOutput" data-k="'+o.k+'"><span class="chip-ico">'+IC.image+'</span><span>'+o.t+'<span class="chip-sub" style="display:block">'+o.sub+'</span></span></button>';
+  return '<button class="chip'+(state.outputs.has(o.k)?' on':'')+'" data-act="toggleOutput" data-k="'+o.k+'"><span class="chip-ico">'+IC.image+'</span><span>'+o.t+'<span class="chip-sub" style="display:block">'+o.sub+'</span></span></button>';
  }).join('');
  card('<div class="card-pad"><div class="card-title">这单要出哪些图？</div>'
   +'<div class="card-desc">可多选。'+(used?'车辆颜色、车型、轮毂、朝向在所有图里严格一致。':'商品颜色、形状、包装在所有图里严格一致。')+'</div>'
