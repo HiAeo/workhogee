@@ -121,54 +121,6 @@ ul{list-style:none;}
 .mh-left,.mh-right{min-width:0;}
 .mh-left img,.mh-right img{max-width:100%;}
 /* ===== Hero 四伙计并排合影（悬浮 + 单只悬停） ===== */
-.hero-team{display:flex;align-items:flex-end;justify-content:flex-start;flex-wrap:nowrap;gap:clamp(6px,1.4vw,22px);margin:0 0 clamp(24px,3.6vh,42px);width:100%;}
-.hero-team img{height:clamp(128px,15.4vw,212px);width:auto;display:block;min-width:0;transform-origin:50% 100%;filter:drop-shadow(0 20px 28px rgba(0,0,0,.5));animation:teamFloat 5.6s ease-in-out infinite;transition:transform .32s cubic-bezier(.34,1.45,.5,1),filter .32s;will-change:transform;}
-.hero-team img:nth-child(2){animation-delay:.5s;}
-.hero-team img:nth-child(3){animation-delay:1s;}
-.hero-team img:nth-child(4){animation-delay:1.5s;}
-.hero-team img:hover{animation-play-state:paused;transform:translateY(-16px) scale(1.06);filter:drop-shadow(0 30px 42px rgba(0,0,0,.62));position:relative;z-index:3;}
-@keyframes teamFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-.mh-mascot{display:inline-flex;justify-content:flex-start;margin-bottom:2px;position:relative;width:max-content;max-width:100%;}
-.mh-atu-wrap{position:relative;display:inline-block;max-width:100%;transform:translateY(14px);}
-.mh-atu{height:156px;width:auto;display:block;transform-origin:50% 100%;filter:drop-shadow(0 20px 26px rgba(0,0,0,.42));animation:atuFloat 5s ease-in-out 1s infinite;}
-@keyframes atuFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-/* ===== 阿图演出：侧身 / 闪光 / 天线 / 对话气泡 ===== */
-.mh-atu-stage{position:relative;display:inline-block;transform-origin:50% 84%;transition:transform .6s cubic-bezier(.34,1.35,.5,1);will-change:transform;cursor:pointer;}
-.mh-atu-stage.turn{transform:perspective(620px) rotateY(26deg) rotateZ(-4deg) translateY(-2px);}
-.mh-atu-stage.turn.shoot{transform:perspective(620px) rotateY(26deg) rotateZ(-9deg) translateY(-10px);transition:transform .18s ease-out;}
-.mh-atu-stage.turn .mh-atu{animation-play-state:paused;}
-.mh-atu-stage.shoot .mh-atu{filter:brightness(1.18) drop-shadow(0 20px 26px rgba(0,0,0,.42));transition:filter .1s;}
-.atu-flash{position:absolute;left:15%;top:80%;width:0;height:0;pointer-events:none;z-index:4;}
-.atu-flash::before{content:"";position:absolute;left:0;top:0;width:clamp(42px,27%,58px);aspect-ratio:1;border-radius:50%;opacity:0;transform:translate(-50%,-50%) scale(.3);background:radial-gradient(circle,#fff 0%,rgba(255,252,240,.95) 38%,rgba(255,244,214,0) 72%);}
-.atu-flash::after{content:"";position:absolute;left:0;top:0;width:clamp(74px,48%,108px);aspect-ratio:1;opacity:0;transform:translate(-50%,-50%) scale(.3);background:linear-gradient(90deg,rgba(255,255,255,0) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,0) 56%),linear-gradient(0deg,rgba(255,255,255,0) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,0) 56%);}
-.atu-flash.on::before{animation:atuFlashCore .56s ease-out;}
-.atu-flash.on::after{animation:atuFlashStar .62s ease-out;}
-@keyframes atuFlashCore{0%{opacity:0;transform:translate(-50%,-50%) scale(.3);}16%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}42%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7);}}
-@keyframes atuFlashStar{0%{opacity:0;transform:translate(-50%,-50%) scale(.3);}18%{opacity:.95;transform:translate(-50%,-50%) scale(1);}44%{opacity:.85;transform:translate(-50%,-50%) scale(1.06);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4);}}
-.atu-tip{position:absolute;width:clamp(7px,4.2%,11px);aspect-ratio:1;border-radius:50%;background:#5aa3e6;box-shadow:0 0 0 3px rgba(74,144,217,.18),0 0 10px 2px rgba(90,163,230,.8);opacity:0;transform:translate(-50%,-50%) scale(.5);pointer-events:none;z-index:5;}
-.atu-tip.t1{left:24.5%;top:13.3%;}
-.atu-tip.t2{left:73.8%;top:10.5%;}
-.mh-atu-stage.talking .atu-tip{animation:atuTip .42s ease-in-out infinite;}
-.mh-atu-stage.talking .atu-tip.t2{animation-delay:.21s;}
-@keyframes atuTip{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(.7);}50%{opacity:1;transform:translate(-50%,calc(-50% - 6px)) scale(1.15);}}
-.atu-bubble{position:absolute;left:66%;bottom:48%;width:auto;max-width:clamp(190px,20vw,262px);min-width:0;white-space:nowrap;background:#f7f4ee;color:#1c1917;border:1px solid rgba(234,88,12,.32);border-radius:14px;padding:11px 15px;font-size:14px;font-weight:600;line-height:1.55;letter-spacing:.2px;box-shadow:0 18px 42px rgba(0,0,0,.42);opacity:0;transform:scale(.6) translateY(8px);transform-origin:bottom left;pointer-events:none;z-index:6;transition:opacity .26s ease,transform .28s cubic-bezier(.34,1.56,.64,1),filter .3s;}
-.atu-bubble.bub-show{opacity:1;transform:scale(1) translateY(0);}
-.atu-bubble.bub-hide{opacity:0;transform:scale(.72) translateY(6px);transition:opacity .18s,transform .18s;}
-.atu-bubble .bub-text{min-height:1.55em;}
-.atu-bubble .bub-text::after{content:"";display:inline-block;width:2px;height:1.05em;margin-left:1px;background:#ea580c;vertical-align:-.14em;animation:atuCaret .7s steps(1) infinite;}
-.atu-bubble.bub-smoke .bub-text::after{display:none;}
-@keyframes atuCaret{0%,49%{opacity:1;}50%,100%{opacity:0;}}
-.atu-bubble .bub-caret{position:absolute;left:20px;bottom:-8px;width:15px;height:15px;background:#f7f4ee;border-right:1px solid rgba(234,88,12,.32);border-bottom:1px solid rgba(234,88,12,.32);transform:rotate(45deg);border-bottom-right-radius:3px;}
-.atu-bubble .smk{position:absolute;bottom:6px;width:10px;height:10px;border-radius:50%;background:rgba(247,244,238,.85);filter:blur(3px);opacity:0;}
-.atu-bubble .smk.s1{left:26%;}
-.atu-bubble .smk.s2{left:52%;width:13px;height:13px;}
-.atu-bubble .smk.s3{left:74%;}
-.atu-bubble.bub-smoke{animation:atuBubSmoke 1.15s ease forwards;}
-.atu-bubble.bub-smoke .smk{animation:atuSmk 1.1s ease-out forwards;}
-.atu-bubble.bub-smoke .smk.s2{animation-delay:.12s;}
-.atu-bubble.bub-smoke .smk.s3{animation-delay:.22s;}
-@keyframes atuBubSmoke{0%{opacity:1;filter:blur(0);transform:scale(1) translateY(0);}100%{opacity:0;filter:blur(9px);transform:scale(1.07) translateY(-15px);}}
-@keyframes atuSmk{0%{opacity:0;transform:translateY(6px) scale(.6);}25%{opacity:.8;}100%{opacity:0;transform:translateY(-40px) translateX(6px) scale(1.7);}}
 .mh-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.16);padding:7px 15px;border-radius:999px;margin-bottom:30px;max-width:100%;box-sizing:border-box;}
 .mh-eyebrow .eb-mini{display:none;}
 .mh-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:mpulse 2.2s infinite;}
@@ -517,11 +469,6 @@ ul{list-style:none;}
   .reveal{opacity:1;transform:none;transition:none;}
   .mh-anim{animation:none;opacity:1;transform:none;}
   .mh-eyebrow .dot{animation:none;}
-  .mh-atu{animation:none;}
-  .mh-atu-stage{transition:none;}
-  .atu-flash,.atu-tip,.atu-bubble{display:none;}
-  .hero-team img{animation:none;}
-  .hero-team img:hover{transform:none;filter:drop-shadow(0 20px 28px rgba(0,0,0,.5));}
   html{scroll-behavior:auto;}
 }
 
@@ -529,7 +476,6 @@ ul{list-style:none;}
 @media (max-width:960px){
   .mhero{padding-top:132px;}
   .mhero-in{grid-template-columns:1fr;gap:40px;}
-  .hero-team img{height:clamp(150px,22vw,212px);}
   .mh-creed{margin-top:46px;}
   .mh-creed .sm{margin-left:0;}
   .shead{grid-template-columns:1fr;gap:14px;margin-bottom:38px;}
@@ -589,12 +535,6 @@ ul{list-style:none;}
   .wcard .wc-ph{aspect-ratio:16/7;}
   .mx-mid .desc,.mx-feat .cap .cf{font-size:13.5px;}
   .mcta .mp-line button{padding:8px 4px;}
-  .mh-mascot{margin-bottom:0;}
-  .mh-atu{height:116px;}
-  .hero-team{gap:4px;margin-bottom:20px;}
-  .hero-team img{height:clamp(92px,28vw,120px);}
-  .atu-bubble{left:56%;bottom:45%;width:auto;max-width:min(60vw,214px);white-space:nowrap;font-size:13px;padding:9px 13px;}
-  .atu-bubble .bub-caret{left:22px;}
   .mh-eyebrow{margin-bottom:18px;font-size:12px;padding:6px 12px;}
   .mh-eyebrow .eb-full{display:none;}
   .mh-eyebrow .eb-mini{display:inline;}
@@ -610,11 +550,7 @@ ul{list-style:none;}
   .shead h2{font-size:clamp(26px,3vw,34px);letter-spacing:-.6px;}
   .shead p{margin-top:11px;font-size:15px;line-height:1.72;}
   .mhero{padding-top:122px;}
-  .mh-mascot{margin-bottom:0;}
-  .mh-atu{height:118px;}
   .mh-eyebrow{margin-bottom:20px;}
-  .hero-team img{height:160px;}
-  .hero-team{margin-bottom:22px;}
   .mh-title{font-size:clamp(40px,5.2vw,64px);}
   .mh-sub{margin-top:18px;font-size:16px;line-height:1.72;}
   .mh-cta{margin-top:24px;}
@@ -677,10 +613,7 @@ ul{list-style:none;}
   .mcta{padding:62px 0 52px;}
   .shead{margin-bottom:28px;}
   .mhero{padding-top:104px;}
-  .mh-atu{height:96px;}
   .mh-eyebrow{margin-bottom:16px;}
-  .hero-team img{height:132px;}
-  .hero-team{margin-bottom:18px;}
   .mh-title{font-size:clamp(36px,4.6vw,54px);}
   .mh-sub{margin-top:14px;font-size:15.5px;}
   .mh-cta{margin-top:20px;}
@@ -1331,54 +1264,7 @@ function mpNotify(){
   mask.addEventListener('click',function(e){if(e.target===mask)hide();});
   mask.querySelector('#mpBtn').addEventListener('click',hide);
   document.addEventListener('keydown',function h(e){if(e.key==='Escape'){hide();document.removeEventListener('keydown',h);}});
-}
-/* ===== 阿图主动演出：侧身拍照 + 气泡打字 + 烟雾散去 ===== */
-(function(){
-  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var stage=document.getElementById('atuStage'),bub=document.getElementById('atuBubble'),txt=document.getElementById('atuBubText');
-  if(reduce||!stage||!bub||!txt)return;
-  var mascot=stage.parentNode,busy=false;
-  function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
-  function flash(){var f=stage.querySelector('.atu-flash');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');}
-  function bubReset(){bub.classList.remove('bub-show','bub-smoke','bub-hide');bub.setAttribute('aria-hidden','true');txt.textContent='';}
-  function bubIn(){bub.classList.remove('bub-hide','bub-smoke');bub.classList.add('bub-show');bub.setAttribute('aria-hidden','false');}
-  function bubOut(){bub.classList.remove('bub-show');bub.classList.add('bub-hide');}
-  async function type(s,speed){for(var i=1;i<=s.length;i++){txt.textContent=s.slice(0,i);await sleep(speed+(i%3)*14);}}
-  async function erase(speed){var s=txt.textContent;for(var i=s.length;i>0;i--){txt.textContent=s.slice(0,i-1);await sleep(speed);}}
-  async function play(){
-    if(busy)return;busy=true;
-    try{
-      bubReset();await sleep(260);
-      stage.classList.add('turn');await sleep(700);
-      stage.classList.add('shoot');flash();await sleep(440);
-      stage.classList.remove('shoot');await sleep(240);
-      bubIn();await sleep(320);
-      stage.classList.add('talking');
-      var lines=['你好，我是Hogee阿图！','老板！要出图吗？','出图找阿图，靠谱！'];
-      for(var i=0;i<lines.length;i++){
-        await type(lines[i],52);await sleep(640);
-        await erase(26);
-        if(i<lines.length-1)await sleep(170);
-      }
-      stage.classList.remove('talking');
-      bubOut();await sleep(240);
-      stage.classList.remove('turn');await sleep(720);
-      await sleep(3000);
-      stage.classList.add('turn');await sleep(520);
-      bubIn();await sleep(300);
-      stage.classList.add('talking');
-      await type('我很专业噢！',62);await sleep(1180);
-      stage.classList.remove('talking');
-      bub.classList.add('bub-smoke');await sleep(1220);
-      bubReset();
-      stage.classList.remove('turn');await sleep(520);
-    }catch(e){}finally{busy=false;}
-  }
-  setTimeout(play,5000);
-  mascot.addEventListener('mouseenter',play);
-  mascot.addEventListener('click',play);
-})();
-</script>
+}</script>
 <script src="/member-auth.js?v=brand20260918" defer></script>
 <script>
 /* ===== 新版首页交互：Hero 四伙计轮播自荐 / 接力 tab / 手机动效轮播 ===== */
