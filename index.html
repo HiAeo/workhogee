@@ -250,10 +250,11 @@ ul{list-style:none;}
 .ab-mark{font-size:clamp(20px,2.4vw,26px);font-weight:900;letter-spacing:-.4px;color:var(--orange-light);}
 .ab-sub{color:rgba(255,255,255,.66);font-size:14.5px;}
 @media (max-width:860px){.ab-grid{grid-template-columns:1fr;}.ab-col{padding:30px 24px;}}
-.shead{display:grid;grid-template-columns:3fr 9fr;gap:36px;align-items:end;margin-bottom:54px;}
-.shead .kick{font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;padding-bottom:8px;}
-.shead h2{font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.18;letter-spacing:-.8px;text-align:left;}
-.shead p{font-size:16px;color:var(--ink-soft);line-height:1.85;margin-top:16px;max-width:700px;text-align:left;}
+.shead{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:54px;}
+.shead h2{order:1;font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.2;letter-spacing:-.8px;text-align:center;}
+.shead .kick{order:2;font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--orange-deep);text-transform:uppercase;margin-top:18px;max-width:var(--hw,100%);}
+.shead p{order:3;font-size:16px;color:var(--ink-soft);line-height:1.85;margin-top:14px;max-width:var(--hw,880px);text-align:center;}
+.shead .shead-line{order:4;display:block;width:56px;height:3px;border-radius:2px;background:var(--orange);margin:22px auto 0;}
 
 /* ===== 品类矩阵（不对称） ===== */
 .mx-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
@@ -478,7 +479,7 @@ ul{list-style:none;}
   .mhero-in{grid-template-columns:1fr;gap:40px;}
   .mh-creed{margin-top:46px;}
   .mh-creed .sm{margin-left:0;}
-  .shead{grid-template-columns:1fr;gap:14px;margin-bottom:38px;}
+  .shead{margin-bottom:34px;}
   .mx-feat{grid-column:span 12;min-height:360px;}
   .mx-side{grid-column:span 12;grid-template-rows:none;grid-template-columns:1fr 1fr;}
   .mx-index{grid-template-columns:1fr;}
@@ -545,8 +546,8 @@ ul{list-style:none;}
   .section{padding:66px 0;}
   .standoff{padding:70px 0;}
   .mcta{padding:78px 0 64px;}
-  .shead{margin-bottom:36px;gap:28px;}
-  .shead .kick{padding-bottom:5px;}
+  .shead{margin-bottom:32px;}
+  .shead .kick{margin-top:14px;}
   .shead h2{font-size:clamp(26px,3vw,34px);letter-spacing:-.6px;}
   .shead p{margin-top:11px;font-size:15px;line-height:1.72;}
   .mhero{padding-top:122px;}
@@ -1320,7 +1321,7 @@ ul{list-style:none;}
 <section class="mcta">
   <div class="container">
     <div class="k2 reveal">WorkHogee · 生意伙计</div>
-    <h2 class="reveal">做生意，<br>找<span style="color:#f97316">伙计</span>。</h2>
+    <h2 class="reveal" style="white-space:nowrap">做生意，找<span style="color:#f97316">伙计</span>。</h2>
     <p class="reveal">拍几张实拍图，出好图、配好文、送到位。<br>让每一件好货，都被看见。</p>
     <div class="crow reveal">
       <a href="/workbench.html" class="btn btn-org">
@@ -1360,9 +1361,8 @@ ul{list-style:none;}
       <div class="footer-col">
         <h5>产品</h5>
           <ul>
-            <li><a href="/workbench.html">Web 工作台</a></li>
-            <li><a href="/analytics.html">效果中心</a></li>
-            <li><a href="#mpp" onclick="mpNotify();return false;">微信小程序</a></li>
+            <li><a href="/workbench.html">Hogee Web工作台</a></li>
+            <li><a href="#mpp" onclick="mpNotify();return false;">Hogee 微信小程序</a></li>
           </ul>
       </div>
       <div class="footer-col">
@@ -1538,6 +1538,22 @@ function mpNotify(){
     mshow(0);
     if(!reduce)setInterval(function(){mshow(mi+1);},3200);
   }
+})();
+</script>
+<script>
+(function(){
+  function fitSheads(){
+    document.querySelectorAll('.shead').forEach(function(sh){
+      var h=sh.querySelector('h2'); if(!h) return;
+      var w=Math.ceil(h.getBoundingClientRect().width);
+      if(w>0){ sh.style.setProperty('--hw', w+'px'); }
+    });
+  }
+  window.addEventListener('DOMContentLoaded',fitSheads);
+  window.addEventListener('load',fitSheads);
+  window.addEventListener('resize',fitSheads);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSheads);}
+  setTimeout(fitSheads,300);setTimeout(fitSheads,1200);setTimeout(fitSheads,2500);
 })();
 </script>
 </body>
