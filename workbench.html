@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -671,8 +671,25 @@ function resetState(){
 var state=resetState();
 /* ================= 任务列表（本地持久化：置顶 / 重命名 / 删除 / 切换） ================= */
 function newTaskId(){return 't'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-function loadTasks(){try{return JSON.parse(localStorage.getItem('hogee_tasks')||'[]');}catch(e){return [];}}
-function saveTasks(a){try{localStorage.setItem('hogee_tasks',JSON.stringify(a.slice(0,30)));}catch(e){}}
+var taskCache=[];
+function loadTasks(){return taskCache;}
+function saveTasks(a){
+ taskCache=a.slice(0,30);
+ // 异步同步到后端（fire and forget）
+ try{
+  fetch(API+'/api/tasks/sync',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({tasks:taskCache})})
+   .then(function(r){return r.json();}).then(function(j){if(!(j&&j.ok))console.warn('tasks sync fail',j);}).catch(function(){});
+ }catch(e){}
+}
+function loadTasksRemote(){
+ return fetch(API+'/api/tasks',{headers:authHeaders()})
+  .then(function(r){return r.json();})
+  .then(function(j){
+   if(j&&j.ok&&Array.isArray(j.tasks)){taskCache=j.tasks;}
+   renderTaskList();
+  })
+  .catch(function(){renderTaskList();});
+}
 function taskSkillIco(t){return t==='usedcar'?IC.car:IC.shop;}
 function markTaskProgress(){
  if(!state.identity)return;
@@ -780,8 +797,24 @@ function analyzeImage(dataUrl){
   mean/=n;var va=0;for(var k=0;k<lap.length;k++)va+=(lap[k]-mean)*(lap[k]-mean);va/=n;
   var sharp=va<55?'bad':(va<150?'warn':'ok');
   var exp=bright<48?'bad':(bright>212?'bad':(bright<72||bright>192?'warn':'ok'));
-  return {sharp:sharp,exp:exp};
+  var base={sharp:sharp,exp:exp};
+  // 异步调后端 vision 细判（遮挡/完整度/构图），失败不影响主流程
+  return callQcVision(dataUrl).then(function(v){
+   if(v&&v.available){
+    base.occlusion=v.checks.occlusion;
+    base.completeness=v.checks.completeness;
+    base.framing=v.checks.framing;
+    base.level=v.level;
+    base.tip=v.tip;
+   }
+   return base;
+  }).catch(function(){return base;});
  });
+}
+function callQcVision(dataUrl){
+ return fetch(API+'/qc',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({image:dataUrl})})
+  .then(function(r){return r.json();})
+  .then(function(j){return (j&&j.ok&&j.qc)?j.qc:null;});
 }
 
 /* ================= API ================= */
@@ -848,16 +881,14 @@ function skillName(){return state.identity&&state.identity.type==='usedcar'?'二
 function renderPartners(){
  var box=$('#partnerList');if(!box)return;
  box.innerHTML=PARTNERS.map(function(p){
-  var hired=state.hires.has(p.id),active=state.activePartner===p.id;
-  var sw=p.must?'':('<button class="hire'+(hired?' on':'')+'" data-act="hire" data-id="'+p.id+'" aria-label="雇佣开关"></button>');
+  var active=state.activePartner===p.id;
   return '<div class="partner p-'+p.id+(active?' active':'')+'" role="button" tabindex="0" data-act="speak" data-id="'+p.id+'">'
    +'<span class="pavatar">'+p.ico+'</span>'
-   +'<span class="pn"><b>'+p.name+'</b><span>'+p.role+(hired?'':' · 未雇佣')+'</span></span>'+sw+'</div>';
+   +'<span class="pn"><b>'+p.name+'</b><span>'+p.role+'</span></span></div>';
  }).join('');
 }
 function setActivePartner(id){
  if(id==='host'){state.activePartner='host';renderPartners();renderTopbar();return;}
- if(!state.hires.has(id)){toast('先在「插件·技能·伙伴」里雇佣 '+partnerById(id).name);return;}
  state.activePartner=id;renderPartners();renderTopbar();
  var p=partnerById(id);toast(p.name+' · '+p.role+' 主讲');
 }
@@ -888,45 +919,46 @@ function renderLab(){
 }
 function renderLabSkill(){
  var cur=state.identity?state.identity.type:'';
- var note='<div class="lab-note">技能＝行业大脑。传图后阿图自动识别行业并启用对应技能；二手车技能已带车型库与展厅/棚拍/实地融合能力，通用电商技能兜底全品类。更多行业技能陆续上线，可先点「提醒我」。</div>';
- var ready='<div class="lab-group">已可用</div>'+SKILLS_READY.map(function(s){
+ var note='<div class="lab-note">行业技能＝行业大脑。传图后阿图自动识别行业；二手车技能带车型库与展厅/棚拍/实地融合，通用电商兜底全品类。选一个当前生意用的就行。</div>';
+ return note+SKILLS_READY.map(function(s){
   var on=cur===s.id;
   return '<div class="lab-item"><span class="li-ico">'+s.ico+'</span><div class="li-main"><b>'+s.n+'</b><span>'+s.d+'</span></div>'
    +(on?'<span class="li-state st-on">使用中</span>':'<button class="li-btn primary" data-act="skillUse" data-id="'+s.id+'">切换使用</button>')+'</div>';
  }).join('');
- var noted=notifyState();
- var market='<div class="lab-group">技能市场 · 陆续上线</div>'+SKILLS_MARKET.map(function(s){
-  var isN=noted.indexOf(s.id)>=0;
-  return '<div class="lab-item"><span class="li-ico" style="opacity:.55">'+s.ico+'</span><div class="li-main"><b>'+s.n+'</b><span>'+s.d+'</span></div>'
-   +'<span class="li-state st-soon">即将上线</span><button class="li-btn" data-act="skillNotify" data-id="'+s.id+'" '+(isN?'disabled':'')+'>'+(isN?'已提醒':'提醒我')+'</button></div>';
- }).join('');
- return note+ready+market;
 }
 function renderLabPlugin(){
  var ps=pluginsState();
- var note='<div class="lab-note">插件＝你的自媒体账号连接。阿发坚持「半自动」：把从生成完毕到手指放在发送键之间的活全部干完——适配素材、分渠道文案、草稿/发布页一次就绪，最后一下由你本人点发送，阿发不碰账号密码。标「素材就绪包」的渠道现在就能用，官方 API 通道需企业资质，可先登记。</div>';
+ var note='<div class="lab-note">送达渠道。阿发坚持「半自动」：把素材、文案、发布页一次备好，最后一下你本人点发送，阿发不碰账号密码。下面标「素材就绪包」的现在就能用。</div>';
  var html=note;
+ var activeItems=[],laterItems=[];
  PLUGIN_GROUPS.forEach(function(grp){
-  html+='<div class="lab-group">'+grp.g+'</div>';
   grp.items.forEach(function(it){
-   var ico=it.mode==='kit'?IC.pack:(it.mode==='oauth'?IC.external:IC.send);
-   var state2=ps[it.id];
-   var btn='';
-   if(it.mode==='kit')btn='<span class="li-state st-kit">素材就绪包</span><button class="li-btn primary" data-act="pluginKit" data-id="'+it.id+'">去送达</button>';
-   else if(it.mode==='oauth')btn=state2==='applied'?'<span class="li-state st-oauth">已登记</span><button class="li-btn" disabled>开放通知</button>':'<span class="li-state st-oauth">需企业资质</span><button class="li-btn" data-act="pluginApply" data-id="'+it.id+'">申请开通</button>';
-   else btn='<span class="li-state st-soon">陆续接入</span><button class="li-btn" data-act="pluginSoon" data-id="'+it.id+'">登记关注</button>';
-   html+='<div class="lab-item"><span class="li-ico">'+ico+'</span><div class="li-main"><b>'+it.n+'</b><span>'+it.d+'</span></div>'+btn+'</div>';
+   if(it.mode==='kit')activeItems.push(it);else laterItems.push(it);
   });
  });
+ html+='<div class="lab-group">现在能用</div>';
+ activeItems.forEach(function(it){
+  html+='<div class="lab-item"><span class="li-ico">'+IC.pack+'</span><div class="li-main"><b>'+it.n+'</b><span>'+it.d+'</span></div>'
+   +'<span class="li-state st-kit">素材就绪包</span><button class="li-btn primary" data-act="pluginKit" data-id="'+it.id+'">去送达</button></div>';
+ });
+ if(laterItems.length){
+  html+='<div class="lab-group">更多渠道（需资质或陆续接入）</div>';
+  laterItems.forEach(function(it){
+   var ico=it.mode==='oauth'?IC.external:IC.send;
+   var state2=ps[it.id];
+   var btn='';
+   if(it.mode==='oauth')btn=state2==='applied'?'<span class="li-state st-oauth">已登记</span>':'<span class="li-state st-oauth">需企业资质</span><button class="li-btn" data-act="pluginApply" data-id="'+it.id+'">申请开通</button>';
+   else btn='<span class="li-state st-soon">陆续接入</span><button class="li-btn" data-act="pluginSoon" data-id="'+it.id+'">登记关注</button>';
+   html+='<div class="lab-item" style="opacity:.75"><span class="li-ico">'+ico+'</span><div class="li-main"><b>'+it.n+'</b><span>'+(it.d||'')+'</span></div>'+btn+'</div>';
+  });
+ }
  return html;
 }
 function renderLabPartner(){
- var note='<div class="lab-note">伙伴＝你雇佣的伙计。阿图负责生图（默认在岗），阿文写分渠道文案，阿发把素材与文案送达各平台，阿果汇总效果数据。按你的生意需要雇佣，对话里可用顶部「@伙伴」切换主讲，不必每个都从生图开始。</div>';
+ var note='<div class="lab-note">四个伙计都在岗。阿图生图，阿文写文案，阿发送达，阿果看数据。点「让它主讲」直接切换，不用再雇佣。</div>';
  return note+PARTNERS.map(function(p){
-  var hired=state.hires.has(p.id);
-  var sw=p.must?'<span class="li-state st-on">默认在岗</span>':'<button class="li-btn'+(hired?'':' primary')+'" data-act="hireLab" data-id="'+p.id+'">'+(hired?'取消雇佣':'雇佣')+'</button>';
-  var speak=(!p.must&&!hired)?'':'<button class="li-btn" data-act="speak" data-id="'+p.id+'">'+(state.activePartner===p.id?'当前主讲':'让它主讲')+'</button>';
-  return '<div class="lab-item p-'+p.id+'"><span class="li-ico">'+p.ico+'</span><div class="li-main"><b>'+p.name+' · '+p.role+'</b><span>'+partnerDuty(p.id)+'</span></div>'+sw+speak+'</div>';
+  var speak='<button class="li-btn" data-act="speak" data-id="'+p.id+'">'+(state.activePartner===p.id?'当前主讲':'让它主讲')+'</button>';
+  return '<div class="lab-item p-'+p.id+'"><span class="li-ico">'+p.ico+'</span><div class="li-main"><b>'+p.name+' · '+p.role+'</b><span>'+partnerDuty(p.id)+'</span></div>'+speak+'</div>';
  }).join('');
 }
 function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主体一点不动',awen:'分渠道文案，自动规避广告法绝对化词',afa:'素材就绪包 + 发布页/草稿，本人点最后一下',agu:'画册渠道码、浏览与线索回流效果中心'}[id]||'';}
@@ -935,7 +967,9 @@ function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主�
 function start(){
  scroll.innerHTML='';state.stage='welcome';
  var id=loadId();
- renderPartners();renderTopbar();renderCmpAttach();renderDeliver();renderTaskList();
+ renderPartners();renderTopbar();renderCmpAttach();renderDeliver();
+ // 先从后端拉历史任务，再渲染列表
+ loadTasksRemote();
  if(id){state.identity=id;state.bgImage=loadBg(id.type);renderTopbar();
   botSay('回来了，老板。当前是<b>'+skillName()+'</b>，直接传图我就开工；也可以换个技能或让阿文先写文案。');
   quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个技能',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
@@ -1003,34 +1037,134 @@ function handleFiles(fileList){
  }).catch(function(){stop();toast('有图片没读出来，换一张试试','err');});
 }
 
-/* ================= 认货 ================= */
+/* ================= 认货（AI 识图自动预填，客户只需确认或跳过） ================= */
 var carFilter={cat:'all',letter:''};
+var identifyFields={};
+/* 内测水印：右下角半透明深色圆角框 + 白色 WorkHogee 出图字样 */
+function addWatermark(dataUrl){
+ return new Promise(function(resolve){
+  if(!dataUrl||typeof dataUrl!=='string'){resolve(dataUrl);return;}
+  var img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+   try{
+    var c=document.createElement('canvas');
+    c.width=img.width;c.height=img.height;
+    var ctx=c.getContext('2d');
+    ctx.drawImage(img,0,0);
+    var pad=Math.round(img.width*0.012);
+    var fs=Math.round(img.width*0.026);
+    var bw=fs*9,bh=fs+pad*2;
+    var bx=img.width-bw-pad*1.5;
+    var by=img.height-bh-pad*1.5;
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    var r=fs*0.28;
+    ctx.beginPath();
+    ctx.moveTo(bx+r,by);
+    ctx.arcTo(bx+bw,by,bx+bw,by+bh,r);
+    ctx.arcTo(bx+bw,by+bh,bx,by+bh,r);
+    ctx.arcTo(bx,by+bh,bx,by,r);
+    ctx.arcTo(bx,by,bx+bw,by,r);
+    ctx.closePath();ctx.fill();
+    ctx.font='600 '+fs+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(255,255,255,0.95)';
+    ctx.fillText('WorkHogee 出图',bx+pad*1.4,by+bh/2);
+    resolve(c.toDataURL('image/jpeg',0.92));
+   }catch(e){resolve(dataUrl);}
+  };
+  img.onerror=function(){resolve(dataUrl);};
+  img.src=dataUrl;
+ });
+}
+
+function callIdentify(dataUrl){
+ return fetch(API+'/identify',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({image:dataUrl})})
+  .then(function(r){return r.json();})
+  .then(function(j){
+   var f=(j&&j.identify&&j.identify.available)?j.identify.fields:{};
+   // 品牌模糊纠错：AI说"丰田汽车""TOYOTA丰田"等，纠正到 CAR_DB 标准名
+   if(f.brand&&CAR_DB.length){
+    var bf=f.brand.replace(/[汽车|有限公司|中国|合资|进口|TOYOTA|toyota|HONDA|honda]/g,'').trim();
+    var hit=CAR_DB.filter(function(d){return d.n===bf||d.n.indexOf(bf)>=0||bf.indexOf(d.n)>=0;})[0];
+    if(hit)f.brand=hit.n;
+   }
+   return f;
+  })
+  .catch(function(){return {};});
+}
+function identifySummary(f){
+ if(!f||!f.kind)return '';
+ if(f.kind==='usedcar'){
+  var parts=[];
+  if(f.color)parts.push(f.color);
+  if(f.brand)parts.push(f.brand);
+  if(f.series)parts.push(f.series);
+  if(f.year)parts.push(f.year);
+  return parts.join(' ');
+ }else{
+  return f.name||f.category||f.brand||'';
+ }
+}
 function renderConfirmCard(){
+ var used=state.identity.type==='usedcar';
+ // 第一步：先显示识图 loading
+ card('<div class="card-pad"><div class="card-title">阿图正在看图认货…</div><div class="card-desc">我尽量从图里把品牌、型号、颜色都认出来，你不用一个个填。</div></div>','atu');
+ state.stage='confirm';
+ var firstImg=(state.images&&state.images[0])?state.images[0].dataUrl:'';
+ if(!firstImg){renderConfirmEdit();return;}
+ callIdentify(firstImg).then(function(f){
+  identifyFields=f||{};
+  renderConfirmSummary();
+ });
+}
+function renderConfirmSummary(){
+ var used=state.identity.type==='usedcar';
+ var sum=identifySummary(identifyFields);
+ var title=sum?('阿图认出了：<b>'+esc(sum)+'</b>'):'阿图看了一圈，没完全认出来';
+ var desc='想快速出图就直接点下面按钮，不用填任何东西。要写文案或长图、或者认的不对，再点「改一下」。';
+ var inner='<div class="card-title">'+title+'</div>'
+  +'<div class="card-desc">'+desc+'</div>'
+  +'<div class="card-actions" style="flex-direction:column;gap:8px">'
+  +'<button class="btn btn-primary" data-act="skipIdentify" style="width:100%">直接出图，不填了</button>'
+  +'<button class="btn btn-ghost" data-act="showEditIdentify" style="width:100%">改一下信息 / 写文案用</button>'
+  +'<button class="btn btn-ghost" data-act="backUpload" style="width:100%">返回加图</button>'
+  +'</div>';
+ card('<div class="card-pad">'+inner+'</div>','atu');
+}
+function renderConfirmEdit(){
  carFilter={cat:'all',letter:''};
  var used=state.identity.type==='usedcar';var inner;
+ var f=identifyFields||{};
  if(used){
-  inner='<div class="card-title">认一认这是哪台车</div>'
-   +'<div class="card-desc">视觉识别正在接入，这一步你帮阿图核对一下，认对了出图才准。</div>'
+  inner='<div class="card-title">核对一下这台车</div>'
+   +'<div class="card-desc">阿图已经从图里认了一些，你看着改就行。</div>'
    +'<datalist id="brandList">'+CAR_BRANDS.map(function(b){return '<option value="'+b+'">';}).join('')+'</datalist>'
    +'<datalist id="seriesList"></datalist>'
-   +'<div class="fld"><label>品牌</label><input id="carBrand" list="brandList" placeholder="可搜索，或在下方按能源 / 字母点选" autocomplete="off"></div>'
+   +'<div class="fld"><label>品牌</label><input id="carBrand" list="brandList" placeholder="可搜索，或在下方按能源 / 字母点选" autocomplete="off" value="'+esc(f.brand||'')+'"></div>'
    +'<div class="car-tabs" id="carTabs"></div><div class="car-abc" id="carAbc"></div><div class="car-grid" id="carGrid"></div>'
-   +'<div class="fld" style="margin-top:11px"><label>车系</label><input id="carSeries" list="seriesList" placeholder="先选品牌，再选车系（也可手输）" autocomplete="off"></div>'
-   +'<div class="fld-row"><div class="fld"><label>年款</label><input id="carYear" placeholder="如：2021 款"></div>'
+   +'<div class="fld" style="margin-top:11px"><label>车系</label><input id="carSeries" list="seriesList" placeholder="先选品牌，再选车系（也可手输）" autocomplete="off" value="'+esc(f.series||'')+'"></div>'
+   +'<div class="fld-row"><div class="fld"><label>年款</label><input id="carYear" placeholder="如：2021 款" value="'+esc(f.year||'')+'"></div>'
    +'<div class="fld"><label>配置 / 排量（选填）</label><input id="carTrim" placeholder="如：C260L"></div></div>'
-   +'<div class="fld-row"><div class="fld"><label>能源类型</label><select id="carEnergy"><option value="燃油">燃油</option><option value="油电混动">油电混动</option><option value="插混/增程">插混 / 增程</option><option value="纯电">纯电</option></select></div>'
-   +'<div class="fld"><label>变速箱</label><select id="carGear"><option value="">不确定 / 不限</option><option value="手动挡">手动挡</option><option value="自动挡(AT)">自动挡 · AT</option><option value="CVT无级">CVT 无级</option><option value="双离合">双离合</option><option value="单速(纯电)">单速（纯电）</option></select></div></div>'
+   +'<div class="fld-row"><div class="fld"><label>车身颜色</label><input id="carColor" placeholder="如：黑色" value="'+esc(f.color||'')+'"></div>'
+   +'<div class="fld"><label>能源类型</label><select id="carEnergy"><option value="燃油">燃油</option><option value="油电混动">油电混动</option><option value="插混/增程">插混 / 增程</option><option value="纯电">纯电</option></select></div></div>'
    +'<div class="fld" style="margin-top:6px"><label>常用车况卖点（点选，自动加入补充要求）</label><div class="sell-chips" id="sellChips">'+SELL_POINTS.map(function(t){return '<button type="button" data-act="fillSell" data-v="'+t+'">'+t+'</button>';}).join('')+'</div></div>';
  }else{
-  var guess=state.identity.cat||'你的商品';
-  inner='<div class="card-title">认一认你卖的是什么货</div>'
-   +'<div class="card-desc">写具体一点，出图和写文案才准。例如「纯棉短袖 T 恤」「北欧实木餐桌」「蓝牙音箱」。</div>'
-   +'<div class="fld"><label>商品名称</label><input id="productName" placeholder="'+esc(guess)+'" value="'+esc(state.product.name||'')+'"></div>';
+  var guess=f.name||f.category||f.brand||(state.identity.cat||'你的商品');
+  inner='<div class="card-title">核对一下这是什么货</div>'
+   +'<div class="card-desc">阿图已经从图里认了一些，你看着改就行。</div>'
+   +'<div class="fld"><label>商品名称</label><input id="productName" placeholder="'+esc(guess)+'" value="'+esc(f.name||state.product.name||'')+'"></div>';
  }
  inner+='<div class="fld" style="margin-top:13px"><label>补充要求（选填）</label><input id="extraInstr" placeholder="如：想要暖一点的光 / 突出某个卖点 / 不要出现人物"></div>';
  inner+='<div class="card-actions"><button class="btn btn-primary" data-act="confirmProduct">对，就这个</button><button class="btn btn-ghost" data-act="backUpload">返回加图</button></div>';
  card('<div class="card-pad">'+inner+'</div>','atu');
- if(used)setTimeout(renderCarPicker,0);
+ if(used){
+  setTimeout(function(){
+   renderCarPicker();
+   // 预填能源类型
+   if(f.energy){var en=$('#carEnergy');if(en){var map={'燃油':'燃油','油电混动':'油电混动','插混/增程':'插混/增程','纯电':'纯电'};en.value=map[f.energy]||'燃油';}}
+  },0);
+ }
  state.stage='confirm';
 }
 function renderCarPicker(){
@@ -1141,7 +1275,8 @@ function runGenerate(){
     try{
      var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize);
      if(token!==state.genToken)return;
-     state.results.push({url:url,label:jobs[i].label,k:jobs[i].k});
+     var wmUrl=await addWatermark(url);
+     state.results.push({url:wmUrl,label:jobs[i].label,k:jobs[i].k});
      if(window.HG_bumpGen)window.HG_bumpGen();
      markTaskProgress();
      if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
@@ -1205,7 +1340,7 @@ function copySectionHtml(){
  return '<div class="dl-sec"><h5>'+IC.pen+' 阿文文案</h5><div class="copy-box"><div class="copy-head">分渠道草拟，发布前核对真实 <button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div>'
   +'<div class="copy-chans">'+btns+'</div><div class="copy-warn" id="copyWarn"></div>'
   +'<textarea id="copyText">'+esc(val)+'</textarea>'
-  +'<div class="copy-foot"><span id="copyScan" class="copy-ok"></span><button type="button" class="btn btn-ghost btn-sm" id="copyCleanBtn" data-act="copyClean" style="display:none">一键净化绝对化词</button></div></div></div>';
+  +'<div class="copy-foot"><span id="copyScan" class="copy-ok"></span><button type="button" class="btn btn-ghost btn-sm" id="copyCleanBtn" data-act="copyClean" style="display:none">一键净化绝对化词</button></div>' +'<div class="copy-redo" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:12px;opacity:.6;line-height:28px">不满意再改：</span><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="casual">再口语化</button><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="short">再短一点</button><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="real">别像广告</button></div></div></div>';
 }
 function reachSectionHtml(){
  if(!state.results.length&&!state.copy.ready)return '';
@@ -1381,7 +1516,7 @@ async function redoOne(i){
  var job=buildJobs().filter(function(j){return j.k===r.k;})[0];if(!job){toast('找不到原任务');return;}
  var stop=botTyping('atu');
  try{var url=await callGenerateRetry(job.prompt,job.image,state.quality==='hd'?'2304x2304':'2048x2048');stop();
-  state.results[i].url=url;if($('#lbImg').src&&$('#lightbox').classList.contains('show'))$('#lbImg').src=url;
+  var wm2=await addWatermark(url);state.results[i].url=wm2;if($('#lbImg').src&&$('#lightbox').classList.contains('show'))$('#lbImg').src=wm2;
   renderDeliver();toast('已重做，看看这张');
  }catch(e){stop();toast(e.message||'重做失败','err');}
 }
@@ -1452,13 +1587,43 @@ function downloadQr(){var sh=state.showcase;if(!sh||!sh.qr_svg)return;var blob=n
 function copyShowLink(){var inp=$('#pubLinkInput');var v=inp?inp.value:'';if(!v)return;copyPlain(v).then(function(){toast('链接已复制');});}
 
 /* ================= 伙伴分流（阿文先行 / 阿发送达 / 阿果效果） ================= */
-function awenFlow(text){
+function awenFlow(text,tone){
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(text){if(!state.product.name)state.product.name=text.slice(0,24);state.extra=text;}
- if(!state.product.name){botSay('告诉我你卖什么、主打什么卖点（或先传商品图让阿图认货），我就能出一版分渠道文案。','awen');return;}
- state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
- renderTopbar();setDeliverTab('copy');openDeliver();
- botSay('文案已放进右侧「交付物 · 图文」：通用、小红书、朋友圈、话题标签各一版，已自动规避广告法绝对化词，发布前你再过一遍真实参数即可。','awen');
+ if(!state.product.name&&!(identifyFields&&identifyFields.sellingPoints&&identifyFields.sellingPoints.length)){
+  botSay('告诉我你卖什么、主打什么卖点（或先传商品图让阿图认货），我就能出一版分渠道文案。','awen');return;
+ }
+ var sp=(identifyFields&&identifyFields.sellingPoints)||state.product.sellingPoints||[];
+ var cat=(identifyFields&&identifyFields.category)||state.product.category||state.identity.cat||'';
+ var productName=state.product.name||[identifyFields.brand,identifyFields.name].filter(Boolean).join(' ');
+ var stop=botTyping('awen');
+ authPost('/copy',{product:productName,identityType:state.identity.type||'general',extra:state.extra||'',sellingPoints:sp,category:cat,tone:tone||''})
+  .then(function(r){
+   stop();
+   if(r&&r.ok&&r.copy&&r.copy.available&&r.copy.channels){
+    var ch=r.copy.channels;
+    state.copy.cps={general:ch.general,xhs:ch.xhs,pyq:ch.pyq,tags:(ch.tags||[]).join(' ')};
+    state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
+    state.copy._lastTone=tone||'';
+    renderTopbar();setDeliverTab('copy');openDeliver();
+    var warn=(r.copy.bannedHits&&r.copy.bannedHits.length)?(' 检出绝对化词「'+r.copy.bannedHits.join('、')+'」，发布前点净化。'):'';
+    var spHint=sp.length?(' 这次用了图里看出来的 '+sp.length+' 个卖点。'):'';
+    botSay('文案已放进右侧「交付物 · 图文」。'+spHint+warn+' 不满意可以点下面按钮再改一版。','awen');
+   }else{
+    state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
+    renderTopbar();setDeliverTab('copy');openDeliver();
+    botSay('文案已放进右侧「交付物 · 图文」（规则模板版）。','awen');
+   }
+  })
+  .catch(function(){
+   stop();
+   state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
+   renderTopbar();setDeliverTab('copy');openDeliver();
+   botSay('文案已放进右侧「交付物 · 图文」（规则模板版）。','awen');
+  });
+}
+function redoCopy(tone){
+ awenFlow(state.extra||'',tone);
 }
 function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.chart+' 阿果效果中心</div><div class="card-desc">画册浏览、渠道二维码归因、访客留资与咨询，都会在这里汇总。生成画册并把链接/二维码投出去后，数据自动回流。</div><div class="card-actions"><a class="btn btn-primary" href="/analytics.html" target="_blank" rel="noopener">'+IC.external+' 打开效果中心</a></div></div>','agu');}
 
@@ -1490,7 +1655,7 @@ function ensurePartnerPop(){
 }
 function placePop(pop,anchor){var r=anchor.getBoundingClientRect();pop.style.position='fixed';pop.style.right=(window.innerWidth-r.right)+'px';pop.style.bottom=(window.innerHeight-r.top+10)+'px';pop.style.top='auto';pop.style.left='auto';}
 function togglePartnerPop(){ensurePartnerPop();var pop=$('#partnerPop');
- var rows=[{id:'host',name:'Hogee',role:'总调度',ico:IC.brand}].concat(PARTNERS.filter(function(p){return state.hires.has(p.id);}));
+ var rows=[{id:'host',name:'Hogee',role:'总调度',ico:IC.brand}].concat(PARTNERS);
   pop.innerHTML=rows.map(function(p){return '<button class="pop-item p-'+p.id+'" data-act="speak" data-id="'+p.id+'"><span class="pavatar sm"'+(p.id==='host'?' style="color:var(--orange)"':'')+'>'+p.ico+'</span>'+p.name+' · '+p.role+(state.activePartner===p.id?'<span class="pop-on">主讲</span>':'')+'</button>';}).join('');
  placePop(pop,$('#tbPartner'));pop.classList.toggle('show');$('#plusPop').classList.remove('show');
 }
@@ -1499,10 +1664,93 @@ function togglePartnerPop(){ensurePartnerPop();var pop=$('#partnerPop');
 function openLightbox(src){$('#lbImg').src=src;$('#lightbox').classList.add('show');}
 function closeLightbox(){$('#lightbox').classList.remove('show');$('#lbImg').src='';}
 
-/* ================= 自由输入分流 ================= */
+/* ================= 自由输入分流（大模型意图理解 + 规则兜底） ================= */
 function sendFreeText(){
  var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';
  userSay(txt);
+ var stop=botTyping(state.activePartner);
+ var ctx={
+  activePartner:state.activePartner,
+  stage:state.stage||'welcome',
+  hasIdentity:!!state.identity,
+  identityType:state.identity?state.identity.type:'',
+  hasImages:!!(state.images&&state.images.length),
+  product:state.product&&state.product.name?state.product.name:''
+ };
+ authPost('/api/understand',{text:txt,context:ctx}).then(function(r){
+  stop();
+  if(!r||!r.ok||!r.data||(r.data.confidence||0)<0.35){sendFreeTextLegacy(txt);return;}
+  routeByIntent(txt,r.data);
+ }).catch(function(){stop();sendFreeTextLegacy(txt);});
+}
+
+/* 按大模型意图分流 */
+function routeByIntent(txt,it){
+ var t=it.target,a=it.action;
+ /* 切主讲 */
+ if(t&&t!==state.activePartner&&(t==='atu'||t==='awen'||t==='afa'||t==='agu')){
+  state.activePartner=t;renderPartners();renderTopbar();
+ }
+ switch(a){
+  case 'start_sell':{
+   var nm=(it.product||txt).slice(0,24);
+   if(!state.identity||state.stage==='welcome'){
+    state.identity={type:'general',label:'通用电商',cat:''};saveId();state.bgImage=null;renderTopbar();
+   }
+   state.product.name=nm;
+   botSay((it.reply||'明白了，你做「'+esc(nm)+'」。把商品用手机拍几张传上来，第一张拍清整体，我拿它做主图。'),'atu');
+   if(state.stage!=='upload'){renderUploadCard();state.stage='upload';}
+   break;
+  }
+  case 'upload_photos':{
+   if(!state.identity){
+    state.identity={type:'general',label:'通用电商',cat:''};saveId();state.bgImage=null;renderTopbar();
+   }
+   if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+   botSay(it.reply||'好，点左下角「+」把手机拍的图传上来。','atu');
+   $('#fileInput').click();
+   break;
+  }
+  case 'write_copy':{
+    state.activePartner='awen';renderPartners();renderTopbar();
+   awenFlow(txt);
+   break;
+  }
+  case 'deliver':{
+   if(state.results.length||state.copy.ready){
+    setDeliverTab('reach');openDeliver();
+    botSay(it.reply||'素材和文案都备好了，右边选平台：复制文案、打开发布页，最后一下由你本人点发送。','afa');
+   }else{
+    botSay(it.reply||'先让阿图出图、或让阿文写文案，我才能把素材打包送达各平台。','afa');
+   }
+   break;
+  }
+  case 'show_analytics':{
+   state.activePartner='agu';renderPartners();renderTopbar();
+   botSay(it.reply||'我是阿果，专管效果数据。画册投出去后的浏览、留资、渠道归因都在效果中心。','agu');
+   aguCard();
+   break;
+  }
+  case 'choose_skill':{
+   openLab('skill');
+   botSay(it.reply||'在左边选个行业技能，二手车和通用电商都行。','host');
+   break;
+  }
+  case 'extra_note':{
+   state.extra=(state.extra?state.extra+'；':'')+txt;
+   botSay(it.reply||('记下了：'+esc(txt)+'。出图时按这个来。'),'atu');
+   break;
+  }
+  case 'chat':
+  default:{
+   botSay(it.reply||'收到。你说，我听着。','host');
+   break;
+  }
+ }
+}
+
+/* 规则兜底：API 不可用或低置信度时走老逻辑（userSay 已在新入口做过，这里不重复） */
+function sendFreeTextLegacy(txt){
  var ap=state.activePartner;
  if(ap==='awen'){awenFlow(txt);return;}
  if(ap==='afa'){
@@ -1609,11 +1857,36 @@ function handleAct(b){
  else if(act==='fillSell'){var ex=document.getElementById('extraInstr'),v=b.dataset.v,arr=ex?ex.value.split(/[、,，\n]/).map(function(x){return x.trim();}).filter(Boolean):[];if(b.classList.contains('on')){b.classList.remove('on');arr=arr.filter(function(x){return x!==v;});}else{if(arr.indexOf(v)<0)arr.push(v);b.classList.add('on');}if(ex)ex.value=arr.join('、');}
  else if(act==='confirmProduct'){
   var used=state.identity.type==='usedcar';
-  if(used){var brand=$('#carBrand').value.trim(),series=$('#carSeries').value.trim();if(!brand||!series){toast('品牌和车系至少填一下，阿图才认得准','err');return;}
-   state.product={brand:brand,series:series,year:$('#carYear').value.trim(),trim:$('#carTrim').value.trim(),energy:$('#carEnergy').value,gear:$('#carGear').value,name:[$('#carYear').value.trim(),brand,series].filter(Boolean).join(' ')};
-  }else{var nm=$('#productName').value.trim();if(!nm){toast('写一下商品名称，阿图才好出图','err');return;}state.product.name=nm;}
+  if(used){
+   var brand=$('#carBrand').value.trim(),series=$('#carSeries').value.trim();
+   var year=$('#carYear').value.trim(),trim=$('#carTrim').value.trim();
+   var color=$('#carColor')?$('#carColor').value.trim():'';
+   var energy=$('#carEnergy')?$('#carEnergy').value:'燃油';
+   var gear=$('#carGear')?$('#carGear').value:'';
+   state.product={brand:brand,series:series,year:year,trim:trim,color:color,energy:energy,gear:gear,name:[year,brand,series].filter(Boolean).join(' ')};
+  }else{
+   var nm=$('#productName').value.trim();
+   state.product.name=nm;
+  }
   state.extra=$('#extraInstr')?$('#extraInstr').value.trim():'';
-  state.taskTitle=state.taskTitle||state.product.name;markTaskProgress();renderTopbar();botSay('认下了：<b>'+esc(state.product.name)+'</b>。下面挑这单要出哪些图。','atu');renderOutputsCard();
+  state.taskTitle=state.taskTitle||state.product.name||(used?'这台车':'这款商品');
+  markTaskProgress();renderTopbar();
+  botSay('认下了：<b>'+esc(state.product.name||'这单货')+'</b>。下面挑这单要出哪些图。','atu');
+  renderOutputsCard();
+ }
+ else if(act==='skipIdentify'){
+  // 快速路径：不填任何信息，直接进产出选择
+  var used2=state.identity.type==='usedcar';
+  var f=identifyFields||{};
+  state.product={brand:f.brand||'',series:f.series||'',year:f.year||'',trim:'',color:f.color||'',energy:f.energy||'燃油',gear:'',name:used2?[f.year,f.brand,f.series].filter(Boolean).join(' '):(f.name||'')};
+  state.extra='';
+  state.taskTitle=state.taskTitle||state.product.name||(used2?'这台车':'这款商品');
+  markTaskProgress();renderTopbar();
+  botSay('好，直接出图。下面挑这单要出哪些图。','atu');
+  renderOutputsCard();
+ }
+ else if(act==='showEditIdentify'){
+  renderConfirmEdit();
  }
  else if(act==='toggleOutput'){var k=b.dataset.k;if(state.outputs.has(k)){if(state.outputs.size===1){toast('至少保留一种图');return;}state.outputs.delete(k);b.classList.remove('on');}else{state.outputs.add(k);b.classList.add('on');}}
  else if(act==='toScene'){var isUsed=state.identity.type==='usedcar';
@@ -1636,6 +1909,7 @@ function handleAct(b){
  else if(act==='pack'){packAll();}
  else if(act==='copyText'){var t0=$('#copyText');if(t0){t0.select();copyPlain(t0.value).then(function(){toast('文案已复制');});}}
  else if(act==='copyChan'){state.copy.channel=b.dataset.v;var cps0=state.copy.cps||buildCopies();state.copy.draft='';state.copy._lastCh=state.copy.channel;renderDeliver();}
+ else if(act==='copyRedo'){var toneMap={'casual':'再口语化一点，像真人说话，不要广告腔','short':'再短一点，朋友圈就3行，别啰嗦','real':'别这么像广告，像个人闲置转让，有点小缺点也没事'};redoCopy(toneMap[b.dataset.t]||b.dataset.t);}
  else if(act==='copyClean'){var tac=$('#copyText');if(tac){var rr=cleanBanned(tac.value);tac.value=rr.text;state.copy.draft=tac.value;refreshCopyScan();toast(rr.removed.length?('已净化 '+rr.removed.length+' 处绝对化词，请通读'):'未发现需净化词');}}
  else if(act==='reach'){reachPlatform(b.dataset.p);}
  else if(act==='dynKen'){dynMake('ken',b);}else if(act==='dynShow'){dynMake('show',b);}else if(act==='dynSpin'){dynMake('spin',b);}else if(act==='dynGrid'){dynMake('grid',b);}
