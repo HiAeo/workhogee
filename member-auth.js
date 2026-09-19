@@ -135,36 +135,34 @@
     '.nav.solid .hm-navlogout,.nav.panel-open .hm-navlogout,.nav.light .hm-navlogout,.topbar .hm-navlogout{color:rgba(28,25,23,.62);}',
     '.nav.solid .hm-navlogout:hover,.nav.panel-open .hm-navlogout:hover,.nav.light .hm-navlogout:hover,.topbar .hm-navlogout:hover{color:#ea580c;}',
     '@media(max-width:860px){.hm-badge{display:none;}}',
-    /* === 登录方式改版：品牌logo / 个人企业 / 第三方登录 == */
-    '.hm-brand{align-items:center;text-align:center;gap:7px;margin-bottom:18px;}',
-    '.hm-brand .hm-logo{display:block;height:30px;width:auto;}',
-    '.hm-type{display:flex;gap:10px;}',
-    '.hm-typebtn{flex:1;appearance:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:rgba(255,255,255,.66);background:#1d1813;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:11px 0;transition:border-color .18s,color .18s,background .18s,box-shadow .18s;}',
-    '.hm-typebtn:hover{border-color:rgba(251,146,60,.6);color:#fff;}',
-    '.hm-typebtn.hm-active{background:rgba(234,88,12,.14);border-color:#ea580c;color:#fb923c;box-shadow:0 0 0 3px rgba(234,88,12,.12);}',
-    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:700;color:#fff;background:#ea580c;border:0;border-radius:11px;padding:13px 0;margin:2px 0 2px;transition:background .18s,transform .18s;box-shadow:0 8px 22px rgba(234,88,12,.28);}',
-    '.hm-wechat:hover{background:#c2410c;}',
+    /* === 登录方式改版：紧凑布局 / 品牌logo / 第三方登录 === */
+    '.hm-card{padding:20px 26px 20px;}',
+    '.hm-brand{align-items:center;text-align:center;gap:5px;margin-bottom:12px;}',
+    '.hm-brand .hm-logo{display:block;height:28px;width:auto;}',
+    '.hm-brand .hm-tagline{font-size:12px;}',
+    '.hm-seg{margin-bottom:12px;}',
+    '.hm-seg button{padding:9px 0;}',
+    '.hm-field{margin-bottom:11px;}',
+    '.hm-input{padding:10px 13px;}',
+    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:700;color:#fff;background:#07C160;border:0;border-radius:11px;padding:11px 0;margin:0;transition:background .18s,transform .18s;box-shadow:0 8px 20px rgba(7,193,96,.28);}',
+    '.hm-wechat:hover{background:#06AD56;}',
     '.hm-wechat:active{transform:translateY(1px);}',
-    '.hm-wechat svg{width:21px;height:21px;flex:none;}',
-    '.hm-or{display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:rgba(255,255,255,.38);font-size:12px;}',
+    '.hm-wechat svg{width:20px;height:20px;flex:none;}',
+    '.hm-or{display:flex;align-items:center;gap:10px;margin:11px 0 9px;color:rgba(255,255,255,.38);font-size:12px;}',
     '.hm-or::before,.hm-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12);}',
     '.hm-labrow{display:flex;align-items:center;justify-content:space-between;}',
     '.hm-labrow label{margin:0;}',
     '.hm-link{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12px;color:#fb923c;padding:0;font-weight:500;white-space:nowrap;}',
     '.hm-link:hover{color:#fdba74;}',
-    '.hm-oauth{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px;}',
-    '.hm-oth{appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.82);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:10px 0;transition:border-color .18s,color .18s,background .18s;}',
+    '.hm-submit{padding:11px 0;margin-top:2px;}',
+    '.hm-oauth{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px;}',
+    '.hm-oth{appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:9px 0;transition:border-color .18s,color .18s,background .18s;}',
     '.hm-oth:hover{border-color:#fb923c;color:#fff;background:rgba(251,146,60,.08);}',
-    '.hm-oth.hm-oth-wide{grid-column:1 / -1;}',
-    '.hm-zhi{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:5px;border:1.5px solid currentColor;font-size:11px;font-weight:700;line-height:1;}',
-    '.hm-footlinks{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:13px;}',
-    '.hm-footlinks button{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12.5px;color:rgba(255,255,255,.6);padding:2px 4px;transition:color .18s;}',
-    '.hm-footlinks button:hover{color:#fb923c;}',
-    '.hm-footlinks i{width:1px;height:12px;background:rgba(255,255,255,.18);font-style:normal;}',
-    '.hm-soon{display:none;margin-top:12px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:9px;padding:9px 12px;}',
+    '.hm-oth svg{width:18px;height:18px;flex:none;}',
+    '.hm-soon{display:none;margin-top:11px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:9px;padding:9px 12px;}',
     '.hm-soon.hm-show{display:block;animation:hmFade .2s ease;}',
-    '.hm-gate .hm-logo{height:40px;width:auto;margin-bottom:4px;}',
-    '@media(max-width:480px){.hm-card{padding:24px 20px 22px;}.hm-oauth{gap:8px;}.hm-oth{font-size:12.5px;}}',
+    '.hm-gate .hm-logo{height:38px;width:auto;margin-bottom:4px;}',
+    '@media(max-width:480px){.hm-card{padding:20px 18px;}.hm-oauth{gap:8px;}.hm-oth{font-size:12.5px;}}',
     '@media(max-width:860px){',
     '  .nav .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
     '  .nav .hm-navbtn{width:100%;padding:13px 18px;text-align:center;}',
@@ -196,29 +194,25 @@
       '</g></svg>';
   }
 
-  // 微信单色线性图标（currentColor，遵循全站单色图标规范）
-  var WECHAT_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.7 3C4.9 3 2 5.5 2 8.6c0 1.8 1 3.4 2.5 4.5L4 15.4l2.4-1.3c.7.2 1.5.3 2.3.3h.4c-.1-.4-.2-.9-.2-1.3 0-2.9 2.8-5.2 6.2-5.2h.4C15 5 12.1 3 8.7 3Zm-2.4 3.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Zm4.8 0a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/><path d="M22 13.1c0-2.5-2.4-4.5-5.4-4.5s-5.4 2-5.4 4.5 2.4 4.5 5.4 4.5c.6 0 1.3-.1 1.9-.3l1.9 1-.5-1.7c1.3-.9 2.1-2.2 2.1-3.5Zm-7.2-.9a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Zm3.6 0a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Z"/></svg>';
+  // 第三方品牌标识（取自官方品牌 SVG，仅用于登录方式识别）
+  var WECHAT_WHITE = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M32.8 18.003 32.5 18C25.732 18 20 22.798 20 29c0 1.007.151 1.976.433 2.894A18 18 0 0 1 18.5 32c-1.809 0-3.54-.274-5.137-.775-.394-.123-1.828.696-3.039 1.389-.927.53-1.724.986-1.824.886-.094-.094.169-.718.476-1.448.446-1.06.986-2.346.664-2.552C6.21 27.305 4 23.866 4 20c0-6.627 6.492-12 14.5-12 7.186 0 13.151 4.326 14.3 10.003M16 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0m7 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4" fill="#ffffff"/><path fill-rule="evenodd" clip-rule="evenodd" d="M44 29c0 3.362-1.908 6.336-4.833 8.149-.13.08.169.858.446 1.583.237.618.459 1.196.387 1.268-.075.075-.802-.327-1.571-.752-.829-.458-1.706-.942-1.871-.888-1.262.413-2.63.64-4.058.64C26.149 39 21 34.523 21 29s5.149-10 11.5-10S44 23.477 44 29m-6-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M28.5 27a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" fill="#ffffff"/></svg>';
+  var ICON_FEISHU = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8c0 1 7 3.5 14.745 16.744 0 0 4.184-4.363 6.255-5.744 1.5-1 2.712-1.332 2.712-1.332C33.712 15.156 29.5 8 28 8z" fill="#00d6b9"/><path d="M43.5 18.5c-1-.667-3.65-1.771-6.5-1.5a15 15 0 0 0-3.288.668S32.5 18 31 19c-2.07 1.38-6.255 5.744-6.255 5.744-1.428 1.397-3.05 2.732-5.245 3.756 0 0 7 3 11.5 3 5.063 0 7-3.5 7-3.5 1.5-3.305 3.5-7 5.5-9.5" fill="#163c9a"/><path d="M4 17.5v17c0 1 6 5.5 15 5.5 10 0 17.05-7.705 19-12 0 0-1.937 3.5-7 3.5-4.5 0-11.5-3-11.5-3-5.117-2.239-10.03-6.577-12.906-9.117C4.974 17.953 4 17.093 4 17.5" fill="#3370ff"/></svg>';
+  var ICON_DINGTALK = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="36" height="36" rx="8" fill="#0285fc"/><path d="m20.178 37.577 3.5-6h-3l2-3c-5.5-1-6.281-3.938-6-4.5.162-.325 2.5 1 6.281 1-8.281-.5-8.281-7-7.781-7.5.423-.424 2.44 1.666 6.564 3.53-9.126-4.314-6.453-11.956-5.064-11.03 3.344 3 9.5 8.5 15 13 .658.538 1 2 0 3.25s-2.5 2.75-3 3.25h2.5z" fill="#fff"/></svg>';
+  var ICON_QQ = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 31s-3 4.5-3.5 4c-.803-.803.062-6.622 1.5-11 0 0 2 1 4.5 1.5 0 0-1.74 9.46 4.268 13.242C20.768 40 24 40 24 40s3.232 0 5.232-1.258C35.241 34.96 33.5 25.5 33.5 25.5 36 25 38 24 38 24c1.438 4.378 2.303 10.197 1.5 11-.5.5-3.5-4-3.5-4s.232 4.776-3.392 7.742c0 0-3.376 2.758-8.608 2.758s-8.608-2.758-8.608-2.758C11.768 35.776 12 31 12 31m0-11C12 7 19 4 24 4s12 3 12 16c-4.033.782-7.5 1.5-12 1.5s-7.967-.718-12-1.5m5-2.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#000"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.732 41.5c-1 .5-8.232.5-11.732 0 5.232 0 8.608-2.758 8.608-2.758-.081.066 5.124 1.758 3.124 2.758" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M24 41.5c-3.5.5-10.732.5-11.732 0-2-1 3.205-2.692 3.124-2.758 0 0 3.376 2.758 8.608 2.758" fill="#f8ae08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10 24c.564-1.718 1.436-3.014 2-4 4.033.782 7.5 1.5 12 1.5s7.967-.718 12-1.5c.564.986 1.436 2.282 2 4 0 0-2 1-4.5 1.5s-5.5 1-9.5 1q-1.183-.001-2.257-.055c0 1.515 0 2.503.016 4.374a.2.2 0 0 1-.143.192c-1.69.479-3.579.463-4.995-.454a.19.19 0 0 1-.088-.16c-.033-1.885-.032-2.435.002-4.52A65 65 0 0 1 14.5 25.5C12 25 10 24 10 24" fill="#ea1c26"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 17.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 25.5a66 66 0 0 0 2.035.377 102 102 0 0 0-.002 4.52.19.19 0 0 0 .088.16c1.416.917 3.305.933 4.995.454a.2.2 0 0 0 .143-.192c-.016-1.87-.016-2.859-.016-4.374q1.073.054 2.257.055c4 0 7-.5 9.5-1 0 0 1.74 9.46-4.268 13.242C27.232 40 24 40 24 40s-3.232 0-5.232-1.258C12.759 34.96 14.5 25.5 14.5 25.5" fill="#fff"/><path d="M21 14c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3m6 0c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3" fill="#fff"/><path d="M21 12.438c.552 0 1-.546 1-1.22 0-.672-.448-1.218-1-1.218s-1 .546-1 1.219.448 1.219 1 1.219" fill="#000"/><path d="M26 11c.5-.5 1.5-.5 2 0" stroke="#000" stroke-width=".7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 
   var MODAL_HTML =
     '<div class="hm-overlay" id="hmOverlay">' +
       '<div class="hm-card" role="dialog" aria-modal="true" aria-label="WorkHogee 会员登录注册">' +
         '<button type="button" class="hm-close" id="hmClose" aria-label="关闭">' + xIcon() + '</button>' +
-        '<div class="hm-brand">' + brandSvg(30) +
+        '<div class="hm-brand">' + brandSvg(28) +
         '<span class="hm-tagline">生意伙计 · 会员账号</span></div>' +
         '<div class="hm-seg">' +
           '<button type="button" id="hmTabLogin" class="hm-active">登录</button>' +
           '<button type="button" id="hmTabRegister">注册</button>' +
         '</div>' +
         '<form id="hmForm" autocomplete="on">' +
-          '<div class="hm-field" id="hmTypeField" style="display:none;">' +
-            '<label>账号类型（必选）</label>' +
-            '<div class="hm-type" id="hmType">' +
-              '<button type="button" class="hm-typebtn" data-type="personal">个人</button>' +
-              '<button type="button" class="hm-typebtn" data-type="enterprise">企业</button>' +
-            '</div>' +
-          '</div>' +
-          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_ICON + '微信扫码 / 授权登录</button>' +
+          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_WHITE + '微信扫码 / 授权登录</button>' +
           '<div class="hm-or">或用手机号 / 邮箱登录</div>' +
           '<div class="hm-field">' +
             '<label for="hmAccount" id="hmAccountLabel">手机号 / 邮箱</label>' +
@@ -237,17 +231,11 @@
           '<div class="hm-err" id="hmErr"></div>' +
           '<div class="hm-soon" id="hmSoon"></div>' +
           '<div class="hm-oauth">' +
-            '<button type="button" class="hm-oth" data-provider="feishu">飞书</button>' +
-            '<button type="button" class="hm-oth" data-provider="dingtalk">钉钉</button>' +
-            '<button type="button" class="hm-oth" data-provider="qq">QQ</button>' +
-            '<button type="button" class="hm-oth hm-oth-wide" data-provider="alipay"><span class="hm-zhi">支</span>支付宝扫码登录</button>' +
+            '<button type="button" class="hm-oth" data-provider="feishu">' + ICON_FEISHU + '飞书</button>' +
+            '<button type="button" class="hm-oth" data-provider="dingtalk">' + ICON_DINGTALK + '钉钉</button>' +
+            '<button type="button" class="hm-oth" data-provider="qq">' + ICON_QQ + 'QQ</button>' +
           '</div>' +
         '</form>' +
-        '<div class="hm-footlinks">' +
-          '<button type="button" data-acct="phone">手机号登录</button><i></i>' +
-          '<button type="button" data-acct="email">邮箱登录</button>' +
-        '</div>' +
-        '<div class="hm-note">内测期间注册登录即可使用工作台。第三方授权登录将随企业资质办理陆续开放。</div>' +
       '</div>' +
     '</div>';
 
@@ -420,7 +408,6 @@
     if (!accountType(account)) { showErr('请输入正确的手机号或邮箱'); return; }
     if (password.length < 8 || password.length > 64) { showErr('密码长度需为 8-64 位'); return; }
     if (reg) {
-      if (state.memberType !== 'personal' && state.memberType !== 'enterprise') { showErr('请选择账号类型：个人或企业'); return; }
       var confirm = el('hmConfirm').value || '';
       if (confirm !== password) { showErr('两次输入的密码不一致'); return; }
     }
@@ -428,9 +415,7 @@
     btn.disabled = true;
     btn.textContent = reg ? '注册中…' : '登录中…';
 
-    var payload = reg
-      ? { account: account, password: password, memberType: state.memberType }
-      : { account: account, password: password };
+    var payload = { account: account, password: password };
     var path = reg ? '/api/member/register' : '/api/member/login';
 
     api(path, payload).then(function (r) {
