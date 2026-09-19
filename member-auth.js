@@ -20,6 +20,7 @@
     token: null,
     user: null,
     mode: 'login',
+    memberType: null,
     injected: false,
     gate: false,
     waitResolve: null,
@@ -134,6 +135,36 @@
     '.nav.solid .hm-navlogout,.nav.panel-open .hm-navlogout,.nav.light .hm-navlogout,.topbar .hm-navlogout{color:rgba(28,25,23,.62);}',
     '.nav.solid .hm-navlogout:hover,.nav.panel-open .hm-navlogout:hover,.nav.light .hm-navlogout:hover,.topbar .hm-navlogout:hover{color:#ea580c;}',
     '@media(max-width:860px){.hm-badge{display:none;}}',
+    /* === 登录方式改版：品牌logo / 个人企业 / 第三方登录 == */
+    '.hm-brand{align-items:center;text-align:center;gap:7px;margin-bottom:18px;}',
+    '.hm-brand .hm-logo{display:block;height:30px;width:auto;}',
+    '.hm-type{display:flex;gap:10px;}',
+    '.hm-typebtn{flex:1;appearance:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:rgba(255,255,255,.66);background:#1d1813;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:11px 0;transition:border-color .18s,color .18s,background .18s,box-shadow .18s;}',
+    '.hm-typebtn:hover{border-color:rgba(251,146,60,.6);color:#fff;}',
+    '.hm-typebtn.hm-active{background:rgba(234,88,12,.14);border-color:#ea580c;color:#fb923c;box-shadow:0 0 0 3px rgba(234,88,12,.12);}',
+    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:700;color:#fff;background:#ea580c;border:0;border-radius:11px;padding:13px 0;margin:2px 0 2px;transition:background .18s,transform .18s;box-shadow:0 8px 22px rgba(234,88,12,.28);}',
+    '.hm-wechat:hover{background:#c2410c;}',
+    '.hm-wechat:active{transform:translateY(1px);}',
+    '.hm-wechat svg{width:21px;height:21px;flex:none;}',
+    '.hm-or{display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:rgba(255,255,255,.38);font-size:12px;}',
+    '.hm-or::before,.hm-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12);}',
+    '.hm-labrow{display:flex;align-items:center;justify-content:space-between;}',
+    '.hm-labrow label{margin:0;}',
+    '.hm-link{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12px;color:#fb923c;padding:0;font-weight:500;white-space:nowrap;}',
+    '.hm-link:hover{color:#fdba74;}',
+    '.hm-oauth{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px;}',
+    '.hm-oth{appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.82);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:10px 0;transition:border-color .18s,color .18s,background .18s;}',
+    '.hm-oth:hover{border-color:#fb923c;color:#fff;background:rgba(251,146,60,.08);}',
+    '.hm-oth.hm-oth-wide{grid-column:1 / -1;}',
+    '.hm-zhi{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:5px;border:1.5px solid currentColor;font-size:11px;font-weight:700;line-height:1;}',
+    '.hm-footlinks{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:13px;}',
+    '.hm-footlinks button{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12.5px;color:rgba(255,255,255,.6);padding:2px 4px;transition:color .18s;}',
+    '.hm-footlinks button:hover{color:#fb923c;}',
+    '.hm-footlinks i{width:1px;height:12px;background:rgba(255,255,255,.18);font-style:normal;}',
+    '.hm-soon{display:none;margin-top:12px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:9px;padding:9px 12px;}',
+    '.hm-soon.hm-show{display:block;animation:hmFade .2s ease;}',
+    '.hm-gate .hm-logo{height:40px;width:auto;margin-bottom:4px;}',
+    '@media(max-width:480px){.hm-card{padding:24px 20px 22px;}.hm-oauth{gap:8px;}.hm-oth{font-size:12.5px;}}',
     '@media(max-width:860px){',
     '  .nav .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
     '  .nav .hm-navbtn{width:100%;padding:13px 18px;text-align:center;}',
@@ -151,27 +182,51 @@
     return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
   }
 
+  // 官网正式 SVG logo（深色场景：白 Work / 橙 o / 白 Hogee），与首页、footer 同源
+  function brandSvg(h) {
+    h = h || 30;
+    return '<svg class="hm-logo" viewBox="0 0 118 19.13" xmlns="http://www.w3.org/2000/svg" aria-label="WorkHogee" style="height:' + h + 'px;width:auto;display:block;">' +
+      '<g transform="translate(-1.06 -28.16)">' +
+      '<path fill="#ffffff" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>' +
+      '<path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>' +
+      '<path fill="#ffffff" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>' +
+      '<path fill="#ffffff" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>' +
+      '<path fill="#ffffff" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>' +
+      '<text x="53" y="42.3" font-family="\'Trebuchet MS\',\'Trebuchet\',\'Lucida Sans Unicode\',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>' +
+      '</g></svg>';
+  }
+
+  // 微信单色线性图标（currentColor，遵循全站单色图标规范）
+  var WECHAT_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.7 3C4.9 3 2 5.5 2 8.6c0 1.8 1 3.4 2.5 4.5L4 15.4l2.4-1.3c.7.2 1.5.3 2.3.3h.4c-.1-.4-.2-.9-.2-1.3 0-2.9 2.8-5.2 6.2-5.2h.4C15 5 12.1 3 8.7 3Zm-2.4 3.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Zm4.8 0a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/><path d="M22 13.1c0-2.5-2.4-4.5-5.4-4.5s-5.4 2-5.4 4.5 2.4 4.5 5.4 4.5c.6 0 1.3-.1 1.9-.3l1.9 1-.5-1.7c1.3-.9 2.1-2.2 2.1-3.5Zm-7.2-.9a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Zm3.6 0a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Z"/></svg>';
+
+
   var MODAL_HTML =
     '<div class="hm-overlay" id="hmOverlay">' +
       '<div class="hm-card" role="dialog" aria-modal="true" aria-label="WorkHogee 会员登录注册">' +
         '<button type="button" class="hm-close" id="hmClose" aria-label="关闭">' + xIcon() + '</button>' +
-        '<div class="hm-brand"><span class="hm-wm"><b>Work</b><i>Hogee</i></span>' +
+        '<div class="hm-brand">' + brandSvg(30) +
         '<span class="hm-tagline">生意伙计 · 会员账号</span></div>' +
         '<div class="hm-seg">' +
           '<button type="button" id="hmTabLogin" class="hm-active">登录</button>' +
           '<button type="button" id="hmTabRegister">注册</button>' +
         '</div>' +
         '<form id="hmForm" autocomplete="on">' +
-          '<div class="hm-field" id="hmNameField" style="display:none;">' +
-            '<label for="hmName">联系人 / 商户名（选填）</label>' +
-            '<input class="hm-input" id="hmName" type="text" maxlength="40" placeholder="便于称呼您，如：XX店铺 / 张先生">' +
+          '<div class="hm-field" id="hmTypeField" style="display:none;">' +
+            '<label>账号类型（必选）</label>' +
+            '<div class="hm-type" id="hmType">' +
+              '<button type="button" class="hm-typebtn" data-type="personal">个人</button>' +
+              '<button type="button" class="hm-typebtn" data-type="enterprise">企业</button>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_ICON + '微信扫码 / 授权登录</button>' +
+          '<div class="hm-or">或用手机号 / 邮箱登录</div>' +
+          '<div class="hm-field">' +
+            '<label for="hmAccount" id="hmAccountLabel">手机号 / 邮箱</label>' +
+            '<input class="hm-input" id="hmAccount" type="text" inputmode="tel" autocomplete="username" placeholder="请输入手机号或邮箱">' +
           '</div>' +
           '<div class="hm-field">' +
-            '<label for="hmAccount">手机号 / 邮箱</label>' +
-            '<input class="hm-input" id="hmAccount" type="text" inputmode="email" autocomplete="username" placeholder="用于登录与找回账号">' +
-          '</div>' +
-          '<div class="hm-field">' +
-            '<label for="hmPassword">密码</label>' +
+            '<div class="hm-labrow"><label for="hmPassword">密码</label>' +
+            '<button type="button" class="hm-link" data-provider="sms">验证码 / 本机一键登录</button></div>' +
             '<input class="hm-input" id="hmPassword" type="password" autocomplete="current-password" placeholder="至少 8 位">' +
           '</div>' +
           '<div class="hm-field" id="hmConfirmField" style="display:none;">' +
@@ -180,15 +235,26 @@
           '</div>' +
           '<button type="submit" class="hm-submit" id="hmSubmit">登录</button>' +
           '<div class="hm-err" id="hmErr"></div>' +
+          '<div class="hm-soon" id="hmSoon"></div>' +
+          '<div class="hm-oauth">' +
+            '<button type="button" class="hm-oth" data-provider="feishu">飞书</button>' +
+            '<button type="button" class="hm-oth" data-provider="dingtalk">钉钉</button>' +
+            '<button type="button" class="hm-oth" data-provider="qq">QQ</button>' +
+            '<button type="button" class="hm-oth hm-oth-wide" data-provider="alipay"><span class="hm-zhi">支</span>支付宝扫码登录</button>' +
+          '</div>' +
         '</form>' +
-        '<div class="hm-note">内测期间，注册并登录后即可使用工作台生图。<br>我们不会向第三方泄露您的账号信息。</div>' +
+        '<div class="hm-footlinks">' +
+          '<button type="button" data-acct="phone">手机号登录</button><i></i>' +
+          '<button type="button" data-acct="email">邮箱登录</button>' +
+        '</div>' +
+        '<div class="hm-note">内测期间注册登录即可使用工作台。第三方授权登录将随企业资质办理陆续开放。</div>' +
       '</div>' +
     '</div>';
 
   var GATE_HTML =
     '<div class="hm-gate" id="hmGate">' +
       '<div class="hm-gate-badge">WORKHOGEE · 内测中</div>' +
-      '<span class="hm-wm"><b>Work</b><i>Hogee</i></span>' +
+      brandSvg(40) +
       '<h3 id="hmGateTitle">登录后开始使用工作台</h3>' +
       '<p>注册一个 WorkHogee 会员账号，即可在工作台为你的商品生成可上架、可合规的专业图片与图文。内测期间登录即可使用。</p>' +
       '<div class="hm-gate-btns">' +
@@ -229,6 +295,43 @@
     });
     el('hmForm').addEventListener('submit', onSubmit);
 
+    // 个人 / 企业账号类型（注册必选）
+    var typeBtns = document.querySelectorAll('#hmType .hm-typebtn');
+    for (var ti = 0; ti < typeBtns.length; ti++) {
+      typeBtns[ti].addEventListener('click', function () {
+        state.memberType = this.getAttribute('data-type');
+        for (var k = 0; k < typeBtns.length; k++) typeBtns[k].classList.toggle('hm-active', typeBtns[k] === this);
+        hideErr(); var sb0 = el('hmSoon'); if (sb0) sb0.classList.remove('hm-show');
+      });
+    }
+    // 第三方授权 / 验证码登录：内测期资质未就绪，诚实提示并预留标准 OAuth 接入位
+    var PROVIDER_NAME = { wechat: '微信', sms: '手机验证码 / 本机一键登录', feishu: '飞书', dingtalk: '钉钉', qq: 'QQ', alipay: '支付宝' };
+    function providerComing(p) {
+      // 企业资质与 AppID 就绪后，改为：
+      // location.href = API_BASE + '/api/auth/' + p + '/start?redirect=' + encodeURIComponent(location.origin + '/workbench.html');
+      var name = PROVIDER_NAME[p] || '该登录方式';
+      var box = el('hmSoon');
+      hideErr();
+      if (box) { box.textContent = '「' + name + '」内测期即将开通（需企业资质与开放平台授权），当前请先用手机号 / 邮箱 + 密码登录。'; box.classList.add('hm-show'); }
+    }
+    var provBtns = document.querySelectorAll('.hm-overlay [data-provider]');
+    for (var pi = 0; pi < provBtns.length; pi++) {
+      provBtns[pi].addEventListener('click', function () { providerComing(this.getAttribute('data-provider')); });
+    }
+    // 账号输入模式：手机 / 邮箱（同一账号框，切换键盘与提示，后端自动识别）
+    var acctBtns = document.querySelectorAll('[data-acct]');
+    for (var ai = 0; ai < acctBtns.length; ai++) {
+      acctBtns[ai].addEventListener('click', function () {
+        var mode = this.getAttribute('data-acct');
+        var inp = el('hmAccount'), lab = el('hmAccountLabel');
+        if (!inp) return;
+        // 账号框始终保持 text，由 accountType() 统一给中文校验提示，只切换键盘类型避免原生 email 校验拦截
+        if (mode === 'email') { inp.setAttribute('inputmode', 'email'); inp.placeholder = '请输入邮箱地址'; if (lab) lab.textContent = '邮箱'; }
+        else { inp.setAttribute('inputmode', 'tel'); inp.placeholder = '请输入手机号'; if (lab) lab.textContent = '手机号'; }
+        inp.focus();
+      });
+    }
+
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target.closest('[data-hm]') : null;
       if (!t) return;
@@ -244,8 +347,12 @@
     var reg = mode === 'register';
     el('hmTabLogin').classList.toggle('hm-active', !reg);
     el('hmTabRegister').classList.toggle('hm-active', reg);
-    el('hmNameField').style.display = reg ? '' : 'none';
+    var tf = el('hmTypeField'); if (tf) tf.style.display = reg ? '' : 'none';
     el('hmConfirmField').style.display = reg ? '' : 'none';
+    state.memberType = null;
+    var tb0 = document.querySelectorAll('#hmType .hm-typebtn');
+    for (var tbi = 0; tbi < tb0.length; tbi++) tb0[tbi].classList.remove('hm-active');
+    var sb1 = el('hmSoon'); if (sb1) sb1.classList.remove('hm-show');
     el('hmSubmit').textContent = reg ? '注册并登录' : '登录';
     el('hmPassword').setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
     hideErr();
@@ -313,6 +420,7 @@
     if (!accountType(account)) { showErr('请输入正确的手机号或邮箱'); return; }
     if (password.length < 8 || password.length > 64) { showErr('密码长度需为 8-64 位'); return; }
     if (reg) {
+      if (state.memberType !== 'personal' && state.memberType !== 'enterprise') { showErr('请选择账号类型：个人或企业'); return; }
       var confirm = el('hmConfirm').value || '';
       if (confirm !== password) { showErr('两次输入的密码不一致'); return; }
     }
@@ -321,7 +429,7 @@
     btn.textContent = reg ? '注册中…' : '登录中…';
 
     var payload = reg
-      ? { account: account, password: password, contactName: (el('hmName').value || '').trim() }
+      ? { account: account, password: password, memberType: state.memberType }
       : { account: account, password: password };
     var path = reg ? '/api/member/register' : '/api/member/login';
 
