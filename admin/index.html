@@ -46,6 +46,7 @@ svg{display:block}
 .input:focus,select.input:focus,textarea.input:focus{outline:none;border-color:var(--orange);
   box-shadow:0 0 0 3px rgba(234,88,12,.13)}
 .input::placeholder{color:#bdb6aa}
+.input[readonly]{background:var(--paper);color:var(--ink-muted);cursor:not-allowed}
 .login-error{background:var(--red-soft);color:var(--red);border:1px solid #fecaca;border-radius:10px;
   padding:9px 12px;font-size:13px;margin-bottom:14px;display:none}
 .login-error.show{display:block;animation:shake .35s}
@@ -66,7 +67,7 @@ svg{display:block}
 .btn-danger{background:#fff;border-color:#f3c0c0;color:var(--red)}
 .btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .btn-block{width:100%}
-.btn-sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:8px}
 .btn[disabled]{opacity:.6;cursor:not-allowed;transform:none}
 .icon-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:8px;color:var(--ink-soft);
   font-size:13px;transition:background .15s,color .15s}
@@ -101,7 +102,6 @@ svg{display:block}
 .logout-btn svg{width:17px;height:17px}
 
 .main{margin-left:236px;min-height:100vh;display:flex;flex-direction:column}
-.topbar{display:none}
 .content{padding:30px 36px 56px;max-width:1280px;width:100%}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .page-head h1{font-size:22px;font-weight:700;letter-spacing:.3px}
@@ -122,23 +122,33 @@ svg{display:block}
 .stat-val{font-size:27px;font-weight:700;line-height:1;letter-spacing:-.5px}
 .stat-label{font-size:12.5px;color:var(--ink-muted)}
 .sec-title{font-size:15px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
-.grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.grid-2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
 .mini-list{padding:6px 8px}
 .mini-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:9px}
 .mini-row:hover{background:var(--paper)}
 .mini-dot{width:8px;height:8px;border-radius:50%;flex:none}
 .mini-main{flex:1;min-width:0}
-.mini-main b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-main b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
 .mini-main span{font-size:12px;color:var(--ink-muted)}
 .mini-time{font-size:12px;color:var(--ink-muted);white-space:nowrap}
-.prod-bar-row{padding:13px 18px;display:flex;align-items:center;gap:14px}
-.prod-bar-row + .prod-bar-row{border-top:1px solid var(--line)}
-.prod-bar-name{width:170px;flex:none;font-size:13.5px}
-.prod-track{flex:1;height:7px;background:var(--bg);border-radius:99px;overflow:hidden}
-.prod-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .6s cubic-bezier(.22,1,.36,1)}
-.prod-fill.soon{background:#fdba74}
-.prod-fill.plan{background:var(--line-strong)}
-.prod-bar-num{width:42px;text-align:right;font-weight:600;font-size:13.5px}
+.acct-ic{width:13px;height:13px;flex:none;color:var(--orange)}
+.acct-ic.gray{color:var(--ink-muted)}
+
+/* 构成条形 */
+.comp{padding:6px 0 4px}
+.comp-mini{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--ink-soft);
+  padding:14px 20px;border-bottom:1px solid var(--line)}
+.comp-mini span{display:inline-flex;align-items:baseline}
+.comp-mini b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;margin-left:4px}
+.comp-group{padding:13px 20px;border-bottom:1px solid var(--line)}
+.comp-group:last-child{border-bottom:none}
+.comp-group h4{font-size:12.5px;font-weight:600;color:var(--ink-muted);margin-bottom:9px}
+.dist-row{display:flex;align-items:center;gap:12px;padding:4px 0}
+.dist-name{width:88px;flex:none;font-size:12.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dist-track{flex:1;height:7px;background:var(--bg);border-radius:99px;overflow:hidden}
+.dist-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .7s cubic-bezier(.22,1,.36,1)}
+.dist-fill.muted{background:var(--line-strong)}
+.dist-num{width:38px;text-align:right;font-weight:600;font-size:12.5px}
 .plan-tag{font-size:11px;padding:1px 7px;border-radius:99px;margin-left:8px;font-weight:500;white-space:nowrap}
 .plan-tag.on{background:var(--green-soft);color:var(--green)}
 .plan-tag.soon{background:var(--orange-soft);color:var(--orange-deep)}
@@ -147,22 +157,22 @@ svg{display:block}
 /* ---------- 工具栏 / 表格 ---------- */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
 .toolbar .input,.toolbar select.input{width:auto;padding:9px 12px;font-size:13.5px}
-.toolbar input[type=search],.toolbar .q{min-width:210px;flex:1;max-width:300px}
+.toolbar input[type=search],.toolbar .q{min-width:230px;flex:1;max-width:320px}
 .toolbar .spacer{flex:1}
 .table-wrap{overflow-x:auto;border-radius:var(--radius)}
-table.data{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px;min-width:960px}
+table.data{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px;min-width:920px}
 table.data thead th{text-align:left;font-size:12px;font-weight:600;color:var(--ink-muted);padding:12px 14px;
   border-bottom:1px solid var(--line);background:var(--paper);white-space:nowrap}
 table.data tbody td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
 table.data tbody tr{transition:background .12s}
 table.data tbody tr:hover{background:var(--paper)}
 table.data tbody tr:last-child td{border-bottom:none}
-.cell-main b{font-weight:600}
-.cell-main span{display:block;font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
-.cell-sub{color:var(--ink-soft);font-size:12.5px;white-space:nowrap}
-.badges{display:flex;gap:5px;flex-wrap:wrap;max-width:190px}
-.tag{display:inline-flex;align-items:center;font-size:11.5px;padding:2px 8px;border-radius:99px;background:#f1ede6;color:var(--ink-soft);white-space:nowrap}
-.tag.orange{background:var(--orange-soft);color:var(--orange-deep)}
+.cell-main b{font-weight:600;display:flex;align-items:center;gap:7px}
+.cell-main span{display:block;font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.cell-sub{color:var(--ink-soft);font-size:12.5px;white-space:nowrap;line-height:1.7}
+.cell-sub .mut{color:var(--ink-muted)}
+.tag{display:inline-flex;align-items:center;font-size:11.5px;padding:2px 9px;border-radius:99px;background:#f1ede6;color:var(--ink-soft);white-space:nowrap}
+.tag.ent{background:var(--orange-soft);color:var(--orange-deep);font-weight:600}
 .status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;white-space:nowrap}
 .status i{width:7px;height:7px;border-radius:50%}
 .status.active{color:var(--green)} .status.active i{background:var(--green)}
@@ -175,20 +185,27 @@ table.data tbody tr:last-child td{border-bottom:none}
 .empty svg{width:42px;height:42px;margin:0 auto 14px;color:var(--line-strong)}
 .empty b{display:block;color:var(--ink-soft);font-size:15px;margin-bottom:6px}
 
-/* ---------- 产品 / 套餐页 ---------- */
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.prod-card{padding:20px}
-.prod-card h3{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:9px}
-.prod-card p{color:var(--ink-muted);font-size:13px;margin-top:9px}
-.prod-meta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:14px}
-.plan-card{padding:20px;position:relative}
-.plan-card h3{font-size:16px;font-weight:700}
-.plan-card .price{font-size:13px;color:var(--ink-muted);margin:8px 0 4px}
-.plan-card ul{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink-soft)}
-.plan-card li{display:flex;gap:8px;align-items:flex-start}
-.plan-card li svg{width:15px;height:15px;color:var(--orange);flex:none;margin-top:2px}
-.plan-card.featured{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange),var(--shadow)}
+/* ---------- 产品能力页 ---------- */
+.cap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.cap-card{padding:22px;transition:transform .15s,box-shadow .15s}
+.cap-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px -16px rgba(28,25,23,.28)}
+.cap-head{display:flex;align-items:flex-start;gap:13px}
+.cap-ic{width:40px;height:40px;border-radius:10px;background:var(--orange-soft);color:var(--orange);
+  display:flex;align-items:center;justify-content:center;flex:none}
+.cap-ic.app{background:#f1ede6;color:var(--ink-soft)}
+.cap-ic svg{width:21px;height:21px}
+.cap-head h3{font-size:15.5px;font-weight:700;line-height:1.3;display:flex;align-items:center;flex-wrap:wrap}
+.cap-card p{color:var(--ink-muted);font-size:13px;margin-top:11px;line-height:1.6}
+.cap-apps{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}
+.plan-hero{padding:26px 28px;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;
+  border-color:var(--orange);box-shadow:0 0 0 1px rgba(234,88,12,.35),var(--shadow)}
+.plan-hero h3{font-size:19px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.plan-hero .ph-desc{color:var(--ink-soft);font-size:13.5px;margin-top:10px;line-height:1.7;max-width:520px}
+.plan-hero ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;font-size:13px;color:var(--ink-soft)}
+.plan-hero li{display:flex;gap:8px;align-items:flex-start}
+.plan-hero li svg{width:15px;height:15px;color:var(--orange);flex:none;margin-top:2px}
+.plan-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--orange-deep);
+  background:var(--orange-soft);border:1px solid #fed7aa;padding:3px 11px;border-radius:99px}
 .note-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:15px 18px;font-size:13px;color:var(--ink-soft);margin-top:16px;display:flex;gap:10px}
 .note-box svg{width:18px;height:18px;color:var(--orange);flex:none;margin-top:1px}
 
@@ -207,22 +224,7 @@ table.data tbody tr:last-child td{border-bottom:none}
 .x-btn svg{width:19px;height:19px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-grid .full{grid-column:1/-1}
-.prod-auth{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px;background:#fff}
-.prod-auth-row{padding:13px 14px}
-.prod-auth-row + .prod-auth-row{border-top:1px solid var(--line)}
-.pa-top{display:flex;align-items:center;gap:12px}
-.prod-auth-name{flex:1;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;min-width:0}
-.pa-bottom{display:flex;gap:12px;margin-top:11px;padding-left:40px}
-.pa-f{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
-.pa-f > span{font-size:11px;color:var(--ink-muted);font-weight:500}
-.prod-auth-quota,.prod-auth-date{width:100%;padding:8px 10px;border:1px solid var(--line-strong);border-radius:8px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff;box-sizing:border-box}
-.prod-auth-quota{text-align:center}
-.switch{position:relative;width:40px;height:22px;flex:none}
-.switch input{opacity:0;width:0;height:0}
-.switch i{position:absolute;inset:0;background:var(--line-strong);border-radius:99px;transition:background .18s;cursor:pointer}
-.switch i::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
-.switch input:checked + i{background:var(--orange)}
-.switch input:checked + i::after{transform:translateX(18px)}
+.form-hint{font-size:12px;color:var(--ink-muted);margin-top:8px;line-height:1.6}
 .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.97);width:400px;max-width:92vw;background:#fff;
   border-radius:14px;padding:24px;z-index:70;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:var(--shadow-lg)}
 .modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
@@ -247,7 +249,7 @@ table.data tbody tr:last-child td{border-bottom:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---------- 响应式 ---------- */
-@media (max-width:1100px){.stat-grid{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}
+@media (max-width:1180px){.stat-grid{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}.plan-hero{grid-template-columns:1fr}}
 @media (max-width:860px){
   .sidebar{position:sticky;top:0;width:100%;height:auto;bottom:auto;flex-direction:row;align-items:center;
     padding:0 12px;overflow-x:auto;gap:4px}
@@ -263,7 +265,7 @@ table.data tbody tr:last-child td{border-bottom:none}
   .content{padding:20px 16px 48px}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .form-grid{grid-template-columns:1fr}
-  .pa-bottom{padding-left:0;flex-direction:column}
+  .plan-hero ul{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -286,12 +288,12 @@ table.data tbody tr:last-child td{border-bottom:none}
       </svg>
     </div>
     <div class="login-title">会员管理后台</div>
-    <div class="login-sub">WorkHogee 生意伙计 · 会员与授权管理 · 仅限管理员</div>
+    <div class="login-sub">WorkHogee 生意伙计 · 会员管理 · 仅限管理员</div>
     <div class="login-error" id="loginError"></div>
     <form id="loginForm">
       <div class="field">
         <label>管理员账号</label>
-        <input class="input" id="loginUser" autocomplete="username" placeholder="请输入管理员账号" autocomplete="off">
+        <input class="input" id="loginUser" autocomplete="username" placeholder="请输入管理员账号">
       </div>
       <div class="field">
         <label>密码</label>
@@ -317,14 +319,14 @@ table.data tbody tr:last-child td{border-bottom:none}
           <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
           <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
           <path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
-          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#faf8f4">Hogee</text>
         </g>
       </svg>
     </a>
     <nav class="nav" id="sideNav">
       <a class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>概览</span></a>
       <a class="nav-item" data-view="members"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>会员管理</span></a>
-      <a class="nav-item" data-view="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>品类与套餐</span></a>
+      <a class="nav-item" data-view="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>产品能力</span></a>
       <a class="nav-item" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>账号设置</span></a>
     </nav>
     <div class="sidebar-foot">
@@ -342,7 +344,7 @@ table.data tbody tr:last-child td{border-bottom:none}
       <!-- 概览 -->
       <section class="view active" id="view-dashboard">
         <div class="page-head">
-          <div><h1>概览</h1><p>WorkHogee 生意伙计 · 注册会员与授权情况</p></div>
+          <div><h1>概览</h1><p>WorkHogee 生意伙计 · 注册会员总览（内测期）</p></div>
         </div>
         <div class="stat-grid" id="statGrid"></div>
         <div class="grid-2">
@@ -351,8 +353,8 @@ table.data tbody tr:last-child td{border-bottom:none}
             <div class="mini-list" id="recentList"></div>
           </div>
           <div class="card">
-            <div class="sec-title" style="padding:16px 18px 0;margin:0">各品类授权分布</div>
-            <div id="prodDist"></div>
+            <div class="sec-title" style="padding:16px 20px 0;margin:0">会员构成</div>
+            <div class="comp" id="compBody"></div>
           </div>
         </div>
       </section>
@@ -360,13 +362,14 @@ table.data tbody tr:last-child td{border-bottom:none}
       <!-- 会员管理 -->
       <section class="view" id="view-members">
         <div class="page-head">
-          <div><h1>会员管理</h1><p>管理所有注册会员、统一套餐与品类授权</p></div>
+          <div><h1>会员管理</h1><p>管理所有注册会员；内测期统一会员档位、不限生成量</p></div>
         </div>
         <div class="toolbar">
-          <input class="input q" id="fQ" type="search" placeholder="搜索商户名 / 联系人 / 手机 / 邮箱 / 会员ID">
+          <input class="input q" id="fQ" type="search" placeholder="搜索账号 / 手机 / 邮箱 / 联系人 / 商户 / 会员ID">
           <select class="input" id="fStatus"><option value="">全部状态</option></select>
-          <select class="input" id="fPlan"><option value="">全部套餐</option></select>
-          <select class="input" id="fProduct"><option value="">全部品类</option></select>
+          <select class="input" id="fSource"><option value="">全部来源</option></select>
+          <select class="input" id="fMType"><option value="">个人 / 企业</option></select>
+          <select class="input" id="fAType"><option value="">账号方式</option></select>
           <button class="btn btn-ghost btn-sm" id="filterBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>查询</button>
           <button class="icon-btn" id="resetBtn">重置</button>
           <div class="spacer"></div>
@@ -376,14 +379,14 @@ table.data tbody tr:last-child td{border-bottom:none}
         <div class="card table-wrap">
           <table class="data">
             <thead><tr>
-              <th>会员</th><th>联系方式</th><th>套餐</th><th>品类授权</th><th>状态</th><th>额度用量</th><th>注册时间</th><th>最近登录</th><th style="text-align:right">操作</th>
+              <th>会员账号</th><th>联系人 / 商户</th><th>类型</th><th>来源</th><th>状态</th><th>注册时间</th><th>最近登录</th><th style="text-align:right">操作</th>
             </tr></thead>
             <tbody id="memberRows"></tbody>
           </table>
           <div class="empty" id="emptyState" style="display:none">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             <b>还没有符合条件的会员</b>
-            <span>点击「新增会员」添加第一位会员</span>
+            <span>会员在官网 / 工作台自助注册，也可点「新增会员」建立资料档案</span>
           </div>
         </div>
         <div class="pager">
@@ -395,18 +398,20 @@ table.data tbody tr:last-child td{border-bottom:none}
         </div>
       </section>
 
-      <!-- 产品与套餐 -->
+      <!-- 产品能力 -->
       <section class="view" id="view-products">
         <div class="page-head">
-          <div><h1>品类与套餐</h1><p>WorkHogee 行业能力与统一会员套餐（一套套餐，全行业通用）</p></div>
+          <div><h1>产品能力</h1><p>WorkHogee 生意伙计 · 四个伙计接力，从一张图到一笔成交</p></div>
         </div>
-        <div class="sec-title">行业能力</div>
-        <div class="prod-grid" id="prodGrid"></div>
-        <div class="sec-title">会员套餐（全品类通用）</div>
-        <div class="plan-grid" id="planGrid"></div>
+        <div class="sec-title">四个伙计</div>
+        <div class="cap-grid" id="mateGrid"></div>
+        <div class="sec-title">两个端</div>
+        <div class="cap-grid" id="appGrid"></div>
+        <div class="sec-title">会员档位</div>
+        <div id="planBody"></div>
         <div class="note-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <div>WorkHogee 是面向全行业的商品图与图文工作台，按行当把出图路数逐个做深；套餐不按行业拆分，一个会员账号一套额度，全行业通用。行业开关仅用于灰度与新行当能力的预开通。当前「二手车」行当能力已上线，其他行当通用能力已可用、专属能力持续打磨。内测期注册会员默认不限生成量，套餐定价在内测结束后统一开放，现阶段不在客户前台展示价格。</div>
+          <div>WorkHogee 是面向全行业的 AI 生意伙计，能力不按行业设限，所有会员共用同一套伙计能力。内测阶段统一为「内测会员」档位、不限生成量，便于充分验证；正式商业化档位与价格将在经营主体就绪、定价方案确定后上线，现阶段不在客户前台展示价格。微信小程序正式版待小程序主体与认证完成后开放。</div>
         </div>
       </section>
 
@@ -438,24 +443,16 @@ table.data tbody tr:last-child td{border-bottom:none}
   </div>
   <div class="drawer-body">
     <div class="form-grid">
-      <div class="field full"><label>商户 / 公司名称</label><input class="input" id="mMerchant" placeholder="如：邢台XX店铺"></div>
+      <div class="field full"><label>登录账号（手机号 / 邮箱）</label><input class="input" id="mAccount" placeholder="如 13800000000 或 name@example.com"></div>
       <div class="field"><label>联系人</label><input class="input" id="mContact" placeholder="联系人姓名"></div>
-      <div class="field"><label>手机号</label><input class="input" id="mPhone" inputmode="numeric" placeholder="11 位手机号"></div>
-      <div class="field"><label>邮箱</label><input class="input" id="mEmail" type="email" placeholder="name@example.com"></div>
-      <div class="field"><label>登录账号（预留）</label><input class="input" id="mUsername" placeholder="会员自助登录账号"></div>
+      <div class="field"><label>商户 / 公司名称</label><input class="input" id="mMerchant" placeholder="如：邢台XX店铺（选填）"></div>
+      <div class="field"><label>会员类型</label><select class="input" id="mMType"></select></div>
       <div class="field"><label>状态</label><select class="input" id="mStatus"></select></div>
-      <div class="field"><label>套餐</label><select class="input" id="mPlan"></select></div>
       <div class="field"><label>来源</label><select class="input" id="mSource"></select></div>
-      <div class="field"><label>总额度（件，-1 不限）</label><input class="input" id="mQuotaTotal" type="number" placeholder="-1 表示不限量"></div>
-      <div class="field"><label>已用额度（件）</label><input class="input" id="mQuotaUsed" type="number" min="0" placeholder="0"></div>
-      <div class="field full"><label>套餐到期日（留空长期有效）</label><input class="input" id="mExpires" type="date"></div>
-      <div class="field full">
-        <label>品类授权</label>
-        <div class="prod-auth" id="prodAuth"></div>
-        <p style="font-size:12px;color:var(--ink-muted);margin-top:7px">套餐与额度全品类通用；品类开关仅用于灰度与即将上线品类的预开通，不再按品类分别计配额。</p>
-      </div>
+      <div class="field"><label>会员到期日（留空长期有效）</label><input class="input" id="mExpires" type="date"></div>
       <div class="field full"><label>备注</label><textarea class="input" id="mNote" rows="3" placeholder="内部备注，仅管理员可见"></textarea></div>
     </div>
+    <p class="form-hint" id="formHint">会员主要通过官网 / 工作台用手机号或邮箱自助注册并设置密码；后台「新增会员」用于建立线下会员资料档案，内测期统一为内测会员、不限生成量。</p>
   </div>
   <div class="drawer-foot">
     <button class="btn btn-ghost" id="drawerCancel">取消</button>
@@ -481,21 +478,51 @@ table.data tbody tr:last-child td{border-bottom:none}
   var API='https://api.workhogee.com';
   var TOKEN_KEY='wh_admin_token';
   var state={meta:null,stats:null,items:[],page:1,pageSize:20,total:0,totalPages:1,
-    filters:{q:'',status:'',plan:'',product:''},editing:null};
-  function pname(p){return p?(p.short||p.name):'';}
-  function statusMeta(s){
-    if(s==='available')return {cls:'on',label:'已上线',fill:''};
-    if(s==='soon')return {cls:'soon',label:'即将上线',fill:'soon'};
-    return {cls:'off',label:'规划中',fill:'plan'};
-  }
-  function memberUsed(m){return Number(m.quotaUsed)||0;}
-  function memberTotal(m){var t=Number(m.quotaTotal);return (!Number.isFinite(t)||t===-1)?'不限':t;}
+    filters:{q:'',status:'',source:'',memberType:'',accountType:''},editing:null};
 
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function fmt(ts){if(!ts)return'—';var d=new Date(ts),p=function(n){return String(n).padStart(2,'0');};
     return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
-  function name(arr,id){var f=(arr||[]).filter(function(x){return x.id===id;})[0];return f?f.name:id;}
+  function nameOf(arr,id){var f=(arr||[]).filter(function(x){return x.id===id;})[0];return f?f.name:(id||'');}
+
+  // 账号 / 类型归一（兼容历史会员缺字段）
+  function acctOf(m){return m.loginAccount||m.username||m.phone||m.email||'';}
+  function acctTypeOf(m){
+    if(m.accountType==='phone'||m.accountType==='email')return m.accountType;
+    if(m.phone)return'phone'; if(m.email)return'email';
+    var a=acctOf(m);
+    if(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(a))return'email';
+    if(/^1[3-9]\d{9}$/.test(a))return'phone';
+    return '';
+  }
+  function mtypeOf(m){return m.memberType==='enterprise'?'enterprise':'personal';}
+
+  var ICON={
+    phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/>',
+    mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22 6 12 13 2 6"/>',
+    users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    userPlus:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>',
+    check:'<polyline points="20 6 9 17 4 12"/>',
+    activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+    briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+    image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+    pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+    chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+    monitor:'<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    phone2:'<rect x="5" y="2" width="14" height="20" rx="2.5"/><line x1="12" y1="18" x2="12.01" y2="18"/>'
+  };
+  function iconSvg(path,sw){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.9)+'" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';}
+  function acctIcon(type,gray){return '<span class="acct-ic'+(gray?' gray':'')+'">'+(type==='email'?iconSvg(ICON.mail,2):iconSvg(ICON.phone,2))+'</span>';}
+
+  function capStatus(st){
+    if(st==='available')return{cls:'on',label:'已上线'};
+    if(st==='beta')return{cls:'soon',label:'灰度中'};
+    if(st==='soon')return{cls:'soon',label:'即将上线'};
+    return{cls:'off',label:'规划中'};
+  }
+
   function toast(msg,type){type=type||'ok';var box=$('toast');var el=document.createElement('div');el.className='toast '+type;
     el.innerHTML=(type==='err'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>')+'<span>'+esc(msg)+'</span>';
     box.appendChild(el);requestAnimationFrame(function(){el.classList.add('show');});
@@ -522,7 +549,6 @@ table.data tbody tr:last-child td{border-bottom:none}
       var isAbort=e&&e.name==='AbortError';
       var isNet=e&&(e.name==='TypeError'||(e.message&&/Failed to fetch|NetworkError|load failed/i.test(e.message)));
       var is5xx=e&&e.status>=500;
-      // 仅对网络抖动 / 超时 / 5xx 自动重试，最多 3 次；400/401/404/429 等确定性错误立即返回
       if((isAbort||isNet||is5xx)&&attempt<2){
         return new Promise(function(res){setTimeout(res,700*(attempt+1));})
           .then(function(){return api(method,path,body,attempt+1);});
@@ -563,44 +589,37 @@ table.data tbody tr:last-child td{border-bottom:none}
     for(var j=0;j<views.length;j++)views[j].classList.toggle('active',views[j].id==='view-'+v);
     if(v==='dashboard')loadDashboard();
     if(v==='members')loadMembers();
-    if(v==='products')renderProducts();
+    if(v==='products')renderCapabilities();
   }
   document.getElementById('sideNav').addEventListener('click',function(e){
     var it=e.target.closest('.nav-item');if(it)switchView(it.getAttribute('data-view'));
   });
 
-  /* ---------- 元数据 ---------- */
-  function fillSelect(el,list,placeholder,withName){
+  function fillSelect(el,list,placeholder){
     var html='<option value="">'+placeholder+'</option>';
-    list.forEach(function(x){html+='<option value="'+x.id+'">'+(withName?withName(x):x.name)+'</option>';});
+    list.forEach(function(x){html+='<option value="'+x.id+'">'+x.name+'</option>';});
     el.innerHTML=html;
   }
 
   /* ---------- 概览 ---------- */
-  var IC={users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
-    check:'<polyline points="20 6 9 17 4 12"/>',clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-    pause:'<circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/>',
-    spark:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
-    image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'};
-  function iconSvg(path){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';}
-
   function loadDashboard(){
     api('GET','/api/admin/members?page=1&pageSize=1').then(function(r){
-      state.stats=r.stats;renderStats(r.stats);
+      state.stats=r.stats;renderStats(r.stats);renderComposition(r.stats,state.meta);
     }).catch(function(e){toast(e.message,'err');});
-    api('GET','/api/admin/members?page=1&pageSize=6').then(function(r){
-      renderRecent(r.items);renderProdDist(r.stats,state.meta);
-    });
+    api('GET','/api/admin/members?page=1&pageSize=7').then(function(r){
+      renderRecent(r.items);
+      if(!state.stats){state.stats=r.stats;renderStats(r.stats);renderComposition(r.stats,state.meta);}
+    }).catch(function(){});
   }
   function renderStats(s){
     if(!s)return;
     var cards=[
-      {v:s.total,l:'会员总数',ic:IC.users,cls:''},
-      {v:s.active,l:'正常',ic:IC.check,cls:'green'},
-      {v:s.pending,l:'待激活',ic:IC.clock,cls:''},
-      {v:s.suspended,l:'已停用',ic:IC.pause,cls:'gray'},
-      {v:s.new7d,l:'近 7 天新增',ic:IC.spark,cls:''},
-      {v:s.totalUsed,l:'累计生图用量',ic:IC.image,cls:'gray'}
+      {v:s.total,l:'会员总数',ic:ICON.users,cls:''},
+      {v:s.active,l:'正常会员',ic:ICON.check,cls:'green'},
+      {v:s.new7d,l:'近 7 天新增',ic:ICON.userPlus,cls:''},
+      {v:s.active7d,l:'近 7 天活跃',ic:ICON.activity,cls:'gray'},
+      {v:s.byAccountType.phone,l:'手机账号',ic:ICON.phone,cls:'gray'},
+      {v:s.byMemberType.enterprise,l:'企业会员',ic:ICON.briefcase,cls:'gray'}
     ];
     $('statGrid').innerHTML=cards.map(function(c){
       return '<div class="card stat"><div class="stat-top"><div class="stat-ic '+c.cls+'">'+iconSvg(c.ic)+'</div></div>'+
@@ -611,28 +630,43 @@ table.data tbody tr:last-child td{border-bottom:none}
     if(!items||!items.length){$('recentList').innerHTML='<div class="empty" style="padding:36px"><b>暂无会员</b></div>';return;}
     $('recentList').innerHTML=items.map(function(m){
       var dot=m.status==='active'?'var(--green)':m.status==='pending'?'var(--orange)':'var(--ink-muted)';
-      var firstProd=state.meta.products.filter(function(p){return m.products&&m.products[p.id]&&m.products[p.id].enabled;})[0];
-      var prodLabel=firstProd?pname(firstProd):'未开通';
+      var at=acctTypeOf(m),acct=acctOf(m)||m.id;
+      var sub=nameOf(state.meta.memberTypes,mtypeOf(m))+' · '+nameOf(state.meta.sources,m.source||'manual');
       return '<div class="mini-row"><span class="mini-dot" style="background:'+dot+'"></span>'+
-        '<div class="mini-main"><b>'+esc(m.merchantName||m.contactName||m.phone||m.id)+'</b><span>'+esc(name(state.meta.plans,m.plan))+' · '+esc(prodLabel)+'</span></div>'+
+        '<div class="mini-main"><b>'+(at?acctIcon(at):'')+esc(acct)+'</b><span>'+esc(sub)+'</span></div>'+
         '<span class="mini-time">'+fmt(m.createdAt)+'</span></div>';
     }).join('');
   }
-  function renderProdDist(stats,meta){
-    if(!stats||!meta)return;var max=Math.max(1,stats.total);
-    $('prodDist').innerHTML=meta.products.map(function(p){
-      var n=stats.byProduct[p.id]||0,st=statusMeta(p.status);
-      return '<div class="prod-bar-row"><div class="prod-bar-name">'+esc(p.name)+
-        '<span class="plan-tag '+st.cls+'">'+st.label+'</span></div>'+
-        '<div class="prod-track"><div class="prod-fill '+st.fill+'" style="width:'+(n/max*100)+'%"></div></div>'+
-        '<div class="prod-bar-num num">'+n+'</div></div>';
-    }).join('');
+  function distRow(name,n,max,muted){
+    var pct=max>0?(n/max*100):0;
+    return '<div class="dist-row"><div class="dist-name">'+esc(name)+'</div>'+
+      '<div class="dist-track"><div class="dist-fill'+(muted?' muted':'')+'" style="width:'+pct+'%"></div></div>'+
+      '<div class="dist-num num">'+n+'</div></div>';
+  }
+  function renderComposition(s,meta){
+    if(!s||!meta)return;
+    var mini='<span>今日新增<b>'+s.newToday+'</b></span><span>待激活<b>'+s.pending+'</b></span>'+
+      '<span>已停用<b>'+s.suspended+'</b></span><span>累计登录<b>'+s.loggedIn+'</b></span>'+
+      '<span>邮箱账号<b>'+s.byAccountType.email+'</b></span>';
+    var srcMax=Math.max(1,Math.max.apply(null,meta.sources.map(function(x){return s.bySource[x.id]||0;})));
+    var srcRows=meta.sources.map(function(x){return distRow(x.name,s.bySource[x.id]||0,srcMax);}).join('');
+    var mtMax=Math.max(1,s.byMemberType.personal,s.byMemberType.enterprise);
+    var mtRows=distRow('个人',s.byMemberType.personal,mtMax)+distRow('企业',s.byMemberType.enterprise,mtMax,true);
+    var atMax=Math.max(1,s.byAccountType.phone,s.byAccountType.email,s.byAccountType.unknown);
+    var atRows=distRow('手机号',s.byAccountType.phone,atMax)+distRow('邮箱',s.byAccountType.email,atMax,true)+
+      (s.byAccountType.unknown?distRow('未设置',s.byAccountType.unknown,atMax,true):'');
+    $('compBody').innerHTML=
+      '<div class="comp-mini">'+mini+'</div>'+
+      '<div class="comp-group"><h4>注册来源</h4>'+srcRows+'</div>'+
+      '<div class="comp-group"><h4>会员类型</h4>'+mtRows+'</div>'+
+      '<div class="comp-group"><h4>账号方式</h4>'+atRows+'</div>';
   }
 
   /* ---------- 会员列表 ---------- */
   function loadMembers(){
     var f=state.filters,qs='page='+state.page+'&pageSize='+state.pageSize+
-      '&q='+encodeURIComponent(f.q)+'&status='+f.status+'&plan='+f.plan+'&product='+f.product;
+      '&q='+encodeURIComponent(f.q)+'&status='+f.status+'&source='+f.source+
+      '&memberType='+f.memberType+'&accountType='+f.accountType;
     api('GET','/api/admin/members?'+qs).then(function(r){
       state.items=r.items;state.total=r.total;state.totalPages=r.totalPages;state.stats=r.stats;
       renderRows(r.items);$('pagerInfo').textContent='共 '+r.total+' 条 · 第 '+r.page+' / '+r.totalPages+' 页';
@@ -645,20 +679,19 @@ table.data tbody tr:last-child td{border-bottom:none}
     if(!items||!items.length){tb.innerHTML='';$('emptyState').style.display='block';return;}
     $('emptyState').style.display='none';
     tb.innerHTML=items.map(function(m){
-      var granted=state.meta.products.filter(function(p){return m.products&&m.products[p.id]&&m.products[p.id].enabled;});
-      var badges=granted.map(function(p){return '<span class="tag'+(p.id==='usedcar'?' orange':'')+'">'+esc(pname(p))+'</span>';}).join('')||'<span class="tag">未开通</span>';
-      var used=memberUsed(m),total=memberTotal(m);
-      var contact=(m.phone?esc(m.phone):'')+(m.email?'<br>'+esc(m.email):'')||'—';
+      var at=acctTypeOf(m),acct=acctOf(m)||'—';
+      var ent=mtypeOf(m)==='enterprise';
+      var contact=(m.contactName?esc(m.contactName):'<span class="mut">—</span>')+
+        (m.merchantName?'<br>'+esc(m.merchantName):'');
       var toggle=m.status==='suspended'
         ? '<button class="icon-btn" data-act="enable" data-id="'+m.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>启用</button>'
         : '<button class="icon-btn" data-act="suspend" data-id="'+m.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>停用</button>';
       return '<tr data-id="'+m.id+'">'+
-        '<td><div class="cell-main"><b>'+esc(m.merchantName||'未命名商户')+'</b><span>'+esc(m.id)+'</span></div></td>'+
-        '<td><div class="cell-sub">'+(m.contactName?esc(m.contactName)+'<br>':'')+contact+'</div></td>'+
-        '<td><span class="tag">'+esc(name(state.meta.plans,m.plan))+'</span></td>'+
-        '<td><div class="badges">'+badges+'</div></td>'+
+        '<td><div class="cell-main"><b>'+(at&&acct!=='—'?acctIcon(at):'')+esc(acct)+'</b><span>'+esc(m.id)+'</span></div></td>'+
+        '<td><div class="cell-sub">'+contact+'</div></td>'+
+        '<td><span class="tag'+(ent?' ent':'')+'">'+(ent?'企业':'个人')+'</span></td>'+
+        '<td><span class="tag">'+esc(nameOf(state.meta.sources,m.source||'manual'))+'</span></td>'+
         '<td>'+statusBadge(m.status)+'</td>'+
-        '<td class="num">'+used+' / '+total+'</td>'+
         '<td class="num" style="white-space:nowrap">'+fmt(m.createdAt)+'</td>'+
         '<td class="num" style="white-space:nowrap">'+fmt(m.lastLoginAt)+'</td>'+
         '<td><div class="row-actions" style="justify-content:flex-end">'+
@@ -670,12 +703,13 @@ table.data tbody tr:last-child td{border-bottom:none}
   }
 
   $('filterBtn').addEventListener('click',function(){
-    state.filters={q:$('fQ').value.trim(),status:$('fStatus').value,plan:$('fPlan').value,product:$('fProduct').value};
+    state.filters={q:$('fQ').value.trim(),status:$('fStatus').value,source:$('fSource').value,
+      memberType:$('fMType').value,accountType:$('fAType').value};
     state.page=1;loadMembers();});
   $('fQ').addEventListener('keydown',function(e){if(e.key==='Enter')$('filterBtn').click();});
   $('resetBtn').addEventListener('click',function(){
-    $('fQ').value='';$('fStatus').value='';$('fPlan').value='';$('fProduct').value='';
-    state.filters={q:'',status:'',plan:'',product:''};state.page=1;loadMembers();});
+    $('fQ').value='';$('fStatus').value='';$('fSource').value='';$('fMType').value='';$('fAType').value='';
+    state.filters={q:'',status:'',source:'',memberType:'',accountType:''};state.page=1;loadMembers();});
   $('prevPage').addEventListener('click',function(){if(state.page>1){state.page--;loadMembers();}});
   $('nextPage').addEventListener('click',function(){if(state.page<state.totalPages){state.page++;loadMembers();}});
 
@@ -683,76 +717,74 @@ table.data tbody tr:last-child td{border-bottom:none}
     var btn=e.target.closest('button[data-act]');if(!btn)return;
     var id=btn.getAttribute('data-id'),act=btn.getAttribute('data-act');
     var m=state.items.filter(function(x){return x.id===id;})[0];
+    var label=acctOf(m)||m.id;
     if(act==='edit'){openDrawer(m);}
-    if(act==='suspend'){confirmBox('停用会员','确定停用「'+(m.merchantName||m.id)+'」？停用后该会员将无法使用已授权产品。',function(){saveMember(id,{status:'suspended'});});}
+    if(act==='suspend'){confirmBox('停用会员','确定停用「'+label+'」？停用后该会员将无法登录工作台。',function(){saveMember(id,{status:'suspended'});});}
     if(act==='enable'){saveMember(id,{status:'active'});}
-    if(act==='del'){confirmBox('删除会员','确定删除会员「'+(m.merchantName||m.id)+'」？此操作不可恢复，其授权与用量记录将一并删除。',function(){delMember(id);});}
+    if(act==='del'){confirmBox('删除会员','确定删除会员「'+label+'」？此操作不可恢复，其账号索引与资料将一并删除。',function(){delMember(id);});}
   });
 
   /* ---------- 新增 / 编辑抽屉 ---------- */
   function openDrawer(m){
     state.editing=m||null;
     $('drawerTitle').textContent=m?'编辑会员':'新增会员';
+    fillSelect($('mMType'),state.meta.memberTypes,'选择类型');
     fillSelect($('mStatus'),state.meta.statuses,'选择状态');
-    fillSelect($('mPlan'),state.meta.plans,'选择套餐');
     fillSelect($('mSource'),state.meta.sources,'选择来源');
-    $('mMerchant').value=m&&m.merchantName||'';
-    $('mContact').value=m&&m.contactName||'';
-    $('mPhone').value=m&&m.phone||'';
-    $('mEmail').value=m&&m.email||'';
-    $('mUsername').value=m&&m.username||'';
-    $('mStatus').value=m?m.status:'active';
-    $('mPlan').value=m?m.plan:'free';
-    $('mSource').value=m?m.source:'manual';
-    $('mNote').value=m&&m.note||'';
-    // 统一额度（会员层级，全品类通用）；内测默认不限量
-    $('mQuotaTotal').value=(m&&m.quotaTotal!=null)?m.quotaTotal:-1;
-    $('mQuotaUsed').value=m?memberUsed(m):0;
+    var acct=m?acctOf(m):'';
+    $('mAccount').value=acct;
+    // 自助注册账号（带 loginAccount / 密码）不允许在后台改动，避免与登录索引不一致
+    $('mAccount').readOnly=!!(m&&m.loginAccount&&m.hash);
+    $('mContact').value=(m&&m.contactName)||'';
+    $('mMerchant').value=(m&&m.merchantName)||'';
+    $('mMType').value=m?mtypeOf(m):'personal';
+    $('mStatus').value=m?(m.status||'active'):'active';
+    $('mSource').value=m?(m.source||'manual'):'manual';
+    $('mNote').value=(m&&m.note)||'';
     $('mExpires').value=(m&&m.expiresAt)?String(m.expiresAt).slice(0,10):'';
-    // 品类授权行（仅开关，用于灰度 / 预开通）
-    $('prodAuth').innerHTML=state.meta.products.map(function(p){
-      var pa=(m&&m.products&&m.products[p.id])||{enabled:p.status==='available'};
-      var st=statusMeta(p.status);
-      return '<div class="prod-auth-row"><div class="pa-top">'+
-        '<label class="switch"><input type="checkbox" data-p="'+p.id+'" data-k="enabled" '+(pa.enabled?'checked':'')+'><i></i></label>'+
-        '<div class="prod-auth-name">'+esc(p.name)+'<span class="plan-tag '+st.cls+'">'+st.label+'</span></div>'+
-        '</div></div>';
-    }).join('');
+    $('formHint').textContent=(m&&m.loginAccount&&m.hash)
+      ? '该会员通过 '+acct+' 自助注册，账号不可在后台修改；内测期统一为内测会员、不限生成量。'
+      : '会员主要通过官网 / 工作台用手机号或邮箱自助注册并设置密码；后台「新增会员」用于建立线下会员资料档案，内测期统一为内测会员、不限生成量。';
     showDrawer(true);
   }
   function collectForm(){
-    var products={};
-    state.meta.products.forEach(function(p){
-      var en=$('prodAuth').querySelector('[data-p="'+p.id+'"][data-k="enabled"]').checked;
-      products[p.id]={enabled:en};
-    });
-    var qtRaw=$('mQuotaTotal').value.trim();
-    var qt=qtRaw===''?-1:parseInt(qtRaw,10);
-    if(isNaN(qt))qt=-1; if(qt!==-1)qt=Math.max(0,qt);
-    var qu=parseInt($('mQuotaUsed').value.trim(),10); if(isNaN(qu)||qu<0)qu=0;
+    var acct=$('mAccount').value.trim();
     var ex=$('mExpires').value;
-    return {
-      merchantName:$('mMerchant').value.trim(),contactName:$('mContact').value.trim(),
-      phone:$('mPhone').value.trim(),email:$('mEmail').value.trim(),username:$('mUsername').value.trim(),
-      status:$('mStatus').value,plan:$('mPlan').value,source:$('mSource').value,note:$('mNote').value.trim(),
-      quotaTotal:qt,quotaUsed:qu,expiresAt:ex||null,
-      products:products
+    var body={
+      contactName:$('mContact').value.trim(),
+      merchantName:$('mMerchant').value.trim(),
+      memberType:$('mMType').value||'personal',
+      status:$('mStatus').value||'active',
+      source:$('mSource').value||'manual',
+      note:$('mNote').value.trim(),
+      expiresAt:ex||null
     };
+    var editing=state.editing;
+    var locked=editing&&editing.loginAccount&&editing.hash;
+    if(!locked){
+      body.username=acct;
+      if(/^1[3-9]\d{9}$/.test(acct))body.phone=acct;
+      else if(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(acct))body.email=acct.toLowerCase();
+      else if(acct){body.username=acct;}
+    }
+    return body;
   }
   function saveMember(id,patch){
     var method=id?'PUT':'POST',path=id?'/api/admin/members/'+id:'/api/admin/members';
     var body=patch||collectForm();
-    if(!patch&&!body.merchantName&&!body.contactName&&!body.phone&&!body.email&&!body.username){
-      toast('请至少填写商户名、联系人、手机号、邮箱或账号中的一项','err');return;}
+    if(!patch){
+      var hasAcct=$('mAccount').value.trim(),hasContact=$('mContact').value.trim(),hasMerchant=$('mMerchant').value.trim();
+      if(!hasAcct&&!hasContact&&!hasMerchant){toast('请至少填写登录账号、联系人或商户名称中的一项','err');return;}
+    }
     var btn=$('drawerSave');if(btn)btn.disabled=true;
     api(method,path,body).then(function(){
       toast(id?'会员已更新':'会员已添加');showDrawer(false);
-      setTimeout(loadMembers,1100); // 容忍 KV 最终一致
+      setTimeout(loadMembers,900);
     }).catch(function(e){toast(e.message||'保存失败','err');})
     .finally(function(){if(btn)btn.disabled=false;});
   }
   function delMember(id){
-    api('DELETE','/api/admin/members/'+id).then(function(){toast('会员已删除');setTimeout(loadMembers,1100);})
+    api('DELETE','/api/admin/members/'+id).then(function(){toast('会员已删除');setTimeout(loadMembers,900);})
       .catch(function(e){toast(e.message||'删除失败','err');});}
   function showDrawer(show){$('drawer').classList.toggle('show',show);$('overlay').classList.toggle('show',show);}
   $('addBtn').addEventListener('click',function(){openDrawer(null);});
@@ -771,7 +803,8 @@ table.data tbody tr:last-child td{border-bottom:none}
 
   /* ---------- 导出 ---------- */
   $('exportBtn').addEventListener('click',function(){
-    var f=state.filters,qs='q='+encodeURIComponent(f.q)+'&status='+f.status+'&plan='+f.plan+'&product='+f.product;
+    var f=state.filters,qs='q='+encodeURIComponent(f.q)+'&status='+f.status+'&source='+f.source+
+      '&memberType='+f.memberType+'&accountType='+f.accountType;
     var btn=$('exportBtn');btn.disabled=true;
     function dl(attempt){
       attempt=attempt||0;
@@ -792,25 +825,37 @@ table.data tbody tr:last-child td{border-bottom:none}
     dl();
   });
 
-  /* ---------- 品类 / 套餐页 ---------- */
-  function renderProducts(){
+  /* ---------- 产品能力页 ---------- */
+  var APP_LABEL={web:'Web 工作台',mp:'微信小程序'};
+  function capIcon(c){
+    if(c.id==='atu')return ICON.image;
+    if(c.id==='awen')return ICON.pen;
+    if(c.id==='afa')return ICON.send;
+    if(c.id==='aguo')return ICON.chart;
+    if(c.id==='web')return ICON.monitor;
+    if(c.id==='mp')return ICON.phone2;
+    return ICON.check;
+  }
+  function capCard(c){
+    var st=capStatus(c.status);
+    var apps=(c.apps||[]).map(function(a){return '<span class="tag">'+esc(APP_LABEL[a]||a)+'</span>';}).join('');
+    return '<div class="card cap-card"><div class="cap-head">'+
+      '<div class="cap-ic'+(c.kind==='app'?' app':'')+'">'+iconSvg(capIcon(c))+'</div>'+
+      '<div><h3>'+esc(c.name)+'<span class="plan-tag '+st.cls+'">'+st.label+'</span></h3></div></div>'+
+      '<p>'+esc(c.desc||'')+'</p>'+
+      (apps?'<div class="cap-apps">'+apps+'</div>':'')+'</div>';
+  }
+  function renderCapabilities(){
     if(!state.meta)return;
-    var platMap={web:'Web 工作台',client:'PC 客户端',mobile:'移动客户端',miniprogram:'微信小程序'};
-    var statusText={available:'已上线，可对会员开通授权。',soon:'即将上线，可在会员资料中预开通。',planned:'规划中，暂不开通。'};
-    $('prodGrid').innerHTML=state.meta.products.map(function(p){
-      var st=statusMeta(p.status);
-      return '<div class="card prod-card"><h3>'+esc(p.name)+
-        '<span class="plan-tag '+st.cls+'">'+st.label+'</span></h3>'+
-        '<p>'+esc(p.desc||'')+'</p>'+
-        '<p style="color:var(--ink-muted);font-size:12.5px;margin-top:2px">'+(statusText[p.status]||'')+'</p>'+
-        '<div class="prod-meta">'+(p.platform||[]).map(function(x){
-          return '<span class="tag">'+(platMap[x]||x)+'</span>';}).join('')+'</div></div>';
-    }).join('');
-    $('planGrid').innerHTML=state.meta.plans.map(function(pl){
-      var quota=pl.quotaText?('<div class="price">'+esc(pl.price)+'</div><div style="font-size:12.5px;color:var(--ink-muted);margin-top:2px">'+esc(pl.quotaText)+(pl.watermark?' · 成品带 AI 标识':' · 无水印')+'</div>'):('<div class="price">'+esc(pl.price)+'</div>');
-      return '<div class="card plan-card'+(pl.id==='monthly'?' featured':'')+'"><h3>'+esc(pl.name)+'</h3>'+quota+
-        '<p style="color:var(--ink-soft);font-size:13px;margin:6px 0 10px">'+esc(pl.desc||'')+'</p>'+
-        '<ul>'+(pl.features||[]).map(function(it){return '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'+esc(it)+'</li>';}).join('')+'</ul></div>';
+    var mates=state.meta.capabilities.filter(function(c){return c.kind==='mate';});
+    var apps=state.meta.capabilities.filter(function(c){return c.kind==='app';});
+    $('mateGrid').innerHTML=mates.map(capCard).join('');
+    $('appGrid').innerHTML=apps.map(capCard).join('');
+    $('planBody').innerHTML=state.meta.plans.map(function(pl){
+      return '<div class="card plan-hero"><div>'+
+        '<h3>'+esc(pl.name)+'<span class="plan-badge">'+esc(pl.quotaText||'')+'</span></h3>'+
+        '<div class="ph-desc">'+esc(pl.desc||'')+'</div></div>'+
+        '<ul>'+(pl.features||[]).map(function(it){return '<li>'+iconSvg(ICON.check,2.4)+esc(it)+'</li>';}).join('')+'</ul></div>';
     }).join('');
   }
 
@@ -836,8 +881,9 @@ table.data tbody tr:last-child td{border-bottom:none}
     }).then(function(meta){
       state.meta=meta;
       fillSelect($('fStatus'),meta.statuses||[],'全部状态');
-      fillSelect($('fPlan'),meta.plans||[],'全部套餐');
-      fillSelect($('fProduct'),(meta.products||[]).map(function(p){return{id:p.id,name:pname(p)};}),'全部品类');
+      fillSelect($('fSource'),meta.sources||[],'全部来源');
+      fillSelect($('fMType'),meta.memberTypes||[],'个人 / 企业');
+      fillSelect($('fAType'),meta.accountTypes||[],'账号方式');
       showApp();switchView('dashboard');
     }).catch(function(){showLogin();});
   }
