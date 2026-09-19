@@ -223,7 +223,7 @@ img{display:block;max-width:100%}
 .cmp-box:focus-within{border-color:rgba(251,146,60,.55);box-shadow:0 0 0 3px var(--orange-soft)}
 .cmp-plus{appearance:none;border:0;background:rgba(255,255,255,.07);color:var(--tx2);width:34px;height:34px;border-radius:10px;font-size:20px;line-height:1;flex:none;transition:.15s;display:flex;align-items:center;justify-content:center}
 .cmp-plus:hover{background:var(--orange);color:#fff}
-#composerInput{flex:1;background:transparent;border:0;resize:none;color:var(--tx);font-family:inherit;font-size:14px;line-height:1.6;min-height:50px;max-height:140px;padding:8px 4px;outline:none}
+#composerInput{flex:1;background:transparent;border:0;resize:none;color:var(--tx);font-family:inherit;font-size:14px;line-height:1.6;min-height:96px;max-height:220px;padding:10px 4px;outline:none}
 #composerInput::placeholder{color:var(--tx3)}
 .cmp-q{appearance:none;border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:9px;font-size:11.5px;font-weight:700;width:40px;height:34px;flex:none;transition:.15s}
 .cmp-q:hover{border-color:var(--orange);color:var(--orange)}
@@ -396,7 +396,7 @@ img{display:block;max-width:100%}
   .card-pad{padding:15px 14px}
   .bubble{font-size:14.5px;line-height:1.72}
   .quick button{font-size:13.5px}
-  #composerInput{font-size:16px}
+  #composerInput{font-size:16px;min-height:72px}
   .fld input,.fld select,.fld textarea{font-size:16px}
 }
 </style>
@@ -471,7 +471,7 @@ img{display:block;max-width:100%}
           <button class="cmp-q" id="btnQuality" title="切换清晰度">高清</button>
           <button class="cmp-send" id="btnSend" aria-label="发送"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></button>
         </div>
-        <div class="cmp-hint">伙计生成的内容可能有误，车况 / 功效 / 价格请按实物核对；阿发只备好素材，发布最后一下由你本人完成。</div>
+        <div class="cmp-hint">伙计生成的内容可能有误，商品实际情况、功效与价格请按实物核对；阿发只备好素材，发布最后一下由你本人完成。</div>
       </div>
     </div>
   </main>
@@ -496,8 +496,8 @@ img{display:block;max-width:100%}
 </div>
 
 <div class="pop" id="plusPop">
-  <button data-plus="shot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>传商品 / 车辆图片</button>
-  <button data-plus="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>传实地展厅背景</button>
+  <button data-plus="shot" id="plusShotBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span id="plusShotLabel">上传商品图片</span></button>
+  <button data-plus="bg" id="plusBgBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>传实地展厅背景</button>
   <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>管理技能 / 插件 / 伙伴</button>
 </div>
 
@@ -1097,7 +1097,7 @@ function renderSpecCard(){
   +'<div class="chip-block"><div class="cb-label">清晰度</div><div class="chip-grid">'
    +'<button class="chip'+(state.quality==='std'?' on':'')+'" data-act="pickQuality" data-v="std">标准<span class="chip-sub">更快</span></button>'
    +'<button class="chip'+(state.quality==='hd'?' on':'')+'" data-act="pickQuality" data-v="hd">高清<span class="chip-sub">推荐</span></button></div></div>'
-  +'<div class="compliance">'+IC.check+'<span>成品默认带 AI 生成标识；阿图只优化呈现，<b>不改变商品/车辆本身、不抹瑕疵</b>，发布动作由你本人完成。</span></div>'
+  +'<div class="compliance">'+IC.check+'<span>成品默认带 AI 生成标识；阿图只优化呈现，<b>不改变商品本身、不抹瑕疵</b>，发布动作由你本人完成。</span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="startGen">'+IC.camera+' 开始出图</button></div></div>','atu');
  state.stage='spec';
 }
@@ -1106,7 +1106,7 @@ function renderSpecCard(){
 function buildJobs(){
  var used=state.identity.type==='usedcar',jobs=[];
  var main=state.images[0].dataUrl,extra='';
- if(state.extra){var ce=cleanBanned(state.extra.slice(0,120));var ex=ce.text.trim();if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品/车辆本身原有标识除外）：'+ex;}
+ if(state.extra){var ce=cleanBanned(state.extra.slice(0,120));var ex=ce.text.trim();if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品本身原有标识除外）：'+ex;}
  var carAnchor='';
  if(used&&state.product&&state.product.brand){
   carAnchor='参考图中的车辆识别为「'+productLabel()+'」'+(state.product.energy&&state.product.energy!=='燃油'?'（'+state.product.energy+'）':'')+'，车型名称仅用于帮助识别车辆；必须以参考图里的实车作为唯一准绳，严格保持车身颜色、车型轮廓、车标、轮毂、玻璃、牌照位置与全部外观细节和参考图完全一致，不得按车型名称脑补、不得更换车辆或年款外观、不得改动里程等真实车况信息。';
@@ -1131,7 +1131,7 @@ function runGenerate(){
  var __go=function(){
   var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
   var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 15–25 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
-  var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">车身/商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div></div>','atu');
+  var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div></div>','atu');
   var genSize=state.quality==='hd'?'2304x2304':'2048x2048';
   (async function(){
    for(var i=0;i<jobs.length;i++){
@@ -1523,7 +1523,11 @@ function sendFreeText(){
   botSay('记下了：'+esc(txt)+'。确认无误就点卡片里的按钮。','atu');
  }else{
   state.extra=(state.extra?state.extra+'；':'')+txt;
-  botSay('收到，'+esc(txt)+'。我会在出图时按这个来。','atu');
+  if(state.stage==='upload'&&(!state.images||!state.images.length)){
+   botSay('收到：'+esc(txt)+'。点左下角「+」上传商品图片我就能开工；想先写文案，可在左侧伙伴里让阿文接手。','atu');
+  }else{
+   botSay('收到，'+esc(txt)+'。我会在出图时按这个来。','atu');
+  }
  }
 }
 
@@ -1571,11 +1575,11 @@ function bind(){
  $('#btnSend').addEventListener('click',sendFreeText);
  var ta=$('#composerInput');
  ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeText();}});
- ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+ ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,220)+'px';});
  $('#btnQuality').addEventListener('click',function(){state.quality=state.quality==='hd'?'std':'hd';syncQuality();toast(state.quality==='hd'?'高清出图（推荐）':'标准出图（更快）');});
- $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();var pop=$('#plusPop');placePop(pop,$('#btnPlus'));pop.classList.toggle('show');$('#partnerPop')&&$('#partnerPop').classList.remove('show');});
+ $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();var pop=$('#plusPop');placePop(pop,$('#btnPlus'));pop.classList.toggle('show');var bgb=$('#plusBgBtn');if(bgb){bgb.style.display=(pop.classList.contains('show')&&state.identity&&state.identity.type==='usedcar')?'':'none';}var slb=$('#plusShotLabel');if(slb){slb.textContent=(state.identity&&state.identity.type==='usedcar')?'上传车辆图片':'上传商品图片';}$('#partnerPop')&&$('#partnerPop').classList.remove('show');});
  $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
-  if(k==='shot'){if(!state.identity)startOrder('general');setTimeout(function(){$('#fileInput').click();},250);}
+  if(k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
   else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车技能，先切换到二手车技能','err');}
   else if(k==='lab')openLab('skill');
  });
