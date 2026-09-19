@@ -695,7 +695,7 @@ function markTaskProgress(){
  if(!state.identity)return;
  var arr=loadTasks(),i=arr.findIndex(function(t){return t.id===state.taskId;});
  var fallback=state.identity.type==='usedcar'?'二手车出图任务':'商品出图任务';
- var rec={id:state.taskId,title:state.taskTitle||(state.product&&state.product.name)||fallback,pinned:state.taskPinned,ts:Date.now(),skill:state.identity.type,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner};
+ var rec={id:state.taskId,title:state.taskTitle||(state.product&&state.product.name)||fallback,pinned:state.taskPinned,ts:Date.now(),skill:state.identity.type,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner,inputKeys:(state.images||[]).map(function(x){return x.tosKey;}).filter(Boolean),resultKeys:(state.results||[]).map(function(x){return x.tosKey;}).filter(Boolean)};
  if(i>=0)arr[i]=Object.assign(arr[i],rec);else arr.unshift(rec);
  arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
  saveTasks(arr);renderTaskList();
@@ -739,6 +739,7 @@ function openTask(id){
  userSay('打开任务：'+t.title);
  botSay('已打开「<b>'+esc(t.title)+'</b>」。历史成品在右侧云盘；要接着出图，把这件货的照片再传一次就行。','atu');
  renderUploadCard();
+ if(t.resultKeys&&t.resultKeys.length){restoreCloudResults(t.resultKeys);}
 }
 /* ================= composer 常驻快捷能力 ================= */
 function cqAction(k){
@@ -845,6 +846,59 @@ function callGenerateRetry(prompt,imagePayload,size,onTick){
 function authPost(path,body){
  return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)})
   .then(function(r){return r.json();}).catch(function(){return {ok:false,error:{message:'网络异常，请稍后再试'}};});
+}
+
+/* ================= TOS 跨端云盘（登录用户原图/成品直传；任何失败静默降级本地，绝不阻断出图） ================= */
+function _tosLoggedIn(){return !!(window.HogeeMember&&HogeeMember.isLoggedIn&&HogeeMember.isLoggedIn());}
+function _dataUrlToBlob(d){
+ try{
+  var parts=String(d).split(','),mime=(parts[0].match(/data:([^;]+)/)||[])[1]||'image/jpeg';
+  var bin=atob(parts[1]||''),len=bin.length,ua=new Uint8Array(len);
+  for(var i=0;i<len;i++)ua[i]=bin.charCodeAt(i);
+  return new Blob([ua],{type:mime});
+ }catch(e){return null;}
+}
+function _tosExt(d){var m=String(d).match(/data:image\/([a-zA-Z0-9]+)/);m=m?m[1].toLowerCase():'jpeg';if(m==='jpeg')return 'jpg';return (['png','webp','gif'].indexOf(m)>=0?m:'jpg');}
+function tosPutObject(dataUrl,kind){
+ if(!dataUrl||typeof dataUrl!=='string'||dataUrl.indexOf('data:image')!==0)return Promise.resolve(null);
+ if(!_tosLoggedIn())return Promise.resolve(null);
+ var ext=_tosExt(dataUrl);
+ return authPost('/api/storage',{action:'put',ext:ext,kind:kind||'result'}).then(function(j){
+  if(!j||!j.ok||!j.putUrl)return null;
+  var blob=_dataUrlToBlob(dataUrl);if(!blob)return null;
+  return fetch(j.putUrl,{method:'PUT',headers:{'Content-Type':(j.headers&&j.headers['Content-Type'])||blob.type||('image/'+ext)},body:blob})
+   .then(function(r){return r.ok?{key:j.key,getUrl:j.getUrl}:null;}).catch(function(){return null;});
+ }).catch(function(){return null;});
+}
+function tosGetUrl(key){
+ if(!key||!_tosLoggedIn())return Promise.resolve(null);
+ return authPost('/api/storage',{action:'get',key:key}).then(function(j){return (j&&j.ok&&j.getUrl)?j.getUrl:null;}).catch(function(){return null;});
+}
+function tosSyncImage(imgItem,kind){
+ if(!imgItem||imgItem.tosKey||imgItem._tosBusy||!imgItem.dataUrl)return;
+ imgItem._tosBusy=true;
+ tosPutObject(imgItem.dataUrl,kind).then(function(o){
+  imgItem._tosBusy=false;
+  if(o){imgItem.tosKey=o.key;imgItem.tosUrl=o.getUrl;try{if(state.identity)markTaskProgress();}catch(e){}}
+ });
+}
+function tosSyncResult(resItem){
+ if(!resItem||resItem.tosKey||resItem._tosBusy||!resItem.url)return;
+ resItem._tosBusy=true;
+ tosPutObject(resItem.url,'result').then(function(o){
+  resItem._tosBusy=false;
+  if(o){resItem.tosKey=o.key;resItem.tosUrl=o.getUrl;try{markTaskProgress();}catch(e){}}
+ });
+}
+function restoreCloudResults(keys){
+ botSay('正在从云盘取回这单的历史成品…','atu');
+ Promise.all(keys.map(function(k){return tosGetUrl(k).then(function(u){return u?{url:u,tosKey:k,label:'云端成品',k:'cloud'}:null;});}))
+  .then(function(list){
+   var got=list.filter(Boolean);
+   if(!got.length)return;
+   state.results=got;renderDeliver();
+   botSay('已从云盘取回 <b>'+got.length+'</b> 张历史成品，在右侧交付物里可看大图、下载；要改图或出新图，把商品照片再传一次就行。','atu');
+  });
 }
 
 /* ================= 对话渲染 ================= */
@@ -1033,6 +1087,7 @@ function handleFiles(fileList){
  var stop=botTyping('atu');
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){stop();state.images=state.images.concat(arr);refreshShots();
+  arr.forEach(function(it){tosSyncImage(it,'input');});
   botSay('收到 <b>'+arr.length+'</b> 张，我都看过了。传齐了点「认认货」，先把你卖的是啥确认清楚，<b>绝不张冠李戴</b>。','atu');
  }).catch(function(){stop();toast('有图片没读出来，换一张试试','err');});
 }
@@ -1276,7 +1331,7 @@ function runGenerate(){
      var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize);
      if(token!==state.genToken)return;
      var wmUrl=await addWatermark(url);
-     state.results.push({url:wmUrl,label:jobs[i].label,k:jobs[i].k});
+     var __res={url:wmUrl,label:jobs[i].label,k:jobs[i].k};state.results.push(__res);tosSyncResult(__res);
      if(window.HG_bumpGen)window.HG_bumpGen();
      markTaskProgress();
      if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
@@ -1320,7 +1375,7 @@ function imagesSectionHtml(){
    +'<div class="res-meta"><div class="res-name">'+esc(r.label)+'</div><div class="res-acts">'
    +'<button data-act="dlvPreview" data-i="'+i+'" title="看大图">'+IC.zoom+'</button>'
    +'<button data-act="dlvDownload" data-i="'+i+'" title="下载">'+IC.download+'</button>'
-   +'<button data-act="dlvRedo" data-i="'+i+'" title="重做">'+IC.redo+'</button></div></div></div>';
+   +(r.k==='cloud'?'':'<button data-act="dlvRedo" data-i="'+i+'" title="重做">'+IC.redo+'</button>')+'</div></div></div>';
  }).join('');
  return '<div class="dl-sec"><h5>'+IC.image+' 成品图（'+state.results.length+'）</h5><div class="res-grid">'+items+'</div></div>';
 }
