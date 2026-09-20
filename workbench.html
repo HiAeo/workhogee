@@ -988,7 +988,56 @@ function renderPartners(){
 function setActivePartner(id){
  if(id==='host'){state.activePartner='host';renderPartners();renderTopbar();return;}
  state.activePartner=id;renderPartners();renderTopbar();
- var p=partnerById(id);toast(p.name+' · '+p.role+' 主讲');
+ partnerTakeover(id);
+}
+/* 点击左栏伙伴 / 让它主讲：中间操作台随之切到该伙计的对话与交付面板，
+   上下文感知——已传图、已有文案时给不同引导，不重置进行中的任务。 */
+function partnerTakeover(id){
+ var hasImg=state.results&&state.results.length;
+ var hasCopy=state.copy&&state.copy.ready;
+ var started=state.stage&&state.stage!=='welcome';
+ if(id==='atu'){
+  setDeliverTab('img');
+  if(!started){
+   if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();renderTopbar();}
+   if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+   botSay('我是<b>阿图</b>，专管出图。把手机拍的商品图传上来，第一张拍清整体做主图，白底、场景、多平台尺寸我一套出齐，<b>商品本身一点不动</b>。','atu');
+   quickPills([['startUpload','传几张手机实拍',IC.image],['useUsedcar','我卖二手车',IC.car]]);
+  }else{
+   botSay('阿图接手，右侧「图片」看成品；继续传图我接着出，哪张要重做、换背景直接说。','atu');
+  }
+ }else if(id==='awen'){
+  setDeliverTab('copy');
+  if(hasCopy){
+   botSay('阿文接手，右侧「图文」是我按平台写好的文案，要换口吻、加卖点、净化极限词直接说。','awen');
+  }else if(started){
+   botSay('阿文接手。我按认出的商品和卖点，先出一版小红书 / 抖音 / 朋友圈文案，广告法极限词自动过滤。','awen');
+   quickPills([['write_copy','按当前商品先写一版',IC.pen]]);
+  }else{
+   botSay('我是<b>阿文</b>，专管文案。告诉我你卖什么、主打什么卖点，或先传商品图让阿图认货，我按小红书、抖音、朋友圈不同口吻各写一版。','awen');
+   quickPills([['startUpload','先传图让阿图认货',IC.image]]);
+  }
+ }else if(id==='ashi'){
+  setDeliverTab('video');openDeliver();
+  if(hasImg){
+   botSay('阿视接手，右侧「视频」就是成片器，选模板点生成，我把这 '+state.results.length+' 张成品剪成带运镜、转场、字幕的短片。','ashi');
+  }else{
+   botSay('我是<b>阿视</b>，专管把成品图剪成短视频。现在还没有成品图，先让阿图出图，图一好我立刻开剪。','ashi');
+   quickPills([['startUpload','先让阿图出图',IC.image]]);
+  }
+ }else if(id==='afa'){
+  setDeliverTab('reach');openDeliver();
+  if(hasImg||hasCopy){
+   botSay('阿发接手，右侧「送达」按平台备好了：复制文案、打开发布页，或做 H5 画册和渠道码，最后一下你本人点发送。','afa');
+  }else{
+   botSay('我是<b>阿发</b>，专管把素材送到客户面前。先让阿图出图、阿文写文案，素材一好我就按平台打包，你只点最后一下发送。','afa');
+   quickPills([['startUpload','先让阿图出图',IC.image]]);
+  }
+ }else if(id==='agu'){
+  botSay('我是<b>阿果</b>，专管效果。画册和渠道码投出去后，谁看了、扫了码、留了电话，我汇成明白账，到点提醒你该跟进谁。','agu');
+  aguCard();
+ }
+ scrollBottom();
 }
 function renderTopbar(){
  var p=partnerById(state.activePartner);
