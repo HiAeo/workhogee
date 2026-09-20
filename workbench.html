@@ -14,7 +14,7 @@
   --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.05);
   --tx:rgba(255,255,255,.92); --tx2:rgba(255,255,255,.60); --tx3:rgba(255,255,255,.38);
   --orange:#fb923c; --orange-d:#ea580c; --orange-soft:rgba(251,146,60,.14);
-  --atu:#fb923c; --awen:#60a5fa; --afa:#4ade80; --agu:#c084fc; --host:#fb923c;
+  --atu:#fb923c; --awen:#60a5fa; --ashi:#ec407a; --afa:#4ade80; --agu:#c084fc; --host:#fb923c;
   --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
   --rail:248px; --deliver:402px;
   --font:"Trebuchet MS","Trebuchet","Lucida Sans Unicode","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -89,6 +89,7 @@ img{display:block;max-width:100%}
 .p-awen .pavatar{background:rgba(96,165,250,.16)}.p-awen .pavatar svg{color:var(--awen)}.p-awen.active .pavatar{box-shadow:0 0 0 1.5px var(--awen)}
 .p-afa .pavatar{background:rgba(74,222,128,.15)}.p-afa .pavatar svg{color:var(--afa)}.p-afa.active .pavatar{box-shadow:0 0 0 1.5px var(--afa)}
 .p-agu .pavatar{background:rgba(192,132,252,.16)}.p-agu .pavatar svg{color:var(--agu)}.p-agu.active .pavatar{box-shadow:0 0 0 1.5px var(--agu)}
+.p-ashi .pavatar{background:rgba(236,64,122,.16)}.p-ashi .pavatar svg{color:var(--ashi)}.p-ashi.active .pavatar{box-shadow:0 0 0 1.5px var(--ashi)}
 .partner .pn{flex:1;min-width:0}
 .partner .pn b{display:block;font-size:13px;font-weight:700;color:var(--tx)}
 .partner .pn span{display:block;font-size:11px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -314,6 +315,41 @@ img{display:block;max-width:100%}
 .di-btn{flex:1;appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--tx2);border-radius:8px;font-size:11.5px;font-weight:600;padding:7px;display:flex;gap:6px;align-items:center;justify-content:center;transition:.14s}
 .di-btn:hover{border-color:var(--orange);color:var(--orange)}
 .di-btn svg{width:13px;height:13px}
+
+/* 阿视 · 图文成片 */
+.vid-box{border:1px solid var(--line);border-radius:13px;background:#191714;padding:13px;margin-bottom:12px}
+.vid-head{font-size:12.8px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.vid-head svg{width:15px;height:15px;color:var(--ashi)}
+.vid-sub{font-size:10.8px;color:var(--tx3);line-height:1.6;margin-bottom:8px}
+.vid-row{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0;align-items:center}
+.vid-row .vl{font-size:11px;color:var(--tx2);width:100%}
+.vid-chip{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--tx2);border-radius:999px;padding:6px 11px;font-size:11.5px;font-weight:600;font-family:inherit;transition:.14s}
+.vid-chip:hover{border-color:var(--ashi);color:var(--ashi)}
+.vid-chip.on{background:var(--ashi);border-color:var(--ashi);color:#fff}
+.vid-stage{display:none;position:relative;margin:10px 0 4px;border-radius:11px;overflow:hidden;background:#0c0b09;border:1px solid var(--line)}
+.vid-stage.show{display:block}
+.vid-stage canvas{display:block;width:100%;height:auto;background:#0c0b09}
+.vid-prog{height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:8px;display:none}
+.vid-prog.show{display:block}
+.vid-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ashi),#fb923c);border-radius:99px;transition:width .12s linear}
+.vid-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.vid-btn{appearance:none;border-radius:10px;font-size:12px;font-weight:700;padding:9px 13px;font-family:inherit;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.vid-btn svg{width:14px;height:14px}
+.vid-btn:hover{border-color:var(--ashi);color:var(--ashi)}
+.vid-btn.primary{background:var(--ashi);border-color:var(--ashi);color:#fff}
+.vid-btn.primary:hover{background:#d81b60;color:#fff}
+.vid-btn.primary:disabled{opacity:.55;cursor:not-allowed}
+.vid-btn.ghost{color:var(--tx3)}
+.vid-soon{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--tx3);line-height:1.6;border:1px dashed var(--line);border-radius:10px;padding:9px 11px;margin-top:10px}
+.vid-soon svg{width:15px;height:15px;flex:none;color:var(--ashi)}
+.vid-soon b{color:var(--tx2)}
+.vid-item{border:1px solid var(--line2);border-radius:11px;overflow:hidden;background:#15130f;margin-bottom:10px}
+.vid-item video{display:block;width:100%;background:#000}
+.vi-meta{display:flex;align-items:center;gap:8px;padding:9px 11px}
+.vi-name{flex:1;min-width:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vi-spec{font-size:10.5px;color:var(--tx3);white-space:nowrap}
+.vi-dl{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--tx2);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:5px;flex:none}
+.vi-dl svg{width:13px;height:13px}.vi-dl:hover{border-color:var(--ashi);color:var(--ashi)}
 .pub-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
 .pub-thumb{width:54px;height:54px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 .pub-thumb img{width:100%;height:100%;object-fit:cover}
@@ -463,6 +499,7 @@ img{display:block;max-width:100%}
           <button data-cq="usedcar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>我卖二手车</button>
           <button data-cq="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>写文案</button>
           <button data-cq="motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>做动态图</button>
+          <button data-cq="video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="13" rx="2"/><path d="m16 10 5-3v10l-5-3"/><circle cx="9" cy="12.5" r="3.2"/></svg>做短视频</button>
           <button data-cq="reach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发自媒体</button>
         </div>
         <div class="cmp-box">
@@ -488,6 +525,7 @@ img{display:block;max-width:100%}
       <button data-dltab="all" class="on">全部</button>
       <button data-dltab="img">图片<span class="n" id="nImg"></span></button>
       <button data-dltab="dyn">动态<span class="n" id="nDyn"></span></button>
+      <button data-dltab="video">视频<span class="n" id="nVid"></span></button>
       <button data-dltab="copy">图文</button>
       <button data-dltab="reach">送达</button>
     </div>
@@ -558,6 +596,7 @@ var IC={
  qr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7M14 21h3M17 17h4v4"/></svg>',
  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
  motion:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>',
+ video:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="13" rx="2"/><path d="m16 10 5-3v10l-5-3"/><circle cx="9" cy="12.5" r="3.2"/></svg>',
  stack:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5"/></svg>',
  rotate:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.7-6.4"/><path d="M21 3v6h-6"/></svg>',
  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>',
@@ -582,6 +621,7 @@ var IC={
 var PARTNERS=[
  {id:'atu',name:'阿图',role:'生图伙计',ico:IC.camera,must:true},
  {id:'awen',name:'阿文',role:'文案伙计',ico:IC.pen},
+ {id:'ashi',name:'阿视',role:'视频伙计',ico:IC.video},
  {id:'afa',name:'阿发',role:'分发伙计',ico:IC.send},
  {id:'agu',name:'阿果',role:'效果伙计',ico:IC.chart}
 ];
@@ -664,8 +704,8 @@ var P_onsite='第一张图是待售二手车（主体，务必完整保留），
 /* ================= 状态 ================= */
 function resetState(){
  return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:'',energy:'',gear:''},outputs:new Set(),scene:null,bgImage:null,
-  sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],dyn:[],dynGrid:null,stage:'welcome',genToken:0,
-  activePartner:'host',hires:new Set(['atu','awen','afa','agu']),taskId:newTaskId(),taskTitle:'',taskPinned:false,
+  sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],dyn:[],dynGrid:null,videos:[],videoCfg:{tpl:'showcase15',ratio:'9:16'},stage:'welcome',genToken:0,
+  activePartner:'host',hires:new Set(['atu','awen','ashi','afa','agu']),taskId:newTaskId(),taskTitle:'',taskPinned:false,
   copy:{ready:false,channel:'general',cps:null,draft:''},showcase:null,deliverTab:'all',labTab:'skill'};
 }
 var state=resetState();
@@ -757,6 +797,10 @@ function cqAction(k){
   if(state.results&&state.results.length){dynMake('ken');}
   else if(state.images&&state.images.length>=4){dynMake('spin');}
   else toast('先出一两张成品图（或围着商品传 4 张以上原图），就能做动态封面 / 360 环绕','err');
+ }else if(k==='video'){
+  setActivePartner('ashi');setDeliverTab('video');openDeliver();
+  if(state.results&&state.results.length){botSay('老板，把你刚出的成品图给我，我按<b>商品展示 / 种草 / 快闪</b>分镜，自动运镜、加字幕，导成竖版或方形短视频，直接发抖音 / 小红书 / 视频号。在右侧「视频」选模板和画幅，点生成。','ashi');}
+  else{botSay('老板，做短视频得先有几张成品图。你先传手机实拍让阿图出图，图一好我就能把它们剪成一条带运镜和字幕的短片。','ashi');}
  }else if(k==='reach'){
   if(state.results&&state.results.length)renderPublishCard();
   else toast('先生成几张图，阿发就能打包成小红书 / 抖音 / 朋友圈素材','err');
@@ -1009,13 +1053,13 @@ function renderLabPlugin(){
  return html;
 }
 function renderLabPartner(){
- var note='<div class="lab-note">四个伙计都在岗。阿图生图，阿文写文案，阿发送达，阿果看数据。点「让它主讲」直接切换，不用再雇佣。</div>';
+ var note='<div class="lab-note">五个伙计都在岗。阿图生图，阿文写文案，阿视剪视频，阿发送达，阿果看数据。点「让它主讲」直接切换，不用再雇佣。</div>';
  return note+PARTNERS.map(function(p){
   var speak='<button class="li-btn" data-act="speak" data-id="'+p.id+'">'+(state.activePartner===p.id?'当前主讲':'让它主讲')+'</button>';
   return '<div class="lab-item p-'+p.id+'"><span class="li-ico">'+p.ico+'</span><div class="li-main"><b>'+p.name+' · '+p.role+'</b><span>'+partnerDuty(p.id)+'</span></div>'+speak+'</div>';
  }).join('');
 }
-function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主体一点不动',awen:'分渠道文案，自动规避广告法绝对化词',afa:'素材就绪包 + 发布页/草稿，本人点最后一下',agu:'画册渠道码、浏览与线索回流效果中心'}[id]||'';}
+function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主体一点不动',awen:'分渠道文案，自动规避广告法绝对化词',ashi:'多张成品自动分镜，运镜加字幕，导出竖版/方形短视频，AI 图生视频即将开放',afa:'素材就绪包 + 发布页/草稿，本人点最后一下',agu:'画册渠道码、浏览与线索回流效果中心'}[id]||'';}
 
 /* ================= 欢迎 / 选技能（小 pill，无大按钮网格） ================= */
 function start(){
@@ -1028,7 +1072,7 @@ function start(){
   botSay('回来了，老板。当前是<b>'+skillName()+'</b>，直接传图我就开工；也可以换个技能或让阿文先写文案。');
   quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个技能',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
  }else{
-  var wh=botSay('老板好，我是你的 <b>Hogee</b>，你生意上的好伙计。<b>做生意，找伙计。</b><br>出商品图、写分渠道文案、把素材送达小红书 / 抖音 / 朋友圈，我都能干。传几张手机实拍，或直接在下面打字告诉我你卖什么。');
+  var wh=botSay('老板好，我是你的 <b>Hogee</b>，你生意上的好伙计。<b>做生意，找伙计。</b><br>出商品图、写分渠道文案、把成品剪成短视频、把素材送达小红书 / 抖音 / 朋友圈，我都能干。传几张手机实拍，或直接在下面打字告诉我你卖什么。');
   wh.querySelector('.bubble').classList.add('welcome');
   quickPills([['startUpload','传几张手机实拍开始',IC.image],['useUsedcar','我卖二手车',IC.car],['useGeneral','我做电商 / 通用商品',IC.shop],['askAwen','只想先写文案',IC.pen]]);
  }
@@ -1365,7 +1409,7 @@ function finishGenerate(){
 }
 
 /* ================= 右列：交付物聚合 ================= */
-function deliverCount(){return state.results.length+state.dyn.length+(state.dynGrid?1:0)+(state.copy.ready?1:0)+(state.showcase?1:0);}
+function deliverCount(){return state.results.length+state.dyn.length+(state.dynGrid?1:0)+state.videos.length+(state.copy.ready?1:0)+(state.showcase?1:0);}
 function setDeliverTab(tab){state.deliverTab=tab;$$('#dlTabs button').forEach(function(b){b.classList.toggle('on',b.dataset.dltab===tab);});renderDeliver();}
 function openDeliver(){$('#deliver').classList.add('open');}
 function imagesSectionHtml(){
@@ -1413,16 +1457,17 @@ function renderDeliver(){
  var body=$('#deliverBody');if(!body)return;
  if($('#copyText')){state.copy.draft=$('#copyText').value;state.copy._lastCh=state.copy.channel;}
  var tab=state.deliverTab,html='',has=state.results.length||state.dyn.length||state.dynGrid||state.copy.ready||state.showcase;
- if(!has){body.innerHTML=emptyDeliverHtml();}
- else if(tab==='img')html=imagesSectionHtml()||emptyDeliverHtml();
- else if(tab==='dyn')html=dynSectionHtml();
- else if(tab==='copy')html=copySectionHtml()||emptyDeliverHtml();
- else if(tab==='reach')html=reachSectionHtml()||emptyDeliverHtml();
- else html=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+copySectionHtml()+reachSectionHtml();
- if(has)body.innerHTML=html||emptyDeliverHtml();
+ if(tab==='video'){body.innerHTML=videoSectionHtml();}
+ else if(!has){body.innerHTML=emptyDeliverHtml();}
+ else if(tab==='img'){body.innerHTML=imagesSectionHtml()||emptyDeliverHtml();}
+ else if(tab==='dyn'){body.innerHTML=dynSectionHtml();}
+ else if(tab==='copy'){body.innerHTML=copySectionHtml()||emptyDeliverHtml();}
+ else if(tab==='reach'){body.innerHTML=reachSectionHtml()||emptyDeliverHtml();}
+ else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+videoSectionHtml()+copySectionHtml()+reachSectionHtml();}
  var n=deliverCount();$('#dlCount').textContent=n;$('#dlCount').classList.toggle('show',n>0);
  $('#nImg').textContent=state.results.length?('('+state.results.length+')'):'';
  var dn=state.dyn.length+(state.dynGrid?1:0);$('#nDyn').textContent=dn?('('+dn+')'):'';
+ var vn=state.videos.length;var nV=$('#nVid');if(nV)nV.textContent=vn?('('+vn+')'):'';
  $('#btnPack').disabled=!state.results.length;
  if($('#copyText')){refreshCopyScan();bindCopyTextLive();}
  if($('#dynOut'))renderDyn();
@@ -1526,6 +1571,199 @@ async function dlGridZip(){
  downloadDataUrl(url,'WorkHogee_九宫格.zip');setTimeout(function(){URL.revokeObjectURL(url);},4000);toast('九宫格打包好了');
 }
 
+
+/* ================= 阿视：图文成片（前端 Canvas + MediaRecorder，零外部依赖） ================= */
+var VIDEO_RATIOS={'9:16':{w:720,h:1280},'1:1':{w:720,h:720},'3:4':{w:720,h:960}};
+var VIDEO_TEMPLATES={
+ showcase15:{label:'商品展示',sec:15,beats:['全景展示','细节特写','使用场景','卖点收尾'],plats:'抖音 / 快手'},
+ seeding20:{label:'种草推荐',sec:20,beats:['痛点引入','产品亮相','效果展示','前后对比','行动号召'],plats:'小红书'},
+ quick8:{label:'快闪短片',sec:8,beats:['全景一览','细节特写','全景收尾'],plats:'朋友圈 / 视频号'},
+ detail30:{label:'详细讲解',sec:30,beats:['整体外观','内部细节','核心功能','材质做工','对比优势','行动号召'],plats:'抖音挂车'}
+};
+var VIDEO_CAP={
+ '全景展示':'实拍呈现，所见即所得','细节特写':'细节，经得起放大','使用场景':'放进场景，一下就专业','卖点收尾':'好货，自己会说话',
+ '痛点引入':'拍照不出片？','产品亮相':'好货，值得被看见','效果展示':'一张图，拉开差距','前后对比':'实拍变专业商品图','行动号召':'喜欢就留言咨询',
+ '全景一览':'好货，一眼看清','全景收尾':'现货在这，等你来看','整体外观':'整体外观，一目了然','内部细节':'内在细节，清清楚楚',
+ '核心功能':'核心功能，直击需求','材质做工':'材质做工，如实呈现','对比优势':'一比，差距就出来了'
+};
+function videoDim(){return VIDEO_RATIOS[state.videoCfg.ratio]||VIDEO_RATIOS['9:16'];}
+function fallbackStoryboard(){
+ var cfg=state.videoCfg,tpl=VIDEO_TEMPLATES[cfg.tpl]||VIDEO_TEMPLATES.showcase15,dim=videoDim();
+ var motions=['push-in','kenburns','pan-right','zoom-out','kenburns','rise'];
+ var n=tpl.beats.length, per=Math.max(2,Math.round(tpl.sec/n*2)/2);
+ var shots=tpl.beats.map(function(b,i){return {index:i+1,shot:b,visual:b,motion:motions[i%motions.length],duration:per,caption:VIDEO_CAP[b]||''};});
+ return {fallback:true,ratio:cfg.ratio,width:dim.w,height:dim.h,durationSec:per*n,platforms:tpl.plats,templateLabel:tpl.label,title:productLabel()||'这单好货',cta:'你的生意好伙计',shots:shots};
+}
+function callStoryboard(){
+ var body={product:productLabel(),category:(state.identity&&state.identity.cat)||'',sellingPoints:sellPoints(),copyText:(state.copy&&state.copy.cps)?state.copy.cps.general:'',template:state.videoCfg.tpl,ratio:state.videoCfg.ratio};
+ return authPost('/storyboard',body).then(function(j){
+  if(j&&j.ok&&j.storyboard&&j.storyboard.available&&j.storyboard.shots&&j.storyboard.shots.length)return j.storyboard;
+  return null;
+ }).catch(function(){return null;});
+}
+function loadVideoImage(src){
+ return new Promise(function(res,rej){
+  var i=new Image();i.crossOrigin='anonymous';
+  i.onload=function(){res(i);};
+  i.onerror=function(){var k=new Image();k.onload=function(){res(k);};k.onerror=function(){rej(new Error('图片加载失败'));};k.src=src;};
+  i.src=src;
+ });
+}
+function pickVideoMime(){
+ if(!window.MediaRecorder)return '';
+ var c=['video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+ for(var i=0;i<c.length;i++){try{if(MediaRecorder.isTypeSupported(c[i]))return c[i];}catch(e){}}
+ return '';
+}
+function wrapCN(text,maxChars){
+ var t=String(text||''),out=[],line='';
+ for(var i=0;i<t.length;i++){line+=t[i];if(line.length>=maxChars){out.push(line);line='';}}
+ if(line)out.push(line);
+ return out.slice(0,2);
+}
+function drawCoverKB(x,img,W,H,s,ox,oy,alpha){
+ x.save();x.globalAlpha=alpha;
+ var ir=img.width/img.height,tr=W/H,bw,bh;
+ if(ir>tr){bh=H;bw=H*ir;}else{bw=W;bh=W/ir;}
+ bw*=s;bh*=s;
+ var ex=Math.max(1,(bw-W)/2),ey=Math.max(1,(bh-H)/2);
+ x.drawImage(img,(W-bw)/2+ox*ex,(H-bh)/2+oy*ey,bw,bh);
+ x.restore();
+}
+function kbFor(p,motion){
+ var e=p*p*(3-2*p);
+ if(motion==='push-in')return {s:1.06+0.10*e,ox:0,oy:0};
+ if(motion==='zoom-out')return {s:1.16-0.10*e,ox:0,oy:0};
+ if(motion==='pan-right')return {s:1.15,ox:-0.55+1.1*e,oy:0};
+ if(motion==='pan-left')return {s:1.15,ox:0.55-1.1*e,oy:0};
+ if(motion==='rise')return {s:1.13,ox:0,oy:0.5-1.0*e};
+ return {s:1.05+0.10*e,ox:-0.3+0.6*e,oy:-0.25+0.5*e};
+}
+function drawBrandBg(x,W,H){
+ var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#15130f');g.addColorStop(1,'#2e2418');
+ x.fillStyle=g;x.fillRect(0,0,W,H);
+}
+function drawIntro(x,W,H,p,title){
+ drawBrandBg(x,W,H);
+ x.save();x.globalAlpha=Math.min(1,p*1.4);x.textAlign='center';
+ x.fillStyle='#fb923c';x.font='600 '+Math.round(W*0.04)+'px Trebuchet MS,sans-serif';x.fillText('WorkHogee · 阿视',W/2,H*0.26);
+ x.fillStyle='#fff';x.font='800 '+Math.round(W*0.085)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+ var lines=wrapCN(title||'这单好货',9),lh=W*0.12,y0=H*0.42-(lines.length-1)*lh/2;
+ for(var i=0;i<lines.length;i++)x.fillText(lines[i],W/2,y0+i*lh);
+ var lw=W*0.46*(p*p*(3-2*p));x.strokeStyle='#fb923c';x.lineWidth=3;x.beginPath();x.moveTo(W/2-lw/2,H*0.6);x.lineTo(W/2+lw/2,H*0.6);x.stroke();
+ x.restore();
+}
+function drawOutro(x,W,H,p){
+ drawBrandBg(x,W,H);
+ x.save();x.globalAlpha=Math.min(1,p*1.4);x.textAlign='center';
+ x.fillStyle='#fb923c';x.font='800 '+Math.round(W*0.17)+'px Trebuchet MS,sans-serif';x.fillText('Hogee',W/2,H*0.42);
+ x.fillStyle='#fff';x.font='600 '+Math.round(W*0.052)+'px "PingFang SC","Microsoft YaHei",sans-serif';x.fillText('你的生意好伙计',W/2,H*0.53);
+ x.fillStyle='rgba(255,255,255,.55)';x.font='400 '+Math.round(W*0.033)+'px "PingFang SC","Microsoft YaHei",sans-serif';x.fillText('出图 · 文案 · 视频 · 分发 · 效果',W/2,H*0.62);
+ x.restore();
+}
+function drawCaption(x,W,H,text,alpha){
+ if(!text)return;
+ var g=x.createLinearGradient(0,H*0.68,0,H*0.95);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.66)');
+ x.fillStyle=g;x.fillRect(0,H*0.68,W,H*0.27);
+ x.save();x.globalAlpha=alpha;x.textAlign='center';x.fillStyle='#fff';
+ x.font='700 '+Math.round(W*0.062)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+ var lines=wrapCN(text,13),lh=W*0.092,y0=H*0.80-(lines.length-1)*lh/2;
+ for(var i=0;i<lines.length;i++)x.fillText(lines[i],W/2,y0+i*lh);
+ x.restore();
+}
+function drawCorner(x,W,H){
+ x.save();x.globalAlpha=.7;x.textAlign='right';x.fillStyle='rgba(255,255,255,.82)';
+ x.font='500 '+Math.round(W*0.027)+'px sans-serif';x.fillText('AI 生成 · WorkHogee',W-16,H-18);x.restore();
+}
+function composeVideo(sb,imgs,onProg){
+ var dim=VIDEO_RATIOS[sb.ratio]||VIDEO_RATIOS['9:16'],W=dim.w,H=dim.h;
+ var canvas=document.getElementById('vidCanvasEl');
+ if(!canvas)return Promise.reject(new Error('视频画布未就绪'));
+ canvas.width=W;canvas.height=H;var x=canvas.getContext('2d');
+ var shots=sb.shots||[],INTRO=1.3,OUTRO=1.8,TRANS=0.28;
+ var shotsDur=shots.reduce(function(a,s){return a+(+s.duration||3);},0);
+ var total=INTRO+shotsDur+OUTRO;
+ var mime=pickVideoMime();
+ if(!mime)return Promise.reject(new Error('当前浏览器不支持本地视频录制，请用最新版 Chrome / Edge / Safari'));
+ function frame(t){
+  x.fillStyle='#0c0b09';x.fillRect(0,0,W,H);
+  if(t<INTRO){drawIntro(x,W,H,t/INTRO,sb.title);return;}
+  if(t>=INTRO+shotsDur){drawOutro(x,W,H,(t-INTRO-shotsDur)/OUTRO);return;}
+  var lt=t-INTRO,cum=0,shot=shots[shots.length-1],idx=shots.length-1,local=0,dur=3;
+  for(var i=0;i<shots.length;i++){var d=+shots[i].duration||3;cum+=d;if(lt<cum){shot=shots[i];idx=i;local=lt-(cum-d);dur=d;break;}}
+  var p=Math.max(0,Math.min(1,local/dur));
+  var kb=kbFor(p,shot.motion);
+  var fade=Math.min(1,local/TRANS);
+  if(idx===shots.length-1&&local>dur-0.32)fade*=Math.max(0,(dur-local)/0.32);
+  var img=imgs[idx%imgs.length];
+  if(img)drawCoverKB(x,img,W,H,kb.s,kb.ox,kb.oy,Math.max(0,Math.min(1,fade)));
+  if(shot.caption&&local>0.34&&local<dur-0.16)drawCaption(x,W,H,shot.caption,Math.min(1,(local-0.34)/0.3));
+  drawCorner(x,W,H);
+ }
+ var stream=canvas.captureStream(30);
+ var rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000});
+ var chunks=[];rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data);};
+ return new Promise(function(res,rej){
+  rec.onerror=function(){rej(new Error('录制失败'));};
+  rec.onstop=function(){res({blob:new Blob(chunks,{type:mime.split(';')[0]}),w:W,h:H,dur:total});};
+  var start=null,raf=0,stopped=false;
+  function loop(ts){
+   if(!start)start=ts;var t=(ts-start)/1000;
+   if(t>=total){frame(total);onProg&&onProg(1);if(!stopped){stopped=true;setTimeout(function(){try{rec.stop();}catch(e){}},150);}return;}
+   frame(t);onProg&&onProg(Math.min(0.999,t/total));raf=requestAnimationFrame(loop);
+  }
+  rec.onstart=function(){raf=requestAnimationFrame(loop);};
+  setTimeout(function(){try{rec.start(200);}catch(e){rej(e);}},60);
+ });
+}
+function videoSectionHtml(){
+ var cfg=state.videoCfg,nImg=state.results.length;
+ var tplBtns=Object.keys(VIDEO_TEMPLATES).map(function(k){var t=VIDEO_TEMPLATES[k];return '<button type="button" class="vid-chip'+(cfg.tpl===k?' on':'')+'" data-act="videoTpl" data-v="'+k+'">'+t.label+' '+t.sec+'s</button>';}).join('');
+ var ratioBtns=[['9:16','竖屏 9:16'],['1:1','方形 1:1'],['3:4','竖图 3:4']].map(function(r){return '<button type="button" class="vid-chip'+(cfg.ratio===r[0]?' on':'')+'" data-act="videoRatio" data-v="'+r[0]+'">'+r[1]+'</button>';}).join('');
+ var soon='<div class="vid-soon">'+IC.motion+'<span><b>AI 图生视频</b>（让照片里的商品真实运动）内测中，即将开放；现在先用「图文成片」，把多张成品剪成带运镜和字幕的短视频。</span></div>';
+ var box='<div class="vid-box"><div class="vid-head">'+IC.video+' 阿视 · 图文成片</div>'
+  +'<div class="vid-sub">把阿图的成品图自动分镜，加 Ken Burns 运镜、转场和字幕，导出可直接发抖音 / 小红书 / 视频号的竖版或方形短片。静音成片，发布时在平台配热门 BGM 更安全。</div>'
+  +'<div class="vid-row"><span class="vl">分镜模板</span>'+tplBtns+'</div>'
+  +'<div class="vid-row"><span class="vl">画幅</span>'+ratioBtns+'</div>'
+  +'<div class="vid-stage" id="vidStage"><canvas id="vidCanvasEl"></canvas><div class="vid-prog" id="vidProg"><i id="vidProgBar"></i></div></div>'
+  +'<div class="vid-actions"><button type="button" class="vid-btn primary" data-act="videoMake"'+(nImg?'':' disabled')+'>'+IC.video+' 用 '+nImg+' 张成品生成短视频</button><button type="button" class="vid-btn ghost" data-act="videoAiSoon">AI 图生视频 · 即将开放</button></div>'
+  +(nImg?'':'<div class="vid-sub" style="margin-top:8px">先让阿图出几张成品图，阿视就能把它们剪成一条片。</div>')
+  +soon+'</div>';
+ return '<div class="dl-sec"><h5>'+IC.video+' 阿视短视频'+(state.videos.length?'（'+state.videos.length+'）':'')+'</h5>'+box+'<div id="vidOut">'+renderVideos()+'</div></div>';
+}
+function renderVideos(){
+ if(!state.videos.length)return '';
+ return state.videos.map(function(v,i){
+  return '<div class="vid-item"><video src="'+v.url+'" controls playsinline preload="metadata"></video>'
+   +'<div class="vi-meta"><span class="vi-name">'+esc(v.name)+'</span><span class="vi-spec">'+v.w+'×'+v.h+' · '+v.ext.toUpperCase()+' · '+Math.round(v.dur)+'s</span>'
+   +'<button class="vi-dl" data-act="videoDl" data-i="'+i+'">'+IC.download+'下载</button></div></div>';
+ }).join('');
+}
+async function videoMake(btn){
+ if(!state.results.length){toast('先让阿图出几张成品图，阿视才能剪','err');return;}
+ var stage=document.getElementById('vidStage'),prog=document.getElementById('vidProg'),bar=document.getElementById('vidProgBar');
+ if(stage)stage.classList.add('show');if(prog)prog.classList.add('show');
+ if(btn){btn.disabled=true;btn.innerHTML=IC.video+' 正在准备…';}
+ try{
+  var urls=state.results.slice(0,6).map(function(r){return r.url;});
+  var imgs=await Promise.all(urls.map(loadVideoImage));
+  var sb=await callStoryboard(),fb=false;
+  if(!sb){sb=fallbackStoryboard();fb=true;}
+  var dim=videoDim();sb.width=dim.w;sb.height=dim.h;sb.ratio=state.videoCfg.ratio;
+  if(btn)btn.innerHTML=IC.video+' 正在剪辑…';
+  var r=await composeVideo(sb,imgs,function(p){if(bar)bar.style.width=Math.round(p*100)+'%';if(btn)btn.innerHTML=IC.video+' 剪辑 '+Math.round(p*100)+'%';});
+  var ext=(r.blob.type.indexOf('mp4')>=0)?'mp4':'webm';
+  var name='WorkHogee_阿视_'+(sb.templateLabel||'短视频').replace(/[^\u4e00-\u9fa5a-zA-Z0-9]+/g,'')+'.'+ext;
+  state.videos.push({name:name,url:URL.createObjectURL(r.blob),blob:r.blob,w:r.w,h:r.h,dur:r.dur,ext:ext,tpl:state.videoCfg.tpl,ratio:state.videoCfg.ratio});
+  renderDeliver();
+  toast(fb?'短视频剪好了（内置分镜，登录后用 AI 分镜）':'短视频剪好了，'+sb.shots.length+' 个镜头');
+  botSay('<b>片子剪好了，你看看。</b>'+r.w+'×'+r.h+'、'+Math.round(r.dur)+' 秒，已放进右侧「视频」，可直接下载发抖音 / 小红书 / 视频号；发布时配上平台热门 BGM 就行。','ashi');
+ }catch(e){
+  toast('视频没剪成：'+(e&&e.message?e.message:'重试一下'),'err');
+  renderDeliver();
+ }
+}
+
 /* ================= 导出 / 打包 / 重做 ================= */
 function exportRatio(url,w,h,mode,fmt){
  return loadImage(url).then(function(img){
@@ -1556,6 +1794,7 @@ async function packAll(){
   var zip=new JSZip();
   for(var i=0;i<state.results.length;i++){var r=state.results[i];for(var j=0;j<sizeList.length;j++){var s=sizeList[j];var du=await exportRatio(r.url,s.w,s.h,modeFor(r.k),state.fmt);zip.file(safeName(r.label)+'_'+s.k+'.'+state.fmt,du.split(',')[1],{base64:true});}}
   state.dyn.forEach(function(d){zip.folder('动图GIF').file(d.name,d.blob);});
+  state.videos.forEach(function(v){zip.folder('短视频').file(v.name,v.blob);});
   if(state.dynGrid){var gf=zip.folder('九宫格');state.dynGrid.items.forEach(function(u,i){gf.file('九宫格_'+String(i+1).padStart(2,'0')+'.jpg',u.split(',')[1],{base64:true});});}
   zip.folder('文案').file('配套文案.txt',copyText);
   var blob=await zip.generateAsync({type:'blob'}),url=URL.createObjectURL(blob);
@@ -1970,6 +2209,11 @@ function handleAct(b){
  else if(act==='dynKen'){dynMake('ken',b);}else if(act==='dynShow'){dynMake('show',b);}else if(act==='dynSpin'){dynMake('spin',b);}else if(act==='dynGrid'){dynMake('grid',b);}
  else if(act==='dlDyn'){var dd=state.dyn[+b.dataset.i];if(dd){downloadDataUrl(dd.url,dd.name);toast('已下载 '+dd.name);}}
  else if(act==='dlGrid'){dlGridZip();}
+ else if(act==='videoTpl'){state.videoCfg.tpl=b.dataset.v;$$('[data-act="videoTpl"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.videoCfg.tpl);});}
+ else if(act==='videoRatio'){state.videoCfg.ratio=b.dataset.v;$$('[data-act="videoRatio"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.videoCfg.ratio);});}
+ else if(act==='videoMake'){videoMake(b);}
+ else if(act==='videoDl'){var vv=state.videos[+b.dataset.i];if(vv){downloadDataUrl(vv.url,vv.name);toast('已下载 '+vv.name);}}
+ else if(act==='videoAiSoon'){toast('AI 图生视频内测中，即将开放；现在先用图文成片把多张成品剪成短视频');}
  else if(act==='newOrder'){newOrder();}
  else if(act==='moreScene'){state.results=[];state.dyn=[];state.dynGrid=null;renderDeliver();renderOutputsCard();}
  else if(act==='publishShowcase'){renderPublishCard();}
