@@ -1068,6 +1068,8 @@ function start(){
  renderPartners();renderTopbar();renderCmpAttach();renderDeliver();
  // 先从后端拉历史任务，再渲染列表
  loadTasksRemote();
+ var mateQ=new URLSearchParams(location.search).get('mate');
+ if(mateQ&&partnerById(mateQ)){state.activePartner=mateQ;renderPartners();renderTopbar();mateWelcome(mateQ);return;}
  if(id){state.identity=id;state.bgImage=loadBg(id.type);renderTopbar();
   botSay('回来了，老板。当前是<b>'+skillName()+'</b>，直接传图我就开工；也可以换个技能或让阿文先写文案。');
   quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个技能',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
@@ -1076,6 +1078,40 @@ function start(){
   wh.querySelector('.bubble').classList.add('welcome');
   quickPills([['startUpload','传几张手机实拍开始',IC.image],['useUsedcar','我卖二手车',IC.car],['useGeneral','我做电商 / 通用商品',IC.shop],['askAwen','只想先写文案',IC.pen]]);
  }
+}
+function mateWelcome(mate){
+ var lines={
+  atu:'老板好，我是<b>阿图</b>，专管出图。把手机拍的商品图传上来，第一张拍清整体我拿它做主图，白底图、场景图、多平台尺寸一套出齐；<b>商品本身一点不动</b>，只把背景和呈现做专业。',
+  awen:'老板好，我是<b>阿文</b>，专管文案。告诉我你卖什么、主打什么卖点，或先传商品图让阿图认货，我按<b>小红书、抖音、朋友圈</b>不同口吻各写一版，广告法极限词和违禁词自动过滤，发得出去、不被限流。',
+  ashi:'老板好，我是<b>阿视</b>，专管把成品图剪成短视频。阿图出好的图我来自动分镜，加运镜、转场和字幕，导出竖版 / 方形短片，直接发抖音、小红书、视频号。',
+  afa:'老板好，我是<b>阿发</b>，专管把素材送到客户面前。图和文案备好后，我按平台把素材、文案、发布页一次备齐，<b>最后一下发送由你本人点</b>，我不碰账号密码；也能做 H5 画册和渠道二维码。',
+  agu:'老板好，我是<b>阿果</b>，专管效果。画册和渠道码投出去后，谁看了、看多久、扫了码、留了电话，我都给你汇成明白账，到点提醒你该跟进谁。'
+ };
+ botSay(lines[mate],mate);
+ var hasImg=state.results&&state.results.length;
+ var hasCopy=state.copy&&state.copy.ready;
+ if(mate==='atu'){
+  setDeliverTab('img');
+  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();renderTopbar();}
+  if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+  quickPills([['startUpload','传几张手机实拍开始',IC.image],['useUsedcar','我卖二手车',IC.car],['askAwen','先让阿文写文案',IC.pen]]);
+ }else if(mate==='awen'){
+  setDeliverTab('copy');
+  quickPills([['startUpload','先传图让阿图认货',IC.image]]);
+ }else if(mate==='ashi'){
+  setDeliverTab('video');openDeliver();
+  if(hasImg){botSay('右侧「视频」面板里就是阿视成片器，选个模板点生成，我把这 '+state.results.length+' 张成品剪成一条带运镜和字幕的短片。','ashi');}
+  else{botSay('剪视频得先有几张成品图。你先传手机实拍让阿图出图，图一好我立刻接手开剪，不用你再重新找人。','ashi');
+   quickPills([['startUpload','先让阿图出图',IC.image]]);}
+ }else if(mate==='afa'){
+  setDeliverTab('reach');openDeliver();
+  if(hasImg||hasCopy){botSay('素材和文案都备好了，看右侧「送达」：选平台复制文案、打开发布页，或生成 H5 画册和渠道二维码。','afa');}
+  else{botSay('先让阿图出图、或让阿文写文案，素材一好我就按平台打包好，送到你手上只差最后一下发送。','afa');
+   quickPills([['startUpload','先让阿图出图',IC.image]]);}
+ }else if(mate==='agu'){
+  aguCard();
+ }
+ scrollBottom();
 }
 function quickPills(list){
  var m=document.createElement('div');m.className='msg bot';
