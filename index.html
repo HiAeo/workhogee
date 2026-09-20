@@ -774,6 +774,11 @@ ul{list-style:none;}
 .pl-node{text-align:center;position:relative;padding:0 12px;}
 .pl-ic{width:60px;height:60px;border-radius:50%;margin:0 auto 13px;border:1.5px solid var(--mc);background:color-mix(in srgb,var(--mc) 9%,#ffffff);color:var(--mc);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:transform .3s ease,box-shadow .3s ease;}
 .pl-node:hover .pl-ic{transform:translateY(-4px);box-shadow:0 12px 26px color-mix(in srgb,var(--mc) 26%,transparent);}
+
+.pl-node.hot .pl-ic{background:var(--mc);color:#fff;box-shadow:0 12px 26px color-mix(in srgb,var(--mc) 34%,transparent);}
+.pl-node.hot .pl-step{font-weight:800;}
+.pl-node .pl-tag{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--mc);border:1px solid color-mix(in srgb,var(--mc) 45%,transparent);border-radius:999px;padding:2px 9px;}
+.pl-node.hot .pl-tag{background:var(--mc);color:#fff;border-color:var(--mc);}
 .pl-ic svg{width:26px;height:26px;}
 .pl-step{font-size:10.5px;font-weight:800;letter-spacing:.12em;color:var(--mc);margin-bottom:5px;}
 .pl-node h4{font-size:15px;font-weight:800;color:#14100c;}
@@ -1526,9 +1531,9 @@ ul{list-style:none;}
 <section class="pipe" id="reach">
   <div class="container">
     <div class="shead reveal">
-      <span class="kick">五个伙计 · 一条流水线</span>
-      <h2>从一张产品图，到一笔成交，五个伙计接力干完</h2>
-      <p>你只管拍几张手机实拍、点最后一下发送。阿图出图、阿文写文案、阿视剪视频、阿发送达到各个平台、阿果把效果和线索收回来——环环相扣，客户从哪张图来、问了什么、成交没有，都看得见、收得回。</p>
+      <span class="kick">全渠道送达 · 闭环回收</span>
+      <h2>阿发送到客户眼前，阿果把人和效果带回来</h2>
+      <p>阿图出的图、阿文写的文案、阿视剪的视频，阿发按渠道打包送达——官方能连的半自动，不能连的递到你手边，最后一下你本人发；客户看了、扫码了、留资了，阿果自动收进线索库、提醒你跟进。从曝光到成交，每张图都有回音。</p>
       <span class="shead-line"></span>
     </div>
 
@@ -1551,16 +1556,18 @@ ul{list-style:none;}
         <h4>阿视 · 视频</h4>
         <p>把成品图剪成带运镜、转场、字幕的短视频，静帧成片、适配竖屏。</p>
       </div>
-      <div class="pl-node reveal" style="--mc:#16a34a">
+      <div class="pl-node reveal hot" style="--mc:#16a34a">
         <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-9z"/><path d="M22 2 11 13"/></svg></div>
         <div class="pl-step">STEP 04</div>
         <h4>阿发 · 送达</h4>
+        <span class="pl-tag">送达 · Reach</span>
         <p>素材打包送达小红书、抖音、朋友圈，能连的半自动，最后一下你本人发。</p>
       </div>
-      <div class="pl-node reveal" style="--mc:#9333ea">
+      <div class="pl-node reveal hot" style="--mc:#9333ea">
         <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></div>
         <div class="pl-step">STEP 05</div>
         <h4>阿果 · 收回</h4>
+        <span class="pl-tag">回收 · Result</span>
         <p>浏览、扫码、留资自动回流，线索进库、按热度提醒你跟进。</p>
       </div>
     </div>
