@@ -765,6 +765,41 @@ ul{list-style:none;}
 .rway li{font-size:13.5px;color:rgba(255,255,255,.76);display:flex;gap:10px;align-items:flex-start;line-height:1.65;}
 .rway li svg{width:16px;height:16px;color:var(--orange-light);flex-shrink:0;margin-top:3px;}
 
+/* ===== 五伙计接力流水线（白底闭环） ===== */
+.pipe{background:#fff;color:#1c1712;padding:88px 0;}
+.pipe .shead .kick{color:var(--orange);}
+.pipe .shead h2{color:#14100c;}
+.pipe .shead p{color:#6f675e;}
+.ploop{display:grid;grid-template-columns:repeat(5,1fr);margin:16px 0 42px;}
+.pl-node{text-align:center;position:relative;padding:0 12px;}
+.pl-ic{width:60px;height:60px;border-radius:50%;margin:0 auto 13px;border:1.5px solid var(--mc);background:color-mix(in srgb,var(--mc) 9%,#ffffff);color:var(--mc);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:transform .3s ease,box-shadow .3s ease;}
+.pl-node:hover .pl-ic{transform:translateY(-4px);box-shadow:0 12px 26px color-mix(in srgb,var(--mc) 26%,transparent);}
+.pl-ic svg{width:26px;height:26px;}
+.pl-step{font-size:10.5px;font-weight:800;letter-spacing:.12em;color:var(--mc);margin-bottom:5px;}
+.pl-node h4{font-size:15px;font-weight:800;color:#14100c;}
+.pl-node p{font-size:12.5px;color:#6f675e;margin-top:6px;line-height:1.6;}
+.pl-node:not(:last-child)::after{content:"";position:absolute;top:29px;left:calc(50% + 38px);right:calc(-50% + 38px);height:0;border-top:2px dashed rgba(20,16,12,.18);z-index:1;}
+.pl-node:not(:last-child)::before{content:"";position:absolute;top:27px;left:calc(50% + 38px);width:12px;height:5px;border-radius:3px;background:var(--orange);z-index:3;animation:plflow 2.6s linear infinite;}
+@keyframes plflow{0%{left:calc(50% + 38px);opacity:0}12%{opacity:1}88%{opacity:1}100%{left:calc(50% + 80px);opacity:0}}
+.pways{display:grid;grid-template-columns:1.25fr .95fr;gap:22px;}
+.pway{border:1px solid rgba(20,16,12,.09);border-radius:var(--r-lg);padding:26px 28px;background:#fbfaf9;text-align:left;transition:box-shadow .35s ease,border-color .35s ease,transform .35s ease;}
+.pway:hover{box-shadow:0 18px 44px rgba(20,16,12,.08);border-color:rgba(249,115,22,.32);transform:translateY(-4px);}
+.pway h4{font-size:15.5px;font-weight:800;margin:0 0 16px;color:#14100c;display:flex;align-items:center;gap:9px;line-height:1.5;}
+.pw-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.pway .pw-grp{margin-bottom:15px;}
+.pway .pw-grp:last-child{margin-bottom:0;}
+.pway .pw-gt{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:#2a241e;margin-bottom:9px;flex-wrap:wrap;}
+.pway .pw-gt .b{font-size:11px;font-weight:800;width:21px;height:21px;border-radius:6px;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pway .pw-gt small{font-weight:500;color:#9a9188;font-size:11.5px;}
+.chips-light{display:flex;flex-wrap:wrap;gap:8px;}
+.chips-light span{font-size:12px;color:#4a433b;background:#fff;border:1px solid rgba(20,16,12,.1);padding:5px 11px;border-radius:999px;}
+.pway ul{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;}
+.pway li{font-size:13.5px;color:#544c44;display:flex;gap:10px;align-items:flex-start;line-height:1.65;list-style:none;}
+.pway li svg{width:16px;height:16px;color:var(--orange);flex-shrink:0;margin-top:3px;}
+@media(max-width:900px){.pways{grid-template-columns:1fr;}.ploop{grid-template-columns:1fr 1fr;gap:28px 12px;}.pl-node:not(:last-child)::after,.pl-node:not(:last-child)::before{display:none;}}
+@media(max-width:560px){.ploop{grid-template-columns:1fr;gap:22px;}.pipe{padding:64px 0;}.pway{padding:22px 20px;}}
+
+
 /* ===== 真实与合规底线 ===== */
 .trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
 .tcard{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 24px;transition:.3s;}
@@ -1487,57 +1522,71 @@ ul{list-style:none;}
 </section>
 
 
-<!-- ===== 03 发出去，收得回（深色闭环） ===== -->
-<section class="reach" id="reach">
+<!-- ===== 五伙计接力流水线（白底闭环） ===== -->
+<section class="pipe" id="reach">
   <div class="container">
     <div class="shead reveal">
-      <span class="kick">发出去，还要收得回 · Reach</span>
-      <h2>不是做完图就走，而是把客户带到你面前</h2>
-      <p>阿发负责把素材送达，阿果负责把效果和线索收回来，形成从曝光到成交的闭环。</p>
+      <span class="kick">五个伙计 · 一条流水线</span>
+      <h2>从一张产品图，到一笔成交，五个伙计接力干完</h2>
+      <p>你只管拍几张手机实拍、点最后一下发送。阿图出图、阿文写文案、阿视剪视频、阿发送达到各个平台、阿果把效果和线索收回来——环环相扣，客户从哪张图来、问了什么、成交没有，都看得见、收得回。</p>
       <span class="shead-line"></span>
     </div>
 
-    <div class="rloop reveal">
-      <div class="rl-node">
-        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></div>
-        <h4>素材送达</h4><p>画册、二维码、素材包分发到各个渠道</p>
+    <div class="ploop reveal">
+      <div class="pl-node reveal" style="--mc:#ea580c">
+        <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L5 21"/></svg></div>
+        <div class="pl-step">STEP 01</div>
+        <h4>阿图 · 生图</h4>
+        <p>手机实拍变白底图、场景图，一次出齐全平台尺寸，商品原样不动。</p>
       </div>
-      <div class="rl-node">
-        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h4>浏览 / 扫码</h4><p>买家看图、扫渠道码、翻动态图集</p>
+      <div class="pl-node reveal" style="--mc:#2563eb">
+        <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <div class="pl-step">STEP 02</div>
+        <h4>阿文 · 文案</h4>
+        <p>按小红书、抖音、朋友圈口吻各写一版，广告法极限词自动过滤。</p>
       </div>
-      <div class="rl-node">
-        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
-        <h4>留资 / 询盘</h4><p>表单留电话、私信咨询、邮件点击</p>
+      <div class="pl-node reveal" style="--mc:#db2777">
+        <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8Z"/></svg></div>
+        <div class="pl-step">STEP 03</div>
+        <h4>阿视 · 视频</h4>
+        <p>把成品图剪成带运镜、转场、字幕的短视频，静帧成片、适配竖屏。</p>
       </div>
-      <div class="rl-node">
-        <div class="rl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
-        <h4>跟进成交</h4><p>线索进库、提醒跟进、数据复盘</p>
+      <div class="pl-node reveal" style="--mc:#16a34a">
+        <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-9z"/><path d="M22 2 11 13"/></svg></div>
+        <div class="pl-step">STEP 04</div>
+        <h4>阿发 · 送达</h4>
+        <p>素材打包送达小红书、抖音、朋友圈，能连的半自动，最后一下你本人发。</p>
+      </div>
+      <div class="pl-node reveal" style="--mc:#9333ea">
+        <div class="pl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></div>
+        <div class="pl-step">STEP 05</div>
+        <h4>阿果 · 收回</h4>
+        <p>浏览、扫码、留资自动回流，线索进库、按热度提醒你跟进。</p>
       </div>
     </div>
 
-    <div class="rways reveal">
-      <div class="rway">
-        <h4>三条送达路径，能自动的自动，不能自动的递到你手边</h4>
-        <div class="rw-grp">
-          <div class="rw-gt"><span class="b">A</span>官方可连接<small>授权后半自动</small></div>
-          <div class="chips-mono"><span>邮箱 SMTP</span><span>企业微信</span><span>微信公众号</span><span>飞书</span><span>短信</span></div>
+    <div class="pways reveal">
+      <div class="pway">
+        <h4><span class="pw-dot" style="background:#16a34a"></span>阿发怎么送：能自动的自动，不能自动的递到你手边</h4>
+        <div class="pw-grp">
+          <div class="pw-gt"><span class="b">A</span>官方可连接<small>授权后半自动</small></div>
+          <div class="chips-light"><span>邮箱 SMTP</span><span>企业微信</span><span>微信公众号</span><span>飞书</span><span>短信</span></div>
         </div>
-        <div class="rw-grp">
-          <div class="rw-gt"><span class="b">B</span>素材包 + 人工引导<small>最后一下本人发</small></div>
-          <div class="chips-mono"><span>小红书</span><span>抖音</span><span>快手</span><span>闲鱼</span><span>视频号</span><span>朋友圈</span></div>
+        <div class="pw-grp">
+          <div class="pw-gt"><span class="b">B</span>素材包 + 人工引导<small>最后一下本人发</small></div>
+          <div class="chips-light"><span>小红书</span><span>抖音</span><span>快手</span><span>闲鱼</span><span>视频号</span><span>朋友圈</span></div>
         </div>
-        <div class="rw-grp">
-          <div class="rw-gt"><span class="b">C</span>自有触点<small>零授权即可用</small></div>
-          <div class="chips-mono"><span>H5 动态画册</span><span>渠道二维码</span><span>留资表单</span><span>门店大屏</span><span>印刷导出</span></div>
+        <div class="pw-grp">
+          <div class="pw-gt"><span class="b">C</span>自有触点<small>零授权即可用</small></div>
+          <div class="chips-light"><span>H5 动态画册</span><span>渠道二维码</span><span>留资表单</span><span>门店大屏</span><span>印刷导出</span></div>
         </div>
       </div>
-      <div class="rway">
-        <h4>线索回流，每张图都有回音</h4>
+      <div class="pway">
+        <h4><span class="pw-dot" style="background:#9333ea"></span>阿果怎么收：每张图都有回音</h4>
         <ul>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>每个渠道码、画册链接都带来源标识，客户从哪张图、哪个平台来一目了然。</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>浏览、扫码、留资、邮件点击自动汇总进轻量线索库，不用手工登记。</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>新询盘实时提醒，按热度排序，告诉你先跟进谁。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>浏览、扫码、留资、邮件点击自动汇总进线索库，不用手工登记。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>新询盘实时提醒、按热度排序，告诉你先跟进谁。</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>数据沉淀成日报、周报，哪张图、哪条文案最能带客，持续优化。</li>
         </ul>
       </div>
@@ -1545,35 +1594,6 @@ ul{list-style:none;}
   </div>
 </section>
 
-<!-- ===== 优势4 资产归你 ===== -->
-<section class="section white" id="asset">
-  <div class="container">
-    <div class="shead reveal">
-      <span class="kick">资产归你 · Assets</span>
-      <h2>账号是你的，客户是你的，家底越攒越厚</h2>
-      <p>所有发布都走你自己的账号，商品图库、图文画册、客户线索和每一次投放效果，都沉淀在你自己的工作台里——不绑死平台、不截留客户，越用越懂你的货和你的买家。</p>
-      <span class="shead-line"></span>
-    </div>
-    <div class="asset-grid reveal">
-      <div class="acard">
-        <div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M16 5l3 3M19 8l1.5-1.5"/></svg></div>
-        <h4>发布账号归你</h4><p>内容都发在你自己的小红书、抖音、微信账号上，粉丝、内容和权重始终是你的私产。</p>
-      </div>
-      <div class="acard">
-        <div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/><path d="M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
-        <h4>客户线索沉淀</h4><p>扫码、留资、询盘自动进线索库、打好标签，谁该跟进一目了然，可随时导出。</p>
-      </div>
-      <div class="acard">
-        <div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/></svg></div>
-        <h4>商品资产库</h4><p>每个商品的图、文案、画册自动归档，复购、上新、换平台时一键复用，不重复劳动。</p>
-      </div>
-      <div class="acard">
-        <div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div>
-        <h4>数据随时带走</h4><p>素材、客户、效果数据都支持导出，不锁死、不绑架，换工具、换团队也带得走。</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ===== 收尾 CTA ===== -->
 <section class="mcta">
