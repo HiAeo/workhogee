@@ -730,7 +730,7 @@ body[data-rail="mini"] .rail:hover .rlabel{display:block}
 @media(max-width:760px){.hm-wall{grid-template-columns:repeat(2,1fr)}.hm-strip{grid-template-columns:repeat(2,1fr)}.hw-media{gap:11px}.fic-copy{aspect-ratio:auto;min-height:148px}}
 /* ================= rework6：flova 式极光门户 ================= */
 /* 全局极光背景：更大更柔的彩色光晕，缓慢呼吸 */
-.stage::before{content:"";position:absolute;inset:-6% -4% -4%;z-index:0;pointer-events:none;
+.app::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
  background:
   radial-gradient(1250px 820px at 16% -14%, rgba(99,102,241,.22), rgba(99,102,241,0) 60%),
   radial-gradient(1380px 880px at 50% -26%, rgba(251,122,34,.20), rgba(251,122,34,0) 63%),
@@ -740,7 +740,39 @@ body[data-rail="mini"] .rail:hover .rlabel{display:block}
  animation:hwAurora 28s ease-in-out infinite alternate;}
 @keyframes hwAurora{0%{transform:translate3d(-2.2%,0,0) scale(1)}100%{transform:translate3d(2.4%,-2.5%,0) scale(1.09)}}
 .stage::after{opacity:.10}
-@media(prefers-reduced-motion:reduce){.stage::before{animation:none}}
+@media(prefers-reduced-motion:reduce){.app::before{animation:none}}
+/* ================= rework7：三栏一体共享背景 + 图标上文字下导航 ================= */
+.app{position:relative;background:var(--bg)}
+.app::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+ background-image:radial-gradient(rgba(255,255,255,.55) 1px,transparent 1.4px);background-size:26px 26px;
+ -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.12) 46%,transparent 78%);
+ mask-image:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.12) 46%,transparent 78%)}
+.rail,.stage{position:relative;z-index:1}
+.rail{background:transparent;border-right:0}
+.stage{background:transparent;border-right:0}
+.stage::before,.stage::after{content:none}
+.rail-foot{border-top:0}
+/* 顶部与输入区：同色玻璃渐隐，无 1px 分割线，与共享背景融为一体 */
+.topbar{border-bottom:0;background:linear-gradient(180deg,rgba(13,17,25,.62),rgba(13,17,25,.38));
+ -webkit-backdrop-filter:blur(14px) saturate(1.18);backdrop-filter:blur(14px) saturate(1.18)}
+.composer{background:linear-gradient(180deg,rgba(13,17,25,0),rgba(13,17,25,.74) 82%)}
+/* 左栏导航：图标在上、文字在下，flova 式居中竖排 */
+.rmenu{align-items:center;gap:3px}
+.rmenu button{flex-direction:column;align-items:center;justify-content:center;text-align:center;
+ gap:6px;width:104px;margin:0 auto;padding:11px 6px 10px;font-size:11.5px;font-weight:600;border-radius:14px}
+.rmenu button svg{width:23px;height:23px}
+.rlabel{text-align:center;width:104px;margin:15px auto 7px;font-size:10.5px;letter-spacing:1.6px;
+ color:var(--tx3);font-weight:600}
+.rmenu button.on{background:rgba(251,122,34,.14);color:#ffc396;box-shadow:inset 0 0 0 1px rgba(251,122,34,.32)}
+.rmenu button.on:hover{background:rgba(251,122,34,.22);color:#ffd2ae;box-shadow:inset 0 0 0 1px rgba(251,122,34,.42)}
+/* mini 收起态保持纯图标；hover 浮起展开也沿用竖向，浮层半透明同色玻璃 */
+body[data-rail="mini"] .rmenu button{width:auto;padding:11px 0}
+body[data-rail="mini"] .rail:hover{background:rgba(13,17,25,.92);
+ -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-right:1px solid var(--line2)}
+body[data-rail="mini"] .rail:hover .rmenu{align-items:center}
+body[data-rail="mini"] .rail:hover .rmenu button{flex-direction:column;align-items:center;justify-content:center;
+ text-align:center;gap:6px;width:104px;margin:0 auto;padding:11px 6px 10px;font-size:11.5px}
+body[data-rail="mini"] .rail:hover .rlabel{display:block;text-align:center;width:104px;margin:15px auto 7px}
 /* welcome 玻璃输入底座 */
 body[data-stage="welcome"] .cmp-card{
  background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
@@ -901,14 +933,14 @@ body[data-stage="welcome"] .cmp-card{box-shadow:0 30px 80px rgba(0,0,0,.5),inset
       <nav class="rmenu" id="mainMenu">
         <div class="rlabel">创作</div>
         <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg>首页</button>
-        <button id="navAtu" data-mate="atu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>生成商品图</button>
-        <button id="navAwen" data-mate="awen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>写爆款文案</button>
-        <button id="navAshi" data-mate="ashi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/></svg>制作营销视频</button>
-        <button id="navAfa" data-mate="afa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>媒体发布</button>
+        <button id="navAtu" data-mate="atu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>商品图</button>
+        <button id="navAwen" data-mate="awen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>文案创作</button>
+        <button id="navAshi" data-mate="ashi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/></svg>营销视频</button>
+        <button id="navAfa" data-mate="afa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>发布</button>
         <div class="rlabel">资产</div>
-        <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>企业知识库</button>
-        <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>我的作品</button>
-        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果中心</button>
+        <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>知识库</button>
+        <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>作品</button>
+        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果</button>
       </nav>
 
     </div>
@@ -1537,7 +1569,7 @@ function renderCmpAttach(){
 
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
 function openLab(tab){state.labTab='plugin';var t=$('#labModalTitle');if(t)t.textContent='发布账号与渠道';renderLab();$('#labModal').classList.add('show');}
-function openKnowledge(){state.labTab='skill';var t=$('#labModalTitle');if(t)t.textContent='企业知识库';renderLab();$('#labModal').classList.add('show');}
+function openKnowledge(){state.labTab='skill';var t=$('#labModalTitle');if(t)t.textContent='知识库';renderLab();$('#labModal').classList.add('show');}
 function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();placeComposer(true);scroll.innerHTML='';state.stage='welcome';heroWelcome();}
 function enterMate(id){closeAnalytics();var mid=id==='atu'?'navAtu':id==='awen'?'navAwen':id==='ashi'?'navAshi':'navAfa';setMenuActive(mid);setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
@@ -1549,7 +1581,7 @@ function renderLab(){
 }
 function renderLabSkill(){
  var cur=state.identity?state.identity.type:'';
- var note='<div class="lab-note">企业知识库：行业卖点、车型库、拍摄与合规话术在这里沉淀，传图后自动调用，越用越懂你的生意。</div>';
+ var note='<div class="lab-note">知识库：行业卖点、产品资料、拍摄与合规话术都在这里沉淀，传图后自动调用，越用越懂你的生意。</div>';
  var html=note+SKILLS_READY.map(function(sk){
   var on=cur===sk.id;
   return '<div class="lab-item"><span class="li-ico">'+(sk.id==='usedcar'?IC.car:IC.shop)+'</span>'
