@@ -51,6 +51,7 @@
   }
   function accountType(a) {
     a = String(a || '').trim().toLowerCase();
+    if (a === 'workhogee') return 'admin'; // 官方运营账号（用户名 + 密码登录）
     if (/^1[3-9]\d{9}$/.test(a)) return 'phone';
     if (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(a)) return 'email';
     return null;
@@ -451,6 +452,7 @@
   function sendCode() {
     hideErr();
     var account = (el('hmAccount').value || '').trim();
+    if (String(account).trim().toLowerCase() === 'workhogee') { showErr('官方运营账号请使用密码登录'); return; }
     if (!accountType(account)) { showErr('请先输入正确的手机号或邮箱'); return; }
     var btn = el('hmGetCode');
     btn.disabled = true;
@@ -504,6 +506,9 @@
     var reg = state.mode === 'register';
     var account = (el('hmAccount').value || '').trim();
     if (!accountType(account)) { showErr('请输入正确的手机号或邮箱'); return; }
+    var isAdminAcct = String(account).trim().toLowerCase() === 'workhogee';
+    if (isAdminAcct && reg) { showErr('该账号为官方保留账号，请直接登录'); return; }
+    if (isAdminAcct && state.authKind === 'code') { showErr('官方运营账号请使用密码登录'); return; }
     if (state.authKind === 'code') { submitCodeAuth(account); return; }
     var password = el('hmPassword').value || '';
     if (password.length < 8 || password.length > 64) { showErr('密码长度需为 8-64 位'); return; }
