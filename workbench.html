@@ -20,7 +20,7 @@
   --shadow-s:0 1px 2px rgba(0,0,0,.35);
   --shadow:0 10px 30px rgba(0,0,0,.40);
   --shadow-l:0 24px 70px rgba(0,0,0,.62);
-  --rail:76px; --deliver:380px;
+  --rail:262px; --deliver:0px;
   --font:"Trebuchet MS","Trebuchet","Lucida Sans Unicode","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -37,6 +37,18 @@ img{display:block;max-width:100%}
 .wm b{color:var(--tx);font-weight:800}.wm i{color:var(--orange);font-style:normal;font-weight:800}
 .rail-brand a.wm svg .wb1{fill:var(--tx)}
 .rail-brand a.wm svg text{fill:var(--tx)}
+body[data-rail="mini"]{--rail:76px}
+body[data-deliver="open"]{--deliver:380px}
+.rail-brand-actions{display:inline-flex;align-items:center;gap:6px;flex:none}
+.rail-toggle{appearance:none;background:transparent;border:1px solid var(--line);color:var(--tx2);width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:.15s;padding:0}
+.rail-toggle:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-soft)}
+#btnDeliver.on{color:var(--orange);background:var(--orange-soft)}
+@media(min-width:1081px){
+  .deliver{overflow:hidden;transition:border-color .22s ease}
+  body:not([data-deliver="open"]) .deliver{border-left-color:transparent}
+}
+@media(max-width:900px){.rail-toggle{display:none}}
+.app{transition:grid-template-columns .24s ease}
 .app{display:grid;grid-template-columns:var(--rail) 1fr var(--deliver);grid-template-rows:minmax(0,1fr);height:100vh;height:100dvh}
 
 /* 左列 */
@@ -479,73 +491,105 @@ img{display:block;max-width:100%}
   .fld input,.fld select,.fld textarea{font-size:16px}
 }
 
-/* ============ 桌面：左侧收窄为图标轨，hover 浮层展开（移动端不生效，仍为抽屉） ============ */
+/* ============ 桌面：左栏默认展开，可一键收起为图标轨（mini 态 hover 浮层展开） ============ */
 @media(min-width:901px){
-  .rail{border-right:1px solid var(--line2)}
-  .rail-brand{padding:15px 0 13px;justify-content:center}
-  .rail-brand a.wm{display:none!important}
-  .rail-brand .icon-btn{width:38px;height:38px}
-  .rail-scroll{padding:6px 10px}
-  .btn-new{justify-content:center;padding:11px 0;font-size:0;border-radius:12px}
-  .btn-new .pl{margin:0}
-  .rmenu button{justify-content:center;padding:10px 0;font-size:0}
-  .rmenu button svg{width:19px;height:19px}
-  .rgroup,.skill-now,.task-empty,.rail-ver{display:none}
-  .tasklist{gap:2px}
-  .task-item{justify-content:center;padding:9px 0}
-  .task-item .tk-name,.task-item .tk-pin,.task-item .tk-acts{display:none}
-  .task-item .tk-ico svg{width:18px;height:18px}
-  .partner{justify-content:center;padding:10px 0}
-  .partner .pn,.partner .hire{display:none}
-  .pavatar{width:38px;height:38px;border-radius:11px}
-  .pavatar svg{width:19px;height:19px}
-  .rail-foot{padding:10px 8px}
-  .rail-foot .member-nav{gap:6px}
-  .rail-foot .hm-navbtn,.rail-foot .hm-navuser,.rail-foot .hm-navlogout{font-size:0;height:40px;padding:0;justify-content:center;overflow:hidden}
-  .rail-foot .hm-navuser svg{width:18px;height:18px}
-  .wb-account .wb-btn{font-size:0;height:40px;padding:0}
-  .wb-account .wb-ab{justify-content:center;padding:7px 0}
-  .wb-account .wb-ab .nm,.wb-account .wb-ab .cv{display:none}
-  .wb-account .wb-ava{margin:0}
-  /* hover 浮层展开为完整菜单 */
-  .rail:hover{position:fixed;left:0;top:0;bottom:0;width:262px;z-index:70;background:var(--bg);box-shadow:24px 0 60px rgba(0,0,0,.55);border-right:1px solid var(--line)}
-  .rail:hover .rail-brand{padding:16px 16px 14px;justify-content:space-between}
-  .rail:hover .rail-brand a.wm{display:inline-flex!important}
-  .rail:hover .rail-scroll{padding:4px 12px 12px}
-  .rail:hover .btn-new{justify-content:flex-start;padding:11px 14px;font-size:13.5px}
-  .rail:hover .btn-new .pl{margin-right:0}
-  .rail:hover .rmenu button{justify-content:flex-start;padding:9px 10px;font-size:13.5px}
-  .rail:hover .rgroup,.rail:hover .skill-now,.rail:hover .rail-ver{display:block}
-  .rail:hover .task-empty{display:block}
-  .rail:hover .task-item{justify-content:flex-start;padding:7px 8px}
-  .rail:hover .task-item .tk-name{display:block}
-  .rail:hover .task-item .tk-pin{display:flex}
-  .rail:hover .partner{justify-content:flex-start;padding:7px 8px}
-  .rail:hover .partner .pn{display:block}
-  .rail:hover .partner .hire{display:block}
-  .rail:hover .pavatar{width:32px;height:32px}
-  .rail:hover .pavatar svg{width:17px;height:17px}
-  .rail:hover .rail-foot{padding:12px}
-  .rail:hover .rail-foot .hm-navbtn,.rail:hover .rail-foot .hm-navuser,.rail:hover .rail-foot .hm-navlogout{font-size:13px;height:auto;padding:9px 12px}
-  .rail:hover .wb-account .wb-btn{font-size:13px;height:auto;padding:10px 14px}
-  .rail:hover .wb-account .wb-ab{justify-content:flex-start;padding:6px 8px}
-  .rail:hover .wb-account .wb-ab .nm{display:block}
-  .rail:hover .wb-account .wb-ab .cv{display:grid}
+  .rail-brand{padding:15px 14px 13px;justify-content:space-between}
+  .rail-brand a.wm{display:inline-flex!important}
+  body[data-rail="mini"] .rail-brand{padding:15px 0 13px;justify-content:center}
+  body[data-rail="mini"] .rail-brand a.wm{display:none!important}
+  body[data-rail="mini"] .rail-brand .icon-home{display:none}
+  body[data-rail="mini"] .rail-scroll{padding:6px 10px}
+  body[data-rail="mini"] .btn-new{justify-content:center;padding:11px 0;font-size:0;border-radius:12px}
+  body[data-rail="mini"] .btn-new .pl{margin:0}
+  body[data-rail="mini"] .rmenu button{justify-content:center;padding:10px 0;font-size:0}
+  body[data-rail="mini"] .rmenu button svg{width:19px;height:19px}
+  body[data-rail="mini"] .rgroup,body[data-rail="mini"] .skill-now,body[data-rail="mini"] .task-empty,body[data-rail="mini"] .rail-ver{display:none}
+  body[data-rail="mini"] .tasklist{gap:2px}
+  body[data-rail="mini"] .task-item{justify-content:center;padding:9px 0}
+  body[data-rail="mini"] .task-item .tk-name,body[data-rail="mini"] .task-item .tk-pin,body[data-rail="mini"] .task-item .tk-acts{display:none}
+  body[data-rail="mini"] .task-item .tk-ico svg{width:18px;height:18px}
+  body[data-rail="mini"] .partner{justify-content:center;padding:10px 0}
+  body[data-rail="mini"] .partner .pn,body[data-rail="mini"] .partner .hire{display:none}
+  body[data-rail="mini"] .pavatar{width:38px;height:38px;border-radius:11px}
+  body[data-rail="mini"] .pavatar svg{width:19px;height:19px}
+  body[data-rail="mini"] .rail-foot{padding:10px 8px}
+  body[data-rail="mini"] .rail-foot .member-nav{gap:6px}
+  body[data-rail="mini"] .rail-foot .hm-navbtn,body[data-rail="mini"] .rail-foot .hm-navuser,body[data-rail="mini"] .rail-foot .hm-navlogout{font-size:0;height:40px;padding:0;justify-content:center;overflow:hidden}
+  body[data-rail="mini"] .rail-foot .hm-navuser svg{width:18px;height:18px}
+  body[data-rail="mini"] .wb-account .wb-btn{font-size:0;height:40px;padding:0}
+  body[data-rail="mini"] .wb-account .wb-ab{justify-content:center;padding:7px 0}
+  body[data-rail="mini"] .wb-account .wb-ab .nm,body[data-rail="mini"] .wb-account .wb-ab .cv{display:none}
+  body[data-rail="mini"] .wb-account .wb-ava{margin:0}
+  body[data-rail="mini"] .rail:hover{position:fixed;left:0;top:0;bottom:0;width:262px;z-index:70;background:var(--bg);box-shadow:24px 0 60px rgba(0,0,0,.55);border-right:1px solid var(--line)}
+  body[data-rail="mini"] .rail:hover .rail-brand{padding:16px 14px 14px;justify-content:space-between}
+  body[data-rail="mini"] .rail:hover .rail-brand a.wm{display:inline-flex!important}
+  body[data-rail="mini"] .rail:hover .rail-brand .icon-home{display:inline-flex}
+  body[data-rail="mini"] .rail:hover .rail-scroll{padding:4px 12px 12px}
+  body[data-rail="mini"] .rail:hover .btn-new{justify-content:flex-start;padding:11px 14px;font-size:13.5px}
+  body[data-rail="mini"] .rail:hover .btn-new .pl{margin-right:0}
+  body[data-rail="mini"] .rail:hover .rmenu button{justify-content:flex-start;padding:9px 10px;font-size:13.5px}
+  body[data-rail="mini"] .rail:hover .rgroup,body[data-rail="mini"] .rail:hover .skill-now,body[data-rail="mini"] .rail:hover .rail-ver{display:block}
+  body[data-rail="mini"] .rail:hover .task-empty{display:block}
+  body[data-rail="mini"] .rail:hover .task-item{justify-content:flex-start;padding:7px 8px}
+  body[data-rail="mini"] .rail:hover .task-item .tk-name{display:block}
+  body[data-rail="mini"] .rail:hover .task-item .tk-pin{display:flex}
+  body[data-rail="mini"] .rail:hover .partner{justify-content:flex-start;padding:7px 8px}
+  body[data-rail="mini"] .rail:hover .partner .pn{display:block}
+  body[data-rail="mini"] .rail:hover .partner .hire{display:block}
+  body[data-rail="mini"] .rail:hover .pavatar{width:32px;height:32px}
+  body[data-rail="mini"] .rail:hover .pavatar svg{width:17px;height:17px}
+  body[data-rail="mini"] .rail:hover .rail-foot{padding:12px}
+  body[data-rail="mini"] .rail:hover .rail-foot .hm-navbtn,body[data-rail="mini"] .rail:hover .rail-foot .hm-navuser,body[data-rail="mini"] .rail:hover .rail-foot .hm-navlogout{font-size:13px;height:auto;padding:9px 12px}
+  body[data-rail="mini"] .rail:hover .wb-account .wb-btn{font-size:13px;height:auto;padding:10px 14px}
+  body[data-rail="mini"] .rail:hover .wb-account .wb-ab{justify-content:flex-start;padding:6px 8px}
+  body[data-rail="mini"] .rail:hover .wb-account .wb-ab .nm{display:block}
+  body[data-rail="mini"] .rail:hover .wb-account .wb-ab .cv{display:grid}
 }
 /* ============ 欢迎门户：输入 dock 提升到中央 ============ */
 .hw{max-width:780px}
 .hw-dock{margin:28px auto 2px;width:100%}
-body[data-stage="welcome"] .composer{padding:0;background:none;flex:none}
-body[data-stage="welcome"] .composer-inner{max-width:780px}
-body[data-stage="welcome"] .cmp-quick{justify-content:center;padding:0 2px 13px}
-body[data-stage="welcome"] .cmp-box{border-radius:22px;padding:13px 14px 11px;box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.04)}
-body[data-stage="welcome"] .cmp-box:focus-within{box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 0 3px var(--orange-soft)}
-body[data-stage="welcome"] #composerInput{min-height:62px;font-size:15.5px}
-body[data-stage="welcome"] .cmp-hint{margin-top:12px}
 body[data-stage="welcome"] .hw-team{margin-top:24px}
 body[data-stage="welcome"] .chat{display:flex;flex-direction:column;justify-content:center}
 body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
-@media(max-width:560px){body[data-stage="welcome"] #composerInput{min-height:54px;font-size:16px}}
+/* ===== 纳米式大输入卡：顶部书签 + 左上大上传方块 ===== */
+.cmp-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);transition:border-color .16s,box-shadow .16s;overflow:hidden}
+.cmp-card:focus-within{border-color:rgba(249,115,22,.5);box-shadow:var(--shadow),0 0 0 3px var(--orange-soft)}
+.cmp-tabs{display:flex;gap:2px;padding:8px 12px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2)}
+.cmp-tabs::-webkit-scrollbar{display:none}
+.cmp-tab{appearance:none;background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--tx3);padding:9px 14px;border-radius:12px 12px 0 0;white-space:nowrap;position:relative;transition:color .15s,background .15s;display:inline-flex;align-items:center}
+.cmp-tab:hover{color:var(--tx2)}
+.cmp-tab.on{color:var(--orange);background:var(--orange-soft)}
+.cmp-tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;background:var(--orange)}
+.cmp-body{display:flex;gap:14px;padding:14px 16px 13px;align-items:stretch}
+.cmp-upload{appearance:none;flex:none;width:104px;min-height:120px;align-self:stretch;border:1.5px dashed rgba(255,255,255,.20);border-radius:16px;background:rgba(255,255,255,.03);color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:inherit;transition:.18s;padding:10px}
+.cmp-upload svg{width:30px;height:30px}
+.cmp-upload span{font-size:12px;font-weight:600;line-height:1.3;text-align:center}
+.cmp-upload:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft);transform:translateY(-1px)}
+.cmp-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.cmp-main #composerInput{flex:1;min-height:104px;max-height:240px;background:transparent;border:0;resize:none;color:var(--tx);font-family:inherit;font-size:14.5px;line-height:1.65;padding:6px 4px;outline:none}
+.cmp-foot{display:flex;align-items:center;justify-content:space-between;padding-top:9px;margin-top:auto}
+.cmp-q{appearance:none;border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:999px;font-size:11.5px;font-weight:700;padding:7px 14px;width:auto;height:auto;transition:.15s;cursor:pointer;font-family:inherit}
+.cmp-q:hover{border-color:var(--orange);color:var(--orange)}
+.cmp-q.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.cmp-right{display:flex;align-items:center;gap:12px}
+.cmp-count{font-size:11.5px;color:var(--tx3);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
+.cmp-send{appearance:none;border:0;background:var(--orange-d);color:#fff;width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.16s}
+.cmp-send:hover{background:var(--orange);transform:translateY(-1px)}
+.cmp-send svg{width:18px;height:18px}
+body[data-stage="welcome"] .composer{padding:0;background:none;flex:none}
+body[data-stage="welcome"] .composer-inner{max-width:840px}
+body[data-stage="welcome"] .cmp-card{border-radius:24px;box-shadow:0 22px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04)}
+body[data-stage="welcome"] .cmp-main #composerInput{min-height:118px;font-size:15.5px}
+body[data-stage="welcome"] .cmp-hint{margin-top:13px}
+@media(max-width:600px){
+  .cmp-body{gap:10px;padding:11px 11px 10px}
+  .cmp-upload{width:80px;min-height:104px;border-radius:14px;gap:6px}
+  .cmp-upload svg{width:24px;height:24px}
+  .cmp-upload span{font-size:11px}
+  .cmp-main #composerInput{min-height:88px;font-size:16px}
+  .cmp-tab{padding:9px 11px;font-size:12.5px}
+}
+
 </style>
 </head>
 <body>
@@ -553,9 +597,12 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
   <aside class="rail" id="rail">
     <div class="rail-brand">
       <a href="/" class="wm" title="回 WorkHogee 官网" aria-label="WorkHogee" style="display:inline-flex;align-items:center"><svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:23px;width:auto;display:block"><defs><style>.wb1{fill:#ffffff}.wb2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wb1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wb2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wb1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wb1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wb1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text></g></svg></a>
-      <a href="/" class="icon-btn" title="回官网" aria-label="回官网">
+      <span class="rail-brand-actions">
+      <a href="/" class="icon-btn icon-home" title="回官网" aria-label="回官网">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>
       </a>
+      <button class="rail-toggle" id="btnRailToggle" type="button" aria-label="收起侧栏" title="收起侧栏"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></button>
+      </span>
     </div>
     <div class="rail-scroll">
       <button class="btn-new" id="railNew"><span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>新任务</button>
@@ -596,7 +643,7 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
       <div class="tb-right">
         <span class="skill-chip" id="tbSkill">通用电商技能</span>
         <button class="btn-partner" id="tbPartner">@Hogee</button>
-        <button class="icon-btn only-mobile" id="btnDeliver" aria-label="交付物"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg></button>
+        <button class="icon-btn" id="btnDeliver" aria-label="交付物" title="交付物"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg></button>
       </div>
     </header>
 
@@ -605,18 +652,30 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
     <div class="composer">
       <div class="composer-inner">
         <div class="cmp-attach" id="cmpAttach"></div>
-        <div class="cmp-quick" id="cmpQuick">
-          <button data-cq="gen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>出商品图</button>
-          <button data-cq="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>写文案</button>
-          <button data-cq="motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>做动态图</button>
-          <button data-cq="video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="13" rx="2"/><path d="m16 10 5-3v10l-5-3"/><circle cx="9" cy="12.5" r="3.2"/></svg>做短视频</button>
-          <button data-cq="reach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发自媒体</button>
-        </div>
-        <div class="cmp-box">
-          <button class="cmp-plus" id="btnPlus" aria-label="添加">+</button>
-          <textarea id="composerInput" rows="1" placeholder="传商品图，或直接让伙计出图 / 写文案 / 做素材包…"></textarea>
-          <button class="cmp-q" id="btnQuality" title="切换清晰度">高清</button>
-          <button class="cmp-send" id="btnSend" aria-label="发送"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></button>
+        <div class="cmp-card" id="cmpCard">
+          <div class="cmp-tabs" id="cmpTabs">
+            <button type="button" class="cmp-tab on" data-tab="host">WorkHogee</button>
+            <button type="button" class="cmp-tab" data-tab="atu">生图·Hogee</button>
+            <button type="button" class="cmp-tab" data-tab="awen">生文·Hogee</button>
+            <button type="button" class="cmp-tab" data-tab="ashi">生视频·Hogee</button>
+            <button type="button" class="cmp-tab" data-tab="afa">发布·Hogee</button>
+          </div>
+          <div class="cmp-body">
+            <button type="button" class="cmp-upload" id="btnPlus" aria-label="上传产品图">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              <span>上传产品图</span>
+            </button>
+            <div class="cmp-main">
+              <textarea id="composerInput" rows="1" placeholder="传一张产品图，或告诉伙计你要做什么——出图、写文案、剪视频、发内容…"></textarea>
+              <div class="cmp-foot">
+                <button type="button" class="cmp-q" id="btnQuality" title="切换清晰度">高清</button>
+                <div class="cmp-right">
+                  <span class="cmp-count" id="cmpCount"></span>
+                  <button type="button" class="cmp-send" id="btnSend" aria-label="发送"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="cmp-hint">伙计生成的内容可能有误，商品实际情况、功效与价格请按实物核对；阿发只备好素材，发布最后一下由你本人完成。</div>
       </div>
@@ -628,7 +687,7 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
       <div class="dl-title">交付物<span class="dl-count" id="dlCount"></span></div>
       <div class="dl-actions">
         <button class="mini" id="btnPack" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>一键打包</button>
-        <button class="icon-btn only-mobile" id="btnDeliverClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <button class="icon-btn" id="btnDeliverClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </div>
     </div>
     <div class="dl-tabs" id="dlTabs">
@@ -1160,6 +1219,7 @@ function renderTopbar(){
  $('#tbPartner').textContent='@'+p.name;
  var sn=$('#skillNowName');if(sn)sn.textContent=state.identity?skillName():'待选择';
  var sd=$('#skillNowDesc');if(sd)sd.textContent=state.identity?'当前任务使用该行业技能，传图后自动核对。':'传图后阿图自动识别行业并启用对应技能，也可手动添加。';
+ if(typeof syncCmpTabs==='function')syncCmpTabs();
 }
 function renderCmpAttach(){
  var box=$('#cmpAttach');if(!box)return;
@@ -1299,7 +1359,7 @@ function heroWelcome(){
   var mates=PARTNERS.map(function(p){return '<button type="button" class="hw-mate p-'+p.id+'" data-act="speak" data-id="'+p.id+'"><span class="hm-ic">'+p.ico+'</span><b>'+p.name+'</b><span>'+p.role+'</span></button>';}).join('');
   var h=document.createElement('div');h.className='hw';
   h.innerHTML='<div class="hw-badge"><span class="dot-live"></span>你生意的好伙计</div>'
-   +'<div class="hw-title">做生意，<span class="hl">找伙计</span></div>'
+   +'<div class="hw-title">一笔成交从<span class="hl">一张产品图</span>开始</div>'
    +'<div class="hw-sub">拍图找阿图，写文案找阿文，做视频找阿视，发内容找阿发，盯数据找阿果。<br>五个伙计接力，从一张产品图，到一笔成交。</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
    +'<div class="hw-team">'+mates+'</div>'
@@ -1638,7 +1698,51 @@ function finishGenerate(){
 /* ================= 右列：交付物聚合 ================= */
 function deliverCount(){return state.results.length+state.dyn.length+(state.dynGrid?1:0)+state.videos.length+(state.copy.ready?1:0)+(state.showcase?1:0);}
 function setDeliverTab(tab){state.deliverTab=tab;$$('#dlTabs button').forEach(function(b){b.classList.toggle('on',b.dataset.dltab===tab);});renderDeliver();}
-function openDeliver(){$('#deliver').classList.add('open');}
+function setDeliver(open){
+ document.body.dataset.deliver=open?'open':'closed';
+ var d=$('#deliver');if(d)d.classList.toggle('open',open);
+ try{localStorage.setItem('hw.deliver',open?'open':'closed');}catch(e){}
+ var b=$('#btnDeliver');if(b)b.classList.toggle('on',open);
+}
+function openDeliver(){try{sessionStorage.removeItem('hw.dlUserClosed');}catch(e){}setDeliver(true);}
+function closeDeliver(){try{sessionStorage.setItem('hw.dlUserClosed','1');}catch(e){}setDeliver(false);}
+var CMP_PH={host:'传一张产品图，或告诉伙计你要做什么——出图、写文案、剪视频、发内容…',
+ atu:'上传产品图，阿图帮你出商品图 / 场景图 / 动态图，商品本身一点不动…',
+ awen:'说说你卖什么、主打什么卖点，阿文按小红书 / 抖音 / 朋友圈口吻各写一版…',
+ ashi:'传产品图或成品素材，阿视帮你分镜、运镜、加字幕，做成短视频…',
+ afa:'选好要发的图文或视频，阿发帮你按平台打包素材、打开发布页，你点最后一下…'};
+function syncCmpTabs(){
+ var k=(state.activePartner&&['atu','awen','ashi','afa'].indexOf(state.activePartner)>=0)?state.activePartner:'host';
+ var ts=document.querySelectorAll('#cmpTabs .cmp-tab');
+ for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',ts[i].dataset.tab===k);
+ var inp=$('#composerInput');if(inp&&CMP_PH[k])inp.placeholder=CMP_PH[k];
+}
+function selectTab(k){
+ state.activePartner=k;renderPartners();renderTopbar();
+ if(k==='ashi')setDeliverTab('video');else if(k==='afa')setDeliverTab('reach');
+ var inp=$('#composerInput');if(inp)setTimeout(function(){inp.focus();},30);
+}
+function initLayout(){
+ var rail='wide';try{rail=localStorage.getItem('hw.rail')||'wide';}catch(e){}
+ document.body.dataset.rail=rail==='mini'?'mini':'wide';
+ var dl='closed';try{dl=localStorage.getItem('hw.deliver')||'closed';}catch(e){}
+ document.body.dataset.deliver=(dl==='open'&&typeof deliverCount==='function'&&deliverCount()>0)?'open':'closed';
+ var rt=$('#btnRailToggle');
+ function railIcon(){var mini=document.body.dataset.rail==='mini';rt.innerHTML=mini
+  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m13 9 3 3-3 3"/></svg>'
+  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>';
+  rt.title=mini?'展开侧栏':'收起侧栏';rt.setAttribute('aria-label',rt.title);}
+ railIcon();
+ rt.addEventListener('click',function(){var mini=document.body.dataset.rail==='mini';document.body.dataset.rail=mini?'wide':'mini';try{localStorage.setItem('hw.rail',mini?'wide':'mini');}catch(e){}railIcon();});
+ var b=$('#btnDeliver');if(b)b.classList.toggle('on',document.body.dataset.deliver==='open');
+ var tabs=$('#cmpTabs');
+ if(tabs&&!tabs._bound){tabs._bound=true;tabs.addEventListener('click',function(e){var t2=e.target.closest('.cmp-tab');if(t2)selectTab(t2.dataset.tab);});}
+ var inp=$('#composerInput'),cnt=$('#cmpCount');
+ function cc(){if(cnt){var n=inp.value.length;cnt.textContent=n?(n+' / 2000'):'';}}
+ if(inp&&!inp._cntbound){inp._cntbound=true;inp.addEventListener('input',cc);}
+ window.syncCmpCount=cc;cc();
+ syncCmpTabs();
+}
 function imagesSectionHtml(){
  if(!state.results.length)return '';
  var items=state.results.map(function(r,i){
@@ -1698,6 +1802,7 @@ function renderDeliver(){
  $('#btnPack').disabled=!state.results.length;
  if($('#copyText')){refreshCopyScan();bindCopyTextLive();}
  if($('#dynOut'))renderDyn();
+ if(deliverCount()>0){try{if(sessionStorage.getItem('hw.dlUserClosed')!=='1')openDeliver();}catch(e){openDeliver();}}
 }
 function bindCopyTextLive(){var ta=$('#copyText');if(ta&&!ta._bound){ta._bound=true;ta.addEventListener('input',function(){state.copy.draft=ta.value;refreshCopyScan();});}}
 /* ================= 阿文：分渠道文案 + 广告法机审 ================= */
@@ -2154,6 +2259,8 @@ function newOrder(){
  var hires=state.hires;
  state=resetState();state.hires=hires;
  placeComposer(false);
+ try{sessionStorage.removeItem('hw.dlUserClosed');}catch(e){}
+ setDeliver(false);
  scroll.innerHTML='';state.stage='welcome';
  renderPartners();renderTopbar();renderDeliver();renderCmpAttach();renderTaskList();
  var wh=botSay('老板好，我是你的 <b>Hogee</b>。新的一单，想做点什么？出图、写文案、发自媒体，说一声就开工。');
@@ -2188,7 +2295,7 @@ function closeLightbox(){$('#lightbox').classList.remove('show');$('#lbImg').src
 
 /* ================= 自由输入分流（大模型意图理解 + 规则兜底） ================= */
 function sendFreeText(){
- var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;placeComposer(false);inp.value='';inp.style.height='auto';
+ var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;placeComposer(false);inp.value='';inp.style.height='auto';if(window.syncCmpCount)syncCmpCount();
  userSay(txt);
  var stop=botTyping(state.activePartner);
  var ctx={
@@ -2314,8 +2421,8 @@ function bind(){
  $('#tbPartner').addEventListener('click',togglePartnerPop);
  $('#btnRail').addEventListener('click',function(){$('#rail').classList.add('open');$('#railMask').classList.add('show');});
  $('#railMask').addEventListener('click',function(){$('#rail').classList.remove('open');$('#railMask').classList.remove('show');});
- $('#btnDeliver').addEventListener('click',openDeliver);
- $('#btnDeliverClose').addEventListener('click',function(){$('#deliver').classList.remove('open');});
+ $('#btnDeliver').addEventListener('click',function(){if(document.body.dataset.deliver==='open')closeDeliver();else openDeliver();});
+ $('#btnDeliverClose').addEventListener('click',closeDeliver);
  $('#btnPack').addEventListener('click',packAll);
  $('#dlTabs').addEventListener('click',function(e){var b=e.target.closest('[data-dltab]');if(b)setDeliverTab(b.dataset.dltab);});
  /* 实验室 */
@@ -2347,7 +2454,7 @@ function bind(){
  ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeText();}});
  ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,220)+'px';});
  $('#btnQuality').addEventListener('click',function(){state.quality=state.quality==='hd'?'std':'hd';syncQuality();toast(state.quality==='hd'?'高清出图（推荐）':'标准出图（更快）');});
- $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();var pop=$('#plusPop');placePop(pop,$('#btnPlus'));pop.classList.toggle('show');var bgb=$('#plusBgBtn');if(bgb){bgb.style.display=(pop.classList.contains('show')&&state.identity&&state.identity.type==='usedcar')?'':'none';}var slb=$('#plusShotLabel');if(slb){slb.textContent=(state.identity&&state.identity.type==='usedcar')?'上传车辆图片':'上传商品图片';}$('#partnerPop')&&$('#partnerPop').classList.remove('show');});
+ $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();if($('#plusPop'))$('#plusPop').classList.remove('show');if(!state.identity){startOrder('general');}else if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}$('#fileInput').click();});
  $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
   if(k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
   else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车技能，先切换到二手车技能','err');}
@@ -2466,6 +2573,7 @@ bind();
 syncQuality();
 ensurePartnerPop();
 start();
+initLayout();
 /* ================= 登录后头像账号菜单（工作台专属，不动全站 member-auth） ================= */
 (function(){
   function q(s,p){return (p||document).querySelector(s);}
