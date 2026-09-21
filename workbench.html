@@ -430,7 +430,7 @@ body[data-deliver="open"]{--deliver:380px}
 .m-tabs{flex:none;display:flex;gap:4px;padding:12px 20px 0}
 .m-tabs button{appearance:none;border:0;background:transparent;color:var(--tx3);font-size:13.5px;font-weight:700;padding:9px 14px;border-radius:10px 10px 0 0;border-bottom:2px solid transparent;transition:.15s}
 .m-tabs button.on{color:var(--orange);border-bottom-color:var(--orange)}
-.m-body{flex:1;overflow-y:auto;padding:18px 20px 22px}
+.modal .m-body{flex:1;overflow-y:auto;padding:18px 20px 22px}
 .lab-note{font-size:12px;color:var(--tx2);line-height:1.65;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;margin-bottom:15px}
 .lab-item{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:9px;background:var(--panel);transition:.15s;box-shadow:var(--shadow-s)}
 .lab-item:hover{border-color:rgba(255,255,255,.22);box-shadow:var(--shadow)}
@@ -590,6 +590,95 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
   .cmp-tab{padding:9px 11px;font-size:12.5px}
 }
 
+
+/* ============================================================
+   第三轮重构：深色点阵质感 + 品牌色克制点缀（覆盖前述规则）
+   ============================================================ */
+/* 中央舞台：点阵纹理 + 顶部暖光，破除纯黑白 */
+.stage{position:relative;overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:
+  radial-gradient(880px 480px at 50% -14%, rgba(249,115,22,.13), rgba(249,115,22,0) 62%),
+  radial-gradient(700px 520px at 88% -6%, rgba(96,165,250,.07), rgba(96,165,250,0) 60%),
+  radial-gradient(600px 460px at 6% 2%, rgba(192,132,252,.05), rgba(192,132,252,0) 60%);}
+.stage::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.55;
+ background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+ background-size:26px 26px;
+ -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.12) 42%,transparent 72%);
+ mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.12) 42%,transparent 72%);}
+.topbar{position:relative;z-index:5}
+.chat{position:relative;z-index:1}
+.composer{position:relative;z-index:1}
+/* 左栏：顶部一丝暖光 + 菜单选中品牌橙（对标纳米选中态） */
+.rail{background:linear-gradient(180deg,rgba(249,115,22,.035),transparent 240px),var(--bg)}
+.rmenu button.on{background:var(--orange-soft);color:var(--orange);font-weight:700}
+.rmenu button.on svg{color:var(--orange)}
+.rmenu button.on:hover{background:rgba(249,115,22,.20);color:var(--orange)}
+/* 任务分组标题 + 小新建钮 */
+.rgroup{display:flex;align-items:center;justify-content:space-between;margin:18px 6px 8px;font-size:11px;letter-spacing:1px;text-transform:none}
+.rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;padding:0}
+.rgroup-add svg{width:15px;height:15px}
+.rgroup-add:hover{color:var(--orange);background:var(--orange-soft)}
+body[data-rail="mini"] .rail:hover .rgroup{display:flex}
+.task-item .tk-name{font-size:13px}
+.task-empty{font-size:12.5px}
+/* 创作书签：融入深色卡，选中为淡橙底+橙字+顶部橙条（弃生硬白块） */
+.cmp-tab:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.cmp-tab.on{color:var(--orange);transform:none;
+ background-image:linear-gradient(180deg,rgba(249,115,22,.22),rgba(249,115,22,.10));
+ box-shadow:inset 0 2px 0 var(--orange)}
+.cmp-tab.on::after{display:none}
+/* 高清开关：淡橙选中（弃白底） */
+.cmp-q.on{background:var(--orange-soft);border-color:rgba(249,115,22,.5);color:var(--orange)}
+/* 欢迎门户：胶囊淡橙、靠上排列、与创作卡同宽 */
+.hw-badge{color:var(--orange);background:var(--orange-soft);border-color:rgba(249,115,22,.30)}
+.hw-badge .dot-live{background:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,.18)}
+.hw{max-width:880px;margin:3.2vh auto 0}
+.hw-title{font-size:42px}
+.hw-sub{max-width:620px}
+body[data-stage="welcome"] .composer-inner{max-width:880px}
+body[data-stage="welcome"] .cmp-card{box-shadow:0 26px 70px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.05),0 0 96px rgba(249,115,22,.06)}
+/* 外贸宣传片板块 */
+.hw-video{margin:36px auto 0;text-align:left;animation:hwIn .5s cubic-bezier(.2,.8,.2,1)}
+.hv-head{display:flex;align-items:center;gap:12px;margin:0 4px 14px;flex-wrap:wrap}
+.hv-tag{flex:none;font-size:11.5px;font-weight:700;letter-spacing:.4px;color:var(--orange);background:var(--orange-soft);border:1px solid rgba(249,115,22,.34);border-radius:999px;padding:4px 12px}
+.hv-title{font-size:17px;font-weight:800;color:var(--tx);letter-spacing:.2px}
+.hv-frame{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-l);background:#0b0c10;aspect-ratio:16/9}
+.hv-frame video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+.hv-poster{position:absolute;inset:0;width:100%;height:100%;appearance:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;color:#fff;overflow:hidden;
+ background:
+  radial-gradient(700px 380px at 50% -10%, rgba(249,115,22,.20), transparent 60%),
+  radial-gradient(620px 520px at 86% 112%, rgba(96,165,250,.14), transparent 60%),
+  radial-gradient(circle at 50% 42%, rgba(255,255,255,.05) 1px, transparent 1.6px) 0 0/26px 26px,
+  linear-gradient(160deg,#232029 0%,#15161b 56%,#0e0f13 100%);}
+.hv-poster::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);pointer-events:none}
+.hv-play-ic{width:76px;height:76px;border-radius:50%;background:linear-gradient(180deg,#fb8231,#ea580c);display:flex;align-items:center;justify-content:center;box-shadow:0 14px 44px rgba(234,88,12,.5),0 0 0 9px rgba(249,115,22,.13);transition:transform .2s cubic-bezier(.2,.8,.2,1);position:relative;z-index:1}
+.hv-play-ic svg{width:30px;height:30px;color:#fff;margin-left:4px}
+.hv-poster:hover .hv-play-ic{transform:scale(1.08)}
+.hv-play-tx{font-size:16.5px;font-weight:800;letter-spacing:.3px;position:relative;z-index:1}
+.hv-play-sub{font-size:12.5px;color:rgba(255,255,255,.62);position:relative;z-index:1}
+.hv-en{margin-top:13px;text-align:center;font-size:12px;color:var(--tx3);letter-spacing:.4px}
+@media(max-width:560px){.hv-title{font-size:15px}.hv-play-ic{width:62px;height:62px}.hv-frame{border-radius:14px}.hw-title{font-size:32px}}
+/* 效果中心内嵌视图 */
+.embed-view{display:none;flex-direction:column;flex:1;min-height:0;position:relative;z-index:2}
+body[data-view="analytics"] .topbar,body[data-view="analytics"] .chat,body[data-view="analytics"] .composer{display:none}
+body[data-view="analytics"] .embed-view{display:flex}
+.embed-bar{flex:none;height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line2);background:rgba(20,21,25,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;z-index:2}
+.embed-back{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--tx);border-radius:10px;padding:7px 13px;font-size:13px;font-weight:600;transition:.15s}
+.embed-back svg{width:16px;height:16px}
+.embed-back:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+.embed-title{font-size:14px;font-weight:800}
+.embed-sub{font-size:12px;color:var(--tx3)}
+.embed-view iframe{flex:1;width:100%;border:0;background:var(--stage);position:relative;z-index:1}
+
+
+/* 修复：welcome 门户含宣传片后超高，flex 垂直居中会把顶部标题裁掉且滚不到 */
+body[data-stage="welcome"] .chat{justify-content:flex-start}
+body[data-stage="welcome"] .chat-inner{margin:0 auto;flex:none}
+
+
+@media(max-width:560px){.hw-title{text-wrap:balance;-webkit-text-wrap:balance}}
+
 </style>
 </head>
 <body>
@@ -605,20 +694,14 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
       </span>
     </div>
     <div class="rail-scroll">
-      <button class="btn-new" id="railNew"><span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>新任务</button>
       <nav class="rmenu">
-        <button id="menuLab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>插件 · 技能 · 伙伴</button>
-        <button id="menuCloud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9h-1.8A7 7 0 1 0 4 15.3"/></svg>云盘</button>
+        <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>创作</button>
+        <button id="menuLab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>插件 · 伙计</button>
         <button id="menuDeliver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>交付物</button>
         <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>效果中心</button>
       </nav>
-      <div class="rgroup">任务</div>
+      <div class="rgroup"><span>任务</span><button type="button" id="railNew" class="rgroup-add" title="新建任务" aria-label="新建任务"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
       <div class="tasklist" id="taskList"></div>
-      <div class="rgroup">当前技能</div>
-      <div class="skill-now" id="skillNow">
-        <div class="sn-t"><span class="dot-live"></span><span id="skillNowName">通用电商技能</span></div>
-        <div class="sn-d" id="skillNowDesc">传图后阿图自动识别行业并启用对应技能，也可手动添加。</div>
-      </div>
     </div>
     <div class="rail-foot">
       <div data-member-nav hidden style="display:none"></div>
@@ -639,7 +722,6 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
         </div>
       </div>
       <div class="tb-right">
-        <span class="skill-chip" id="tbSkill">通用电商技能</span>
         <button class="btn-partner" id="tbPartner">@Hogee</button>
         <button class="icon-btn" id="btnDeliver" aria-label="交付物" title="交付物"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg></button>
       </div>
@@ -677,6 +759,15 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
         </div>
       </div>
     </div>
+
+    <div class="embed-view" id="analyticsView">
+      <div class="embed-bar">
+        <button type="button" class="embed-back" id="analyticsBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg>返回创作</button>
+        <span class="embed-title">效果中心</span>
+        <span class="embed-sub">浏览 · 留资 · 渠道归因，一眼看清</span>
+      </div>
+      <iframe id="analyticsFrame" title="效果中心" loading="lazy"></iframe>
+    </div>
   </main>
 
   <aside class="deliver" id="deliver">
@@ -702,19 +793,18 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 <div class="pop" id="plusPop">
   <button data-plus="shot" id="plusShotBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span id="plusShotLabel">上传商品图片</span></button>
   <button data-plus="bg" id="plusBgBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>传实地展厅背景</button>
-  <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>管理技能 / 插件 / 伙伴</button>
+  <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>插件与伙计</button>
 </div>
 
 <div class="modal" id="labModal">
   <div class="modal-card">
     <header>
-      <div class="m-title">插件 · 技能 · 伙伴</div>
+      <div class="m-title">插件与伙计</div>
       <button class="icon-btn" id="labClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="m-tabs">
-      <button data-labtab="skill" class="on">技能（行业）</button>
-      <button data-labtab="plugin">插件（账号连接）</button>
-      <button data-labtab="partner">伙伴（雇佣）</button>
+      <button data-labtab="plugin" class="on">账号连接（插件）</button>
+      <button data-labtab="partner">伙计</button>
     </div>
     <div class="m-body" id="labBody"></div>
   </div>
@@ -797,8 +887,8 @@ function pavatarHTML(p,size){return '<span class="pavatar" style="'+(size?('widt
 
 /* ================= 技能（行业 skill） ================= */
 var SKILLS_READY=[
- {id:'usedcar',n:'二手车技能',ico:IC.car,d:'车型库 · 展厅/棚拍/实地融合 · 车况合规话术'},
- {id:'general',n:'通用电商技能',ico:IC.shop,d:'全品类白底主图 · 生活场景 · 细节增强，卖什么都能先跑起来'}
+ {id:'usedcar',n:'二手车',ico:IC.car,d:'车型库 · 展厅/棚拍/实地融合 · 车况合规话术'},
+ {id:'general',n:'通用电商',ico:IC.shop,d:'全品类白底主图 · 生活场景 · 细节增强，卖什么都能先跑起来'}
 ];
 var SKILLS_MARKET=[
  {id:'fashion',n:'服装鞋包',ico:IC.shirt,d:'上身/平铺/模特场景，电商与小红书规格'},
@@ -927,7 +1017,7 @@ function taskAct(act,id,e){
  var arr=loadTasks(),i=arr.findIndex(function(t){return t.id===id;});if(i<0)return;
  if(act==='pin'){arr[i].pinned=!arr[i].pinned;if(arr[i].id===state.taskId)state.taskPinned=arr[i].pinned;toast(arr[i].pinned?'已置顶':'已取消置顶');}
  else if(act==='rename'){var v=window.prompt('给任务改个名字',arr[i].title);if(v&&v.trim()){arr[i].title=v.trim();if(arr[i].id===state.taskId)state.taskTitle=v.trim();}}
- else if(act==='del'){if(!window.confirm('删除这个任务记录？交付物仍保留在云盘。'))return;arr.splice(i,1);saveTasks(arr);renderTaskList();renderTopbar();return;}
+ else if(act==='del'){if(!window.confirm('删除这个任务记录？交付物仍会保留在右侧交付物。'))return;arr.splice(i,1);saveTasks(arr);renderTaskList();renderTopbar();return;}
  arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
  saveTasks(arr);renderTaskList();renderTopbar();
 }
@@ -944,7 +1034,7 @@ function openTask(id){
  scroll.innerHTML='';
  renderPartners();renderTopbar();renderDeliver();renderCmpAttach();renderTaskList();
  userSay('打开任务：'+t.title);
- botSay('已打开「<b>'+esc(t.title)+'</b>」。历史成品在右侧云盘；要接着出图，把这件货的照片再传一次就行。','atu');
+ botSay('已打开「<b>'+esc(t.title)+'</b>」。历史成品在右侧交付物；要接着出图，把这件货的照片再传一次就行。','atu');
  renderUploadCard();
  if(t.resultKeys&&t.resultKeys.length){restoreCloudResults(t.resultKeys);}
 }
@@ -955,7 +1045,7 @@ function cqAction(k){
   if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}
   document.getElementById('fileInput').click();
  }else if(k==='usedcar'){
-  if(state.identity&&state.identity.type==='usedcar'){toast('已是二手车技能，直接传图就行');if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}return;}
+  if(state.identity&&state.identity.type==='usedcar'){toast('已识别为二手车，直接传图就行');if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}return;}
   startOrder('usedcar');
  }else if(k==='copy'){
   setActivePartner('awen');
@@ -1102,13 +1192,13 @@ function tosSyncResult(resItem){
  });
 }
 function restoreCloudResults(keys){
- botSay('正在从云盘取回这单的历史成品…','atu');
+ botSay('正在从云端交付物取回这单的历史成品…','atu');
  Promise.all(keys.map(function(k){return tosGetUrl(k).then(function(u){return u?{url:u,tosKey:k,label:'云端成品',k:'cloud'}:null;});}))
   .then(function(list){
    var got=list.filter(Boolean);
    if(!got.length)return;
    state.results=got;renderDeliver();
-   botSay('已从云盘取回 <b>'+got.length+'</b> 张历史成品，在右侧交付物里可看大图、下载；要改图或出新图，把商品照片再传一次就行。','atu');
+   botSay('已从云端取回 <b>'+got.length+'</b> 张历史成品，在右侧交付物里可看大图、下载；要改图或出新图，把商品照片再传一次就行。','atu');
   });
 }
 
@@ -1142,7 +1232,7 @@ function toast(msg,type){
  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.className='toast';},2600);
 }
 /* ================= 左列 / 顶栏 ================= */
-function skillName(){return state.identity&&state.identity.type==='usedcar'?'二手车技能':'通用电商技能';}
+function skillName(){return state.identity&&state.identity.type==='usedcar'?'二手车生意':'通用电商生意';}
 function renderPartners(){
  var box=$('#partnerList');if(!box)return;
  box.innerHTML=PARTNERS.map(function(p){
@@ -1212,10 +1302,7 @@ function renderTopbar(){
  var av=$('#tbAvatar');av.className='tb-avatar p-'+p.id;av.style.cssText='';av.innerHTML=p.ico;av.querySelector('svg').style.color='var(--'+p.id+')';
  $('#tbTitle').textContent=state.taskTitle||(state.product&&state.product.name?state.product.name:'新任务');
  $('#tbSub').textContent=p.name+' · '+p.role+' 在线';
- $('#tbSkill').textContent=state.identity?skillName():'未选技能';
  $('#tbPartner').textContent='@'+p.name;
- var sn=$('#skillNowName');if(sn)sn.textContent=state.identity?skillName():'待选择';
- var sd=$('#skillNowDesc');if(sd)sd.textContent=state.identity?'当前任务使用该行业技能，传图后自动核对。':'传图后阿图自动识别行业并启用对应技能，也可手动添加。';
  if(typeof syncCmpTabs==='function')syncCmpTabs();
 }
 function renderCmpAttach(){
@@ -1225,7 +1312,7 @@ function renderCmpAttach(){
 }
 
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
-function openLab(tab){state.labTab=tab||'skill';$$('#labModal .m-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.labtab===state.labTab);});renderLab();$('#labModal').classList.add('show');}
+function openLab(tab){state.labTab=(tab==='skill'||!tab)?'plugin':tab;$$('#labModal .m-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.labtab===state.labTab);});renderLab();$('#labModal').classList.add('show');}
 function closeLab(){$('#labModal').classList.remove('show');}
 function renderLab(){
  var body=$('#labBody');if(!body)return;
@@ -1235,7 +1322,7 @@ function renderLab(){
 }
 function renderLabSkill(){
  var cur=state.identity?state.identity.type:'';
- var note='<div class="lab-note">行业技能＝行业大脑。传图后阿图自动识别行业；二手车技能带车型库与展厅/棚拍/实地融合，通用电商兜底全品类。选一个当前生意用的就行。</div>';
+ var note='<div class="lab-note">行业大脑：传图后阿图会自动识别你做的行业；二手车带车型库与展厅/棚拍/实地融合，通用电商兜底全品类，卖什么都能先跑起来。</div>';
  return note+SKILLS_READY.map(function(s){
   var on=cur===s.id;
   return '<div class="lab-item"><span class="li-ico">'+s.ico+'</span><div class="li-main"><b>'+s.n+'</b><span>'+s.d+'</span></div>'
@@ -1290,8 +1377,8 @@ function start(){
  var mateQ=new URLSearchParams(location.search).get('mate');
  if(mateQ&&partnerById(mateQ)){state.activePartner=mateQ;renderPartners();renderTopbar();mateWelcome(mateQ);return;}
  if(id){state.identity=id;state.bgImage=loadBg(id.type);renderTopbar();
-  botSay('回来了，老板。当前是<b>'+skillName()+'</b>，直接传图我就开工；也可以换个技能或让阿文先写文案。');
-  quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个技能',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
+  botSay('回来了，老板。当前做的是<b>'+skillName()+'</b>，直接传图我就开工；也可以告诉我你做什么行业，或先让阿文写文案。');
+  quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个行业',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
  }else{
   heroWelcome();
  }
@@ -1358,10 +1445,13 @@ function heroWelcome(){
   h.innerHTML='<div class="hw-badge"><span class="dot-live"></span>你生意的好伙计</div>'
    +'<div class="hw-title">一笔成交从<span class="hl">一张产品图</span>开始</div>'
    +'<div class="hw-sub">拍图找阿图，写文案找阿文，做视频找阿视，发内容找阿发，盯数据找阿果。<br>五个伙计接力，从一张产品图，到一笔成交。</div>'
-   +'<div class="hw-dock" id="hwDock"></div>';
+   +'<div class="hw-dock" id="hwDock"></div>'
+   +'<div class="hw-video"><div class="hv-head"><span class="hv-tag">Hogee 外贸版</span><span class="hv-title">五个伙计，把一张产品图变成全球订单</span></div>'
+   +'<div class="hv-frame"><button type="button" class="hv-poster" id="hvPlay" aria-label="播放宣传片"><span class="hv-play-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="hv-play-tx">观看 Hogee 外贸版宣传片</span><span class="hv-play-sub">约 90 秒 · 一张产品图，五个伙计接力</span></button><video id="hvVideo" src="/media/workhogee-global.mp4" controls preload="none" playsinline style="display:none"></video></div>'
+   +'<div class="hv-en">From one product photo to a global order &mdash; five Hogees on the job.</div></div>';
   scroll.appendChild(h);
   placeComposer(true);
-  scrollBottom();
+  scrollBox.scrollTop=0;
 }
 function startOrder(skillId){
  placeComposer(false);
@@ -1406,7 +1496,7 @@ function refreshShots(){
  renderCmpAttach();
 }
 function handleFiles(fileList){
- if(!state.identity){toast('先选个技能，或直接告诉我你卖什么','err');return;}
+ if(!state.identity){toast('先传张产品图，或直接告诉我你卖什么','err');return;}
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
  if(!files.length)return;
  if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
@@ -2272,7 +2362,16 @@ function redoCopy(tone){
 function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.chart+' 阿果效果中心</div><div class="card-desc">画册浏览、渠道二维码归因、访客留资与咨询，都会在这里汇总。生成画册并把链接/二维码投出去后，数据自动回流。</div><div class="card-actions"><a class="btn btn-primary" href="/analytics.html" target="_blank" rel="noopener">'+IC.external+' 打开效果中心</a></div></div>','agu');}
 
 /* ================= 新任务 / 背景上传 ================= */
+/* ================= 效果中心内嵌视图 ================= */
+function setMenuActive(id){$$('.rmenu button').forEach(function(b){b.classList.toggle('on',b.id===id);});}
+function openAnalytics(){
+ document.body.dataset.view='analytics';setMenuActive('menuAnalytics');
+ if(typeof closeDeliver==='function')closeDeliver();
+ var f=$('#analyticsFrame');if(f&&!f.getAttribute('data-loaded')){f.src='/analytics.html?embed=1';f.setAttribute('data-loaded','1');}
+}
+function closeAnalytics(){if(document.body.dataset.view==='analytics')document.body.dataset.view='studio';setMenuActive('menuHome');}
 function newOrder(){
+ closeAnalytics();
  archiveCurrentTask();
  var hires=state.hires;
  state=resetState();state.hires=hires;
@@ -2379,8 +2478,8 @@ function routeByIntent(txt,it){
    break;
   }
   case 'choose_skill':{
-   openLab('skill');
-   botSay(it.reply||'在左边选个行业技能，二手车和通用电商都行。','host');
+   openLab('plugin');
+   botSay(it.reply||'账号连接和伙计都在这里管理；做什么行业，传图后阿图会自动认出来。','host');
    break;
   }
   case 'extra_note':{
@@ -2430,13 +2529,13 @@ function sendFreeTextLegacy(txt){
 function bind(){
  /* 顶部 / 左列 */
  $('#railNew').addEventListener('click',newOrder);
- $('#menuLab').addEventListener('click',function(){openLab('skill');});
- $('#menuCloud').addEventListener('click',function(){setDeliverTab('all');openDeliver();toast('云盘就是右侧交付物：图片、动态、图文与送达记录都归档在这');});
- $('#menuDeliver').addEventListener('click',function(){setDeliverTab('all');openDeliver();});
- $('#menuAnalytics').addEventListener('click',function(){window.open('/analytics.html','_blank','noopener');});
- $('#skillNow').addEventListener('click',function(){openLab('skill');});
- $('#tbSkill').addEventListener('click',function(){openLab('skill');});
+ $('#menuHome').addEventListener('click',function(){closeAnalytics();setMenuActive('menuHome');});
+ $('#menuLab').addEventListener('click',function(){openLab('plugin');});
+ $('#menuDeliver').addEventListener('click',function(){closeAnalytics();setMenuActive('menuDeliver');setDeliverTab('all');openDeliver();});
+ $('#menuAnalytics').addEventListener('click',openAnalytics);
+ $('#analyticsBack').addEventListener('click',closeAnalytics);
  $('#tbPartner').addEventListener('click',togglePartnerPop);
+ document.addEventListener('click',function(e){var p=e.target.closest('#hvPlay');if(!p)return;var v=document.getElementById('hvVideo');if(!v)return;p.style.display='none';v.style.display='block';var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});});
  $('#btnRail').addEventListener('click',function(){$('#rail').classList.add('open');$('#railMask').classList.add('show');});
  $('#railMask').addEventListener('click',function(){$('#rail').classList.remove('open');$('#railMask').classList.remove('show');});
  $('#btnDeliver').addEventListener('click',function(){if(document.body.dataset.deliver==='open')closeDeliver();else openDeliver();});
@@ -2454,7 +2553,7 @@ function bind(){
   var ta=e.target.closest('#taskList [data-tact]');
   if(ta){taskAct(ta.dataset.tact,ta.closest('[data-tid]').dataset.tid,e);return;}
   var ti=e.target.closest('#taskList [data-tid]');
-  if(ti){openTask(ti.dataset.tid);return;}
+  if(ti){closeAnalytics();openTask(ti.dataset.tid);return;}
   var q=e.target.closest('[data-quick]');
   if(q){var a=q.dataset.quick;
    if(a==='startUpload'){if(!state.identity)startOrder('general');else $('#fileInput').click();}
@@ -2462,7 +2561,7 @@ function bind(){
    else if(a==='useGeneral')startOrder('general');
    else if(a==='askAwen'){setActivePartner('awen');botSay('告诉我你卖什么、主打卖点，或先传商品图让阿图认货，我先出一版分渠道文案。','awen');}
    else if(a==='resume'){renderUploadCard();state.stage='upload';}
-   else if(a==='changeSkill')openLab('skill');
+   else if(a==='changeSkill')openLab('plugin');
    return;}
   var b=e.target.closest('[data-act]');if(b)handleAct(b);
  });
@@ -2475,8 +2574,8 @@ function bind(){
  $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();if($('#plusPop'))$('#plusPop').classList.remove('show');if(!state.identity){startOrder('general');}else if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}$('#fileInput').click();});
  $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
   if(k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
-  else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车技能，先切换到二手车技能','err');}
-  else if(k==='lab')openLab('skill');
+  else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车行业，先告诉伙计你在卖二手车','err');}
+  else if(k==='lab')openLab('plugin');
  });
  document.addEventListener('click',function(e){if(!e.target.closest('#plusPop')&&!e.target.closest('#btnPlus'))$('#plusPop').classList.remove('show');if(!e.target.closest('#partnerPop')&&!e.target.closest('#tbPartner')){$('#partnerPop')&&$('#partnerPop').classList.remove('show');}});
  /* 文件 */
@@ -2578,7 +2677,7 @@ function handleAct(b){
  else if(act==='openAnalytics'){window.open('/analytics.html','_blank','noopener');}
  /* 实验室：技能 / 插件 / 伙伴 */
  else if(act==='skillUse'){var id=b.dataset.id;if(state.identity&&state.identity.type===id){toast('已在使用该技能');return;}closeLab();startOrder(id);}
- else if(act==='skillNotify'){var sid=b.dataset.id;var n=notifyState();if(n.indexOf(sid)<0){n.push(sid);try{localStorage.setItem('hogee_skill_notify',JSON.stringify(n));}catch(e){}}b.disabled=true;b.textContent='已提醒';renderLab();toast('已记下，该技能上线第一时间通知你');}
+ else if(act==='skillNotify'){var sid=b.dataset.id;var n=notifyState();if(n.indexOf(sid)<0){n.push(sid);try{localStorage.setItem('hogee_skill_notify',JSON.stringify(n));}catch(e){}}b.disabled=true;b.textContent='已提醒';renderLab();toast('已记下，该行业能力上线第一时间通知你');}
  else if(act==='pluginKit'){closeLab();setDeliverTab('reach');openDeliver();toast('该渠道无需连接账号：出图后在「送达」复制文案、保存素材，本人打开发布页即可发');}
  else if(act==='pluginApply'){var pid=b.dataset.id,ps=pluginsState();ps[pid]='applied';savePlugins(ps);renderLab();toast('已登记。官方 API 需企业资质（营业执照/认证），开放内测第一时间通知你；现在可用素材就绪包本人发');}
  else if(act==='pluginSoon'){toast('该渠道陆续接入，已记下你的关注');}
@@ -2648,7 +2747,7 @@ initLayout();
       +'<button class="wb-mi" data-am="profile">'+svgIc('settings')+'账号资料</button>'
       +'<button class="wb-mi" data-am="quota">'+svgIc('gauge')+'额度状态</button>'
       +'<div class="wb-sep"></div>'
-      +'<button class="wb-mi" data-am="cloud">'+svgIc('cloud')+'我的云盘</button>'
+      +'<button class="wb-mi" data-am="cloud">'+svgIc('pack')+'我的交付物</button>'
       +'<button class="wb-mi" data-am="site">'+svgIc('external')+'WorkHogee 官网</button>'
       +'<button class="wb-mi" data-am="help">'+svgIc('help')+'帮助与反馈</button>'
       +'<button class="wb-mi" data-am="update">'+svgIc('rotate')+'检查更新</button>'
@@ -2700,7 +2799,7 @@ initLayout();
     closeMenu();
     if(k==='profile'){showProfile();}
     else if(k==='quota'){showQuota();}
-    else if(k==='cloud'){if(window.setDeliverTab)setDeliverTab('all');if(window.openDeliver)openDeliver();if(window.toast)toast('交付物都归档在云盘：图片 / 动态 / 图文 / 送达');}
+    else if(k==='cloud'){if(window.setDeliverTab)setDeliverTab('all');if(window.openDeliver)openDeliver();if(window.toast)toast('交付物按 图片 / 动态 / 视频 / 图文 / 送达 归档');}
     else if(k==='site'){window.open('https://www.workhogee.com/','_blank','noopener');}
     else if(k==='help'){window.open('mailto:910036590@qq.com?subject=WorkHogee%20%E5%B8%AE%E5%8A%A9%E4%B8%8E%E5%8F%8D%E9%A6%88','_blank');if(window.toast)toast('已为你打开邮件反馈');}
     else if(k==='update'){if(window.toast)toast('当前已是最新版本，网页版会自动更新');}
