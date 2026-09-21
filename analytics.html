@@ -238,9 +238,32 @@ td .dim{color:var(--m);font-size:12px}
 </style>
 <script>(function(){try{if(new URLSearchParams(location.search).get('embed')){document.documentElement.classList.add('embed');}}catch(e){}})();</script>
 <style>
+html.embed{
+  --ink:#eaf0f9;--ink2:#c4cddd;--m:#94a1b6;--m2:#69758c;
+  --l:#1a2231;--l2:#0d1119;--line:rgba(255,255,255,.10);--white:#18202f;
+  --o:#fb7a22;--o-d:#f2630d;--o-soft:rgba(251,122,34,.16);--o-line:rgba(251,122,34,.40);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 16px 40px -18px rgba(0,0,0,.7)}
 html.embed header.topbar,html.embed footer.whf{display:none!important}
-html.embed body{background:#fafaf9}
-html.embed main.wrap{min-height:100vh;padding-top:24px}
+html.embed body{background:#0d1119;color:var(--ink)}
+html.embed main.wrap{min-height:100vh;padding-top:22px}
+html.embed .tablewrap,html.embed .iconbtn,html.embed .search,html.embed .modal,
+html.embed .field select,html.embed .field input,html.embed .field textarea,
+html.embed .chips button,html.embed .qr-box .qr,html.embed .drawer,html.embed .empty,
+html.embed .filterbar .st-tabs button,html.embed .tl-item::before{background:var(--white)}
+html.embed .field select,html.embed .field input,html.embed .field textarea{color:var(--ink)}
+html.embed .field input::placeholder,html.embed .field textarea::placeholder{color:var(--m2)}
+html.embed .iconbtn,html.embed .chips button,html.embed .filterbar .st-tabs button{color:var(--ink2)}
+html.embed .seg button.on,html.embed .filterbar .st-tabs button.on,
+html.embed .btn-dark,html.embed .st-deal,html.embed .step3 .n{background:var(--o);color:#fff;border-color:var(--o)}
+html.embed .btn-dark:hover{background:var(--o-d)}
+html.embed .btn-ghost:hover{background:var(--l);border-color:var(--line)}
+html.embed .kpi.accent{background:linear-gradient(135deg,#f2630d,#fb8a3c);border-color:transparent}
+html.embed .st-following{background:rgba(251,122,34,.20);color:#fdba74}
+html.embed .st-visited{background:rgba(251,122,34,.13);color:#fdba74;border-color:rgba(251,122,34,.35)}
+html.embed .drawer-f,html.embed .step3{background:var(--l2)}
+html.embed .qr-box .short{background:var(--l2);color:var(--ink2)}
+html.embed .xbtn:hover{background:var(--line);color:var(--ink)}
+html.embed .thumb{background:var(--l)}
 </style>
 </head>
 <body data-member-gate>
@@ -567,9 +590,10 @@ function apiPatch(path,body){return req('PATCH',path,body);}
 /* ---------- 状态 ---------- */
 var S={range:7,view:'overview',ov:null,ch:null,sc:null,leads:[],showcases:[],links:[],leadStatus:'all',q:'',qrSource:'wechat_group',charts:{},lastQr:null};
 function dates(){return{from:bjDate(-(S.range-1)),to:bjDate(0)};}
+var EMB=document.documentElement.classList.contains('embed');
 var chartTheme={
-  textStyle:{fontFamily:'-apple-system,"PingFang SC","Microsoft YaHei",sans-serif',color:'#44403c'},
-  axis:{axisLine:{lineStyle:{color:'#d6d3d1'}},axisTick:{show:false},axisLabel:{color:'#78716c',fontSize:11,fontVariantNumeric:'tabular-nums'},splitLine:{lineStyle:{color:'#f0efed'}}},
+  textStyle:{fontFamily:'-apple-system,"PingFang SC","Microsoft YaHei",sans-serif',color:EMB?'#c6d0e0':'#44403c'},
+  axis:{axisLine:{lineStyle:{color:EMB?'rgba(255,255,255,.16)':'#d6d3d1'}},axisTick:{show:false},axisLabel:{color:EMB?'#8fa0b8':'#78716c',fontSize:11,fontVariantNumeric:'tabular-nums'},splitLine:{lineStyle:{color:EMB?'rgba(255,255,255,.08)':'#f0efed'}}},
   tooltip:{backgroundColor:'#1c1917',borderWidth:0,textStyle:{color:'#fff',fontSize:12},confine:true,extraCssText:'border-radius:9px;padding:8px 11px;'}
 };
 function chart(id){if(typeof echarts==='undefined')return null;if(!S.charts[id]){var el=$(id);if(!el)return null;S.charts[id]=echarts.init(el,null,{renderer:'svg'});}return S.charts[id];}
@@ -632,7 +656,7 @@ function renderTrend(){
   c.setOption({
     textStyle:chartTheme.textStyle,
     grid:{left:42,right:18,top:36,bottom:30},
-    legend:{top:0,right:0,icon:'roundRect',itemWidth:11,itemHeight:3,textStyle:{fontSize:12,color:'#78716c'},data:['浏览 PV','访客 UV']},
+    legend:{top:0,right:0,icon:'roundRect',itemWidth:11,itemHeight:3,textStyle:{fontSize:12,color:EMB?'#9fb0c6':'#78716c'},data:['浏览 PV','访客 UV']},
     tooltip:Object.assign({trigger:'axis'},chartTheme.tooltip),
     xAxis:{type:'category',boundaryGap:false,data:tr.map(function(x){return x.date.slice(5);}),axisLine:chartTheme.axis.axisLine,axisTick:{show:false},axisLabel:chartTheme.axis.axisLabel},
     yAxis:{type:'value',minInterval:1,splitLine:chartTheme.axis.splitLine,axisLabel:chartTheme.axis.axisLabel},
@@ -656,7 +680,7 @@ function funnelOption(funnel,big){
   }
   return{textStyle:chartTheme.textStyle,tooltip:tip,series:[{
     type:'funnel',left:'0%',width:'55%',top:8,bottom:8,minSize:'24%',maxSize:'100%',gap:2,sort:'none',
-    label:{show:true,position:'right',color:'#44403c',fontSize:11.5,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
+    label:{show:true,position:'right',color:EMB?'#dfe6f2':'#44403c',fontSize:11.5,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
     labelLine:{show:true,length:8,length2:6,lineStyle:{color:'#d6d3d1'}},
     itemStyle:{borderColor:'#fff',borderWidth:1.5,borderRadius:4},data:data
   }]};
@@ -688,12 +712,12 @@ function renderChannelsChart(){
     textStyle:chartTheme.textStyle,grid:{left:108,right:42,top:18,bottom:24},
     tooltip:Object.assign({trigger:'axis',axisPointer:{type:'shadow'},formatter:function(ps){var r=rows[ps[0].dataIndex];if(!r)return'';return srcLabel(r.source)+'<br/>浏览 <b>'+n0(r.pv)+'</b> · 访客 '+n0(r.uv)+'<br/>意向 '+n0(r.cta)+' · 留资 <b>'+n0(r.leads)+'</b>';}},chartTheme.tooltip),
     xAxis:{type:'value',minInterval:1,splitLine:chartTheme.axis.splitLine,axisLabel:chartTheme.axis.axisLabel},
-    yAxis:{type:'category',data:rows.map(function(r){return srcLabel(r.source);}),axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#44403c',fontSize:12}},
+    yAxis:{type:'category',data:rows.map(function(r){return srcLabel(r.source);}),axisLine:{show:false},axisTick:{show:false},axisLabel:{color:EMB?'#c6d0e0':'#44403c',fontSize:12}},
     series:[{
       name:useLead?'留资线索':'浏览 PV',type:'bar',barWidth:13,
       data:rows.map(function(r){return useLead?r.leads:r.pv;}),
       itemStyle:{color:useLead?'#ea580c':'#d6d3d1',borderRadius:[0,4,4,0]},
-      label:{show:true,position:'right',color:'#44403c',fontSize:11,fontVariantNumeric:'tabular-nums'}
+      label:{show:true,position:'right',color:EMB?'#dfe6f2':'#44403c',fontSize:11,fontVariantNumeric:'tabular-nums'}
     }]
   });
 }
