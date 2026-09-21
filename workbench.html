@@ -791,6 +791,7 @@ body[data-stage="welcome"] .cmp-upload{border-color:rgba(255,255,255,.16);backgr
 @keyframes hwPulse{0%,100%{opacity:1}50%{opacity:.45}}
 .hw6-title{font-size:43px;font-weight:300;letter-spacing:-.6px;line-height:1.16;color:#fff;margin:0}
 .hw6-title .hl{color:var(--orange);font-weight:300}
+.hw6-br{display:none}
 .hw6-sub{margin:17px auto 0;max-width:680px;font-size:15px;line-height:1.75;color:var(--tx3);font-weight:400}
 /* 能力胶囊 */
 .hw6-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 2px}
@@ -839,6 +840,7 @@ body[data-stage="welcome"] .cmp-upload{border-color:rgba(255,255,255,.16);backgr
 @media(max-width:760px){
  .hw.hw6{padding:0 14px;margin-top:1.6vh}
  .hw6-title{font-size:29px;font-weight:400;letter-spacing:-.3px}
+ .hw6-br{display:block}
  .hw6-sub{font-size:13.5px;margin-top:13px}
  .hw6-chip{padding:9px 14px;font-size:13px}
  .rcard{aspect-ratio:16/10;border-radius:15px}
@@ -1762,7 +1764,7 @@ function heroWelcome(){
   };
   h.innerHTML='<div class="hw6-hero">'
    +'<span class="hw6-badge"><span class="dot"></span>Hogee · 你的生意好伙计</span>'
-   +'<h1 class="hw6-title">一笔成交，从<span class="hl">一张产品图</span>开始</h1>'
+   +'<h1 class="hw6-title">一笔成交，<br class="hw6-br">从<span class="hl">一张产品图</span>开始</h1>'
    +'</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
    +'<section class="hm6"><div class="hm6-head"><span class="hm6-h">精选</span></div>'
