@@ -3106,7 +3106,14 @@ function routeByIntent(txt,it){
   }
   case 'write_copy':{
     state.activePartner='awen';renderPartners();renderTopbar();
+   if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
+   if(it.product){state.product.name=String(it.product).slice(0,40);}
    awenFlow(txt);
+   break;
+  }
+  case 'make_video':{
+   if(typeof enterMate==='function'){enterMate('ashi');}
+   else{state.activePartner='ashi';renderPartners();renderTopbar();botSay(it.reply||'我是阿视，负责把成品图文做成短视频和动态图。先让阿图出好商品图，有了图我就能剪。','ashi');}
    break;
   }
   case 'deliver':{
@@ -3143,8 +3150,20 @@ function routeByIntent(txt,it){
 }
 
 /* 规则兜底：API 不可用或低置信度时走老逻辑（userSay 已在新入口做过，这里不重复） */
+function legacyGuess(t){
+ if(/(文案|标题|商品描述|种草|笔记|软文|话术|写一版|来一版|写一条|写一篇|写个|帮我写|写好|改写|写一段)/.test(t))return 'awen';
+ if(/((小红书|朋友圈|公众号|抖音|快手|视频号|微博).*(文案|标题|笔记|软文|稿|文字))/.test(t))return 'awen';
+ if(/(视频|短视频|剪一?条|剪辑|剪个|动态图|分镜|宣传片|把图动|动起来)/i.test(t))return 'ashi';
+ if(/(发布|上架|分发|发到|发抖音|发小红书|发朋友圈|送达|打包发|媒体发布|帮我发|一键发)/.test(t))return 'afa';
+ if(/(数据|效果怎么样|浏览量|播放量|线索|转化|统计|看板|归因|多少人看)/.test(t))return 'agu';
+ return null;
+}
 function sendFreeTextLegacy(txt){
  var ap=state.activePartner;
+ if(ap!=='awen'&&ap!=='afa'&&ap!=='agu'&&ap!=='ashi'){
+  var g=legacyGuess(txt);
+  if(g){state.activePartner=g;renderPartners();renderTopbar();ap=g;}
+ }
  if(ap==='awen'){awenFlow(txt);return;}
  if(ap==='afa'){
   if(state.results.length||state.copy.ready){setDeliverTab('reach');openDeliver();botSay('素材和文案都备好了，右边选平台：复制文案、打开发布页，最后一下由你本人点发送。','afa');}
@@ -3152,6 +3171,7 @@ function sendFreeTextLegacy(txt){
   return;
  }
  if(ap==='agu'){botSay('我是阿果，专管效果数据。画册投出去后的浏览、留资、渠道归因都在效果中心。','agu');aguCard();return;}
+ if(ap==='ashi'){if(typeof enterMate==='function'){enterMate('ashi');}else{botSay('我是阿视，负责把成品图文做成短视频和动态图。先让阿图出好商品图，有了图我就能剪。','ashi');}return;}
  /* 默认阿图：按流程阶段分流 */
  if(!state.identity||state.stage==='welcome'){
   state.identity={type:'general',label:'通用电商',cat:''};saveId();state.bgImage=null;renderTopbar();
