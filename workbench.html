@@ -11,10 +11,10 @@
    保留全部 class / 状态钩子，仅重塑视觉
    ============================================================ */
 :root{
-  --bg:#0e0f12; --stage:#141519; --panel:#1a1c21; --panel2:#20232a; --elev:#24272f;
-  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.06);
-  --tx:#eef0f3; --tx2:rgba(238,240,243,.64); --tx3:rgba(238,240,243,.42);
-  --orange:#f97316; --orange-d:#ea580c; --orange-soft:rgba(249,115,22,.16);
+  --bg:#0d1119; --stage:#131a27; --panel:#1b2333; --panel2:#232d42; --elev:#2c3750;
+  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.075);
+  --tx:#f4f7fd; --tx2:rgba(244,247,253,.72); --tx3:rgba(244,247,253,.50);
+  --orange:#fb7a22; --orange-d:#f2630d; --orange-soft:rgba(251,122,34,.18);
   --atu:#fb923c; --awen:#60a5fa; --ashi:#f472b6; --afa:#4ade80; --agu:#c084fc; --host:#fb923c;
   --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
   --shadow-s:0 1px 2px rgba(0,0,0,.35);
@@ -124,7 +124,7 @@ body[data-deliver="open"]{--deliver:380px}
 
 /* 中列 */
 .stage{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--stage);border-right:1px solid var(--line2)}
-.topbar{height:56px;flex:none;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:11px;padding:0 18px;background:rgba(20,21,25,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:5}
+.topbar{height:56px;flex:none;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:11px;padding:0 18px;background:rgba(17,23,35,.84);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:5}
 .tb-task{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
 .tb-avatar{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--orange-soft);flex:none}
 .tb-avatar svg{width:18px;height:18px;color:var(--orange)}
@@ -440,8 +440,10 @@ body[data-deliver="open"]{--deliver:380px}
 .li-main b{font-size:13.5px;display:block}
 .li-main span{font-size:11.5px;color:var(--tx3);line-height:1.5;display:block;margin-top:2px}
 .li-state{font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;flex:none}
-.st-on{color:var(--ok);background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.3)}
+.st-on{color:#fdba74;background:rgba(251,122,34,.16);border:1px solid rgba(251,122,34,.42)}
 .st-soon{color:var(--tx3);background:var(--panel2);border:1px solid var(--line)}
+.li-use{flex:none;font-size:11.5px;font-weight:700;color:var(--orange);background:transparent;border:1px solid rgba(251,122,34,.45);border-radius:999px;padding:5px 13px;cursor:pointer;transition:.15s}
+.li-use:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
 .st-kit{color:var(--afa);background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.28)}
 .st-oauth{color:var(--warn);background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.3)}
 .li-btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--tx);border-radius:10px;font-size:12px;font-weight:600;padding:8px 13px;flex:none;transition:.15s;white-space:nowrap}
@@ -552,7 +554,7 @@ body[data-stage="welcome"] .hw-team{margin-top:24px}
 body[data-stage="welcome"] .chat{display:flex;flex-direction:column;justify-content:center}
 body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
 /* ===== 纳米式大输入卡：顶部书签 + 左上大上传方块 ===== */
-.cmp-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);transition:border-color .16s,box-shadow .16s;overflow:hidden}
+.cmp-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.09);transition:border-color .16s,box-shadow .16s;overflow:hidden}
 .cmp-card:focus-within{border-color:rgba(249,115,22,.5);box-shadow:var(--shadow),0 0 0 3px var(--orange-soft)}
 .cmp-tabs{display:flex;gap:4px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0))}
 .cmp-tabs::-webkit-scrollbar{display:none}
@@ -598,22 +600,23 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .stage{position:relative;overflow:hidden}
 .stage::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
  background:
-  radial-gradient(880px 480px at 50% -14%, rgba(249,115,22,.13), rgba(249,115,22,0) 62%),
-  radial-gradient(700px 520px at 88% -6%, rgba(96,165,250,.07), rgba(96,165,250,0) 60%),
-  radial-gradient(600px 460px at 6% 2%, rgba(192,132,252,.05), rgba(192,132,252,0) 60%);}
-.stage::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.55;
- background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+  radial-gradient(1100px 580px at 50% -18%, rgba(251,122,34,.20), rgba(251,122,34,0) 64%),
+  radial-gradient(920px 660px at 95% -10%, rgba(96,165,250,.16), rgba(96,165,250,0) 62%),
+  radial-gradient(840px 620px at -2% 4%, rgba(167,139,250,.13), rgba(167,139,250,0) 60%),
+  radial-gradient(900px 520px at 50% 120%, rgba(251,122,34,.09), rgba(251,122,34,0) 66%);}
+.stage::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.38;
+ background-image:radial-gradient(rgba(255,255,255,.045) 1px, transparent 1.4px);
  background-size:26px 26px;
- -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.12) 42%,transparent 72%);
- mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.12) 42%,transparent 72%);}
+ -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),rgba(0,0,0,.1) 44%,transparent 74%);
+ mask-image:linear-gradient(180deg,rgba(0,0,0,.8),rgba(0,0,0,.1) 44%,transparent 74%);}
 .topbar{position:relative;z-index:5}
 .chat{position:relative;z-index:1}
 .composer{position:relative;z-index:1}
 /* 左栏：顶部一丝暖光 + 菜单选中品牌橙（对标纳米选中态） */
-.rail{background:linear-gradient(180deg,rgba(249,115,22,.035),transparent 240px),var(--bg)}
-.rmenu button.on{background:var(--orange-soft);color:var(--orange);font-weight:700}
+.rail{background:linear-gradient(180deg,rgba(251,122,34,.07),rgba(120,150,255,.035) 320px,transparent),var(--bg)}
+.rmenu button.on{background:linear-gradient(90deg,rgba(251,122,34,.27),rgba(251,122,34,.08));color:#ffb27d;font-weight:700;box-shadow:inset 0 0 0 1px rgba(251,122,34,.24)}
 .rmenu button.on svg{color:var(--orange)}
-.rmenu button.on:hover{background:rgba(249,115,22,.20);color:var(--orange)}
+.rmenu button.on:hover{background:linear-gradient(90deg,rgba(251,122,34,.36),rgba(251,122,34,.13));color:#ffc396}
 /* 任务分组标题 + 小新建钮 */
 .rgroup{display:flex;align-items:center;justify-content:space-between;margin:18px 6px 8px;font-size:11px;letter-spacing:1px;text-transform:none}
 .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;padding:0}
@@ -663,7 +666,7 @@ body[data-stage="welcome"] .cmp-card{box-shadow:0 26px 70px rgba(0,0,0,.55),inse
 .embed-view{display:none;flex-direction:column;flex:1;min-height:0;position:relative;z-index:2}
 body[data-view="analytics"] .topbar,body[data-view="analytics"] .chat,body[data-view="analytics"] .composer{display:none}
 body[data-view="analytics"] .embed-view{display:flex}
-.embed-bar{flex:none;height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line2);background:rgba(20,21,25,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;z-index:2}
+.embed-bar{flex:none;height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line2);background:rgba(17,23,35,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;z-index:2}
 .embed-back{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--tx);border-radius:10px;padding:7px 13px;font-size:13px;font-weight:600;transition:.15s}
 .embed-back svg{width:16px;height:16px}
 .embed-back:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
@@ -678,6 +681,20 @@ body[data-stage="welcome"] .chat-inner{margin:0 auto;flex:none}
 
 
 @media(max-width:560px){.hw-title{text-wrap:balance;-webkit-text-wrap:balance}}
+
+/* ===== rework4：分组标题 / 细体门户标题 / 鲜亮创作卡 / 宣传片首帧 ===== */
+.rlabel{margin:16px 10px 7px;font-size:10.5px;letter-spacing:1.6px;color:var(--tx3);text-transform:uppercase;font-weight:700}
+.rlabel:first-child{margin-top:2px}
+body[data-rail="mini"] .rlabel{display:none}
+body[data-rail="mini"] .rail:hover .rlabel{display:block}
+.hw-title{font-size:33px;font-weight:600;letter-spacing:-.3px}
+.hw-title .hl{color:var(--orange)}
+.hv-head{justify-content:center}
+.hv-title{font-size:18px;font-weight:700;letter-spacing:.3px}
+body[data-stage="welcome"] .cmp-card{box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.10),0 0 120px rgba(251,122,34,.10)}
+.cmp-send{background:linear-gradient(180deg,#fd8f43,#ef5f0a);box-shadow:0 8px 22px rgba(242,99,13,.42),inset 0 1px 0 rgba(255,255,255,.3)}
+.cmp-send:hover{filter:brightness(1.07)}
+@media(max-width:560px){.hw-title{font-size:26px}.hv-title{font-size:15px}}
 
 </style>
 </head>
@@ -694,14 +711,19 @@ body[data-stage="welcome"] .chat-inner{margin:0 auto;flex:none}
       </span>
     </div>
     <div class="rail-scroll">
-      <nav class="rmenu">
-        <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>创作</button>
-        <button id="menuLab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>插件 · 伙计</button>
-        <button id="menuDeliver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>交付物</button>
-        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>效果中心</button>
+      <nav class="rmenu" id="mainMenu">
+        <div class="rlabel">创作</div>
+        <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg>首页</button>
+        <button id="navAtu" data-mate="atu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>生成商品图</button>
+        <button id="navAwen" data-mate="awen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>写爆款文案</button>
+        <button id="navAshi" data-mate="ashi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/></svg>制作营销视频</button>
+        <button id="navAfa" data-mate="afa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>媒体发布</button>
+        <div class="rlabel">资产</div>
+        <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>企业知识库</button>
+        <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>我的作品</button>
+        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果中心</button>
       </nav>
-      <div class="rgroup"><span>任务</span><button type="button" id="railNew" class="rgroup-add" title="新建任务" aria-label="新建任务"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
-      <div class="tasklist" id="taskList"></div>
+
     </div>
     <div class="rail-foot">
       <div data-member-nav hidden style="display:none"></div>
@@ -733,13 +755,6 @@ body[data-stage="welcome"] .chat-inner{margin:0 auto;flex:none}
       <div class="composer-inner">
         <div class="cmp-attach" id="cmpAttach"></div>
         <div class="cmp-card" id="cmpCard">
-          <div class="cmp-tabs" id="cmpTabs">
-            <button type="button" class="cmp-tab on" data-tab="host">WorkHogee</button>
-            <button type="button" class="cmp-tab" data-tab="atu">生图·Hogee</button>
-            <button type="button" class="cmp-tab" data-tab="awen">生文·Hogee</button>
-            <button type="button" class="cmp-tab" data-tab="ashi">生视频·Hogee</button>
-            <button type="button" class="cmp-tab" data-tab="afa">发布·Hogee</button>
-          </div>
           <div class="cmp-body">
             <button type="button" class="cmp-upload" id="btnPlus" aria-label="上传产品图">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -793,19 +808,15 @@ body[data-stage="welcome"] .chat-inner{margin:0 auto;flex:none}
 <div class="pop" id="plusPop">
   <button data-plus="shot" id="plusShotBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span id="plusShotLabel">上传商品图片</span></button>
   <button data-plus="bg" id="plusBgBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>传实地展厅背景</button>
-  <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>插件与伙计</button>
+  <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>发布账号与渠道</button>
 </div>
 
 <div class="modal" id="labModal">
   <div class="modal-card">
     <header>
-      <div class="m-title">插件与伙计</div>
+      <div class="m-title" id="labModalTitle">发布账号与渠道</div>
       <button class="icon-btn" id="labClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
-    <div class="m-tabs">
-      <button data-labtab="plugin" class="on">账号连接（插件）</button>
-      <button data-labtab="partner">伙计</button>
-    </div>
     <div class="m-body" id="labBody"></div>
   </div>
 </div>
@@ -1312,7 +1323,10 @@ function renderCmpAttach(){
 }
 
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
-function openLab(tab){state.labTab=(tab==='skill'||!tab)?'plugin':tab;$$('#labModal .m-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.labtab===state.labTab);});renderLab();$('#labModal').classList.add('show');}
+function openLab(tab){state.labTab='plugin';var t=$('#labModalTitle');if(t)t.textContent='发布账号与渠道';renderLab();$('#labModal').classList.add('show');}
+function openKnowledge(){state.labTab='skill';var t=$('#labModalTitle');if(t)t.textContent='企业知识库';renderLab();$('#labModal').classList.add('show');}
+function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();placeComposer(true);scroll.innerHTML='';state.stage='welcome';heroWelcome();}
+function enterMate(id){closeAnalytics();var mid=id==='atu'?'navAtu':id==='awen'?'navAwen':id==='ashi'?'navAshi':'navAfa';setMenuActive(mid);setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
 function renderLab(){
  var body=$('#labBody');if(!body)return;
@@ -1322,12 +1336,17 @@ function renderLab(){
 }
 function renderLabSkill(){
  var cur=state.identity?state.identity.type:'';
- var note='<div class="lab-note">行业大脑：传图后阿图会自动识别你做的行业；二手车带车型库与展厅/棚拍/实地融合，通用电商兜底全品类，卖什么都能先跑起来。</div>';
- return note+SKILLS_READY.map(function(s){
-  var on=cur===s.id;
-  return '<div class="lab-item"><span class="li-ico">'+s.ico+'</span><div class="li-main"><b>'+s.n+'</b><span>'+s.d+'</span></div>'
-   +(on?'<span class="li-state st-on">使用中</span>':'<button class="li-btn primary" data-act="skillUse" data-id="'+s.id+'">切换使用</button>')+'</div>';
+ var note='<div class="lab-note">企业知识库：行业卖点、车型库、拍摄与合规话术在这里沉淀，传图后自动调用，越用越懂你的生意。</div>';
+ var html=note+SKILLS_READY.map(function(sk){
+  var on=cur===sk.id;
+  return '<div class="lab-item"><span class="li-ico">'+(sk.id==='usedcar'?IC.car:IC.shop)+'</span>'
+   +'<div class="li-main"><b>'+sk.n+'知识库</b><span>'+sk.d+'</span></div>'
+   +(on?'<span class="li-state st-on">使用中</span>':'<button class="li-use" data-act="skillUse" data-skill="'+sk.id+'">切换使用</button>')
+   +'</div>';
  }).join('');
+ html+='<div class="lab-group">我的品牌资料</div>'
+  +'<div class="lab-item" style="opacity:.75"><span class="li-ico">'+IC.brand+'</span><div class="li-main"><b>品牌与店铺资料</b><span>Logo、品牌色、常用卖点与客服话术，一次沉淀反复用</span></div><span class="li-state st-soon">即将开放</span></div>';
+ return html;
 }
 function renderLabPlugin(){
  var ps=pluginsState();
@@ -1440,15 +1459,11 @@ function placeComposer(central){
  }
 }
 function heroWelcome(){
-  var mates=PARTNERS.map(function(p){return '<button type="button" class="hw-mate p-'+p.id+'" data-act="speak" data-id="'+p.id+'"><span class="hm-ic">'+p.ico+'</span><b>'+p.name+'</b><span>'+p.role+'</span></button>';}).join('');
   var h=document.createElement('div');h.className='hw';
-  h.innerHTML='<div class="hw-badge"><span class="dot-live"></span>你生意的好伙计</div>'
-   +'<div class="hw-title">一笔成交从<span class="hl">一张产品图</span>开始</div>'
-   +'<div class="hw-sub">拍图找阿图，写文案找阿文，做视频找阿视，发内容找阿发，盯数据找阿果。<br>五个伙计接力，从一张产品图，到一笔成交。</div>'
+  h.innerHTML='<div class="hw-title">一笔成交从<span class="hl">一张产品图</span>开始</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
-   +'<div class="hw-video"><div class="hv-head"><span class="hv-tag">Hogee 外贸版</span><span class="hv-title">五个伙计，把一张产品图变成全球订单</span></div>'
-   +'<div class="hv-frame"><button type="button" class="hv-poster" id="hvPlay" aria-label="播放宣传片"><span class="hv-play-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="hv-play-tx">观看 Hogee 外贸版宣传片</span><span class="hv-play-sub">约 90 秒 · 一张产品图，五个伙计接力</span></button><video id="hvVideo" src="/media/workhogee-global.mp4" controls preload="none" playsinline style="display:none"></video></div>'
-   +'<div class="hv-en">From one product photo to a global order &mdash; five Hogees on the job.</div></div>';
+   +'<div class="hw-video"><div class="hv-head"><span class="hv-title">WorkHogee 外贸版即将上线，敬请期待</span></div>'
+   +'<div class="hv-frame"><video id="hvVideo" src="/media/workhogee-global.mp4" poster="/media/workhogee-global-poster.jpg" controls preload="metadata" playsinline></video></div></div>';
   scroll.appendChild(h);
   placeComposer(true);
   scrollBox.scrollTop=0;
@@ -2528,10 +2543,13 @@ function sendFreeTextLegacy(txt){
 /* ================= 事件绑定 ================= */
 function bind(){
  /* 顶部 / 左列 */
- $('#railNew').addEventListener('click',newOrder);
- $('#menuHome').addEventListener('click',function(){closeAnalytics();setMenuActive('menuHome');});
- $('#menuLab').addEventListener('click',function(){openLab('plugin');});
- $('#menuDeliver').addEventListener('click',function(){closeAnalytics();setMenuActive('menuDeliver');setDeliverTab('all');openDeliver();});
+ $('#menuHome').addEventListener('click',goHome);
+ $('#navAtu').addEventListener('click',function(){enterMate('atu');});
+ $('#navAwen').addEventListener('click',function(){enterMate('awen');});
+ $('#navAshi').addEventListener('click',function(){enterMate('ashi');});
+ $('#navAfa').addEventListener('click',function(){enterMate('afa');});
+ $('#navKnowledge').addEventListener('click',openKnowledge);
+ $('#navWorks').addEventListener('click',function(){closeAnalytics();setMenuActive('navWorks');setDeliverTab('all');openDeliver();});
  $('#menuAnalytics').addEventListener('click',openAnalytics);
  $('#analyticsBack').addEventListener('click',closeAnalytics);
  $('#tbPartner').addEventListener('click',togglePartnerPop);
