@@ -1,0 +1,5 @@
+# WorkHogee 旧工作台 / 旧专题页统一入口（临时 302，可一键复原：删除对应行即恢复旧页）
+/huoer-online.html  /workbench.html  302
+/huoer-online       /workbench.html  302
+/usedcar.html       /workbench.html  302
+/usedcar            /workbench.html  302
