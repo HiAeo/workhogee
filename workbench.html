@@ -3123,7 +3123,8 @@ function routeByIntent(txt,it){
     setDeliverTab('reach');openDeliver();
     botSay(it.reply||'素材和文案都备好了，右边选平台：复制文案、打开发布页，最后一下由你本人点发送。','afa');
    }else{
-    botSay(it.reply||'先让阿图出图、或让阿文写文案，我才能把素材打包送达各平台。','afa');
+    setDeliverTab('reach');openDeliver();
+    botSay(it.reply||'我是阿发，右边是我能送达的平台。先让阿图出图、或让阿文写文案，素材一好我就按平台打包，最后一下你本人点发送。','afa');
    }
    break;
   }
@@ -3169,7 +3170,7 @@ function sendFreeTextLegacy(txt){
  if(ap==='awen'){awenFlow(txt);return;}
  if(ap==='afa'){
   if(state.results.length||state.copy.ready){setDeliverTab('reach');openDeliver();botSay('素材和文案都备好了，右边选平台：复制文案、打开发布页，最后一下由你本人点发送。','afa');}
-  else botSay('先让阿图出图、或让阿文写文案，我才能把素材打包送达各平台。','afa');
+  else{setDeliverTab('reach');openDeliver();botSay('我是阿发，右边是我能送达的平台。先让阿图出图、或让阿文写文案，素材一好我就按平台打包，最后一下你本人点发送。','afa');}
   return;
  }
  if(ap==='agu'){botSay('我是阿果，专管效果数据。画册投出去后的浏览、留资、渠道归因都在效果中心。','agu');aguCard();return;}
