@@ -2976,31 +2976,34 @@ function awenFlow(text,tone){
  var sp=(identifyFields&&identifyFields.sellingPoints)||state.product.sellingPoints||[];
  var cat=(identifyFields&&identifyFields.category)||state.product.category||state.identity.cat||'';
  var productName=state.product.name||[identifyFields.brand,identifyFields.name].filter(Boolean).join(' ');
+ var payload={product:productName,identityType:state.identity.type||'general',extra:state.extra||'',sellingPoints:sp,category:cat,tone:tone||'',kbContext:getKnowledgeContext()};
  var stop=botTyping('awen');
- authPost('/copy',{product:productName,identityType:state.identity.type||'general',extra:state.extra||'',sellingPoints:sp,category:cat,tone:tone||'',kbContext:getKnowledgeContext()})
-  .then(function(r){
-   stop();
-   if(r&&r.ok&&r.copy&&r.copy.available&&r.copy.channels){
-    var ch=r.copy.channels;
-    state.copy.cps={general:ch.general,xhs:ch.xhs,pyq:ch.pyq,tags:(ch.tags||[]).join(' ')};
-    state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
-    state.copy._lastTone=tone||'';rememberWork('copy',{text:(state.copy.cps&&state.copy.cps.general)||''});
-    renderTopbar();setDeliverTab('copy');openDeliver();
-    var warn=(r.copy.bannedHits&&r.copy.bannedHits.length)?(' 检出绝对化词「'+r.copy.bannedHits.join('、')+'」，发布前点净化。'):'';
-    var spHint=sp.length?(' 这次用了图里看出来的 '+sp.length+' 个卖点。'):'';
-    botSay('文案已放进右侧「交付物 · 图文」。'+spHint+warn+' 不满意可以点下面按钮再改一版。','awen');
-   }else{
-    state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';rememberWork('copy',{text:(state.copy.cps&&state.copy.cps.general)||''});
-    renderTopbar();setDeliverTab('copy');openDeliver();
-    botSay('文案已放进右侧「交付物 · 图文」（规则模板版）。','awen');
-   }
-  })
-  .catch(function(){
-   stop();
-   state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';rememberWork('copy',{text:(state.copy.cps&&state.copy.cps.general)||''});
-   renderTopbar();setDeliverTab('copy');openDeliver();
-   botSay('文案已放进右侧「交付物 · 图文」（规则模板版）。','awen');
+ function renderLLM(r){
+  var ch=r.copy.channels;
+  state.copy.cps={general:ch.general,xhs:ch.xhs,pyq:ch.pyq,tags:(ch.tags||[]).join(' ')};
+  state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';
+  state.copy._lastTone=tone||'';rememberWork('copy',{text:(state.copy.cps&&state.copy.cps.general)||''});
+  renderTopbar();setDeliverTab('copy');openDeliver();
+  var warn=(r.copy.bannedHits&&r.copy.bannedHits.length)?(' 检出绝对化词「'+r.copy.bannedHits.join('、')+'」，发布前点净化。'):'';
+  var spHint=sp.length?(' 这次用了图里看出来的 '+sp.length+' 个卖点。'):'';
+  botSay('文案已放进右侧「交付物 · 图文」。'+spHint+warn+' 不满意可以点下面按钮再改一版。','awen');
+ }
+ function renderFallback(tip){
+  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh='';rememberWork('copy',{text:(state.copy.cps&&state.copy.cps.general)||''});
+  renderTopbar();setDeliverTab('copy');openDeliver();
+  botSay(tip,'awen');
+ }
+ function attempt(n){
+  authPost('/copy',payload).then(function(r){
+   if(r&&r.ok&&r.copy&&r.copy.available&&r.copy.channels){stop();renderLLM(r);}
+   else if(n>0){attempt(n-1);}
+   else{stop();renderFallback('AI 文案服务暂时繁忙，已先给你一版模板文案兜底，重新发送或点下方按钮即可让阿文再写一版。');}
+  }).catch(function(){
+   if(n>0){attempt(n-1);}
+   else{stop();renderFallback('网络开了点小差，已先给你一版模板文案兜底，重新发送即可让阿文再写。');}
   });
+ }
+ attempt(1);
 }
 function redoCopy(tone){
  awenFlow(state.extra||'',tone);
