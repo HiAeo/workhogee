@@ -1930,7 +1930,7 @@ function heroWelcome(){
  function renderHmRail(h){
   var rail=h.querySelector('#hmRail');if(!rail)return;
   rail.innerHTML='<div class="hm-loading">Hogee上新加载中…</div>';
-  fetch(API+'/api/feed',{headers:{'Accept':'application/json'}})
+  fetch(API+'/api/feed?_='+Date.now(),{cache:'no-store',headers:{'Accept':'application/json'}})
    .then(function(r){if(!r.ok)throw new Error('feed '+r.status);return r.json();})
    .then(function(j){if(j&&j.ok&&Array.isArray(j.items))hmPaintRail(h,j.items,hmIsAdmin());else hmFallback(h);})
    .catch(function(){hmFallback(h);});
