@@ -3483,6 +3483,8 @@ initLayout();
   document.addEventListener('hogee:auth',renderAccount);
   document.addEventListener('hogee:logout',renderAccount);
 })();
+/* rework10 fix: 跨 IIFE 桥，供下拉/语音/上传交互块调用主作用域函数 */
+window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPartners,renderTopbar:renderTopbar,setMenuActive:setMenuActive,enterMate:enterMate,startOrder:startOrder,syncSendReady:syncSendReady};
 })();
 
 
@@ -3490,6 +3492,7 @@ initLayout();
 
 /* ================= rework10 交互：下拉 / 语音 / 精选本地上传 ================= */
 (function(){
+ var HG=window.HG||{};
  function $(s){return document.querySelector(s);}
  /* ---- ④ 通用下拉 ---- */
  function wire(btnId,menuId,onPick){
@@ -3508,7 +3511,7 @@ initLayout();
   window.addEventListener('resize',closeAll);
   window.addEventListener('scroll',closeAll,true);
   menu.addEventListener('click',function(e){e.stopPropagation();var b=e.target.closest('button');if(!b)return;
-   if(b.classList.contains('off')||b.disabled){if(window.toast)toast('该行业技能即将开放，先用通用电商');return;}
+   if(b.classList.contains('off')||b.disabled){if(HG.toast)HG.toast('该行业技能即将开放，先用通用电商');return;}
    onPick(b);closeAll();});
   document.addEventListener('click',function(e){if(!dd.contains(e.target)&&!menu.contains(e.target))closeAll();});
  }
@@ -3517,23 +3520,23 @@ initLayout();
   document.querySelectorAll('#ddAgentMenu button').forEach(function(x){x.classList.toggle('on',x===b);});
   var lab=document.getElementById('ddAgentLabel');
   if(v==='host'){lab.textContent='Agent 模式';
-   try{setActivePartner('host');renderPartners();renderTopbar();setMenuActive('menuHome');}catch(e){}
-   if(window.toast)toast('已切回自动识别，交给 Hogee 判断');
+   try{HG.setActivePartner('host');HG.renderPartners();HG.renderTopbar();HG.setMenuActive('menuHome');}catch(e){}
+   if(HG.toast)HG.toast('已切回自动识别，交给 Hogee 判断');
   }else{lab.textContent=b.textContent.trim();
-   try{enterMate(v);}catch(e){}
-   if(window.toast)toast('已交给对应伙计，直接说需求或传图即可');}
+   try{HG.enterMate(v);}catch(e){}
+   if(HG.toast)HG.toast('已交给对应伙计，直接说需求或传图即可');}
  });
  wire('ddSkillBtn','ddSkillMenu',function(b){
   var s=b.getAttribute('data-s');
   document.querySelectorAll('#ddSkillMenu button').forEach(function(x){x.classList.toggle('on',x===b);});
   var lab=document.getElementById('ddSkillLabel');lab.textContent=b.textContent.trim().replace('Skill','').trim();
-  try{if(s==='general'){startOrder('general');}else if(s==='usedcar'){startOrder('usedcar');}}catch(e){}
+  try{if(s==='general'){HG.startOrder('general');}else if(s==='usedcar'){HG.startOrder('usedcar');}}catch(e){}
  });
  /* ---- ⑤ 语音输入（Web Speech API，仅本机识别，不上传） ---- */
  var mic=document.getElementById('btnMic'),ta=document.getElementById('composerInput');
  if(mic&&ta){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){mic.addEventListener('click',function(){if(window.toast)toast('当前浏览器不支持语音，请用 Edge 或 Chrome');});
+  if(!SR){mic.addEventListener('click',function(){if(HG.toast)HG.toast('当前浏览器不支持语音，请用 Edge 或 Chrome');});
    mic.style.opacity=.55;}
   else{
    var rec=new SR();rec.lang='zh-CN';rec.continuous=false;rec.interimResults=true;
@@ -3546,9 +3549,9 @@ initLayout();
    });
    rec.onstart=function(){listening=true;mic.classList.add('rec');};
    rec.onresult=function(e){var t='';for(var i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;
-    ta.value=base+t;fit();if(window.syncSendReady)syncSendReady();};
-   var end=function(){listening=false;mic.classList.remove('rec');fit();if(window.syncSendReady)syncSendReady();};
-   rec.onend=end;rec.onerror=function(ev){end();if(ev&&ev.error==='not-allowed'&&window.toast)toast('请在浏览器允许麦克风权限');};
+    ta.value=base+t;fit();if(HG.syncSendReady)HG.syncSendReady();};
+   var end=function(){listening=false;mic.classList.remove('rec');fit();if(HG.syncSendReady)HG.syncSendReady();};
+   rec.onend=end;rec.onerror=function(ev){end();if(ev&&ev.error==='not-allowed'&&HG.toast)HG.toast('请在浏览器允许麦克风权限');};
   }
  }
  /* ---- ⑥ 精选墙本地上传（仅本机预览，按原始比例自动卡位，纳入灯箱） ---- */
@@ -3571,7 +3574,7 @@ initLayout();
  var hmInp=document.getElementById('hmUpload');
  if(hmInp)hmInp.addEventListener('change',function(){
   var rail=document.getElementById('hmRail'),addBtn=document.getElementById('hmAddBtn');
-  if(!rail){if(window.toast)toast('请回到首页精选墙再上传');return;}
+  if(!rail){if(HG.toast)HG.toast('请回到首页精选墙再上传');return;}
   var files=Array.prototype.slice.call(hmInp.files||[]);if(!files.length)return;
   files.forEach(function(file){
    var url=URL.createObjectURL(file),name=file.name||'我的素材';
@@ -3590,7 +3593,7 @@ initLayout();
    }
   });
   hmInp.value='';
-  if(window.toast)toast('已加入精选墙（本机预览，不会上传）');
+  if(HG.toast)HG.toast('已加入精选墙（本机预览，不会上传）');
  });
 })();
 
