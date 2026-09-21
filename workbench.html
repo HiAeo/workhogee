@@ -2526,12 +2526,13 @@ function copySectionHtml(){
   +'<div class="copy-foot"><span id="copyScan" class="copy-ok"></span><button type="button" class="btn btn-ghost btn-sm" id="copyCleanBtn" data-act="copyClean" style="display:none">一键净化绝对化词</button></div>' +'<div class="copy-redo" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:12px;opacity:.6;line-height:28px">不满意再改：</span><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="casual">再口语化</button><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="short">再短一点</button><button type="button" class="btn btn-ghost btn-sm" data-act="copyRedo" data-t="real">别像广告</button></div></div></div>';
 }
 function reachSectionHtml(){
- if(!state.results.length&&!state.copy.ready)return '';
+ var noAsset=!state.results.length&&!state.copy.ready;
  var btns=REACH_PLATFORMS.map(function(x){return '<button type="button" class="reach-btn" data-act="reach" data-p="'+x.p+'" data-url="'+x.url+'">'+x.name+(x.url?IC.external:'')+'</button>';}).join('');
  var pub=state.showcase?showcaseDeliverHtml():('<button class="btn btn-dark btn-sm" data-act="publishShowcase">'+IC.qr+' 生成可追踪画册 / 渠道码</button>');
+ var tip=noAsset?'先让阿图出图、阿文写文案；素材一备好，回到这里选平台，复制文案、打开发布页，最后一下由你本人点发送。':'图片用「一键打包」素材包；手机发朋友圈可先生成画册，把链接发到微信，手机打开即可存图、复制文案。';
  return '<div class="dl-sec"><h5>'+IC.send+' 阿发送达</h5>'
   +'<div class="reach-box"><div class="reach-head">选平台：复制文案 + 打开发布页<span class="rh-sub">最后一下由你本人发布，阿发不碰账号密码</span></div><div class="reach-grid">'+btns+'</div>'
-  +'<div class="reach-tip">图片用「一键打包」素材包；手机发朋友圈可先生成画册，把链接发到微信，手机打开即可存图、复制文案。</div></div>'
+  +'<div class="reach-tip">'+tip+'</div></div>'
   +'<div class="reach-box"><div class="reach-head">'+IC.qr+' H5 画册与渠道码<span class="rh-sub">谁看了、看多久、留了联系方式，回到阿果效果中心</span></div>'+pub+'</div></div>';
 }
 function emptyDeliverHtml(){
@@ -2542,11 +2543,11 @@ function renderDeliver(){
  if($('#copyText')){state.copy.draft=$('#copyText').value;state.copy._lastCh=state.copy.channel;}
  var tab=state.deliverTab,html='',has=state.results.length||state.dyn.length||state.dynGrid||state.copy.ready||state.showcase;
  if(tab==='video'){body.innerHTML=videoSectionHtml();}
+ else if(tab==='reach'){body.innerHTML=reachSectionHtml();}
  else if(!has){body.innerHTML=emptyDeliverHtml();}
  else if(tab==='img'){body.innerHTML=imagesSectionHtml()||emptyDeliverHtml();}
  else if(tab==='dyn'){body.innerHTML=dynSectionHtml();}
  else if(tab==='copy'){body.innerHTML=copySectionHtml()||emptyDeliverHtml();}
- else if(tab==='reach'){body.innerHTML=reachSectionHtml()||emptyDeliverHtml();}
  else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+videoSectionHtml()+copySectionHtml()+reachSectionHtml();}
  var n=deliverCount();$('#dlCount').textContent=n;$('#dlCount').classList.toggle('show',n>0);
  $('#nImg').textContent=state.results.length?('('+state.results.length+')'):'';
