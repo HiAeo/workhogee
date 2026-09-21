@@ -240,12 +240,17 @@ td .dim{color:var(--m);font-size:12px}
 <style>
 html.embed{
   --ink:#eaf0f9;--ink2:#c4cddd;--m:#94a1b6;--m2:#69758c;
-  --l:#1a2231;--l2:#0d1119;--line:rgba(255,255,255,.10);--white:#18202f;
+  --l:#232d42;--l2:#131a27;--line:rgba(255,255,255,.12);--white:#1b2333;
   --o:#fb7a22;--o-d:#f2630d;--o-soft:rgba(251,122,34,.16);--o-line:rgba(251,122,34,.40);
   --shadow:0 1px 2px rgba(0,0,0,.35),0 16px 40px -18px rgba(0,0,0,.7)}
 html.embed header.topbar,html.embed footer.whf{display:none!important}
-html.embed body{background:#0d1119;color:var(--ink)}
-html.embed main.wrap{min-height:100vh;padding-top:22px}
+html.embed body{background-color:#131a27;color:var(--ink);
+  background-image:
+   radial-gradient(900px 520px at 12% -8%, rgba(251,122,34,.13), transparent 60%),
+   radial-gradient(820px 520px at 96% 0%, rgba(80,120,255,.10), transparent 58%),
+   radial-gradient(760px 640px at 50% 118%, rgba(168,85,247,.10), transparent 62%);
+  background-attachment:fixed;background-repeat:no-repeat}
+html.embed main.wrap{min-height:100vh;padding-top:16px}
 html.embed .tablewrap,html.embed .iconbtn,html.embed .search,html.embed .modal,
 html.embed .field select,html.embed .field input,html.embed .field textarea,
 html.embed .chips button,html.embed .qr-box .qr,html.embed .drawer,html.embed .empty,
@@ -257,7 +262,14 @@ html.embed .seg button.on,html.embed .filterbar .st-tabs button.on,
 html.embed .btn-dark,html.embed .st-deal,html.embed .step3 .n{background:var(--o);color:#fff;border-color:var(--o)}
 html.embed .btn-dark:hover{background:var(--o-d)}
 html.embed .btn-ghost:hover{background:var(--l);border-color:var(--line)}
-html.embed .kpi.accent{background:linear-gradient(135deg,#f2630d,#fb8a3c);border-color:transparent}
+html.embed .kpi.accent{background:rgba(251,122,34,.10);border-color:rgba(251,122,34,.45)}
+html.embed .kpi.accent .num{color:#fd9248}
+html.embed .kpi.accent .lab,html.embed .kpi.accent .sub{color:rgba(255,255,255,.72)}
+html.embed .kpi.accent .sub b{color:#fdba74}
+html.embed .page-head h1{font-size:18px;font-weight:600;letter-spacing:0}
+html.embed .page-head p{font-size:12px}
+html.embed .kpi{background:rgba(27,35,51,.72);backdrop-filter:blur(6px)}
+html.embed .panel{background:rgba(27,35,51,.72);backdrop-filter:blur(6px)}
 html.embed .st-following{background:rgba(251,122,34,.20);color:#fdba74}
 html.embed .st-visited{background:rgba(251,122,34,.13);color:#fdba74;border-color:rgba(251,122,34,.35)}
 html.embed .drawer-f,html.embed .step3{background:var(--l2)}
@@ -661,28 +673,40 @@ function renderTrend(){
     xAxis:{type:'category',boundaryGap:false,data:tr.map(function(x){return x.date.slice(5);}),axisLine:chartTheme.axis.axisLine,axisTick:{show:false},axisLabel:chartTheme.axis.axisLabel},
     yAxis:{type:'value',minInterval:1,splitLine:chartTheme.axis.splitLine,axisLabel:chartTheme.axis.axisLabel},
     series:[
-      {name:'浏览 PV',type:'line',smooth:!REDUCE,symbol:'circle',symbolSize:5,showSymbol:false,data:tr.map(function(x){return x.pv;}),lineStyle:{color:'#1c1917',width:2.2},itemStyle:{color:'#1c1917'},areaStyle:{color:'rgba(28,25,23,.05)'}},
+      {name:'浏览 PV',type:'line',smooth:!REDUCE,symbol:'circle',symbolSize:5,showSymbol:false,data:tr.map(function(x){return x.pv;}),lineStyle:{color:EMB?'#e6ecf7':'#1c1917',width:2.2},itemStyle:{color:EMB?'#e6ecf7':'#1c1917'},areaStyle:{color:EMB?'rgba(230,236,247,.07)':'rgba(28,25,23,.05)'}},
       {name:'访客 UV',type:'line',smooth:!REDUCE,symbol:'circle',symbolSize:4,showSymbol:false,data:tr.map(function(x){return x.uv;}),lineStyle:{color:'#ea580c',width:2},itemStyle:{color:'#ea580c'}}
     ]
   });
 }
 function funnelOption(funnel,big){
   var rows=(funnel||[]).map(function(f,i){return{label:f.label,short:SHORT[i]||f.label,count:f.count};});
-  var colors=['#1c1917','#44403c','#78716c','#ea580c','#f97316','#fb923c','#fdba74'];
-  var data=rows.map(function(d,i){return{name:d.short,value:d.count,itemStyle:{color:colors[i%colors.length]}};});
+  var n=Math.max(rows.length,1);
+  // 统一品牌橙色阶（深底用亮阶，浅底用深阶）；视觉宽度固定等差收窄，保证标准漏斗形状
+  var oLight=['#fdba74','#fb923c','#f97316','#ea580c','#dd6a1a','#c2570e','#9a4409'];
+  var oDark =['#fdba74','#f98d3f','#f2630d','#ea580c','#d2570c','#b94c0b','#9a4009'];
+  var data=rows.map(function(d,i){
+    var shape=Math.max(34,100-i*(66/n));
+    var active=d.count>0;
+    var col=active?(EMB?oLight[i%oLight.length]:oDark[i%oDark.length]):(EMB?'rgba(255,255,255,.10)':'#e7e5e4');
+    return{name:d.short,value:shape,_real:d.count,itemStyle:{color:col,borderColor:EMB?'#131a27':'#fff'}};
+  });
   var tip=Object.assign({trigger:'item',formatter:function(p){var d=rows[p.dataIndex];return d.label+'：<b>'+n0(d.count)+'</b>';}},chartTheme.tooltip);
+  var labColor=function(p){var a=rows[p.dataIndex].count>0;
+    if(big)return a?'#fff':'#9aa7b8';
+    return a?(EMB?'#eaf0f9':'#44403c'):(EMB?'#7e8a9c':'#a8a29e');};
+  var labText=function(p){return rows[p.dataIndex].short+'  '+n0(rows[p.dataIndex].count);};
   if(big){
     return{textStyle:chartTheme.textStyle,tooltip:tip,series:[{
-      type:'funnel',minSize:'36%',maxSize:'94%',gap:3,sort:'none',
-      label:{show:true,position:'inside',color:'#fff',fontSize:12.5,fontWeight:600,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
-      labelLine:{show:false},itemStyle:{borderColor:'#fff',borderWidth:2,borderRadius:5},data:data
+      type:'funnel',minSize:'30%',maxSize:'96%',gap:3,sort:'none',
+      label:{show:true,position:'inside',fontSize:12.5,fontWeight:600,formatter:labText,color:labColor},
+      labelLine:{show:false},itemStyle:{borderWidth:2,borderRadius:5},data:data
     }]};
   }
   return{textStyle:chartTheme.textStyle,tooltip:tip,series:[{
-    type:'funnel',left:'0%',width:'55%',top:8,bottom:8,minSize:'24%',maxSize:'100%',gap:2,sort:'none',
-    label:{show:true,position:'right',color:EMB?'#dfe6f2':'#44403c',fontSize:11.5,formatter:function(p){return rows[p.dataIndex].short+'  '+n0(p.value);}},
-    labelLine:{show:true,length:8,length2:6,lineStyle:{color:'#d6d3d1'}},
-    itemStyle:{borderColor:'#fff',borderWidth:1.5,borderRadius:4},data:data
+    type:'funnel',left:'0%',width:'55%',top:8,bottom:8,minSize:'22%',maxSize:'100%',gap:2,sort:'none',
+    label:{show:true,position:'right',fontSize:11.5,formatter:labText,color:labColor},
+    labelLine:{show:true,length:8,length2:6,lineStyle:{color:EMB?'rgba(255,255,255,.25)':'#d6d3d1'}},
+    itemStyle:{borderWidth:1.5,borderRadius:4},data:data
   }]};
 }
 function renderRank(list,el,type){
@@ -766,14 +790,14 @@ function renderFunnelView(){
     var prev=i?f[i-1].count:null;
     var rate=prev?((x.count/prev)*100).toFixed(1)+'%':'100%';
     var w=prev?Math.max((x.count/Math.max(prev,1))*100,4):100;
-    return '<div class="staterow steprate"><span class="sn">'+(SHORT[i]||esc(x.label))+'<small>'+n0(x.count)+' · '+esc(x.label)+'</small></span><div class="bar" style="height:8px"><i style="display:block;height:100%;background:'+(i>=3?'#ea580c':'#a8a29e')+';border-radius:99px;width:'+w.toFixed(1)+'%"></i></div><span class="rt tnum">'+rate+'</span></div>';
+    return '<div class="staterow steprate"><span class="sn">'+(SHORT[i]||esc(x.label))+'<small>'+n0(x.count)+' · '+esc(x.label)+'</small></span><div class="bar" style="height:8px"><i style="display:block;height:100%;background:'+(['#fdba74','#fb923c','#f97316','#ea580c','#ea580c','#c2410c','#9a3412'][i]||'#ea580c')+';border-radius:99px;width:'+w.toFixed(1)+'%"></i></div><span class="rt tnum">'+rate+'</span></div>';
   }).join('');
   var by={new:0,following:0,visited:0,deal:0,lost:0};
   S.leads.forEach(function(l){by[l.status]=(by[l.status]||0)+1;});
   var tot=S.leads.length||1;
   $('leadStateBars').innerHTML=Object.keys(ST).map(function(k){
     var v=by[k]||0;
-    return '<div class="staterow"><span class="src-tag" style="background:transparent;padding:0">'+ST[k].t+'</span><div class="bar" style="height:9px"><i style="display:block;height:100%;background:'+(k==='deal'?'#1c1917':k==='visited'?'#ea580c':'#d6d3d1')+';border-radius:99px;width:'+Math.round(v/tot*100)+'%"></i></div><span class="tnum" style="text-align:right;font-weight:600">'+v+'</span></div>';
+    return '<div class="staterow"><span class="src-tag" style="background:transparent;padding:0">'+ST[k].t+'</span><div class="bar" style="height:9px"><i style="display:block;height:100%;background:'+({new:'#fdba74',following:'#fb923c',visited:'#f97316',deal:'#ea580c',lost:'rgba(234,88,12,.32)'}[k]||'#ea580c')+';border-radius:99px;width:'+Math.round(v/tot*100)+'%"></i></div><span class="tnum" style="text-align:right;font-weight:600">'+v+'</span></div>';
   }).join('');
 }
 
