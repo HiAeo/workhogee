@@ -846,6 +846,57 @@ body[data-stage="welcome"] .cmp-upload{border-color:rgba(255,255,255,.16);backgr
  .hm6-rail{margin:0 -14px;padding-left:14px;padding-right:30px;-webkit-mask-image:none;mask-image:none}
  .hm6-tip{display:none}
 }
+/* ============================================================
+   rework8：窄轨一体 · 去顶栏 · 门户通栏精选（覆盖 rework7）
+   ============================================================ */
+:root{--rail:112px}
+.rail-brand{justify-content:center;padding:18px 0 12px}
+.rail-brand a.wm-mark{display:inline-flex!important}
+.rail-brand a.wm-full{display:none!important}
+.rail-brand .wm-mark svg{height:30px;width:auto;display:block}
+.rail-scroll{padding:6px 12px 10px}
+.rmenu{align-items:center;gap:2px}
+.rmenu button{width:88px;gap:5px;padding:10px 4px;font-size:11px;border-radius:13px}
+.rmenu button svg{width:22px;height:22px}
+.rlabel{display:none!important}
+.rail-foot{padding:10px 12px 12px}
+.rail-foot .wb-account{align-items:center;gap:8px}
+.rail-foot .wb-btn{flex-direction:column;width:88px;height:62px;padding:0;gap:5px;border-radius:14px;font-size:11.5px;font-weight:600;justify-content:center;line-height:1.1}
+.rail-foot .wb-btn svg{width:21px;height:21px}
+.rail-foot .wb-btn-p{background:linear-gradient(180deg,#fd8a3d,#f2630d);border-color:transparent;color:#fff;box-shadow:0 8px 20px rgba(234,88,12,.28)}
+.rail-foot .wb-btn-p:hover{background:linear-gradient(180deg,#ff974d,#fb7a22)}
+.rail-foot .wb-btn-g{background:rgba(255,255,255,.045);border-color:var(--line);color:var(--tx)}
+.rail-foot .wb-btn-g:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);color:var(--tx)}
+.rail-foot .wb-ab{flex-direction:column;width:88px;height:auto;padding:9px 4px 8px;gap:5px;border-radius:14px;background:rgba(255,255,255,.045)}
+.rail-foot .wb-ab:hover{background:rgba(255,255,255,.08)}
+.rail-foot .wb-ab .wb-ava{width:34px;height:34px;margin:0}
+.rail-foot .wb-ab .nm{text-align:center;font-size:11px;width:100%}
+.rail-foot .wb-ab .cv{display:none}
+.rail-ver{display:none!important}
+@media(min-width:901px){.topbar{display:none!important}}
+body[data-stage="welcome"] .chat-inner{max-width:none;padding:0}
+body[data-stage="welcome"] .hw.hw6{max-width:none;padding:0;margin:2.2vh auto 0}
+.hw6-hero{max-width:880px;margin:0 auto;padding:0 26px}
+.hm6{width:100%;max-width:none}
+.hm6-head{margin:32px 0 2px;padding:0 28px}
+.hm6-rail{margin:0;padding:8px 0 16px;padding-left:28px;padding-right:40px;-webkit-mask-image:none;mask-image:none}
+@media(max-width:760px){
+ .hm6-head{padding:0 16px}
+ .hm6-rail{padding-left:16px;padding-right:28px}
+}
+@media(max-width:900px){
+ .topbar{display:flex!important;height:50px;border:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 8px}
+ .topbar .tb-task,.topbar .tb-right{display:none!important}
+ .rail-brand{justify-content:flex-start;padding:16px 16px 14px}
+ .rail-brand a.wm-mark{display:none!important}
+ .rail-brand .wm-full{display:inline-flex!important}
+ .rail-scroll{padding:6px 16px}
+ .rmenu button{width:120px;font-size:12px;padding:11px 6px}
+ .rmenu button svg{width:23px;height:23px}
+ .rail-foot{padding:12px 16px}
+ .rail-foot .wb-btn,.rail-foot .wb-ab{width:120px}
+ .rail-foot .wb-btn{height:64px}
+}
 /* ===== rework5 中央作品库 ===== */
 body[data-stage="works"] .composer{display:none!important}
 .wv{max-width:1080px;margin:0 auto;padding:12px 8px 70px;animation:hwIn .4s ease}
@@ -921,23 +972,16 @@ body[data-stage="welcome"] .cmp-card{box-shadow:0 30px 80px rgba(0,0,0,.5),inset
 <div class="app">
   <aside class="rail" id="rail">
     <div class="rail-brand">
-      <a href="/" class="wm" title="回 WorkHogee 官网" aria-label="WorkHogee" style="display:inline-flex;align-items:center"><svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:23px;width:auto;display:block"><defs><style>.wb1{fill:#ffffff}.wb2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wb1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wb2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wb1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wb1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wb1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text></g></svg></a>
-      <span class="rail-brand-actions">
-      <a href="/" class="icon-btn icon-home" title="回官网" aria-label="回官网">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/></svg>
-      </a>
-      <button class="rail-toggle" id="btnRailToggle" type="button" aria-label="收起侧栏" title="收起侧栏"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></button>
-      </span>
+      <a href="/" class="wm wm-mark" title="WorkHogee" aria-label="WorkHogee 首页"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></a>
+      <a href="/" class="wm wm-full" title="回 WorkHogee 官网" aria-label="WorkHogee" style="align-items:center"><svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:23px;width:auto;display:block"><defs><style>.wb1{fill:#ffffff}.wb2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wb1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wb2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wb1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wb1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wb1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text></g></svg></a>
     </div>
     <div class="rail-scroll">
       <nav class="rmenu" id="mainMenu">
-        <div class="rlabel">创作</div>
         <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg>首页</button>
         <button id="navAtu" data-mate="atu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>商品图</button>
         <button id="navAwen" data-mate="awen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>文案创作</button>
         <button id="navAshi" data-mate="ashi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/></svg>营销视频</button>
         <button id="navAfa" data-mate="afa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>发布</button>
-        <div class="rlabel">资产</div>
         <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>知识库</button>
         <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>作品</button>
         <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果</button>
@@ -947,7 +991,6 @@ body[data-stage="welcome"] .cmp-card{box-shadow:0 30px 80px rgba(0,0,0,.5),inset
     <div class="rail-foot">
       <div data-member-nav hidden style="display:none"></div>
       <div class="wb-account" id="wbAccount"></div>
-      <div class="rail-ver">WorkHogee 内测版 · 做生意，找伙计</div>
     </div>
   </aside>
   <div class="rail-mask" id="railMask"></div>
@@ -1716,15 +1759,9 @@ function heroWelcome(){
   h.innerHTML='<div class="hw6-hero">'
    +'<span class="hw6-badge"><span class="dot"></span>Hogee · 你的生意好伙计</span>'
    +'<h1 class="hw6-title">一笔成交，从<span class="hl">一张产品图</span>开始</h1>'
-   +'<p class="hw6-sub">传一张手机实拍，阿图出商品图、阿文写文案、阿视剪视频、阿发帮你发到抖音小红书——五个伙计接力，从一张图到一笔成交。</p></div>'
-   +'<div class="hw-dock" id="hwDock"></div>'
-   +'<div class="hw6-chips" id="hwChips">'
-   +'<button type="button" class="hw6-chip" data-m="atu">'+ICN.img+'生成商品图</button>'
-   +'<button type="button" class="hw6-chip" data-m="awen">'+ICN.pen+'写爆款文案</button>'
-   +'<button type="button" class="hw6-chip" data-m="ashi">'+ICN.vid+'制作营销视频</button>'
-   +'<button type="button" class="hw6-chip" data-m="afa">'+ICN.send+'媒体发布</button>'
    +'</div>'
-   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h">功能演示 · 商品图与视频</span><span class="hm6-tip">横向拖动查看更多 ›</span></div>'
+   +'<div class="hw-dock" id="hwDock"></div>'
+   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h">精选</span><span class="hm6-tip">横向拖动查看更多 ›</span></div>'
    +'<div class="hm6-rail" id="hmRail"></div></section>';
   scroll.appendChild(h);
   placeComposer(true);
@@ -1771,8 +1808,6 @@ function heroWelcome(){
   HM6_DEMO.forEach(function(d){list.push(d);if(d.feat&&mine.length)list=list.concat(mine);});
   rail.innerHTML=list.map(function(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}).join('');
   initBa(h);
-  // 能力胶囊 → 对应伙计
-  h.querySelectorAll('#hwChips [data-m]').forEach(function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');if(typeof enterMate==='function')enterMate(m);});});
   // 卡片点击：灯箱 / 作品库
   if(!h._r6bound){h._r6bound=1;h.addEventListener('click',function(e){
    var ow=e.target.closest('[data-openworks]');if(ow){openWorks();return;}
@@ -2319,17 +2354,9 @@ function selectTab(k){
  var inp=$('#composerInput');if(inp)setTimeout(function(){inp.focus();},30);
 }
 function initLayout(){
- var rail='wide';try{rail=localStorage.getItem('hw.rail')||'wide';}catch(e){}
- document.body.dataset.rail=rail==='mini'?'mini':'wide';
+ document.body.dataset.rail='wide';
  var dl='closed';try{dl=localStorage.getItem('hw.deliver')||'closed';}catch(e){}
  document.body.dataset.deliver=(dl==='open'&&typeof deliverCount==='function'&&deliverCount()>0)?'open':'closed';
- var rt=$('#btnRailToggle');
- function railIcon(){var mini=document.body.dataset.rail==='mini';rt.innerHTML=mini
-  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m13 9 3 3-3 3"/></svg>'
-  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>';
-  rt.title=mini?'展开侧栏':'收起侧栏';rt.setAttribute('aria-label',rt.title);}
- railIcon();
- rt.addEventListener('click',function(){var mini=document.body.dataset.rail==='mini';document.body.dataset.rail=mini?'wide':'mini';try{localStorage.setItem('hw.rail',mini?'wide':'mini');}catch(e){}railIcon();});
  var b=$('#btnDeliver');if(b)b.classList.toggle('on',document.body.dataset.deliver==='open');
  var tabs=$('#cmpTabs');
  if(tabs&&!tabs._bound){tabs._bound=true;tabs.addEventListener('click',function(e){var t2=e.target.closest('.cmp-tab');if(t2)selectTab(t2.dataset.tab);});}
@@ -3309,8 +3336,8 @@ initLayout();
   function renderAccount(){
     if(!M){acct.innerHTML='';return;}
     if(!M.isLoggedIn()){
-      acct.innerHTML='<button class="wb-btn wb-btn-p" id="wbReg">'+(IC?IC.user:'')+'Hogee会员注册</button>'
-        +'<button class="wb-btn wb-btn-g" id="wbLogin">登录</button>';
+      acct.innerHTML='<button class="wb-btn wb-btn-p" id="wbReg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>注册</button>'
+        +'<button class="wb-btn wb-btn-g" id="wbLogin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>登录</button>';
       var r=q('#wbReg',acct),l=q('#wbLogin',acct);
       if(r)r.addEventListener('click',function(){M.open('register');});
       if(l)l.addEventListener('click',function(){M.open('login');});
