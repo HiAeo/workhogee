@@ -1722,7 +1722,7 @@ function renderCmpAttach(){
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
 function openLab(tab){state.labTab='plugin';var t=$('#labModalTitle');if(t)t.textContent='发布账号与渠道';renderLab();$('#labModal').classList.add('show');}
 function openKnowledge(){state.labTab='skill';var t=$('#labModalTitle');if(t)t.textContent='知识库';renderLab();$('#labModal').classList.add('show');}
-function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();placeComposer(true);scroll.innerHTML='';state.stage='welcome';heroWelcome();}
+function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();var _c=document.querySelector('.composer'),_st=document.querySelector('.stage'),_chat=document.getElementById('chatScroll');if(_c&&_st&&_c.parentNode!==_st){_st.insertBefore(_c,_chat?_chat.nextSibling:null);}scroll.innerHTML='';state.stage='welcome';heroWelcome();placeComposer(true);}
 function enterMate(id){closeAnalytics();setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
 function renderLab(){
