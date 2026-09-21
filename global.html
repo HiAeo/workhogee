@@ -89,13 +89,18 @@ ul{list-style:none;}
 .coming{background:linear-gradient(180deg,var(--sand) 0%,var(--paper) 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:108px 0;text-align:center;}
 .coming-eyebrow{font-size:13px;letter-spacing:5px;color:var(--ink-muted);font-weight:400;margin-bottom:26px;}
 .coming-title{
+  position:relative;
   font-size:clamp(30px,4.6vw,58px);font-weight:300;line-height:1.3;letter-spacing:2px;color:var(--ink);
+}
+.coming-title .ct-base{color:var(--ink);}
+.coming-title .ct-shine{
+  position:absolute;inset:0;pointer-events:none;
   background-image:linear-gradient(102deg,
-    var(--ink) 0%,var(--ink) 42%,
-    #fb923c 45.5%,#facc15 48%,#4ade80 50.5%,#22d3ee 53%,#a78bfa 55.5%,#ec4899 58%,
-    var(--ink) 62.5%,var(--ink) 100%);
+    transparent 0%,transparent 40%,
+    #fb923c 45%,#facc15 48%,#4ade80 50.5%,#22d3ee 53%,#a78bfa 55.5%,#ec4899 58%,
+    transparent 64%,transparent 100%);
   background-size:320% 100%;background-repeat:no-repeat;
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
   animation:rainbowSweep 3.6s cubic-bezier(.6,.05,.35,1) infinite;
 }
 @keyframes rainbowSweep{0%{background-position:128% 0;}55%{background-position:50% 0;}100%{background-position:-28% 0;}}
@@ -104,7 +109,7 @@ ul{list-style:none;}
 .coming-back{margin-top:40px;display:inline-flex;align-items:center;gap:9px;font-size:14.5px;font-weight:500;color:var(--orange-deep);border:1.5px solid var(--orange);padding:12px 28px;border-radius:999px;transition:all .25s;}
 .coming-back:hover{background:var(--orange);color:#fff;transform:translateY(-1px);box-shadow:0 10px 24px rgba(234,88,12,.28);}
 .coming-back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-@media(prefers-reduced-motion:reduce){.coming-title{animation:none;background-image:none;-webkit-text-fill-color:var(--ink);color:var(--ink);}.g-video{transition:none;}}
+@media(prefers-reduced-motion:reduce){.coming-title .ct-shine{animation:none;opacity:0;}.g-video{transition:none;}}
 
 /* ===== Footer（与官网首页一致） ===== */
 .footer{background:var(--coal);padding:66px 0 28px;color:rgba(255,255,255,.7);}
@@ -176,7 +181,7 @@ ul{list-style:none;}
 <section class="coming">
   <div class="container">
     <div class="coming-eyebrow">WORKHOGEE GLOBAL</div>
-    <h2 class="coming-title">Hogee外贸版，即将上线，敬请期待！</h2>
+    <h2 class="coming-title"><span class="ct-base">Hogee外贸版，即将上线，敬请期待！</span><span class="ct-shine" aria-hidden="true">Hogee外贸版，即将上线，敬请期待！</span></h2>
     <p class="coming-en">Hogee Global Edition<span class="dot">·</span>Coming Soon<span class="dot">·</span>Stay Tuned</p>
     <a href="/" class="coming-back">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
