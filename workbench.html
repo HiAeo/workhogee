@@ -719,7 +719,7 @@ body[data-rail="mini"] .rail:hover .rlabel{display:block}
 .ba-tag{position:absolute;top:8px;z-index:3;font-size:9.5px;color:#fff;border-radius:999px;padding:2px 8px;background:rgba(10,12,18,.6);border:1px solid rgba(255,255,255,.16)}
 .ba-tag.bf{left:8px}.ba-tag.af{right:8px}
 .fic-video .ph video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
-.fic-copy{display:flex;flex-direction:column;gap:9px;justify-content:center;padding:15px;aspect-ratio:16/11;background:linear-gradient(160deg,#1d2029,#14161d)}
+.fic-copy{display:flex;flex-direction:column;gap:9px;justify-content:flex-start;padding:15px;aspect-ratio:16/11;background:linear-gradient(160deg,#1d2029,#14161d)}
 .fic-copy .fc-t{font-size:12.5px;font-weight:700;color:var(--orange);display:flex;align-items:center;gap:6px}
 .fic-copy .fc-t svg{width:14px;height:14px;flex:none}
 .fic-copy .fc-l{font-size:11px;line-height:1.65;color:var(--tx2);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
@@ -1604,7 +1604,7 @@ var HM_STRIP=[
  {kind:'video',src:'/media/workhogee-global.mp4',poster:'/media/workhogee-global-poster.jpg',cap:'营销视频 · 阿视成片'},
  {kind:'copy'}
 ];
-function baCardHtml(d,cls){return '<div class="fic wide ba '+cls+'" data-ba><div class="ph"><img class="ba-after" src="'+d.after+'" alt="AI 成品"><img class="ba-before" src="'+d.before+'" alt="手机原图"><span class="ba-tag bf">手机原图</span><span class="ba-tag af">AI 成品</span><span class="ba-line"></span><span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span><span class="fic-cap">'+d.cap+'</span><span class="hm-demo">功能演示</span></div></div>';}
+function baCardHtml(d,cls){return '<div class="fic wide ba '+cls+'" data-ba><div class="ph"><img class="ba-after" src="'+d.after+'" alt="AI 成品"><img class="ba-before" src="'+d.before+'" alt="手机原图"><span class="ba-tag bf">手机原图</span><span class="ba-tag af">AI 成品</span><span class="ba-line"></span><span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span><span class="fic-cap">'+d.cap+'</span></div></div>';}
 function imgCardHtml(src,cap,cls,mine){return '<button class="fic '+cls+'" '+(mine?'data-openworks':'data-lightbox="'+src+'"')+' type="button"><div class="ph"><img src="'+src+'" alt="'+esc(cap)+'"><span class="fic-cap">'+esc(cap)+'</span>'+(mine?'<span class="hm-mine">我的作品</span>':'<span class="hm-demo">功能演示</span>')+'</div></button>';}
 function videoCardHtml(d,cls){return '<div class="fic '+cls+' fic-video"><div class="ph"><video src="'+d.src+'" poster="'+d.poster+'" preload="metadata" muted loop playsinline controls></video><span class="fic-cap">'+d.cap+'</span><span class="hm-demo">功能演示</span></div></div>';}
 function copyCardHtml(cls){return '<button class="fic '+cls+' fic-copy" type="button" data-mate="awen"><span class="fc-t">'+IC.pen+'阿文 · 爆款文案</span><span class="fc-l">同款商品，小红书、抖音、朋友圈各写一版：标题抓眼、卖点清楚、话题标签配齐，广告法极限词自动过滤。</span><span class="fc-go">让阿文写一版 →</span></button>';}
