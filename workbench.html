@@ -1001,7 +1001,7 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 /* ② Alpha 胶囊 */
 .hw6-badge.alpha{background:rgba(251,122,34,.12);border:1px solid rgba(251,122,34,.45);color:#fdba74;letter-spacing:1px}
 /* ④⑤ composer 工具行 */
-.cmp-foot{justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cmp-foot{justify-content:flex-end;gap:10px;flex-wrap:nowrap}
 .cmp-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
 .rcard{position:relative}
 .rc-del{position:absolute;top:8px;right:8px;z-index:7;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(13,17,25,.6);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;opacity:0;transition:opacity .18s ease,background .18s ease,border-color .18s ease;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
@@ -1788,17 +1788,14 @@ function start(){
  placeComposer(false);
  scroll.innerHTML='';state.stage='welcome';
  var id=loadId();
+ if(id){state.identity=id;state.bgImage=loadBg(id.type);}
  renderPartners();renderTopbar();renderCmpAttach();renderDeliver();
  // 先从后端拉历史任务，再渲染列表
  loadTasksRemote();
  var mateQ=new URLSearchParams(location.search).get('mate');
  if(mateQ&&partnerById(mateQ)){state.activePartner=mateQ;renderPartners();renderTopbar();mateWelcome(mateQ);return;}
- if(id){state.identity=id;state.bgImage=loadBg(id.type);renderTopbar();
-  botSay('回来了，老板。当前做的是<b>'+skillName()+'</b>，直接传图我就开工；也可以告诉我你做什么行业，或先让阿文写文案。');
-  quickPills([['resume','对，开始传图',IC.camera],['changeSkill','换个行业',IC.stack],['askAwen','先让阿文写文案',IC.pen]]);
- }else{
-  heroWelcome();
- }
+ // 刷新/回首页始终落在门户首页；身份仅静默恢复，不自动进入对话
+ heroWelcome();
 }
 function mateWelcome(mate){
  var lines={
@@ -1903,9 +1900,10 @@ function heroWelcome(){
    +'<span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span>'
    +'<span class="rc-shade"></span><span class="rc-cap">'+rcEsc(d.cap)+'</span></div></div>';
  }
+ function rcFirstFrame(src){return src+(src.indexOf('#')<0?'#t=0.5':'');}
  function rcVideo(d){
   return '<div class="rcard rc-v sz-'+(d.sz||'wide')+'" data-lbvideo="'+d.src+'"><div class="rc-ph">'
-   +'<video src="'+d.src+'" poster="'+d.poster+'" preload="metadata" muted loop playsinline></video>'
+   +'<video src="'+rcFirstFrame(d.src)+'"'+((d.poster&&d.poster!=='undefined')?' poster="'+d.poster+'"':'')+' preload="metadata" muted loop playsinline></video>'
    +(d.feat?'<span class="rc-badge">GLOBAL 外贸版</span>':'<span class="rc-tag">功能演示</span>')
    +rcPlaySvg()+'<span class="rc-shade"></span><span class="rc-cap">'+rcEsc(d.cap)+'</span></div></div>';
  }
@@ -2119,7 +2117,13 @@ function startOrder(skillId){
 }
 
 /* ================= 上传 ================= */
+function leaveHero(){
+ var hh=(typeof state!=='undefined')?state._heroEl:null;
+ if(hh&&hh.parentNode){placeComposer(false);state.stage='work';}
+ if(typeof state!=='undefined')state._heroEl=null;
+}
 function renderUploadCard(){
+ leaveHero();
  var used=state.identity&&state.identity.type==='usedcar';
  card('<div class="card-pad" id="uploadCard">'
   +'<div class="card-title">'+IC.camera+' 把手机拍的图传给阿图</div>'
@@ -3536,10 +3540,10 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
  function fIsAdmin(){try{return !!(window.HogeeMember&&HogeeMember.getUser()&&HogeeMember.getUser().role==='admin');}catch(e){return false;}}
  document.addEventListener('click',function(e){
   var add=e.target.closest('#hmAddBtn');
-  if(add){e.preventDefault();
+  if(add){e.preventDefault();e.stopPropagation();
    if(!fIsAdmin()){if(HG.toast)HG.toast('仅官方运营账号可维护上新素材');return;}
    var inp0=document.getElementById('hmUpload');if(inp0)inp0.click();}
- });
+ },true);
  function fSzByAspect(a){if(a>=1.45)return 'wide';if(a<=0.78)return 'tall';return 'sq';}
  function fMediaSize(file){
   return new Promise(function(resolve){
