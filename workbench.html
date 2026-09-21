@@ -1025,6 +1025,32 @@ var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelect
 var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 var API='https://api.workhogee.com';
+/* === 服务端能力开关（/config）：前端不硬编码承诺，按后端真实开关渲染 === */
+var SVC={cap:null,cfg:null,loaded:false,loading:false};
+function loadConfig(){
+ if(SVC.loaded||SVC.loading)return Promise.resolve(SVC.cap);
+ SVC.loading=true;
+ var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+ var to=setTimeout(function(){if(ctrl){try{ctrl.abort();}catch(e){}}},6000);
+ return fetch(API+'/config',ctrl?{signal:ctrl.signal}:{}).then(function(r){return r.ok?r.json():null;})
+ .then(function(j){clearTimeout(to);SVC.loading=false;SVC.loaded=true;
+  if(j&&j.ok){SVC.cfg=j;SVC.cap=j.capabilities||{};refreshCompliance();}
+  return SVC.cap;
+ }).catch(function(){clearTimeout(to);SVC.loading=false;return null;});
+}
+/* 未知/未加载时保守处理：只有后端明确 true 才宣称该服务端能力 */
+function svcCap(k){return !!(SVC.cap&&SVC.cap[k]===true);}
+function buildComplianceHtml(){
+ var c=SVC.cap;
+ var h=(c&&c.aiMetadata?'成品默认带 AI 生成标识（水印 + 文件元数据）':'成品默认带 AI 生成标识')
+  +'；阿图只优化呈现，<b>不改变商品本身、不抹瑕疵</b>，发布动作由你本人完成。';
+ if(c){
+  if(c.consistencyVerify)h+='主体一致性自动校验，不合格免费重出一次；';
+  if(c.privacyDetect)h+='车牌 / 人脸 / VIN 自动识别并在生成端规避。';
+ }
+ return h;
+}
+function refreshCompliance(){var el=document.getElementById('cfgCompliance');if(el)el.innerHTML=buildComplianceHtml();}
 var HGif=window.HGif||{};
 var CAR_DB=window.WD_CAR_DB||[];
 var CAR_BRANDS=CAR_DB.map(function(x){return x.n;});
@@ -1574,6 +1600,7 @@ function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主�
 
 /* ================= 欢迎 / 选技能（小 pill，无大按钮网格） ================= */
 function start(){
+ loadConfig();
  placeComposer(false);
  scroll.innerHTML='';state.stage='welcome';
  var id=loadId();
@@ -1943,6 +1970,7 @@ var identifyFields={};
 function addWatermark(dataUrl){
  return new Promise(function(resolve){
   if(!dataUrl||typeof dataUrl!=='string'){resolve(dataUrl);return;}
+  if(SVC.cap&&SVC.cap.aiLabel===false){resolve(dataUrl);return;}
   var img=new Image();
   img.crossOrigin='anonymous';
   img.onload=function(){
@@ -2130,7 +2158,7 @@ function renderSpecCard(){
   +'<div class="chip-block"><div class="cb-label">清晰度</div><div class="chip-grid">'
    +'<button class="chip'+(state.quality==='std'?' on':'')+'" data-act="pickQuality" data-v="std">标准<span class="chip-sub">更快</span></button>'
    +'<button class="chip'+(state.quality==='hd'?' on':'')+'" data-act="pickQuality" data-v="hd">高清<span class="chip-sub">推荐</span></button></div></div>'
-  +'<div class="compliance">'+IC.check+'<span>成品默认带 AI 生成标识；阿图只优化呈现，<b>不改变商品本身、不抹瑕疵</b>，发布动作由你本人完成。</span></div>'
+  +'<div class="compliance">'+IC.check+'<span id="cfgCompliance">'+buildComplianceHtml()+'</span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="startGen">'+IC.camera+' 开始出图</button></div></div>','atu');
  state.stage='spec';
 }
