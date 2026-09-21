@@ -1003,6 +1003,12 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 /* ④⑤ composer 工具行 */
 .cmp-foot{justify-content:space-between;gap:10px;flex-wrap:wrap}
 .cmp-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.rcard{position:relative}
+.rc-del{position:absolute;top:8px;right:8px;z-index:7;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(13,17,25,.6);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;opacity:0;transition:opacity .18s ease,background .18s ease,border-color .18s ease;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.rcard:hover .rc-del{opacity:1}
+.rc-del:hover{background:#e11d48;border-color:#e11d48;color:#fff}
+.rc-del svg{width:15px;height:15px}
+.hm-loading{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:170px;color:var(--tx2);font-size:13px;letter-spacing:.5px}
 .cmp-dd{position:relative}
 .cmp-chip{appearance:none;display:inline-flex;align-items:center;gap:6px;max-width:210px;border:1px solid var(--line);
  background:rgba(255,255,255,.045);color:var(--tx2);border-radius:999px;padding:7px 11px;font-family:inherit;
@@ -1084,15 +1090,10 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
     <div class="rail-brand">
       <a href="/" class="wm wm-mark" title="WorkHogee" aria-label="WorkHogee 首页"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></a>
       <a href="/" class="wm wm-full" title="回 WorkHogee 官网" aria-label="WorkHogee" style="align-items:center"><svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:23px;width:auto;display:block"><defs><style>.wb1{fill:#ffffff}.wb2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wb1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wb2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wb1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wb1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wb1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text></g></svg></a>
-      <span class="rail-tag" title="你生意的好伙计"><span class="rail-tag-txt">你生意的好伙计</span></span>
     </div>
     <div class="rail-scroll">
       <nav class="rmenu" id="mainMenu">
         <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg>首页</button>
-        <button id="navAtu" data-mate="atu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>商品图</button>
-        <button id="navAwen" data-mate="awen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>文案创作</button>
-        <button id="navAshi" data-mate="ashi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/></svg>营销视频</button>
-        <button id="navAfa" data-mate="afa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>发布</button>
         <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>知识库</button>
         <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>作品</button>
         <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果</button>
@@ -1136,30 +1137,6 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
             <div class="cmp-main">
               <textarea id="composerInput" rows="1" placeholder="传一张产品图，或告诉伙计你要做什么——出图、写文案、剪视频、发内容…"></textarea>
               <div class="cmp-foot">
-                <div class="cmp-tools">
-                  <div class="cmp-dd" id="ddAgent">
-                    <button type="button" class="cmp-chip" id="ddAgentBtn" aria-haspopup="true"><span class="cmp-chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9Z"/><path d="M19 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7Z"/></svg></span><span class="lab" id="ddAgentLabel">Agent 模式</span><span class="cv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></button>
-                    <div class="cmp-menu" id="ddAgentMenu" role="menu">
-                      <button type="button" class="on" data-v="host">自动识别</button>
-                      <button type="button" data-v="atu">商品图生成</button>
-                      <button type="button" data-v="awen">爆款文案生成</button>
-                      <button type="button" data-v="ashi">营销视频生成</button>
-                      <button type="button" data-v="afa">媒体发布</button>
-                    </div>
-                  </div>
-                  <div class="cmp-dd" id="ddSkill">
-                    <button type="button" class="cmp-chip" id="ddSkillBtn" aria-haspopup="true"><span class="cmp-chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5"/></svg></span><span class="lab" id="ddSkillLabel">通用电商</span><span class="cv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></button>
-                    <div class="cmp-menu" id="ddSkillMenu" role="menu">
-                      <button type="button" class="ready on" data-s="general">通用电商 Skill</button>
-                      <button type="button" class="ready" data-s="usedcar">二手车商 Skill</button>
-                      <button type="button" class="off" data-s="trade">出海 / 外贸 Skill</button>
-                      <button type="button" class="off" data-s="fashion">服装鞋帽 Skill</button>
-                      <button type="button" class="off" data-s="digital">3C 数码 Skill</button>
-                      <button type="button" class="off" data-s="food">食品餐饮 Skill</button>
-                      <button type="button" class="off" data-s="edu">教育培训 Skill</button>
-                    </div>
-                  </div>
-                </div>
                 <div class="cmp-right">
                   <span class="cmp-count" id="cmpCount"></span>
                   <button type="button" class="cmp-mic" id="btnMic" aria-label="语音输入" title="语音输入"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
@@ -1221,7 +1198,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
-<script src="/member-auth.js?v=authcode20260921"></script>
+<script src="/member-auth.js?v=feed20260922"></script>
 <script>
 (function(){
 'use strict';
@@ -1746,7 +1723,7 @@ function renderCmpAttach(){
 function openLab(tab){state.labTab='plugin';var t=$('#labModalTitle');if(t)t.textContent='发布账号与渠道';renderLab();$('#labModal').classList.add('show');}
 function openKnowledge(){state.labTab='skill';var t=$('#labModalTitle');if(t)t.textContent='知识库';renderLab();$('#labModal').classList.add('show');}
 function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();placeComposer(true);scroll.innerHTML='';state.stage='welcome';heroWelcome();}
-function enterMate(id){closeAnalytics();var mid=id==='atu'?'navAtu':id==='awen'?'navAwen':id==='ashi'?'navAshi':'navAfa';setMenuActive(mid);setActivePartner(id);}
+function enterMate(id){closeAnalytics();setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
 function renderLab(){
  var body=$('#labBody');if(!body)return;
@@ -1889,12 +1866,12 @@ function heroWelcome(){
    send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>'
   };
   h.innerHTML='<div class="hw6-hero">'
-   +'<span class="hw6-badge alpha">Alpha 内测版</span>'
    +'<h1 class="hw6-title">一笔成交，<br class="hw6-br">从<span class="hl">一张产品图</span>开始</h1>'
    +'</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
    +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee上新</span></div>'
    +'<div class="hm6-rail" id="hmRail"></div></section>';
+  state._heroEl=h;
   scroll.appendChild(h);
   placeComposer(true);
   renderHmRail(h);
@@ -1937,20 +1914,41 @@ function heroWelcome(){
   return '<button type="button" class="rcard rc-add sz-sq" id="hmAddBtn"><span class="rc-add-in">'+plus
    +'<span class="rc-add-t">上传图片 / 视频</span><small>按原始尺寸自动拼进精选墙</small></span></button>';
  }
+ function hmIsAdmin(){try{return !!(window.HogeeMember&&HogeeMember.getUser()&&HogeeMember.getUser().role==='admin');}catch(e){return false;}}
+ var HM_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+ function hmCardHtml(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}
+ function hmPaintRail(h,items,isAdmin){
+  var rail=h.querySelector('#hmRail');if(!rail)return;
+  rail.dataset.admin=isAdmin?'1':'0';
+  rail.innerHTML=items.map(hmCardHtml).join('')+(isAdmin?hmAddCardHtml():'');
+  if(isAdmin){var cards=rail.querySelectorAll('.rcard');
+   items.forEach(function(d,idx){if(!d.id)return;var c=cards[idx];if(!c)return;
+    var del=document.createElement('span');del.className='rc-del';del.setAttribute('data-hmdel',String(d.id));del.setAttribute('title','删除该素材');del.innerHTML=HM_TRASH;c.appendChild(del);});}
+  initBa(h);
+ }
+ function hmFallback(h){hmPaintRail(h,HM6_DEMO.map(function(d,i){return Object.assign({id:'fb'+i},d);}),false);}
  function renderHmRail(h){
   var rail=h.querySelector('#hmRail');if(!rail)return;
-  var mine=getStoredWorks().filter(function(w){return w.type==='img'&&w.url;}).slice(0,6)
-   .map(function(w){return {k:'img',src:w.url,cap:w.label||'我的作品',sz:'sq',mine:1};});
-  var list=[];
-  HM6_DEMO.forEach(function(d){list.push(d);if(d.feat&&mine.length)list=list.concat(mine);});
-  rail.innerHTML=list.map(function(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}).join('')+hmAddCardHtml();
-  initBa(h);
-  // 卡片点击：灯箱 / 作品库
+  rail.innerHTML='<div class="hm-loading">Hogee上新加载中…</div>';
+  fetch(API+'/api/feed',{headers:{'Accept':'application/json'}})
+   .then(function(r){if(!r.ok)throw new Error('feed '+r.status);return r.json();})
+   .then(function(j){if(j&&j.ok&&Array.isArray(j.items))hmPaintRail(h,j.items,hmIsAdmin());else hmFallback(h);})
+   .catch(function(){hmFallback(h);});
   if(!h._r6bound){h._r6bound=1;h.addEventListener('click',function(e){
+   var del=e.target.closest('[data-hmdel]');
+   if(del){e.preventDefault();e.stopPropagation();hmDelete(del.getAttribute('data-hmdel'),h);return;}
    var ow=e.target.closest('[data-openworks]');if(ow){openWorks();return;}
    var vv=e.target.closest('[data-lbvideo]');if(vv){openVideoLightbox(vv.getAttribute('data-lbvideo'));return;}
    var lb=e.target.closest('[data-lightbox]');if(lb){openLightbox(lb.getAttribute('data-lightbox'));}
   });}
+ }
+ function hmDelete(id,h){
+  if(!id||!hmIsAdmin())return;
+  if(!window.confirm('确定从「Hogee上新」删除这张素材？删除后所有用户都将看不到。'))return;
+  HogeeMember.authFetch(API+'/api/feed?id='+encodeURIComponent(id),{method:'DELETE'})
+   .then(function(r){if(!r.ok)throw new Error('del '+r.status);return r.json();})
+   .then(function(j){if(j&&j.ok){renderHmRail(h);toast('已删除');}else toast('删除失败');})
+   .catch(function(){toast('删除失败，请确认已用官方账号登录');});
  }
 
 /* ================= rework5：作品墙 / 我的作品库 / 企业资料库 ================= */
@@ -3174,10 +3172,6 @@ function sendFreeTextLegacy(txt){
 function bind(){
  /* 顶部 / 左列 */
  $('#menuHome').addEventListener('click',goHome);
- $('#navAtu').addEventListener('click',function(){enterMate('atu');});
- $('#navAwen').addEventListener('click',function(){enterMate('awen');});
- $('#navAshi').addEventListener('click',function(){enterMate('ashi');});
- $('#navAfa').addEventListener('click',function(){enterMate('afa');});
  $('#navKnowledge').addEventListener('click',openKnowledge);
  $('#navWorks').addEventListener('click',openWorks);
  $('#menuAnalytics').addEventListener('click',openAnalytics);
@@ -3484,7 +3478,7 @@ initLayout();
   document.addEventListener('hogee:logout',renderAccount);
 })();
 /* rework10 fix: 跨 IIFE 桥，供下拉/语音/上传交互块调用主作用域函数 */
-window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPartners,renderTopbar:renderTopbar,setMenuActive:setMenuActive,enterMate:enterMate,startOrder:startOrder,syncSendReady:syncSendReady};
+window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPartners,renderTopbar:renderTopbar,setMenuActive:setMenuActive,enterMate:enterMate,startOrder:startOrder,syncSendReady:syncSendReady,refreshHmFeed:function(){if(typeof state!=='undefined'&&state._heroEl)renderHmRail(state._heroEl);}};
 })();
 
 
@@ -3515,23 +3509,6 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
    onPick(b);closeAll();});
   document.addEventListener('click',function(e){if(!dd.contains(e.target)&&!menu.contains(e.target))closeAll();});
  }
- wire('ddAgentBtn','ddAgentMenu',function(b){
-  var v=b.getAttribute('data-v');
-  document.querySelectorAll('#ddAgentMenu button').forEach(function(x){x.classList.toggle('on',x===b);});
-  var lab=document.getElementById('ddAgentLabel');
-  if(v==='host'){lab.textContent='Agent 模式';
-   try{HG.setActivePartner('host');HG.renderPartners();HG.renderTopbar();HG.setMenuActive('menuHome');}catch(e){}
-   if(HG.toast)HG.toast('已切回自动识别，交给 Hogee 判断');
-  }else{lab.textContent=b.textContent.trim();
-   try{HG.enterMate(v);}catch(e){}
-   if(HG.toast)HG.toast('已交给对应伙计，直接说需求或传图即可');}
- });
- wire('ddSkillBtn','ddSkillMenu',function(b){
-  var s=b.getAttribute('data-s');
-  document.querySelectorAll('#ddSkillMenu button').forEach(function(x){x.classList.toggle('on',x===b);});
-  var lab=document.getElementById('ddSkillLabel');lab.textContent=b.textContent.trim().replace('Skill','').trim();
-  try{if(s==='general'){HG.startOrder('general');}else if(s==='usedcar'){HG.startOrder('usedcar');}}catch(e){}
- });
  /* ---- ⑤ 语音输入（Web Speech API，仅本机识别，不上传） ---- */
  var mic=document.getElementById('btnMic'),ta=document.getElementById('composerInput');
  if(mic&&ta){
@@ -3554,47 +3531,59 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
    rec.onend=end;rec.onerror=function(ev){end();if(ev&&ev.error==='not-allowed'&&HG.toast)HG.toast('请在浏览器允许麦克风权限');};
   }
  }
- /* ---- ⑥ 精选墙本地上传（仅本机预览，按原始比例自动卡位，纳入灯箱） ---- */
+ /* ---- ⑥ Hogee上新：仅官方管理员可上传，服务端持久化、全员可见 ---- */
+ var FAPI='https://api.workhogee.com';
+ function fIsAdmin(){try{return !!(window.HogeeMember&&HogeeMember.getUser()&&HogeeMember.getUser().role==='admin');}catch(e){return false;}}
  document.addEventListener('click',function(e){
-  if(e.target.closest('#hmAddBtn')){var inp=document.getElementById('hmUpload');if(inp)inp.click();}
+  var add=e.target.closest('#hmAddBtn');
+  if(add){e.preventDefault();
+   if(!fIsAdmin()){if(HG.toast)HG.toast('仅官方运营账号可维护上新素材');return;}
+   var inp0=document.getElementById('hmUpload');if(inp0)inp0.click();}
  });
- function escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
- function szByAspect(a){if(a>=1.45)return 'wide';if(a<=0.78)return 'tall';return 'sq';}
- function imgCard(url,name,sz){
-  return '<button type="button" class="rcard sz-'+sz+' local" data-lightbox="'+url+'"><div class="rc-ph">'
-   +'<img src="'+url+'" alt="'+escAttr(name)+'"><span class="rc-shade"></span>'
-   +'<span class="rc-tag">我的素材</span><span class="rc-cap">'+escAttr(name)+'</span></div></button>';
+ function fSzByAspect(a){if(a>=1.45)return 'wide';if(a<=0.78)return 'tall';return 'sq';}
+ function fMediaSize(file){
+  return new Promise(function(resolve){
+   if(/^video\//.test(file.type)){
+    var v=document.createElement('video');v.preload='metadata';
+    v.onloadedmetadata=function(){resolve(fSzByAspect((v.videoWidth||16)/(v.videoHeight||9)));};
+    v.onerror=function(){resolve('wide');};v.src=URL.createObjectURL(file);
+   }else{
+    var img=new Image();
+    img.onload=function(){resolve(fSzByAspect(img.width/img.height));};
+    img.onerror=function(){resolve('sq');};img.src=URL.createObjectURL(file);
+   }
+  });
  }
- function vidCard(url,name){
-  return '<div class="rcard rc-v sz-wide local" data-lbvideo="'+url+'"><div class="rc-ph">'
-   +'<video src="'+url+'" muted loop playsinline preload="metadata"></video>'
-   +'<span class="rc-tag">我的素材</span><span class="rc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></span>'
-   +'<span class="rc-shade"></span><span class="rc-cap">'+escAttr(name)+'</span></div></div>';
+ function fExt(file){var m=(file.name||'').toLowerCase().match(/\.([a-z0-9]+)$/);return m?m[1]:(/^video\//.test(file.type)?'mp4':'jpg');}
+ function fCap(file){return (file.name||'官方素材').replace(/\.[a-z0-9]+$/i,'').slice(0,60)||'官方素材';}
+ function fUploadOne(file){
+  var ext=fExt(file);
+  return fMediaSize(file).then(function(sz){
+   var kind=/^(mp4|mov|webm)$/.test(ext)?'v':'img';
+   return HogeeMember.authFetch(FAPI+'/api/feed/presign',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ext:ext})})
+    .then(function(r){if(!r.ok)throw new Error('presign '+r.status);return r.json();})
+    .then(function(j){
+     if(!j.ok||!j.putUrl||!j.key)throw new Error('presign bad');
+     var putHeaders={'Content-Type':(j.headers&&j.headers['Content-Type'])||'application/octet-stream'};
+     return fetch(j.putUrl,{method:'PUT',headers:putHeaders,body:file}).then(function(pr){if(!pr.ok)throw new Error('put '+pr.status);
+      return HogeeMember.authFetch(FAPI+'/api/feed/commit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,key:j.key,cap:fCap(file),sz:sz})});});
+    })
+    .then(function(r){if(!r.ok)throw new Error('commit '+r.status);return r.json();});
+  });
  }
  var hmInp=document.getElementById('hmUpload');
  if(hmInp)hmInp.addEventListener('change',function(){
-  var rail=document.getElementById('hmRail'),addBtn=document.getElementById('hmAddBtn');
-  if(!rail){if(HG.toast)HG.toast('请回到首页精选墙再上传');return;}
+  if(!fIsAdmin()){hmInp.value='';if(HG.toast)HG.toast('仅官方运营账号可维护上新素材');return;}
   var files=Array.prototype.slice.call(hmInp.files||[]);if(!files.length)return;
-  files.forEach(function(file){
-   var url=URL.createObjectURL(file),name=file.name||'我的素材';
-   if(/^video\//.test(file.type)){
-    var v=document.createElement('div');v.innerHTML=vidCard(url,name);var vn=v.firstElementChild;
-    rail.insertBefore(vn,addBtn);
-    var vid=vn.querySelector('video');vid.addEventListener('loadedmetadata',function(){
-     var sz=szByAspect((vid.videoWidth||16)/(vid.videoHeight||9));
-     vn.classList.remove('sz-wide');vn.classList.add('sz-'+sz);});
-   }else{
-    var img=new Image();
-    img.onload=function(){var sz=szByAspect(img.width/img.height);
-     var w=document.createElement('div');w.innerHTML=imgCard(url,name,sz);rail.insertBefore(w.firstElementChild,addBtn);};
-    img.onerror=function(){var w=document.createElement('div');w.innerHTML=imgCard(url,name,'sq');rail.insertBefore(w.firstElementChild,addBtn);};
-    img.src=url;
-   }
-  });
   hmInp.value='';
-  if(HG.toast)HG.toast('已加入精选墙（本机预览，不会上传）');
+  if(HG.toast)HG.toast('开始上传 '+files.length+' 个素材，请勿关闭页面…');
+  files.reduce(function(p,f){return p.then(function(){return fUploadOne(f);});},Promise.resolve())
+   .then(function(){if(HG.toast)HG.toast('上传完成，已同步给所有用户');if(HG.refreshHmFeed)HG.refreshHmFeed();})
+   .catch(function(err){if(HG.toast)HG.toast('部分素材上传失败：'+(err&&err.message?err.message:'请重试'));if(HG.refreshHmFeed)HG.refreshHmFeed();});
  });
+ function fRefreshIfHome(){var rail0=document.getElementById('hmRail');if(rail0&&HG.refreshHmFeed)HG.refreshHmFeed();}
+ document.addEventListener('hogee:auth',fRefreshIfHome);
+ document.addEventListener('hogee:logout',fRefreshIfHome);
 })();
 
 </script>
