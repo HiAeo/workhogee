@@ -20,6 +20,7 @@
     token: null,
     user: null,
     mode: 'login',
+    authKind: 'password',
     memberType: null,
     injected: false,
     gate: false,
@@ -85,14 +86,14 @@
     '.hm-tagline{font-size:12.5px;color:rgba(255,255,255,.55);letter-spacing:.4px;}',
     '.hm-seg{display:flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:4px;margin-bottom:20px;}',
     '.hm-seg button{flex:1;appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:rgba(255,255,255,.6);background:transparent;border-radius:9px;padding:9px 0;transition:all .18s;}',
-    '.hm-seg button.hm-active{background:#ea580c;color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.3);}',
+    '.hm-seg button.hm-active{background:rgba(251,122,34,.14);color:#fd9248;box-shadow:inset 0 0 0 1px rgba(251,122,34,.55);}',
     '.hm-field{margin-bottom:14px;}',
     '.hm-field label{display:block;font-size:12.5px;color:rgba(255,255,255,.62);margin-bottom:6px;}',
     '.hm-input{width:100%;box-sizing:border-box;appearance:none;border:1px solid rgba(255,255,255,.14);background:#1d1813;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;font-family:inherit;transition:border-color .18s,box-shadow .18s;}',
     '.hm-input::placeholder{color:rgba(255,255,255,.32);}',
     '.hm-input:focus{outline:none;border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.18);}',
-    '.hm-submit{width:100%;appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:#fff;background:#ea580c;border-radius:11px;padding:13px 0;margin-top:6px;transition:background .18s,transform .18s;}',
-    '.hm-submit:hover{background:#c2410c;}',
+    '.hm-submit{width:100%;appearance:none;border:1px solid rgba(251,122,34,.55);cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;color:#fd9248;background:rgba(251,122,34,.10);border-radius:11px;padding:13px 0;margin-top:6px;transition:background .18s,border-color .18s,color .18s,transform .18s;}',
+    '.hm-submit:hover{background:rgba(251,122,34,.20);border-color:#fb7a22;color:#ffb27d;}',
     '.hm-submit:active{transform:translateY(1px);}',
     '.hm-submit[disabled]{opacity:.6;cursor:not-allowed;}',
     '.hm-err{display:none;margin-top:12px;font-size:13px;line-height:1.5;color:#fb923c;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);border-radius:9px;padding:9px 12px;}',
@@ -144,8 +145,8 @@
     '.hm-seg button{padding:9px 0;}',
     '.hm-field{margin-bottom:11px;}',
     '.hm-input{padding:10px 13px;}',
-    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:700;color:#fff;background:#07C160;border:0;border-radius:11px;padding:11px 0;margin:0;transition:background .18s,transform .18s;box-shadow:0 8px 20px rgba(7,193,96,.28);}',
-    '.hm-wechat:hover{background:#06AD56;}',
+    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:600;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:11px 0;margin:0;transition:background .18s,border-color .18s,transform .18s;box-shadow:none;}',
+    '.hm-wechat:hover{background:rgba(255,255,255,.10);border-color:rgba(7,193,96,.6);}',
     '.hm-wechat:active{transform:translateY(1px);}',
     '.hm-wechat svg{width:20px;height:20px;flex:none;}',
     '.hm-or{display:flex;align-items:center;gap:10px;margin:11px 0 9px;color:rgba(255,255,255,.38);font-size:12px;}',
@@ -162,6 +163,12 @@
     '.hm-soon{display:none;margin-top:11px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:9px;padding:9px 12px;}',
     '.hm-soon.hm-show{display:block;animation:hmFade .2s ease;}',
     '.hm-gate .hm-logo{height:38px;width:auto;margin-bottom:4px;}',
+    '.hm-input:-webkit-autofill,.hm-input:-webkit-autofill:hover,.hm-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px #1d1813 inset;caret-color:#fff;transition:background-color 9999s ease-in-out 0s;}',
+    '.hm-coderow{display:flex;gap:9px;}',
+    '.hm-coderow .hm-input{flex:1;min-width:0;}',
+    '.hm-codebtn{appearance:none;flex:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fd9248;background:rgba(251,122,34,.10);border:1px solid rgba(251,122,34,.5);border-radius:10px;padding:0 14px;white-space:nowrap;transition:background .18s,border-color .18s,color .18s;}',
+    '.hm-codebtn:hover:not(:disabled){background:rgba(251,122,34,.20);border-color:#fb7a22;}',
+    '.hm-codebtn:disabled{opacity:.55;cursor:not-allowed;color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.14);background:transparent;}',
     '@media(max-width:480px){.hm-card{padding:20px 18px;}.hm-oauth{gap:8px;}.hm-oth{font-size:12.5px;}}',
     '@media(max-width:860px){',
     '  .nav .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
@@ -196,6 +203,7 @@
 
   // 第三方品牌标识（取自官方品牌 SVG，仅用于登录方式识别）
   var WECHAT_WHITE = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M32.8 18.003 32.5 18C25.732 18 20 22.798 20 29c0 1.007.151 1.976.433 2.894A18 18 0 0 1 18.5 32c-1.809 0-3.54-.274-5.137-.775-.394-.123-1.828.696-3.039 1.389-.927.53-1.724.986-1.824.886-.094-.094.169-.718.476-1.448.446-1.06.986-2.346.664-2.552C6.21 27.305 4 23.866 4 20c0-6.627 6.492-12 14.5-12 7.186 0 13.151 4.326 14.3 10.003M16 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0m7 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4" fill="#ffffff"/><path fill-rule="evenodd" clip-rule="evenodd" d="M44 29c0 3.362-1.908 6.336-4.833 8.149-.13.08.169.858.446 1.583.237.618.459 1.196.387 1.268-.075.075-.802-.327-1.571-.752-.829-.458-1.706-.942-1.871-.888-1.262.413-2.63.64-4.058.64C26.149 39 21 34.523 21 29s5.149-10 11.5-10S44 23.477 44 29m-6-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M28.5 27a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" fill="#ffffff"/></svg>';
+  var WECHAT_GREEN = WECHAT_WHITE.split('#ffffff').join('#07C160');
   var ICON_FEISHU = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8c0 1 7 3.5 14.745 16.744 0 0 4.184-4.363 6.255-5.744 1.5-1 2.712-1.332 2.712-1.332C33.712 15.156 29.5 8 28 8z" fill="#00d6b9"/><path d="M43.5 18.5c-1-.667-3.65-1.771-6.5-1.5a15 15 0 0 0-3.288.668S32.5 18 31 19c-2.07 1.38-6.255 5.744-6.255 5.744-1.428 1.397-3.05 2.732-5.245 3.756 0 0 7 3 11.5 3 5.063 0 7-3.5 7-3.5 1.5-3.305 3.5-7 5.5-9.5" fill="#163c9a"/><path d="M4 17.5v17c0 1 6 5.5 15 5.5 10 0 17.05-7.705 19-12 0 0-1.937 3.5-7 3.5-4.5 0-11.5-3-11.5-3-5.117-2.239-10.03-6.577-12.906-9.117C4.974 17.953 4 17.093 4 17.5" fill="#3370ff"/></svg>';
   var ICON_DINGTALK = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="36" height="36" rx="8" fill="#0285fc"/><path d="m20.178 37.577 3.5-6h-3l2-3c-5.5-1-6.281-3.938-6-4.5.162-.325 2.5 1 6.281 1-8.281-.5-8.281-7-7.781-7.5.423-.424 2.44 1.666 6.564 3.53-9.126-4.314-6.453-11.956-5.064-11.03 3.344 3 9.5 8.5 15 13 .658.538 1 2 0 3.25s-2.5 2.75-3 3.25h2.5z" fill="#fff"/></svg>';
   var ICON_QQ = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 31s-3 4.5-3.5 4c-.803-.803.062-6.622 1.5-11 0 0 2 1 4.5 1.5 0 0-1.74 9.46 4.268 13.242C20.768 40 24 40 24 40s3.232 0 5.232-1.258C35.241 34.96 33.5 25.5 33.5 25.5 36 25 38 24 38 24c1.438 4.378 2.303 10.197 1.5 11-.5.5-3.5-4-3.5-4s.232 4.776-3.392 7.742c0 0-3.376 2.758-8.608 2.758s-8.608-2.758-8.608-2.758C11.768 35.776 12 31 12 31m0-11C12 7 19 4 24 4s12 3 12 16c-4.033.782-7.5 1.5-12 1.5s-7.967-.718-12-1.5m5-2.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#000"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.732 41.5c-1 .5-8.232.5-11.732 0 5.232 0 8.608-2.758 8.608-2.758-.081.066 5.124 1.758 3.124 2.758" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M24 41.5c-3.5.5-10.732.5-11.732 0-2-1 3.205-2.692 3.124-2.758 0 0 3.376 2.758 8.608 2.758" fill="#f8ae08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10 24c.564-1.718 1.436-3.014 2-4 4.033.782 7.5 1.5 12 1.5s7.967-.718 12-1.5c.564.986 1.436 2.282 2 4 0 0-2 1-4.5 1.5s-5.5 1-9.5 1q-1.183-.001-2.257-.055c0 1.515 0 2.503.016 4.374a.2.2 0 0 1-.143.192c-1.69.479-3.579.463-4.995-.454a.19.19 0 0 1-.088-.16c-.033-1.885-.032-2.435.002-4.52A65 65 0 0 1 14.5 25.5C12 25 10 24 10 24" fill="#ea1c26"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 17.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 25.5a66 66 0 0 0 2.035.377 102 102 0 0 0-.002 4.52.19.19 0 0 0 .088.16c1.416.917 3.305.933 4.995.454a.2.2 0 0 0 .143-.192c-.016-1.87-.016-2.859-.016-4.374q1.073.054 2.257.055c4 0 7-.5 9.5-1 0 0 1.74 9.46-4.268 13.242C27.232 40 24 40 24 40s-3.232 0-5.232-1.258C12.759 34.96 14.5 25.5 14.5 25.5" fill="#fff"/><path d="M21 14c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3m6 0c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3" fill="#fff"/><path d="M21 12.438c.552 0 1-.546 1-1.22 0-.672-.448-1.218-1-1.218s-1 .546-1 1.219.448 1.219 1 1.219" fill="#000"/><path d="M26 11c.5-.5 1.5-.5 2 0" stroke="#000" stroke-width=".7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -212,16 +220,24 @@
           '<button type="button" id="hmTabRegister">注册</button>' +
         '</div>' +
         '<form id="hmForm" autocomplete="on">' +
-          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_WHITE + '微信扫码 / 授权登录</button>' +
+          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_GREEN + '微信扫码 / 授权登录</button>' +
           '<div class="hm-or">或用手机号 / 邮箱登录</div>' +
           '<div class="hm-field">' +
             '<label for="hmAccount" id="hmAccountLabel">手机号 / 邮箱</label>' +
             '<input class="hm-input" id="hmAccount" type="text" inputmode="tel" autocomplete="username" placeholder="请输入手机号或邮箱">' +
           '</div>' +
-          '<div class="hm-field">' +
+          '<div class="hm-field" id="hmPwField">' +
             '<div class="hm-labrow"><label for="hmPassword">密码</label>' +
-            '<button type="button" class="hm-link" data-provider="sms">验证码 / 本机一键登录</button></div>' +
+            '<button type="button" class="hm-link" id="hmToCode">验证码登录</button></div>' +
             '<input class="hm-input" id="hmPassword" type="password" autocomplete="current-password" placeholder="至少 8 位">' +
+          '</div>' +
+          '<div class="hm-field" id="hmCodeField" style="display:none;">' +
+            '<div class="hm-labrow"><label for="hmCode">验证码</label>' +
+            '<button type="button" class="hm-link" id="hmToPw">密码登录</button></div>' +
+            '<div class="hm-coderow">' +
+              '<input class="hm-input" id="hmCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 位验证码">' +
+              '<button type="button" class="hm-codebtn" id="hmGetCode">获取验证码</button>' +
+            '</div>' +
           '</div>' +
           '<div class="hm-field" id="hmConfirmField" style="display:none;">' +
             '<label for="hmConfirm">确认密码</label>' +
@@ -282,6 +298,10 @@
       if (e.key === 'Escape' && el('hmOverlay') && el('hmOverlay').classList.contains('hm-show')) cancelAuth();
     });
     el('hmForm').addEventListener('submit', onSubmit);
+    var _tc = el('hmToCode'), _tp = el('hmToPw'), _gc = el('hmGetCode');
+    if (_tc) _tc.addEventListener('click', function () { setAuthKind('code'); });
+    if (_tp) _tp.addEventListener('click', function () { setAuthKind('password'); });
+    if (_gc) _gc.addEventListener('click', sendCode);
 
     // 个人 / 企业账号类型（注册必选）
     var typeBtns = document.querySelectorAll('#hmType .hm-typebtn');
@@ -336,12 +356,12 @@
     el('hmTabLogin').classList.toggle('hm-active', !reg);
     el('hmTabRegister').classList.toggle('hm-active', reg);
     var tf = el('hmTypeField'); if (tf) tf.style.display = reg ? '' : 'none';
-    el('hmConfirmField').style.display = reg ? '' : 'none';
+    var cf0 = el('hmConfirmField'); if (cf0) cf0.style.display = (reg && state.authKind === 'password') ? '' : 'none';
     state.memberType = null;
     var tb0 = document.querySelectorAll('#hmType .hm-typebtn');
     for (var tbi = 0; tbi < tb0.length; tbi++) tb0[tbi].classList.remove('hm-active');
     var sb1 = el('hmSoon'); if (sb1) sb1.classList.remove('hm-show');
-    el('hmSubmit').textContent = reg ? '注册并登录' : '登录';
+    el('hmSubmit').textContent = state.authKind === 'code' ? '验证并登录' : (reg ? '注册并登录' : '登录');
     el('hmPassword').setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
     hideErr();
   }
@@ -399,13 +419,93 @@
     });
   }
 
+  function successAuth(j) {
+    saveSession(j.token, j.member);
+    closeAuth();
+    renderNav();
+    renderGate();
+    dispatch('hogee:auth');
+    if (state.waitResolve) { var rs = state.waitResolve; state.waitResolve = null; state.waitReject = null; rs(j.member); }
+    var f = el('hmForm'); if (f) f.reset();
+    state.authKind = 'password';
+    var ci = el('hmCode'); if (ci) ci.value = '';
+    var pfl = el('hmPwField'), cfl = el('hmCodeField');
+    if (pfl) pfl.style.display = '';
+    if (cfl) cfl.style.display = 'none';
+  }
+
+  function setAuthKind(kind) {
+    state.authKind = kind;
+    var code = kind === 'code';
+    var pfl = el('hmPwField'), cfl = el('hmCodeField'), cf = el('hmConfirmField');
+    if (pfl) pfl.style.display = code ? 'none' : '';
+    if (cfl) cfl.style.display = code ? '' : 'none';
+    if (cf) cf.style.display = (!code && state.mode === 'register') ? '' : 'none';
+    el('hmSubmit').textContent = code ? '验证并登录' : (state.mode === 'register' ? '注册并登录' : '登录');
+    hideErr();
+    var sb = el('hmSoon'); if (sb && code === false) sb.classList.remove('hm-show');
+    setTimeout(function () { var a = code ? el('hmAccount') : el('hmPassword'); if (a) a.focus(); }, 40);
+  }
+
+  var codeTimer = null;
+  function sendCode() {
+    hideErr();
+    var account = (el('hmAccount').value || '').trim();
+    if (!accountType(account)) { showErr('请先输入正确的手机号或邮箱'); return; }
+    var btn = el('hmGetCode');
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = '发送中…';
+    api('/api/member/send-code', { account: account }).then(function (r) {
+      var j = r.json || {};
+      if (r.status === 200 && j.ok) {
+        var sb = el('hmSoon');
+        if (j.devCode) { sb.textContent = '内测演示验证码：' + j.devCode + '（短信通道开通后将自动发送到手机）'; }
+        else { sb.textContent = '验证码已发送，请查收' + (j.channel ? '（' + j.channel + '）' : ''); }
+        sb.classList.add('hm-show');
+        var n = 60;
+        btn.textContent = n + ' s';
+        if (codeTimer) clearInterval(codeTimer);
+        codeTimer = setInterval(function () {
+          n--;
+          if (n <= 0) { clearInterval(codeTimer); codeTimer = null; btn.disabled = false; btn.textContent = '获取验证码'; }
+          else btn.textContent = n + ' s';
+        }, 1000);
+        var ci = el('hmCode'); if (ci) ci.focus();
+      } else {
+        btn.disabled = false; btn.textContent = oldText;
+        showErr((j.error && j.error.message) || '验证码发送失败，请稍后再试');
+      }
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = oldText;
+      showErr('网络异常，请检查连接后重试');
+    });
+  }
+
+  function submitCodeAuth(account) {
+    var code = (el('hmCode').value || '').trim();
+    if (!/^\d{4,8}$/.test(code)) { showErr('请输入收到的验证码'); return; }
+    var btn = el('hmSubmit');
+    btn.disabled = true; btn.textContent = '验证中…';
+    api('/api/member/code-auth', { account: account, code: code }).then(function (r) {
+      var j = r.json;
+      if (r.status === 200 && j && j.ok && j.token) { successAuth(j); }
+      else { showErr((j && j.error && j.error.message) || '验证码错误或已失效，请重新获取'); }
+    }).catch(function () {
+      showErr('网络异常，请检查连接后重试');
+    }).finally(function () {
+      btn.disabled = false; btn.textContent = '验证并登录';
+    });
+  }
+
   function onSubmit(e) {
     e.preventDefault();
     hideErr();
     var reg = state.mode === 'register';
     var account = (el('hmAccount').value || '').trim();
-    var password = el('hmPassword').value || '';
     if (!accountType(account)) { showErr('请输入正确的手机号或邮箱'); return; }
+    if (state.authKind === 'code') { submitCodeAuth(account); return; }
+    var password = el('hmPassword').value || '';
     if (password.length < 8 || password.length > 64) { showErr('密码长度需为 8-64 位'); return; }
     if (reg) {
       var confirm = el('hmConfirm').value || '';
@@ -421,14 +521,7 @@
     api(path, payload).then(function (r) {
       var j = r.json;
       if (r.status === 200 && j && j.ok && j.token) {
-        saveSession(j.token, j.member);
-        closeAuth();
-        renderNav();
-        renderGate();
-        dispatch('hogee:auth');
-        if (state.waitResolve) { var rs = state.waitResolve; state.waitResolve = null; state.waitReject = null; rs(j.member); }
-        // 重置表单
-        el('hmForm').reset();
+        successAuth(j);
       } else {
         showErr((j && j.error && j.error.message) || (reg ? '注册失败，请稍后再试' : '登录失败，请检查账号密码'));
       }
