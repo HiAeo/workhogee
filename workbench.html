@@ -1873,15 +1873,9 @@ function heroWelcome(){
   renderHmRail(h);
   scrollBox.scrollTop=0;
  }
+ /* 「Hogee上新」断网兜底：出厂不带演示素材，内容统一来自 /api/feed 运营素材墙，
+    避免离线时重新出现已下线的历史示例。在线时只展示管理员登记的素材。 */
  var HM6_DEMO=[
-  {k:'v',src:'/media/workhogee-global.mp4',poster:'/media/workhogee-global-poster.jpg',cap:'WorkHogee 外贸版宣传片 · 五个伙计把货卖全球',sz:'lg',feat:1},
-  {k:'ba',before:'/images/3c-earphone-white.jpg',after:'/images/3c-earphone-pro.jpg',cap:'耳机 · 手机原图 → AI 商品图',sz:'sq'},
-  {k:'ba',before:'/images/cloth-sneaker-white.jpg',after:'/images/cloth-sneaker-pro.jpg',cap:'运动鞋 · 原图 → 上架主图',sz:'sq'},
-  {k:'img',src:'/images/home-candle-pro.jpg',cap:'香薰蜡烛 · 氛围场景图',sz:'wide'},
-  {k:'img',src:'/images/beauty-perfume-pro.jpg',cap:'香水 · 精修场景图',sz:'tall'},
-  {k:'img',src:'/images/cloth-sneaker-pro.jpg',cap:'运动鞋 · 场景主图',sz:'sq'},
-  {k:'img',src:'/images/3c-earphone-pro.jpg',cap:'耳机 · AI 场景主图',sz:'sq'},
-  {k:'v',src:'/media/workhogee-global.mp4',poster:'/media/workhogee-global-poster.jpg',cap:'营销视频 · 阿视成片',sz:'wide'}
  ];
  function rcEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
  function rcPlaySvg(){return '<span class="rc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></span>';}
