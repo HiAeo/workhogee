@@ -142,8 +142,8 @@ body[data-deliver="open"]{--deliver:380px}
 .btn-partner{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--tx2);border-radius:999px;font-size:12px;font-weight:600;padding:6px 12px;transition:.16s;box-shadow:var(--shadow-s)}
 .btn-partner:hover{border-color:var(--orange);color:var(--orange)}
 .only-mobile{display:none!important}
-.chat{flex:1;min-height:0;overflow-y:auto;padding:26px 0 14px;scroll-behavior:smooth}
-.chat-inner{max-width:880px;margin:0 auto;padding:0 22px}
+.chat{flex:1;min-height:0;overflow-y:auto;padding:26px 0 14px;scroll-behavior:smooth;display:flex;flex-direction:column;align-items:center}
+.chat-inner{width:100%;max-width:880px;margin:0 auto;padding:0 22px;box-sizing:border-box}
 .msg{display:flex;gap:11px;margin:18px 0;animation:msgIn .26s cubic-bezier(.2,.8,.2,1)}
 @keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .msg .m-avatar{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--orange-soft);margin-top:2px}
@@ -166,10 +166,10 @@ body[data-deliver="open"]{--deliver:380px}
 /* 品牌欢迎空态 */
 .hw{max-width:720px;margin:6vh auto 0;text-align:center;animation:hwIn .5s cubic-bezier(.2,.8,.2,1)}
 @keyframes hwIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.hw-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--orange);background:var(--orange-soft);border:1px solid rgba(234,88,12,.28);border-radius:999px;padding:6px 14px;margin-bottom:20px}
-.hw-badge .dot-live{width:6px;height:6px}
+.hw-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:.5px;color:var(--tx2);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 14px;margin-bottom:20px}
+.hw-badge .dot-live{width:6px;height:6px;border-radius:50%;background:var(--tx3)}
 .hw-title{font-size:40px;line-height:1.18;font-weight:800;letter-spacing:-.5px;color:var(--tx)}
-.hw-title .hl{color:var(--orange)}
+.hw-title .hl{color:var(--tx)}
 .hw-sub{margin:16px auto 0;max-width:560px;font-size:14.5px;line-height:1.85;color:var(--tx2)}
 .hw-team{display:flex;justify-content:center;gap:10px;margin:28px 0 6px;flex-wrap:wrap}
 .hw-mate{appearance:none;border:1px solid var(--line);background:linear-gradient(180deg,#20232b,#191b21);border-radius:16px;padding:15px 12px 13px;width:128px;display:flex;flex-direction:column;align-items:center;gap:9px;transition:.22s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-s);position:relative;overflow:hidden}
@@ -270,8 +270,8 @@ body[data-deliver="open"]{--deliver:380px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* 输入区 */
-.composer{flex:none;padding:12px 22px 14px;background:linear-gradient(180deg,rgba(20,21,25,0),var(--stage) 30%)}
-.composer-inner{max-width:880px;margin:0 auto}
+.composer{flex:none;padding:12px 22px 14px;background:linear-gradient(180deg,rgba(20,21,25,0),var(--stage) 30%);display:flex;flex-direction:column;align-items:center}
+.composer-inner{width:100%;max-width:880px;margin:0 auto;box-sizing:border-box}
 .cmp-attach{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}
 .cmp-attach .at{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:4px 8px 4px 4px;font-size:11.5px;color:var(--tx2);box-shadow:var(--shadow-s)}
 .cmp-attach .at img{width:26px;height:26px;border-radius:6px;object-fit:cover}
@@ -282,7 +282,7 @@ body[data-deliver="open"]{--deliver:380px}
 #composerInput{flex:1;background:transparent;border:0;resize:none;color:var(--tx);font-family:inherit;font-size:14px;line-height:1.6;min-height:80px;max-height:220px;padding:10px 4px;outline:none}
 #composerInput::placeholder{color:var(--tx3)}
 .cmp-q{appearance:none;border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:10px;font-size:11.5px;font-weight:700;width:42px;height:34px;flex:none;transition:.15s}
-.cmp-q:hover{border-color:var(--orange);color:var(--orange)}
+.cmp-q:hover{border-color:rgba(255,255,255,.42);color:var(--tx)}
 .cmp-send{appearance:none;border:0;background:var(--orange-d);color:#fff;width:36px;height:34px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;transition:.16s}
 .cmp-send:hover{background:var(--orange)}.cmp-send svg{width:17px;height:17px}
 .cmp-hint{text-align:center;font-size:11px;color:var(--tx3);margin-top:8px;line-height:1.5}
@@ -554,12 +554,12 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
 /* ===== 纳米式大输入卡：顶部书签 + 左上大上传方块 ===== */
 .cmp-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);transition:border-color .16s,box-shadow .16s;overflow:hidden}
 .cmp-card:focus-within{border-color:rgba(249,115,22,.5);box-shadow:var(--shadow),0 0 0 3px var(--orange-soft)}
-.cmp-tabs{display:flex;gap:2px;padding:8px 12px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2)}
+.cmp-tabs{display:flex;gap:4px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0))}
 .cmp-tabs::-webkit-scrollbar{display:none}
-.cmp-tab{appearance:none;background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--tx3);padding:9px 14px;border-radius:12px 12px 0 0;white-space:nowrap;position:relative;transition:color .15s,background .15s;display:inline-flex;align-items:center}
-.cmp-tab:hover{color:var(--tx2)}
-.cmp-tab.on{color:var(--orange);background:var(--orange-soft)}
-.cmp-tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;background:var(--orange)}
+.cmp-tab{appearance:none;background:transparent;border:1px solid transparent;border-bottom:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.2px;color:var(--tx3);padding:10px 17px 11px;border-radius:11px 11px 0 0;white-space:nowrap;position:relative;transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s,color .18s,box-shadow .18s;display:inline-flex;align-items:center}
+.cmp-tab:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.cmp-tab.on{color:#16171c;background:linear-gradient(180deg,#ffffff,#e6e8ed);font-weight:800;transform:translateY(-1px);box-shadow:0 -8px 18px rgba(255,255,255,.10),inset 0 1px 0 rgba(255,255,255,.95)}
+.cmp-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#eef0f4}
 .cmp-body{display:flex;gap:14px;padding:14px 16px 13px;align-items:stretch}
 .cmp-upload{appearance:none;flex:none;width:104px;min-height:120px;align-self:stretch;border:1.5px dashed rgba(255,255,255,.20);border-radius:16px;background:rgba(255,255,255,.03);color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:inherit;transition:.18s;padding:10px}
 .cmp-upload svg{width:30px;height:30px}
@@ -569,8 +569,8 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
 .cmp-main #composerInput{flex:1;min-height:104px;max-height:240px;background:transparent;border:0;resize:none;color:var(--tx);font-family:inherit;font-size:14.5px;line-height:1.65;padding:6px 4px;outline:none}
 .cmp-foot{display:flex;align-items:center;justify-content:space-between;padding-top:9px;margin-top:auto}
 .cmp-q{appearance:none;border:1px solid var(--line);background:transparent;color:var(--tx2);border-radius:999px;font-size:11.5px;font-weight:700;padding:7px 14px;width:auto;height:auto;transition:.15s;cursor:pointer;font-family:inherit}
-.cmp-q:hover{border-color:var(--orange);color:var(--orange)}
-.cmp-q.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.cmp-q:hover{border-color:rgba(255,255,255,.42);color:var(--tx)}
+.cmp-q.on{background:#fff;border-color:#fff;color:#16171c}
 .cmp-right{display:flex;align-items:center;gap:12px}
 .cmp-count{font-size:11.5px;color:var(--tx3);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
 .cmp-send{appearance:none;border:0;background:var(--orange-d);color:#fff;width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.16s}
@@ -619,8 +619,6 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
         <div class="sn-t"><span class="dot-live"></span><span id="skillNowName">通用电商技能</span></div>
         <div class="sn-d" id="skillNowDesc">传图后阿图自动识别行业并启用对应技能，也可手动添加。</div>
       </div>
-      <div class="rgroup">我的伙伴</div>
-      <div id="partnerList"></div>
     </div>
     <div class="rail-foot">
       <div data-member-nav hidden style="display:none"></div>
@@ -677,7 +675,6 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
             </div>
           </div>
         </div>
-        <div class="cmp-hint">伙计生成的内容可能有误，商品实际情况、功效与价格请按实物核对；阿发只备好素材，发布最后一下由你本人完成。</div>
       </div>
     </div>
   </main>
@@ -1361,9 +1358,7 @@ function heroWelcome(){
   h.innerHTML='<div class="hw-badge"><span class="dot-live"></span>你生意的好伙计</div>'
    +'<div class="hw-title">一笔成交从<span class="hl">一张产品图</span>开始</div>'
    +'<div class="hw-sub">拍图找阿图，写文案找阿文，做视频找阿视，发内容找阿发，盯数据找阿果。<br>五个伙计接力，从一张产品图，到一笔成交。</div>'
-   +'<div class="hw-dock" id="hwDock"></div>'
-   +'<div class="hw-team">'+mates+'</div>'
-   +'<div class="hw-hint">点一个伙计直接开工，或在输入框传图、说清你卖什么</div>';
+   +'<div class="hw-dock" id="hwDock"></div>';
   scroll.appendChild(h);
   placeComposer(true);
   scrollBottom();
@@ -1706,16 +1701,39 @@ function setDeliver(open){
 }
 function openDeliver(){try{sessionStorage.removeItem('hw.dlUserClosed');}catch(e){}setDeliver(true);}
 function closeDeliver(){try{sessionStorage.setItem('hw.dlUserClosed','1');}catch(e){}setDeliver(false);}
-var CMP_PH={host:'传一张产品图，或告诉伙计你要做什么——出图、写文案、剪视频、发内容…',
- atu:'上传产品图，阿图帮你出商品图 / 场景图 / 动态图，商品本身一点不动…',
- awen:'说说你卖什么、主打什么卖点，阿文按小红书 / 抖音 / 朋友圈口吻各写一版…',
- ashi:'传产品图或成品素材，阿视帮你分镜、运镜、加字幕，做成短视频…',
- afa:'选好要发的图文或视频，阿发帮你按平台打包素材、打开发布页，你点最后一下…'};
+var CMP_PH={host:['传一张产品图，或告诉伙计你要做什么…','出图、写文案、剪视频、发内容，一句话安排伙计…','卖什么？拍张图发我，剩下的伙计来干…'],
+ atu:['上传产品图，阿图帮你出能直接上架的商品图…','白底图、场景图、详情页主图，想要哪种尽管说…','商品本身一点不动，只把背景和质感做到位…'],
+ awen:['说说你卖什么、主打什么卖点，阿文按平台口吻写文案…','给我产品名和卖点，标题、正文、话题标签一次写好…','小红书、抖音、朋友圈，同款产品写出不同味道…'],
+ ashi:['传几张产品图，阿视帮你分镜、加字幕做成短视频…','产品展示、口播、卡点，想要什么节奏都可以…'],
+ afa:['图文视频备好了，阿发按平台整理成发布素材包…','小红书、抖音、朋友圈…选好平台，尺寸文案自动配齐…','最后一下你来点发送，前面的杂活伙计全包…']};
+window.HogeeTyper=(function(){
+ var inp=document.getElementById('composerInput'),si=0,ci=0,del=false,timer=null,key='host';
+ function arr(){return CMP_PH[key]||CMP_PH.host;}
+ function focused(){return document.activeElement===inp;}
+ function tick(){
+   if(!inp)return;
+   if(focused()||inp.value){if(!inp.value)inp.placeholder=arr()[si%arr().length];return;}
+   var a=arr(),s=a[si%a.length];
+   if(!del){ci++;inp.placeholder=s.slice(0,ci);if(ci>=s.length){del=true;timer=setTimeout(tick,1700);return;}}
+   else{ci--;inp.placeholder=s.slice(0,ci);if(ci<=0){del=false;si=(si+1)%a.length;timer=setTimeout(tick,340);return;}}
+   timer=setTimeout(tick,del?26:54);
+ }
+ function start(){if(timer)clearTimeout(timer);ci=0;del=false;timer=setTimeout(tick,480);}
+ function setTab(k){k=CMP_PH[k]?k:'host';var same=(k===key);key=k;si=0;
+   if(!inp)return;
+   if(focused()||inp.value){inp.placeholder=(CMP_PH[k]||CMP_PH.host)[0];}
+   else if(!same||!timer){inp.placeholder='';start();}}
+ if(inp){
+  inp.addEventListener('blur',function(){if(!inp.value)start();});
+  inp.addEventListener('focus',function(){if(!inp.value){if(timer)clearTimeout(timer);timer=null;inp.placeholder=arr()[si%arr().length];}});
+ }
+ return {setTab:setTab,start:start};
+})();
 function syncCmpTabs(){
  var k=(state.activePartner&&['atu','awen','ashi','afa'].indexOf(state.activePartner)>=0)?state.activePartner:'host';
  var ts=document.querySelectorAll('#cmpTabs .cmp-tab');
  for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',ts[i].dataset.tab===k);
- var inp=$('#composerInput');if(inp&&CMP_PH[k])inp.placeholder=CMP_PH[k];
+ if(window.HogeeTyper)window.HogeeTyper.setTab(k);
 }
 function selectTab(k){
  state.activePartner=k;renderPartners();renderTopbar();
