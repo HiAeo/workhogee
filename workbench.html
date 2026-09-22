@@ -624,7 +624,12 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .rmenu button.on:hover{background:rgba(255,255,255,.15);color:#fff}
 .rmenu button.on:hover svg{color:#fff}
 /* 任务分组标题 + 小新建钮 */
-.rgroup{display:flex;align-items:center;justify-content:space-between;margin:18px 6px 8px;font-size:11px;letter-spacing:1px;text-transform:none}
+.rgroup{display:flex;align-items:center;justify-content:space-between;margin:16px 6px 8px;font-size:14px;font-weight:600;letter-spacing:.2px;color:var(--tx2);text-transform:none}
+.rgroup-txt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tasklist{display:flex;flex-direction:column;gap:1px}
+.tasklist .task-item{margin:0}
+#taskList .task-item .tk-ico{color:var(--tx3)}
+#taskList .task-item.active .tk-ico{color:var(--orange)}
 .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;padding:0}
 .rgroup-add svg{width:15px;height:15px}
 .rgroup-add:hover{color:var(--orange);background:var(--orange-soft)}
@@ -1452,9 +1457,11 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
     </div>
     <div class="rail-scroll">
       <nav class="rmenu" id="mainMenu">
-        <div class="rgroup">工作台</div>
+        <div class="rgroup"><span class="rgroup-txt">工作台</span></div>
         <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/></svg>Hogee创作</button>
-        <div class="rgroup">我的</div>
+        <div class="rgroup"><span class="rgroup-txt">对话</span><button class="rgroup-add" id="btnNewChat" type="button" title="新建对话" aria-label="新建对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        <div id="taskList" class="tasklist"></div>
+        <div class="rgroup"><span class="rgroup-txt">我的</span></div>
         <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>我的知识库</button>
         <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>我的创作</button>
         <button id="navPublish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发布管理</button>
@@ -1774,8 +1781,11 @@ var state=resetState();
 function newTaskId(){return 't'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 var taskCache=[];
 function loadTasks(){return taskCache;}
+function readLocalTasks(){try{var v=JSON.parse(localStorage.getItem('hogee_tasks_local')||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}}
+function writeLocalTasks(){try{localStorage.setItem('hogee_tasks_local',JSON.stringify(taskCache));}catch(e){}}
 function saveTasks(a){
  taskCache=a.slice(0,30);
+ writeLocalTasks();
  // 异步同步到后端（fire and forget）
  try{
   fetch(API+'/api/tasks/sync',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({tasks:taskCache})})
@@ -1783,32 +1793,57 @@ function saveTasks(a){
  }catch(e){}
 }
 function loadTasksRemote(){
- if(!localStorage.getItem('hogee_mtoken')){renderTaskList();return Promise.resolve();}
+ if(!localStorage.getItem('hogee_mtoken')){var lt0=readLocalTasks();if(lt0.length)taskCache=lt0;renderTaskList();return Promise.resolve();}
  return fetch(API+'/api/tasks',{headers:authHeaders()})
   .then(function(r){return r.json();})
   .then(function(j){
-   if(j&&j.ok&&Array.isArray(j.tasks)){taskCache=j.tasks;}
+   var local=readLocalTasks();
+   if(j&&j.ok&&Array.isArray(j.tasks)&&j.tasks.length){taskCache=j.tasks;writeLocalTasks();}
+   else if(local.length){taskCache=local;
+     try{fetch(API+'/api/tasks/sync',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({tasks:taskCache})}).catch(function(){});}catch(e){}}
    renderTaskList();
   })
-  .catch(function(){renderTaskList();});
+  .catch(function(){var lt1=readLocalTasks();if(lt1.length)taskCache=lt1;renderTaskList();});
 }
 function taskSkillIco(t){return t==='usedcar'?IC.car:IC.shop;}
+var ICHAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5 8.4 8.4 0 0 1 8.5 8.5Z"/></svg>';
+function chatTitleFrom(t){t=String(t==null?'':t).replace(/\s+/g,' ').trim();return t.length>24?t.slice(0,24)+'…':t;}
+/* 自由对话也建档：首次发言即生成一条对话，仅持久化用户消息时间线（图片/卡片走交付物，不进本地存储） */
+function ensureChatFromText(txt){
+ try{
+  var t=String(txt==null?'':txt).trim();if(!t)return;
+  var arr=loadTasks(),i=arr.findIndex(function(x){return x.id===state.taskId;}),now=Date.now();
+  var skill=state.identity?state.identity.type:'general';
+  if(i<0){
+   var title=state.taskTitle||chatTitleFrom(t)||'新对话';
+   var rec={id:state.taskId,title:title,pinned:!!state.taskPinned,ts:now,skill:skill,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner,msgs:[{role:'user',t:t.slice(0,200)}],inputKeys:[],resultKeys:[]};
+   arr.unshift(rec);state.taskTitle=title;
+  }else{
+   arr[i].ts=now;arr[i].partner=state.activePartner;arr[i].skill=skill;
+   if(!arr[i].msgs)arr[i].msgs=[];
+   arr[i].msgs.push({role:'user',t:t.slice(0,200)});arr[i].msgs=arr[i].msgs.slice(-60);
+   if(!state.taskTitle){if(arr[i].title&&arr[i].title!=='新对话')state.taskTitle=arr[i].title;else{arr[i].title=chatTitleFrom(t);state.taskTitle=arr[i].title;}}
+  }
+  arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
+  saveTasks(arr);renderTaskList();
+ }catch(e){}
+}
 function markTaskProgress(){
- if(!state.identity)return;
+ var skill=state.identity?state.identity.type:'general';
  var arr=loadTasks(),i=arr.findIndex(function(t){return t.id===state.taskId;});
- var fallback=state.identity.type==='usedcar'?'二手车出图任务':'商品出图任务';
- var rec={id:state.taskId,title:state.taskTitle||(state.product&&state.product.name)||fallback,pinned:state.taskPinned,ts:Date.now(),skill:state.identity.type,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner,inputKeys:(state.images||[]).map(function(x){return x.tosKey;}).filter(Boolean),resultKeys:(state.results||[]).map(function(x){return x.tosKey;}).filter(Boolean)};
- if(i>=0)arr[i]=Object.assign(arr[i],rec);else arr.unshift(rec);
+ var fallback=skill==='usedcar'?'二手车出图任务':'商品出图任务';
+ var rec={id:state.taskId,title:state.taskTitle||(state.product&&state.product.name)||fallback,pinned:state.taskPinned,ts:Date.now(),skill:skill,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner,inputKeys:(state.images||[]).map(function(x){return x.tosKey;}).filter(Boolean),resultKeys:(state.results||[]).map(function(x){return x.tosKey;}).filter(Boolean)};
+ if(i>=0){rec.title=arr[i].title||rec.title;rec.msgs=arr[i].msgs;arr[i]=Object.assign(arr[i],rec);}else arr.unshift(rec);
  arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
  saveTasks(arr);renderTaskList();
 }
 function archiveCurrentTask(){if(state.identity&&((state.product&&state.product.name)||(state.results&&state.results.length)||state.images.length))markTaskProgress();}
 function renderTaskList(){
  var box=document.getElementById('taskList');if(!box)return;var arr=loadTasks();
- if(!arr.length){box.innerHTML='<div class="task-empty">还没有任务，传张图开始第一单。</div>';return;}
+ if(!arr.length){box.innerHTML='<div class="task-empty">还没有对话，发一句话或传张产品图开始。</div>';return;}
  box.innerHTML=arr.map(function(t){
   return '<div class="task-item'+(t.id===state.taskId?' active':'')+'" data-tid="'+t.id+'" title="'+esc(t.title)+'">'
-   +'<span class="tk-ico">'+taskSkillIco(t.skill)+'</span>'
+   +'<span class="tk-ico">'+ICHAT+'</span>'
    +'<span class="tk-name">'+esc(t.title)+'</span>'
    +(t.pinned?'<span class="tk-pin">'+IC.pin+'</span>':'')
    +'<span class="tk-acts">'
@@ -1835,14 +1870,20 @@ function openTask(id){
  state.taskId=t.id;state.taskTitle=t.title;state.taskPinned=!!t.pinned;
  state.identity=t.skill?{type:t.skill,label:t.skill==='usedcar'?'二手车':'通用电商',cat:t.skill==='usedcar'?'二手车':''}:null;
  if(state.identity){saveId();state.bgImage=loadBg(state.identity.type);}
- state.product=t.product||{name:''};state.activePartner='atu';state.stage='upload';
+ state.product=t.product||{name:''};
+ state.activePartner=(t.partner&&partnerById(t.partner))?t.partner:'host';
+ state.stage=(t.results||t.imgs)?'result':'chat';
  placeComposer(false);
  scroll.innerHTML='';
+ setMenuActive('menuHome');
  renderPartners();renderTopbar();renderDeliver();renderCmpAttach();renderTaskList();
- userSay('打开任务：'+t.title);
- botSay('已打开「<b>'+esc(t.title)+'</b>」。历史成品在右侧交付物；要接着出图，把这件货的照片再传一次就行。','atu');
- renderUploadCard();
+ var ums=(t.msgs||[]).filter(function(m){return m&&m.role==='user'&&m.t;});
+ ums.forEach(function(m){userSay(m.t);});
+ var sum='已打开对话「<b>'+esc(t.title)+'</b>」。';
+ sum+=((t.results||t.imgs)?'之前生成的成品在右侧「交付物」里，接着传图或直接说要改哪张就行。':'继续说，我接着干。');
+ botSay(sum,'host');
  if(t.resultKeys&&t.resultKeys.length){restoreCloudResults(t.resultKeys);}
+ scrollBottom();
 }
 /* ================= composer 常驻快捷能力 ================= */
 function cqAction(k){
@@ -4413,6 +4454,7 @@ function cmpInit(){
 function sendFreeText(){
  var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;placeComposer(false);inp.value='';inp.style.height='auto';if(window.syncCmpCount)syncCmpCount();syncSendReady();
  userSay(txt);
+ ensureChatFromText(txt);
  if(window.CMP&&CMP.mode!=='agent'){routeByCmpMode(CMP.mode,txt);return;}
  var stop=botTyping(state.activePartner);
  var ctx={
@@ -4550,6 +4592,7 @@ function sendFreeTextLegacy(txt){
 function bind(){
  /* 顶部 / 左列 */
  $('#menuHome').addEventListener('click',goHome);
+(function(){var nc=document.getElementById('btnNewChat');if(nc)nc.addEventListener('click',function(){closeAnalytics();newOrder();});})();
  $('#navKnowledge').addEventListener('click',openKnowledgeView);
  $('#navWorks').addEventListener('click',openWorks);
  $('#navPublish').addEventListener('click',openPublish);
