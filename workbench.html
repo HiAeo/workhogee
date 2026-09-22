@@ -1018,6 +1018,73 @@ body[data-stage="publish"] .composer{display:none!important}
 @media(max-width:520px){.ac-benefits{grid-template-columns:1fr}.ac-kpis{grid-template-columns:1fr 1fr}}
 
 body[data-stage="knowledge"] .composer,body[data-stage="connect"] .composer{display:none!important}
+body[data-stage="analytics"] .composer{display:none!important}
+.ag-kpi .n small{font-size:13px;color:var(--orange);font-weight:500;margin-left:6px}
+.ag-sec{margin-bottom:18px}
+.ag-sec:last-child{margin-bottom:0}
+.ag-sec-t{font-size:15px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:9px}
+.ag-sec-t::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--orange)}
+.ag-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px}
+.ag-search{flex:1;min-width:180px;max-width:300px;box-sizing:border-box;padding:9px 13px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--tx);font-size:13px;font-family:inherit;outline:none}
+.ag-search:focus{border-color:var(--orange)}
+.ag-row{display:flex;align-items:center;gap:13px;border:1px solid var(--line2);background:rgba(255,255,255,.018);border-radius:13px;padding:11px 14px;margin-bottom:8px;transition:border-color .15s,background .15s}
+.ag-row:hover{border-color:var(--line);background:var(--panel2)}
+.ag-main{flex:1;min-width:0}
+.ag-t1{font-size:13.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-t2{font-size:11.5px;color:var(--tx3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-nums{display:flex;gap:20px;flex:none}
+.ag-num{text-align:center;min-width:44px}
+.ag-num .v{font-size:15px;font-weight:600;color:var(--tx);font-variant-numeric:tabular-nums;line-height:1}
+.ag-num .v.hot{color:var(--orange)}
+.ag-num .k{font-size:10px;color:var(--tx3);margin-top:5px}
+.ag-acts{display:flex;gap:7px;flex:none}
+.ag-icon{appearance:none;width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--tx2);display:grid;place-items:center;cursor:pointer;transition:.15s;flex:none}
+.ag-icon:hover{border-color:var(--orange);color:var(--orange)}
+.ag-icon svg{width:15px;height:15px}
+.ag-thumb{width:50px;height:50px;border-radius:11px;flex:none;object-fit:cover;background:var(--panel2);border:1px solid var(--line2)}
+.ag-thumb-ph{width:50px;height:50px;border-radius:11px;flex:none;display:grid;place-items:center;color:var(--tx3);background:var(--panel2);border:1px solid var(--line2)}
+.ag-thumb-ph svg{width:22px;height:22px}
+.ag-pill{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--tx2);white-space:nowrap;background:rgba(255,255,255,.03);flex:none}
+.ag-sel{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);border-radius:999px;padding:5px 26px 5px 11px;font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;white-space:nowrap;flex:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239fb0c8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.ag-empty{border:1px dashed var(--line);border-radius:14px;padding:42px 22px;text-align:center;color:var(--tx3);background:rgba(255,255,255,.015)}
+.ag-empty .ei{width:52px;height:52px;border-radius:15px;background:rgba(251,122,34,.1);color:var(--orange);display:grid;place-items:center;margin:0 auto 14px}
+.ag-empty .ei svg{width:25px;height:25px}
+.ag-empty .et{font-size:14.5px;font-weight:600;color:var(--tx2);margin-bottom:7px}
+.ag-empty .ed{font-size:12.5px;line-height:1.8;max-width:460px;margin:0 auto 16px}
+.ag-empty .ac-btn{margin:0 4px}
+.ag-loading{padding:58px 0;text-align:center;color:var(--tx3);font-size:13px}
+.ag-spin{width:30px;height:30px;border-radius:50%;border:2px solid var(--line2);border-top-color:var(--orange);animation:agSpin .8s linear infinite;margin:0 auto 14px}
+@keyframes agSpin{to{transform:rotate(360deg)}}
+.ag-mask{position:fixed;inset:0;background:rgba(5,8,14,.62);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:120}
+.ag-mask.show{opacity:1;pointer-events:auto}
+.ag-drawer{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;background:var(--stage);border-left:1px solid var(--line2);box-shadow:-24px 0 60px rgba(0,0,0,.55);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:121;display:flex;flex-direction:column}
+.ag-drawer.show{transform:translateX(0)}
+.ag-dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line2)}
+.ag-dh .t{font-size:16px;font-weight:600;color:var(--tx)}
+.ag-dh .s{font-size:11.5px;color:var(--tx3);margin-top:3px}
+.ag-db{flex:1;overflow-y:auto;padding:20px}
+.ag-contact{display:flex;align-items:center;gap:11px;border:1px solid var(--line2);background:var(--panel);border-radius:12px;padding:13px 15px;margin-bottom:16px}
+.ag-contact .cv{font-size:15px;font-weight:600;color:var(--tx);font-variant-numeric:tabular-nums;flex:1;min-width:0;word-break:break-all}
+.ag-dl{margin-bottom:6px}
+.ag-dl .r{display:flex;gap:14px;padding:10px 2px;border-bottom:1px dashed var(--line2);font-size:13px}
+.ag-dl .r:last-child{border-bottom:0}
+.ag-dl .k{width:70px;flex:none;color:var(--tx3);font-size:12.5px}
+.ag-dl .v{flex:1;color:var(--tx);word-break:break-word;min-width:0}
+.ag-rate{display:flex;gap:4px}
+.ag-rate button{appearance:none;background:none;border:0;cursor:pointer;padding:2px;color:var(--tx3)}
+.ag-rate button.on{color:var(--orange)}
+.ag-rate svg{width:19px;height:19px}
+.ag-tlwrap{position:relative;padding:2px 0 6px 20px;border-left:1.5px solid var(--line2);margin:6px 0 16px}
+.ag-tli{position:relative;padding:0 0 15px}
+.ag-tli:last-child{padding-bottom:0}
+.ag-tli::before{content:"";position:absolute;left:-25.5px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px var(--stage)}
+.ag-tli .tt{font-size:12.5px;font-weight:600;color:var(--tx)}
+.ag-tli .tx{font-size:12px;color:var(--tx3);line-height:1.7;margin-top:3px;word-break:break-word}
+.ag-ta{width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:11px 13px;color:var(--tx);font-size:13px;font-family:inherit;resize:vertical;min-height:66px;outline:none}
+.ag-ta:focus{border-color:var(--orange)}
+.ag-sec-label{font-size:12px;font-weight:600;color:var(--tx2);margin:16px 0 9px}
+.ag-db .ac-btn.primary{width:100%;justify-content:center;margin-top:11px}
+@media(max-width:680px){.ag-nums{gap:14px;order:3;width:100%;justify-content:space-between}.ag-row{flex-wrap:wrap;gap:11px}.ag-pill{order:1}.ag-sel{order:2}.ag-acts{order:1;margin-left:auto}.ag-thumb,.ag-thumb-ph{width:44px;height:44px}}
 @media(max-width:860px){.view{padding:14px 15px 60px}.view-title{font-size:22px}.skill-grid{grid-template-columns:1fr}.conn-grid{grid-template-columns:repeat(2,1fr)}.pv,.wv{padding:14px 15px 60px}}
 @media(max-width:520px){.conn-grid{grid-template-columns:1fr}}
 .pv{max-width:1200px;margin:0 auto;width:100%;padding:22px 34px 90px}
@@ -1451,6 +1518,11 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
       </div>
     </div>
 
+    <div class="ag-mask" id="agMask"></div>
+    <aside class="ag-drawer" id="agDrawer" aria-hidden="true">
+      <div class="ag-dh"><div><div class="t" id="agDTitle">线索详情</div><div class="s" id="agDSub"></div></div><button type="button" class="ag-icon" id="agDClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="ag-db" id="agDBody"></div>
+    </aside>
     <div class="embed-view" id="analyticsView">
       <iframe id="analyticsFrame" title="效果中心" loading="lazy"></iframe>
     </div>
@@ -3889,14 +3961,195 @@ function redoCopy(tone){
 function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.chart+' 阿果效果中心</div><div class="card-desc">画册浏览、渠道二维码归因、访客留资与咨询，都会在这里汇总。生成画册并把链接/二维码投出去后，数据自动回流。</div><div class="card-actions"><a class="btn btn-primary" href="/analytics.html" target="_blank" rel="noopener">'+IC.external+' 打开效果中心</a></div></div>','agu');}
 
 /* ================= 新任务 / 背景上传 ================= */
-/* ================= 效果中心内嵌视图 ================= */
+/* ================= 效果监控（原生统一视图，对齐知识库/创作/发布/连接） ================= */
 function setMenuActive(id){$$('.rmenu button').forEach(function(b){b.classList.toggle('on',b.id===id);});}
-function openAnalytics(){
- document.body.dataset.view='analytics';setMenuActive('menuAnalytics');
- if(typeof closeDeliver==='function')closeDeliver();
- var f=$('#analyticsFrame');if(f&&!f.getAttribute('data-loaded')){f.src='/analytics.html?embed=1';f.setAttribute('data-loaded','1');}
+var AG_SRC={wechat_group:'客户微信群',moments:'朋友圈',poster:'门店立牌/印刷',douyin:'抖音',xiaohongshu:'小红书',xianyu:'闲鱼',dongchedi:'懂车帝',kuaishou:'快手',gzh:'公众号',shipinhao:'视频号',sms:'短信',email:'邮件',direct:'直接访问',other:'其他'};
+var AG_ST={new:{t:'新线索'},following:{t:'跟进中'},visited:{t:'已到店'},deal:{t:'已成交'},lost:{t:'已流失'}};
+var AG={range:7,status:'all',q:'',ov:null,ch:{rows:[]},sc:{rows:[]},leads:[],showcases:[]};
+function agSrc(s){return AG_SRC[s]||s||'直接访问';}
+function agN(v){return (Number(v)||0).toLocaleString('en-US');}
+function agDate(off){var d=new Date(Date.now()+(off||0)*864e5+8*36e5);return d.toISOString().slice(0,10);}
+function agTime(ts){if(!ts)return '—';var d=new Date(ts);function p(x){return (x<10?'0':'')+x;}return (d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function agDur(ms){if(!ms)return '—';var s=Math.round(ms/1000);if(s<60)return s+'秒';var m=Math.floor(s/60);s=s%60;return m+'分'+(s?(''+s+'秒'):'');}
+function agLoggedIn(){return !!(window.HogeeMember&&HogeeMember.isLoggedIn&&HogeeMember.isLoggedIn());}
+function agCIcon(type){var p={phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.2 4.3 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z',wechat:'M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-3.4A8 8 0 1 1 21 11.5z',email:'M4 4h16v16H4zM4 6l8 6 8-6'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:none"><path d="'+(p[type]||p.phone)+'"/></svg>';}
+function agEye(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';}
+function agExt(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>';}
+function agCopyIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';}
+function agImgPh(){return '<div class="ag-thumb-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 14l5-4 4 3 3-2 6 4"/></svg></div>';}
+function agReq(method,path,body){
+ return HogeeMember.authFetch(API+path,{method:method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})
+ .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok||(j&&j.ok===false)){var e=new Error((j&&j.error&&(j.error.message||j.error.code))||('请求失败 '+r.status));e.status=r.status;e.code=j&&j.error&&j.error.code;throw e;}return j;});});
 }
-function closeAnalytics(){if(document.body.dataset.view==='analytics')document.body.dataset.view='studio';setMenuActive('menuHome');}
+function agCopy(text,msg){
+ function fb(){var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast(msg||'已复制');}catch(e){}document.body.removeChild(ta);}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast(msg||'已复制');},fb);}else fb();
+}
+function agScTitle(code){var a=AG.showcases.find(function(x){return x.code===code;});if(a)return a.title;var b=(AG.sc.rows||[]).find(function(x){return x.code===code;});return b?b.title:(code||'—');}
+function agEmpty(et,ed,actions){return '<div class="ag-empty"><div class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"/><path d="M3 7l3-3h12l3 3"/><path d="M9 12h6M12 9v6"/></svg></div><div class="et">'+et+'</div><div class="ed">'+ed+'</div>'+(actions||'')+'</div>';}
+function closeAnalytics(){try{closeAgLead();}catch(e){}}
+function openAnalytics(){
+ if(typeof closeDeliver==='function'){try{closeDeliver();}catch(e){}}
+ setMenuActive('menuAnalytics');
+ placeComposer(false);document.body.dataset.stage='analytics';
+ scroll.innerHTML='';
+ var v=document.createElement('div');v.className='view';v.id='agView';
+ v.innerHTML='<div class="view-head"><div><div class="view-title">Hogee 效果监控</div><div class="view-sub">阿果帮你盯画册与渠道码的浏览、意向与留资；客户留资后可直接在这里跟进、改状态。</div></div>'
+  +'<div class="atabs" id="agRange"><button type="button" class="atab" data-r="7">近 7 天</button><button type="button" class="atab" data-r="30">近 30 天</button><button type="button" class="atab" data-r="90">近 90 天</button></div></div>'
+  +'<div id="agBody"><div class="ag-loading"><div class="ag-spin"></div>正在汇总效果数据…</div></div>';
+ scroll.appendChild(v);scrollBox.scrollTop=0;
+ setupAgDrawerOnce();bindAg(v);
+ v.querySelector('#agRange').querySelectorAll('.atab').forEach(function(b){b.classList.toggle('on',Number(b.getAttribute('data-r'))===AG.range);});
+ if(!agLoggedIn()){agGate(v);return;}
+ loadAg(v);
+}
+function agGate(v){
+ var body=v.querySelector('#agBody');
+ body.innerHTML=agEmpty('登录后查看效果数据','画册浏览、意向点击、留资线索和渠道表现都属于你的经营数据，登录后即可查看、跟进与导出。',
+  '<button type="button" class="ac-btn primary" id="agLoginBtn">登录 / 注册</button><button type="button" class="ac-btn" id="agReloadBtn">我已登录，刷新</button>');
+ var b1=body.querySelector('#agLoginBtn');if(b1)b1.onclick=function(){if(window.HogeeMember&&HogeeMember.open)HogeeMember.open('login');};
+ var b2=body.querySelector('#agReloadBtn');if(b2)b2.onclick=function(){openAnalytics();};
+}
+function agErr(v,msg){
+ v.querySelector('#agBody').innerHTML=agEmpty('数据暂时没加载出来',(msg||'网络异常')+'，可以重试一次；若多次失败请稍后再看。','<button type="button" class="ac-btn primary" data-retry>重新加载</button>');
+}
+function loadAg(v){
+ var body=v.querySelector('#agBody');
+ body.innerHTML='<div class="ag-loading"><div class="ag-spin"></div>正在汇总效果数据…</div>';
+ var from=agDate(-(AG.range-1)),to=agDate(0);
+ Promise.all([
+  agReq('GET','/analytics/overview?from='+from+'&to='+to),
+  agReq('GET','/analytics/channels?from='+from+'&to='+to).catch(function(){return {data:{rows:[]}};}),
+  agReq('GET','/analytics/showcases?from='+from+'&to='+to).catch(function(){return {data:{rows:[]}};}),
+  agReq('GET','/leads?from='+agDate(-89)+'&to='+to).catch(function(){return {data:[]};}),
+  agReq('GET','/showcases').catch(function(){return {data:[]};})
+ ]).then(function(rs){
+  AG.ov=(rs[0]&&rs[0].data)||null;
+  AG.ch=(rs[1]&&rs[1].data)||{rows:[]};
+  AG.sc=(rs[2]&&rs[2].data)||{rows:[]};
+  AG.leads=rs[3].data||[];AG.showcases=rs[4].data||[];
+  renderAg(v);
+ }).catch(function(e){
+  if(e&&(e.status===401||/登录|未登录|token|unauthorized|401|请先/.test(e.message||''))){agGate(v);}else agErr(v,e.message||'');
+ });
+}
+function renderAg(v){
+ var t=(AG.ov&&AG.ov.totals)||{};
+ var leadRate=t.uv?((Number(t.leads)||0)/Number(t.uv)*100).toFixed(1)+'%':null;
+ var kpis=[{n:agN(t.pv),l:'画册浏览（PV）'},{n:agN(t.uv),l:'独立访客（UV）'},{n:agN(t.leads),s:leadRate,l:'留资线索 · 留资率'},{n:agN(t.cta),l:'意向点击（问底价等）'}];
+ var h='<div class="ac-kpis">'+kpis.map(function(k){return '<div class="ac-kpi ag-kpi"><div class="n">'+k.n+(k.s?'<small>'+k.s+'</small>':'')+'</div><div class="l">'+k.l+'</div></div>';}).join('')+'</div>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">留资线索<button type="button" class="ac-btn" id="agExport" style="margin-left:auto;padding:6px 13px;font-size:12px">导出 CSV</button></div>'
+  +'<div class="ag-toolbar"><div class="atabs" id="agStTabs"></div><input class="ag-search" id="agSearch" placeholder="搜索客户姓名 / 联系方式 / 备注" value="'+esc(AG.q)+'"></div><div id="agLeads"></div></section>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">画册表现</div><div id="agSc"></div></section>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">渠道表现</div><div id="agCh"></div></section>';
+ v.querySelector('#agBody').innerHTML=h;
+ agRenderLeads(v);agRenderSc(v);agRenderCh(v);
+}
+function agRenderLeads(v){
+ var TABS=[['all','全部'],['new','新线索'],['following','跟进中'],['visited','已到店'],['deal','已成交'],['lost','已流失']];
+ var cnt={all:AG.leads.length};['new','following','visited','deal','lost'].forEach(function(k){cnt[k]=AG.leads.filter(function(l){return l.status===k;}).length;});
+ v.querySelector('#agStTabs').innerHTML=TABS.map(function(t){return '<button type="button" class="atab'+(AG.status===t[0]?' on':'')+'" data-st="'+t[0]+'">'+t[1]+' <span style="opacity:.6;font-variant-numeric:tabular-nums">'+cnt[t[0]]+'</span></button>';}).join('');
+ var q=AG.q.trim().toLowerCase();
+ var rows=AG.leads.filter(function(l){if(AG.status!=='all'&&l.status!==AG.status)return false;if(q){var hay=((l.name||'')+' '+(l.note||'')+' '+((l.contact&&l.contact.value)||'')).toLowerCase();if(hay.indexOf(q)<0)return false;}return true;});
+ var box=v.querySelector('#agLeads');
+ if(!AG.leads.length){box.innerHTML=agEmpty('还没有留资线索','客户在你投出的画册里点「问底价」并留下联系方式后，会自动出现在这里，可直接跟进、评级和改状态。');return;}
+ if(!rows.length){box.innerHTML=agEmpty('该筛选下暂无线索','换个状态或关键词试试。');return;}
+ box.innerHTML=rows.slice().sort(function(a,b){return (b.created_at||0)-(a.created_at||0);}).map(function(l){
+  var ct=l.contact||{type:'phone',value:''};
+  var intent=l.intent_showcase?agScTitle(l.intent_showcase):'';
+  var opts=Object.keys(AG_ST).map(function(k){return '<option value="'+k+'" '+(k===l.status?'selected':'')+'>'+AG_ST[k].t+'</option>';}).join('');
+  return '<div class="ag-row"><div class="ag-main"><div class="ag-t1">'+esc(l.name||'未留名客户')+'</div>'
+   +'<div class="ag-t2" style="display:flex;align-items:center;gap:6px;color:var(--tx2)">'+agCIcon(ct.type)+'<span style="font-variant-numeric:tabular-nums">'+esc(ct.value||'—')+'</span><span style="opacity:.4">·</span><span>'+agTime(l.created_at)+'</span></div>'
+   +'<div class="ag-t2">'+(intent?('意向画册：'+esc(intent)):'')+(l.note?((intent?' · ':'意向：')+esc(l.note)):'')+'</div></div>'
+   +'<span class="ag-pill">'+esc(agSrc(l.source))+'</span>'
+   +'<select class="ag-sel" data-status="'+esc(l.lead_id)+'" aria-label="线索状态">'+opts+'</select>'
+   +'<button type="button" class="ag-icon" data-lead="'+esc(l.lead_id)+'" title="查看详情 / 跟进" aria-label="线索详情">'+agEye()+'</button></div>';
+ }).join('');
+}
+function agRenderSc(v){
+ var rows=(AG.sc.rows||[]).slice().sort(function(a,b){return (b.pv||0)-(a.pv||0);});
+ var box=v.querySelector('#agSc');
+ if(!rows.length){box.innerHTML=agEmpty('还没有画册数据','在工作台把成品「发布为 H5 画册」并投出后，这里会按画册统计浏览、意向与留资。');return;}
+ box.innerHTML=rows.map(function(r){
+  var thumb=r.thumb?'<img class="ag-thumb" src="'+esc(r.thumb)+'" alt="" loading="lazy">':agImgPh();
+  var url=API+'/s/'+r.code;
+  return '<div class="ag-row">'+thumb
+   +'<div class="ag-main"><div class="ag-t1">'+esc(r.title||'未命名画册')+'</div><div class="ag-t2">'+esc(r.code)+' · 平均停留 '+agDur(r.avg_duration_ms)+'</div></div>'
+   +'<div class="ag-nums"><div class="ag-num"><div class="v">'+agN(r.pv)+'</div><div class="k">浏览</div></div><div class="ag-num"><div class="v">'+agN(r.uv)+'</div><div class="k">访客</div></div><div class="ag-num"><div class="v">'+agN(r.cta)+'</div><div class="k">意向</div></div><div class="ag-num"><div class="v hot">'+agN(r.leads)+'</div><div class="k">留资</div></div></div>'
+   +'<div class="ag-acts"><a class="ag-icon" title="打开画册" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none">'+agExt()+'</a><button type="button" class="ag-icon" data-copy="'+esc(url)+'" title="复制画册链接" aria-label="复制链接">'+agCopyIcon()+'</button></div></div>';
+ }).join('');
+}
+function agRenderCh(v){
+ var rows=(AG.ch.rows||[]).slice().sort(function(a,b){return (b.leads||0)-(a.leads||0)||(b.pv||0)-(a.pv||0);});
+ var box=v.querySelector('#agCh');
+ if(!rows.length){box.innerHTML=agEmpty('还没有渠道数据','在「发布管理」为画册生成渠道二维码（朋友圈、抖音、小红书等）并投出后，这里按渠道汇总效果。');return;}
+ box.innerHTML=rows.map(function(r){
+  var rate=(r.uv&&typeof r.lead_rate==='number')?r.lead_rate.toFixed(1)+'%':'—';
+  return '<div class="ag-row"><div class="ag-main"><div class="ag-t1">'+esc(agSrc(r.source))+'</div><div class="ag-t2">跳转 '+agN(r.redirect)+' 次</div></div>'
+   +'<div class="ag-nums"><div class="ag-num"><div class="v">'+agN(r.pv)+'</div><div class="k">浏览</div></div><div class="ag-num"><div class="v">'+agN(r.uv)+'</div><div class="k">访客</div></div><div class="ag-num"><div class="v">'+agN(r.cta)+'</div><div class="k">意向</div></div><div class="ag-num"><div class="v hot">'+agN(r.leads)+'</div><div class="k">留资</div></div><div class="ag-num"><div class="v">'+rate+'</div><div class="k">留资率</div></div></div></div>';
+ }).join('');
+}
+function agExportCsv(){
+ if(!agLoggedIn()){if(window.HogeeMember)HogeeMember.open('login');return;}
+ HogeeMember.authFetch(API+'/leads/export?from='+agDate(-89)+'&to='+agDate(0)).then(function(r){if(!r.ok)throw new Error('导出失败');return r.blob();}).then(function(blob){
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='workhogee-线索-'+agDate(0)+'.csv';document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);toast('CSV 已导出');
+ }).catch(function(e){toast(e.message||'导出失败');});
+}
+function bindAg(v){
+ v.addEventListener('click',function(e){
+  var rb=e.target.closest('[data-r]');if(rb){AG.range=Number(rb.getAttribute('data-r'));v.querySelectorAll('#agRange .atab').forEach(function(b){b.classList.toggle('on',b===rb);});loadAg(v);return;}
+  var st=e.target.closest('[data-st]');if(st){AG.status=st.getAttribute('data-st');agRenderLeads(v);return;}
+  var ld=e.target.closest('[data-lead]');if(ld){openAgLead(ld.getAttribute('data-lead'));return;}
+  var cp=e.target.closest('[data-copy]');if(cp){agCopy(cp.getAttribute('data-copy'),'画册链接已复制');return;}
+  if(e.target.closest('#agExport')){agExportCsv();return;}
+  if(e.target.closest('[data-retry]')){loadAg(v);return;}
+ });
+ var sti;var si=v.querySelector('#agSearch');
+ v.addEventListener('input',function(e){if(e.target&&e.target.id==='agSearch'){AG.q=e.target.value;clearTimeout(sti);sti=setTimeout(function(){agRenderLeads(v);},180);}});
+ v.addEventListener('change',function(e){
+  var sel=e.target.closest&&e.target.closest('[data-status]');if(!sel)return;
+  var id=sel.getAttribute('data-status'),val=sel.value;
+  agReq('PATCH','/leads/'+id,{status:val}).then(function(){toast('状态已更新为「'+AG_ST[val].t+'」');var l=AG.leads.find(function(x){return x.lead_id===id;});if(l)l.status=val;agRenderLeads(v);}).catch(function(err){toast(err.message||'更新失败');agRenderLeads(v);});
+ });
+}
+function setupAgDrawerOnce(){
+ if(window.__agD)return;window.__agD=1;
+ var m=document.getElementById('agMask'),c=document.getElementById('agDClose');
+ if(m)m.addEventListener('click',closeAgLead);
+ if(c)c.addEventListener('click',closeAgLead);
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAgLead();});
+}
+function closeAgLead(){var d=document.getElementById('agDrawer'),m=document.getElementById('agMask');if(d){d.classList.remove('show');d.setAttribute('aria-hidden','true');}if(m)m.classList.remove('show');}
+function openAgLead(id){
+ agReq('GET','/leads/'+id).then(function(r){
+  var l=r.data;if(!l){toast('线索不存在');return;}
+  var ct=l.contact||{type:'phone',value:''};var isPhone=ct.type==='phone';
+  document.getElementById('agDTitle').textContent=l.name||'未留名客户';
+  document.getElementById('agDSub').textContent=agTime(l.created_at)+' · '+agSrc(l.source);
+  var stars=[1,2,3,4,5].map(function(i){return '<button type="button" data-rate="'+i+'" class="'+(i<=(l.rating||0)?'on':'')+'" aria-label="'+i+'星"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3 6.6 7 .8-5.2 4.7 1.5 6.9L12 17.5 5.7 21l1.5-6.9L2 9.4l7-.8z"/></svg></button>';}).join('');
+  var opts=Object.keys(AG_ST).map(function(k){return '<option value="'+k+'" '+(k===l.status?'selected':'')+'>'+AG_ST[k].t+'</option>';}).join('');
+  var tl=[{at:l.created_at,t:'客户在画册留资',x:l.note||'（无备注）'}].concat((l.followups||[]).slice().reverse().map(function(f){return {at:f.at,t:'商家跟进',x:f.text};}));
+  var html='<div class="ag-contact">'+agCIcon(ct.type)+'<span class="cv">'+esc(ct.value||'—')+'</span>'
+   +(isPhone&&ct.value?'<a class="ac-btn" style="padding:7px 12px" href="tel:'+esc(ct.value)+'">拨打</a>':'')
+   +'<button type="button" class="ac-btn" style="padding:7px 12px" id="agDCopy">复制</button></div>'
+   +'<div class="ag-dl">'
+   +'<div class="r"><span class="k">意向画册</span><span class="v">'+esc(agScTitle(l.intent_showcase))+'</span></div>'
+   +'<div class="r"><span class="k">来源渠道</span><span class="v"><span class="ag-pill">'+esc(agSrc(l.source))+'</span></span></div>'
+   +'<div class="r"><span class="k">客户备注</span><span class="v">'+esc(l.note||'—')+'</span></div>'
+   +'<div class="r"><span class="k">意向评级</span><span class="v"><span class="ag-rate" id="agRate">'+stars+'</span></span></div>'
+   +'<div class="r"><span class="k">当前状态</span><span class="v"><select class="ag-sel" id="agDStatus">'+opts+'</select></span></div></div>'
+   +'<div class="ag-sec-label">跟进记录</div><div class="ag-tlwrap">'+tl.map(function(x){return '<div class="ag-tli"><div class="tt">'+agTime(x.at)+' · '+esc(x.t)+'</div><div class="tx">'+esc(x.x)+'</div></div>';}).join('')+'</div>'
+   +'<div class="ag-sec-label">添加跟进</div><textarea class="ag-ta" id="agFollowText" placeholder="记录沟通内容，如：已加微信，约周末到店"></textarea>'
+   +'<button type="button" class="ac-btn primary" id="agFollowSave">保存跟进</button>';
+  var body=document.getElementById('agDBody');body.innerHTML=html;
+  document.getElementById('agDrawer').classList.add('show');document.getElementById('agDrawer').setAttribute('aria-hidden','false');document.getElementById('agMask').classList.add('show');
+  var cp=body.querySelector('#agDCopy');if(cp)cp.onclick=function(){agCopy(ct.value||'','联系方式已复制');};
+  body.querySelectorAll('#agRate [data-rate]').forEach(function(b){b.onclick=function(){agReq('PATCH','/leads/'+id,{rating:Number(b.getAttribute('data-rate'))}).then(function(){toast('评级已更新');openAgLead(id);}).catch(function(e){toast(e.message||'更新失败');});};});
+  body.querySelector('#agDStatus').onchange=function(){var val=this.value;agReq('PATCH','/leads/'+id,{status:val}).then(function(){toast('状态已更新为「'+AG_ST[val].t+'」');var x=AG.leads.find(function(y){return y.lead_id===id;});if(x)x.status=val;var v=document.getElementById('agView');if(v)agRenderLeads(v);openAgLead(id);}).catch(function(e){toast(e.message||'更新失败');openAgLead(id);});};
+  body.querySelector('#agFollowSave').onclick=function(){var tx=body.querySelector('#agFollowText').value.trim();if(!tx){toast('先写点跟进内容');return;}agReq('POST','/leads/'+id+'/followup',{text:tx}).then(function(){toast('跟进已保存');var x=AG.leads.find(function(y){return y.lead_id===id;});if(x)x.status='following';var v=document.getElementById('agView');if(v)agRenderLeads(v);openAgLead(id);}).catch(function(e){toast(e.message||'保存失败');});};
+ }).catch(function(e){toast(e.message||'线索加载失败');});
+}
 function newOrder(){
  closeAnalytics();
  archiveCurrentTask();
