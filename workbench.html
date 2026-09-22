@@ -1263,6 +1263,72 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .hpm-btn.ghost:hover{background:rgba(255,255,255,.12)}
 .hpm-btn.primary{background:linear-gradient(135deg,#fb7a22,#ea580c);border-color:transparent;color:#fff;font-weight:600}
 .hpm-btn.primary:hover{filter:brightness(1.08)}
+
+/* ===== 知识库：引导式档案 + 分类录入（v6） ===== */
+.kbp-type{display:flex;gap:8px;margin-bottom:18px}
+.seg{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--tx2);border-radius:10px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.16s;font-family:inherit}
+.seg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.kbp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 16px}
+.kbp-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.kbp-field.col2{grid-column:1/-1}
+.kbp-field label{font-size:12px;color:var(--tx3);font-weight:500}
+.kbp-field input,.kbp-field select{appearance:none;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--tx);font-size:13.5px;font-family:inherit;outline:none;transition:.15s;width:100%}
+.kbp-field input:focus,.kbp-field select:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.kbp-field input::placeholder{color:rgba(244,247,253,.30)}
+.kbp-actions{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.kbp-saved{font-size:12px;color:var(--tx3)}
+.kb-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.kb-cat{appearance:none;text-align:left;background:var(--panel);border:1px dashed var(--line);border-radius:15px;padding:16px;cursor:pointer;transition:.18s;color:var(--tx);font-family:inherit;display:flex;flex-direction:column;gap:7px;min-height:122px}
+.kb-cat:hover{border-color:var(--orange);background:var(--panel2);transform:translateY(-2px)}
+.kb-cat .kc-ic{width:38px;height:38px;border-radius:11px;background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center}
+.kb-cat .kc-ic svg{width:20px;height:20px}
+.kb-cat .kc-n{font-size:14px;font-weight:700;color:var(--tx)}
+.kb-cat .kc-h{font-size:11.5px;color:var(--tx3);line-height:1.5}
+.kb-cat .kc-up{margin-top:auto;font-size:12px;font-weight:600;color:var(--orange)}
+.kb-grp{margin-top:20px}
+.kb-grp-h{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;color:var(--tx);margin:0 0 9px}
+.kb-grp-h .cnt{font-size:11px;color:var(--tx3);font-weight:500;border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+.kb-grp-empty{font-size:12px;color:var(--tx3);padding:1px 0 4px}
+@media(max-width:860px){.kbp-grid{grid-template-columns:1fr}.kb-cats{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.kb-cats{grid-template-columns:1fr}}
+/* ===== 技能与连接：三 Tab + 品牌 logo（v6） ===== */
+.ctabs{display:inline-flex;gap:4px;background:var(--panel);border:1px solid var(--line2);border-radius:13px;padding:4px;margin:2px 0 22px;flex-wrap:wrap}
+.ctab{appearance:none;border:0;background:transparent;color:var(--tx2);font-size:13.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:inherit;transition:.16s;white-space:nowrap}
+.ctab.on{background:var(--elev);color:var(--tx);box-shadow:0 2px 10px rgba(0,0,0,.28)}
+.cpane{display:none}.cpane.show{display:block;animation:cpfade .22s ease}
+@keyframes cpfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.brand-ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
+.brand-ic img{width:22px;height:22px;display:block}
+.brand-ic svg{width:21px;height:21px;color:#fff}
+.conn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.conn-item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:12px 14px;transition:.16s}
+.conn-item:hover{border-color:var(--line);background:var(--panel2)}
+.conn-meta{flex:1;min-width:0}
+.conn-name{font-size:14px;font-weight:600;color:var(--tx)}
+.conn-home{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--tx3);text-decoration:none;margin-top:3px}
+.conn-home:hover{color:var(--orange)}
+.conn-home svg{width:11px;height:11px}
+.conn-zone{font-size:12px;color:var(--tx3);letter-spacing:.08em;margin:20px 0 9px;font-weight:600}
+.conn-btn{appearance:none;border:1px solid var(--line);background:var(--elev);color:var(--tx);border-radius:10px;padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.conn-btn:hover{border-color:var(--orange);color:var(--orange)}
+.conn-btn.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.skill-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.skill-card2{background:var(--panel);border:1px solid var(--line2);border-radius:15px;padding:17px;position:relative;transition:.16s}
+.skill-card2.cur{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.skill-card2.off{opacity:.55}
+.skill-card2 .sk-top{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding-right:74px}
+.skill-card2 .sk-ic{width:38px;height:38px;border-radius:11px;background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center;flex:none}
+.skill-card2.off .sk-ic{background:var(--elev);color:var(--tx3)}
+.skill-card2 .sk-ic svg{width:20px;height:20px}
+.skill-card2 .sk-n{font-size:14.5px;font-weight:700;color:var(--tx)}
+.skill-card2 .sk-d{font-size:12.5px;color:var(--tx2);line-height:1.6}
+.sk-badge{position:absolute;top:15px;right:15px;font-size:10.5px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.sk-badge.built{background:var(--orange-soft);color:var(--orange)}
+.sk-badge.cur{background:var(--orange);color:#fff}
+.sk-badge.soon{background:var(--elev);color:var(--tx3)}
+.sk-curnote{font-size:12.5px;color:var(--tx2);background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;margin-bottom:16px}
+@media(max-width:720px){.conn-grid,.skill-grid2{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -1929,36 +1995,121 @@ function renderCmpAttach(){
 
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
 function openLab(tab){state.labTab='plugin';var t=$('#labModalTitle');if(t)t.textContent='发布账号与渠道';renderLab();$('#labModal').classList.add('show');}
+var KB_PROFILE_LS='hogee_kb_profile';
+var KB_INDUSTRIES=['通用电商','二手车','服装服饰','家居家装','餐饮美食','美妆个护','数码家电','本地生活','教育培训','外贸出海','其他'];
+var KB_CATS=[
+ {id:'raw',n:'产品原图',ic:'img',h:'手机实拍、未修原图，多角度与细节都可传',accept:'image/*'},
+ {id:'goods',n:'商品图',ic:'img',h:'已做好的白底图、场景图、详情图、主图',accept:'image/*'},
+ {id:'intro',n:'企业介绍 PPT / PDF',ic:'doc',h:'公司介绍、品牌手册、资质与荣誉文件',accept:'.pdf,.ppt,.pptx,.doc,.docx'},
+ {id:'video',n:'宣传视频',ic:'vid',h:'企业宣传片、产品演示视频、带货视频',accept:'video/*,.mp4,.mov,.webm'},
+ {id:'manual',n:'产品说明书',ic:'doc',h:'参数表、规格书、使用说明、价目表',accept:'.pdf,.doc,.docx,.xls,.xlsx,.txt,.md,.csv'},
+ {id:'other',n:'其他资料',ic:'doc',h:'不属于以上分类的资料，都放这里',accept:''}
+];
+function kbCatIcon(ic){if(ic==='img')return kbIcon('x.jpg');if(ic==='vid')return kbIcon('x.mp4');return kbIcon('x.pdf');}
+function kbProfLoad(){
+ var d={subjectType:'company',company:'',website:'',contact:'',phone:'',tel:'',email:'',wechat:'',address:'',mainProduct:'',industry:'通用电商'};
+ try{var p=JSON.parse(localStorage.getItem(KB_PROFILE_LS)||'{}');if(p&&typeof p==='object')for(var k2 in d){if(p[k2]!=null)d[k2]=p[k2];}}catch(e){}
+ try{var hp=acProf();if(!d.company&&hp.merchantName)d.company=hp.merchantName;if(!d.contact&&hp.contactName)d.contact=hp.contactName;if(!d.industry||d.industry==='通用电商'){if(hp.industry)d.industry=hp.industry;}}catch(e){}
+ return d;
+}
+function kbProfSave(o){
+ try{localStorage.setItem(KB_PROFILE_LS,JSON.stringify(o));}catch(e){}
+ try{var hp=acProf();if(o.contact)hp.contactName=o.contact;if(o.company)hp.merchantName=o.company;if(o.industry)hp.industry=o.industry;localStorage.setItem('hogee_profile',JSON.stringify(hp));if(window.HG_renderAccount)window.HG_renderAccount();}catch(e){}
+ kbApplyIndustry(o.industry);
+ kbAll().then(function(docs){syncKbText(docs);}).catch(function(){});
+}
+function kbIndustrySkill(ind){return ind==='二手车'?'usedcar':'general';}
+function kbApplyIndustry(ind){
+ var t=kbIndustrySkill(ind);var cur=state.identity?state.identity.type:null;
+ if(cur!==t){
+  state.identity=t==='usedcar'?{type:'usedcar',label:'二手车',cat:'二手车'}:{type:'general',label:'通用电商',cat:''};
+  saveId();try{state.bgImage=loadBg(t);}catch(e){}try{renderTopbar();}catch(e){}
+ }
+}
 function openKnowledgeView(){
  closeAnalytics();try{closeDeliver();}catch(e){}
  setMenuActive('navKnowledge');
  placeComposer(false);document.body.dataset.stage='knowledge';
  scroll.innerHTML='';
+ var p=kbProfLoad();
+ var fld=function(id,label,val,ph,type,col2){return '<div class="kbp-field'+(col2?' col2':'')+'"><label>'+label+'</label><input id="'+id+'" data-k="'+id+'" '+(type||'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></div>';};
+ var inds=KB_INDUSTRIES.map(function(it){return '<option '+(p.industry===it?'selected':'')+'>'+it+'</option>';}).join('');
+ var cats=KB_CATS.map(function(c){return '<button type="button" class="kb-cat" data-cat="'+c.id+'"><span class="kc-ic">'+kbCatIcon(c.ic)+'</span><span class="kc-n">'+c.n+'</span><span class="kc-h">'+c.h+'</span><span class="kc-up">+ 上传</span></button>';}).join('');
  var v=document.createElement('div');v.className='view';v.id='kbView';
- v.innerHTML='<div class="view-head"><div><div class="view-title">我的知识库</div><div class="view-sub">把产品手册、价目表、品牌资料、参数文档和产品图片传上来，伙计在出图、写文案时会参考，越传越懂你的生意。资料仅你可见。</div></div></div>'
-  +'<div class="vcard"><div class="kb-up" id="kbUp" role="button"><span class="ku-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span><b>点击上传企业资料</b><span>支持 PDF / Word / Excel / PPT / TXT / Markdown / CSV / 图片 / 视频，可一次选多个</span></div>'
-  +'<div class="kb-list" id="kbList"><div class="kb-empty">正在载入资料库…</div></div></div>'
-  +'<div class="conn-foot">文本资料（TXT / Markdown / CSV）上传后即刻用于阿文文案；PDF、Word、Excel、PPT、图片、视频已安全收录到你的资料库，文档与图片解析将在服务端升级后自动启用。</div>';
+ v.innerHTML='<div class="view-head"><div><div class="view-title">我的知识库</div><div class="view-sub">先完善基础信息，再按分类上传资料。阿图、阿文、阿视、阿发出图、写文案、做画册、剪视频、发媒体时会自动调取，不用反复填写，交付也更贴合你的生意。资料仅你可见。</div></div></div>'
+  +'<section class="vcard"><div class="vsec-h">基础信息</div>'
+  +'<div class="kbp-type"><button type="button" class="seg '+(p.subjectType==='company'?'on':'')+'" data-type="company">企业 / 商户</button><button type="button" class="seg '+(p.subjectType==='personal'?'on':'')+'" data-type="personal">个人</button></div>'
+  +'<div class="kbp-grid">'
+  +'<div class="kbp-field"><label id="kbpCompanyLabel">公司 / 商户名称</label><input id="kbpCompany" data-k="company" value="'+esc(p.company)+'" placeholder="营业执照或店铺名称"></div>'
+  +fld('kbpWebsite','网址',p.website,'官网 / 店铺主页链接')
+  +fld('kbpContact','联系人',p.contact,'怎么称呼你')
+  +fld('kbpMainProduct','主营产品 / 服务',p.mainProduct,'如：女装 / 家居百货 / 数码配件','',true)
+  +fld('kbpPhone','手机号',p.phone,'用于画册一键拨打','inputmode="tel"')
+  +fld('kbpTel','座机',p.tel,'选填','inputmode="tel"')
+  +fld('kbpWechat','微信号',p.wechat,'画册页一键复制')
+  +fld('kbpEmail','邮箱',p.email,'用于接收成品与报告','type="email"')
+  +fld('kbpAddress','地址',p.address,'门店 / 公司地址','',true)
+  +'<div class="kbp-field"><label>所属行业（选择后自动启用对应行业能力）</label><select id="kbpIndustry" data-k="industry">'+inds+'</select></div>'
+  +'</div>'
+  +'<div class="kbp-actions"><button type="button" class="ac-btn primary" id="kbpSave">保存基础信息</button><span class="kbp-saved" id="kbpSaved"></span></div>'
+  +'</section>'
+  +'<section class="vcard" style="margin-top:16px"><div class="vsec-h">分类上传资料<span class="hint">按类型上传，伙计调用更准 · 可一次选多个</span></div>'
+  +'<div class="kb-cats">'+cats+'</div><div id="kbGroups"></div></section>'
+  +'<div class="conn-foot">文本资料（TXT / Markdown / CSV 等）上传后即刻用于阿文文案；图片、视频、PDF、Word、PPT、Excel 已安全收录到本机资料库，文档与图片解析将在服务端升级后自动启用。</div>';
  scroll.appendChild(v);scrollBox.scrollTop=0;
  bindKbView(v);
 }
 function bindKbView(root){
- function paint(){kbAll().then(function(docs){syncKbText(docs);var box=root.querySelector('#kbList');if(!box)return;if(!docs.length){box.innerHTML='<div class="kb-empty">还没有资料，上传后会显示在这里</div>';return;}
-  box.innerHTML=docs.map(function(d){var on=kbTextExt(d.ext);return '<div class="kb-item"><span class="ki-ic">'+kbIcon(d.ext)+'</span><div class="ki-main"><div class="ki-name">'+esc(d.name)+'</div><div class="ki-sub">'+kbFmtSize(d.size)+' · '+(d.ext||'file').toUpperCase()+' · '+fmtWTime(d.ts)+'</div></div><span class="ki-state '+(on?'on':'wait')+'">'+(on?'已用于文案参考':'已收录 · 解析即将开放')+'</span><button class="kb-del" type="button" data-kbdel="'+d.id+'" aria-label="删除">'+kbTrash()+'</button></div>';}).join('');}).catch(function(){var box=root.querySelector('#kbList');if(box)box.innerHTML='<div class="kb-empty">当前浏览器无法启用本地资料库</div>';});}
+ var prof=kbProfLoad();
+ function collect(){
+  var g=function(id){var el=root.querySelector('#'+id);return el?el.value.trim():'';};
+  return {subjectType:root.querySelector('.seg.on')?root.querySelector('.seg.on').getAttribute('data-type'):'company',
+   company:g('kbpCompany'),website:g('kbpWebsite'),contact:g('kbpContact'),mainProduct:g('kbpMainProduct'),
+   phone:g('kbpPhone'),tel:g('kbpTel'),wechat:g('kbpWechat'),email:g('kbpEmail'),address:g('kbpAddress'),
+   industry:(function(){var s=root.querySelector('#kbpIndustry');return s?s.value:'通用电商';})()};
+ }
+ root.querySelectorAll('.seg').forEach(function(b){b.addEventListener('click',function(){
+  root.querySelectorAll('.seg').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+  var lab=root.querySelector('#kbpCompanyLabel');if(lab)lab.textContent=b.getAttribute('data-type')==='personal'?'店铺 / 个体名称':'公司 / 商户名称';
+ });});
+ var sv=root.querySelector('#kbpSave');
+ if(sv)sv.addEventListener('click',function(){
+  var o=collect();
+  if(o.email&&!(o.email.indexOf('@')>0&&o.email.indexOf('.')>o.email.indexOf('@'))){if(window.toast)toast('邮箱格式好像不对','err');return;}
+  if(o.phone&&!/^[0-9+\-\s]{6,}$/.test(o.phone)){if(window.toast)toast('手机号格式好像不对','err');return;}
+  kbProfSave(o);prof=o;
+  var tip=root.querySelector('#kbpSaved');if(tip)tip.textContent='已保存 · 五个伙计已更新档案';
+  if(window.toast)toast('基础信息已保存，行业能力已切换到「'+o.industry+'」');
+ });
+ var inp=document.createElement('input');inp.type='file';inp.multiple=true;inp.style.display='none';document.body.appendChild(inp);
+ var pendingCat='other';
+ function paint(){
+  kbAll().then(function(docs){syncKbText(docs);var box=root.querySelector('#kbGroups');if(!box)return;
+   docs.forEach(function(d){if(!d.cat)d.cat='other';});
+   box.innerHTML=KB_CATS.map(function(c){
+    var arr=docs.filter(function(d){return (d.cat||'other')===c.id;});
+    var items=arr.length?arr.map(function(d){var on=kbTextExt(d.ext);return '<div class="kb-item"><span class="ki-ic">'+kbIcon(d.ext)+'</span><div class="ki-main"><div class="ki-name">'+esc(d.name)+'</div><div class="ki-sub">'+kbFmtSize(d.size)+' · '+(d.ext||'file').toUpperCase()+' · '+fmtWTime(d.ts)+'</div></div><span class="ki-state '+(on?'on':'wait')+'">'+(on?'已用于文案参考':'已收录 · 解析即将开放')+'</span><button class="kb-del" type="button" data-kbdel="'+d.id+'" aria-label="删除">'+kbTrash()+'</button></div>';}).join(''):'<div class="kb-grp-empty">暂无，点上方卡片上传</div>';
+    return '<div class="kb-grp"><div class="kb-grp-h"><span class="kc-ic" style="width:26px;height:26px;border-radius:8px">'+kbCatIcon(c.ic)+'</span>'+c.n+'<span class="cnt">'+arr.length+'</span></div>'+items+'</div>';
+   }).join('');
+  }).catch(function(){var box=root.querySelector('#kbGroups');if(box)box.innerHTML='<div class="kb-empty">当前浏览器无法启用本地资料库</div>';});
+ }
  paint();
- if(root._kbbound)return;root._kbbound=1;
- var inp=document.createElement('input');inp.type='file';inp.multiple=true;inp.style.display='none';
- inp.accept='.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.markdown,.csv,.json,.log,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov';document.body.appendChild(inp);
- root.addEventListener('click',function(e){var up=e.target.closest('#kbUp');if(up){inp.click();return;}var del=e.target.closest('[data-kbdel]');if(del){kbDel(del.getAttribute('data-kbdel')).then(paint).catch(paint);}});
+ root.addEventListener('click',function(e){
+  var cat=e.target.closest('.kb-cat');if(cat){pendingCat=cat.getAttribute('data-cat');var cc=KB_CATS.filter(function(x){return x.id===pendingCat;})[0];inp.accept=cc?cc.accept:'';inp.click();return;}
+  var del=e.target.closest('[data-kbdel]');if(del){kbDel(del.getAttribute('data-kbdel')).then(paint).catch(paint);}
+ });
  inp.addEventListener('change',function(){
   var fs=Array.prototype.slice.call(inp.files||[]);if(!fs.length)return;
-  fs.forEach(function(f){var ext=kbExt(f.name),isText=kbTextExt(ext);var rec={id:'kb'+Date.now()+Math.random().toString(36).slice(2,7),name:f.name,size:f.size,ext:ext||'file',mime:f.type||'',ts:Date.now(),text:'',blob:f};
+  var n=0;
+  fs.forEach(function(f){var ext=kbExt(f.name),isText=kbTextExt(ext);var rec={id:'kb'+Date.now()+Math.random().toString(36).slice(2,7),name:f.name,size:f.size,ext:ext||'file',mime:f.type||'',ts:Date.now(),text:'',blob:f,cat:pendingCat};
+   n++;
    var fin=function(){kbPut(rec).then(paint).catch(paint);};
    if(isText){var rd=new FileReader();rd.onload=function(){rec.text=String(rd.result||'').slice(0,40000);fin();};rd.onerror=fin;rd.readAsText(f);}else fin();
   });
-  inp.value='';if(window.toast)toast('资料已收录'+(fs.length>1?'（'+fs.length+' 个文件）':''));
+  inp.value='';if(window.toast)toast('已收录到「'+(KB_CATS.filter(function(x){return x.id===pendingCat;})[0]||{n:'资料'}).n+'」'+(n>1?'（'+n+' 个文件）':''));
  });
 }
+
 function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();var _c=document.querySelector('.composer'),_st=document.querySelector('.stage'),_chat=document.getElementById('chatScroll');if(_c&&_st&&_c.parentNode!==_st){_st.insertBefore(_c,_chat?_chat.nextSibling:null);}scroll.innerHTML='';state.stage='welcome';heroWelcome();placeComposer(true);}
 function enterMate(id){closeAnalytics();setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
@@ -2402,47 +2553,82 @@ var CONN_ICONS={
 };
 function connIcon(k){return CONN_ICONS[k]||CONN_ICONS.web;}
 var CONN_SKILLS=[
- {id:'general',name:'通用电商 Skill',ic:'shop',desc:'面向全行业商品的主图、白底图、场景图、动态图与分渠道文案能力，开箱即用，Hogee 会按你卖的东西自动调度，无需手动选择。'},
- {id:'usedcar',name:'二手车商 Skill',ic:'car',desc:'围绕车源的外观、内饰、空间、展厅 / 摄影棚背景与卖点话术能力，自动整理车型信息、匹配二手车商关心的卖点与展示角度。'}
+ {id:'general',name:'通用电商 Skill',ic:'shop',desc:'全行业通用的商品图、文案、短视频与多平台物料能力，开箱即用、默认启用。'},
+ {id:'usedcar',name:'二手车商 Skill',ic:'car',desc:'车辆精修、展厅背景、车况卖点与车商物料能力；在知识库选择行业「二手车」后自动启用。'}
 ];
 var CONN_IM=[
- {id:'wechat',name:'微信',ic:'chat'},{id:'wxwork',name:'企业微信',ic:'chat'},
- {id:'feishu',name:'飞书',ic:'chat'},{id:'dingtalk',name:'钉钉',ic:'chat'},
- {id:'qq',name:'QQ',ic:'chat'},{id:'email',name:'邮箱',ic:'mail',kind:'email'}
+ {id:'wechat',name:'微信',ic:'chat',kind:'im',color:'#07C160',logo:'wechat',home:'https://weixin.qq.com/'},
+ {id:'wxwork',name:'企业微信',ic:'chat',kind:'im',color:'#0187FF',logo:'',home:'https://work.weixin.qq.com/'},
+ {id:'feishu',name:'飞书',ic:'chat',kind:'im',color:'#3370FF',logo:'',home:'https://www.feishu.cn/'},
+ {id:'dingtalk',name:'钉钉',ic:'chat',kind:'im',color:'#1677FF',logo:'',home:'https://www.dingtalk.com/'},
+ {id:'qq',name:'QQ',ic:'chat',kind:'im',color:'#12B7F5',logo:'qq',home:'https://im.qq.com/index/'},
+ {id:'email',name:'邮箱',ic:'mail',kind:'email',color:'#FB7A22',logo:'',home:''}
 ];
 var CONN_MEDIA_CN=[
- {id:'xhs',name:'小红书',ic:'image'},{id:'douyin',name:'抖音',ic:'video'},{id:'shipinhao',name:'视频号',ic:'video'},
- {id:'gongzhonghao',name:'微信公众号',ic:'feed'},{id:'weibo',name:'微博',ic:'feed'},{id:'xianyu',name:'闲鱼',ic:'shop'},
- {id:'kuaishou',name:'快手',ic:'video'},{id:'bili',name:'B站',ic:'video'},{id:'zhihu',name:'知乎',ic:'feed'},
- {id:'taobao',name:'淘宝 / 1688',ic:'shop'},{id:'meituan',name:'美团 / 大众点评',ic:'shop'},{id:'toutiao',name:'头条号',ic:'feed'}
+ {id:'xhs',name:'小红书',ic:'feed',color:'#FF2442',logo:'xhs',home:'https://www.xiaohongshu.com/'},
+ {id:'douyin',name:'抖音',ic:'video',color:'#111111',logo:'douyin',home:'https://www.douyin.com/'},
+ {id:'shipinhao',name:'视频号',ic:'video',color:'#07C160',logo:'',home:'https://channels.weixin.qq.com/'},
+ {id:'gongzhonghao',name:'微信公众号',ic:'feed',color:'#07C160',logo:'',home:'https://mp.weixin.qq.com/'},
+ {id:'weibo',name:'微博',ic:'feed',color:'#E6162D',logo:'weibo',home:'https://weibo.com/'},
+ {id:'xianyu',name:'闲鱼',ic:'shop',color:'#F5A623',logo:'',home:'https://www.goofish.com/'},
+ {id:'kuaishou',name:'快手',ic:'video',color:'#FF4906',logo:'kuaishou',home:'https://www.kuaishou.com/'},
+ {id:'bili',name:'B站',ic:'video',color:'#00A1D6',logo:'bili',home:'https://www.bilibili.com/'},
+ {id:'zhihu',name:'知乎',ic:'feed',color:'#0066FF',logo:'zhihu',home:'https://www.zhihu.com/'},
+ {id:'taobao',name:'淘宝 / 1688',ic:'shop',color:'#FF5000',logo:'taobao',home:'https://www.taobao.com/'},
+ {id:'meituan',name:'美团 / 大众点评',ic:'shop',color:'#F59E0B',logo:'meituan',home:'https://www.meituan.com/'},
+ {id:'toutiao',name:'头条号',ic:'feed',color:'#F04142',logo:'',home:'https://mp.toutiao.com/profile_v4/index'}
 ];
 var CONN_MEDIA_GL=[
- {id:'tiktok',name:'TikTok',ic:'video'},{id:'instagram',name:'Instagram',ic:'image'},{id:'facebook',name:'Facebook',ic:'feed'},
- {id:'youtube',name:'YouTube',ic:'video'},{id:'pinterest',name:'Pinterest',ic:'image'},{id:'x',name:'X (Twitter)',ic:'feed'},
- {id:'linkedin',name:'LinkedIn',ic:'feed'},{id:'whatsapp',name:'WhatsApp',ic:'chat'},{id:'amazon',name:'Amazon',ic:'shop'},
- {id:'shopee',name:'Shopee',ic:'shop'}
+ {id:'tiktok',name:'TikTok',ic:'video',color:'#111111',logo:'tiktok',home:'https://www.tiktok.com/'},
+ {id:'instagram',name:'Instagram',ic:'feed',color:'#E1306C',logo:'instagram',home:'https://www.instagram.com/'},
+ {id:'facebook',name:'Facebook',ic:'feed',color:'#1877F2',logo:'facebook',home:'https://www.facebook.com/'},
+ {id:'youtube',name:'YouTube',ic:'video',color:'#FF0000',logo:'youtube',home:'https://www.youtube.com/'},
+ {id:'pinterest',name:'Pinterest',ic:'feed',color:'#E60023',logo:'pinterest',home:'https://www.pinterest.com/'},
+ {id:'x',name:'X',ic:'feed',color:'#000000',logo:'x',home:'https://x.com/'},
+ {id:'linkedin',name:'LinkedIn',ic:'feed',color:'#0A66C2',logo:'linkedin',home:'https://www.linkedin.com/'},
+ {id:'whatsapp',name:'WhatsApp',ic:'chat',color:'#25D366',logo:'whatsapp',home:'https://www.whatsapp.com/'},
+ {id:'amazon',name:'Amazon',ic:'shop',color:'#FF9900',logo:'amazon',home:'https://www.amazon.com/'},
+ {id:'shopee',name:'Shopee',ic:'shop',color:'#EE4D2D',logo:'shopee',home:'https://shopee.com/'}
 ];
-function skillCard(sd){return '<div class="skill-card"><div class="skill-top"><span class="skill-ic">'+connIcon(sd.ic)+'</span><span class="skill-name">'+sd.name+'</span><span class="skill-badge">已内置</span></div><div class="skill-desc">'+sd.desc+'</div></div>';}
+function connExtIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>';}
+function connBrand(d){var inner=d.logo?'<img src="images/brands/'+d.logo+'.svg" alt="" loading="lazy">':connIcon(d.ic);return '<span class="brand-ic" style="background:'+d.color+'">'+inner+'</span>';}
 function connItem(d){
  var rec=connLoad()[d.id];
+ var home=d.home?'<a class="conn-home" href="'+d.home+'" target="_blank" rel="noopener noreferrer" data-home="1">'+connExtIcon()+'官网 / 下载</a>':'';
  var btn=rec?'<button class="conn-btn on" type="button" data-conn="'+d.id+'">已登记</button>':'<button class="conn-btn" type="button" data-conn="'+d.id+'">连接</button>';
- var acct=rec?'<div class="conn-acct">'+esc(rec.account||'待授权开通')+'</div>':'';
- return '<div class="conn-item"><span class="conn-ic">'+connIcon(d.ic)+'</span><div class="conn-meta"><div class="conn-name">'+d.name+'</div>'+acct+'</div>'+btn+'</div>';
+ return '<div class="conn-item">'+connBrand(d)+'<div class="conn-meta"><div class="conn-name">'+d.name+'</div>'+home+'</div>'+btn+'</div>';
+}
+function skillCard2(name,desc,iconHtml,mode,badge){
+ return '<div class="skill-card2 '+mode+'"><span class="sk-badge '+mode+'">'+badge+'</span><div class="sk-top"><span class="sk-ic">'+iconHtml+'</span><span class="sk-n">'+name+'</span></div><div class="sk-d">'+desc+'</div></div>';
+}
+function connSkillPanelHtml(){
+ var cur=state.identity?state.identity.type:'general';
+ var ready=CONN_SKILLS.map(function(sd){var on=cur===sd.id;return skillCard2(sd.name,sd.desc,connIcon(sd.ic),on?'cur':'built',on?'当前启用':'已内置');}).join('');
+ var soon=(typeof SKILLS_MARKET!=='undefined'?SKILLS_MARKET:[]).map(function(sd){return skillCard2(sd.n,sd.d,sd.ico||connIcon('shop'),'off','即将上线');}).join('');
+ var curName=cur==='usedcar'?'二手车商 Skill':'通用电商 Skill';
+ return '<div class="sk-curnote">技能随你在「我的知识库 → 基础信息 → 所属行业」中选择的行业自动启用，无需在对话里手动切换。当前启用：<b style="color:var(--orange)">'+curName+'</b></div><div class="skill-grid2">'+ready+soon+'</div>';
 }
 function openConnect(){
  closeAnalytics();try{closeDeliver();}catch(e){}
  setMenuActive('navConnect');
  placeComposer(false);document.body.dataset.stage='connect';
  scroll.innerHTML='';
- var v=document.createElement('div');v.className='view';v.id='connectView';
- v.innerHTML='<div class="view-head"><div><div class="view-title">Hogee技能与连接</div><div class="view-sub">技能是 Hogee 内置的行业能力，自动调度、无需手动开启；连接你的通讯工具和媒体账号后，做好的图文视频就能一键送达。Hogee 不碰你的账号密码，最后一下发送始终由你完成。</div></div></div>'
-  +'<section class="vsec"><div class="vsec-h"><span class="si">'+connIcon('spark')+'</span>Hogee 技能<span class="hint">内置能力 · 自动调度 · 无需操作</span></div><div class="skill-grid">'+CONN_SKILLS.map(skillCard).join('')+'</div></section>'
-  +'<section class="vsec"><div class="vsec-h"><span class="si">'+connIcon('chat')+'</span>即时通讯连接</div><div class="conn-grid">'+CONN_IM.map(connItem).join('')+'</div></section>'
-  +'<section class="vsec"><div class="vsec-h"><span class="si">'+connIcon('video')+'</span>发布媒体账号</div>'
-  +'<div class="conn-zone">国内媒体</div><div class="conn-grid">'+CONN_MEDIA_CN.map(connItem).join('')+'</div>'
-  +'<div class="conn-zone">海外媒体</div><div class="conn-grid">'+CONN_MEDIA_GL.map(connItem).join('')+'</div></section>';
- v.addEventListener('click',function(e){var b=e.target.closest('[data-conn]');if(b)openConnModal(b.getAttribute('data-conn'));});
+ var tab=function(k,n){return '<button type="button" class="ctab" data-ctab="'+k+'">'+n+'</button>';};
+ var v=document.createElement('div');v.className='view';
+ v.innerHTML='<div class="view-head"><div><div class="view-title">技能与连接</div><div class="view-sub">连接即时通讯与自媒体账号，做好的图文视频一键备妥，最后由你点发送；技能按行业自动启用。官方授权通道陆续开放，现可先登记，开放后优先开通。</div></div></div>'
+  +'<div class="ctabs">'+tab('im','即时通讯连接')+tab('media','发布媒体账号连接')+tab('skill','Hogee 技能')+'</div>'
+  +'<div class="cpane" id="cp-im"><div class="conn-grid">'+CONN_IM.map(connItem).join('')+'</div></div>'
+  +'<div class="cpane" id="cp-media"><div class="conn-zone">国内媒体</div><div class="conn-grid">'+CONN_MEDIA_CN.map(connItem).join('')+'</div><div class="conn-zone">海外媒体</div><div class="conn-grid">'+CONN_MEDIA_GL.map(connItem).join('')+'</div></div>'
+  +'<div class="cpane" id="cp-skill">'+connSkillPanelHtml()+'</div>'
+  +'<div class="conn-foot">连接只用于把成品备到你的账号草稿 / 下载目录，最后一下「发送」始终由你本人完成；Hogee 不索要、不存储账号密码。</div>';
  scroll.appendChild(v);scrollBox.scrollTop=0;
+ function show(t){window._connTab=t;v.querySelectorAll('.ctab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-ctab')===t);});['im','media','skill'].forEach(function(k){var p=v.querySelector('#cp-'+k);if(p)p.classList.toggle('show',k===t);});}
+ show(window._connTab||'im');
+ v.addEventListener('click',function(e){
+  if(e.target.closest('[data-home]')){e.stopPropagation();return;}
+  var t=e.target.closest('[data-ctab]');if(t){show(t.getAttribute('data-ctab'));return;}
+  var b=e.target.closest('[data-conn]');if(b){openConnModal(b.getAttribute('data-conn'));}
+ });
 }
 var CONN_MAP=null;
 function connAllMap(){if(!CONN_MAP){CONN_MAP={};CONN_IM.concat(CONN_MEDIA_CN,CONN_MEDIA_GL).forEach(function(d){CONN_MAP[d.id]=d;});}return CONN_MAP;}
@@ -2691,9 +2877,28 @@ function renderKnowledge(){
 }
 function syncKbText(docs){
  try{
+  var p=(typeof kbProfLoad==='function')?kbProfLoad():null;
+  var L=[];
+  if(p){
+   L.push('【商家基础档案】');
+   L.push('身份：'+(p.subjectType==='personal'?'个人':'企业 / 商户'));
+   if(p.company)L.push('公司 / 店铺：'+p.company);
+   if(p.mainProduct)L.push('主营产品 / 服务：'+p.mainProduct);
+   L.push('所属行业：'+p.industry);
+   if(p.contact)L.push('联系人：'+p.contact);
+   if(p.phone)L.push('手机号：'+p.phone);
+   if(p.tel)L.push('座机：'+p.tel);
+   if(p.wechat)L.push('微信号：'+p.wechat);
+   if(p.email)L.push('邮箱：'+p.email);
+   if(p.address)L.push('地址：'+p.address);
+   if(p.website)L.push('网址：'+p.website);
+  }
   var parts=docs.filter(function(d){return d.text;}).map(function(d){return d.text;});
-  var t=parts.join(String.fromCharCode(10,10)).slice(0,8000);
-  if(t)localStorage.setItem('hogee_kb_text',t);else localStorage.removeItem('hogee_kb_text');
+  var body=parts.join(String.fromCharCode(10,10));
+  if(body)L.push(String.fromCharCode(10)+'【商家上传资料】'+String.fromCharCode(10)+body);
+  var has=(p&&(p.company||p.mainProduct||p.contact||p.phone||p.wechat||p.email||p.address))||body;
+  var t=L.join(String.fromCharCode(10)).slice(0,12000);
+  if(has)localStorage.setItem('hogee_kb_text',t);else localStorage.removeItem('hogee_kb_text');
  }catch(e){}
 }
 function getKnowledgeContext(){try{return localStorage.getItem('hogee_kb_text')||'';}catch(e){return '';}}
@@ -3537,8 +3742,8 @@ function renderPublishCard(){
   +'<div class="pub-thumbs">'+thumbs+'</div>'
   +'<div class="fld" style="margin-top:12px"><label>画册标题</label><input id="pubTitle" value="'+esc(state.product.name||'')+'"></div>'
   +'<div class="fld" style="margin-top:11px"><label>核心卖点（每行一条，阿文已拟，请按实际改）</label><textarea id="pubPoints" rows="4">'+esc(defaultPoints().join('\n'))+'</textarea></div>'
-  +'<div class="fld-row" style="margin-top:11px"><div class="fld"><label>联系电话（选填）</label><input id="pubPhone" inputmode="tel" placeholder="页面一键拨打"></div>'
-  +'<div class="fld"><label>微信号（选填）</label><input id="pubWechat" placeholder="页面一键复制"></div></div>'
+  +'<div class="fld-row" style="margin-top:11px"><div class="fld"><label>联系电话（选填）</label><input id="pubPhone" inputmode="tel" placeholder="页面一键拨打" value="'+esc((typeof kbProfLoad==='function')?kbProfLoad().phone:'')+'"></div>'
+  +'<div class="fld"><label>微信号（选填）</label><input id="pubWechat" placeholder="页面一键复制" value="'+esc((typeof kbProfLoad==='function')?kbProfLoad().wechat:'')+'"></div></div>'
   +'<div class="fld" style="margin-top:11px"><label>二维码投放渠道</label><select id="pubSource">'+opts+'</select></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="doPublish">'+IC.qr+' 生成画册与二维码</button><button class="btn btn-ghost" data-act="backPublish">返回</button></div></div>','afa');
  state.stage='publish';setTimeout(scrollBottom,120);
