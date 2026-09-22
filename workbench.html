@@ -2654,12 +2654,21 @@ function heroWelcome(){
    var lb=e.target.closest('[data-lightbox]');if(lb){openLightbox(lb.getAttribute('data-lightbox'));}
   });}
  }
- function hmDelete(id,h){
+ function hmApply(h,j){
+ if(j&&Array.isArray(j.items)){
+  HM_CATS_CUSTOM=Array.isArray(j.cats)?j.cats:[];
+  if(HM_CAT!=='all'){var known=HM_BUILTIN_CATS.some(function(c){return c.key===HM_CAT;})||HM_CATS_CUSTOM.some(function(c){return c.key===HM_CAT;});if(!known)HM_CAT='all';}
+  hmPaintTabs(h);hmPaintRail(h,j.items,hmIsAdmin());return true;
+ }
+ return false;
+}
+if(typeof window!=='undefined'){window.__hmApply=function(j){return hmApply(document,j);};}
+function hmDelete(id,h){
   if(!id||!hmIsAdmin())return;
   if(!window.confirm('确定从「Hogee创作探索」删除这张素材？删除后所有用户都将看不到。'))return;
   HogeeMember.authFetch(API+'/api/feed?id='+encodeURIComponent(id),{method:'DELETE'})
    .then(function(r){if(!r.ok)throw new Error('del '+r.status);return r.json();})
-   .then(function(j){if(j&&j.ok){renderHmRail(h);toast('已删除');}else toast('删除失败');})
+   .then(function(j){if(j&&j.ok){if(!hmApply(h,j))renderHmRail(h);toast('已删除');}else toast('删除失败');})
    .catch(function(){toast('删除失败，请确认已用官方账号登录');});
  }
 /* ---- Hogee创作探索：分类 / 分页 / 置顶 / 视频悬停播放 ---- */
@@ -2696,18 +2705,18 @@ function hmOpenAddCat(anchor,h){
 }
 function hmCatAdd(n,h){
  HogeeMember.authFetch(API+'/api/feed/cats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'add',n:n})})
-  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){hmPopClose();if(HG.toast)HG.toast('分类已添加');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'添加失败');}})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){hmPopClose();if(HG.toast)HG.toast('分类已添加');if(!hmApply(h,j))renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'添加失败');}})
   .catch(function(){if(HG.toast)HG.toast('添加失败，请确认已用官方账号登录');});
 }
 function hmCatRemove(key,h){
  HogeeMember.authFetch(API+'/api/feed/cats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'remove',key:key})})
-  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HM_CAT===key)HM_CAT='all';if(HG.toast)HG.toast('分类已删除');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'删除失败');}})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HM_CAT===key)HM_CAT='all';if(HG.toast)HG.toast('分类已删除');if(!hmApply(h,j))renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'删除失败');}})
   .catch(function(){if(HG.toast)HG.toast('删除失败，请确认已用官方账号登录');});
 }
 function hmTogglePin(id,h){
  var d=hmItems.filter(function(x){return String(x.id)===String(id);})[0];if(!d)return;var pin=d.pin?0:1;
  HogeeMember.authFetch(API+'/api/feed/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:String(id),pin:pin})})
-  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HG.toast)HG.toast(pin?'已置顶到第一位':'已取消置顶');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'操作失败');}})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HG.toast)HG.toast(pin?'已置顶到第一位':'已取消置顶');if(!hmApply(h,j))renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'操作失败');}})
   .catch(function(){if(HG.toast)HG.toast('操作失败，请确认已用官方账号登录');});
 }
 document.addEventListener('click',function(e){var p=document.getElementById('hmPop');if(p&&p.classList.contains('show')&&!p.contains(e.target)&&!(e.target.closest&&e.target.closest('#hmCatAdd'))&&!(e.target.closest&&e.target.closest('#hmAddBtn')))hmPopClose();});
@@ -5405,7 +5414,7 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
   hmInp.value='';
   if(HG.toast)HG.toast('开始上传 '+files.length+' 个素材，请勿关闭页面…');
   files.reduce(function(p,f){return p.then(function(){return fUploadOne(f);});},Promise.resolve())
-   .then(function(){if(HG.toast)HG.toast('上传完成，已同步给所有用户');if(HG.refreshHmFeed)HG.refreshHmFeed();})
+   .then(function(lastJ){if(HG.toast)HG.toast('上传完成，已同步给所有用户');if(!(lastJ&&window.__hmApply&&window.__hmApply(lastJ))&&HG.refreshHmFeed)HG.refreshHmFeed();})
    .catch(function(err){if(HG.toast)HG.toast('部分素材上传失败：'+(err&&err.message?err.message:'请重试'));if(HG.refreshHmFeed)HG.refreshHmFeed();});
  });
  function fRefreshIfHome(){var rail0=document.getElementById('hmRail');if(rail0&&HG.refreshHmFeed)HG.refreshHmFeed();}
