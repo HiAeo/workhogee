@@ -1082,6 +1082,36 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
  .cmp-menu{min-width:168px}
 }
 
+
+/* ===== Hogee上新：提示词 / 做同款 ===== */
+.rc-pbar{position:absolute;left:8px;right:8px;bottom:8px;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:6px;opacity:0;transform:translateY(4px);transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+.rcard:hover .rc-pbar,.rcard.has-pbar .rc-pbar{opacity:1;transform:none;pointer-events:auto}
+.rc-pbl{display:flex;gap:6px;align-items:center;min-width:0}
+.rc-pbtn,.rc-ubtn{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:8px;font-size:11px;line-height:1;cursor:pointer;white-space:nowrap;border:1px solid rgba(255,255,255,.22);background:rgba(13,17,25,.62);color:#e8edf6;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.rc-pbtn:hover{border-color:rgba(255,255,255,.45);background:rgba(28,34,46,.8)}
+.rc-ubtn{border-color:rgba(234,88,12,.85);color:#ffb38a;background:rgba(234,88,12,.18);font-weight:600}
+.rc-ubtn:hover{background:rgba(234,88,12,.34);color:#ffd9c2}
+.rc-addp{border-style:dashed;color:#ffb38a;border-color:rgba(234,88,12,.6)}
+.rcard.has-pbar .rc-cap{bottom:42px}
+.hpm-mask{position:fixed;inset:0;z-index:100030;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(6,9,15,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hpm-mask.show{display:flex}
+.hpm{position:relative;width:min(720px,94vw);max-height:88vh;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,rgba(24,29,41,.98),rgba(15,19,28,.98));border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 120px rgba(0,0,0,.6)}
+.hpm-x{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(10,13,20,.55);color:#dfe5ef;font-size:20px;line-height:1;cursor:pointer}
+.hpm-x:hover{background:rgba(234,88,12,.25);border-color:rgba(234,88,12,.6)}
+.hpm-media{max-height:300px;min-height:0;display:flex;align-items:center;justify-content:center;background:#0a0e16;overflow:hidden}
+.hpm-media img{max-width:100%;max-height:300px;object-fit:contain;display:block}
+.hpm-media video{max-width:100%;max-height:300px;width:100%;background:#000}
+.hpm-body{padding:18px 20px 8px;overflow-y:auto}
+.hpm-cap-v{font-size:16px;font-weight:600;color:#f3f6fc;margin:0 44px 12px 0}
+.hpm-cap-e{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#f3f6fc;font-size:14px;margin-bottom:12px;box-sizing:border-box}
+.hpm-plabel{font-size:12px;color:#9aa6ba;margin-bottom:8px;letter-spacing:.5px}
+.hpm-pv{white-space:pre-wrap;word-break:break-word;font-size:13.5px;line-height:1.7;color:#d7deea;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;max-height:34vh;overflow-y:auto;margin:0}
+.hpm-pe{width:100%;resize:vertical;border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#f3f6fc;font-size:13.5px;line-height:1.7;font-family:inherit;box-sizing:border-box}
+.hpm-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px 18px;border-top:1px solid rgba(255,255,255,.07)}
+.hpm-btn{height:38px;padding:0 18px;border-radius:10px;font-size:14px;cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#e8edf6}
+.hpm-btn.ghost:hover{background:rgba(255,255,255,.12)}
+.hpm-btn.primary{background:linear-gradient(135deg,#fb7a22,#ea580c);border-color:transparent;color:#fff;font-weight:600}
+.hpm-btn.primary:hover{filter:brightness(1.08)}
 </style>
 </head>
 <body>
@@ -1190,6 +1220,20 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 </div>
 
 <div class="lightbox" id="lightbox"><button class="lb-close" id="lbClose" aria-label="关闭">×</button><img id="lbImg" alt="成品大图"><video id="lbVideo" controls playsinline preload="metadata" style="display:none;max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.6)"></video></div>
+<div class="hpm-mask" id="hmPm" data-pm="mask">
+ <div class="hpm" role="dialog" aria-label="素材提示词">
+  <button class="hpm-x" type="button" data-pm="close" aria-label="关闭">×</button>
+  <div class="hpm-media" id="hmPmMedia"></div>
+  <div class="hpm-body">
+   <div class="hpm-cap-v" id="hmPmCapView"></div>
+   <input class="hpm-cap-e" id="hmPmCap" maxlength="80" style="display:none">
+   <div class="hpm-plabel">提示词</div>
+   <div class="hpm-pv" id="hmPmView"></div>
+   <textarea class="hpm-pe" id="hmPmText" maxlength="1500" rows="8" style="display:none" placeholder="填写这条作品的提示词。用户点「做同款」后，会按这里的构图、光线、色调与风格创作自己的商品图/视频。"></textarea>
+  </div>
+  <div class="hpm-foot" id="hmPmFoot"></div>
+ </div>
+</div>
 <div class="toast" id="toast"></div>
 <input type="file" id="fileInput" accept="image/*" multiple hidden>
 <input type="file" id="hmUpload" accept="image/*,video/*" multiple hidden>
@@ -1908,13 +1952,27 @@ function heroWelcome(){
  function hmIsAdmin(){try{return !!(window.HogeeMember&&HogeeMember.getUser()&&HogeeMember.getUser().role==='admin');}catch(e){return false;}}
  var HM_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
  function hmCardHtml(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}
+ var hmItems=[];
+ function hmPromptBarHtml(d,isAdmin){
+  if(!d.id)return '';
+  if(d.prompt&&String(d.prompt).trim()){
+   var l='<span class="rc-pbtn" data-hmview="'+rcEsc(d.id)+'">提示词</span>'+(isAdmin?'<span class="rc-pbtn" data-hmedit="'+rcEsc(d.id)+'">编辑</span>':'');
+   return '<span class="rc-pbar"><span class="rc-pbl">'+l+'</span><span class="rc-ubtn" data-hmuse="'+rcEsc(d.id)+'">做同款</span></span>';
+  }
+  if(isAdmin)return '<span class="rc-pbar"><span class="rc-pbl"><span class="rc-pbtn rc-addp" data-hmedit="'+rcEsc(d.id)+'">＋ 添加提示词</span></span></span>';
+  return '';
+ }
  function hmPaintRail(h,items,isAdmin){
   var rail=h.querySelector('#hmRail');if(!rail)return;
+  hmItems=items||[];
   rail.dataset.admin=isAdmin?'1':'0';
-  rail.innerHTML=items.map(hmCardHtml).join('')+(isAdmin?hmAddCardHtml():'');
-  if(isAdmin){var cards=rail.querySelectorAll('.rcard');
-   items.forEach(function(d,idx){if(!d.id)return;var c=cards[idx];if(!c)return;
-    var del=document.createElement('span');del.className='rc-del';del.setAttribute('data-hmdel',String(d.id));del.setAttribute('title','删除该素材');del.innerHTML=HM_TRASH;c.appendChild(del);});}
+  rail.innerHTML=hmItems.map(hmCardHtml).join('')+(isAdmin?hmAddCardHtml():'');
+  var cards=rail.querySelectorAll('.rcard');
+  hmItems.forEach(function(d,idx){var c=cards[idx];if(!c||!d.id)return;
+   var bar=hmPromptBarHtml(d,isAdmin);
+   if(bar){var tmp=document.createElement('span');tmp.innerHTML=bar;var node=tmp.firstElementChild;if(node){c.appendChild(node);c.classList.add('has-pbar');}}
+   if(isAdmin){var del=document.createElement('span');del.className='rc-del';del.setAttribute('data-hmdel',String(d.id));del.setAttribute('title','删除该素材');del.innerHTML=HM_TRASH;c.appendChild(del);}
+  });
   initBa(h);
  }
  function hmFallback(h){hmPaintRail(h,HM6_DEMO.map(function(d,i){return Object.assign({id:'fb'+i},d);}),false);}
@@ -1928,6 +1986,12 @@ function heroWelcome(){
   if(!h._r6bound){h._r6bound=1;h.addEventListener('click',function(e){
    var del=e.target.closest('[data-hmdel]');
    if(del){e.preventDefault();e.stopPropagation();hmDelete(del.getAttribute('data-hmdel'),h);return;}
+   var pv=e.target.closest('[data-hmview]');
+   if(pv){e.preventDefault();e.stopPropagation();hmOpenView(pv.getAttribute('data-hmview'));return;}
+   var pe=e.target.closest('[data-hmedit]');
+   if(pe){e.preventDefault();e.stopPropagation();hmOpenEdit(pe.getAttribute('data-hmedit'));return;}
+   var pu=e.target.closest('[data-hmuse]');
+   if(pu){e.preventDefault();e.stopPropagation();hmUsePromptById(pu.getAttribute('data-hmuse'));return;}
    var ow=e.target.closest('[data-openworks]');if(ow){openWorks();return;}
    var vv=e.target.closest('[data-lbvideo]');if(vv){openVideoLightbox(vv.getAttribute('data-lbvideo'));return;}
    var lb=e.target.closest('[data-lightbox]');if(lb){openLightbox(lb.getAttribute('data-lightbox'));}
@@ -1965,6 +2029,82 @@ function collectWorks(){
 }
 function fmtWTime(ts){if(!ts)return '本次';try{var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}catch(e){return '';}}
 /* ---- 门户作品墙 ---- */
+/* ===== 素材提示词：查看 / 编辑 / 做同款 ===== */
+var hmPmId=null;
+function hmFindItem(id){for(var i=0;i<hmItems.length;i++){if(String(hmItems[i].id)===String(id))return hmItems[i];}return null;}
+function hmPmMediaHtml(d){
+ if(!d)return '';
+ if(d.k==='v'&&d.src)return '<video src="'+rcEsc(d.src)+'" controls playsinline preload="metadata"></video>';
+ var src=(d.k==='ba'?d.after:d.src);if(!src)return '';
+ return '<img src="'+rcEsc(src)+'" alt="">';
+}
+function hmPmOpen(id,mode){
+ var d=hmFindItem(id);if(!d){toast('素材信息已更新，正在刷新…');if(HG.refreshHmFeed)HG.refreshHmFeed();return;}
+ hmPmId=id;
+ var m=document.getElementById('hmPm');
+ document.getElementById('hmPmMedia').innerHTML=hmPmMediaHtml(d);
+ var cv=document.getElementById('hmPmCapView'),ce=document.getElementById('hmPmCap');
+ var pv=document.getElementById('hmPmView'),te=document.getElementById('hmPmText'),foot=document.getElementById('hmPmFoot');
+ if(mode==='edit'){
+  cv.style.display='none';ce.style.display='';ce.value=d.cap||'';
+  pv.style.display='none';te.style.display='';te.value=d.prompt||'';
+  foot.innerHTML='<button class="hpm-btn ghost" type="button" data-pm="cancel">取消</button><button class="hpm-btn primary" type="button" data-pm="save">保存</button>';
+ }else{
+  cv.style.display='';cv.textContent=d.cap||'';ce.style.display='none';
+  te.style.display='none';pv.style.display='';pv.textContent=d.prompt||'';
+  foot.innerHTML='<button class="hpm-btn ghost" type="button" data-pm="copy">复制提示词</button><button class="hpm-btn primary" type="button" data-pm="use">做同款</button>';
+ }
+ m.classList.add('show');
+}
+function hmOpenView(id){hmPmOpen(id,'view');}
+function hmOpenEdit(id){if(!hmIsAdmin()){toast('仅官方运营账号可编辑提示词');return;}hmPmOpen(id,'edit');}
+function hmClosePm(){var m=document.getElementById('hmPm');if(!m)return;m.classList.remove('show');var v=m.querySelector('video');if(v){v.pause();}hmPmId=null;}
+function hmFallbackCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('提示词已复制');}catch(e){toast('请手动选择文本复制');}document.body.removeChild(ta);}
+function hmCopyPrompt(){var d=hmFindItem(hmPmId);if(!d||!d.prompt){toast('这条素材还没有提示词');return;}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(d.prompt).then(function(){toast('提示词已复制');}).catch(function(){hmFallbackCopy(d.prompt);});}else hmFallbackCopy(d.prompt);}
+function hmSavePrompt(){
+ var id=hmPmId;if(!id)return;
+ var cap=document.getElementById('hmPmCap').value.trim();
+ var prompt=document.getElementById('hmPmText').value.trim();
+ var btn=document.querySelector('#hmPm [data-pm="save"]');if(btn){btn.disabled=true;btn.textContent='保存中…';}
+ HogeeMember.authFetch(API+'/api/feed/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:String(id),cap:cap,prompt:prompt})})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+  .then(function(res){if(btn){btn.disabled=false;btn.textContent='保存';}
+   if(res.ok&&res.j&&res.j.ok){toast('提示词已保存，所有用户可见');hmClosePm();if(HG.refreshHmFeed)HG.refreshHmFeed();}
+   else{toast((res.j&&res.j.error&&res.j.error.message)||'保存失败，请确认用官方账号登录');}})
+  .catch(function(){if(btn){btn.disabled=false;btn.textContent='保存';}toast('保存失败，请确认用官方账号登录');});
+}
+function hmUsePromptById(id){var d=hmFindItem(id);if(d)hmUsePrompt(d);}
+function hmUsePrompt(d){
+ var pr=(d.prompt||'').trim();
+ if(!pr){toast('这条素材还没有提示词');return;}
+ hmClosePm();
+ if(d.k==='v'){
+  if(typeof enterMate==='function')enterMate('ashi');
+  try{state.extra=pr;}catch(e){}
+  botSay('已载入这条视频的提示词。先让阿图出好商品图（或在右侧选已有成品），我按这个分镜、节奏和风格给你做视频。','ashi');
+ }else{
+  if(typeof enterMate==='function')enterMate('atu');
+  try{
+   if(!state.identity||state.stage==='welcome'){state.identity={type:'general',label:'通用电商',cat:''};saveId();state.bgImage=null;renderTopbar();}
+   state.extra=pr;
+   if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+  }catch(e){}
+  botSay('已载入这条作品的提示词。你拍一张自己的产品图传上来，我按同样的构图、光线、色调和风格给你出图。','atu');
+ }
+ setTimeout(function(){var ci=document.getElementById('composerInput');if(ci)ci.focus();},300);
+}
+document.addEventListener('click',function(e){
+ var c=e.target.closest('[data-pm]');if(!c)return;
+ var act=c.getAttribute('data-pm');
+ if(act==='mask'&&e.target&&e.target.id==='hmPm'){hmClosePm();return;}
+ if(act==='close'||act==='cancel'){hmClosePm();return;}
+ if(act==='copy'){hmCopyPrompt();return;}
+ if(act==='save'){hmSavePrompt();return;}
+ if(act==='use'){hmUsePromptById(hmPmId);return;}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=document.getElementById('hmPm');if(m&&m.classList.contains('show'))hmClosePm();}});
+
 var HM_BA1={before:'/images/3c-earphone-white.jpg',after:'/images/3c-earphone-pro.jpg',cap:'耳机 · 手机原图 → AI 场景主图'};
 var HM_C1={src:'/images/home-candle-pro.jpg',cap:'香薰蜡烛 · 氛围场景图'};
 var HM_C2={src:'/images/cloth-sneaker-pro.jpg',cap:'运动鞋 · 上架主图'};
