@@ -236,7 +236,7 @@ td .dim{color:var(--m);font-size:12px}
   .tools{width:100%}
 }
 </style>
-<script>(function(){try{if(new URLSearchParams(location.search).get('embed')){document.documentElement.classList.add('embed');}}catch(e){}})();</script>
+<script>(function(){try{if(new URLSearchParams(location.search).get('embed')){document.documentElement.classList.add('embed');var set=function(){var h=document.querySelector('.page-head h1');if(h)h.textContent='Hogee效果监控';};if(document.body)set();else document.addEventListener('DOMContentLoaded',set);}}catch(e){}})();</script>
 <style>
 html.embed{
   --ink:#eaf0f9;--ink2:#c4cddd;--m:#94a1b6;--m2:#69758c;
@@ -266,7 +266,7 @@ html.embed .kpi.accent{background:rgba(251,122,34,.10);border-color:rgba(251,122
 html.embed .kpi.accent .num{color:#fd9248}
 html.embed .kpi.accent .lab,html.embed .kpi.accent .sub{color:rgba(255,255,255,.72)}
 html.embed .kpi.accent .sub b{color:#fdba74}
-html.embed .page-head h1{font-size:18px;font-weight:600;letter-spacing:0}
+html.embed .page-head h1{font-size:24px;font-weight:300;letter-spacing:-.01em}
 html.embed .page-head p{font-size:12px}
 html.embed .kpi{background:rgba(27,35,51,.72);backdrop-filter:blur(6px)}
 html.embed .panel{background:rgba(27,35,51,.72);backdrop-filter:blur(6px)}
