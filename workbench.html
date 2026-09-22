@@ -2631,6 +2631,9 @@ function openConnect(){
  });
 }
 var CONN_MAP=null;
+function connPreload(){try{[].concat(CONN_IM,CONN_MEDIA_CN,CONN_MEDIA_GL).forEach(function(d){if(d.logo){var im=new Image();im.src='images/brands/'+d.logo+'.svg';}});}catch(e){}}
+if(window.requestIdleCallback){window.requestIdleCallback(connPreload,{timeout:2500});}else{window.addEventListener('load',function(){setTimeout(connPreload,400);});}
+
 function connAllMap(){if(!CONN_MAP){CONN_MAP={};CONN_IM.concat(CONN_MEDIA_CN,CONN_MEDIA_GL).forEach(function(d){CONN_MAP[d.id]=d;});}return CONN_MAP;}
 function closeConnModal(){$('#connModal').classList.remove('show');}
 function openConnModal(id){
