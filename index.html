@@ -1864,6 +1864,7 @@ function mpNotify(){
       imgs.forEach(function(im,idx){im.classList.toggle('on',idx===cur);});
       dots.forEach(function(d,idx){d.classList.toggle('on',idx===cur);});
       nameEl.textContent=c.name; roleEl.textContent=c.role; setVars(c);
+      lineEl.textContent='';
       setTimeout(function(){typeText(c.line);}, instant?0:280);
     }
     function stop(){if(timer){clearInterval(timer);timer=null;}}
