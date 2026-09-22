@@ -100,6 +100,12 @@ body[data-deliver="open"]{--deliver:380px}
 .task-item .tk-acts button:hover{background:rgba(255,255,255,.08);color:var(--tx)}
 .task-item .tk-acts button.danger:hover{color:var(--bad)}
 .task-item .tk-acts svg{width:13px;height:13px}
+.task-item.editing,.task-item.confirming{background:rgba(255,255,255,.06)}
+.task-item.editing .tk-acts,.task-item.confirming .tk-acts{display:flex}
+.task-item .tk-edit{flex:1;min-width:0;height:26px;margin:0;border:1px solid var(--orange);background:rgba(251,122,34,.14);color:var(--tx);font-size:12.5px;font-family:inherit;font-weight:500;border-radius:7px;padding:0 8px;outline:none;box-shadow:0 0 0 2px rgba(251,122,34,.12)}
+.task-item .tk-warn{flex:1;min-width:0;font-size:12px;font-weight:600;color:#ff8a7a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-item .tk-acts button.ok{color:var(--ok)}
+.task-item .tk-acts button.ok:hover{background:rgba(255,255,255,.1);color:var(--ok)}
 .task-empty{font-size:11.5px;color:var(--tx3);padding:2px 8px 8px;line-height:1.55}
 .cmp-quick{display:flex;gap:7px;overflow-x:auto;padding:0 1px 9px;scrollbar-width:none}
 .cmp-quick::-webkit-scrollbar{display:none}
@@ -624,15 +630,15 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .rmenu button.on:hover{background:rgba(255,255,255,.15);color:#fff}
 .rmenu button.on:hover svg{color:#fff}
 /* 任务分组标题 + 小新建钮 */
-.rgroup{display:flex;align-items:center;justify-content:space-between;margin:16px 6px 8px;font-size:14px;font-weight:600;letter-spacing:.2px;color:var(--tx2);text-transform:none}
+.rgroup{display:flex;align-items:center;justify-content:space-between;align-self:stretch;margin:16px 6px 8px;font-size:14px;font-weight:600;letter-spacing:.2px;color:var(--tx2);text-transform:none}
 .rgroup-txt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tasklist{display:flex;flex-direction:column;gap:1px}
+.tasklist{align-self:stretch;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:1px}
 .tasklist .task-item{margin:0}
 #taskList .task-item .tk-ico{color:var(--tx3)}
 #taskList .task-item.active .tk-ico{color:var(--orange)}
-.rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;padding:0}
-.rgroup-add svg{width:15px;height:15px}
-.rgroup-add:hover{color:var(--orange);background:var(--orange-soft)}
+.rmenu .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;min-width:24px;flex:none;margin:0;padding:0;gap:0;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+.rmenu .rgroup-add svg{width:15px;height:15px;flex:none}
+.rmenu .rgroup-add:hover{color:var(--orange);background:var(--orange-soft)}
 body[data-rail="mini"] .rail:hover .rgroup{display:flex}
 .task-item .tk-name{font-size:13px}
 .task-empty{font-size:12.5px}
@@ -1838,31 +1844,59 @@ function markTaskProgress(){
  saveTasks(arr);renderTaskList();
 }
 function archiveCurrentTask(){if(state.identity&&((state.product&&state.product.name)||(state.results&&state.results.length)||state.images.length))markTaskProgress();}
+var taskEditingId=null,taskConfirmDelId=null;
+function pinTaskSort(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;}
+var ICHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+var IX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 function renderTaskList(){
  var box=document.getElementById('taskList');if(!box)return;var arr=loadTasks();
  if(!arr.length){box.innerHTML='<div class="task-empty">还没有对话，发一句话或传张产品图开始。</div>';return;}
  box.innerHTML=arr.map(function(t){
-  return '<div class="task-item'+(t.id===state.taskId?' active':'')+'" data-tid="'+t.id+'" title="'+esc(t.title)+'">'
-   +'<span class="tk-ico">'+ICHAT+'</span>'
-   +'<span class="tk-name">'+esc(t.title)+'</span>'
-   +(t.pinned?'<span class="tk-pin">'+IC.pin+'</span>':'')
-   +'<span class="tk-acts">'
-   +'<button data-tact="pin" title="置顶/取消置顶">'+IC.pin+'</button>'
-   +'<button data-tact="rename" title="重命名">'+IC.pen+'</button>'
-   +'<button data-tact="del" class="danger" title="删除">'+IC.trash+'</button>'
-   +'</span></div>';
+  var editing=t.id===taskEditingId,confirming=t.id===taskConfirmDelId;
+  var cls='task-item'+(t.id===state.taskId?' active':'')+(editing?' editing':'')+(confirming?' confirming':'');
+  var head='<span class="tk-ico">'+ICHAT+'</span>',mid,acts;
+  if(editing){
+   mid='<input class="tk-edit" data-trename="'+t.id+'" value="'+esc(t.title).replace(/"/g,'&quot;')+'" maxlength="40" aria-label="对话名称">';
+   acts='<span class="tk-acts"><button data-tact="renameok" class="ok" title="保存">'+ICHECK+'</button><button data-tact="renamecancel" title="取消">'+IX+'</button></span>';
+  }else if(confirming){
+   mid='<span class="tk-name tk-warn">删除此对话？</span>';
+   acts='<span class="tk-acts"><button data-tact="delyes" class="danger" title="确认删除">'+ICHECK+'</button><button data-tact="delno" title="取消">'+IX+'</button></span>';
+  }else{
+   mid='<span class="tk-name">'+esc(t.title)+'</span>'+(t.pinned?'<span class="tk-pin">'+IC.pin+'</span>':'');
+   acts='<span class="tk-acts">'
+    +'<button data-tact="pin" title="置顶/取消置顶">'+IC.pin+'</button>'
+    +'<button data-tact="rename" title="重命名">'+IC.pen+'</button>'
+    +'<button data-tact="del" class="danger" title="删除">'+IC.trash+'</button>'
+    +'</span>';
+  }
+  return '<div class="'+cls+'" data-tid="'+t.id+'"'+(editing||confirming?'':' title="'+esc(t.title)+'"')+'>'+head+mid+acts+'</div>';
  }).join('');
+ var ei=box.querySelector('.tk-edit');if(ei){try{ei.focus();ei.select();}catch(x){}}
 }
 function taskAct(act,id,e){
- e.stopPropagation();
- var arr=loadTasks(),i=arr.findIndex(function(t){return t.id===id;});if(i<0)return;
- if(act==='pin'){arr[i].pinned=!arr[i].pinned;if(arr[i].id===state.taskId)state.taskPinned=arr[i].pinned;toast(arr[i].pinned?'已置顶':'已取消置顶');}
- else if(act==='rename'){var v=window.prompt('给任务改个名字',arr[i].title);if(v&&v.trim()){arr[i].title=v.trim();if(arr[i].id===state.taskId)state.taskTitle=v.trim();}}
- else if(act==='del'){if(!window.confirm('删除这个任务记录？交付物仍会保留在右侧交付物。'))return;arr.splice(i,1);saveTasks(arr);renderTaskList();renderTopbar();return;}
- arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
- saveTasks(arr);renderTaskList();renderTopbar();
+ if(e&&e.stopPropagation)e.stopPropagation();
+ var arr=loadTasks();
+ if(act==='rename'){taskConfirmDelId=null;taskEditingId=id;renderTaskList();return;}
+ if(act==='renamecancel'){taskEditingId=null;renderTaskList();return;}
+ if(act==='renameok'){
+  var inp=document.querySelector('#taskList .tk-edit');
+  var v=inp?String(inp.value==null?'':inp.value).trim():'';
+  if(v){v=v.length>40?v.slice(0,40):v;var j=arr.findIndex(function(t){return t.id===id;});if(j>=0){arr[j].title=v;if(arr[j].id===state.taskId)state.taskTitle=v;arr.sort(pinTaskSort);saveTasks(arr);}}
+  taskEditingId=null;renderTaskList();renderTopbar();return;
+ }
+ if(act==='del'){taskEditingId=null;taskConfirmDelId=id;renderTaskList();return;}
+ if(act==='delno'){taskConfirmDelId=null;renderTaskList();return;}
+ if(act==='delyes'){
+  taskConfirmDelId=null;
+  var k=arr.findIndex(function(t){return t.id===id;});
+  if(k>=0){arr.splice(k,1);saveTasks(arr);}
+  renderTaskList();renderTopbar();return;
+ }
+ var i=arr.findIndex(function(t){return t.id===id;});if(i<0)return;
+ if(act==='pin'){arr[i].pinned=!arr[i].pinned;if(arr[i].id===state.taskId)state.taskPinned=arr[i].pinned;toast(arr[i].pinned?'已置顶':'已取消置顶');arr.sort(pinTaskSort);saveTasks(arr);renderTaskList();renderTopbar();}
 }
 function openTask(id){
+ taskConfirmDelId=null;
  var t=loadTasks().filter(function(x){return x.id===id;})[0];if(!t)return;
  archiveCurrentTask();
  var hires=state.hires;
@@ -4621,7 +4655,7 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
   var ta=e.target.closest('#taskList [data-tact]');
   if(ta){taskAct(ta.dataset.tact,ta.closest('[data-tid]').dataset.tid,e);return;}
   var ti=e.target.closest('#taskList [data-tid]');
-  if(ti){closeAnalytics();openTask(ti.dataset.tid);return;}
+  if(ti){if(e.target.closest('.tk-edit'))return;if(e.target.closest('.tk-warn')){taskConfirmDelId=null;renderTaskList();return;}closeAnalytics();openTask(ti.dataset.tid);return;}
   var q=e.target.closest('[data-quick]');
   if(q){var a=q.dataset.quick;
    if(a==='startUpload'){if(!state.identity)startOrder('general');else $('#fileInput').click();}
@@ -4632,6 +4666,21 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
    else if(a==='changeSkill')openLab('plugin');
    return;}
   var b=e.target.closest('[data-act]');if(b)handleAct(b);
+ });
+ /* 左栏对话：原地重命名 / 行内二次确认删除（不使用浏览器原生弹窗） */
+ document.addEventListener('mousedown',function(e){
+  if(e.target.closest&&e.target.closest('#taskList .task-item.editing .tk-acts, #taskList .task-item.confirming .tk-acts'))e.preventDefault();
+ });
+ document.addEventListener('keydown',function(e){
+  var inp=e.target.closest&&e.target.closest('#taskList .tk-edit');if(!inp)return;
+  var tid=inp.closest('[data-tid]').dataset.tid;
+  if(e.key==='Enter'){e.preventDefault();taskAct('renameok',tid,e);}
+  else if(e.key==='Escape'){e.preventDefault();taskAct('renamecancel',tid,e);}
+ });
+ document.addEventListener('focusout',function(e){
+  var inp=e.target.closest&&e.target.closest('#taskList .tk-edit');if(!inp)return;
+  var tid=inp.closest('[data-tid]').dataset.tid;
+  setTimeout(function(){if(taskEditingId===tid)taskAct('renameok',tid,{stopPropagation:function(){}});},150);
  });
  /* composer */
  $('#btnSend').addEventListener('click',sendFreeText);
