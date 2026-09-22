@@ -1188,6 +1188,51 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 .cmp-mic svg{width:16px;height:16px}
 .cmp-mic:hover{color:var(--orange);border-color:var(--orange)}
 .cmp-mic.rec{background:rgba(239,68,68,.16);border-color:#ef4444;color:#f87171;animation:micPulse 1.3s ease-in-out infinite}
+/* ==== composer 即梦式工具行（模式/自动/技能 + 动态参数） ==== */
+.cmp-foot{justify-content:space-between!important;gap:9px 10px;flex-wrap:wrap}
+.cmp-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
+.cmp-params{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap}
+.cmp-pill{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx2);height:33px;padding:0 11px;border-radius:10px;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:400;line-height:1;cursor:pointer;white-space:nowrap;transition:background .16s,border-color .16s,color .16s,transform .16s}
+.cmp-pill:hover{background:rgba(255,255,255,.10);color:var(--tx);border-color:rgba(255,255,255,.22)}
+.cmp-pill:active{transform:scale(.96)}
+.cmp-pill svg{width:15px;height:15px;flex:none}
+.cmp-pill .chev{width:11px;height:11px;opacity:.62;transition:transform .2s}
+.cmp-pill.open .chev{transform:rotate(180deg)}
+.cmp-pill.mode-on{background:linear-gradient(180deg,rgba(251,122,34,.22),rgba(251,122,34,.10));border-color:rgba(251,122,34,.55);color:#fda05c}
+.cmp-pill.auto-on{background:rgba(251,122,34,.10);border-color:rgba(251,122,34,.42);color:#fda05c}
+.cmp-pill.pparam{font-variant-numeric:tabular-nums}
+.cmp-menu{position:fixed;z-index:140;display:none;flex-direction:column;background:linear-gradient(180deg,#222c40,#1a2233);border:1px solid var(--line);border-radius:14px;box-shadow:0 26px 64px rgba(0,0,0,.6);padding:6px;min-width:232px;max-height:62vh;overflow:auto}
+.cmp-menu.show{display:flex;animation:cmpMenuIn .16s ease}
+@keyframes cmpMenuIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cmp-menu .cm-title{font-size:11px;color:var(--tx3);padding:8px 10px 5px;letter-spacing:.02em}
+.cmp-menu .cm-item{appearance:none;border:0;background:transparent;color:var(--tx);font-family:inherit;font-size:13px;padding:9px 10px;border-radius:9px;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;width:100%;transition:background .12s,color .12s}
+.cmp-menu .cm-item:hover{background:rgba(255,255,255,.07)}
+.cmp-menu .cm-item svg{width:16px;height:16px;color:var(--tx3);flex:none}
+.cmp-menu .cm-item .cm-t{flex:1;min-width:0}
+.cmp-menu .cm-item .cm-sub{display:block;font-size:10.5px;color:var(--tx3);font-weight:300;margin-top:2px}
+.cmp-menu .cm-item .cm-ck{width:14px;height:14px;color:var(--orange);opacity:0;flex:none}
+.cmp-menu .cm-item.on{color:#fda05c}
+.cmp-menu .cm-item.on svg{color:#fda05c}
+.cmp-menu .cm-item.on .cm-ck{opacity:1}
+.cmp-menu .cm-item.disabled{opacity:.4;cursor:not-allowed}
+.cmp-menu .cm-item.disabled:hover{background:transparent}
+.cmp-menu .cm-sep{border:0;border-top:1px solid var(--line2);margin:6px 8px}
+.cm-ratio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:2px 8px 8px}
+.cm-ratio{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:10px;padding:8px 4px 7px;color:var(--tx2);font-family:inherit;font-size:10.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:.14s}
+.cm-ratio:hover{border-color:rgba(255,255,255,.26);color:var(--tx)}
+.cm-ratio.on{border-color:var(--orange);color:#fda05c;background:rgba(251,122,34,.10)}
+.cm-ratio svg{width:22px;height:18px}
+/* + 号：即梦式倾斜虚线方块 */
+.cmp-upload{border:1.5px dashed rgba(255,255,255,.30)!important;background:rgba(255,255,255,.03)!important;border-radius:14px!important;transform:rotate(-8deg);transition:transform .2s,border-color .2s,background .2s}
+.cmp-upload:hover{transform:rotate(0) scale(1.06);border-color:var(--orange)!important;color:var(--orange);background:var(--orange-soft)!important}
+.cmp-upload svg{width:26px!important;height:26px!important}
+@media(max-width:560px){
+ .cmp-tools{gap:5px}
+ .cmp-pill{height:31px;padding:0 9px;font-size:11.5px;border-radius:9px}
+ .cmp-pill.pparam .pp-ico{display:none}
+ .cmp-params{gap:5px}
+}
+
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.42)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 /* ⑥ 精选 masonry */
 .hm6-h::before{display:none!important}
@@ -1388,6 +1433,12 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
             <div class="cmp-main">
               <textarea id="composerInput" rows="1" placeholder="上传产品图，伙计马上开工。"></textarea>
               <div class="cmp-foot">
+                <div class="cmp-tools" id="cmpTools">
+                  <button type="button" class="cmp-pill" id="cmpModeBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6 6.5 18 10 8.5 13.5 18 17 8.5 20.5 18" stroke="#f4f7fd" stroke-width="2.3"/><path d="M14.5 3.5 20.5 9.5" stroke="#fb7a22" stroke-width="2"/></svg><span class="lbl" id="cmpModeLabel">Agent 模式</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                  <span class="cmp-params" id="cmpParams"></span>
+                  <button type="button" class="cmp-pill auto-on" id="cmpAutoBtn" title="按你的行业自动匹配技能"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3.5 7.5h9M15.5 7.5h5M3.5 16.5h4M11.5 16.5h9"/><circle cx="13.5" cy="7.5" r="2.3" fill="#1b2333"/><circle cx="9.5" cy="16.5" r="2.3" fill="#1b2333"/></svg><span class="lbl">自动</span></button>
+                  <button type="button" class="cmp-pill" id="cmpSkillBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18.6 14.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg><span class="lbl" id="cmpSkillLabel">Hogee 技能</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                </div>
                 <div class="cmp-right">
                   <span class="cmp-count" id="cmpCount"></span>
                   <button type="button" class="cmp-mic" id="btnMic" aria-label="语音输入" title="语音输入"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
@@ -1425,6 +1476,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
   </aside>
 </div>
 
+<div class="cmp-menu" id="cmpMenu"></div>
 <div class="pop" id="plusPop">
   <button data-plus="shot" id="plusShotBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span id="plusShotLabel">上传商品图片</span></button>
   <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>发布账号与渠道</button>
@@ -3886,10 +3938,229 @@ function openLightbox(src){var v=$('#lbVideo');if(v){v.pause();v.removeAttribute
 function openVideoLightbox(src){var img=$('#lbImg'),v=$('#lbVideo');img.src='';img.style.display='none';v.style.display='block';v.src=src;$('#lightbox').classList.add('show');var p=v.play();if(p&&p.catch)p.catch(function(){});}
 function closeLightbox(){$('#lightbox').classList.remove('show');$('#lbImg').src='';var v=$('#lbVideo');if(v){v.pause();v.removeAttribute('src');v.style.display='none';if(v.load)v.load();}}
 
+
+/* ================= composer 即梦式：模式 / 自动 / 技能 / 动态参数 ================= */
+var CMP_CHEV='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+var CMP_ICO={
+ agent:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18.6 14.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg>',
+ image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.6" cy="9.6" r="1.7"/><path d="m4 17 4.6-4.2 3.4 3 2.6-2.4L20 17"/></svg>',
+ video:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m10.5 9.2 4.3 2.8-4.3 2.8z" fill="currentColor" stroke="none"/></svg>',
+ copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5h14M5 12h14M5 18.5h9"/></svg>',
+ catalog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 9.5h8M4 14.5h8M15 13h4M15 16.5h4"/></svg>',
+ check:'<svg class="cm-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>'
+};
+var CMP_MODES=[
+ {id:'agent',n:'Agent 模式',sub:'智能调度五个伙计，随你说的来'},
+ {id:'image',n:'图片生成',sub:'阿图 · 白底 / 场景 / 多尺寸商品图'},
+ {id:'video',n:'视频生成',sub:'阿视 · 图文成片（内测）'},
+ {id:'copy',n:'文案生成',sub:'阿文 · 分渠道爆款文案'},
+ {id:'catalog',n:'画册生成',sub:'阿发 · 可追踪 H5 上架画册'}
+];
+var CMP_MODE_PARTNER={image:'atu',video:'ashi',copy:'awen',catalog:'afa'};
+var CMP_SKILLS_READY=[
+ {id:'general',n:'通用电商',sub:'全行业商品，默认能力'},
+ {id:'usedcar',n:'二手车商',sub:'车源图 / 展厅 / 车况话术'}
+];
+var CMP_SKILLS_SOON=['服装鞋帽','家居百货','美食餐饮','3C 数码','美妆个护','珠宝配饰'];
+var CMP={mode:'agent',auto:true,skill:null,p:{model:'seedream4.5',ratio:'smart',quality:'hd',fmt:'jpg',vidTpl:'showcase15',vidRatio:'9:16',tone:''}};
+function cmpEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cmpToneOpts(){return [{v:'',n:'自动语气'},{v:'专业可信',n:'专业可信'},{v:'亲切热情',n:'亲切热情'},{v:'简洁直接',n:'简洁直接'}];}
+function cmpParamDefs(){
+ if(CMP.mode==='image'){
+  return [
+   {k:'model',n:'模型',opts:[{v:'seedream4.5',n:'Seedream 4.5',sub:'当前模型'}]},
+   {k:'ratio',n:'比例',grid:true,opts:[{v:'smart',n:'智能'},{v:'1:1',n:'1:1'},{v:'3:4',n:'3:4'},{v:'4:5',n:'4:5'},{v:'16:9',n:'16:9'},{v:'9:16',n:'9:16'}]},
+   {k:'quality',n:'清晰度',opts:[{v:'std',n:'标准',sub:'更快'},{v:'hd',n:'高清',sub:'推荐'}]},
+   {k:'fmt',n:'格式',opts:[{v:'jpg',n:'JPG'},{v:'png',n:'PNG'}]}
+  ];
+ }
+ if(CMP.mode==='video'){
+  var tpls=Object.keys(VIDEO_TEMPLATES).map(function(k){return {v:k,n:VIDEO_TEMPLATES[k].label+' '+VIDEO_TEMPLATES[k].sec+'s'};});
+  return [
+   {k:'vidTpl',n:'模板',opts:tpls},
+   {k:'vidRatio',n:'画幅',opts:[{v:'9:16',n:'竖屏 9:16'},{v:'1:1',n:'方形 1:1'},{v:'3:4',n:'竖图 3:4'}]}
+  ];
+ }
+ if(CMP.mode==='copy'){
+  return [{k:'tone',n:'语气',opts:cmpToneOpts()}];
+ }
+ return [];
+}
+function cmpParamLabel(def){
+ var v=CMP.p[def.k];
+ if(def.k==='model')return 'Seedream 4.5';
+ if(def.k==='ratio')return v==='smart'?'比例':v;
+ if(def.k==='quality')return v==='hd'?'高清':'标清';
+ if(def.k==='fmt')return v.toUpperCase();
+ if(def.k==='vidTpl')return (VIDEO_TEMPLATES[v]?VIDEO_TEMPLATES[v].label:'模板');
+ if(def.k==='vidRatio')return '画幅 '+v;
+ if(def.k==='tone')return v||'语气';
+ return v;
+}
+function renderCmpTools(){
+ var mb=$('#cmpModeBtn'),ml=$('#cmpModeLabel'),pp=$('#cmpParams'),ab=$('#cmpAutoBtn'),sl=$('#cmpSkillLabel'),sb=$('#cmpSkillBtn');
+ if(!mb)return;
+ var mode=CMP_MODES.filter(function(m){return m.id===CMP.mode;})[0]||CMP_MODES[0];
+ ml.textContent=mode.n;
+ mb.classList.toggle('mode-on',CMP.mode!=='agent');
+ mb.classList.toggle('open',cmpOpenKind==='mode');
+ sb.classList.toggle('open',cmpOpenKind==='skill');
+ // 参数药丸
+ var defs=cmpParamDefs(),h='';
+ defs.forEach(function(d){
+  h+='<button type="button" class="cmp-pill pparam" data-cmp-param="'+d.k+'"><span class="pp-t">'+cmpEsc(cmpParamLabel(d))+'</span>'+CMP_CHEV+'</button>';
+ });
+ pp.innerHTML=h;
+ // 自动 / 技能
+ ab.classList.toggle('auto-on',!!CMP.auto);
+ if(CMP.auto){sl.textContent='Hogee 技能';sb.classList.remove('mode-on');}
+ else{sl.textContent=CMP.skill==='usedcar'?'二手车商':'通用电商';sb.classList.add('mode-on');}
+}
+var cmpOpenKind=null;
+function cmpPlace(anchor){
+ var m=$('#cmpMenu'),r=anchor.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight;
+ m.style.position='fixed';m.style.left=r.left+'px';m.style.right='auto';m.style.top='auto';m.style.bottom='auto';m.style.maxHeight='62vh';
+ m.classList.add('show');
+ var mh=m.getBoundingClientRect().height;
+ var spaceUp=r.top-10,spaceDown=vh-r.bottom-10;
+ if(mh<=spaceUp){m.style.bottom=(vh-r.top+10)+'px';}
+ else if(mh<=spaceDown){m.style.top=(r.bottom+10)+'px';}
+ else if(spaceUp>=spaceDown){m.style.bottom='10px';m.style.maxHeight=Math.max(160,spaceUp)+'px';}
+ else {m.style.top='10px';m.style.maxHeight=Math.max(160,spaceDown)+'px';}
+ var mr=m.getBoundingClientRect();
+ if(mr.right>vw-12)m.style.left=Math.max(12,vw-12-mr.width)+'px';
+ if(mr.left<12)m.style.left='12px';
+}
+function cmpClose(){$('#cmpMenu').classList.remove('show');cmpOpenKind=null;$$('.cmp-pill.open').forEach(function(x){x.classList.remove('open');});}
+function cmpOpen(anchor,kind,html){
+ var m=$('#cmpMenu');var same=(cmpOpenKind===kind&&m.classList.contains('show'));
+ cmpClose();
+ if(same)return;
+ m.innerHTML=html;cmpOpenKind=kind;anchor.classList.add('open');cmpPlace(anchor);
+}
+function cmpItem(ico,t,sub,ck,extra){
+ var dis=extra==='disabled';
+ var cls='cm-item'+(ck?' on':'')+(dis?' disabled':'');
+ var attr=dis?'disabled':(extra||'');
+ return '<button type="button" class="'+cls+'" '+attr+'>'+ico+'<span class="cm-t">'+t+(sub?'<span class="cm-sub">'+sub+'</span>':'')+'</span>'+(ck?CMP_ICO.check:'<svg class="cm-ck" viewBox="0 0 24 24"></svg>')+'</button>';
+}
+function cmpModeMenu(anchor){
+ var h='<div class="cm-title">创作类型</div>';
+ CMP_MODES.forEach(function(m){
+  h+=cmpItem(CMP_ICO[m.id]||CMP_ICO.agent,cmpEsc(m.n),cmpEsc(m.sub),CMP.mode===m.id,'data-cm="mode" data-v="'+m.id+'"');
+ });
+ cmpOpen(anchor,'mode',h);
+}
+function cmpSkillMenu(anchor){
+ var h='<div class="cm-title">技能匹配</div>';
+ h+=cmpItem(CMP_ICO.agent,'自动匹配',(function(){try{var pr=JSON.parse(localStorage.getItem('hogee_kb_profile')||'{}');return pr.industry?('按行业「'+pr.industry+'」自动识别'):'默认通用电商，传图后自动认行业';}catch(e){return '默认通用电商，传图后自动认行业';}})(),CMP.auto,'data-cm="auto"');
+ CMP_SKILLS_READY.forEach(function(s){
+  h+=cmpItem(CMP_ICO.image,cmpEsc(s.n),cmpEsc(s.sub),!CMP.auto&&CMP.skill===s.id,'data-cm="skill" data-v="'+s.id+'"');
+ });
+ h+='<hr class="cm-sep"><div class="cm-title">更多行业技能即将上线</div>';
+ CMP_SKILLS_SOON.forEach(function(n){
+  h+=cmpItem(CMP_ICO.copy,cmpEsc(n),'即将上线',false,'disabled');
+ });
+ cmpOpen(anchor,'skill',h);
+}
+function ratioIcon(k){
+ var box={'smart':[20,16],'1:1':[16,16],'3:4':[13,17],'4:5':[14,17],'16:9':[22,13],'9:16':[11,19]}[k]||[18,16];
+ return '<svg viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="'+((24-box[0])/2)+'" y="'+((22-box[1])/2)+'" width="'+box[0]+'" height="'+box[1]+'" rx="2.2"/></svg>';
+}
+function cmpParamMenu(anchor,k){
+ var def=cmpParamDefs().filter(function(d){return d.k===k;})[0];if(!def)return;
+ var h='<div class="cm-title">'+cmpEsc(def.n)+'</div>';
+ if(def.grid){
+  h+='<div class="cm-ratio-grid">';
+  def.opts.forEach(function(o){h+='<button type="button" class="cm-ratio'+(CMP.p[k]===o.v?' on':'')+'" data-cm="param" data-k="'+k+'" data-v="'+o.v+'">'+ratioIcon(o.v)+cmpEsc(o.n)+'</button>';});
+  h+='</div>';
+ }else{
+  def.opts.forEach(function(o){h+=cmpItem(CMP_ICO.check?('<svg viewBox="0 0 24 24"></svg>'):'',cmpEsc(o.n),o.sub?cmpEsc(o.sub):'',CMP.p[k]===o.v,'data-cm="param" data-k="'+k+'" data-v="'+o.v+'"');});
+ }
+ cmpOpen(anchor,'param:'+k,h);
+}
+function cmpCurrentSkillId(){
+ if(!CMP.auto)return CMP.skill||'general';
+ try{var pr=JSON.parse(localStorage.getItem('hogee_kb_profile')||'{}');if(pr.industry&&typeof kbIndustrySkill==='function')return kbIndustrySkill(pr.industry);}catch(e){}
+ return 'general';
+}
+function cmpApplySkill(id,silent){
+ var ido=id==='usedcar'?{type:'usedcar',label:'二手车',cat:'二手车'}:{type:'general',label:'通用电商',cat:''};
+ if(!state.identity||state.stage==='welcome'){state.identity=ido;saveId();state.bgImage=loadBg(ido.type);renderTopbar();}
+ else{state.identity.type=ido.type;state.identity.label=ido.label;state.identity.cat=ido.cat;saveId();renderTopbar();if(!silent)toast('已切换到'+ido.label+'技能，后续按此行业出图/写文案');}
+}
+function cmpSetAuto(silent){
+ CMP.auto=true;CMP.skill=null;cmpApplySkill(cmpCurrentSkillId(),true);renderCmpTools();cmpClose();
+ if(!silent)toast('已开启自动匹配，按你的行业选技能');
+}
+function cmpSetSkill(id){
+ CMP.auto=false;CMP.skill=id;cmpApplySkill(id,false);renderCmpTools();cmpClose();
+}
+function cmpSetParam(k,v){
+ CMP.p[k]=v;
+ if(k==='vidRatio'&&state.videoCfg)state.videoCfg.ratio=v;
+ if(k==='vidTpl'&&state.videoCfg)state.videoCfg.tpl=v;
+ renderCmpTools();cmpClose();
+}
+function cmpSetMode(id){
+ CMP.mode=id;renderCmpTools();cmpClose();
+ var p=CMP_MODE_PARTNER[id];
+ if(p&&typeof setActivePartner==='function'){try{setActivePartner(p);}catch(e){}}
+ else if(id==='agent'&&typeof setActivePartner==='function'){try{setActivePartner('host');}catch(e){}}
+}
+/* 显式模式：发送时直接路由，跳过意图猜测 */
+function routeByCmpMode(mode,txt){
+ var sk=cmpCurrentSkillId();
+ if(!state.identity){state.identity=sk==='usedcar'?{type:'usedcar',label:'二手车',cat:'二手车'}:{type:'general',label:'通用电商',cat:''};saveId();state.bgImage=loadBg(state.identity.type);renderTopbar();}
+ placeComposer(false);
+ if(mode==='image'){
+  state.activePartner='atu';renderPartners();renderTopbar();
+  state.quality=CMP.p.quality;state.fmt=CMP.p.fmt;
+  if(CMP.p.ratio!=='smart')state.sizes=new Set([CMP.p.ratio]);
+  if(state.images&&state.images.length){renderSpecCard();state.stage='spec';botSay('已按你选的比例 / 清晰度 / 格式设好，确认物料后点「开始出图」。','atu');}
+  else{if(!$('#uploadCard')||state.stage==='welcome'){renderUploadCard();state.stage='upload';}
+   botSay(txt?('好，就按「'+cmpEsc(String(txt).slice(0,30))+'」来。把商品图传上来，我拿第一张做主图。'):'好嘞，把商品图传上来，白底、场景、多平台尺寸我一套出齐。','atu');}
+ }else if(mode==='video'){
+  state.videoCfg.ratio=CMP.p.vidRatio;state.videoCfg.tpl=CMP.p.vidTpl;
+  if(typeof enterMate==='function')enterMate('ashi');
+  else{state.activePartner='ashi';renderPartners();renderTopbar();botSay('我是阿视，先让阿图出好商品图，有了图我就能剪成短视频。','ashi');}
+ }else if(mode==='copy'){
+  state.activePartner='awen';renderPartners();renderTopbar();
+  awenFlow(txt||'',CMP.p.tone||'');
+ }else if(mode==='catalog'){
+  state.activePartner='afa';renderPartners();renderTopbar();
+  if(state.results&&state.results.length){renderPublishCard();}
+  else{if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}botSay('H5 上架画册要先用阿图出好商品图。先传图出图，成品一好我就生成可追踪画册和渠道码。','afa');}
+ }
+}
+function cmpInit(){
+ if(window._cmpInited)return;window._cmpInited=true;
+ renderCmpTools();
+ $('#cmpModeBtn').addEventListener('click',function(e){e.stopPropagation();cmpModeMenu(this);});
+ $('#cmpAutoBtn').addEventListener('click',function(e){e.stopPropagation();cmpSetAuto(false);});
+ $('#cmpSkillBtn').addEventListener('click',function(e){e.stopPropagation();cmpSkillMenu(this);});
+ $('#cmpParams').addEventListener('click',function(e){var b=e.target.closest('[data-cmp-param]');if(!b)return;e.stopPropagation();cmpParamMenu(b,b.dataset.cmpParam);});
+ $('#cmpMenu').addEventListener('click',function(e){
+  var b=e.target.closest('[data-cm]');if(!b||b.classList.contains('disabled'))return;
+  var k=b.dataset.cm;
+  if(k==='mode')cmpSetMode(b.dataset.v);
+  else if(k==='param')cmpSetParam(b.dataset.k,b.dataset.v);
+  else if(k==='skill')cmpSetSkill(b.dataset.v);
+  else if(k==='auto')cmpSetAuto(false);
+ });
+ document.addEventListener('click',function(e){
+  if(e.target.closest&&e.target.closest('#cmpMenu'))return;
+  if(e.target.closest&&e.target.closest('.cmp-pill'))return;
+  cmpClose();
+ });
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')cmpClose();});
+}
+
 /* ================= 自由输入分流（大模型意图理解 + 规则兜底） ================= */
 function sendFreeText(){
  var inp=$('#composerInput'),txt=inp.value.trim();if(!txt)return;placeComposer(false);inp.value='';inp.style.height='auto';if(window.syncCmpCount)syncCmpCount();syncSendReady();
  userSay(txt);
+ if(window.CMP&&CMP.mode!=='agent'){routeByCmpMode(CMP.mode,txt);return;}
  var stop=botTyping(state.activePartner);
  var ctx={
   activePartner:state.activePartner,
@@ -4068,6 +4339,7 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  });
  /* composer */
  $('#btnSend').addEventListener('click',sendFreeText);
+ cmpInit();
  var ta=$('#composerInput');
  ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeText();}});
  ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,220)+'px';syncSendReady();});
