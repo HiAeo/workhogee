@@ -20,7 +20,7 @@
   --shadow-s:0 1px 2px rgba(0,0,0,.35);
   --shadow:0 10px 30px rgba(0,0,0,.40);
   --shadow-l:0 24px 70px rgba(0,0,0,.62);
-  --rail:262px; --deliver:0px;
+  --rail:240px; --deliver:0px;
   --font:"Trebuchet MS","Trebuchet","Lucida Sans Unicode","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -61,10 +61,13 @@ body[data-deliver="open"]{--deliver:380px}
 .btn-new{width:100%;appearance:none;border:0;background:var(--orange-d);color:#fff;border-radius:11px;padding:11px 14px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:9px;transition:.18s;margin-bottom:12px;box-shadow:0 6px 16px rgba(234,88,12,.22)}
 .btn-new:hover{background:var(--orange);transform:translateY(-1px);box-shadow:0 10px 22px rgba(234,88,12,.28)}
 .btn-new .pl{width:18px;height:18px;flex:none}
-.rmenu{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
-.rmenu button{appearance:none;border:0;background:transparent;text-align:left;color:var(--tx2);font-size:13.5px;font-weight:600;border-radius:10px;padding:9px 10px;display:flex;align-items:center;gap:10px;transition:.15s}
-.rmenu button svg{width:17px;height:17px;flex:none}
-.rmenu button:hover{background:rgba(255,255,255,.05);color:var(--tx)}
+.rmenu{display:flex;flex-direction:column;gap:2px;margin:2px 0 12px}
+.rgroup{font-size:11px;font-weight:600;letter-spacing:.10em;color:var(--tx3);padding:14px 14px 5px;text-transform:uppercase;user-select:none}
+.rgroup:first-child{padding-top:4px}
+.rmenu button{appearance:none;border:0;background:transparent;text-align:left;color:var(--tx2);font-size:14px;font-weight:500;border-radius:11px;height:44px;padding:0 13px;display:flex;align-items:center;gap:12px;transition:background .15s ease,color .15s ease;cursor:pointer;width:100%}
+.rmenu button svg{width:19px;height:19px;flex:none;color:var(--tx3);transition:color .15s ease}
+.rmenu button:hover{background:rgba(255,255,255,.055);color:var(--tx)}
+.rmenu button:hover svg{color:var(--tx2)}
 .rgroup{margin:16px 4px 7px;font-size:10.5px;letter-spacing:1.4px;color:var(--tx3);text-transform:uppercase;padding:0;font-weight:700}
 .skill-now{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:11px 12px;cursor:pointer;transition:.16s;box-shadow:var(--shadow-s)}
 .skill-now:hover{border-color:rgba(234,88,12,.45);box-shadow:var(--shadow)}
@@ -614,9 +617,10 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .composer{position:relative;z-index:50}
 /* 左栏：顶部一丝暖光 + 菜单选中品牌橙（对标纳米选中态） */
 .rail{background:linear-gradient(180deg,rgba(251,122,34,.07),rgba(120,150,255,.035) 320px,transparent),var(--bg)}
-.rmenu button.on{background:linear-gradient(90deg,rgba(251,122,34,.27),rgba(251,122,34,.08));color:#ffb27d;font-weight:700;box-shadow:inset 0 0 0 1px rgba(251,122,34,.24)}
-.rmenu button.on svg{color:var(--orange)}
-.rmenu button.on:hover{background:linear-gradient(90deg,rgba(251,122,34,.36),rgba(251,122,34,.13));color:#ffc396}
+.rmenu button.on{background:rgba(255,255,255,.10);color:#fff;font-weight:600;box-shadow:none}
+.rmenu button.on svg{color:#fff}
+.rmenu button.on:hover{background:rgba(255,255,255,.15);color:#fff}
+.rmenu button.on:hover svg{color:#fff}
 /* 任务分组标题 + 小新建钮 */
 .rgroup{display:flex;align-items:center;justify-content:space-between;margin:18px 6px 8px;font-size:11px;letter-spacing:1px;text-transform:none}
 .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;padding:0}
@@ -763,8 +767,8 @@ body[data-rail="mini"] .rail:hover .rlabel{display:block}
 .rmenu button svg{width:23px;height:23px}
 .rlabel{text-align:center;width:104px;margin:15px auto 7px;font-size:10.5px;letter-spacing:1.6px;
  color:var(--tx3);font-weight:600}
-.rmenu button.on{background:rgba(251,122,34,.14);color:#ffc396;box-shadow:inset 0 0 0 1px rgba(251,122,34,.32)}
-.rmenu button.on:hover{background:rgba(251,122,34,.22);color:#ffd2ae;box-shadow:inset 0 0 0 1px rgba(251,122,34,.42)}
+.rmenu button.on{background:rgba(255,255,255,.10);color:#fff;box-shadow:none}
+.rmenu button.on:hover{background:rgba(255,255,255,.15);color:#fff}
 /* mini 收起态保持纯图标；hover 浮起展开也沿用竖向，浮层半透明同色玻璃 */
 body[data-rail="mini"] .rmenu button{width:auto;padding:11px 0}
 body[data-rail="mini"] .rail:hover{background:rgba(13,17,25,.92);
@@ -850,28 +854,28 @@ body[data-stage="welcome"] .cmp-upload{border-color:rgba(255,255,255,.16);backgr
 /* ============================================================
    rework8：窄轨一体 · 去顶栏 · 门户通栏精选（覆盖 rework7）
    ============================================================ */
-:root{--rail:176px}
-.rail-brand{justify-content:center;padding:18px 0 12px}
+:root{--rail:240px}
+.rail-brand{justify-content:flex-start;padding:16px 18px 12px}
 .rail-brand a.wm-mark{display:none!important}
 .rail-brand a.wm-full{display:inline-flex!important;align-items:center}
-.rail-brand .wm-full svg{height:17px!important;width:auto;display:block}
-.rail-scroll{padding:6px 12px 10px}
-.rmenu{align-items:center;gap:2px}
-.rmenu button{width:88px;gap:5px;padding:10px 4px;font-size:11px;border-radius:13px}
-.rmenu button svg{width:22px;height:22px}
+.rail-brand .wm-full svg{height:21px!important;width:auto;display:block}
+.rail-scroll{padding:4px 10px 10px}
+.rmenu{align-items:stretch;gap:2px}
+.rmenu button{width:100%;height:44px;gap:12px;padding:0 13px;margin:0;font-size:14px;font-weight:500;border-radius:11px;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left}
+.rmenu button svg{width:19px;height:19px}
 .rlabel{display:none!important}
-.rail-foot{padding:10px 12px 12px}
-.rail-foot .wb-account{align-items:center;gap:8px}
-.rail-foot .wb-btn{flex-direction:column;width:88px;height:62px;padding:0;gap:5px;border-radius:14px;font-size:11.5px;font-weight:600;justify-content:center;line-height:1.1}
-.rail-foot .wb-btn svg{width:21px;height:21px}
+.rail-foot{padding:10px 12px 14px}
+.rail-foot .wb-account{align-items:stretch;gap:8px}
+.rail-foot .wb-btn{flex-direction:row;align-items:center;width:100%;height:42px;padding:0 13px;gap:10px;border-radius:11px;font-size:13.5px;font-weight:600;justify-content:flex-start;text-align:left;line-height:1.2}
+.rail-foot .wb-btn svg{width:18px;height:18px;flex:none}
 .rail-foot .wb-btn-p{background:rgba(251,122,34,.10);border:1px solid rgba(251,122,34,.55);color:#fd9248;box-shadow:none}
 .rail-foot .wb-btn-p:hover{background:rgba(251,122,34,.20);border-color:#fb7a22;color:#ffb27d;box-shadow:0 6px 18px rgba(234,88,12,.18)}
 .rail-foot .wb-btn-g{background:rgba(255,255,255,.045);border-color:var(--line);color:var(--tx)}
 .rail-foot .wb-btn-g:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);color:var(--tx)}
-.rail-foot .wb-ab{flex-direction:column;width:88px;height:auto;padding:9px 4px 8px;gap:5px;border-radius:14px;background:rgba(255,255,255,.045)}
+.rail-foot .wb-ab{flex-direction:row;align-items:center;width:100%;height:auto;padding:8px 12px;gap:10px;border-radius:11px;background:rgba(255,255,255,.045)}
 .rail-foot .wb-ab:hover{background:rgba(255,255,255,.08)}
-.rail-foot .wb-ab .wb-ava{width:34px;height:34px;margin:0}
-.rail-foot .wb-ab .nm{text-align:center;font-size:11px;width:100%}
+.rail-foot .wb-ab .wb-ava{width:30px;height:30px;margin:0;flex:none}
+.rail-foot .wb-ab .nm{text-align:left;font-size:12.5px;width:auto;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rail-foot .wb-ab .cv{display:none}
 .rail-ver{display:none!important}
 @media(min-width:901px){.topbar{display:none!important}}
@@ -889,21 +893,57 @@ body[data-stage="welcome"] .hw.hw6{max-width:none;padding:0;margin:2.2vh auto 0}
  .topbar{display:flex!important;height:50px;border:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 8px}
  .topbar .tb-task,.topbar .tb-right{display:none!important}
  .rail{position:fixed!important;left:0;top:0;bottom:0;height:100dvh;width:min(280px,86vw);z-index:61;transform:translateX(-100%);transition:transform .26s;box-shadow:24px 0 60px rgba(0,0,0,.55)}
- .rail.open{transform:none!important}
+ .rail.open{transform:none!important;background:rgba(12,16,23,.97);-webkit-backdrop-filter:blur(20px) saturate(1.2);backdrop-filter:blur(20px) saturate(1.2)}
  .rail-mask.show{display:block;z-index:60}
  .rail-brand{justify-content:flex-start;padding:16px 16px 14px}
  .rail-brand a.wm-mark{display:none!important}
  .rail-brand a.wm-full{display:inline-flex!important}
  .rail-brand .wm-full svg{height:23px!important}
  .rail-scroll{padding:6px 16px}
- .rmenu button{width:120px;font-size:12px;padding:11px 6px}
- .rmenu button svg{width:23px;height:23px}
+ .rmenu button{width:100%;height:44px;font-size:14px;padding:0 13px;margin:0;gap:12px;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left}
+ .rmenu button svg{width:19px;height:19px}
  .rail-foot{padding:12px 16px}
- .rail-foot .wb-btn,.rail-foot .wb-ab{width:120px}
- .rail-foot .wb-btn{height:64px}
+ .rail-foot .wb-btn,.rail-foot .wb-ab{width:100%}
+ .rail-foot .wb-btn{height:42px}
 }
 /* ===== rework5 中央作品库 ===== */
 body[data-stage="works"] .composer{display:none!important}
+body[data-stage="publish"] .composer{display:none!important}
+.pv{max-width:1060px;margin:0 auto;width:100%;padding:26px 34px 90px}
+.pv-head{margin-bottom:18px}
+.pv-title{font-size:24px;font-weight:700;color:var(--tx);letter-spacing:.01em}
+.pv-sub{font-size:13px;color:var(--tx3);line-height:1.7;margin-top:7px;max-width:760px}
+.pv-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 22px}
+.pv-stat{border:1px solid var(--line2);background:var(--panel);border-radius:14px;padding:15px 17px}
+.pv-stat .n{font-size:24px;font-weight:700;color:var(--tx);line-height:1.1}
+.pv-stat .l{font-size:12px;color:var(--tx3);margin-top:5px}
+.pv-row{display:flex;align-items:center;gap:14px;border:1px solid var(--line2);background:var(--panel);border-radius:14px;padding:12px 14px;margin-bottom:10px;transition:border-color .15s,background .15s}
+.pv-row:hover{border-color:var(--line);background:var(--panel2)}
+.pv-thumb{width:62px;height:62px;border-radius:11px;flex:none;background:var(--panel2);border:1px solid var(--line2);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--tx3)}
+.pv-thumb img{width:100%;height:100%;object-fit:cover}
+.pv-thumb svg{width:24px;height:24px}
+.pv-main{flex:1;min-width:0}
+.pv-name{font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-tags{display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap}
+.pv-ch{font-size:11.5px;font-weight:600;color:var(--tx2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.pv-st{font-size:11px;font-weight:600;border-radius:8px;padding:3px 9px;white-space:nowrap}
+.pv-st.open{color:#ffb27d;background:rgba(251,122,34,.12);border:1px solid rgba(251,122,34,.28)}
+.pv-st.phone{color:var(--tx2);background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.pv-date{font-size:11.5px;color:var(--tx3);margin-top:6px}
+.pv-kpis{display:flex;gap:0;flex:none}
+.pv-kpi{width:74px;text-align:center}
+.pv-kpi .v{font-size:15px;font-weight:700;color:var(--tx2)}
+.pv-kpi .k{font-size:10.5px;color:var(--tx3);margin-top:3px}
+.pv-del{appearance:none;background:transparent;border:0;color:var(--tx3);cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.pv-del:hover{color:#f87171;background:rgba(248,113,113,.1)}
+.pv-del svg{width:16px;height:16px}
+.pv-empty{border:1px dashed var(--line);border-radius:18px;background:rgba(255,255,255,.02);padding:54px 26px;text-align:center;color:var(--tx3)}
+.pv-empty .ei{width:58px;height:58px;border-radius:16px;background:var(--panel);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--tx3)}
+.pv-empty .ei svg{width:27px;height:27px}
+.pv-empty h4{color:var(--tx);font-size:16px;margin:0 0 8px}
+.pv-empty p{font-size:13px;line-height:1.8;max-width:520px;margin:0 auto 18px}
+.pv-empty .btn{margin:0 auto}
+@media(max-width:860px){.pv{padding:18px 15px 60px}.pv-stats{grid-template-columns:1fr 1fr 1fr;gap:8px}.pv-kpi{width:52px}.pv-kpi .v{font-size:13px}.pv-thumb{width:50px;height:50px}}
 .wv{max-width:1080px;margin:0 auto;padding:12px 8px 70px;animation:hwIn .4s ease}
 .wv-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:20px}
 .wv-title{font-size:25px;font-weight:700;letter-spacing:-.2px}
@@ -1123,10 +1163,13 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
     </div>
     <div class="rail-scroll">
       <nav class="rmenu" id="mainMenu">
-        <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg>首页</button>
-        <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>知识库</button>
-        <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>作品</button>
-        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果</button>
+        <div class="rgroup">工作台</div>
+        <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/></svg>Hogee创作</button>
+        <div class="rgroup">我的</div>
+        <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>My知识库</button>
+        <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>My作品</button>
+        <button id="navPublish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发布管理</button>
+        <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果监控</button>
       </nav>
 
     </div>
@@ -2189,6 +2232,58 @@ function bindWorksEvents(v){
   else if(k==='del'||k==='delc'){removeStoredWork(+b.getAttribute('data-si'));renderWorks();if(window.toast)toast('已删除');}
  });
 }
+/* ================= 发布管理（阿发辅助发布记录，本地持久） ================= */
+var PUB_LS='hogee_publish';
+function pubLoad(){try{var a=JSON.parse(localStorage.getItem(PUB_LS)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+function pubSave(a){try{localStorage.setItem(PUB_LS,JSON.stringify((a||[]).slice(0,120)));}catch(e){}}
+function logPublish(x){
+ try{
+  var r0=(state.results&&state.results[0])?state.results[0]:null;
+  var arr=pubLoad();
+  arr.unshift({id:'p'+Date.now()+Math.floor(Math.random()*1000),ts:Date.now(),p:x.p,name:x.name,
+   title:r0&&r0.label?r0.label:'营销素材',thumb:r0&&r0.url?r0.url:'',nImg:state.results?state.results.length:0,
+   status:x.url?'open':'phone'});
+  pubSave(arr);
+ }catch(e){}
+}
+function openPublish(){
+ closeAnalytics();try{closeDeliver();}catch(e){}
+ setMenuActive('navPublish');
+ placeComposer(false);document.body.dataset.stage='publish';
+ scroll.innerHTML='';
+ var v=document.createElement('div');v.className='pv';v.id='publishView';scroll.appendChild(v);
+ renderPublish();scrollBox.scrollTop=0;
+}
+function pubKpi(label){return '<div class="pv-kpi"><div class="v" title="平台官方数据接入后自动回流；可追踪画册的数据见效果监控">—</div><div class="k">'+label+'</div></div>';}
+function renderPublish(){
+ var v=document.getElementById('publishView');if(!v)return;
+ var arr=pubLoad();var chans={};arr.forEach(function(r){chans[r.p]=1;});
+ var head='<div class="pv-head"><div class="pv-title">发布管理</div><div class="pv-sub">阿发帮你把素材、文案备好并打开发布页的记录都在这里，最后一下由你本人点发送，阿发不碰账号密码。绑定平台账号后，展现、浏览、留资会自动回流；可追踪画册的数据在「效果监控」。</div></div>';
+ var stats='<div class="pv-stats"><div class="pv-stat"><div class="n">'+arr.length+'</div><div class="l">累计辅助发布（次）</div></div><div class="pv-stat"><div class="n">'+Object.keys(chans).length+'</div><div class="l">覆盖渠道（个）</div></div><div class="pv-stat"><div class="n">'+(arr.filter(function(r){return r.status==='open';}).length)+'</div><div class="l">已打开发布页待发送</div></div></div>';
+ var sendIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>';
+ var body;
+ if(!arr.length){
+  body='<div class="pv-empty"><div class="ei">'+sendIcon+'</div><h4>还没有辅助发布记录</h4><p>在对话里让阿图出图、阿文写文案，再到右侧「送达」选择平台，阿发会复制文案、打开发布页，并自动记下素材、渠道和日期。</p><button class="btn btn-orange" type="button" data-pubact="home">去创作</button></div>';
+ }else{
+  body=arr.map(function(r){
+   var thumb=r.thumb?'<img src="'+r.thumb+'" alt="">':sendIcon;
+   var st=r.status==='open'?'<span class="pv-st open">已打开发布页</span>':'<span class="pv-st phone">待手机发送</span>';
+   return '<div class="pv-row"><div class="pv-thumb">'+thumb+'</div>'
+    +'<div class="pv-main"><div class="pv-name">'+esc(r.title||'营销素材')+'</div>'
+    +'<div class="pv-tags"><span class="pv-ch">'+esc(r.name)+'</span>'+(r.nImg?'<span class="pv-ch">'+r.nImg+' 张素材</span>':'')+st+'</div>'
+    +'<div class="pv-date">'+fmtWTime(r.ts)+'</div></div>'
+    +'<div class="pv-kpis">'+pubKpi('展现')+pubKpi('浏览')+pubKpi('留资')+'</div>'
+    +'<button class="pv-del" type="button" data-pubact="del" data-id="'+r.id+'" title="删除记录" aria-label="删除记录"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>';
+  }).join('');
+ }
+ v.innerHTML=head+stats+body;
+ if(!v._bound){v._bound=true;v.addEventListener('click',function(e){
+  var b=e.target.closest('[data-pubact]');if(!b)return;var act=b.getAttribute('data-pubact');
+  if(act==='home'){goHome();}
+  else if(act==='analytics'){openAnalytics();}
+  else if(act==='del'){var id=b.getAttribute('data-id');var a2=pubLoad().filter(function(x){return x.id!==id;});pubSave(a2);renderPublish();if(window.toast)toast('记录已删除');}
+ });}
+}
 /* ---- 企业资料库（IndexedDB 持久化 + 文本提取） ---- */
 var KB_DB='hogee-kb',KB_STORE='docs';
 function kbOpenDB(){return new Promise(function(res,rej){try{var r=indexedDB.open(KB_DB,1);r.onupgradeneeded=function(){var db=r.result;if(!db.objectStoreNames.contains(KB_STORE))db.createObjectStore(KB_STORE,{keyPath:'id'});};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});}
@@ -2747,6 +2842,7 @@ function reachPlatform(pf){
  copyPlain(txt);
  if(x.url){try{window.open(x.url,'_blank','noopener');}catch(e){}toast(x.name+'：文案已复制，打开发布页粘贴，图片传素材包');}
  else toast(x.name+'：文案已复制，请用手机微信发布（可先做画册把图发到手机）');
+ logPublish(x);
 }
 
 /* ================= 让图动起来（前端 canvas + gifenc，零 AI 成本） ================= */
@@ -3336,6 +3432,7 @@ function bind(){
  $('#menuHome').addEventListener('click',goHome);
  $('#navKnowledge').addEventListener('click',openKnowledge);
  $('#navWorks').addEventListener('click',openWorks);
+ $('#navPublish').addEventListener('click',openPublish);
  $('#menuAnalytics').addEventListener('click',openAnalytics);
  var _ab=$('#analyticsBack');if(_ab)_ab.addEventListener('click',closeAnalytics);
  $('#tbPartner').addEventListener('click',togglePartnerPop);
