@@ -1237,6 +1237,40 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 .rcard:hover .rc-del{opacity:1}
 .rc-del:hover{background:#e11d48;border-color:#e11d48;color:#fff}
 .rc-del svg{width:15px;height:15px}
+.rc-pin{position:absolute;top:8px;right:44px;z-index:7;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(13,17,25,.6);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;opacity:0;transition:opacity .18s,background .18s,border-color .18s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.rcard:hover .rc-pin{opacity:1}
+.rc-pin:hover{background:var(--orange-d);border-color:transparent;color:#fff}
+.rc-pin svg{width:15px;height:15px}
+.rc-pin.on{opacity:1;background:rgba(251,122,34,.92);border-color:transparent;color:#fff}
+.rcard.pinned{border-color:rgba(251,122,34,.55)}
+.rc-v.playing .rc-play,.rc-v:hover .rc-play{opacity:0;transform:translate(-50%,-50%) scale(.88)}
+.hm-empty{grid-column:1/-1;padding:42px 0;text-align:center;color:var(--tx3);font-size:13px;font-weight:300}
+.hm-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 2px}
+.hm-tab{appearance:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);color:var(--tx2);font-family:inherit;font-size:12.5px;font-weight:400;line-height:1;cursor:pointer;white-space:nowrap;transition:background .16s,border-color .16s,color .16s}
+.hm-tab:hover{border-color:rgba(251,122,34,.5);color:#fdba74;background:rgba(251,122,34,.08)}
+.hm-tab.on{background:linear-gradient(135deg,rgba(251,122,34,.94),rgba(234,88,12,.94));border-color:transparent;color:#fff;font-weight:600}
+.hm-tab-x{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;font-size:13px;line-height:1;margin-left:1px;opacity:.8}
+.hm-tab-x:hover{background:rgba(255,255,255,.28)}
+.hm-tab-add{color:#fdba74;border-style:dashed;border-color:rgba(251,122,34,.5)}
+.hm-tab-add svg{width:13px;height:13px}
+.hm-more-wrap{display:flex;justify-content:center;margin:22px 0 6px}
+.hm-more{appearance:none;display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 22px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(40,48,66,.94),rgba(26,34,51,.94));color:var(--tx);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.35);transition:border-color .16s,color .16s,transform .16s}
+.hm-more:hover{border-color:rgba(251,122,34,.6);color:#fdba74;transform:translateY(-2px)}
+.hm-more svg{width:15px;height:15px}
+.hm-pop{position:fixed;z-index:1300;display:none;min-width:212px;max-width:84vw;background:linear-gradient(180deg,#222c40,#1a2233);border:1px solid var(--line);border-radius:14px;box-shadow:0 26px 64px rgba(0,0,0,.6);padding:6px;overflow:auto}
+.hm-pop.show{display:block;animation:cmpMenuIn .16s ease}
+.hm-pop-t{font-size:11px;color:var(--tx3);padding:8px 10px 5px}
+.hm-pop-item{display:flex;align-items:center;width:100%;text-align:left;background:transparent;border:0;color:var(--tx);font-family:inherit;font-size:13px;padding:9px 10px;border-radius:9px;cursor:pointer}
+.hm-pop-item:hover{background:rgba(255,255,255,.07)}
+.hm-pop-input{width:232px;max-width:78vw;margin:4px 8px 6px;display:block;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-family:inherit;font-size:13px;padding:9px 10px}
+.hm-pop-input:focus{outline:none;border-color:rgba(251,122,34,.6)}
+.hm-pop-foot{display:flex;justify-content:flex-end;gap:8px;padding:4px 6px 6px}
+.hm-pop-btn{height:32px;padding:0 14px;border-radius:9px;font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--line)}
+.hm-pop-btn.ghost{background:transparent;color:var(--tx2)}
+.hm-pop-btn.primary{background:var(--orange-d);border-color:transparent;color:#fff}
+@media(min-width:821px){.hm-tabs{padding:0 28px}.hm-more-wrap{padding:0 28px}}
+@media(max-width:820px){.hm-tabs{padding:0 16px;gap:6px}.hm-tab{height:28px;padding:0 12px;font-size:12px}}
+
 .hm-loading{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:170px;color:var(--tx2);font-size:13px;letter-spacing:.5px}
 .cmp-dd{position:relative}
 .cmp-chip{appearance:none;display:inline-flex;align-items:center;gap:6px;max-width:210px;border:1px solid var(--line);
@@ -1258,7 +1292,6 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 .cmp-menu button:hover{background:rgba(255,255,255,.07)}
 .cmp-menu button.ready{color:#fcd34d}
 .cmp-menu button.on{color:#fdba74;font-weight:700}
-.cmp-menu button.on::after{content:"\2713";margin-left:auto;color:var(--orange);font-size:12px}
 .cmp-menu button.off{color:var(--tx3);cursor:not-allowed}
 .cmp-menu button.off:hover{background:transparent}
 .cmp-mic{appearance:none;flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
@@ -1560,7 +1593,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
               <textarea id="composerInput" rows="1" placeholder="上传产品图，伙计马上开工。"></textarea>
               <div class="cmp-foot">
                 <div class="cmp-tools" id="cmpTools">
-                  <button type="button" class="cmp-pill" id="cmpModeBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6 6.5 18 10 8.5 13.5 18 17 8.5 20.5 18" stroke="#f4f7fd" stroke-width="2.3"/><path d="M14.5 3.5 20.5 9.5" stroke="#fb7a22" stroke-width="2"/></svg><span class="lbl" id="cmpModeLabel">Agent 模式</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                  <button type="button" class="cmp-pill" id="cmpModeBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18.6 14.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg><span class="lbl" id="cmpModeLabel">Agent 模式</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
                   <span class="cmp-params" id="cmpParams"></span>
                   <button type="button" class="cmp-pill auto-on" id="cmpAutoBtn" title="按你的行业自动匹配技能"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3.5 7.5h9M15.5 7.5h5M3.5 16.5h4M11.5 16.5h9"/><circle cx="13.5" cy="7.5" r="2.3" fill="#1b2333"/><circle cx="9.5" cy="16.5" r="2.3" fill="#1b2333"/></svg><span class="lbl">自动</span></button>
                   <button type="button" class="cmp-pill" id="cmpSkillBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18.6 14.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg><span class="lbl" id="cmpSkillLabel">Hogee 技能</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -2501,8 +2534,8 @@ function heroWelcome(){
    +'<p class="hw6-sub">一笔成交从一张产品图开始，你只管上传，剩下的交给伙计。</p>'
    +'</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
-   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee创作探索</span></div>'
-   +'<div class="hm6-rail" id="hmRail"></div></section>';
+   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee创作探索</span></div><div class="hm-tabs" id="hmTabs"></div>'
+   +'<div class="hm6-rail" id="hmRail"></div><div class="hm-more-wrap" id="hmMoreWrap"></div></section>';
   state._heroEl=h;
   scroll.appendChild(h);
   placeComposer(true);
@@ -2545,6 +2578,23 @@ function heroWelcome(){
  var HM_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
  function hmCardHtml(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}
  var hmItems=[];
+ var HM_BUILTIN_CATS=[{key:'product',n:'商品图'},{key:'video',n:'营销视频'},{key:'design',n:'平面设计'},{key:'ecom',n:'电商'},{key:'poster',n:'海报'}];
+ var HM_CATS_CUSTOM=[];var HM_CAT='all';var HM_COUNT=21;var HM_CAT_CONFIRM=null;
+ var HM_PIN_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6l-1.1 6.6 2.6 2.6v1.8h-4.1v5l-.9.9-.9-.9v-5H7.5v-1.8l2.6-2.6z"/></svg>';
+ function hmEffCat(d){return (d&&d.cat)||((d&&d.k==='v')?'video':'product');}
+ function hmAllCats(){return HM_BUILTIN_CATS.concat(HM_CATS_CUSTOM);}
+ function hmPaintTabs(h){
+  var box=h.querySelector('#hmTabs');if(!box)return;var admin=hmIsAdmin();
+  var html='<button type="button" class="hm-tab'+(HM_CAT==='all'?' on':'')+'" data-hmcat="all">全部</button>';
+  hmAllCats().forEach(function(c){
+   var custom=!/^(product|video|design|ecom|poster)$/.test(c.key);
+   html+='<button type="button" class="hm-tab'+(HM_CAT===c.key?' on':'')+'" data-hmcat="'+c.key+'">'+rcEsc(c.n)+(admin&&custom?'<span class="hm-tab-x" data-hmcatdel="'+c.key+'" title="删除分类">&times;</span>':'')+'</button>';
+  });
+  if(admin)html+='<button type="button" class="hm-tab hm-tab-add" id="hmCatAdd" title="添加分类"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>分类</button>';
+  box.innerHTML=html;
+ }
+ function hmFiltered(){if(HM_CAT==='all')return hmItems.slice();return hmItems.filter(function(d){return hmEffCat(d)===HM_CAT;});}
+
  function hmPromptBarHtml(d,isAdmin){
   if(!d.id)return '';
   if(d.prompt&&String(d.prompt).trim()){
@@ -2558,26 +2608,41 @@ function heroWelcome(){
   var rail=h.querySelector('#hmRail');if(!rail)return;
   hmItems=items||[];
   rail.dataset.admin=isAdmin?'1':'0';
-  rail.innerHTML=hmItems.map(hmCardHtml).join('')+(isAdmin?hmAddCardHtml():'');
+  var hmList=hmFiltered(),hmShown=hmList.slice(0,HM_COUNT);
+  if(!hmShown.length)rail.innerHTML='<div class="hm-empty">该分类暂无素材</div>';
+  else rail.innerHTML=hmShown.map(hmCardHtml).join('')+(isAdmin?hmAddCardHtml():'');
   var cards=rail.querySelectorAll('.rcard');
-  hmItems.forEach(function(d,idx){var c=cards[idx];if(!c||!d.id)return;
+  hmShown.forEach(function(d,idx){var c=cards[idx];if(!c||!d.id)return;
    var bar=hmPromptBarHtml(d,isAdmin);
    if(bar){var tmp=document.createElement('span');tmp.innerHTML=bar;var node=tmp.firstElementChild;if(node){c.appendChild(node);c.classList.add('has-pbar');}}
-   if(isAdmin){var del=document.createElement('span');del.className='rc-del';del.setAttribute('data-hmdel',String(d.id));del.setAttribute('title','删除该素材');del.innerHTML=HM_TRASH;c.appendChild(del);}
+   if(isAdmin){
+    if(d.pin)c.classList.add('pinned');
+    var pin=document.createElement('span');pin.className='rc-pin'+(d.pin?' on':'');pin.setAttribute('data-hmpin',String(d.id));pin.setAttribute('title',d.pin?'取消置顶':'置顶到第一位');pin.innerHTML=HM_PIN_SVG;c.appendChild(pin);
+    var del=document.createElement('span');del.className='rc-del';del.setAttribute('data-hmdel',String(d.id));del.setAttribute('title','删除该素材');del.innerHTML=HM_TRASH;c.appendChild(del);}
   });
+  var mw=h.querySelector('#hmMoreWrap');
+  if(mw)mw.innerHTML=hmList.length>HM_COUNT?'<button type="button" class="hm-more" id="hmMoreBtn">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>':'';
   initBa(h);
  }
- function hmFallback(h){hmPaintRail(h,HM6_DEMO.map(function(d,i){return Object.assign({id:'fb'+i},d);}),false);}
+ function hmFallback(h){HM_CATS_CUSTOM=[];hmPaintTabs(h);hmPaintRail(h,HM6_DEMO.map(function(d,i){return Object.assign({id:'fb'+i},d);}),false);}
  function renderHmRail(h){
   var rail=h.querySelector('#hmRail');if(!rail)return;
   rail.innerHTML='<div class="hm-loading">Hogee创作探索加载中…</div>';
   fetch(API+'/api/feed?_='+Date.now(),{cache:'no-store',headers:{'Accept':'application/json'}})
    .then(function(r){if(!r.ok)throw new Error('feed '+r.status);return r.json();})
-   .then(function(j){if(j&&j.ok&&Array.isArray(j.items))hmPaintRail(h,j.items,hmIsAdmin());else hmFallback(h);})
+   .then(function(j){if(j&&j.ok&&Array.isArray(j.items)){HM_CATS_CUSTOM=(j&&j.cats)||[];hmPaintTabs(h);hmPaintRail(h,j.items,hmIsAdmin());}else hmFallback(h);})
    .catch(function(){hmFallback(h);});
   if(!h._r6bound){h._r6bound=1;h.addEventListener('click',function(e){
    var del=e.target.closest('[data-hmdel]');
    if(del){e.preventDefault();e.stopPropagation();hmDelete(del.getAttribute('data-hmdel'),h);return;}
+   var cx=e.target.closest('[data-hmcatdel]');
+   if(cx){e.preventDefault();e.stopPropagation();var ck=cx.getAttribute('data-hmcatdel');
+    if(HM_CAT_CONFIRM===ck){hmCatRemove(ck,h);HM_CAT_CONFIRM=null;}
+    else{HM_CAT_CONFIRM=ck;cx.textContent='确认?';if(HG.toast)HG.toast('再点一次确认删除该分类');setTimeout(function(){HM_CAT_CONFIRM=null;var t=h.querySelector('[data-hmcatdel="'+ck+'"]');if(t)t.innerHTML='&times;';},2600);}return;}
+   var cadd=e.target.closest('#hmCatAdd');if(cadd){e.preventDefault();e.stopPropagation();hmOpenAddCat(cadd,h);return;}
+   var ctab=e.target.closest('[data-hmcat]');if(ctab){HM_CAT=ctab.getAttribute('data-hmcat');HM_COUNT=21;hmPaintTabs(h);hmPaintRail(h,hmItems,hmIsAdmin());return;}
+   var more=e.target.closest('#hmMoreBtn');if(more){HM_COUNT+=21;hmPaintRail(h,hmItems,hmIsAdmin());return;}
+   var pinb=e.target.closest('[data-hmpin]');if(pinb){e.preventDefault();e.stopPropagation();hmTogglePin(pinb.getAttribute('data-hmpin'),h);return;}
    var pv=e.target.closest('[data-hmview]');
    if(pv){e.preventDefault();e.stopPropagation();hmOpenView(pv.getAttribute('data-hmview'));return;}
    var pe=e.target.closest('[data-hmedit]');
@@ -2597,6 +2662,58 @@ function heroWelcome(){
    .then(function(j){if(j&&j.ok){renderHmRail(h);toast('已删除');}else toast('删除失败');})
    .catch(function(){toast('删除失败，请确认已用官方账号登录');});
  }
+/* ---- Hogee创作探索：分类 / 分页 / 置顶 / 视频悬停播放 ---- */
+function hmPop(){var p=document.getElementById('hmPop');if(!p){p=document.createElement('div');p.id='hmPop';p.className='hm-pop';document.body.appendChild(p);}return p;}
+function hmPopClose(){var p=document.getElementById('hmPop');if(p){p.classList.remove('show');p.onclick=null;}}
+function hmPopOpen(anchor,html){
+ var p=hmPop();p.innerHTML=html;p.classList.remove('show');
+ var r=anchor.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight;
+ p.style.position='fixed';p.style.right='auto';p.style.bottom='auto';p.style.maxHeight='60vh';
+ p.style.top=(r.bottom+8)+'px';p.style.left=r.left+'px';p.classList.add('show');
+ requestAnimationFrame(function(){
+  var w=p.getBoundingClientRect().width,h=p.getBoundingClientRect().height;
+  if(r.left+w>vw-10)p.style.left=Math.max(10,vw-w-10)+'px';
+  if(r.bottom+8+h>vh-10)p.style.top=Math.max(10,vh-h-10)+'px';
+ });
+}
+window.__hmPickUploadCat=function(anchor,cb){
+ if(HM_CAT!=='all'){cb(HM_CAT);return;}
+ var h='<div class="hm-pop-t">选择所属分类</div>';
+ hmAllCats().forEach(function(c){h+='<button type="button" class="hm-pop-item" data-pickcat="'+c.key+'">'+rcEsc(c.n)+'</button>';});
+ hmPopOpen(anchor,h);
+ var p=hmPop();
+ p.onclick=function(ev){var b=ev.target.closest('[data-pickcat]');if(!b)return;var k=b.getAttribute('data-pickcat');hmPopClose();cb(k);};
+};
+function hmOpenAddCat(anchor,h){
+ if(!hmIsAdmin())return;
+ hmPopOpen(anchor,'<div class="hm-pop-t">新建分类</div><input type="text" id="hmCatInput" class="hm-pop-input" maxlength="12" placeholder="分类名称，如 美妆个护"><div class="hm-pop-foot"><button type="button" class="hm-pop-btn ghost" data-catcancel>取消</button><button type="button" class="hm-pop-btn primary" data-catok>创建</button></div>');
+ var inp=document.getElementById('hmCatInput');if(inp)setTimeout(function(){inp.focus();},30);
+ var p=hmPop();
+ p.onclick=function(ev){
+  if(ev.target.closest('[data-catcancel]')){hmPopClose();return;}
+  if(ev.target.closest('[data-catok]')){var n=(inp?inp.value:'').trim();if(!n){if(HG.toast)HG.toast('请输入分类名称');return;}hmCatAdd(n,h);}
+ };
+}
+function hmCatAdd(n,h){
+ HogeeMember.authFetch(API+'/api/feed/cats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'add',n:n})})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){hmPopClose();if(HG.toast)HG.toast('分类已添加');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'添加失败');}})
+  .catch(function(){if(HG.toast)HG.toast('添加失败，请确认已用官方账号登录');});
+}
+function hmCatRemove(key,h){
+ HogeeMember.authFetch(API+'/api/feed/cats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'remove',key:key})})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HM_CAT===key)HM_CAT='all';if(HG.toast)HG.toast('分类已删除');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'删除失败');}})
+  .catch(function(){if(HG.toast)HG.toast('删除失败，请确认已用官方账号登录');});
+}
+function hmTogglePin(id,h){
+ var d=hmItems.filter(function(x){return String(x.id)===String(id);})[0];if(!d)return;var pin=d.pin?0:1;
+ HogeeMember.authFetch(API+'/api/feed/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:String(id),pin:pin})})
+  .then(function(r){return r.json();}).then(function(j){if(j&&j.ok){if(HG.toast)HG.toast(pin?'已置顶到第一位':'已取消置顶');renderHmRail(h);}else{if(HG.toast)HG.toast((j&&j.error&&j.error.message)||'操作失败');}})
+  .catch(function(){if(HG.toast)HG.toast('操作失败，请确认已用官方账号登录');});
+}
+document.addEventListener('click',function(e){var p=document.getElementById('hmPop');if(p&&p.classList.contains('show')&&!p.contains(e.target)&&!(e.target.closest&&e.target.closest('#hmCatAdd'))&&!(e.target.closest&&e.target.closest('#hmAddBtn')))hmPopClose();});
+document.addEventListener('mouseover',function(e){var c=e.target.closest&&e.target.closest('.rc-v');if(!c)return;var v=c.querySelector('video');if(v){v.muted=true;v.loop=true;var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});c.classList.add('playing');}});
+document.addEventListener('mouseout',function(e){var c=e.target.closest&&e.target.closest('.rc-v');if(!c)return;if(e.relatedTarget&&c.contains(e.relatedTarget))return;var v=c.querySelector('video');if(v){try{v.pause();v.currentTime=0;}catch(x){}c.classList.remove('playing');}});
+
 
 /* ================= rework5：作品墙 / 我的作品库 / 企业资料库 ================= */
 /* ================= 我的作品：持久化作品库（本地 IndexedDB + TOS + 云端 /api/state） =================
@@ -4586,14 +4703,13 @@ function renderCmpTools(){
 var cmpOpenKind=null;
 function cmpPlace(anchor){
  var m=$('#cmpMenu'),r=anchor.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight;
- m.style.position='fixed';m.style.left=r.left+'px';m.style.right='auto';m.style.top='auto';m.style.bottom='auto';m.style.maxHeight='62vh';
+ var downTop=r.bottom+10,availDown=Math.max(150,vh-downTop-10);
+ m.style.position='fixed';m.style.left=r.left+'px';m.style.right='auto';m.style.bottom='auto';
+ m.style.maxHeight=Math.min(Math.round(vh*0.62),availDown)+'px';
+ m.style.top=downTop+'px';
  m.classList.add('show');
  var mh=m.getBoundingClientRect().height;
- var spaceUp=r.top-10,spaceDown=vh-r.bottom-10;
- if(mh<=spaceUp){m.style.bottom=(vh-r.top+10)+'px';}
- else if(mh<=spaceDown){m.style.top=(r.bottom+10)+'px';}
- else if(spaceUp>=spaceDown){m.style.bottom='10px';m.style.maxHeight=Math.max(160,spaceUp)+'px';}
- else {m.style.top='10px';m.style.maxHeight=Math.max(160,spaceDown)+'px';}
+ if(downTop+mh>vh-10){m.style.top=Math.max(10,vh-mh-10)+'px';}
  var mr=m.getBoundingClientRect();
  if(mr.right>vw-12)m.style.left=Math.max(12,vw-12-mr.width)+'px';
  if(mr.left<12)m.style.left='12px';
@@ -5248,7 +5364,8 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
   var add=e.target.closest('#hmAddBtn');
   if(add){e.preventDefault();e.stopPropagation();
    if(!fIsAdmin()){if(HG.toast)HG.toast('仅官方运营账号可维护上新素材');return;}
-   var inp0=document.getElementById('hmUpload');if(inp0)inp0.click();}
+   var open0=function(){var inp0=document.getElementById('hmUpload');if(inp0)inp0.click();};
+   if(window.__hmPickUploadCat){window.__hmPickUploadCat(add,function(cat){window.HG.uploadCat=cat;open0();});}else open0();}
  },true);
  function fSzByAspect(a){if(a>=1.45)return 'wide';if(a<=0.78)return 'tall';return 'sq';}
  function fMediaSize(file){
@@ -5276,7 +5393,7 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
      if(!j.ok||!j.putUrl||!j.key)throw new Error('presign bad');
      var putHeaders={'Content-Type':(j.headers&&j.headers['Content-Type'])||'application/octet-stream'};
      return fetch(j.putUrl,{method:'PUT',headers:putHeaders,body:file}).then(function(pr){if(!pr.ok)throw new Error('put '+pr.status);
-      return HogeeMember.authFetch(FAPI+'/api/feed/commit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,key:j.key,cap:fCap(file),sz:sz})});});
+      return HogeeMember.authFetch(FAPI+'/api/feed/commit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:kind,key:j.key,cap:fCap(file),sz:sz,cat:(window.HG&&window.HG.uploadCat)||'product'})});});
     })
     .then(function(r){if(!r.ok)throw new Error('commit '+r.status);return r.json();});
   });
