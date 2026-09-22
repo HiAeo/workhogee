@@ -3434,7 +3434,7 @@ function handleFiles(fileList){
 /* ================= 认货（AI 识图自动预填，客户只需确认或跳过） ================= */
 var carFilter={cat:'all',letter:''};
 var identifyFields={};
-/* 品牌水印已下线：交付物不再叠加“WorkHogee 出图”字样。
+/* 品牌水印已下线：交付物不再叠加任何品牌字样水印（函数保留为 no-op 以兼容历史调用点）。
    合规 AI 生成标识由服务端隐式元数据(image-meta)与缩略图浅色“AI生成”角标承担，与品牌水印是两套，互不影响。 */
 function addWatermark(dataUrl){ return Promise.resolve(dataUrl); }
 
