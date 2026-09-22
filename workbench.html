@@ -1423,7 +1423,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 /* ===== 知识库：引导式档案 + 分类录入（v6） ===== */
 .kbp-type{display:flex;gap:8px;margin-bottom:18px}
 .seg{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--tx2);border-radius:10px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.16s;font-family:inherit}
-.seg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.seg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}.seg.disabled{opacity:.45;cursor:not-allowed}
 .kbp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 16px}
 .kbp-field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .kbp-field.col2{grid-column:1/-1}
@@ -1433,7 +1433,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .kbp-field input::placeholder{color:rgba(244,247,253,.30)}
 .kbp-actions{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .kbp-saved{font-size:12px;color:var(--tx3)}
-.kb-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.pf-toolbar{margin-bottom:14px}.pf-create{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}.pf-create input{flex:1;max-width:280px}.pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}.pf-card{border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);display:flex;flex-direction:column}.pf-open{display:block;width:100%;padding:0;border:none;background:none;cursor:pointer}.pf-cover{aspect-ratio:4/3;background:rgba(255,255,255,.04);display:grid;place-items:center;color:var(--tx3)}.pf-cover-img{width:100%;height:100%;object-fit:cover;display:block}.pf-cover-ph{width:42px;height:42px}.pf-cover-ph svg{width:100%;height:100%}.pf-body{padding:11px 12px;display:flex;flex-direction:column;gap:8px}.pf-name{display:flex;align-items:center;gap:8px;min-width:0}.pf-name b{font-size:13.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pf-cnt{margin-left:auto;font-size:11px;color:var(--tx3);flex:none}.pf-ops{display:flex;gap:6px;justify-content:flex-end}.pf-op{border:none;background:none;color:var(--tx3);cursor:pointer;padding:3px;border-radius:7px;display:inline-flex}.pf-op svg{width:15px;height:15px}.pf-op:hover{color:var(--orange);background:rgba(251,122,34,.1)}.pf-ren{display:flex;gap:8px;align-items:center;flex:1;min-width:0}.pf-ren-input{background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--tx);padding:7px 10px;font-size:13px;font-family:inherit;min-width:0}.pf-confirm{font-size:12px;color:var(--tx2);display:inline-flex;gap:6px;align-items:center}.pf-confirm button{border:none;background:none;cursor:pointer;font-size:12px;font-family:inherit}.pf-confirm .danger{color:#f87171}.pf-openbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}.pf-open-tt{font-size:15px;font-weight:600;color:var(--tx)}.pf-upbtn{margin-left:auto;padding:5px 13px;font-size:12px}@media(max-width:520px){.pf-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;max-height:52vh;overflow:auto;padding:2px}.kpi{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:var(--panel);aspect-ratio:1;padding:0}.kpi img{width:100%;height:100%;object-fit:cover;display:block}.kpi.on{border-color:var(--orange);box-shadow:0 0 0 2px rgba(251,122,34,.25)}.kpi-proj{font-size:12px;color:var(--tx2);margin:15px 0 7px;font-weight:600}.kpi-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.url-in{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:11px 13px;font-size:13.5px;font-family:inherit}.url-hint{font-size:12px;color:var(--tx3);margin-top:9px;line-height:1.65}.kb-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .kb-cat{appearance:none;text-align:left;background:var(--panel);border:1px dashed var(--line);border-radius:15px;padding:16px;cursor:pointer;transition:.18s;color:var(--tx);font-family:inherit;display:flex;flex-direction:column;gap:7px;min-height:122px}
 .kb-cat:hover{border-color:var(--orange);background:var(--panel2);transform:translateY(-2px)}
 .kb-cat .kc-ic{width:38px;height:38px;border-radius:11px;background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center}
@@ -1508,7 +1508,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .wkc-play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .wkc-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.58);color:#fff;font-size:11px;padding:2px 9px;border-radius:999px;pointer-events:none}
 .wkc-tag.static{position:static;display:inline-block;align-self:flex-start;background:rgba(234,88,12,.14);color:var(--brand);margin-bottom:8px}
-.wkc-copy{padding:14px;min-height:128px;display:flex;flex-direction:column}
+.wkc-copy{padding:14px;min-height:128px;display:flex;flex-direction:column}.wk-card.wk-copy{align-self:start}.wkc-copy p{overflow-wrap:anywhere;word-break:break-word}
 .wkc-copy p{font-size:12.5px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;margin:0}
 .wkc-show{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;min-height:128px;text-decoration:none;color:var(--tx)}
 .wkc-show b{font-size:14px;font-weight:600}
@@ -1642,7 +1642,9 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 
 <div class="cmp-menu" id="cmpMenu"></div>
 <div class="pop" id="plusPop">
-  <button data-plus="shot" id="plusShotBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span id="plusShotLabel">上传商品图片</span></button>
+  <button data-plus="local"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>本地图片</span></button>
+  <button data-plus="kb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg><span>知识库图片</span></button>
+  <button data-plus="url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span>图片链接</span></button>
   <button data-plus="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>发布账号与渠道</button>
 </div>
 
@@ -1862,6 +1864,72 @@ function resetState(){
   copy:{ready:false,channel:'general',cps:null,draft:''},showcase:null,deliverTab:'all',labTab:'skill'};
 }
 var state=resetState();
+/* ================= DataVault：业务数据按账号隔离 + 登录切换 / 退出清理（可复用：核心是 scope 快照切换） ================= */
+var DataVault={
+  P:'hogee_vault_',
+  KEYS:['hogee_works','hogee_tasks_local','hogee_identity','hogee_plugins','hogee_skill_notify','hogee_kb_profile','hogee_kb_text','hogee_kb_projects','hogee_publish','hogee_connections','hogee_profile','hogee_gen_count'],
+  BGP:'hogee_bg_',
+  _last:null,
+  cur:function(){try{var u=(window.HogeeMember&&HogeeMember.getUser)?HogeeMember.getUser():null;return(u&&u.id)?u.id:'guest';}catch(e){return'guest';}},
+  vk:function(s){return this.P+s;},
+  collect:function(){
+    var o={},self=this;
+    this.KEYS.forEach(function(k){var v;try{v=localStorage.getItem(k);}catch(e){v=null;}if(v!=null)o[k]=v;});
+    var bgs={};
+    try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(self.BGP)===0)bgs[k]=localStorage.getItem(k);}}catch(e){}
+    o.__bgs=bgs;return o;
+  },
+  apply:function(o){
+    o=o||{};
+    Object.keys(o).forEach(function(k){if(k==='__bgs')return;try{localStorage.setItem(k,o[k]);}catch(e){}});
+    var bgs=o.__bgs||{};Object.keys(bgs).forEach(function(k){try{localStorage.setItem(k,bgs[k]);}catch(e){}});
+  },
+  save:function(s){try{localStorage.setItem(this.vk(s),JSON.stringify(this.collect()));}catch(e){}},
+  load:function(s){try{return JSON.parse(localStorage.getItem(this.vk(s))||'null');}catch(e){return null;}},
+  clearActive:function(){
+    var self=this,all=this.KEYS.slice();
+    try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(self.BGP)===0&&all.indexOf(k)<0)all.push(k);}}catch(e){}
+    all.forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+  }
+};
+/* 切换账号 / 退出后，把内存 state 与整个中央 UI 复位到干净的欢迎门户（动态全屏视图随 scroll.innerHTML 一并清除） */
+function vaultResetUI(){
+  try{closeAnalytics();}catch(e){}
+  try{closeDeliver();}catch(e){}
+  var hires=state.hires;
+  state=resetState();state.hires=hires;
+  try{scroll.innerHTML='';}catch(e){}
+  state.stage='welcome';
+  try{placeComposer(true);}catch(e){}
+  try{setMenuActive('menuHome');}catch(e){}
+  try{renderPartners();}catch(e){}
+  try{renderTopbar();}catch(e){}
+  try{renderCmpAttach();}catch(e){}
+  try{renderDeliver();}catch(e){}
+  try{renderTaskList();}catch(e){}
+  try{heroWelcome();}catch(e){}
+  try{scrollBox.scrollTop=0;}catch(e){}
+}
+/* 登录 / 注册成功（verify 刷新不触发）：先把旧归属工作区落快照，清空，再恢复目标账号本地快照 + 云端跨设备合并 */
+document.addEventListener('hogee:auth',function(){
+  var ns=DataVault.cur(),old=DataVault._last||'guest';
+  if(ns===old)return;
+  DataVault.save(old);
+  DataVault.clearActive();
+  var snap=DataVault.load(ns);if(snap)DataVault.apply(snap);
+  DataVault._last=ns;
+  vaultResetUI();
+  try{HGCloud.pull();}catch(e){}
+  setTimeout(function(){try{migrateLocalToTOS();}catch(e){}},900);
+});
+/* 退出 / 401：把当前账号工作区落快照后清空，中央 UI 回到干净空态（不恢复游客历史） */
+document.addEventListener('hogee:logout',function(){
+  var old=DataVault._last||'guest';
+  DataVault.save(old);
+  DataVault.clearActive();
+  DataVault._last='guest';
+  vaultResetUI();
+});
 /* ================= 任务列表（本地持久化：置顶 / 重命名 / 删除 / 切换） ================= */
 function newTaskId(){return 't'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 var taskCache=[];
@@ -2304,6 +2372,17 @@ function kbApplyIndustry(ind){
   saveId();try{state.bgImage=loadBg(t);}catch(e){}try{renderTopbar();}catch(e){}
  }
 }
+/* ---- 商品项目文件夹：一个商品一个文件夹，原图/商品图/视频/说明书成套对应 ---- */
+var KB_PROJ_LS='hogee_kb_projects';
+function kbProjLoad(){var a=[];try{a=JSON.parse(localStorage.getItem(KB_PROJ_LS)||'[]');}catch(e){a=[];}return(Array.isArray(a)?a:[]);}
+function kbProjSave(a){try{localStorage.setItem(KB_PROJ_LS,JSON.stringify(Array.isArray(a)?a:[]));}catch(e){}}
+function kbProjById(id){return kbProjLoad().filter(function(p){return p.id===id;})[0]||null;}
+function kbProjCreate(name){var a=kbProjLoad();var r={id:'pj'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:name||('商品文件夹 '+(a.length+1)),ts:Date.now()};a.unshift(r);kbProjSave(a);return r;}
+function kbProjRename(id,name){var a=kbProjLoad();a.forEach(function(p){if(p.id===id)p.name=name;});kbProjSave(a);}
+function kbProjDelete(id){kbProjSave(kbProjLoad().filter(function(p){return p.id!==id;}));return kbAll().then(function(docs){return Promise.all(docs.filter(function(d){return d.pid===id;}).map(function(d){return kbDel(d.id);}));});}
+function kbProjEnsure(){var a=kbProjLoad();if(!a.length){a=[{id:'pjdefault',name:'未分类商品',ts:Date.now()}];kbProjSave(a);}return a;}
+function kbProjMigrate(){var a=kbProjEnsure();return kbAll().then(function(docs){var os=docs.filter(function(d){return !d.pid||!kbProjById(d.pid);});if(!os.length)return;var pid=a[0].id;return Promise.all(os.map(function(d){d.pid=pid;return kbPut(d);}));});}
+function kbIsImg(ext){return /jpg|jpeg|png|webp|gif|bmp|svg/.test(ext||'');}
 function openKnowledgeView(){
  closeAnalytics();try{closeDeliver();}catch(e){}
  setMenuActive('navKnowledge');
@@ -2312,9 +2391,8 @@ function openKnowledgeView(){
  var p=kbProfLoad();
  var fld=function(id,label,val,ph,type,col2){return '<div class="kbp-field'+(col2?' col2':'')+'"><label>'+label+'</label><input id="'+id+'" data-k="'+id+'" '+(type||'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></div>';};
  var inds=KB_INDUSTRIES.map(function(it){return '<option '+(p.industry===it?'selected':'')+'>'+it+'</option>';}).join('');
- var cats=KB_CATS.map(function(c){return '<button type="button" class="kb-cat" data-cat="'+c.id+'"><span class="kc-ic">'+kbCatIcon(c.ic)+'</span><span class="kc-n">'+c.n+'</span><span class="kc-h">'+c.h+'</span><span class="kc-up">+ 上传</span></button>';}).join('');
  var v=document.createElement('div');v.className='view';v.id='kbView';
- v.innerHTML='<div class="view-head"><div><div class="view-title">我的知识库</div><div class="view-sub">先完善基础信息，再按分类上传资料。阿图、阿文、阿视、阿发出图、写文案、做画册、剪视频、发媒体时会自动调取，不用反复填写，交付也更贴合你的生意。资料仅你可见。</div></div></div>'
+ v.innerHTML='<div class="view-head"><div><div class="view-title">我的知识库</div><div class="view-sub">先完善基础信息，再为每个商品建一个文件夹，原图、商品图、视频、说明书成套放。伙计们出图、写文案、做画册、剪视频、发媒体时自动调取，不用反复填写。资料仅你可见。</div></div></div>'
   +'<section class="vcard"><div class="vsec-h">基础信息</div>'
   +'<div class="kbp-type"><button type="button" class="seg '+(p.subjectType==='company'?'on':'')+'" data-type="company">企业 / 商户</button><button type="button" class="seg '+(p.subjectType==='personal'?'on':'')+'" data-type="personal">个人</button></div>'
   +'<div class="kbp-grid">'
@@ -2331,14 +2409,14 @@ function openKnowledgeView(){
   +'</div>'
   +'<div class="kbp-actions"><button type="button" class="ac-btn primary" id="kbpSave">保存基础信息</button><span class="kbp-saved" id="kbpSaved"></span></div>'
   +'</section>'
-  +'<section class="vcard" style="margin-top:16px"><div class="vsec-h">分类上传资料<span class="hint">按类型上传，伙计调用更准 · 可一次选多个</span></div>'
-  +'<div class="kb-cats">'+cats+'</div><div id="kbGroups"></div></section>'
-  +'<div class="conn-foot">文本资料（TXT / Markdown / CSV 等）上传后即刻用于阿文文案；图片、视频、PDF、Word、PPT、Excel 已安全收录到本机资料库，文档与图片解析将在服务端升级后自动启用。</div>';
+  +'<section class="vcard" style="margin-top:16px"><div class="vsec-h">商品资料文件夹<span class="hint">一个商品一个文件夹 · 成套对应</span></div>'
+  +'<div id="kbProj"></div></section>'
+  +'<div class="conn-foot">文本资料（TXT / Markdown / CSV 等）上传后即刻用于文案；图片、视频、PDF、Word、PPT、Excel 已安全收录到本机资料库，文档与图片解析将在服务端升级后自动启用。</div>';
  scroll.appendChild(v);scrollBox.scrollTop=0;
  bindKbView(v);
 }
 function bindKbView(root){
- var prof=kbProfLoad();
+ /* ---- 基础信息 ---- */
  function collect(){
   var g=function(id){var el=root.querySelector('#'+id);return el?el.value.trim():'';};
   return {subjectType:root.querySelector('.seg.on')?root.querySelector('.seg.on').getAttribute('data-type'):'company',
@@ -2347,46 +2425,117 @@ function bindKbView(root){
    industry:(function(){var s=root.querySelector('#kbpIndustry');return s?s.value:'通用电商';})()};
  }
  root.querySelectorAll('.seg').forEach(function(b){b.addEventListener('click',function(){
+  if(b.classList.contains('disabled'))return;
   root.querySelectorAll('.seg').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
   var lab=root.querySelector('#kbpCompanyLabel');if(lab)lab.textContent=b.getAttribute('data-type')==='personal'?'店铺 / 个体名称':'公司 / 商户名称';
  });});
  var sv=root.querySelector('#kbpSave');
+ function fieldEls(){return root.querySelectorAll('.kbp-grid input,.kbp-grid select');}
+ function lockUI(lock){fieldEls().forEach(function(el){el.disabled=lock;});root.querySelectorAll('.kbp-type .seg').forEach(function(b){b.classList.toggle('disabled',lock);});if(sv){sv.textContent=lock?'编辑基础信息':'保存基础信息';sv.dataset.mode=lock?'edit':'save';}}
+ function profHas(){var o=collect();return !!(o.company||o.contact||o.phone||o.mainProduct||o.wechat||o.email||(o.industry&&o.industry!=='通用电商'));}
  if(sv)sv.addEventListener('click',function(){
+  if(sv.dataset.mode==='edit'){lockUI(false);var c=root.querySelector('#kbpCompany');if(c)c.focus();var t0=root.querySelector('#kbpSaved');if(t0)t0.textContent='';return;}
   var o=collect();
   if(o.email&&!(o.email.indexOf('@')>0&&o.email.indexOf('.')>o.email.indexOf('@'))){if(window.toast)toast('邮箱格式好像不对','err');return;}
   if(o.phone&&!/^[0-9+\-\s]{6,}$/.test(o.phone)){if(window.toast)toast('手机号格式好像不对','err');return;}
-  kbProfSave(o);prof=o;
-  var tip=root.querySelector('#kbpSaved');if(tip)tip.textContent='已保存 · 五个伙计已更新档案';
+  kbProfSave(o);
+  var tip=root.querySelector('#kbpSaved');if(tip)tip.textContent='已保存 · 伙计们已更新档案';
   if(window.toast)toast('基础信息已保存，行业能力已切换到「'+o.industry+'」');
+  lockUI(true);
  });
+ lockUI(profHas());
+ /* ---- 商品文件夹 ---- */
  var inp=document.createElement('input');inp.type='file';inp.multiple=true;inp.style.display='none';document.body.appendChild(inp);
- var pendingCat='other';
- function paint(){
-  kbAll().then(function(docs){syncKbText(docs);var box=root.querySelector('#kbGroups');if(!box)return;
-   docs.forEach(function(d){if(!d.cat)d.cat='other';});
-   box.innerHTML=KB_CATS.map(function(c){
-    var arr=docs.filter(function(d){return (d.cat||'other')===c.id;});
-    var items=arr.length?arr.map(function(d){var on=kbTextExt(d.ext);return '<div class="kb-item"><span class="ki-ic">'+kbIcon(d.ext)+'</span><div class="ki-main"><div class="ki-name">'+esc(d.name)+'</div><div class="ki-sub">'+kbFmtSize(d.size)+' · '+(d.ext||'file').toUpperCase()+' · '+fmtWTime(d.ts)+'</div></div><span class="ki-state '+(on?'on':'wait')+'">'+(on?'已用于文案参考':'已收录 · 解析即将开放')+'</span><button class="kb-del" type="button" data-kbdel="'+d.id+'" aria-label="删除">'+kbTrash()+'</button></div>';}).join(''):'<div class="kb-grp-empty">暂无，点上方卡片上传</div>';
-    return '<div class="kb-grp"><div class="kb-grp-h"><span class="kc-ic" style="width:26px;height:26px;border-radius:8px">'+kbCatIcon(c.ic)+'</span>'+c.n+'<span class="cnt">'+arr.length+'</span></div>'+items+'</div>';
-   }).join('');
-  }).catch(function(){var box=root.querySelector('#kbGroups');if(box)box.innerHTML='<div class="kb-empty">当前浏览器无法启用本地资料库</div>';});
+ var pendingPid=null,pendingCat='other';
+ var mode='list',openPid=null,creating=false,renamingId=null,confirmDel=null;
+ var pfUrls=[];
+ function cover(docs,pid){
+  var im=docs.filter(function(d){return d.pid===pid&&d.blob&&kbIsImg(d.ext);})[0];
+  if(im){var u=URL.createObjectURL(im.blob);pfUrls.push(u);return u;}
+  return null;
  }
- paint();
+ function fileRow(d){
+  var on=kbTextExt(d.ext);
+  return '<div class="kb-item"><span class="ki-ic">'+kbIcon(d.ext)+'</span><div class="ki-main"><div class="ki-name">'+esc(d.name)+'</div><div class="ki-sub">'+kbFmtSize(d.size)+' · '+(d.ext||'file').toUpperCase()+' · '+fmtWTime(d.ts)+'</div></div><span class="ki-state '+(on?'on':'wait')+'">'+(on?'已用于文案参考':'已收录 · 解析即将开放')+'</span><button class="kb-del" type="button" data-pf="filedel" data-id="'+d.id+'" aria-label="删除">'+kbTrash()+'</button></div>';
+ }
+ function renderList(docs){
+  var projs=kbProjLoad();
+  var h='<div class="pf-toolbar"><button type="button" class="ac-btn" data-pf="new">+ 新建商品文件夹</button></div>';
+  if(creating){
+   h='<div class="pf-create"><input id="pfNewInput" placeholder="输入商品名，如：小米SU7"><button type="button" class="ac-btn primary" data-pf="newok">创建</button><button type="button" class="ac-btn" data-pf="newcancel">取消</button></div>';
+  }
+  if(!projs.length&&!creating){h+='<div class="kb-empty">还没有文件夹，点上方「新建商品文件夹」开始</div>';}
+  h+='<div class="pf-grid">'+projs.map(function(p){
+   var n=docs.filter(function(d){return d.pid===p.id;}).length;
+   var cu=cover(docs,p.id);
+   var cov=cu?('<img class="pf-cover-img" src="'+cu+'" alt="">'):('<div class="pf-cover-ph">'+kbFolderIco()+'</div>');
+   var head=(renamingId===p.id)?('<div class="pf-ren"><input class="pf-ren-input" value="'+esc(p.name)+'"><button type="button" data-pf="renok" data-id="'+p.id+'">保存</button><button type="button" data-pf="renc">取消</button></div>'):('<b>'+esc(p.name)+'</b>');
+   var delBtn=(confirmDel===p.id)?('<span class="pf-confirm">删除？<button type="button" class="danger" data-pf="delok" data-id="'+p.id+'">确认</button><button type="button" data-pf="delc">取消</button></span>'):('<button class="pf-op" type="button" data-pf="del" data-id="'+p.id+'" title="删除文件夹">'+kbTrash()+'</button>');
+   return '<div class="pf-card"><button type="button" class="pf-open" data-popen="'+p.id+'"><div class="pf-cover">'+cov+'</div></button><div class="pf-body"><div class="pf-name">'+head+'<span class="pf-cnt">'+n+' 个文件</span></div><div class="pf-ops"><button class="pf-op" type="button" data-pf="ren" data-id="'+p.id+'" title="重命名">'+kbPencil()+'</button>'+delBtn+'</div></div></div>';
+  }).join('')+'</div>';
+  return h;
+ }
+ function renderOpen(docs,pid){
+  var p=kbProjById(pid);if(!p){mode='list';return renderList(docs);}
+  var h='<div class="pf-openbar"><button type="button" class="ac-btn" data-pf="back">← 全部文件夹</button><div class="pf-open-tt">'+esc(p.name)+'</div><button type="button" class="ac-btn" data-pf="ren" data-id="'+p.id+'">重命名</button></div>';
+  if(renamingId===p.id){
+   h='<div class="pf-openbar"><button type="button" class="ac-btn" data-pf="back">← 全部文件夹</button><div class="pf-ren"><input class="pf-ren-input" value="'+esc(p.name)+'"><button type="button" data-pf="renok" data-id="'+p.id+'">保存</button><button type="button" data-pf="renc">取消</button></div></div>';
+  }
+  h+=KB_CATS.map(function(c){
+   var arr=docs.filter(function(d){return d.pid===pid&&(d.cat||'other')===c.id;});
+   var items=arr.length?arr.map(fileRow).join(''):'<div class="kb-grp-empty">暂无，点右侧上传</div>';
+   return '<div class="kb-grp"><div class="kb-grp-h"><span class="kc-ic" style="width:26px;height:26px;border-radius:8px">'+kbCatIcon(c.ic)+'</span>'+c.n+'<span class="cnt">'+arr.length+'</span><button type="button" class="ac-btn pf-upbtn" data-pfup="'+c.id+'">+ 上传</button></div>'+items+'</div>';
+  }).join('');
+  return h;
+ }
+ function paint(){
+  pfUrls.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});pfUrls=[];
+  var box=root.querySelector('#kbProj');if(!box)return;
+  kbProjMigrate().then(kbAll).then(function(docs){
+   docs.forEach(function(d){if(!d.cat)d.cat='other';});
+   syncKbText(docs);
+   box.innerHTML=(mode==='open')?renderOpen(docs,openPid):renderList(docs);
+   var ni=root.querySelector('#pfNewInput');if(ni){ni.focus();ni.addEventListener('keydown',function(e){if(e.key==='Enter')doNewOk();if(e.key==='Escape'){creating=false;paint();}});}
+   var ri=root.querySelector('.pf-ren-input');if(ri){ri.focus();ri.select();ri.addEventListener('keydown',function(e){if(e.key==='Enter')doRenOk();if(e.key==='Escape'){renamingId=null;paint();}});}
+  }).catch(function(){var box=root.querySelector('#kbProj');if(box)box.innerHTML='<div class="kb-empty">当前浏览器无法启用本地资料库</div>';});
+ }
+ function doNewOk(){var el=root.querySelector('#pfNewInput');var name=el?el.value.trim():'';kbProjCreate(name);creating=false;paint();}
+ function doRenOk(){var el=root.querySelector('.pf-ren-input');if(el&&renamingId){kbProjRename(renamingId,el.value.trim()||renamingId);}renamingId=null;paint();}
  root.addEventListener('click',function(e){
-  var cat=e.target.closest('.kb-cat');if(cat){pendingCat=cat.getAttribute('data-cat');var cc=KB_CATS.filter(function(x){return x.id===pendingCat;})[0];inp.accept=cc?cc.accept:'';inp.click();return;}
-  var del=e.target.closest('[data-kbdel]');if(del){kbDel(del.getAttribute('data-kbdel')).then(paint).catch(paint);}
+  var t=e.target.closest('[data-pf]');
+  if(t){
+   var a=t.getAttribute('data-pf');
+   if(a==='new'){creating=true;mode='list';paint();return;}
+   if(a==='newok'){doNewOk();return;}
+   if(a==='newcancel'){creating=false;paint();return;}
+   if(a==='back'){mode='list';openPid=null;renamingId=null;paint();return;}
+   if(a==='ren'){renamingId=t.getAttribute('data-id');confirmDel=null;paint();return;}
+   if(a==='renok'){doRenOk();return;}
+   if(a==='renc'){renamingId=null;paint();return;}
+   if(a==='del'){confirmDel=t.getAttribute('data-id');renamingId=null;paint();return;}
+   if(a==='delok'){var id=t.getAttribute('data-id');kbProjDelete(id).then(function(){confirmDel=null;if(openPid===id){mode='list';openPid=null;}paint();});return;}
+   if(a==='delc'){confirmDel=null;paint();return;}
+   if(a==='filedel'){kbDel(t.getAttribute('data-id')).then(paint);return;}
+   return;
+  }
+  var up=e.target.closest('[data-pfup]');
+  if(up){pendingPid=openPid;pendingCat=up.getAttribute('data-pfup');var cc=KB_CATS.filter(function(x){return x.id===pendingCat;})[0];inp.accept=cc?cc.accept:'';inp.click();return;}
+  var op=e.target.closest('[data-popen]');
+  if(op){mode='open';openPid=op.getAttribute('data-popen');renamingId=null;confirmDel=null;paint();return;}
  });
  inp.addEventListener('change',function(){
-  var fs=Array.prototype.slice.call(inp.files||[]);if(!fs.length)return;
-  var n=0;
-  fs.forEach(function(f){var ext=kbExt(f.name),isText=kbTextExt(ext);var rec={id:'kb'+Date.now()+Math.random().toString(36).slice(2,7),name:f.name,size:f.size,ext:ext||'file',mime:f.type||'',ts:Date.now(),text:'',blob:f,cat:pendingCat};
-   n++;
+  var fs=Array.prototype.slice.call(inp.files||[]);if(!fs.length)return;var n=0;
+  fs.forEach(function(f){var ext=kbExt(f.name),isText=kbTextExt(ext);
+   var rec={id:'kb'+Date.now()+Math.random().toString(36).slice(2,7),name:f.name,size:f.size,ext:ext||'file',mime:f.type||'',ts:Date.now(),text:'',blob:f,cat:pendingCat,pid:pendingPid};n++;
    var fin=function(){kbPut(rec).then(paint).catch(paint);};
    if(isText){var rd=new FileReader();rd.onload=function(){rec.text=String(rd.result||'').slice(0,40000);fin();};rd.onerror=fin;rd.readAsText(f);}else fin();
   });
-  inp.value='';if(window.toast)toast('已收录到「'+(KB_CATS.filter(function(x){return x.id===pendingCat;})[0]||{n:'资料'}).n+'」'+(n>1?'（'+n+' 个文件）':''));
+  inp.value='';if(window.toast)toast('已收录到文件夹'+(n>1?'（'+n+' 个文件）':''));
  });
+ paint();
 }
+function kbFolderIco(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>';}
+function kbPencil(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';}
 
 function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();var _c=document.querySelector('.composer'),_st=document.querySelector('.stage'),_chat=document.getElementById('chatScroll');if(_c&&_st&&_c.parentNode!==_st){_st.insertBefore(_c,_chat?_chat.nextSibling:null);}scroll.innerHTML='';state.stage='welcome';heroWelcome();placeComposer(true);}
 function enterMate(id){closeAnalytics();setActivePartner(id);}
@@ -2450,6 +2599,7 @@ function partnerDuty(id){return {atu:'手机实拍 → 可上架商品图，主�
 
 /* ================= 欢迎 / 选技能（小 pill，无大按钮网格） ================= */
 function start(){
+ try{DataVault._last=DataVault.cur();}catch(e){}
  loadConfig();
  placeComposer(false);
  scroll.innerHTML='';state.stage='welcome';
@@ -3075,7 +3225,7 @@ function wkItemCard(w){
  var idx=wkCurList.indexOf(w),tag=worksKindLabel(w.type),body='';
  if(w.type==='img')body='<button type="button" class="wkc-thumb" data-wl="'+idx+'"><img data-wmid="'+idx+'" alt="'+esc(w.label||'商品图')+'"><span class="wkc-tag">'+tag+'</span></button>';
  else if(w.type==='video')body='<button type="button" class="wkc-thumb video" data-wl="'+idx+'"><video data-wmid="'+idx+'" muted preload="metadata" playsinline></video><span class="wkc-play"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="wkc-tag">'+tag+'</span></button>';
- else if(w.type==='copy')body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span><p>'+esc((w.text||'').slice(0,140))+(((w.text||'').length>140)?'…':'')+'</p></div>';
+ else if(w.type==='copy')body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span><p>'+esc(w.text||'')+'</p></div>';
  else if(w.type==='showcase')body='<a class="wkc-show" href="'+esc(w.url||'#')+'" target="_blank" rel="noopener"><span class="wkc-tag static">'+tag+'</span><b>'+esc(w.label||'智能画册')+'</b><span class="wkc-go">打开画册 ↗</span></a>';
  else body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span></div>';
  return '<article class="wk-card wk-'+w.type+'">'+body+'<div class="wkc-meta"><span class="wkc-label">'+esc(w.label||tag)+'</span></div><div class="wkc-acts">'+wkItemActs(w,idx)+'</div></article>';
@@ -3097,7 +3247,14 @@ function wkDownload(w){
   toast('开始下载');
  });
 }
-function wkRecreate(w){var m=({img:'atu',copy:'awen',video:'ashi',showcase:'afa'})[w.type]||'host';try{enterMate(m);}catch(e){goHome();}toast('已切到对应伙计，告诉它你的新要求');}
+function wkRecreate(w){
+ var m=({img:'atu',copy:'awen',video:'ashi',showcase:'afa'})[w.type]||'host';
+ try{enterMate(m);}catch(e){goHome();}
+ try{var tm={img:'img',copy:'copy',video:'video',showcase:'reach'};setDeliverTab(tm[w.type]||'all');openDeliver();}catch(e){}
+ var sm={img:'这张商品图在右侧交付物里，直接说要改成什么样，我重做这一张。',copy:'这版文案在右侧，告诉我哪里要改，我重写。',video:'这条视频在右侧，说要怎么改，我重剪。',showcase:'画册在右侧，要换素材或加渠道码跟我说。'};
+ try{botSay(sm[w.type]||'你要改哪一处，告诉我。',m);scrollBottom();}catch(e){}
+ toast('已切到对应伙计');
+}
 function closeWkLightbox(){var ov=document.getElementById('wkLightbox');if(ov){ov.remove();document.body.style.overflow='';}}
 function openWkLightbox(w){
  ensureWorkMediaUrl(w).then(function(u){
@@ -4344,7 +4501,7 @@ function showcaseDeliverHtml(){
   +'<label>当前渠道：<b>'+esc(pubSourceName(sh.source))+'</b></label>'
   +'<label>可追踪分享链接</label><div class="pub-link"><input id="pubLinkInput" readonly value="'+esc(sh.short_url)+'"><button class="btn btn-ghost btn-sm" data-act="copyShowLink">复制</button><a class="btn btn-ghost btn-sm" href="'+esc(sh.short_url)+'" target="_blank" rel="noopener">打开</a></div>'
   +'<label style="margin-top:8px">画册原链</label><div class="pub-link"><input readonly value="'+esc(sh.url)+'"><a class="btn btn-ghost btn-sm" href="'+esc(sh.url)+'" target="_blank" rel="noopener">预览</a></div>'
-  +'<div class="pub-actions"><button class="btn btn-primary btn-sm" data-act="dlQr">'+IC.download+' 二维码</button><a class="btn btn-dark btn-sm" href="/analytics.html" target="_blank" rel="noopener">'+IC.chart+' 效果中心</a></div>'
+  +'<div class="pub-actions"><button class="btn btn-primary btn-sm" data-act="dlQr">'+IC.download+' 二维码</button><button type="button" class="btn btn-ghost btn-sm" data-act="dlAnalytics">'+IC.chart+' 效果监控</button></div>'
   +'</div></div><div class="pub-more"><span>为其他渠道再出一个码：</span><select id="moreSource">'+more+'</select><button class="btn btn-ghost btn-sm" data-act="addChannelDo">生成</button></div>';
 }
 async function addChannel(){
@@ -4398,7 +4555,7 @@ function awenFlow(text,tone){
 function redoCopy(tone){
  awenFlow(state.extra||'',tone);
 }
-function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.chart+' 阿果效果中心</div><div class="card-desc">画册浏览、渠道二维码归因、访客留资与咨询，都会在这里汇总。生成画册并把链接/二维码投出去后，数据自动回流。</div><div class="card-actions"><a class="btn btn-primary" href="/analytics.html" target="_blank" rel="noopener">'+IC.external+' 打开效果中心</a></div></div>','agu');}
+function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.chart+' 阿果效果中心</div><div class="card-desc">画册浏览、渠道二维码归因、访客留资与咨询，都会在这里汇总。生成画册并把链接/二维码投出去后，数据自动回流。</div><div class="card-actions"><button type="button" class="btn btn-primary" data-act="dlAnalytics">'+IC.chart+' 打开效果监控</button></div></div>','agu');}
 
 /* ================= 新任务 / 背景上传 ================= */
 /* ================= 效果监控（原生统一视图，对齐知识库/创作/发布/连接） ================= */
@@ -5052,9 +5209,93 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  var ta=$('#composerInput');
  ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeText();}});
  ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,220)+'px';syncSendReady();});
+/* ---- 上传来源：本地 / 知识库 / 图片链接 ---- */
+var SRC_CLOSE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+function closeSrcModal(){var m=document.getElementById('srcModal');if(m)m.remove();}
+function srcModal(title,body){
+ closeSrcModal();
+ var m=document.createElement('div');m.className='modal show';m.id='srcModal';
+ m.innerHTML='<div class="modal-card"><header><div class="m-title">'+title+'</div><button class="icon-btn" type="button" data-src="x" aria-label="关闭">'+SRC_CLOSE+'</button></header><div class="m-body">'+body+'</div></div>';
+ document.body.appendChild(m);
+ m.addEventListener('click',function(e){if(e.target.closest('[data-src="x"]'))closeSrcModal();});
+ document.addEventListener('keydown',srcEsc);
+ return m;
+}
+function srcEsc(e){if(e.key==='Escape'){closeSrcModal();document.removeEventListener('keydown',srcEsc);}}
+function openKbPicker(){
+ if(!state.identity)startOrder('general');
+ kbProjMigrate().then(kbAll).then(function(docs){
+  var imgs=docs.filter(function(d){return d.blob&&kbIsImg(d.ext);});
+  var projs=kbProjLoad();var urls=[];
+  var grouped=projs.map(function(p){
+   var arr=imgs.filter(function(d){return d.pid===p.id;});
+   if(!arr.length)return '';
+   var cards=arr.map(function(d){var u=URL.createObjectURL(d.blob);urls.push(u);return '<button type="button" class="kpi" data-pid="'+d.id+'"><img src="'+u+'" alt=""></button>';}).join('');
+   return '<div class="kpi-proj">'+esc(p.name)+' · '+arr.length+' 张</div><div class="kpi-grid">'+cards+'</div>';
+  }).join('');
+  var body=(grouped||'<div class="kb-empty">知识库里还没有图片。可先去「我的知识库」上传，或改用本地 / 链接导入。</div>')
+   +'<div class="kpi-foot"><button type="button" class="ac-btn" data-src="x">取消</button><button type="button" class="ac-btn primary" id="kpiImport">导入选中</button></div>';
+  var m=srcModal('从知识库选择图片',body);
+  var sel={};
+  m.querySelectorAll('.kpi').forEach(function(b){b.addEventListener('click',function(){
+   var id=b.getAttribute('data-pid');
+   if(sel[id]){delete sel[id];b.classList.remove('on');}else{sel[id]=1;b.classList.add('on');}
+  });});
+  var ib=m.querySelector('#kpiImport');
+  if(ib)ib.addEventListener('click',function(){
+   var ids=Object.keys(sel);if(!ids.length){toast('先点选要导入的图片','err');return;}
+   var files=imgs.filter(function(d){return ids.indexOf(d.id)>=0;}).map(function(d){return d.blob;});
+   urls.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});
+   closeSrcModal();
+   if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+   handleFiles(files);
+  });
+ }).catch(function(){toast('知识库读取失败','err');});
+}
+function fetchImageAsFile(url){
+ function toFile(blob){
+  if(!/^image\//.test(blob.type))return Promise.reject('内容不是图片');
+  var ext=(blob.type.split('/')[1]||'jpg').replace(/[^a-z0-9]/g,'');
+  return Promise.resolve(new File([blob],'import-'+Date.now()+'.'+ext,{type:blob.type}));
+ }
+ return fetch(url,{mode:'cors',referrerPolicy:'no-referrer'}).then(function(r){
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  var ct=r.headers.get('Content-Type')||'';
+  if(!/^image\//.test(ct)&&!/\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?|$)/i.test(url))throw new Error('not image');
+  return r.blob();
+ }).then(toFile).catch(function(){
+  var base=(window.HogeeMember&&HogeeMember.getToken)?'https://api.workhogee.com':'https://api.workhogee.com';
+  var hd=(window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};
+  return fetch(base+'/api/import-url?u='+encodeURIComponent(url),{headers:hd}).then(function(r){
+   if(!r.ok)throw new Error('proxy '+r.status);
+   return r.blob();
+  }).then(toFile);
+ });
+}
+function openUrlImport(){
+ if(!state.identity)startOrder('general');
+ var body='<input class="url-in" id="urlIn" placeholder="粘贴图片直链，https://…（.jpg / .png / .webp）">'
+  +'<div class="url-hint">支持“直接图片链接”。网盘 / 飞书的分享页是网页、常需登录，暂不支持自动抓取，可先存到本地或知识库再导入，该能力即将开通。</div>'
+  +'<div class="kpi-foot"><button type="button" class="ac-btn" data-src="x">取消</button><button type="button" class="ac-btn primary" id="urlGo">导入</button></div>';
+ var m=srcModal('通过图片链接导入',body);
+ var inp=m.querySelector('#urlIn');if(inp)inp.focus();
+ function doImport(){
+  var url=(inp.value||'').trim();
+  if(!/^https?:\/\//.test(url)){toast('请粘贴 http(s) 开头的图片直链','err');return;}
+  var ib=m.querySelector('#urlGo');if(ib){ib.disabled=true;ib.textContent='导入中…';}
+  fetchImageAsFile(url).then(function(f){closeSrcModal();
+   if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+   handleFiles([f]);
+  }).catch(function(){if(ib){ib.disabled=false;ib.textContent='导入';}toast('没抓到图片，请确认是图片直链（不是网盘分享页）','err');});
+ }
+ m.querySelector('#urlGo').addEventListener('click',doImport);
+ inp.addEventListener('keydown',function(e){if(e.key==='Enter')doImport();});
+}
  $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();if($('#plusPop'))$('#plusPop').classList.remove('show');if(!state.identity){startOrder('general');}else if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}$('#fileInput').click();});
  $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
-  if(k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
+  if(k==='local'||k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
+  else if(k==='kb')openKbPicker();
+  else if(k==='url')openUrlImport();
   else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车行业，先告诉伙计你在卖二手车','err');}
   else if(k==='lab')openLab('plugin');
  });
@@ -5156,7 +5397,8 @@ function handleAct(b){
  else if(act==='dlQr'){downloadQr();}
  else if(act==='copyShowLink'){copyShowLink();}
  else if(act==='addChannelDo'){addChannel();}
- else if(act==='openAnalytics'){window.open('/analytics.html','_blank','noopener');}
+ else if(act==='openAnalytics'){openAnalytics();}
+ else if(act==='dlAnalytics'){openAnalytics();}
  /* 实验室：技能 / 插件 / 伙伴 */
  else if(act==='skillUse'){var id=b.dataset.id;if(state.identity&&state.identity.type===id){toast('已在使用该技能');return;}closeLab();startOrder(id);}
  else if(act==='skillNotify'){var sid=b.dataset.id;var n=notifyState();if(n.indexOf(sid)<0){n.push(sid);try{localStorage.setItem('hogee_skill_notify',JSON.stringify(n));}catch(e){}}b.disabled=true;b.textContent='已提醒';renderLab();toast('已记下，该行业能力上线第一时间通知你');}
