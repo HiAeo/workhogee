@@ -1647,10 +1647,10 @@ body{
 .mhero{background:transparent;}
 .mhero::after{display:none;}
 .section.white,.section.sand{background:transparent;}
-.vshow{--mc:#ec407a;background:radial-gradient(1050px 580px at 84% -12%,color-mix(in srgb,var(--mc) 15%,transparent),transparent 62%);}
-.vshow.light{background:radial-gradient(1000px 560px at 84% -12%,color-mix(in srgb,var(--mc) 13%,transparent),transparent 60%);color:#f4f7fd;}
+.vshow{--mc:#ec407a;background:transparent;}
+.vshow.light{background:transparent;color:#f4f7fd;}
 .pipe{background:transparent;color:#f4f7fd;}
-.mcta{background:radial-gradient(900px 460px at 50% -10%,rgba(251,122,34,.14),transparent 62%);}
+.mcta{background:var(--coal);}
 /* 导航滚动 / 展开态：深色玻璃 + 白 logo */
 .nav.solid{background:rgba(13,17,25,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.32);}
 .nav.solid .wl1,.nav.solid .wlhog,.nav.panel-open .wl1,.nav.panel-open .wlhog{fill:#ffffff;}
@@ -1661,6 +1661,11 @@ body{
 .nav.solid .nav-pill.soon .soon-badge,.nav.panel-open .nav-pill.soon .soon-badge{background:rgba(251,122,34,.2);color:#fd9a4d;}
 .nav.solid .nav-pill.soon:hover{color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);}
 .nav.solid .nav-toggle span,.nav.panel-open .nav-toggle span{background:#fff;}
+body .nav.solid .hm-navuser,body .nav.panel-open .hm-navuser{color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);}
+body .nav.solid .hm-navlogout,body .nav.panel-open .hm-navlogout{color:rgba(244,247,253,.74);}
+body .nav.solid .hm-navlogout:hover,body .nav.panel-open .hm-navlogout:hover{color:#fff;}
+body .nav.solid .hm-navbtn-ghost,body .nav.panel-open .hm-navbtn-ghost{background:rgba(13,17,25,.5);color:#fff;border:1px solid rgba(255,255,255,.55);}
+body .nav.solid .hm-navbtn-ghost:hover,body .nav.panel-open .hm-navbtn-ghost:hover{border-color:#fff;background:rgba(13,17,25,.72);}
 .nav.panel-open{background:rgba(13,17,25,.96);border-bottom-color:rgba(255,255,255,.08);}
 /* hero 右侧轮卡暖黑小块改冷黑 */
 .wcard .wc-ph{background:#0d1119;}
