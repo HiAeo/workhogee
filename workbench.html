@@ -2622,12 +2622,12 @@ function addWork(rec){
   if(fp){for(var i=0;i<items.length;i++){if(items[i].type===w.type&&workFingerprint(items[i])===fp){dup=i;break;}}}
   if(dup>=0){w=Object.assign(items[dup],rec,{id:items[dup].id,ts:items[dup].ts||rec.ts||Date.now()});}
   else{items.unshift(w);}
-  writeWorksRaw(items);if(window.HGCloud)HGCloud.schedulePush();return w;
+  writeWorksRaw(items);if(typeof HGCloud!=='undefined')HGCloud.schedulePush();return w;
  }catch(e){return rec;}
 }
-function removeWorkById(id){writeWorksRaw(readWorksRaw().filter(function(x){return x.id!==id;}));if(window.HGCloud)HGCloud.schedulePush();}
+function removeWorkById(id){writeWorksRaw(readWorksRaw().filter(function(x){return x.id!==id;}));if(typeof HGCloud!=='undefined')HGCloud.schedulePush();}
 function getStoredWorks(){return readWorksRaw();}
-function removeStoredWork(i){var a=readWorksRaw();if(i>=0&&i<a.length){var w=a[i];if(w.localId&&window.HGIDB)HGIDB.del(w.localId);a.splice(i,1);writeWorksRaw(a);if(window.HGCloud)HGCloud.schedulePush();}}
+function removeStoredWork(i){var a=readWorksRaw();if(i>=0&&i<a.length){var w=a[i];if(w.localId&&typeof HGIDB!=='undefined')HGIDB.del(w.localId);a.splice(i,1);writeWorksRaw(a);if(typeof HGCloud!=='undefined')HGCloud.schedulePush();}}
 /* 兼容旧调用 rememberWork(type,item) */
 function rememberWork(type,item){
  item=item||{};
@@ -2696,6 +2696,32 @@ function persistVideoWork(v){
  }
 }
 function addShowcaseWork(code,url,title){addWork({type:'showcase',code:code,url:url,label:title||'智能画册'});}
+/* 登录后迁移：把仅存于本机 IndexedDB 的图片/视频补传 TOS，更新同一条作品记录并清理本地二进制 */
+function migrateLocalToTOS(){
+ try{
+  if(typeof _tosLoggedIn!=='function'||!_tosLoggedIn()||typeof HGIDB==='undefined')return;
+  var items=readWorksRaw(),jobs=[];
+  items.forEach(function(w){
+   if((w.type==='img'||w.type==='video')&&w.localId&&!w.tosKey){
+    var oldLocal=w.localId;
+    jobs.push(HGIDB.get(oldLocal).then(function(blob){
+     if(!blob)return;
+     var ext;
+     if(w.type==='video')ext=(blob.type&&blob.type.indexOf('webm')>=0)?'webm':'mp4';
+     else ext=(blob.type&&blob.type.indexOf('png')>=0)?'png':((blob.type&&blob.type.indexOf('webp')>=0)?'webp':'jpg');
+     return tosPutBlob(blob,ext,w.type==='video'?'video':'result').then(function(o){
+      if(o&&o.key){
+       var all=readWorksRaw();
+       for(var i=0;i<all.length;i++){if(all[i].id===w.id){all[i].tosKey=o.key;all[i].url=o.getUrl;delete all[i].localId;break;}}
+       writeWorksRaw(all);HGIDB.del(oldLocal);
+      }
+     }).catch(function(){});
+    }).catch(function(){}));
+   }
+  });
+  if(jobs.length)Promise.all(jobs).then(function(){try{if(document.getElementById('worksView'))renderWorks();}catch(e){}if(typeof HGCloud!=='undefined')HGCloud.schedulePush();});
+ }catch(e){}
+}
 /* ---- 作品媒体 URL 解析（TOS 预签名会过期，按需换新；本地走 IndexedDB）---- */
 function ensureWorkMediaUrl(w){
  if(w.url&&/^(https?:|data:|blob:)/.test(w.url))return Promise.resolve(w.url);
@@ -2720,7 +2746,7 @@ var HGCloud={timer:null,pushing:false,pulling:false,
  readLS:function(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},
  cloudWorks:function(){return readWorksRaw().map(function(w){return {id:w.id,type:w.type,ts:w.ts,threadId:w.threadId,threadTitle:w.threadTitle,skill:w.skill,label:w.label,name:w.name,text:w.text,code:w.code,url:(w.url&&/^https?:/.test(w.url)?w.url:''),tosKey:w.tosKey||''};});},
  collect:function(){return {v:1,ts:Date.now(),works:this.cloudWorks(),kbProfile:this.readLS('hogee_kb_profile'),kbText:(function(){try{return localStorage.getItem('hogee_kb_text')||'';}catch(e){return '';}})(),publish:this.readLS('hogee_publish'),connections:this.readLS('hogee_connections'),profile:this.readLS('hogee_profile')};},
- init:function(){var self=this;document.addEventListener('hogee:auth',function(){self.pull();});if(this.logged())this.pull();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')self.push();});},
+ init:function(){var self=this;var runMig=function(){setTimeout(function(){if(typeof migrateLocalToTOS==='function')migrateLocalToTOS();},1200);};document.addEventListener('hogee:auth',function(){self.pull();runMig();});if(this.logged()){this.pull();runMig();}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')self.push();});},
  schedulePush:function(){if(!this.logged())return;var self=this;clearTimeout(this.timer);this.timer=setTimeout(function(){self.push();},1500);},
  push:function(){
   if(!this.logged()||this.pushing)return;var self=this;this.pushing=true;
@@ -3236,7 +3262,7 @@ function acBind(v){
     else if(g==='logout'){if(window.HogeeMember){HogeeMember.logout();if(window.toast)toast('已退出登录');}goHome();}
     return;}
   if(e.target.closest('#acReload')){location.href=location.pathname+'?cb='+Date.now();return;}
-  if(e.target.closest('#acClear')){if(window.confirm('将清除本机的作品、辅助发布记录与账号连接登记，不影响登录和基本资料，且不可恢复。确定清除吗？')){['hogee_works','hogee_publish','hogee_connections','hogee_kb_text','hogee_gen_count'].forEach(function(k){try{localStorage.removeItem(k);}catch(x){}});try{if(window.HGIDB)HGIDB.clear();}catch(x){}if(window.toast)toast('本机作品与记录已清除');openAccountView('profile');}return;}
+  if(e.target.closest('#acClear')){if(window.confirm('将清除本机的作品、辅助发布记录与账号连接登记，不影响登录和基本资料，且不可恢复。确定清除吗？')){['hogee_works','hogee_publish','hogee_connections','hogee_kb_text','hogee_gen_count'].forEach(function(k){try{localStorage.removeItem(k);}catch(x){}});try{if(typeof HGIDB!=='undefined')HGIDB.clear();}catch(x){}if(window.toast)toast('本机作品与记录已清除');openAccountView('profile');}return;}
  });
  var up=v.querySelector('#acAvaUp'),rm=v.querySelector('#acAvaRm'),save=v.querySelector('#acSave');
  if(up){var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.style.display='none';v.appendChild(inp);
