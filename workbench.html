@@ -1451,6 +1451,52 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .sk-badge.soon{background:var(--elev);color:var(--tx3)}
 .sk-curnote{font-size:12.5px;color:var(--tx2);background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;margin-bottom:16px}
 @media(max-width:720px){.conn-grid,.skill-grid2{grid-template-columns:1fr}}
+/* ===== 我的创作：创作主线 ===== */
+.wk-filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+.wkf{font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--tx2);cursor:pointer;transition:.18s}
+.wkf:hover{border-color:var(--brand);color:var(--brand)}
+.wkf.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.wkf-n{opacity:.85;font-size:12px}
+.wk-empty{border:1px dashed var(--line2);border-radius:18px;padding:54px 24px;text-align:center;color:var(--tx2);font-size:14px;line-height:1.9;background:rgba(255,255,255,.02)}
+.wk-empty .btn{margin-top:16px}
+.wk-thread{background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:18px;margin-bottom:18px}
+.wkt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.wkt-tt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wkt-tt b{font-size:16px;font-weight:600;color:var(--tx)}
+.wkt-skill{font-size:11px;color:var(--brand);border:1px solid var(--brand);border-radius:999px;padding:2px 9px}
+.wkt-time,.wkt-count{font-size:12px;color:var(--tx2)}
+.wkt-resume{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--tx);cursor:pointer;transition:.18s}
+.wkt-resume:hover{border-color:var(--brand);color:var(--brand)}
+.wkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:14px}
+.wk-card{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.wkc-thumb{display:block;position:relative;width:100%;aspect-ratio:4/3;background:#0a0d13;border:0;padding:0;cursor:pointer;overflow:hidden}
+.wkc-thumb img,.wkc-thumb video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.wkc-thumb:hover img,.wkc-thumb:hover video{transform:scale(1.04)}
+.wkc-play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.wkc-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.58);color:#fff;font-size:11px;padding:2px 9px;border-radius:999px;pointer-events:none}
+.wkc-tag.static{position:static;display:inline-block;align-self:flex-start;background:rgba(234,88,12,.14);color:var(--brand);margin-bottom:8px}
+.wkc-copy{padding:14px;min-height:128px;display:flex;flex-direction:column}
+.wkc-copy p{font-size:12.5px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;margin:0}
+.wkc-show{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;min-height:128px;text-decoration:none;color:var(--tx)}
+.wkc-show b{font-size:14px;font-weight:600}
+.wkc-show .wkc-go{margin-top:auto;color:var(--brand);font-size:12.5px}
+.wkc-meta{padding:9px 12px 0}
+.wkc-label{font-size:12.5px;color:var(--tx);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wkc-acts{display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px 12px;margin-top:auto}
+.wkc-acts button{font-size:11.5px;padding:4px 11px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--tx2);cursor:pointer;transition:.15s}
+.wkc-acts button:hover{border-color:var(--brand);color:var(--brand)}
+.wkc-acts button.danger:hover{border-color:#f87171;color:#f87171}
+@media(max-width:720px){.wkt-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.wk-thread{padding:14px}}
+/* 作品灯箱 */
+.wk-lb{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:40px}
+.wklb-mask{position:absolute;inset:0;background:rgba(5,8,13,.82);backdrop-filter:blur(4px)}
+.wklb-box{position:relative;max-width:min(94vw,1200px);max-height:92vh;display:flex;flex-direction:column;align-items:center;gap:12px}
+.wklb-box img,.wklb-box video{max-width:94vw;max-height:78vh;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.6);background:#0a0d13}
+.wklb-x{position:absolute;top:-14px;right:-14px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);background:rgba(20,24,32,.9);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+.wklb-x:hover{color:var(--brand);border-color:var(--brand)}
+.wklb-bar{display:flex;align-items:center;gap:16px;color:#fff;font-size:13px}
+.wklb-bar button{padding:7px 18px;border-radius:999px;border:0;background:var(--brand);color:#fff;font-size:13px;cursor:pointer}
+@media(max-width:720px){.wk-lb{padding:16px}.wklb-x{top:-8px;right:-4px}}
 
 </style>
 </head>
@@ -2379,6 +2425,7 @@ function start(){
  renderPartners();renderTopbar();renderCmpAttach();renderDeliver();
  // 先从后端拉历史任务，再渲染列表
  loadTasksRemote();
+ try{HGCloud.init();}catch(e){}
  var mateQ=new URLSearchParams(location.search).get('mate');
  if(mateQ&&partnerById(mateQ)){state.activePartner=mateQ;renderPartners();renderTopbar();mateWelcome(mateQ);return;}
  // 刷新/回首页始终落在门户首页；身份仅静默恢复，不自动进入对话
@@ -2552,26 +2599,169 @@ function heroWelcome(){
  }
 
 /* ================= rework5：作品墙 / 我的作品库 / 企业资料库 ================= */
-function rememberWork(type,item){
- try{
-  if(type==='img'&&(!item.url||item.url.indexOf('data:')===0||item.url.indexOf('blob:')===0))return;
-  if(type==='video')return;
-  var ls=JSON.parse(localStorage.getItem('hogee_works')||'{"items":[]}');if(!Array.isArray(ls.items))ls.items=[];
-  var rec=Object.assign({type:type,ts:Date.now()},item);
-  var dup=ls.items.some(function(x){return (x.url&&rec.url&&x.url===rec.url)||(type==='copy'&&x.text===rec.text);});
-  if(!dup){ls.items.unshift(rec);ls.items=ls.items.slice(0,120);localStorage.setItem('hogee_works',JSON.stringify(ls));}
- }catch(e){}
-}
-function getStoredWorks(){try{var a=JSON.parse(localStorage.getItem('hogee_works')||'{"items":[]}').items;return Array.isArray(a)?a:[];}catch(e){return [];}}
-function removeStoredWork(i){try{var ls=JSON.parse(localStorage.getItem('hogee_works')||'{"items":[]}');if(Array.isArray(ls.items)){ls.items.splice(i,1);localStorage.setItem('hogee_works',JSON.stringify(ls));}}catch(e){}}
-function collectWorks(){
- var arr=[];
- (state.results||[]).forEach(function(r){arr.push({type:'img',url:r.url,label:r.label,session:true});});
- (state.videos||[]).forEach(function(v){arr.push({type:'video',url:v.url,name:v.name,session:true});});
- if(state.copy&&state.copy.ready&&state.copy.cps)arr.push({type:'copy',text:state.copy.cps.general||'',session:true});
- getStoredWorks().forEach(function(w,i){var dup=arr.some(function(a){return (a.url&&w.url&&a.url===w.url)||(a.type==='copy'&&a.text===w.text);});if(!dup){w._si=i;arr.push(w);}});
+/* ================= 我的作品：持久化作品库（本地 IndexedDB + TOS + 云端 /api/state） =================
+ * 可复用：作品元数据统一存 localStorage(hogee_works)，绝不存 data:/blob: 大字段；
+ *         图片/视频本体——登录会员传 TOS（存 tosKey，展示时按需换新预签名），未登录存 IndexedDB（存 localId）；
+ *         文案/画册只存文本与链接；登录后经 /api/state 跨设备恢复。Web 专用适配集中在 HGIDB，未来小程序替换为 wx 文件 API。 */
+var WORKS_LS='hogee_works';
+var WK_PH='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="9"></svg>');
+var wkCurList=[];
+function newWid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function readWorksRaw(){
+ var arr;
+ try{var o=JSON.parse(localStorage.getItem(WORKS_LS)||'{"items":[]}');arr=(o&&Array.isArray(o.items))?o.items:[];}catch(e){arr=[];}
+ arr.forEach(function(w){if(!w.id)w.id=newWid();if(!w.threadId)w.threadId='legacy';});
  return arr;
 }
+function writeWorksRaw(items){try{localStorage.setItem(WORKS_LS,JSON.stringify({items:items.slice(0,300)}));}catch(e){}}
+function curThread(){return {threadId:(state&&state.taskId)||'legacy',threadTitle:(state&&state.taskTitle)||((state&&state.product&&state.product.name)||''),skill:((state&&state.identity&&state.identity.type)||'general')};}
+function workFingerprint(w){return (w.tosKey||w.localId||w.url||(w.type==='copy'?('c:'+(w.text||'').slice(0,80)):(w.type==='showcase'?('sc:'+(w.code||'')):(w.type==='video'?('v:'+(w.label||'')):('i:'+(w.label||''))))));}
+function addWork(rec){
+ try{
+  var items=readWorksRaw(),th=curThread(),w=Object.assign({id:newWid(),ts:Date.now()},th,rec),fp=workFingerprint(w),dup=-1;
+  if(fp){for(var i=0;i<items.length;i++){if(items[i].type===w.type&&workFingerprint(items[i])===fp){dup=i;break;}}}
+  if(dup>=0){w=Object.assign(items[dup],rec,{id:items[dup].id,ts:items[dup].ts||rec.ts||Date.now()});}
+  else{items.unshift(w);}
+  writeWorksRaw(items);if(window.HGCloud)HGCloud.schedulePush();return w;
+ }catch(e){return rec;}
+}
+function removeWorkById(id){writeWorksRaw(readWorksRaw().filter(function(x){return x.id!==id;}));if(window.HGCloud)HGCloud.schedulePush();}
+function getStoredWorks(){return readWorksRaw();}
+function removeStoredWork(i){var a=readWorksRaw();if(i>=0&&i<a.length){var w=a[i];if(w.localId&&window.HGIDB)HGIDB.del(w.localId);a.splice(i,1);writeWorksRaw(a);if(window.HGCloud)HGCloud.schedulePush();}}
+/* 兼容旧调用 rememberWork(type,item) */
+function rememberWork(type,item){
+ item=item||{};
+ if(type==='copy')return addWork({type:'copy',text:item.text||'',label:item.label||'分渠道文案'});
+ if(type==='img'){
+  if(item.tosKey)return addWork({type:'img',url:item.url||'',tosKey:item.tosKey,label:item.label||'商品图'});
+  if(item.url&&/^https?:/.test(item.url))return addWork({type:'img',url:item.url,label:item.label||'商品图'});
+  if(item.url&&/^data:image/.test(item.url))return persistDataImage(item.url,item.label||'商品图');
+ }
+ if(type==='video'){
+  if(item.tosKey)return addWork({type:'video',url:item.url||'',tosKey:item.tosKey,label:item.label||'营销视频'});
+  if(item.url&&/^https?:/.test(item.url))return addWork({type:'video',url:item.url,label:item.label||'营销视频'});
+ }
+}
+/* ---- IndexedDB 二进制适配层（Web 专用）---- */
+var HGIDB={db:null,p:null,
+ open:function(){if(this.p)return this.p;var self=this;this.p=new Promise(function(res){
+  if(!window.indexedDB){res(null);return;}
+  var rq;try{rq=indexedDB.open('hogee_assets',1);}catch(e){res(null);return;}
+  rq.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('blobs'))db.createObjectStore('blobs',{keyPath:'id'});};
+  rq.onsuccess=function(e){self.db=e.target.result;res(self.db);};rq.onerror=function(){res(null);};
+ });return this.p;},
+ put:function(blob){return this.open().then(function(db){if(!db)return null;var id='b'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);return new Promise(function(res){try{var tx=db.transaction('blobs','readwrite');tx.objectStore('blobs').put({id:id,blob:blob});tx.oncomplete=function(){res(id);};tx.onerror=function(){res(null);};}catch(e){res(null);}});});},
+ get:function(id){return this.open().then(function(db){if(!db||!id)return null;return new Promise(function(res){try{var rq=db.transaction('blobs','readonly').objectStore('blobs').get(id);rq.onsuccess=function(){res(rq.result?rq.result.blob:null);};rq.onerror=function(){res(null);};}catch(e){res(null);}});});},
+ del:function(id){return this.open().then(function(db){if(!db||!id)return;try{db.transaction('blobs','readwrite').objectStore('blobs').delete(id);}catch(e){}});},
+ clear:function(){return this.open().then(function(db){if(!db)return;try{db.transaction('blobs','readwrite').objectStore('blobs').clear();}catch(e){}});}
+};
+/* ---- 成品图 / 视频持久化（登录 TOS，未登录 IndexedDB）---- */
+function persistDataImage(dataUrl,label){
+ if(!dataUrl||dataUrl.indexOf('data:image')!==0)return;
+ var blob;try{blob=_dataUrlToBlob(dataUrl);}catch(e){blob=null;}
+ if(!blob)return;
+ HGIDB.put(blob).then(function(id){if(id)addWork({type:'img',localId:id,url:'',label:label||'商品图'});});
+}
+function persistResult(resItem,label){
+ if(!resItem)return;var dataUrl=resItem.url||'';
+ if(typeof _tosLoggedIn==='function'&&_tosLoggedIn()&&dataUrl.indexOf('data:image')===0&&!resItem.tosKey&&!resItem._tosBusy){
+  resItem._tosBusy=true;
+  tosPutObject(dataUrl,'result').then(function(o){
+   resItem._tosBusy=false;
+   if(o){resItem.tosKey=o.key;resItem.tosUrl=o.getUrl;try{markTaskProgress();}catch(e){}addWork({type:'img',url:o.getUrl,tosKey:o.key,label:label||resItem.label||'商品图'});}
+   else{persistDataImage(dataUrl,label||resItem.label||'商品图');}
+  }).catch(function(){resItem._tosBusy=false;persistDataImage(dataUrl,label||resItem.label||'商品图');});
+ }else if(dataUrl.indexOf('data:image')===0&&!resItem.tosKey){
+  persistDataImage(dataUrl,label||resItem.label||'商品图');
+ }
+}
+function tosPutBlob(blob,ext,kind){
+ if(!blob||typeof _tosLoggedIn!=='function'||!_tosLoggedIn())return Promise.resolve(null);
+ ext=(ext||'mp4').toLowerCase();
+ return authPost('/api/storage',{action:'put',ext:ext,kind:kind||'video'}).then(function(j){
+  if(!j||!j.ok||!j.putUrl)return null;
+  var ct=(j.headers&&j.headers['Content-Type'])||blob.type||'video/mp4';
+  return fetch(j.putUrl,{method:'PUT',headers:{'Content-Type':ct},body:blob}).then(function(r){return r.ok?{key:j.key,getUrl:j.getUrl}:null;}).catch(function(){return null;});
+ }).catch(function(){return null;});
+}
+function persistVideoWork(v){
+ if(!v||!v.blob)return;var label=v.name||'营销视频';
+ if(typeof _tosLoggedIn==='function'&&_tosLoggedIn()&&!v.tosKey){
+  tosPutBlob(v.blob,v.ext==='webm'?'webm':'mp4','video').then(function(o){
+   if(o){v.tosKey=o.key;v.tosUrl=o.getUrl;try{markTaskProgress();}catch(e){}addWork({type:'video',url:o.getUrl,tosKey:o.key,label:label});}
+   else{HGIDB.put(v.blob).then(function(id){if(id)addWork({type:'video',localId:id,url:'',label:label});});}
+  }).catch(function(){HGIDB.put(v.blob).then(function(id){if(id)addWork({type:'video',localId:id,url:'',label:label});});});
+ }else if(!v.tosKey){
+  HGIDB.put(v.blob).then(function(id){if(id)addWork({type:'video',localId:id,url:'',label:label});});
+ }
+}
+function addShowcaseWork(code,url,title){addWork({type:'showcase',code:code,url:url,label:title||'智能画册'});}
+/* ---- 作品媒体 URL 解析（TOS 预签名会过期，按需换新；本地走 IndexedDB）---- */
+function ensureWorkMediaUrl(w){
+ if(w.url&&/^(https?:|data:|blob:)/.test(w.url))return Promise.resolve(w.url);
+ if(w.localId)return HGIDB.get(w.localId).then(function(blob){if(!blob)return '';var u=URL.createObjectURL(blob);w.url=u;return u;});
+ if(w.tosKey&&typeof tosGetUrl==='function')return tosGetUrl(w.tosKey).then(function(u){if(u)w.url=u;return u||'';});
+ return Promise.resolve('');
+}
+function hydrateWorkThumbs(scope,list){
+ scope.querySelectorAll('[data-wmid]').forEach(function(el){
+  var idx=parseInt(el.getAttribute('data-wmid'),10),w=list[idx];if(!w)return;
+  ensureWorkMediaUrl(w).then(function(u){if(u)el.src=u;});
+  if(el.tagName==='IMG'){el.addEventListener('error',function(){if(w.tosKey&&!el._rt){el._rt=1;w.url='';tosGetUrl(w.tosKey).then(function(u2){if(u2){w.url=u2;el.src=u2;}});}});}
+ });
+}
+function hydrateHmMine(wall,mine){
+ var btns=wall.querySelectorAll('[data-openworks] img');
+ [0,1].forEach(function(n){var w=mine[n],img=btns[n];if(!w||!img)return;ensureWorkMediaUrl(w).then(function(u){if(u)img.src=u;});img.addEventListener('error',function(){if(w.tosKey&&!img._rt){img._rt=1;w.url='';tosGetUrl(w.tosKey).then(function(u2){if(u2){w.url=u2;img.src=u2;}});}});});
+}
+/* ---- 云端状态备份 /api/state（作品元数据/知识库/发布/连接/资料，跨设备恢复，远端空不清本地）---- */
+var HGCloud={timer:null,pushing:false,pulling:false,
+ logged:function(){return !!(window.HogeeMember&&HogeeMember.isLoggedIn&&HogeeMember.isLoggedIn());},
+ readLS:function(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},
+ cloudWorks:function(){return readWorksRaw().map(function(w){return {id:w.id,type:w.type,ts:w.ts,threadId:w.threadId,threadTitle:w.threadTitle,skill:w.skill,label:w.label,name:w.name,text:w.text,code:w.code,url:(w.url&&/^https?:/.test(w.url)?w.url:''),tosKey:w.tosKey||''};});},
+ collect:function(){return {v:1,ts:Date.now(),works:this.cloudWorks(),kbProfile:this.readLS('hogee_kb_profile'),kbText:(function(){try{return localStorage.getItem('hogee_kb_text')||'';}catch(e){return '';}})(),publish:this.readLS('hogee_publish'),connections:this.readLS('hogee_connections'),profile:this.readLS('hogee_profile')};},
+ init:function(){var self=this;document.addEventListener('hogee:auth',function(){self.pull();});if(this.logged())this.pull();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')self.push();});},
+ schedulePush:function(){if(!this.logged())return;var self=this;clearTimeout(this.timer);this.timer=setTimeout(function(){self.push();},1500);},
+ push:function(){
+  if(!this.logged()||this.pushing)return;var self=this;this.pushing=true;
+  var st=this.collect();
+  authPost('/api/state',{state:st}).then(function(j){if(!(j&&j.ok))console.warn('state push fail',j);}).catch(function(){}).then(function(){self.pushing=false;});
+ },
+ mergeWorks:function(cloud){
+  if(!Array.isArray(cloud)||!cloud.length)return;var items=readWorksRaw(),byId={},changed=false;items.forEach(function(w){byId[w.id]=w;});
+  cloud.forEach(function(c){
+   if(!c||!c.id)return;
+   if(byId[c.id]){var ex=byId[c.id];['tosKey','url','text','code','label','threadId','threadTitle','skill','type','ts'].forEach(function(k){if(!ex[k]&&c[k]){ex[k]=c[k];changed=true;}});}
+   else{items.push(c);byId[c.id]=c;changed=true;}
+  });
+  if(changed){items.sort(function(a,b){return (b.ts||0)-(a.ts||0);});writeWorksRaw(items);}
+ },
+ mergeScalar:function(key,val){if(val==null||val==='')return;var cur=this.readLS(key);var empty=cur==null||cur==='';if(empty)try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}},
+ mergeArr:function(key,cloud){if(!Array.isArray(cloud)||!cloud.length)return;var cur=this.readLS(key)||[],seen={};cur.forEach(function(x){try{seen[JSON.stringify(x)]=1;}catch(e){}});var changed=false;cloud.forEach(function(x){try{var f=JSON.stringify(x);if(!seen[f]){cur.push(x);seen[f]=1;changed=true;}}catch(e){}});if(changed)try{localStorage.setItem(key,JSON.stringify(cur));}catch(e){}},
+ pull:function(){
+  if(!this.logged()||this.pulling)return;var self=this;this.pulling=true;
+  fetch(API+'/api/state',{headers:authHeaders()}).then(function(r){return r.json();}).then(function(j){
+   self.pulling=false;if(!j||!j.ok||!j.state)return;var st=j.state;
+   self.mergeWorks(st.works);self.mergeScalar('hogee_kb_profile',st.kbProfile);
+   if(st.kbText&&!localStorage.getItem('hogee_kb_text')){try{localStorage.setItem('hogee_kb_text',st.kbText);}catch(e){}}
+   self.mergeArr('hogee_publish',st.publish);self.mergeArr('hogee_connections',st.connections);self.mergeScalar('hogee_profile',st.profile);
+   try{if(document.getElementById('worksView'))renderWorks();}catch(e){}
+   self.schedulePush();
+  }).catch(function(){self.pulling=false;});
+ }
+};
+/* 当前会话内存兜底 + 持久作品，统一为带创作主线(threadId)的列表 */
+function collectWorks(){
+ var items=readWorksRaw().slice(),th=curThread();
+ function inThread(x){return !th.threadId||th.threadId==='legacy'||x.threadId===th.threadId;}
+ function hasType(t){return items.some(function(x){return x.type===t&&inThread(x);});}
+ if(!hasType('img'))(state.results||[]).forEach(function(r){items.push({id:'simg'+Math.random().toString(36).slice(2,7),type:'img',url:r.url,tosKey:r.tosKey||'',label:r.label||'商品图',ts:r.ts||Date.now(),threadId:th.threadId,threadTitle:th.threadTitle,skill:th.skill,session:1});});
+ if(!hasType('video'))(state.videos||[]).forEach(function(v){items.push({id:'svid'+Math.random().toString(36).slice(2,7),type:'video',url:v.url,label:v.name||'营销视频',ts:v.ts||Date.now(),threadId:th.threadId,threadTitle:th.threadTitle,skill:th.skill,session:1});});
+ if(state.copy&&state.copy.ready&&state.copy.cps&&state.copy.cps.general&&!hasType('copy'))items.push({id:'scopy',type:'copy',text:state.copy.cps.general,label:'分渠道文案',ts:Date.now(),threadId:th.threadId,threadTitle:th.threadTitle,skill:th.skill,session:1});
+ items.sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+ return items;
+}
+
 function fmtWTime(ts){if(!ts)return '本次';try{var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}catch(e){return '';}}
 /* ---- 门户作品墙 ---- */
 /* ===== 素材提示词：查看 / 编辑 / 做同款 ===== */
@@ -2666,9 +2856,10 @@ function copyCardHtml(cls){return '<button class="fic '+cls+' fic-copy" type="bu
 function renderHmWall(h){
  var wall=h.querySelector('#hmWall'),strip=h.querySelector('#hmStrip');if(!wall)return;
  var mine=getStoredWorks().filter(function(w){return w.type==='img';});
- var c1=mine[0]?{src:mine[0].url,cap:mine[0].label||'我的作品',mine:1}:HM_C1;
- var c2=mine[1]?{src:mine[1].url,cap:mine[1].label||'我的作品',mine:1}:HM_C2;
+ var c1=mine[0]?{src:(mine[0].url||WK_PH),cap:mine[0].label||'我的作品',mine:1}:HM_C1;
+ var c2=mine[1]?{src:(mine[1].url||WK_PH),cap:mine[1].label||'我的作品',mine:1}:HM_C2;
  wall.innerHTML=baCardHtml(HM_BA1,'')+imgCardHtml(c1.src,c1.cap,'',c1.mine)+imgCardHtml(c2.src,c2.cap,'',c2.mine);
+ try{hydrateHmMine(wall,mine);}catch(e){}
  strip.innerHTML=HM_STRIP.map(function(d){if(d.kind==='ba')return baCardHtml(d,'strip');if(d.kind==='video')return videoCardHtml(d,'strip');if(d.kind==='copy')return copyCardHtml('strip');return imgCardHtml(d.src,d.cap,'strip',false);}).join('');
  initBa(h);
  if(!h._hmbound){h._hmbound=1;h.addEventListener('click',function(e){
@@ -2690,9 +2881,10 @@ function initBa(scope){
   setInterval(function(){if(el._drag||el._hover)return;var v=parseFloat(getComputedStyle(el).getPropertyValue('--p'))||50;v+=dir*0.55;if(v>=80){v=80;dir=-1;}if(v<=20){v=20;dir=1;}el.style.setProperty('--p',v+'%');},42);
  });
 }
-/* ---- 中央作品库 ---- */
+/* ---- 我的创作：按“一条创作主线”聚合商品图/视频/文案/画册 ---- */
 var worksTab='all';
-function worksKindLabel(t){return {img:'商品图',video:'视频',copy:'文案'}[t]||t;}
+function worksKindLabel(t){return {img:'商品图',video:'视频',copy:'文案',showcase:'智能画册'}[t]||t;}
+var WK_X='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 function openWorks(){
  closeAnalytics();try{closeDeliver();}catch(e){}
  setMenuActive('navWorks');
@@ -2701,39 +2893,94 @@ function openWorks(){
  var v=document.createElement('div');v.className='wv';v.id='worksView';scroll.appendChild(v);
  worksTab='all';renderWorks();scrollBox.scrollTop=0;
 }
+function groupWorks(list){
+ var groups=[],map={};
+ list.forEach(function(w){
+  var tid=w.threadId||'legacy',g=map[tid];
+  if(!g){g={id:tid,title:w.threadTitle||(tid==='legacy'?'早期作品':'这款商品'),skill:w.skill,ts:w.ts||0,items:[]};map[tid]=g;groups.push(g);}
+  g.items.push(w);if((w.ts||0)>g.ts)g.ts=w.ts;
+ });
+ groups.sort(function(a,b){return b.ts-a.ts;});return groups;
+}
 function renderWorks(){
  var v=document.getElementById('worksView');if(!v)return;
- var all=collectWorks();var counts={img:0,copy:0,video:0};all.forEach(function(w){counts[w.type]=(counts[w.type]||0)+1;});
- var tabs=[['all','全部'],['img','图片'],['copy','文案'],['video','视频']];
- var head='<div class="wv-head"><div><div class="wv-title">我的创作</div><div class="wv-sub">你在工作台生成的商品图、文案和视频都汇集在这里，图片可看大图、下载，文案可复制、再改。</div></div><div class="wv-tabs"><button class="wv-tab" type="button" data-home>返回创作</button>'+tabs.map(function(t){return '<button class="wv-tab'+(worksTab===t[0]?' on':'')+'" type="button" data-wtab="'+t[0]+'">'+t[1]+(t[0]!=='all'&&counts[t[0]]?' ('+counts[t[0]]+')':'')+'</button>';}).join('')+'</div></div>';
- var list=worksTab==='all'?all:all.filter(function(w){return w.type===worksTab;});
- var body=list.length?'<div class="wv-grid">'+list.map(worksCardHtml).join('')+'</div>':'<div class="wv-empty"><div class="we-ic">'+IC.pack+'</div><h4>还没有作品</h4><p>传一张产品图让 Hogee 出商品图、写文案或剪视频，成品会自动收进这里。</p></div>';
- v.innerHTML=head+body;bindWorksEvents(v);
+ var all=collectWorks(),counts={};all.forEach(function(w){counts[w.type]=(counts[w.type]||0)+1;});
+ var tabs=[['all','全部'],['img','商品图'],['video','视频'],['copy','文案'],['showcase','画册']];
+ wkCurList=worksTab==='all'?all:all.filter(function(w){return w.type===worksTab;});
+ var groups=groupWorks(wkCurList);
+ var h='<div class="wv-head"><div><h2 class="wv-title">我的创作</h2><p class="wv-sub">同一件商品的商品图、视频、文案、画册，归在同一条创作主线里。</p></div><button class="btn btn-primary btn-sm" id="wkNewCreate">+ 新的创作</button></div>';
+ h+='<div class="wk-filters">'+tabs.map(function(t){return '<button type="button" class="wkf'+(worksTab===t[0]?' on':'')+'" data-wtab="'+t[0]+'">'+t[1]+(counts[t[0]]?' <span class="wkf-n">'+counts[t[0]]+'</span>':'')+'</button>';}).join('')+'</div>';
+ if(!groups.length){h+='<div class="wk-empty">还没有作品。回操作台传一张产品图，阿图出图、阿文写文案、阿视剪视频，都会自动归到这里。<br><button class="btn btn-primary btn-sm" id="wkEmptyGo" type="button">去创作</button></div>';}
+ else{h+=groups.map(wkThreadCard).join('');}
+ v.innerHTML=h;bindWorksEvents(v);hydrateWorkThumbs(v,wkCurList);
 }
-function worksCardHtml(w){
- if(w.type==='img'){
-  return '<div class="wk"><span class="wk-kind">商品图</span><div class="wk-ph" data-lightbox="'+w.url+'"><img src="'+w.url+'" alt="'+esc(w.label||'商品图')+'"></div><div class="wk-meta"><span class="wk-name">'+esc(w.label||'商品图')+'</span><span class="wk-time">'+fmtWTime(w.ts)+'</span></div><div class="wk-acts"><button type="button" data-wact="view" data-url="'+w.url+'">'+IC.zoom+'大图</button><button type="button" data-wact="dl" data-url="'+w.url+'" data-name="'+esc(w.label||'商品图')+'">'+IC.download+'下载</button>'+(w.session?'<button type="button" data-wact="toatu">'+IC.redo+'再创作</button>':'')+(w._si!=null?'<button type="button" data-wact="del" data-si="'+w._si+'">删除</button>':'')+'</div></div>';
- }
- if(w.type==='video'){
-  return '<div class="wk"><span class="wk-kind">视频</span><div class="wk-ph"><video src="'+w.url+'" controls preload="metadata"></video></div><div class="wk-meta"><span class="wk-name">'+esc(w.name||'营销视频')+'</span><span class="wk-time">本次会话</span></div><div class="wk-acts"><button type="button" data-wact="vdl" data-url="'+w.url+'" data-name="'+esc(w.name||'营销视频')+'">'+IC.download+'下载</button></div></div>';
- }
- return '<div class="wk"><span class="wk-kind">文案</span><div class="wk-copy">'+esc((w.text||'').slice(0,700))+((w.text||'').length>700?'…':'')+'</div><div class="wk-meta"><span class="wk-name">分渠道文案</span><span class="wk-time">'+fmtWTime(w.ts)+'</span></div><div class="wk-acts"><button type="button" data-wact="copytext">'+IC.pack+'复制</button><button type="button" data-wact="awen">'+IC.pen+'让阿文改</button>'+(w._si!=null?'<button type="button" data-wact="delc" data-si="'+w._si+'">删除</button>':'')+'</div></div>';
+function wkThreadCard(g){
+ var skillLabel=({usedcar:'二手车商',general:'通用电商'})[g.skill]||(g.skill&&g.skill!=='general'?g.skill:'');
+ var resume=(g.id&&g.id!=='legacy')?'<button type="button" class="wkt-resume" data-wresume="'+rcEsc(g.id)+'">继续这场对话</button>':'';
+ return '<section class="wk-thread"><div class="wkt-head"><div class="wkt-tt"><b>'+esc(g.title||'这款商品')+'</b>'+(skillLabel?'<span class="wkt-skill">'+esc(skillLabel)+'</span>':'')+'<span class="wkt-time">'+fmtWTime(g.ts)+'</span><span class="wkt-count">'+g.items.length+' 件交付物</span></div>'+resume+'</div><div class="wkt-grid">'+g.items.map(wkItemCard).join('')+'</div></section>';
 }
-function bindWorksEvents(v){
- v.addEventListener('click',function(e){
-  var home=e.target.closest('[data-home]');if(home){goHome();return;}
-  var tab=e.target.closest('[data-wtab]');if(tab){worksTab=tab.getAttribute('data-wtab');renderWorks();return;}
-  var mt=e.target.closest('[data-mate]');if(mt){var id=mt.getAttribute('data-mate');if(['atu','awen','ashi','afa'].indexOf(id)>=0)enterMate(id);return;}
-  var lb=e.target.closest('[data-lightbox]');if(lb){openLightbox(lb.getAttribute('data-lightbox'));return;}
-  var b=e.target.closest('[data-wact]');if(!b)return;var k=b.getAttribute('data-wact');
-  if(k==='view'){openLightbox(b.getAttribute('data-url'));}
-  else if(k==='dl'||k==='vdl'){downloadDataUrl(b.getAttribute('data-url'),b.getAttribute('data-name')||'workhogee');if(window.toast)toast('开始下载');}
-  else if(k==='toatu'){enterMate('atu');}
-  else if(k==='awen'){enterMate('awen');}
-  else if(k==='copytext'){var ct=b.closest('.wk');var t=ct?ct.querySelector('.wk-copy'):null;copyPlain(t?t.textContent:'').then(function(){if(window.toast)toast('文案已复制');});}
-  else if(k==='del'||k==='delc'){removeStoredWork(+b.getAttribute('data-si'));renderWorks();if(window.toast)toast('已删除');}
+function wkItemCard(w){
+ var idx=wkCurList.indexOf(w),tag=worksKindLabel(w.type),body='';
+ if(w.type==='img')body='<button type="button" class="wkc-thumb" data-wl="'+idx+'"><img data-wmid="'+idx+'" alt="'+esc(w.label||'商品图')+'"><span class="wkc-tag">'+tag+'</span></button>';
+ else if(w.type==='video')body='<button type="button" class="wkc-thumb video" data-wl="'+idx+'"><video data-wmid="'+idx+'" muted preload="metadata" playsinline></video><span class="wkc-play"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="wkc-tag">'+tag+'</span></button>';
+ else if(w.type==='copy')body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span><p>'+esc((w.text||'').slice(0,140))+(((w.text||'').length>140)?'…':'')+'</p></div>';
+ else if(w.type==='showcase')body='<a class="wkc-show" href="'+esc(w.url||'#')+'" target="_blank" rel="noopener"><span class="wkc-tag static">'+tag+'</span><b>'+esc(w.label||'智能画册')+'</b><span class="wkc-go">打开画册 ↗</span></a>';
+ else body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span></div>';
+ return '<article class="wk-card wk-'+w.type+'">'+body+'<div class="wkc-meta"><span class="wkc-label">'+esc(w.label||tag)+'</span></div><div class="wkc-acts">'+wkItemActs(w,idx)+'</div></article>';
+}
+function wkItemActs(w,idx){
+ var a='';
+ if(w.type==='img')a='<button type="button" data-wdl="'+idx+'">下载</button><button type="button" data-wre="'+idx+'">再出图</button>';
+ else if(w.type==='video')a='<button type="button" data-wdl="'+idx+'">下载</button><button type="button" data-wre="'+idx+'">再剪一条</button>';
+ else if(w.type==='copy')a='<button type="button" data-wcp="'+idx+'">复制文案</button><button type="button" data-wre="'+idx+'">让阿文改</button>';
+ else if(w.type==='showcase')a='<button type="button" data-wurl="'+idx+'">打开</button><button type="button" data-wcurl="'+idx+'">复制链接</button>';
+ return a+'<button type="button" class="danger" data-wdel="'+esc(w.id)+'">删除</button>';
+}
+function wkDownload(w){
+ ensureWorkMediaUrl(w).then(function(u){
+  if(!u){toast('素材还在准备，稍后再试','err');return;}
+  var name=(w.label||'workhogee').replace(/[\\/:*?"<>|]+/g,'_')+(w.type==='video'?('.'+(w.ext||'mp4')):'.jpg');
+  if(/^https?:/.test(u)){var a=document.createElement('a');a.href=u;a.download=name;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();}
+  else{downloadDataUrl(u,name);}
+  toast('开始下载');
  });
 }
+function wkRecreate(w){var m=({img:'atu',copy:'awen',video:'ashi',showcase:'afa'})[w.type]||'host';try{enterMate(m);}catch(e){goHome();}toast('已切到对应伙计，告诉它你的新要求');}
+function closeWkLightbox(){var ov=document.getElementById('wkLightbox');if(ov){ov.remove();document.body.style.overflow='';}}
+function openWkLightbox(w){
+ ensureWorkMediaUrl(w).then(function(u){
+  var ov=document.getElementById('wkLightbox');if(ov)ov.remove();
+  ov=document.createElement('div');ov.id='wkLightbox';ov.className='wk-lb';
+  var media=w.type==='video'?'<video src="'+rcEsc(u||'')+'" controls autoplay playsinline></video>':'<img src="'+rcEsc(u||'')+'" alt="'+esc(w.label||'')+'">';
+  ov.innerHTML='<div class="wklb-mask" data-wlb="x"></div><div class="wklb-box"><button type="button" class="wklb-x" data-wlb="x" aria-label="关闭">'+WK_X+'</button>'+media+'<div class="wklb-bar"><span>'+esc(w.label||'')+'</span><button type="button" id="wklbDl">下载</button></div></div>';
+  document.body.appendChild(ov);document.body.style.overflow='hidden';
+  ov.addEventListener('click',function(e){if(e.target.closest('[data-wlb="x"]'))closeWkLightbox();});
+  var d=ov.querySelector('#wklbDl');if(d)d.addEventListener('click',function(){wkDownload(w);});
+ });
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var ov=document.getElementById('wkLightbox');if(ov)closeWkLightbox();}});
+function bindWorksEvents(v){
+ if(v._wbound)return;v._wbound=1;
+ v.addEventListener('click',function(e){
+  var t;
+  if(t=e.target.closest('[data-wtab]')){worksTab=t.getAttribute('data-wtab');renderWorks();return;}
+  if(e.target.closest('#wkNewCreate')||e.target.closest('#wkEmptyGo')){goHome();return;}
+  if(t=e.target.closest('[data-wresume]')){var id=t.getAttribute('data-wresume');if(typeof openTask==='function')openTask(id);return;}
+  if(t=e.target.closest('[data-wl]')){openWkLightbox(wkCurList[parseInt(t.getAttribute('data-wl'),10)]);return;}
+  if(t=e.target.closest('[data-wdl]')){wkDownload(wkCurList[parseInt(t.getAttribute('data-wdl'),10)]);return;}
+  if(t=e.target.closest('[data-wcp]')){var wc=wkCurList[parseInt(t.getAttribute('data-wcp'),10)];copyPlain(wc.text).then(function(){toast('文案已复制');});return;}
+  if(t=e.target.closest('[data-wre]')){wkRecreate(wkCurList[parseInt(t.getAttribute('data-wre'),10)]);return;}
+  if(t=e.target.closest('[data-wurl]')){var wu=wkCurList[parseInt(t.getAttribute('data-wurl'),10)];if(wu&&wu.url)window.open(wu.url,'_blank','noopener');return;}
+  if(t=e.target.closest('[data-wcurl]')){var wl=wkCurList[parseInt(t.getAttribute('data-wcurl'),10)];copyPlain(wl.url).then(function(){toast('画册链接已复制');});return;}
+  if(t=e.target.closest('[data-wdel]')){
+   var id=t.getAttribute('data-wdel');
+   if(t.dataset.confirm==='1'){removeWorkById(id);toast('已删除');renderWorks();}
+   else{t.dataset.confirm='1';var orig=t.textContent;t.textContent='确认删除？';var btn=t;setTimeout(function(){delete btn.dataset.confirm;btn.textContent=orig;},2200);}
+   return;
+  }
+ });
+}
+
 /* ================= 技能与连接（技能只读 + 通讯/媒体账号登记） ================= */
 var CONN_LS='hogee_connections';
 function connLoad(){try{var o=JSON.parse(localStorage.getItem(CONN_LS)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
@@ -2989,7 +3236,7 @@ function acBind(v){
     else if(g==='logout'){if(window.HogeeMember){HogeeMember.logout();if(window.toast)toast('已退出登录');}goHome();}
     return;}
   if(e.target.closest('#acReload')){location.href=location.pathname+'?cb='+Date.now();return;}
-  if(e.target.closest('#acClear')){if(window.confirm('将清除本机的作品、辅助发布记录与账号连接登记，不影响登录和基本资料，且不可恢复。确定清除吗？')){['hogee_works','hogee_publish','hogee_connections','hogee_kb_text','hogee_gen_count'].forEach(function(k){try{localStorage.removeItem(k);}catch(x){}});if(window.toast)toast('本机作品与记录已清除');openAccountView('profile');}return;}
+  if(e.target.closest('#acClear')){if(window.confirm('将清除本机的作品、辅助发布记录与账号连接登记，不影响登录和基本资料，且不可恢复。确定清除吗？')){['hogee_works','hogee_publish','hogee_connections','hogee_kb_text','hogee_gen_count'].forEach(function(k){try{localStorage.removeItem(k);}catch(x){}});try{if(window.HGIDB)HGIDB.clear();}catch(x){}if(window.toast)toast('本机作品与记录已清除');openAccountView('profile');}return;}
  });
  var up=v.querySelector('#acAvaUp'),rm=v.querySelector('#acAvaRm'),save=v.querySelector('#acSave');
  if(up){var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.style.display='none';v.appendChild(inp);
@@ -3187,44 +3434,9 @@ function handleFiles(fileList){
 /* ================= 认货（AI 识图自动预填，客户只需确认或跳过） ================= */
 var carFilter={cat:'all',letter:''};
 var identifyFields={};
-/* 内测水印：右下角半透明深色圆角框 + 白色 WorkHogee 出图字样 */
-function addWatermark(dataUrl){
- return new Promise(function(resolve){
-  if(!dataUrl||typeof dataUrl!=='string'){resolve(dataUrl);return;}
-  if(SVC.cap&&SVC.cap.aiLabel===false){resolve(dataUrl);return;}
-  var img=new Image();
-  img.crossOrigin='anonymous';
-  img.onload=function(){
-   try{
-    var c=document.createElement('canvas');
-    c.width=img.width;c.height=img.height;
-    var ctx=c.getContext('2d');
-    ctx.drawImage(img,0,0);
-    var pad=Math.round(img.width*0.012);
-    var fs=Math.round(img.width*0.026);
-    var bw=fs*9,bh=fs+pad*2;
-    var bx=img.width-bw-pad*1.5;
-    var by=img.height-bh-pad*1.5;
-    ctx.fillStyle='rgba(0,0,0,0.55)';
-    var r=fs*0.28;
-    ctx.beginPath();
-    ctx.moveTo(bx+r,by);
-    ctx.arcTo(bx+bw,by,bx+bw,by+bh,r);
-    ctx.arcTo(bx+bw,by+bh,bx,by+bh,r);
-    ctx.arcTo(bx,by+bh,bx,by,r);
-    ctx.arcTo(bx,by,bx+bw,by,r);
-    ctx.closePath();ctx.fill();
-    ctx.font='600 '+fs+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(255,255,255,0.95)';
-    ctx.fillText('WorkHogee 出图',bx+pad*1.4,by+bh/2);
-    resolve(c.toDataURL('image/jpeg',0.92));
-   }catch(e){resolve(dataUrl);}
-  };
-  img.onerror=function(){resolve(dataUrl);};
-  img.src=dataUrl;
- });
-}
+/* 品牌水印已下线：交付物不再叠加“WorkHogee 出图”字样。
+   合规 AI 生成标识由服务端隐式元数据(image-meta)与缩略图浅色“AI生成”角标承担，与品牌水印是两套，互不影响。 */
+function addWatermark(dataUrl){ return Promise.resolve(dataUrl); }
 
 function callIdentify(dataUrl){
  return fetch(API+'/identify',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({image:dataUrl})})
@@ -3423,8 +3635,7 @@ function runGenerate(){
     try{
      var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize);
      if(token!==state.genToken)return;
-     var wmUrl=await addWatermark(url);
-     var __res={url:wmUrl,label:jobs[i].label,k:jobs[i].k};state.results.push(__res);tosSyncResult(__res);rememberWork('img',{url:wmUrl,label:jobs[i].label});
+     var __res={url:url,label:jobs[i].label,k:jobs[i].k,ts:Date.now()};state.results.push(__res);persistResult(__res,jobs[i].label);
      if(window.HG_bumpGen)window.HG_bumpGen();
      markTaskProgress();
      if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
@@ -3865,7 +4076,8 @@ async function videoMake(btn){
   var r=await composeVideo(sb,imgs,function(p){if(bar)bar.style.width=Math.round(p*100)+'%';if(btn)btn.innerHTML=IC.video+' 剪辑 '+Math.round(p*100)+'%';});
   var ext=(r.blob.type.indexOf('mp4')>=0)?'mp4':'webm';
   var name='WorkHogee_阿视_'+(sb.templateLabel||'短视频').replace(/[^\u4e00-\u9fa5a-zA-Z0-9]+/g,'')+'.'+ext;
-  state.videos.push({name:name,url:URL.createObjectURL(r.blob),blob:r.blob,w:r.w,h:r.h,dur:r.dur,ext:ext,tpl:state.videoCfg.tpl,ratio:state.videoCfg.ratio});
+  state.videos.push({name:name,url:URL.createObjectURL(r.blob),blob:r.blob,w:r.w,h:r.h,dur:r.dur,ext:ext,tpl:state.videoCfg.tpl,ratio:state.videoCfg.ratio,ts:Date.now()});
+  persistVideoWork(state.videos[state.videos.length-1]);
   renderDeliver();
   toast(fb?'短视频剪好了（内置分镜，登录后用 AI 分镜）':'短视频剪好了，'+sb.shots.length+' 个镜头');
   botSay('<b>片子剪好了，你看看。</b>'+r.w+'×'+r.h+'、'+Math.round(r.dur)+' 秒，已放进右侧「视频」，可直接下载发抖音 / 小红书 / 视频号；发布时配上平台热门 BGM 就行。','ashi');
@@ -3921,8 +4133,8 @@ async function redoOne(i){
  var job=buildJobs().filter(function(j){return j.k===r.k;})[0];if(!job){toast('找不到原任务');return;}
  var stop=botTyping('atu');
  try{var url=await callGenerateRetry(job.prompt,job.image,state.quality==='hd'?'2304x2304':'2048x2048');stop();
-  var wm2=await addWatermark(url);state.results[i].url=wm2;if($('#lbImg').src&&$('#lightbox').classList.contains('show'))$('#lbImg').src=wm2;
-  renderDeliver();toast('已重做，看看这张');
+  state.results[i].url=url;state.results[i].tosKey='';state.results[i]._tosBusy=false;if($('#lbImg').src&&$('#lightbox').classList.contains('show'))$('#lbImg').src=url;
+  persistResult(state.results[i],state.results[i].label);renderDeliver();toast('已重做，看看这张');
  }catch(e){stop();toast(e.message||'重做失败','err');}
 }
 function downloadOne(i){
@@ -3968,6 +4180,7 @@ async function doPublish(){
   var lk=await authPost('/qr',{target_code:sc.code,source:source,campaign:title.slice(0,50)});
   if(!lk.ok)throw new Error((lk.error&&lk.error.message)||'渠道码生成失败');
   stop();state.showcase={code:sc.code,url:sc.url,short_url:lk.short_url,qr_svg:lk.qr_svg,source:source,title:title};
+  addShowcaseWork(sc.code,lk.short_url||sc.url,title);
   setDeliverTab('reach');openDeliver();
   botSay('画册和「'+pubSourceName(source)+'」渠道码都好了，已放进右侧「送达」。链接发出去、二维码贴出去，<b>谁看了、谁留了联系方式</b>，都回到阿果效果中心。','afa');
  }catch(e){stop();if(btn){btn.disabled=false;btn.innerHTML=IC.qr+' 生成画册与二维码';}toast(e.message||'生成失败，稍后再试','err');}
