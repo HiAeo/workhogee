@@ -568,8 +568,8 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
 .cmp-tab.on{color:#16171c;background:linear-gradient(180deg,#ffffff,#e6e8ed);font-weight:800;transform:translateY(-1px);box-shadow:0 -8px 18px rgba(255,255,255,.10),inset 0 1px 0 rgba(255,255,255,.95)}
 .cmp-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#eef0f4}
 .cmp-body{display:flex;gap:12px;padding:14px 16px 13px;align-items:flex-start}
-.cmp-upload{appearance:none;flex:none;width:42px;height:42px;min-height:0;align-self:flex-start;margin-top:2px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;font-family:inherit;transition:.18s;padding:0}
-.cmp-upload svg{width:19px;height:19px}
+.cmp-upload{appearance:none;flex:none;width:52px;height:52px;min-height:0;align-self:flex-start;margin-top:2px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;font-family:inherit;transition:.18s;padding:0}
+.cmp-upload svg{width:32px;height:32px}
 .cmp-upload span{display:none}
 .cmp-upload:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft);transform:translateY(-1px)}
 .cmp-main{flex:1;min-width:0;display:flex;flex-direction:column}
@@ -590,8 +590,8 @@ body[data-stage="welcome"] .cmp-main #composerInput{min-height:118px;font-size:1
 body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 @media(max-width:600px){
   .cmp-body{gap:10px;padding:11px 11px 10px}
-  .cmp-upload{width:40px;height:40px;min-height:0;border-radius:11px;gap:0}
-  .cmp-upload svg{width:18px;height:18px}
+  .cmp-upload{width:48px;height:48px;min-height:0;border-radius:13px;gap:0}
+  .cmp-upload svg{width:28px;height:28px}
   .cmp-upload span{display:none}
   .cmp-main #composerInput{min-height:88px;font-size:16px}
   .cmp-tab{padding:9px 11px;font-size:12.5px}
@@ -809,7 +809,7 @@ body[data-stage="welcome"] .cmp-upload{border-color:rgba(255,255,255,.16);backgr
 .hw6-chip:hover{color:#fff;border-color:rgba(251,122,34,.6);background:rgba(251,122,34,.15);transform:translateY(-2px)}
 /* 作品横滑轨道 */
 .hm6-head{display:flex;align-items:baseline;justify-content:space-between;margin:30px 2px 2px}
-.hm6-h{font-size:15.5px;font-weight:700;color:var(--tx);letter-spacing:.2px;display:flex;align-items:center;gap:9px}
+.hm6-h{font-size:15.5px;font-weight:300;color:var(--tx);letter-spacing:.2px;display:flex;align-items:center;gap:9px}
 .hm6-h::before{content:"";width:4px;height:15px;border-radius:2px;background:linear-gradient(180deg,#fb8231,#ea580c)}
 .hm6-tip{display:none}
 .hm6-rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:16px;overflow:visible;
@@ -956,6 +956,67 @@ body[data-stage="publish"] .composer{display:none!important}
 .conn-mbtns{display:flex;gap:10px;margin-top:16px}
 .conn-mbtns .btn{flex:1;justify-content:center}
 .conn-foot{font-size:11px;color:var(--tx3);line-height:1.7;margin-top:12px;text-align:center}
+/* ===== 账号中心（头像菜单四页，统一 .view 玻璃卡版面） ===== */
+.atabs{display:inline-flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:12px;padding:4px;flex-wrap:wrap}
+.atab{appearance:none;border:0;background:transparent;color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;padding:8px 15px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.16s}
+.atab:hover{color:var(--tx)}
+.atab.on{background:var(--panel2);color:var(--tx);box-shadow:var(--shadow-s)}
+.ac-grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:start}
+.ac-field{margin-bottom:14px}.ac-field:last-child{margin-bottom:0}
+.ac-field>label{display:block;font-size:12px;color:var(--tx2);margin-bottom:7px}
+.ac-input{width:100%;box-sizing:border-box;padding:11px 13px;border-radius:11px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--tx);font-size:13.5px;font-family:inherit}
+.ac-input:focus{outline:none;border-color:var(--orange)}
+.ac-input[readonly]{color:var(--tx2);cursor:default;background:rgba(255,255,255,.02)}
+.ac-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 2px;border-bottom:1px dashed var(--line2)}
+.ac-row:last-child{border-bottom:0}
+.ac-row .k{font-size:13px;color:var(--tx2)}
+.ac-row .v{font-size:13px;font-weight:600;color:var(--tx);text-align:right}
+.ac-badge{font-size:11px;font-weight:500;color:#fdba74;border:1px solid rgba(251,122,34,.4);background:rgba(251,122,34,.12);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.ac-badge.gray{color:var(--tx3);border-color:var(--line);background:transparent}
+.ac-ava-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.ac-ava{width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:600;overflow:hidden;flex:none}
+.ac-ava img{width:100%;height:100%;object-fit:cover}
+.ac-ava-btns{display:flex;gap:9px;flex-wrap:wrap}
+.ac-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.ac-kpi{border:1px solid var(--line2);background:var(--panel);border-radius:16px;padding:18px 20px}
+.ac-kpi .n{font-size:26px;font-weight:300;color:var(--tx);line-height:1.1;white-space:nowrap}
+.ac-kpi .l{font-size:12px;color:var(--tx3);margin-top:9px}
+.ac-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ac-benefit{border:1px solid var(--line2);border-radius:13px;padding:14px 15px;background:rgba(255,255,255,.02)}
+.ac-benefit .t{font-size:13px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.ac-benefit .t svg{width:16px;height:16px;color:var(--orange);flex:none}
+.ac-benefit .d{font-size:11.5px;color:var(--tx3);line-height:1.6}
+.ac-faq details{border:1px solid var(--line2);border-radius:12px;background:var(--panel);margin-bottom:10px;overflow:hidden}
+.ac-faq summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:13.5px;font-weight:500;color:var(--tx);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ac-faq summary::-webkit-details-marker{display:none}
+.ac-faq summary .arr{transition:.2s;color:var(--tx3);flex:none;display:grid}
+.ac-faq summary .arr svg{width:16px;height:16px}
+.ac-faq details[open] summary .arr{transform:rotate(180deg)}
+.ac-faq .a{padding:0 16px 14px;font-size:12.5px;color:var(--tx3);line-height:1.85}
+.ac-contact{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ac-cc{border:1px solid var(--line2);border-radius:14px;padding:17px;background:var(--panel);display:flex;flex-direction:column;gap:7px;transition:.16s;cursor:pointer;text-align:left;font-family:inherit}
+.ac-cc:hover{border-color:var(--line);background:var(--panel2)}
+.ac-cc .ci{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(251,122,34,.12);color:var(--orange);margin-bottom:3px}
+.ac-cc .ci svg{width:20px;height:20px}
+.ac-cc .ct{font-size:13.5px;font-weight:600;color:var(--tx)}
+.ac-cc .cd{font-size:11.5px;color:var(--tx3);line-height:1.6}
+.ac-log{position:relative;padding:0 0 18px 22px;border-left:1.5px solid var(--line2)}
+.ac-log:last-child{padding-bottom:0}
+.ac-log::before{content:"";position:absolute;left:-5.5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--orange)}
+.ac-log .lt{font-size:13px;font-weight:600;color:var(--tx)}
+.ac-log .lt .lv{font-size:11px;color:var(--orange);font-weight:500;margin-left:8px}
+.ac-log .ld{font-size:11.5px;color:var(--tx3);line-height:1.7;margin-top:4px}
+.ac-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ac-btn{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.16s}
+.ac-btn:hover{border-color:var(--orange);color:var(--orange)}
+.ac-btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.ac-btn.primary:hover{background:var(--orange-d);color:#fff}
+.ac-btn.danger:hover{border-color:#ef4444;color:#f87171}
+.ac-btn svg{width:15px;height:15px}
+.ac-note{font-size:11.5px;color:var(--tx3);line-height:1.75;margin-top:12px}
+@media(max-width:900px){.ac-grid2{grid-template-columns:1fr}.ac-kpis{grid-template-columns:repeat(2,1fr)}.ac-benefits{grid-template-columns:repeat(2,1fr)}.ac-contact{grid-template-columns:1fr}}
+@media(max-width:520px){.ac-benefits{grid-template-columns:1fr}.ac-kpis{grid-template-columns:1fr 1fr}}
+
 body[data-stage="knowledge"] .composer,body[data-stage="connect"] .composer{display:none!important}
 @media(max-width:860px){.view{padding:14px 15px 60px}.view-title{font-size:22px}.skill-grid{grid-template-columns:1fr}.conn-grid{grid-template-columns:repeat(2,1fr)}.pv,.wv{padding:14px 15px 60px}}
 @media(max-width:520px){.conn-grid{grid-template-columns:1fr}}
@@ -1130,7 +1191,7 @@ body[data-rail="mini"] .rail-brand a.wm-full,body[data-rail="mini"] .rail-tag{di
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.42)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 /* ⑥ 精选 masonry */
 .hm6-h::before{display:none!important}
-.hm6-h{gap:9px;font-size:16px;font-weight:700}
+.hm6-h{gap:9px;font-size:16px;font-weight:300}
 .hm6-wm{display:inline-flex;align-items:center;width:25px}
 .hm6-wm svg{width:25px;height:auto;display:block}
 .hm6-rail{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));grid-auto-rows:182px;
@@ -2043,7 +2104,7 @@ function heroWelcome(){
    +'<p class="hw6-sub">一笔成交从一张产品图开始，你只管上传，剩下的交给伙计。</p>'
    +'</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
-   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee上新</span></div>'
+   +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee创作探索</span></div>'
    +'<div class="hm6-rail" id="hmRail"></div></section>';
   state._heroEl=h;
   scroll.appendChild(h);
@@ -2112,7 +2173,7 @@ function heroWelcome(){
  function hmFallback(h){hmPaintRail(h,HM6_DEMO.map(function(d,i){return Object.assign({id:'fb'+i},d);}),false);}
  function renderHmRail(h){
   var rail=h.querySelector('#hmRail');if(!rail)return;
-  rail.innerHTML='<div class="hm-loading">Hogee上新加载中…</div>';
+  rail.innerHTML='<div class="hm-loading">Hogee创作探索加载中…</div>';
   fetch(API+'/api/feed?_='+Date.now(),{cache:'no-store',headers:{'Accept':'application/json'}})
    .then(function(r){if(!r.ok)throw new Error('feed '+r.status);return r.json();})
    .then(function(j){if(j&&j.ok&&Array.isArray(j.items))hmPaintRail(h,j.items,hmIsAdmin());else hmFallback(h);})
@@ -2133,7 +2194,7 @@ function heroWelcome(){
  }
  function hmDelete(id,h){
   if(!id||!hmIsAdmin())return;
-  if(!window.confirm('确定从「Hogee上新」删除这张素材？删除后所有用户都将看不到。'))return;
+  if(!window.confirm('确定从「Hogee创作探索」删除这张素材？删除后所有用户都将看不到。'))return;
   HogeeMember.authFetch(API+'/api/feed?id='+encodeURIComponent(id),{method:'DELETE'})
    .then(function(r){if(!r.ok)throw new Error('del '+r.status);return r.json();})
    .then(function(j){if(j&&j.ok){renderHmRail(h);toast('已删除');}else toast('删除失败');})
@@ -2408,6 +2469,156 @@ function openConnModal(id){
  var rm=body.querySelector('#connRemove');
  if(rm)rm.onclick=function(){var o=connLoad();delete o[id];connSave(o);closeConnModal();openConnect();if(window.toast)toast('已断开 '+d.name);};
 }
+/* ================= 账号中心（头像菜单四页，统一 .view 版面，替代旧居中弹窗） ================= */
+var APP_VER='v0.9.5 Alpha';
+var AC_TABS=[{k:'profile',n:'账号管理'},{k:'quota',n:'会员状态'},{k:'help',n:'帮助中心'},{k:'update',n:'版本更新'}];
+function acUser(){var M=window.HogeeMember;return (M&&M.getUser)?M.getUser():{};}
+function acProf(){try{return JSON.parse(localStorage.getItem('hogee_profile')||'{}');}catch(e){return {};}}
+function acInitial(){var u=acUser(),p=acProf();var c=String(p.contactName||u.contactName||u.merchantName||u.account||u.name||'H').trim();return (c[0]||'H').toUpperCase();}
+function acPubCount(){try{var a=JSON.parse(localStorage.getItem('hogee_publish')||'[]');return Array.isArray(a)?a.length:0;}catch(e){return 0;}}
+function acSvg(inner){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';}
+function acIcon(n){var I={
+ img:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-5-5L5 21"/>',
+ pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+ vid:'<rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4Z"/>',
+ book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+ spark:'<path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12Z"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+ guide:'<path d="M22 9 12 5 2 9l10 4 10-4Z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/>',
+ chat:'<path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 9 9 0 0 1-3.9-.9L3 21l1.9-5.6A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z"/>',
+ refresh:'<path d="M21 12a9 9 0 1 1-2.7-6.4"/><path d="M21 3v6h-6"/>',
+ trash:'<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+ logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>'
+};return acSvg(I[n]||I.spark);}
+
+function acPanelProfile(){
+ var u=acUser(),p=acProf();
+ var inds=['通用电商','二手车','服装服饰','家居家装','餐饮美食','美妆个护','数码家电','本地生活','教育培训','其他'];
+ var opts=inds.map(function(it){return '<option '+(p.industry===it?'selected':'')+'>'+it+'</option>';}).join('');
+ var acct=u.account||u.phone||u.email||u.username||'—';
+ return '<div class="ac-grid2">'
+ +'<section class="vcard"><div class="vsec-h" style="margin:0 0 16px">基本资料</div>'
+ +'<div class="ac-ava-row"><div class="ac-ava" id="acAva">'+(p.avatar?'<img src="'+p.avatar+'" alt="头像">':acInitial())+'</div><div class="ac-ava-btns"><button class="ac-btn" type="button" id="acAvaUp">更换头像</button><button class="ac-btn" type="button" id="acAvaRm">移除头像</button></div></div>'
+ +'<div class="ac-field"><label>登录账号（不可修改）</label><input class="ac-input" readonly value="'+esc(acct)+'"></div>'
+ +'<div class="ac-field"><label>联系人称呼</label><input class="ac-input" id="acContact" maxlength="20" value="'+esc(p.contactName||u.contactName||'')+'" placeholder="怎么称呼你"></div>'
+ +'<div class="ac-field"><label>店铺 / 公司名</label><input class="ac-input" id="acMerchant" maxlength="30" value="'+esc(p.merchantName||u.merchantName||'')+'" placeholder="你的店铺或公司名称"></div>'
+ +'<div class="ac-field"><label>主营行业</label><select class="ac-input" id="acIndustry">'+opts+'</select></div>'
+ +'<div class="ac-actions"><button class="ac-btn primary" type="button" id="acSave">保存资料</button></div>'
+ +'<div class="ac-note">内测阶段资料仅保存在本机，用于让伙计更懂你的生意；正式版将同步到账号云端。</div></section>'
+ +'<div><section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 10px">账号与安全</div>'
+ +'<div class="ac-row"><span class="k">登录方式</span><span class="v">'+esc(acct)+'</span></div>'
+ +'<div class="ac-row"><span class="k">账号状态</span><span class="v"><span class="ac-badge">正常</span></span></div>'
+ +'<div class="ac-row"><span class="k">修改密码 / 换绑手机</span><span class="v"><span class="ac-badge gray">正式版开放</span></span></div>'
+ +'<div class="ac-row"><span class="k">实名 / 企业认证</span><span class="v"><span class="ac-badge gray">正式版开放</span></span></div></section>'
+ +'<section class="vcard"><div class="vsec-h" style="margin:0 0 10px">数据与隐私</div>'
+ +'<div class="ac-note" style="margin:0 0 6px">作品、发布记录与连接登记内测期保存在本机；清除后不可恢复，不影响登录与基本资料，知识库资料请到「我的知识库」单独管理。</div>'
+ +'<div class="ac-actions"><button class="ac-btn danger" type="button" id="acClear">'+acIcon('trash')+'清除本机作品与记录</button><button class="ac-btn" type="button" data-acgo="logout">'+acIcon('logout')+'退出登录</button></div></section>'
+ +'</div></div>';
+}
+function acPanelQuota(){
+ var u=acUser();
+ var plan=(u.plan&&u.plan!=='free'&&u.plan!=='beta')?u.plan:'内测版';
+ var st=(!u.status||u.status==='active')?'正常':String(u.status);
+ var kpis=[[plan,'当前套餐'],[st,'账号状态'],['不限量','出图额度'],[String(parseInt(localStorage.getItem('hogee_gen_count')||'0',10)||0)+' 张','本机累计生成']];
+ var kpi='<div class="ac-kpis">'+kpis.map(function(k){return '<div class="ac-kpi"><div class="n">'+esc(k[0])+'</div><div class="l">'+k[1]+'</div></div>';}).join('')+'</div>';
+ var bens=[['img','商品图生成','白底图、场景图、详情页主图，手机实拍一键变商品图'],['pen','爆款文案','按小红书、抖音、朋友圈口吻写标题正文与话题'],['vid','营销视频','分镜、字幕、成片能力灰度开放，内测持续升级'],['book','企业知识库','上传产品资料，让伙计更懂你的生意'],['link','技能与连接','内置行业技能，登记通讯与媒体账号一键送达'],['spark','创作探索','官方作品墙，查看提示词并一键做同款']];
+ var ben='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 16px">内测权益</div><div class="ac-benefits">'+bens.map(function(b){return '<div class="ac-benefit"><div class="t">'+acIcon(b[0])+b[1]+'</div><div class="d">'+b[2]+'</div></div>';}).join('')+'</div></section>';
+ var usage='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 10px">本机用量</div>'
+  +'<div class="ac-row"><span class="k">我的作品（图 / 视频 / 文案）</span><span class="v">'+(typeof getStoredWorks==='function'?getStoredWorks().length:0)+' 件</span></div>'
+  +'<div class="ac-row"><span class="k">辅助发布记录</span><span class="v">'+acPubCount()+' 次</span></div>'
+  +'<div class="ac-row"><span class="k">知识库资料</span><span class="v" id="acKbCount">统计中…</span></div></section>';
+ var vip='<section class="vcard"><div class="vsec-h" style="margin:0 0 10px">正式会员 <span class="ac-badge gray">即将开放</span></div>'
+  +'<div class="ac-note" style="margin:0">正式版将推出分级会员套餐与按量加量包，覆盖更高额度、视频成片、团队协作与跨端同步等能力，价格与权益上线时在本页公布。内测期间注册登录即可使用，不限出图数量；本机计数切换设备暂不互通，正式版以账号云端统计为准。</div></section>';
+ return kpi+ben+usage+vip;
+}
+function acPanelHelp(){
+ var faqs=[
+  ['如何生成商品图？','点对话框左上角的「上传产品图」，传一张或多张手机实拍，再用一句话说明用途（如白底图、场景图、详情页主图、想要的风格），发送后阿图就会生成可上架的商品图。'],
+  ['都能做哪些内容？','商品图、动态图、爆款文案、营销视频分镜，并按平台整理发布素材包；阿视的视频成片能力正在灰度开放，会持续升级。'],
+  ['文案怎么生成？','直接在对话框说「写文案」，给出产品名和主打卖点，阿文会按小红书、抖音、朋友圈等不同平台的口吻写好标题、正文和话题标签。'],
+  ['怎么发到抖音、小红书这些平台？','在左栏「技能与连接」里登记媒体账号；素材备好后阿发会复制文案、打开发布页，最后一下由你本人点发送，Hogee 不碰你的账号密码。'],
+  ['企业知识库有什么用？','把产品资料、品牌手册、规格参数上传到「我的知识库」，阿文写文案、阿图出图时会参考这些资料，让内容更贴合你的真实生意。'],
+  ['现在收费吗？额度怎么算？','内测阶段注册登录即可使用，不限出图数量。正式版将上线会员套餐与按量加量包，价格与权益上线时在「会员状态」页公布。'],
+  ['支持哪些登录方式？会丢资料吗？','支持微信、手机号验证码、飞书 / 钉钉 / QQ 与邮箱登录。内测期作品与资料保存在本机，正式版将同步到账号云端、跨设备可查。'],
+  ['支持什么设备和浏览器？','Web 网页版推荐在电脑上用 Chrome / Edge 打开，手机浏览器也可使用；微信小程序、桌面客户端与 App 即将上线。']
+ ];
+ var faq='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 16px">常见问题</div><div class="ac-faq">'+faqs.map(function(f){return '<details><summary>'+f[0]+'<span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></summary><div class="a">'+f[1]+'</div></details>';}).join('')+'</div></section>';
+ var cards='<section class="vcard"><div class="vsec-h" style="margin:0 0 16px">教程与反馈</div><div class="ac-contact">'
+  +'<a class="ac-cc" href="https://www.workhogee.com/" target="_blank" rel="noopener"><span class="ci">'+acIcon('guide')+'</span><span class="ct">使用教程 / 官网</span><span class="cd">查看产品介绍、五个伙计的能力与上手示例。</span></a>'
+  +'<a class="ac-cc" href="mailto:910036590@qq.com?subject=WorkHogee%20%E5%B8%AE%E5%8A%A9%E4%B8%8E%E5%8F%8D%E9%A6%88"><span class="ci">'+acIcon('mail')+'</span><span class="ct">联系伙计团队</span><span class="cd">问题、建议或合作，发邮件到 910036590@qq.com。</span></a>'
+  +'<button class="ac-cc" type="button" data-acgo="connect"><span class="ci">'+acIcon('link')+'</span><span class="ct">技能与连接</span><span class="cd">登记通讯工具和媒体账号，做好的图文一键送达。</span></button>'
+  +'</div></section>';
+ return faq+cards;
+}
+function acPanelUpdate(){
+ var logs=[
+  ['v0.9.5','2026-09-22','账号中心改为独立页面（账号管理 / 会员状态 / 帮助中心 / 版本更新）；左栏新增「技能与连接」；素材区更名为「Hogee创作探索」。'],
+  ['v0.9.4','2026-09-21','深色创作工作台改版；创作探索支持提示词与「做同款」；素材多规格瀑布流与点击放大。'],
+  ['v0.9.3','2026-09-20','新增视频伙计阿视，五个伙计接力（生图 / 文案 / 视频 / 发布 / 效果）；外贸版宣传片上线。'],
+  ['v0.9.2','2026-09-19','对话式 Agent 工作台、会员注册登录与本机作品库。'],
+  ['v0.9.1','2026-09-18','统一深色玻璃视图，发布管理与效果监控打通。'],
+  ['内测启动','2026-09','商品图生成、爆款文案、半自动发布、H5 画册与效果看板陆续上线内测。']
+ ];
+ var cur='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 10px">当前版本</div>'
+  +'<div class="ac-row"><span class="k">版本号</span><span class="v">'+APP_VER+'</span></div>'
+  +'<div class="ac-row"><span class="k">产品形态</span><span class="v">Web 网页版</span></div>'
+  +'<div class="ac-row"><span class="k">更新方式</span><span class="v">网页版自动更新，刷新即为最新</span></div>'
+  +'<div class="ac-actions"><button class="ac-btn primary" type="button" id="acReload">'+acIcon('refresh')+'检查更新</button></div></section>';
+ var log='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 18px">更新日志</div>'+logs.map(function(l){return '<div class="ac-log"><div class="lt">'+l[1]+'<span class="lv">'+l[0]+'</span></div><div class="ld">'+l[2]+'</div></div>';}).join('')+'<div class="ac-note">内测持续迭代，部分能力灰度开放；以你刷新后看到的页面为准。</div></section>';
+ var ends='<section class="vcard"><div class="vsec-h" style="margin:0 0 10px">多端规划</div>'
+  +'<div class="ac-row"><span class="k">Web 网页版</span><span class="v"><span class="ac-badge">当前可用</span></span></div>'
+  +'<div class="ac-row"><span class="k">微信小程序</span><span class="v"><span class="ac-badge gray">即将上线</span></span></div>'
+  +'<div class="ac-row"><span class="k">桌面客户端</span><span class="v"><span class="ac-badge gray">即将上线</span></span></div>'
+  +'<div class="ac-row"><span class="k">手机 App</span><span class="v"><span class="ac-badge gray">即将上线</span></span></div></section>';
+ return cur+log+ends;
+}
+function openAccountView(tab){
+ tab=(tab==='quota'||tab==='help'||tab==='update')?tab:'profile';
+ if(!(window.HogeeMember&&HogeeMember.isLoggedIn&&HogeeMember.isLoggedIn())){if(window.toast)toast('请先登录后查看账号信息');if(window.HogeeMember)HogeeMember.open('login');return;}
+ closeAnalytics();try{closeDeliver();}catch(e){}
+ setMenuActive(null);
+ placeComposer(false);document.body.dataset.stage='account';
+ scroll.innerHTML='';
+ var meta={profile:['账号管理','管理头像、店铺资料、登录方式与账号安全。资料内测期保存在本机，正式版将同步到账号云端。'],
+  quota:['会员状态','查看套餐、出图额度、内测权益与本机用量。内测阶段注册登录即可使用，不限出图数量。'],
+  help:['帮助中心','常见问题、使用教程与反馈通道。遇到问题先看这里，也可以随时联系伙计团队。'],
+  update:['版本更新','网页版自动保持最新，刷新即为最新版本；这里记录每次迭代带来的新能力。']}[tab];
+ var v=document.createElement('div');v.className='view';v.id='accountView';
+ var tabs='<div class="atabs">'+AC_TABS.map(function(t){return '<button class="atab'+(t.k===tab?' on':'')+'" data-atab="'+t.k+'">'+t.n+'</button>';}).join('')+'</div>';
+ v.innerHTML='<div class="view-head"><div><div class="view-title">'+meta[0]+'</div><div class="view-sub">'+meta[1]+'</div></div><div class="view-actions">'+tabs+'</div></div>'
+  +'<div class="apanel" id="acPanel">'+({profile:acPanelProfile,quota:acPanelQuota,help:acPanelHelp,update:acPanelUpdate}[tab])()+'</div>';
+ scroll.appendChild(v);scrollBox.scrollTop=0;
+ acBind(v);acFillKb();
+}
+function acFillKb(){var el=document.getElementById('acKbCount');if(!el)return;if(typeof kbAll!=='function'){el.textContent='—';return;}kbAll().then(function(a){el.textContent=(a?a.length:0)+' 份';}).catch(function(){el.textContent='—';});}
+function acCompress(dataUrl,cb){var img=new Image();img.onload=function(){var sz=256,cv=document.createElement('canvas');cv.width=sz;cv.height=sz;var ctx=cv.getContext('2d');var k=Math.min(img.width,img.height)||sz;ctx.drawImage(img,(img.width-k)/2,(img.height-k)/2,k,k,0,0,sz,sz);try{cb(cv.toDataURL('image/jpeg',.85));}catch(e){cb(dataUrl);}};img.onerror=function(){cb(dataUrl);};img.src=dataUrl;}
+function acBind(v){
+ v.addEventListener('click',function(e){
+  var tb=e.target.closest('[data-atab]');if(tb){openAccountView(tb.getAttribute('data-atab'));return;}
+  var go=e.target.closest('[data-acgo]');if(go){var g=go.getAttribute('data-acgo');
+    if(g==='connect')openConnect();else if(g==='analytics')openAnalytics();else if(g==='home')goHome();
+    else if(g==='logout'){if(window.HogeeMember){HogeeMember.logout();if(window.toast)toast('已退出登录');}goHome();}
+    return;}
+  if(e.target.closest('#acReload')){location.href=location.pathname+'?cb='+Date.now();return;}
+  if(e.target.closest('#acClear')){if(window.confirm('将清除本机的作品、辅助发布记录与账号连接登记，不影响登录和基本资料，且不可恢复。确定清除吗？')){['hogee_works','hogee_publish','hogee_connections','hogee_kb_text','hogee_gen_count'].forEach(function(k){try{localStorage.removeItem(k);}catch(x){}});if(window.toast)toast('本机作品与记录已清除');openAccountView('profile');}return;}
+ });
+ var up=v.querySelector('#acAvaUp'),rm=v.querySelector('#acAvaRm'),save=v.querySelector('#acSave');
+ if(up){var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.style.display='none';v.appendChild(inp);
+  inp.addEventListener('change',function(){var f=inp.files&&inp.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){acCompress(rd.result,function(d){var el=v.querySelector('#acAva');if(el){el.innerHTML='<img src="'+d+'" alt="头像">';el.setAttribute('data-new',d);el.removeAttribute('data-rm');}});};rd.readAsDataURL(f);});
+  up.addEventListener('click',function(){inp.click();});}
+ if(rm)rm.addEventListener('click',function(){var el=v.querySelector('#acAva');if(el){el.removeAttribute('data-new');el.setAttribute('data-rm','1');el.textContent=acInitial();}});
+ if(save)save.addEventListener('click',function(){
+  var prof={contactName:(v.querySelector('#acContact')||{}).value?(v.querySelector('#acContact').value.trim()):'',merchantName:(v.querySelector('#acMerchant')||{}).value?v.querySelector('#acMerchant').value.trim():'',industry:(v.querySelector('#acIndustry')||{}).value?v.querySelector('#acIndustry').value:'通用电商',avatar:acProf().avatar||''};
+  var ae=v.querySelector('#acAva');
+  if(ae&&ae.getAttribute('data-new'))prof.avatar=ae.getAttribute('data-new');
+  else if(ae&&ae.hasAttribute('data-rm'))prof.avatar='';
+  try{localStorage.setItem('hogee_profile',JSON.stringify(prof));}catch(e){}
+  if(window.HG_renderAccount)HG_renderAccount();if(window.toast)toast('资料已保存在本机');openAccountView('profile');
+ });
+}
+window.openAccountView=openAccountView;
+
 
 /* ================= 发布管理（阿发辅助发布记录，本地持久） ================= */
 var PUB_LS='hogee_publish';
@@ -3834,7 +4045,7 @@ initLayout();
       switch:_bs+'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>',
       logout:_bs+'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'};
     function _mi(k,t,c){return '<button class="wb-mi'+(c?' '+c:'')+'" data-am="'+k+'"><span class="ic">'+MI[k]+'</span>'+t+'</button>';}
-    menu.innerHTML=_mi('profile','账号')+_mi('quota','额度')+'<div class="wb-sep"></div>'+_mi('help','帮助')+_mi('update','更新')+'<div class="wb-sep"></div>'+_mi('switch','切换')+_mi('logout','退出','danger');
+    menu.innerHTML=_mi('profile','账号管理')+_mi('quota','会员状态')+'<div class="wb-sep"></div>'+_mi('help','帮助中心')+_mi('update','版本更新')+'<div class="wb-sep"></div>'+_mi('switch','账号切换')+_mi('logout','账号退出','danger');
   }
   function openMenu(){buildMenu();menu.classList.add('open');}
   function closeMenu(){menu.classList.remove('open');}
@@ -3886,12 +4097,7 @@ initLayout();
   }
   function onMenu(k){
     closeMenu();
-    if(k==='profile'){showProfile();}
-    else if(k==='quota'){showQuota();}
-    else if(k==='cloud'){if(window.setDeliverTab)setDeliverTab('all');if(window.openDeliver)openDeliver();if(window.toast)toast('交付物按 图片 / 动态 / 视频 / 图文 / 送达 归档');}
-    else if(k==='site'){window.open('https://www.workhogee.com/','_blank','noopener');}
-    else if(k==='help'){window.open('mailto:910036590@qq.com?subject=WorkHogee%20%E5%B8%AE%E5%8A%A9%E4%B8%8E%E5%8F%8D%E9%A6%88','_blank');if(window.toast)toast('已为你打开邮件反馈');}
-    else if(k==='update'){if(window.toast)toast('当前已是最新版本，网页版会自动更新');}
+    if(k==='profile'||k==='quota'||k==='help'||k==='update'){if(window.openAccountView)window.openAccountView(k);}
     else if(k==='switch'){if(M){M.logout();setTimeout(function(){M.open('login');},260);}}
     else if(k==='logout'){if(M){M.logout();if(window.toast)toast('已退出登录');}}
   }
