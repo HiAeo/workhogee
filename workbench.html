@@ -2283,10 +2283,11 @@ function callQcVision(dataUrl){
 
 /* ================= API ================= */
 function authHeaders(){return (window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};}
-function callGenerate(prompt,imagePayload,size){
+function callGenerate(prompt,imagePayload,size,refKind){
  var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},110000);
+ var __gb={prompt:prompt,image:imagePayload,size:size||'2048x2048'};if(refKind)__gb.refKind=refKind;
  return fetch(API+'/generate',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),signal:ctrl.signal,
-  body:JSON.stringify({prompt:prompt,image:imagePayload,size:size||'2048x2048'})})
+  body:JSON.stringify(__gb)})
  .then(function(resp){clearTimeout(timer);return resp.json().catch(function(){return null;}).then(function(j){
   if(resp.ok&&j&&j.ok&&j.b64)return 'data:image/jpeg;base64,'+j.b64;
   var code=j&&j.error&&j.error.code,msg=j&&j.error&&j.error.message;
@@ -2298,8 +2299,8 @@ function callGenerate(prompt,imagePayload,size){
   throw new Error(msg||('图像服务返回 '+resp.status));
  });}).catch(function(e){clearTimeout(timer);throw e;});
 }
-function callGenerateRetry(prompt,imagePayload,size,onTick){
- function attempt(n){return callGenerate(prompt,imagePayload,size).catch(function(e){
+function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
+ function attempt(n){return callGenerate(prompt,imagePayload,size,refKind).catch(function(e){
   if(e&&typeof e.code==='string'&&e.code.indexOf('member')===0)throw e;
   if(e&&e.code==='rate_limited')return sleep(2600).then(function(){return attempt(n);});
   if(n>=2)throw e;return sleep(1300).then(function(){onTick&&onTick();return attempt(n+1);});
@@ -4460,6 +4461,10 @@ function buildJobs(){
    }
   });
  });
+ jobs.forEach(function(j){
+  if(String(j.k).indexOf('onsite')===0){j.refKind='bg-composite';}
+  else if(Array.isArray(j.image)&&j.image.length>1){j.refKind='multi-angle';}
+ });
  return jobs;
 }
 function runGenerate(){
@@ -4467,7 +4472,7 @@ function runGenerate(){
  if(!jobs.length){toast('请至少选择一种要出的图','err');return;}
  var __go=function(){
   var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
-  var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 15–25 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
+  var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 20–40 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
   var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div></div>','atu');
   var genSize=state.quality==='hd'?'2304x2304':'2048x2048';
   (async function(){
@@ -4476,7 +4481,7 @@ function runGenerate(){
     var row=$('.prog-task[data-k="'+jobs[i].k+'"]',pc);
     if(row){row.classList.add('run');$('.pt-state',row).textContent='出图中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
     try{
-     var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize);
+     var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize,jobs[i].refKind);
      if(token!==state.genToken)return;
      var __res={url:url,label:jobs[i].label,k:jobs[i].k,ts:Date.now()};state.results.push(__res);persistResult(__res,jobs[i].label);
      if(window.HG_bumpGen)window.HG_bumpGen();
@@ -4975,7 +4980,7 @@ async function redoOne(i){
  if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
  var job=buildJobs().filter(function(j){return j.k===r.k;})[0];if(!job){toast('找不到原任务');return;}
  var stop=botTyping('atu');
- try{var url=await callGenerateRetry(job.prompt,job.image,state.quality==='hd'?'2304x2304':'2048x2048');stop();
+ try{var url=await callGenerateRetry(job.prompt,job.image,state.quality==='hd'?'2304x2304':'2048x2048',job.refKind);stop();
   state.results[i].url=url;state.results[i].tosKey='';state.results[i]._tosBusy=false;if($('#lbImg').src&&$('#lightbox').classList.contains('show'))$('#lbImg').src=url;
   persistResult(state.results[i],state.results[i].label);renderDeliver();toast('已重做，看看这张');
  }catch(e){stop();toast(e.message||'重做失败','err');}
