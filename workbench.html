@@ -309,7 +309,7 @@ body[data-deliver="open"]{--deliver:380px}
 .pop button:hover{background:rgba(255,255,255,.05);color:var(--tx)}
 
 /* 右列 交付物 */
-.deliver{background:var(--panel);display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--line2)}
+.deliver{background:var(--panel);display:flex;flex-direction:column;min-height:0;overflow:hidden;border-left:1px solid var(--line2)}
 .dl-top{flex:none;height:56px;border-bottom:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
 .dl-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:9px}
 .dl-count{font-size:11px;font-weight:700;color:var(--orange);background:var(--orange-soft);border-radius:999px;padding:2px 9px;display:none}
@@ -476,6 +476,7 @@ body[data-deliver="open"]{--deliver:380px}
 
 /* 响应式 */
 .rail-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.60);z-index:40}
+@media(min-width:1081px){.rail{grid-column:1}.stage{grid-column:2}.deliver{grid-column:3}}
 @media(max-width:1080px){
   .app{grid-template-columns:var(--rail) 1fr}
   .deliver{position:fixed;right:0;top:0;bottom:0;width:min(420px,92vw);z-index:60;transform:translateX(100%);transition:transform .26s;box-shadow:-24px 0 60px rgba(0,0,0,.55)}
