@@ -542,7 +542,7 @@ body[data-deliver="open"]{--deliver:380px}
   body[data-rail="mini"] .rail:hover .rail-scroll{padding:4px 12px 12px}
   body[data-rail="mini"] .rail:hover .btn-new{justify-content:flex-start;padding:11px 14px;font-size:13.5px}
   body[data-rail="mini"] .rail:hover .btn-new .pl{margin-right:0}
-  body[data-rail="mini"] .rail:hover .rmenu button{justify-content:flex-start;padding:9px 10px;font-size:13.5px}
+  body[data-rail="mini"] .rail:hover .rmenu button{flex-direction:row;width:100%;height:44px;gap:12px;justify-content:flex-start;text-align:left;padding:9px 10px;font-size:13.5px}
   body[data-rail="mini"] .rail:hover .rgroup,body[data-rail="mini"] .rail:hover .skill-now,body[data-rail="mini"] .rail:hover .rail-ver{display:block}
   body[data-rail="mini"] .rail:hover .task-empty{display:block}
   body[data-rail="mini"] .rail:hover .task-item{justify-content:flex-start;padding:7px 8px}
@@ -784,14 +784,8 @@ body[data-rail="mini"] .rail:hover .rlabel{display:block}
  color:var(--tx3);font-weight:600}
 .rmenu button.on{background:rgba(255,255,255,.10);color:#fff;box-shadow:none}
 .rmenu button.on:hover{background:rgba(255,255,255,.15);color:#fff}
-/* mini 收起态保持纯图标；hover 浮起展开也沿用竖向，浮层半透明同色玻璃 */
+/* mini 收起态保持纯图标；hover 浮层恢复正常水平宽导航（见上方 :hover 规则） */
 body[data-rail="mini"] .rmenu button{width:auto;padding:11px 0}
-body[data-rail="mini"] .rail:hover{background:rgba(13,17,25,.92);
- -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-right:1px solid var(--line2)}
-body[data-rail="mini"] .rail:hover .rmenu{align-items:center}
-body[data-rail="mini"] .rail:hover .rmenu button{flex-direction:column;align-items:center;justify-content:center;
- text-align:center;gap:6px;width:104px;margin:0 auto;padding:11px 6px 10px;font-size:11.5px}
-body[data-rail="mini"] .rail:hover .rlabel{display:block;text-align:center;width:104px;margin:15px auto 7px}
 /* welcome 玻璃输入底座 */
 body[data-stage="welcome"] .cmp-card{
  background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
@@ -2160,7 +2154,8 @@ function renderTaskList(){
   }
   return '<div class="'+cls+'" data-tid="'+t.id+'"'+(editing||confirming?'':' title="'+esc(t.title)+'"')+'>'+head+mid+acts+'</div>';
  }).join('');
- if(arr.length>TL_LIMIT){box.innerHTML+=expanded?'<button class="task-more" type="button" data-tact="collapseList">收起</button>':'<button class="task-more" type="button" data-tact="expandlist">展开全部 '+arr.length+' 条</button>';}
+ var __tmMore='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',__tmLess='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>';
+ if(arr.length>TL_LIMIT){box.innerHTML+=expanded?'<button class="task-more" type="button" data-tact="collapseList" aria-label="收起对话列表">'+__tmLess+'</button>':'<button class="task-more" type="button" data-tact="expandlist" aria-label="展开全部对话">'+__tmMore+'</button>';}
  var ei=box.querySelector('.tk-edit');if(ei){try{ei.focus();ei.select();}catch(x){}}
 }
 function taskAct(act,id,e){
@@ -2311,7 +2306,7 @@ function downscaleDataUrls(list,longEdge){
  });}));
 }
 async function callGenerate(prompt,imagePayload,size,refKind){
- var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},110000);
+ var __gto=(refKind==='multi-angle')?200000:150000;var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},__gto);
  try{state._curCtrl=ctrl;}catch(e){}
  var __gb={prompt:prompt,image:imagePayload,size:size||'2048x2048'};if(refKind)__gb.refKind=refKind;
  if(refKind==='multi-angle'&&Array.isArray(imagePayload)&&imagePayload.length>1){
@@ -4533,6 +4528,7 @@ function runGenerate(){
      var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize,jobs[i].refKind);
      if(token!==state.genToken)return;
      var __res={url:url,label:jobs[i].label,k:jobs[i].k,ts:Date.now()};state.results.push(__res);persistResult(__res,jobs[i].label);
+     if(state.results.length===1)openDeliver();
      if(window.HG_bumpGen)window.HG_bumpGen();
      markTaskProgress();
      if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
@@ -4550,7 +4546,7 @@ function runGenerate(){
  if(window.HogeeMember){HogeeMember.requireAuth().then(__go).catch(function(){});}else{__go();}
 }
 function finishGenerate(){
- state.stage='result';exitTaskFocus();
+ state.stage='result';
  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以「再来一单」。','atu');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>','atu');renderDeliver();return;}
  botSay('齐活。<b>'+state.results.length+' 张成品</b>已放进右侧「交付物」，阿文的分渠道文案也备好了；看图、单张重做、打包、做画册、送达各平台都在右边。','atu');
@@ -4580,7 +4576,6 @@ function closeDeliver(){try{sessionStorage.setItem('hw.dlUserClosed','1');}catch
 function enterTaskFocus(){
  document.body.classList.add('task-focus');
  document.body.dataset.rail='mini';
- openDeliver();
 }
 function exitTaskFocus(){
  document.body.classList.remove('task-focus');
