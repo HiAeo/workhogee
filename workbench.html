@@ -2998,16 +2998,25 @@ function heroWelcome(){
  ];
  function rcEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
  function rcPlaySvg(){return '<span class="rc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></span>';}
+ /* 卡片媒体瘦身：TOS 原图最大数 MB，作品墙卡片只展示数百像素，统一走 TOS 数据处理
+  * 取缩放 WebP / 视频截帧海报（单张从数 MB 降到几十 KB）；灯箱与做同款才用原图。
+  * 非 TOS（站点静态）素材原样返回。可复用，纯函数。 */
+ function hmIsTos(u){return /^https:\/\/[^/]*volces\.com\//.test(String(u));}
+ function hmProc(u,e){u=String(u);if(!hmIsTos(u))return u;return u+(u.indexOf('?')<0?'?':'&')+'x-tos-process='+encodeURIComponent(e);}
+ function hmBig(d){return d&&(d.sz==='wide'||d.sz==='lg');}
+ function hmImgThumb(d){return hmProc(d.src,'image/resize,'+(hmBig(d)?'w_900':'w_480')+'/format,webp/quality,q_'+(hmBig(d)?'82':'80'));}
+ function hmOneThumb(u,big){return hmProc(u,'image/resize,'+(big?'w_900':'w_480')+'/format,webp/quality,q_'+(big?'82':'80'));}
+ function hmVidPoster(d){return hmProc(d.src,'video/snapshot,t_1200,f_jpg,'+(hmBig(d)?'w_900':'w_480'));}
  function rcImg(d){
   var act=d.mine?'data-openworks="1"':'data-lightbox="'+d.src+'"';
   return '<button type="button" class="rcard sz-'+(d.sz||'sq')+(d.mine?' mine':'')+'" '+act+'>'
-   +'<div class="rc-ph"><img src="'+d.src+'" alt="'+rcEsc(d.cap)+'" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)"><span class="rc-shade"></span>'
+   +'<div class="rc-ph"><img src="'+hmImgThumb(d)+'" alt="'+rcEsc(d.cap)+'" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)"><span class="rc-shade"></span>'
    +'<span class="rc-tag">'+(d.mine?'我的作品':(d.tag||'功能演示'))+'</span><span class="rc-cap">'+rcEsc(d.cap)+'</span></div></button>';
  }
  function rcBa(d){
   return '<div class="rcard rc-ba ba sz-'+(d.sz||'sq')+'" data-ba><div class="rc-ph ph">'
-   +'<img class="ba-after" src="'+d.after+'" alt="AI 成品" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)">'
-   +'<img class="ba-before" src="'+d.before+'" alt="手机原图" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)">'
+   +'<img class="ba-after" src="'+hmOneThumb(d.after,true)+'" alt="AI 成品" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)">'
+   +'<img class="ba-before" src="'+hmOneThumb(d.before,true)+'" alt="手机原图" loading="lazy" data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)">'
    +'<span class="ba-tag bf">手机原图</span><span class="ba-tag af">AI 成品</span><span class="ba-line"></span>'
    +'<span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span>'
    +'<span class="rc-shade"></span><span class="rc-cap">'+rcEsc(d.cap)+'</span></div></div>';
@@ -3015,7 +3024,7 @@ function heroWelcome(){
  function rcFirstFrame(src){return src+(src.indexOf('#')<0?'#t=0.5':'');}
  function rcVideo(d){
   return '<div class="rcard rc-v sz-'+(d.sz||'wide')+'" data-lbvideo="'+d.src+'"><div class="rc-ph">'
-   +'<video src="'+rcFirstFrame(d.src)+'"'+((d.poster&&d.poster!=='undefined')?' poster="'+d.poster+'"':'')+' preload="metadata" muted loop playsinline data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)"></video>'
+   +'<video preload="none" poster="'+hmVidPoster(d)+'" muted loop playsinline data-hmid="'+rcEsc(d.id)+'" onerror="hmMediaFail(this)"></video>'
    +(d.feat?'<span class="rc-badge">GLOBAL 外贸版</span>':'<span class="rc-tag">功能演示</span>')
    +rcPlaySvg()+'<span class="rc-shade"></span><span class="rc-cap">'+rcEsc(d.cap)+'</span></div></div>';
  }
@@ -3091,7 +3100,7 @@ function heroWelcome(){
  function renderHmRail(h){
   var rail=h.querySelector('#hmRail');if(!rail)return;
   rail.innerHTML='<div class="hm-loading">Hogee创作探索加载中…</div>';
-  fetch(API+'/api/feed?_='+Date.now(),{cache:'no-store',headers:{'Accept':'application/json'}})
+  fetch(API+'/api/feed',{headers:{'Accept':'application/json'}})
    .then(function(r){if(!r.ok)throw new Error('feed '+r.status);return r.json();})
    .then(function(j){if(j&&j.ok&&Array.isArray(j.items)){HM_CATS_CUSTOM=(j&&j.cats)||[];hmPaintTabs(h);hmPaintRail(h,j.items,hmIsAdmin());}else hmFallback(h);})
    .catch(function(){hmFallback(h);});
@@ -3183,7 +3192,7 @@ function hmTogglePin(id,h){
   .catch(function(){if(HG.toast)HG.toast('操作失败，请确认已用官方账号登录');});
 }
 document.addEventListener('click',function(e){var p=document.getElementById('hmPop');if(p&&p.classList.contains('show')&&!p.contains(e.target)&&!(e.target.closest&&e.target.closest('#hmCatAdd'))&&!(e.target.closest&&e.target.closest('#hmAddBtn')))hmPopClose();});
-document.addEventListener('mouseover',function(e){var c=e.target.closest&&e.target.closest('.rc-v');if(!c)return;var v=c.querySelector('video');if(v){v.muted=true;v.loop=true;var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});c.classList.add('playing');}});
+document.addEventListener('mouseover',function(e){var c=e.target.closest&&e.target.closest('.rc-v');if(!c)return;var v=c.querySelector('video');if(v){v.muted=true;v.loop=true;if(!v.src){v.src=rcFirstFrame(c.getAttribute('data-lbvideo'));}var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});c.classList.add('playing');}});
 document.addEventListener('mouseout',function(e){var c=e.target.closest&&e.target.closest('.rc-v');if(!c)return;if(e.relatedTarget&&c.contains(e.relatedTarget))return;var v=c.querySelector('video');if(v){try{v.pause();v.currentTime=0;}catch(x){}c.classList.remove('playing');}});
 
 
@@ -3491,7 +3500,7 @@ var HM_STRIP=[
  {kind:'video',src:'/media/workhogee-global.mp4',poster:'/media/workhogee-global-poster.jpg',cap:'营销视频 · 阿视成片'},
  {kind:'copy'}
 ];
-function baCardHtml(d,cls){return '<div class="fic wide ba '+cls+'" data-ba><div class="ph"><img class="ba-after" src="'+d.after+'" alt="AI 成品"><img class="ba-before" src="'+d.before+'" alt="手机原图"><span class="ba-tag bf">手机原图</span><span class="ba-tag af">AI 成品</span><span class="ba-line"></span><span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span><span class="fic-cap">'+d.cap+'</span></div></div>';}
+function baCardHtml(d,cls){return '<div class="fic wide ba '+cls+'" data-ba><div class="ph"><img class="ba-after" src="'+hmOneThumb(d.after,true)+'" alt="AI 成品"><img class="ba-before" src="'+hmOneThumb(d.before,true)+'" alt="手机原图"><span class="ba-tag bf">手机原图</span><span class="ba-tag af">AI 成品</span><span class="ba-line"></span><span class="ba-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="m15 7 5 5-5 5"/></svg></span><span class="fic-cap">'+d.cap+'</span></div></div>';}
 function imgCardHtml(src,cap,cls,mine){return '<button class="fic '+cls+'" '+(mine?'data-openworks':'data-lightbox="'+src+'"')+' type="button"><div class="ph"><img src="'+src+'" alt="'+esc(cap)+'"><span class="fic-cap">'+esc(cap)+'</span>'+(mine?'<span class="hm-mine">我的作品</span>':'<span class="hm-demo">功能演示</span>')+'</div></button>';}
 function videoCardHtml(d,cls){return '<div class="fic '+cls+' fic-video"><div class="ph"><video src="'+d.src+'" poster="'+d.poster+'" preload="metadata" muted loop playsinline controls></video><span class="fic-cap">'+d.cap+'</span><span class="hm-demo">功能演示</span></div></div>';}
 function copyCardHtml(cls){return '<button class="fic '+cls+' fic-copy" type="button" data-mate="awen"><span class="fc-t">'+IC.pen+'阿文 · 爆款文案</span><span class="fc-l">同款商品，小红书、抖音、朋友圈各写一版：标题抓眼、卖点清楚、话题标签配齐，广告法极限词自动过滤。</span><span class="fc-go">让阿文写一版 →</span></button>';}
