@@ -521,6 +521,8 @@ body[data-deliver="open"]{--deliver:380px}
   body[data-rail="mini"] .task-item{justify-content:center;padding:9px 0}
   body[data-rail="mini"] .task-item .tk-name,body[data-rail="mini"] .task-item .tk-pin,body[data-rail="mini"] .task-item .tk-acts{display:none}
   body[data-rail="mini"] .task-item .tk-ico svg{width:18px;height:18px}
+  body[data-rail="mini"] #taskList .task-more{display:none}
+  body[data-rail="mini"] .rail:hover #taskList .task-more{display:flex}
   body[data-rail="mini"] .partner{justify-content:center;padding:10px 0}
   body[data-rail="mini"] .partner .pn,body[data-rail="mini"] .partner .hire{display:none}
   body[data-rail="mini"] .pavatar{width:38px;height:38px;border-radius:11px}
@@ -633,7 +635,7 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .rgroup{display:flex;align-items:center;justify-content:space-between;align-self:stretch;margin:16px 6px 8px;font-size:14px;font-weight:600;letter-spacing:.2px;color:var(--tx2);text-transform:none}
 .rgroup-txt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tasklist{align-self:stretch;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:1px}
-.tasklist .task-item{margin:0}
+.tasklist .task-item{margin:0}#taskList .task-more{width:100%;margin-top:5px;padding:7px 8px;border:0;background:transparent;color:var(--tx3);font-size:12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}#taskList .task-more:hover{color:var(--orange);background:var(--orange-soft)}
 #taskList .task-item .tk-ico{color:var(--tx3)}
 #taskList .task-item.active .tk-ico{color:var(--orange)}
 .rmenu .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;min-width:24px;flex:none;margin:0;padding:0;gap:0;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
@@ -1657,14 +1659,14 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
       <nav class="rmenu" id="mainMenu">
         <div class="rgroup"><span class="rgroup-txt">工作台</span></div>
         <button id="menuHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/></svg>Hogee创作</button>
-        <div class="rgroup"><span class="rgroup-txt">对话</span><button class="rgroup-add" id="btnNewChat" type="button" title="新建对话" aria-label="新建对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
-        <div id="taskList" class="tasklist"></div>
         <div class="rgroup"><span class="rgroup-txt">我的</span></div>
         <button id="navKnowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>我的知识库</button>
         <button id="navWorks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>我的创作</button>
         <button id="navPublish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发布管理</button>
         <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果监控</button>
         <button id="navConnect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.6-2.6a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-2.6 2.6a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg>技能与连接</button>
+        <div class="rgroup"><span class="rgroup-txt">对话</span><button class="rgroup-add" id="btnNewChat" type="button" title="新建对话" aria-label="新建对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        <div id="taskList" class="tasklist"></div>
       </nav>
 
     </div>
@@ -2129,14 +2131,16 @@ function markTaskProgress(){
  saveTasks(arr);renderTaskList();
 }
 function archiveCurrentTask(){if(state.identity&&((state.product&&state.product.name)||(state.results&&state.results.length)||state.images.length))markTaskProgress();}
-var taskEditingId=null,taskConfirmDelId=null;
+var taskEditingId=null,taskConfirmDelId=null,taskListExpanded=false;
 function pinTaskSort(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;}
 var ICHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 var IX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 function renderTaskList(){
  var box=document.getElementById('taskList');if(!box)return;var arr=loadTasks();
  if(!arr.length){box.innerHTML='<div class="task-empty">还没有对话，发一句话或传张产品图开始。</div>';return;}
- box.innerHTML=arr.map(function(t){
+ var expanded=taskListExpanded||taskEditingId||taskConfirmDelId;
+ var TL_LIMIT=7,show=(!expanded&&arr.length>TL_LIMIT)?arr.slice(0,TL_LIMIT):arr;
+ box.innerHTML=show.map(function(t){
   var editing=t.id===taskEditingId,confirming=t.id===taskConfirmDelId;
   var cls='task-item'+(t.id===state.taskId?' active':'')+(editing?' editing':'')+(confirming?' confirming':'');
   var head='<span class="tk-ico">'+ICHAT+'</span>',mid,acts;
@@ -2156,11 +2160,14 @@ function renderTaskList(){
   }
   return '<div class="'+cls+'" data-tid="'+t.id+'"'+(editing||confirming?'':' title="'+esc(t.title)+'"')+'>'+head+mid+acts+'</div>';
  }).join('');
+ if(arr.length>TL_LIMIT){box.innerHTML+=expanded?'<button class="task-more" type="button" data-tact="collapseList">收起</button>':'<button class="task-more" type="button" data-tact="expandlist">展开全部 '+arr.length+' 条</button>';}
  var ei=box.querySelector('.tk-edit');if(ei){try{ei.focus();ei.select();}catch(x){}}
 }
 function taskAct(act,id,e){
  if(e&&e.stopPropagation)e.stopPropagation();
  var arr=loadTasks();
+ if(act==='expandlist'){taskListExpanded=true;renderTaskList();return;}
+ if(act==='collapseList'){taskListExpanded=false;renderTaskList();return;}
  if(act==='rename'){taskConfirmDelId=null;taskEditingId=id;renderTaskList();return;}
  if(act==='renamecancel'){taskEditingId=null;renderTaskList();return;}
  if(act==='renameok'){
@@ -2192,6 +2199,7 @@ function openTask(id){
  state.product=t.product||{name:''};
  state.activePartner=(t.partner&&partnerById(t.partner))?t.partner:'host';
  state.stage=(t.results||t.imgs)?'result':'chat';
+ exitTaskFocus();
  placeComposer(false);
  scroll.innerHTML='';
  setMenuActive('menuHome');
@@ -2861,7 +2869,7 @@ function bindKbView(root){
 function kbFolderIco(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>';}
 function kbPencil(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';}
 
-function goHome(){closeAnalytics();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();var _c=document.querySelector('.composer'),_st=document.querySelector('.stage'),_chat=document.getElementById('chatScroll');if(_c&&_st&&_c.parentNode!==_st){_st.insertBefore(_c,_chat?_chat.nextSibling:null);}scroll.innerHTML='';state.stage='welcome';heroWelcome();placeComposer(true);}
+function goHome(){closeAnalytics();exitTaskFocus();try{closeDeliver();}catch(e){}setMenuActive('menuHome');state.activePartner='host';renderPartners();renderTopbar();var _c=document.querySelector('.composer'),_st=document.querySelector('.stage'),_chat=document.getElementById('chatScroll');if(_c&&_st&&_c.parentNode!==_st){_st.insertBefore(_c,_chat?_chat.nextSibling:null);}scroll.innerHTML='';state.stage='welcome';heroWelcome();placeComposer(true);}
 function enterMate(id){closeAnalytics();setActivePartner(id);}
 function closeLab(){$('#labModal').classList.remove('show');}
 function renderLab(){
@@ -4107,6 +4115,7 @@ function handleFiles(fileList){
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
  if(!files.length)return;
  if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
+ enterTaskFocus();
  var stop=botTyping('atu');
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){stop();state.images=state.images.concat(arr);refreshShots();
@@ -5338,6 +5347,7 @@ function openAgLead(id){
 }
 function newOrder(){
  closeAnalytics();
+ exitTaskFocus();
  archiveCurrentTask();
  var hires=state.hires;
  state=resetState();state.hires=hires;
@@ -5763,7 +5773,7 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
   var cq=e.target.closest('[data-cq]');
   if(cq){cqAction(cq.dataset.cq);return;}
   var ta=e.target.closest('#taskList [data-tact]');
-  if(ta){taskAct(ta.dataset.tact,ta.closest('[data-tid]').dataset.tid,e);return;}
+  if(ta){var _tt=ta.closest('[data-tid]');taskAct(ta.dataset.tact,_tt?_tt.dataset.tid:null,e);return;}
   var ti=e.target.closest('#taskList [data-tid]');
   if(ti){if(e.target.closest('.tk-edit'))return;if(e.target.closest('.tk-warn')){taskConfirmDelId=null;renderTaskList();return;}closeAnalytics();openTask(ti.dataset.tid);return;}
   var q=e.target.closest('[data-quick]');
