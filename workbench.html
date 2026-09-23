@@ -5966,7 +5966,7 @@ function handleAct(b){
  else if(act==='pickFmt'){state.fmt=b.dataset.v;$$('[data-act="pickFmt"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.fmt);});}
  else if(act==='pickQuality'){state.quality=b.dataset.v;$$('[data-act="pickQuality"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.quality);});syncQuality();}
  else if(act==='startGen'){var outs=OUTPUTS[state.identity.type==='usedcar'?'usedcar':'general'],summary=[];state.outputs.forEach(function(kk){var o=outs.filter(function(x){return x.k===kk;})[0];summary.push(o?o.t:kk);});
-  userSay('开始出图：'+summary.join('、')+'，尺寸 '+Array.from(state.sizes).join('/'));var stt=botTyping('atu');setTimeout(function(){stt();runGenerate();},420);}
+  scroll.innerHTML='';userSay('开始出图：'+summary.join('、')+'，尺寸 '+Array.from(state.sizes).join('/'));var stt=botTyping('atu');setTimeout(function(){stt();runGenerate();},420);}
  else if(act==='dlvPreview'){openLightbox(state.results[+b.dataset.i].url);}
  else if(act==='dlvDownload'){downloadOne(+b.dataset.i);}
  else if(act==='dlvRedo'){redoOne(+b.dataset.i);}
