@@ -7,6 +7,8 @@
  *   - 工作台 <body data-member-gate> 会在未登录时显示全屏门禁；
  *   - 生图请求用 HogeeMember.authFetch() 自动带会员令牌；
  *   - 流程内可用 await HogeeMember.requireAuth() 强制先登录。
+ * 登录弹窗为「即梦式」左右分屏：左侧五个伙计幻灯片，右侧手机号 +
+ * 验证码登录（未注册自动注册），另保留低调的账号密码登录入口。
  * 令牌仅存 localStorage，绝不写进任何页面源码；所有请求走 api 子域。
  * ===================================================================*/
 (function () {
@@ -20,7 +22,7 @@
     token: null,
     user: null,
     mode: 'login',
-    authKind: 'password',
+    authKind: 'code',
     memberType: null,
     injected: false,
     gate: false,
@@ -57,12 +59,9 @@
     return null;
   }
 
-  /* ---------------- 样式（黑 / 橙品牌，无彩色图标） ---------------- */
+  /* ---------------- 样式 ---------------- */
   var CSS = [
-    '.hm-wm{font-family:"Trebuchet MS","Trebuchet","Lucida Sans Unicode",sans-serif;font-size:22px;letter-spacing:.2px;line-height:1;}',
-    '.hm-wm b{font-weight:700;color:#fff;}',
-    '.hm-wm i{font-style:normal;color:#ea580c;}',
-    /* 顶部导航会员区 */
+    /* ===== 顶部导航会员区 ===== */
     '.member-nav{display:flex;align-items:center;gap:10px;}',
     '.hm-navbtn{appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;border-radius:999px;padding:9px 18px;line-height:1;white-space:nowrap;transition:transform .18s ease,background-color .18s ease,border-color .18s ease,color .18s ease;}',
     '.hm-navbtn:active{transform:translateY(1px);}',
@@ -75,49 +74,90 @@
     '.hm-navuser span{overflow:hidden;text-overflow:ellipsis;}',
     '.hm-navlogout{appearance:none;cursor:pointer;font-family:inherit;font-size:12px;color:rgba(255,255,255,.72);background:transparent;border:0;padding:4px 2px;}',
     '.hm-navlogout:hover{color:#fff;}',
-    /* 遮罩 + 卡片 */
-    '.hm-overlay{position:fixed;inset:0;z-index:2147483001;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(10,8,6,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}',
+    /* ===== 遮罩 + 分屏卡片 ===== */
+    '.hm-overlay{position:fixed;inset:0;z-index:2147483001;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,7,6,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}',
     '.hm-overlay.hm-show{display:flex;animation:hmFade .22s ease;}',
     '@keyframes hmFade{from{opacity:0}to{opacity:1}}',
-    '.hm-card{width:100%;max-width:400px;background:#14110d;border:1px solid rgba(255,255,255,.10);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.55);padding:30px 30px 26px;color:#fff;position:relative;animation:hmPop .26s cubic-bezier(.2,.8,.2,1);}',
-    '@keyframes hmPop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}',
-    '.hm-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .18s,color .18s;}',
+    '.hm-card{width:min(900px,94vw);height:560px;max-height:94vh;display:grid;grid-template-columns:1.04fr 1fr;background:#14110d;border:1px solid rgba(255,255,255,.09);border-radius:20px;overflow:hidden;box-shadow:0 36px 90px rgba(0,0,0,.6);color:#fff;position:relative;animation:hmPop .28s cubic-bezier(.2,.8,.2,1);}',
+    '@keyframes hmPop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}',
+    /* ===== 左侧：伙计幻灯片 ===== */
+    '.hm-hero{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#221b12 0%,#13100c 60%,#0e0c09 100%);min-width:0;}',
+    '.hh-viewport{position:absolute;inset:0;overflow:hidden;}',
+    '.hh-track{display:flex;height:100%;transition:transform .58s cubic-bezier(.22,.8,.24,1);}',
+    '.hh-slide{flex:0 0 100%;position:relative;display:flex;align-items:flex-end;justify-content:center;height:100%;}',
+    '.hh-slide::after{content:"";position:absolute;left:50%;bottom:46px;width:190px;height:26px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(251,146,60,.32),transparent 72%);filter:blur(2px);}',
+    '.hh-slide img{position:relative;z-index:1;height:88%;width:auto;object-fit:contain;object-position:bottom center;filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));}',
+    '.hh-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(10,9,7,.34);color:rgba(255,255,255,.78);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .18s,color .18s,border-color .18s;}',
+    '.hh-arrow:hover{background:rgba(234,88,12,.82);border-color:transparent;color:#fff;}',
+    '.hh-arrow.prev{left:14px;}.hh-arrow.next{right:14px;}',
+    '.hh-scrim{position:absolute;left:0;right:0;bottom:0;z-index:3;height:38%;background:linear-gradient(to top,rgba(8,7,5,.82),transparent);pointer-events:none;}',
+    '.hh-meta{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 22px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;}',
+    '.hh-name{font-size:21px;font-weight:700;letter-spacing:.5px;}',
+    '.hh-role{font-size:13px;color:#fd9b53;margin-top:3px;letter-spacing:1px;}',
+    '.hh-dots{display:flex;gap:7px;margin-top:12px;}',
+    '.hh-dots button{width:7px;height:7px;border-radius:50%;border:0;padding:0;cursor:pointer;background:rgba(255,255,255,.32);transition:all .22s;}',
+    '.hh-dots button.on{background:#fb7a22;width:18px;border-radius:4px;}',
+    /* ===== 右侧：登录表单 ===== */
+    '.hm-pane{padding:26px 32px 22px;display:flex;flex-direction:column;min-width:0;min-height:0;overflow-y:auto;}',
+    '.hp-top{display:flex;align-items:center;justify-content:space-between;flex:none;}',
+    '.hp-logo svg{display:block;height:25px;width:auto;}',
+    '.hm-close{width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:rgba(255,255,255,.58);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .18s,color .18s;}',
     '.hm-close:hover{background:rgba(255,255,255,.08);color:#fff;}',
-    '.hm-brand{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}',
-    '.hm-tagline{font-size:12.5px;color:rgba(255,255,255,.55);letter-spacing:.4px;}',
-    '.hm-seg{display:flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:4px;margin-bottom:20px;}',
-    '.hm-seg button{flex:1;appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:rgba(255,255,255,.6);background:transparent;border-radius:9px;padding:9px 0;transition:all .18s;}',
-    '.hm-seg button.hm-active{background:rgba(251,122,34,.14);color:#fd9248;box-shadow:inset 0 0 0 1px rgba(251,122,34,.55);}',
-    '.hm-field{margin-bottom:14px;}',
-    '.hm-field label{display:block;font-size:12.5px;color:rgba(255,255,255,.62);margin-bottom:6px;}',
-    '.hm-input{width:100%;box-sizing:border-box;appearance:none;border:1px solid rgba(255,255,255,.14);background:#1d1813;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;font-family:inherit;transition:border-color .18s,box-shadow .18s;}',
-    '.hm-input::placeholder{color:rgba(255,255,255,.32);}',
-    '.hm-input:focus{outline:none;border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.18);}',
-    '.hm-submit{width:100%;appearance:none;border:1px solid rgba(251,122,34,.55);cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;color:#fd9248;background:rgba(251,122,34,.10);border-radius:11px;padding:13px 0;margin-top:6px;transition:background .18s,border-color .18s,color .18s,transform .18s;}',
-    '.hm-submit:hover{background:rgba(251,122,34,.20);border-color:#fb7a22;color:#ffb27d;}',
-    '.hm-submit:active{transform:translateY(1px);}',
-    '.hm-submit[disabled]{opacity:.6;cursor:not-allowed;}',
-    '.hm-err{display:none;margin-top:12px;font-size:13px;line-height:1.5;color:#fb923c;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);border-radius:9px;padding:9px 12px;}',
+    '.hp-title{font-size:23px;font-weight:700;margin:22px 0 4px;letter-spacing:.2px;}',
+    '.hp-sub{font-size:12.5px;color:rgba(255,255,255,.45);margin:0 0 18px;}',
+    '.hm-field{margin-bottom:13px;flex:none;}',
+    '.hm-input{width:100%;box-sizing:border-box;appearance:none;border:1px solid rgba(255,255,255,.1);background:#1e1a15;color:#fff;border-radius:12px;padding:13px 14px;font-size:14px;font-family:inherit;transition:border-color .18s,box-shadow .18s;}',
+    '.hm-input::placeholder{color:rgba(255,255,255,.3);}',
+    '.hm-input:focus{outline:none;border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.16);}',
+    '.hm-input:-webkit-autofill,.hm-input:-webkit-autofill:hover,.hm-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px #1e1a15 inset;caret-color:#fff;transition:background-color 9999s ease-in-out 0s;}',
+    '.hm-coderow{display:flex;gap:10px;}',
+    '.hm-coderow .hm-input{flex:1;min-width:0;}',
+    '.hm-codebtn{appearance:none;flex:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fd9b53;background:rgba(251,122,34,.1);border:1px solid rgba(251,122,34,.5);border-radius:12px;padding:0 15px;white-space:nowrap;transition:background .18s,border-color .18s,color .18s;}',
+    '.hm-codebtn:hover:not(:disabled){background:rgba(251,122,34,.2);border-color:#fb7a22;}',
+    '.hm-codebtn:disabled{opacity:.6;cursor:not-allowed;color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.14);background:transparent;}',
+    '.hm-submit{width:100%;flex:none;appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:#ea580c;border-radius:12px;padding:13px 0;margin-top:5px;transition:background .18s,transform .18s,box-shadow .18s;box-shadow:0 8px 22px rgba(234,88,12,.26);}',
+    '.hm-submit:hover:not(:disabled){background:#d24e0a;}',
+    '.hm-submit:active:not(:disabled){transform:translateY(1px);}',
+    '.hm-submit[disabled]{background:#2b2721;color:rgba(255,255,255,.4);box-shadow:none;cursor:not-allowed;}',
+    '.hp-switch{flex:none;appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12.5px;color:rgba(255,255,255,.5);padding:6px;margin:12px 0 2px;transition:color .18s;}',
+    '.hp-switch:hover{color:#fd9b53;}',
+    '.hm-err{display:none;flex:none;margin-top:11px;font-size:13px;line-height:1.5;color:#fb923c;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);border-radius:10px;padding:9px 12px;}',
     '.hm-err.hm-show{display:block;}',
-    '.hm-note{margin-top:16px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.42);text-align:center;}',
-    /* 工作台全屏门禁 */
+    '.hm-soon{display:none;flex:none;margin-top:11px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:10px;padding:9px 12px;}',
+    '.hm-soon.hm-show{display:block;animation:hmFade .2s ease;}',
+    /* ===== 其他登录方式 ===== */
+    '.hm-others{flex:none;display:flex;align-items:center;gap:11px;margin:13px 0 13px;}',
+    '.hm-others .ho-line{flex:1;height:1px;background:rgba(255,255,255,.12);}',
+    '.hm-others .ho-t{font-size:12px;color:rgba(255,255,255,.42);white-space:nowrap;}',
+    '.hm-social{flex:none;display:flex;align-items:center;justify-content:center;gap:16px;}',
+    '.hm-soc{width:46px;height:46px;border-radius:50%;appearance:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);transition:border-color .18s,background .18s,transform .18s;}',
+    '.hm-soc:hover{border-color:#fb7a22;background:rgba(251,122,34,.14);transform:translateY(-2px);}',
+    '.hm-soc svg{width:23px;height:23px;flex:none;}',
+    /* ===== 协议勾选 ===== */
+    '.hm-agree{flex:none;display:flex;align-items:flex-start;gap:8px;margin-top:16px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.5);cursor:pointer;}',
+    '.hm-agree input{appearance:none;flex:none;width:15px;height:15px;margin-top:2px;border-radius:4px;border:1px solid rgba(255,255,255,.35);background:transparent;cursor:pointer;position:relative;transition:background .16s,border-color .16s;}',
+    '.hm-agree input:checked{background:#ea580c;border-color:#ea580c;}',
+    '.hm-agree input:checked::after{content:"";position:absolute;left:4.5px;top:1.5px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);}',
+    '.hm-agree a{color:#fd9b53;text-decoration:none;}',
+    '.hm-agree a:hover{text-decoration:underline;}',
+    /* ===== 工作台全屏门禁 ===== */
     '.hm-gate{position:fixed;inset:0;z-index:2147483000;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(1200px 600px at 50% -10%,#1c1712 0%,#0d0b09 60%);}',
     '.hm-gate.hm-show{display:flex;animation:hmFade .3s ease;}',
     'html.hm-layer-open,html.hm-layer-open body{overflow:hidden;}',
     'html.hm-layer-open body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}',
-    '.hm-gate .hm-wm{font-size:30px;}',
+    '.hm-gate .hm-logo{height:38px;width:auto;margin-bottom:4px;}',
     '.hm-gate h3{color:#fff;font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:.3px;}',
     '.hm-gate p{color:rgba(255,255,255,.58);font-size:14px;line-height:1.7;max-width:380px;margin:0 0 26px;}',
     '.hm-gate-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}',
     '.hm-gate-btns .hm-navbtn{padding:12px 26px;font-size:15px;}',
     '.hm-gate-badge{margin-bottom:26px;font-size:12px;letter-spacing:2px;color:#fb923c;border:1px solid rgba(251,146,60,.4);border-radius:999px;padding:6px 16px;}',
-    /* 工作台登录后右上角小胶囊 */
+    /* ===== 登录后右上角小胶囊 ===== */
     '.hm-chip{position:fixed;top:12px;right:12px;z-index:2147482990;display:none;align-items:center;gap:10px;background:rgba(13,11,9,.72);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:7px 8px 7px 14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}',
     '.hm-chip.hm-show{display:flex;}',
     '.hm-chip .hm-chip-name{font-size:12.5px;color:#fff;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
     '.hm-chip button{appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;color:#fff;background:#ea580c;border-radius:999px;padding:5px 12px;}',
     '.hm-chip button:hover{background:#c2410c;}',
-    /* 「好货的好伙计」品牌徽章（浅色导航 / 白色工作台版，与首页 logo 旁徽章同款） */
+    /* ===== 品牌徽章（与首页 logo 旁徽章同款） ===== */
     '@property --hm-tag-ang{syntax:"<angle>";initial-value:0deg;inherits:false;}',
     '.hm-badge{position:relative;display:inline-flex;align-items:center;height:31px;padding:0 15px;margin-left:4px;border-radius:999px;border:1px solid rgba(28,25,23,.28);color:#44403c;font-size:12px;font-weight:500;letter-spacing:3px;line-height:1;white-space:nowrap;animation:hmTagFloat 3.8s ease-in-out infinite;transition:color .3s,border-color .3s;}',
     '.hm-badge>span{position:relative;z-index:1;}',
@@ -128,49 +168,14 @@
     '@keyframes hmTagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}',
     '@keyframes hmTagSpin{to{--hm-tag-ang:360deg}}',
     '@keyframes hmTagTxt{to{background-position:-220% 0}}',
-    /* 内容页浅色导航：logo 与徽章水平并排（部分旧模板 .nav-logo 非 flex） */
     '.nav.light .nav-logo{display:inline-flex;align-items:center;gap:10px;}',
-    /* 浅色导航适配：首页滚动(.nav.solid)/移动面板(.nav.panel-open)、内容页(.nav.light)、白色工作台(.topbar) */
     '.nav.solid .hm-navbtn-ghost,.nav.panel-open .hm-navbtn-ghost,.nav.light .hm-navbtn-ghost,.topbar .hm-navbtn-ghost{background:#fff;color:#1c1917;border:1px solid rgba(28,25,23,.28);}',
     '.nav.solid .hm-navbtn-ghost:hover,.nav.panel-open .hm-navbtn-ghost:hover,.nav.light .hm-navbtn-ghost:hover,.topbar .hm-navbtn-ghost:hover{border-color:#1c1917;background:#f5f5f4;}',
     '.nav.solid .hm-navuser,.nav.panel-open .hm-navuser,.nav.light .hm-navuser,.topbar .hm-navuser{color:#1c1917;background:rgba(28,25,23,.06);border:1px solid rgba(28,25,23,.16);}',
     '.nav.solid .hm-navlogout,.nav.panel-open .hm-navlogout,.nav.light .hm-navlogout,.topbar .hm-navlogout{color:rgba(28,25,23,.62);}',
     '.nav.solid .hm-navlogout:hover,.nav.panel-open .hm-navlogout:hover,.nav.light .hm-navlogout:hover,.topbar .hm-navlogout:hover{color:#ea580c;}',
-    '@media(max-width:860px){.hm-badge{display:none;}}',
-    /* === 登录方式改版：紧凑布局 / 品牌logo / 第三方登录 === */
-    '.hm-card{padding:20px 26px 20px;}',
-    '.hm-brand{align-items:center;text-align:center;gap:5px;margin-bottom:12px;}',
-    '.hm-brand .hm-logo{display:block;height:28px;width:auto;}',
-    '.hm-brand .hm-tagline{font-size:12px;}',
-    '.hm-seg{margin-bottom:12px;}',
-    '.hm-seg button{padding:9px 0;}',
-    '.hm-field{margin-bottom:11px;}',
-    '.hm-input{padding:10px 13px;}',
-    '.hm-wechat{width:100%;appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:600;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:11px 0;margin:0;transition:background .18s,border-color .18s,transform .18s;box-shadow:none;}',
-    '.hm-wechat:hover{background:rgba(255,255,255,.10);border-color:rgba(7,193,96,.6);}',
-    '.hm-wechat:active{transform:translateY(1px);}',
-    '.hm-wechat svg{width:20px;height:20px;flex:none;}',
-    '.hm-or{display:flex;align-items:center;gap:10px;margin:11px 0 9px;color:rgba(255,255,255,.38);font-size:12px;}',
-    '.hm-or::before,.hm-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12);}',
-    '.hm-labrow{display:flex;align-items:center;justify-content:space-between;}',
-    '.hm-labrow label{margin:0;}',
-    '.hm-link{appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12px;color:#fb923c;padding:0;font-weight:500;white-space:nowrap;}',
-    '.hm-link:hover{color:#fdba74;}',
-    '.hm-submit{padding:11px 0;margin-top:2px;}',
-    '.hm-oauth{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px;}',
-    '.hm-oth{appearance:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:9px 0;transition:border-color .18s,color .18s,background .18s;}',
-    '.hm-oth:hover{border-color:#fb923c;color:#fff;background:rgba(251,146,60,.08);}',
-    '.hm-oth svg{width:18px;height:18px;flex:none;}',
-    '.hm-soon{display:none;margin-top:11px;font-size:12.5px;line-height:1.55;color:#fde68a;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.32);border-radius:9px;padding:9px 12px;}',
-    '.hm-soon.hm-show{display:block;animation:hmFade .2s ease;}',
-    '.hm-gate .hm-logo{height:38px;width:auto;margin-bottom:4px;}',
-    '.hm-input:-webkit-autofill,.hm-input:-webkit-autofill:hover,.hm-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px #1d1813 inset;caret-color:#fff;transition:background-color 9999s ease-in-out 0s;}',
-    '.hm-coderow{display:flex;gap:9px;}',
-    '.hm-coderow .hm-input{flex:1;min-width:0;}',
-    '.hm-codebtn{appearance:none;flex:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fd9248;background:rgba(251,122,34,.10);border:1px solid rgba(251,122,34,.5);border-radius:10px;padding:0 14px;white-space:nowrap;transition:background .18s,border-color .18s,color .18s;}',
-    '.hm-codebtn:hover:not(:disabled){background:rgba(251,122,34,.20);border-color:#fb7a22;}',
-    '.hm-codebtn:disabled{opacity:.55;cursor:not-allowed;color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.14);background:transparent;}',
-    '@media(max-width:480px){.hm-card{padding:20px 18px;}.hm-oauth{gap:8px;}.hm-oth{font-size:12.5px;}}',
+    /* ===== 响应式：移动端隐藏左侧幻灯片 ===== */
+    '@media(max-width:760px){.hm-card{grid-template-columns:1fr;height:auto;max-height:94vh;}.hm-hero{display:none;}.hm-pane{padding:24px 22px 20px;}.hp-title{margin-top:16px;}.hm-badge{display:none;}}',
     '@media(max-width:860px){',
     '  .nav .member-nav{flex-direction:column;align-items:stretch;width:100%;gap:8px;}',
     '  .nav .hm-navbtn{width:100%;padding:13px 18px;text-align:center;}',
@@ -197,62 +202,90 @@
       '<path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>' +
       '<path fill="#ffffff" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>' +
       '<path fill="#ffffff" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>' +
-      '<path fill="#ffffff" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>' +
+      '<path fill="#ffffff" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>' +
       '<text x="53" y="42.3" font-family="\'Trebuchet MS\',\'Trebuchet\',\'Lucida Sans Unicode\',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>' +
       '</g></svg>';
   }
+  // 纯白单色 logo（登录框左上角）：把橙色 o 也变为白色
+  function brandSvgWhite(h) {
+    return brandSvg(h).split('#ea580c').join('#ffffff');
+  }
 
   // 第三方品牌标识（取自官方品牌 SVG，仅用于登录方式识别）
-  var WECHAT_WHITE = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M32.8 18.003 32.5 18C25.732 18 20 22.798 20 29c0 1.007.151 1.976.433 2.894A18 18 0 0 1 18.5 32c-1.809 0-3.54-.274-5.137-.775-.394-.123-1.828.696-3.039 1.389-.927.53-1.724.986-1.824.886-.094-.094.169-.718.476-1.448.446-1.06.986-2.346.664-2.552C6.21 27.305 4 23.866 4 20c0-6.627 6.492-12 14.5-12 7.186 0 13.151 4.326 14.3 10.003M16 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0m7 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4" fill="#ffffff"/><path fill-rule="evenodd" clip-rule="evenodd" d="M44 29c0 3.362-1.908 6.336-4.833 8.149-.13.08.169.858.446 1.583.237.618.459 1.196.387 1.268-.075.075-.802-.327-1.571-.752-.829-.458-1.706-.942-1.871-.888-1.262.413-2.63.64-4.058.64C26.149 39 21 34.523 21 29s5.149-10 11.5-10S44 23.477 44 29m-6-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M28.5 27a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" fill="#ffffff"/></svg>';
-  var WECHAT_GREEN = WECHAT_WHITE.split('#ffffff').join('#07C160');
-  var ICON_FEISHU = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8c0 1 7 3.5 14.745 16.744 0 0 4.184-4.363 6.255-5.744 1.5-1 2.712-1.332 2.712-1.332C33.712 15.156 29.5 8 28 8z" fill="#00d6b9"/><path d="M43.5 18.5c-1-.667-3.65-1.771-6.5-1.5a15 15 0 0 0-3.288.668S32.5 18 31 19c-2.07 1.38-6.255 5.744-6.255 5.744-1.428 1.397-3.05 2.732-5.245 3.756 0 0 7 3 11.5 3 5.063 0 7-3.5 7-3.5 1.5-3.305 3.5-7 5.5-9.5" fill="#163c9a"/><path d="M4 17.5v17c0 1 6 5.5 15 5.5 10 0 17.05-7.705 19-12 0 0-1.937 3.5-7 3.5-4.5 0-11.5-3-11.5-3-5.117-2.239-10.03-6.577-12.906-9.117C4.974 17.953 4 17.093 4 17.5" fill="#3370ff"/></svg>';
-  var ICON_DINGTALK = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="36" height="36" rx="8" fill="#0285fc"/><path d="m20.178 37.577 3.5-6h-3l2-3c-5.5-1-6.281-3.938-6-4.5.162-.325 2.5 1 6.281 1-8.281-.5-8.281-7-7.781-7.5.423-.424 2.44 1.666 6.564 3.53-9.126-4.314-6.453-11.956-5.064-11.03 3.344 3 9.5 8.5 15 13 .658.538 1 2 0 3.25s-2.5 2.75-3 3.25h2.5z" fill="#fff"/></svg>';
-  var ICON_QQ = '<svg viewBox="0 0 48 48" aria-hidden="true"  fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 31s-3 4.5-3.5 4c-.803-.803.062-6.622 1.5-11 0 0 2 1 4.5 1.5 0 0-1.74 9.46 4.268 13.242C20.768 40 24 40 24 40s3.232 0 5.232-1.258C35.241 34.96 33.5 25.5 33.5 25.5 36 25 38 24 38 24c1.438 4.378 2.303 10.197 1.5 11-.5.5-3.5-4-3.5-4s.232 4.776-3.392 7.742c0 0-3.376 2.758-8.608 2.758s-8.608-2.758-8.608-2.758C11.768 35.776 12 31 12 31m0-11C12 7 19 4 24 4s12 3 12 16c-4.033.782-7.5 1.5-12 1.5s-7.967-.718-12-1.5m5-2.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#000"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.732 41.5c-1 .5-8.232.5-11.732 0 5.232 0 8.608-2.758 8.608-2.758-.081.066 5.124 1.758 3.124 2.758" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M24 41.5c-3.5.5-10.732.5-11.732 0-2-1 3.205-2.692 3.124-2.758 0 0 3.376 2.758 8.608 2.758" fill="#f8ae08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10 24c.564-1.718 1.436-3.014 2-4 4.033.782 7.5 1.5 12 1.5s7.967-.718 12-1.5c.564.986 1.436 2.282 2 4 0 0-2 1-4.5 1.5s-5.5 1-9.5 1q-1.183-.001-2.257-.055c0 1.515 0 2.503.016 4.374a.2.2 0 0 1-.143.192c-1.69.479-3.579.463-4.995-.454a.19.19 0 0 1-.088-.16c-.033-1.885-.032-2.435.002-4.52A65 65 0 0 1 14.5 25.5C12 25 10 24 10 24" fill="#ea1c26"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 17.5c0 1 3.5 2.5 7 2.5s7-1.5 7-2.5-5-1.5-7-1.5-7 .5-7 1.5" fill="#f9ad08"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 25.5a66 66 0 0 0 2.035.377 102 102 0 0 0-.002 4.52.19.19 0 0 0 .088.16c1.416.917 3.305.933 4.995.454a.2.2 0 0 0 .143-.192c-.016-1.87-.016-2.859-.016-4.374q1.073.054 2.257.055c4 0 7-.5 9.5-1 0 0 1.74 9.46-4.268 13.242C27.232 40 24 40 24 40s-3.232 0-5.232-1.258C12.759 34.96 14.5 25.5 14.5 25.5" fill="#fff"/><path d="M21 14c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3m6 0c1.105 0 2-1.343 2-3s-.895-3-2-3-2 1.343-2 3 .895 3 2 3" fill="#fff"/><path d="M21 12.438c.552 0 1-.546 1-1.22 0-.672-.448-1.218-1-1.218s-1 .546-1 1.219.448 1.219 1 1.219" fill="#000"/><path d="M26 11c.5-.5 1.5-.5 2 0" stroke="#000" stroke-width=".7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var WECHAT_WHITE = '<svg viewBox="0 0 48 48" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M32.8 18.003 32.5 18C25.732 18 20 22.798 20 29c0 1.007.151 1.976.433 2.894A18 18 0 0 1 18.5 32c-1.809 0-3.54-.274-5.137-.775-.394-.123-1.828.696-3.039 1.389-.927.53-1.724.986-1.824.886-.094-.094.169-.718.476-1.448.446-1.06.986-2.346.664-2.552C6.21 27.305 4 23.866 4 20c0-6.627 6.492-12 14.5-12 7.186 0 13.151 4.326 14.3 10.003M16 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0m7 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4" fill="#ffffff"/><path fill-rule="evenodd" clip-rule="evenodd" d="M44 29c0 3.362-1.908 6.336-4.833 8.149-.13.08.169.858.446 1.583.237.618.459 1.196.387 1.268-.075.075-.802-.327-1.571-.752-.829-.458-1.706-.942-1.871-.888-1.262.413-2.63.64-4.058.64C26.149 39 21 34.523 21 29s5.149-10 11.5-10S44 23.477 44 29m-6-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M28.5 27a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" fill="#ffffff"/></svg>';
+  var ICON_FEISHU = '<svg viewBox="0 0 48 48" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8c0 1 7 3.5 14.745 16.744 0 0 4.184-4.363 6.255-5.744 1.5-1 2.712-1.332 2.712-1.332C33.712 15.156 29.5 8 28 8z" fill="#00d6b9"/><path d="M43.5 18.5c-1-.667-3.65-1.771-6.5-1.5a15 15 0 0 0-3.288.668S32.5 18 31 19c-2.07 1.38-6.255 5.744-6.255 5.744-1.428 1.397-3.05 2.732-5.245 3.756 0 0 7 3 11.5 3 5.063 0 7-3.5 7-3.5 1.5-3.305 3.5-7 5.5-9.5" fill="#163c9a"/><path d="M4 17.5v17c0 1 6 5.5 15 5.5 10 0 17.05-7.705 19-12 0 0-1.937 3.5-7 3.5-4.5 0-11.5-3-11.5-3-5.117-2.239-10.03-6.577-12.906-9.117C4.974 17.953 4 17.093 4 17.5" fill="#3370ff"/></svg>';
+  // 抖音：单色音符（白色），深色圆底中识别
+  var ICON_DOUYIN = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#ffffff" d="M16.72 3.06h.14a4.62 4.62 0 0 0 3.9 3.96v2.66a7.62 7.62 0 0 1-3.92-1.1v5.74a5.74 5.74 0 1 1-5.74-5.74 5.6 5.6 0 0 1 .66.04v2.74a3.06 3.06 0 1 0 2.16 2.92V3.06h2.8z"/></svg>';
 
+  // 登录左侧幻灯片数据（图片用站点根绝对路径，任何目录引用都正确）
+  var CREW = [
+    { img: '/images/hero-atu.png', name: '阿图', role: '生图伙计' },
+    { img: '/images/hero-awen.png', name: '阿文', role: '文案伙计' },
+    { img: '/images/hero-ashi.png', name: '阿视', role: '视频伙计' },
+    { img: '/images/hero-afa.png', name: '阿发', role: '发图伙计' },
+    { img: '/images/hero-agu.png', name: '阿果', role: '效果伙计' }
+  ];
+
+  function slideHtml(c) {
+    return '<div class="hh-slide"><img src="' + c.img + '" alt="' + c.name + '" loading="lazy"></div>';
+  }
 
   var MODAL_HTML =
     '<div class="hm-overlay" id="hmOverlay">' +
-      '<div class="hm-card" role="dialog" aria-modal="true" aria-label="WorkHogee 会员登录注册">' +
-        '<button type="button" class="hm-close" id="hmClose" aria-label="关闭">' + xIcon() + '</button>' +
-        '<div class="hm-brand">' + brandSvg(28) +
-        '<span class="hm-tagline">生意伙计 · 会员账号</span></div>' +
-        '<div class="hm-seg">' +
-          '<button type="button" id="hmTabLogin" class="hm-active">登录</button>' +
-          '<button type="button" id="hmTabRegister">注册</button>' +
-        '</div>' +
-        '<form id="hmForm" autocomplete="on">' +
-          '<button type="button" class="hm-wechat" data-provider="wechat">' + WECHAT_GREEN + '微信扫码 / 授权登录</button>' +
-          '<div class="hm-or">或用手机号 / 邮箱登录</div>' +
-          '<div class="hm-field">' +
-            '<label for="hmAccount" id="hmAccountLabel">手机号 / 邮箱</label>' +
-            '<input class="hm-input" id="hmAccount" type="text" inputmode="tel" autocomplete="username" placeholder="请输入手机号或邮箱">' +
-          '</div>' +
-          '<div class="hm-field" id="hmPwField">' +
-            '<div class="hm-labrow"><label for="hmPassword">密码</label>' +
-            '<button type="button" class="hm-link" id="hmToCode">验证码登录</button></div>' +
-            '<input class="hm-input" id="hmPassword" type="password" autocomplete="current-password" placeholder="至少 8 位">' +
-          '</div>' +
-          '<div class="hm-field" id="hmCodeField" style="display:none;">' +
-            '<div class="hm-labrow"><label for="hmCode">验证码</label>' +
-            '<button type="button" class="hm-link" id="hmToPw">密码登录</button></div>' +
-            '<div class="hm-coderow">' +
-              '<input class="hm-input" id="hmCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 位验证码">' +
-              '<button type="button" class="hm-codebtn" id="hmGetCode">获取验证码</button>' +
+      '<div class="hm-card" role="dialog" aria-modal="true" aria-label="WorkHogee 会员登录">' +
+        '<div class="hm-hero" id="hmHero">' +
+          '<div class="hh-viewport"><div class="hh-track" id="hhTrack">' +
+            CREW.map(slideHtml).join('') +
+          '</div></div>' +
+          '<button type="button" class="hh-arrow prev" id="hhPrev" aria-label="上一个伙计">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>' +
+          '<button type="button" class="hh-arrow next" id="hhNext" aria-label="下一个伙计">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>' +
+          '<div class="hh-scrim"></div>' +
+          '<div class="hh-meta">' +
+            '<div class="hh-name" id="hhName">阿图</div>' +
+            '<div class="hh-role" id="hhRole">生图伙计</div>' +
+            '<div class="hh-dots" id="hhDots">' +
+              CREW.map(function (c, i) { return '<button type="button" class="' + (i === 0 ? 'on' : '') + '" data-i="' + i + '" aria-label="' + c.name + '"></button>'; }).join('') +
             '</div>' +
           '</div>' +
-          '<div class="hm-field" id="hmConfirmField" style="display:none;">' +
-            '<label for="hmConfirm">确认密码</label>' +
-            '<input class="hm-input" id="hmConfirm" type="password" autocomplete="new-password" placeholder="再次输入密码">' +
+        '</div>' +
+        '<div class="hm-pane">' +
+          '<div class="hp-top">' +
+            '<span class="hp-logo">' + brandSvg(25) + '</span>' +
+            '<button type="button" class="hm-close" id="hmClose" aria-label="关闭">' + xIcon() + '</button>' +
           '</div>' +
-          '<button type="submit" class="hm-submit" id="hmSubmit">登录</button>' +
-          '<div class="hm-err" id="hmErr"></div>' +
-          '<div class="hm-soon" id="hmSoon"></div>' +
-          '<div class="hm-oauth">' +
-            '<button type="button" class="hm-oth" data-provider="feishu">' + ICON_FEISHU + '飞书</button>' +
-            '<button type="button" class="hm-oth" data-provider="dingtalk">' + ICON_DINGTALK + '钉钉</button>' +
-            '<button type="button" class="hm-oth" data-provider="qq">' + ICON_QQ + 'QQ</button>' +
-          '</div>' +
-        '</form>' +
+          '<h2 class="hp-title">欢迎登录伙计工作台</h2>' +
+          '<p class="hp-sub">未注册的手机号验证后将自动注册</p>' +
+          '<form id="hmForm" autocomplete="on">' +
+            '<div class="hm-field">' +
+              '<input class="hm-input" id="hmAccount" type="text" inputmode="tel" autocomplete="username" placeholder="请输入手机号">' +
+            '</div>' +
+            '<div class="hm-field" id="hmCodeField">' +
+              '<div class="hm-coderow">' +
+                '<input class="hm-input" id="hmCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="请输入验证码">' +
+                '<button type="button" class="hm-codebtn" id="hmGetCode">发送验证码</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="hm-field" id="hmPwField" style="display:none;">' +
+              '<input class="hm-input" id="hmPassword" type="password" autocomplete="current-password" placeholder="请输入密码（至少 8 位）">' +
+            '</div>' +
+            '<button type="submit" class="hm-submit" id="hmSubmit" disabled>登录</button>' +
+            '<div class="hm-err" id="hmErr"></div>' +
+            '<div class="hm-soon" id="hmSoon"></div>' +
+            '<button type="button" class="hp-switch" id="hmSwitch">账号密码登录</button>' +
+            '<div class="hm-others"><span class="ho-line"></span><span class="ho-t">其他登录方式</span><span class="ho-line"></span></div>' +
+            '<div class="hm-social">' +
+              '<button type="button" class="hm-soc" data-provider="wechat" aria-label="微信登录">' + WECHAT_WHITE + '</button>' +
+              '<button type="button" class="hm-soc" data-provider="feishu" aria-label="飞书登录">' + ICON_FEISHU + '</button>' +
+              '<button type="button" class="hm-soc" data-provider="douyin" aria-label="抖音登录">' + ICON_DOUYIN + '</button>' +
+            '</div>' +
+            '<label class="hm-agree" for="hmAgree">' +
+              '<input type="checkbox" id="hmAgree">' +
+              '<span>已阅读并同意 <a href="/terms.html" target="_blank" rel="noopener">服务协议</a>、<a href="/privacy.html" target="_blank" rel="noopener">隐私政策</a>、<a href="/ai-notice.html" target="_blank" rel="noopener">AI功能使用须知</a></span>' +
+            '</label>' +
+          '</form>' +
+        '</div>' +
       '</div>' +
     '</div>';
 
@@ -261,13 +294,28 @@
       '<div class="hm-gate-badge">WORKHOGEE · 内测中</div>' +
       brandSvg(40) +
       '<h3 id="hmGateTitle">登录后开始使用工作台</h3>' +
-      '<p>注册一个 WorkHogee 会员账号，即可在工作台为你的商品生成可上架、可合规的专业图片与图文。内测期间登录即可使用。</p>' +
+      '<p>注册一个 WorkHogee 会员账号，即可在工作台为你的商品生成可上架、可合规的专业图片、动态图与文案。内测期间登录即可使用。</p>' +
       '<div class="hm-gate-btns">' +
         '<button type="button" class="hm-navbtn hm-navbtn-primary" data-hm="register">Hogee会员注册</button>' +
         '<button type="button" class="hm-navbtn hm-navbtn-ghost" data-hm="login">登录</button>' +
       '</div>' +
     '</div>' +
     '<div class="hm-chip" id="hmChip"><span class="hm-chip-name" id="hmChipName"></span><button type="button" data-hm="logout">退出</button></div>';
+
+  /* ---------------- 幻灯片控制 ---------------- */
+  var hhCur = 0, hhTimer = null;
+  function hhDots() { return el('hhDots') ? el('hhDots').querySelectorAll('button') : []; }
+  function hhGo(i) {
+    if (!el('hhTrack')) return;
+    hhCur = ((i % CREW.length) + CREW.length) % CREW.length;
+    el('hhTrack').style.transform = 'translateX(-' + (hhCur * 100) + '%)';
+    el('hhName').textContent = CREW[hhCur].name;
+    el('hhRole').textContent = CREW[hhCur].role;
+    var ds = hhDots();
+    for (var i2 = 0; i2 < ds.length; i2++) ds[i2].classList.toggle('on', i2 === hhCur);
+  }
+  function hhStop() { if (hhTimer) { clearInterval(hhTimer); hhTimer = null; } }
+  function hhStart() { hhStop(); hhTimer = setInterval(function () { hhGo(hhCur + 1); }, 4200); }
 
   /* ---------------- UI 注入 ---------------- */
   function injectUI() {
@@ -289,8 +337,6 @@
       while (g.firstChild) document.body.appendChild(g.firstChild);
     }
 
-    el('hmTabLogin').addEventListener('click', function () { setMode('login'); });
-    el('hmTabRegister').addEventListener('click', function () { setMode('register'); });
     el('hmClose').addEventListener('click', function () { cancelAuth(); });
     el('hmOverlay').addEventListener('click', function (e) {
       if (e.target === el('hmOverlay')) cancelAuth();
@@ -299,46 +345,43 @@
       if (e.key === 'Escape' && el('hmOverlay') && el('hmOverlay').classList.contains('hm-show')) cancelAuth();
     });
     el('hmForm').addEventListener('submit', onSubmit);
-    var _tc = el('hmToCode'), _tp = el('hmToPw'), _gc = el('hmGetCode');
-    if (_tc) _tc.addEventListener('click', function () { setAuthKind('code'); });
-    if (_tp) _tp.addEventListener('click', function () { setAuthKind('password'); });
-    if (_gc) _gc.addEventListener('click', sendCode);
+    el('hmGetCode').addEventListener('click', sendCode);
+    el('hmSwitch').addEventListener('click', function () {
+      setAuthKind(state.authKind === 'code' ? 'password' : 'code');
+    });
 
-    // 个人 / 企业账号类型（注册必选）
-    var typeBtns = document.querySelectorAll('#hmType .hm-typebtn');
-    for (var ti = 0; ti < typeBtns.length; ti++) {
-      typeBtns[ti].addEventListener('click', function () {
-        state.memberType = this.getAttribute('data-type');
-        for (var k = 0; k < typeBtns.length; k++) typeBtns[k].classList.toggle('hm-active', typeBtns[k] === this);
-        hideErr(); var sb0 = el('hmSoon'); if (sb0) sb0.classList.remove('hm-show');
-      });
+    // 幻灯片：箭头 / 分页点 / 悬停暂停
+    el('hhPrev').addEventListener('click', function () { hhGo(hhCur - 1); hhStart(); });
+    el('hhNext').addEventListener('click', function () { hhGo(hhCur + 1); hhStart(); });
+    var dotBtns = hhDots();
+    for (var di = 0; di < dotBtns.length; di++) {
+      dotBtns[di].addEventListener('click', function () { hhGo(+this.getAttribute('data-i')); hhStart(); });
     }
-    // 第三方授权 / 验证码登录：内测期资质未就绪，诚实提示并预留标准 OAuth 接入位
-    var PROVIDER_NAME = { wechat: '微信', sms: '手机验证码 / 本机一键登录', feishu: '飞书', dingtalk: '钉钉', qq: 'QQ', alipay: '支付宝' };
+    el('hmHero').addEventListener('mouseenter', hhStop);
+    el('hmHero').addEventListener('mouseleave', function () {
+      if (el('hmOverlay').classList.contains('hm-show')) hhStart();
+    });
+
+    // 登录按钮启用 / 禁用：监听输入与协议勾选
+    var acctIn = el('hmAccount'), codeIn = el('hmCode'), pwIn = el('hmPassword'), agree = el('hmAgree');
+    acctIn.addEventListener('input', updateSubmit);
+    codeIn.addEventListener('input', updateSubmit);
+    pwIn.addEventListener('input', updateSubmit);
+    agree.addEventListener('change', updateSubmit);
+
+    // 第三方授权：内测期资质未就绪，诚实提示并预留标准 OAuth 接入位
+    var PROVIDER_NAME = { wechat: '微信', feishu: '飞书', douyin: '抖音', sms: '手机验证码', dingtalk: '钉钉', qq: 'QQ', alipay: '支付宝' };
     function providerComing(p) {
       // 企业资质与 AppID 就绪后，改为：
       // location.href = API_BASE + '/api/auth/' + p + '/start?redirect=' + encodeURIComponent(location.origin + '/workbench.html');
       var name = PROVIDER_NAME[p] || '该登录方式';
       var box = el('hmSoon');
       hideErr();
-      if (box) { box.textContent = '「' + name + '」内测期即将开通（需企业资质与开放平台授权），当前请先用手机号 / 邮箱 + 密码登录。'; box.classList.add('hm-show'); }
+      if (box) { box.textContent = '「' + name + '」登录内测期即将开通（需企业资质与开放平台授权），当前请先用手机号 + 验证码登录。'; box.classList.add('hm-show'); }
     }
-    var provBtns = document.querySelectorAll('.hm-overlay [data-provider]');
-    for (var pi = 0; pi < provBtns.length; pi++) {
-      provBtns[pi].addEventListener('click', function () { providerComing(this.getAttribute('data-provider')); });
-    }
-    // 账号输入模式：手机 / 邮箱（同一账号框，切换键盘与提示，后端自动识别）
-    var acctBtns = document.querySelectorAll('[data-acct]');
-    for (var ai = 0; ai < acctBtns.length; ai++) {
-      acctBtns[ai].addEventListener('click', function () {
-        var mode = this.getAttribute('data-acct');
-        var inp = el('hmAccount'), lab = el('hmAccountLabel');
-        if (!inp) return;
-        // 账号框始终保持 text，由 accountType() 统一给中文校验提示，只切换键盘类型避免原生 email 校验拦截
-        if (mode === 'email') { inp.setAttribute('inputmode', 'email'); inp.placeholder = '请输入邮箱地址'; if (lab) lab.textContent = '邮箱'; }
-        else { inp.setAttribute('inputmode', 'tel'); inp.placeholder = '请输入手机号'; if (lab) lab.textContent = '手机号'; }
-        inp.focus();
-      });
+    var socBtns = document.querySelectorAll('.hm-overlay [data-provider]');
+    for (var pi = 0; pi < socBtns.length; pi++) {
+      socBtns[pi].addEventListener('click', function () { providerComing(this.getAttribute('data-provider')); });
     }
 
     document.addEventListener('click', function (e) {
@@ -351,19 +394,9 @@
     });
   }
 
+  // 登录注册合一（验证码自动注册），setMode 仅做兼容
   function setMode(mode) {
-    state.mode = mode;
-    var reg = mode === 'register';
-    el('hmTabLogin').classList.toggle('hm-active', !reg);
-    el('hmTabRegister').classList.toggle('hm-active', reg);
-    var tf = el('hmTypeField'); if (tf) tf.style.display = reg ? '' : 'none';
-    var cf0 = el('hmConfirmField'); if (cf0) cf0.style.display = (reg && state.authKind === 'password') ? '' : 'none';
-    state.memberType = null;
-    var tb0 = document.querySelectorAll('#hmType .hm-typebtn');
-    for (var tbi = 0; tbi < tb0.length; tbi++) tb0[tbi].classList.remove('hm-active');
-    var sb1 = el('hmSoon'); if (sb1) sb1.classList.remove('hm-show');
-    el('hmSubmit').textContent = state.authKind === 'code' ? '验证并登录' : (reg ? '注册并登录' : '登录');
-    el('hmPassword').setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
+    state.mode = mode || 'login';
     hideErr();
   }
 
@@ -378,7 +411,7 @@
     if (e) { e.textContent = ''; e.classList.remove('hm-show'); }
   }
 
-  // 全屏层（门禁/登录弹层）显示时：锁定滚动并临时关闭页面所有 backdrop-filter，
+  // 全屏层显示时：锁定滚动并临时关闭页面所有 backdrop-filter，
   // 规避 Chromium 中 backdrop-filter 元素把 fixed 覆盖层错误裁剪的合成 bug。
   function syncLayerClass() {
     var gateOn = state.gate && el('hmGate') && el('hmGate').classList.contains('hm-show');
@@ -387,17 +420,52 @@
     if (gateOn || ovOn) root.classList.add('hm-layer-open');
     else root.classList.remove('hm-layer-open');
   }
+
+  function setAuthKind(kind) {
+    state.authKind = kind;
+    var code = kind === 'code';
+    el('hmCodeField').style.display = code ? '' : 'none';
+    el('hmPwField').style.display = code ? 'none' : '';
+    el('hmAccount').placeholder = code ? '请输入手机号' : '手机号 / 邮箱 / 用户名';
+    el('hmAccount').setAttribute('inputmode', code ? 'tel' : 'text');
+    el('hmSwitch').textContent = code ? '账号密码登录' : '验证码登录';
+    hideErr();
+    var sb = el('hmSoon'); if (sb) sb.classList.remove('hm-show');
+    updateSubmit();
+    setTimeout(function () { el('hmAccount').focus(); }, 40);
+  }
+
+  // 登录按钮是否可点
+  function updateSubmit() {
+    var acct = (el('hmAccount').value || '').trim();
+    var ok = false;
+    if (state.authKind === 'code') {
+      var code = (el('hmCode').value || '').trim();
+      ok = !!accountType(acct) && acct.toLowerCase() !== 'workhogee' && code.length >= 4 && el('hmAgree').checked;
+    } else {
+      var pw = el('hmPassword').value || '';
+      ok = !!acct && pw.length >= 8 && el('hmAgree').checked;
+    }
+    el('hmSubmit').disabled = !ok;
+  }
+
   function openAuth(mode) {
     injectUI();
     setMode(mode || 'login');
+    var f = el('hmForm'); if (f) f.reset();
+    setAuthKind('code');
+    el('hmAgree').checked = false;
+    hhGo(0);
     var ov = el('hmOverlay');
     ov.classList.add('hm-show');
     syncLayerClass();
-    setTimeout(function () { var a = el('hmAccount'); if (a) a.focus(); }, 60);
+    hhStart();
+    setTimeout(function () { el('hmAccount').focus(); }, 60);
   }
   function closeAuth() {
     var ov = el('hmOverlay');
     if (ov) ov.classList.remove('hm-show');
+    hhStop();
     syncLayerClass();
   }
   function cancelAuth() {
@@ -428,24 +496,7 @@
     dispatch('hogee:auth');
     if (state.waitResolve) { var rs = state.waitResolve; state.waitResolve = null; state.waitReject = null; rs(j.member); }
     var f = el('hmForm'); if (f) f.reset();
-    state.authKind = 'password';
-    var ci = el('hmCode'); if (ci) ci.value = '';
-    var pfl = el('hmPwField'), cfl = el('hmCodeField');
-    if (pfl) pfl.style.display = '';
-    if (cfl) cfl.style.display = 'none';
-  }
-
-  function setAuthKind(kind) {
-    state.authKind = kind;
-    var code = kind === 'code';
-    var pfl = el('hmPwField'), cfl = el('hmCodeField'), cf = el('hmConfirmField');
-    if (pfl) pfl.style.display = code ? 'none' : '';
-    if (cfl) cfl.style.display = code ? '' : 'none';
-    if (cf) cf.style.display = (!code && state.mode === 'register') ? '' : 'none';
-    el('hmSubmit').textContent = code ? '验证并登录' : (state.mode === 'register' ? '注册并登录' : '登录');
-    hideErr();
-    var sb = el('hmSoon'); if (sb && code === false) sb.classList.remove('hm-show');
-    setTimeout(function () { var a = code ? el('hmAccount') : el('hmPassword'); if (a) a.focus(); }, 40);
+    state.authKind = 'code';
   }
 
   var codeTimer = null;
@@ -453,7 +504,7 @@
     hideErr();
     var account = (el('hmAccount').value || '').trim();
     if (String(account).trim().toLowerCase() === 'workhogee') { showErr('官方运营账号请使用密码登录'); return; }
-    if (!accountType(account)) { showErr('请先输入正确的手机号或邮箱'); return; }
+    if (!accountType(account)) { showErr('请先输入正确的手机号'); return; }
     var btn = el('hmGetCode');
     btn.disabled = true;
     var oldText = btn.textContent;
@@ -470,10 +521,10 @@
         if (codeTimer) clearInterval(codeTimer);
         codeTimer = setInterval(function () {
           n--;
-          if (n <= 0) { clearInterval(codeTimer); codeTimer = null; btn.disabled = false; btn.textContent = '获取验证码'; }
+          if (n <= 0) { clearInterval(codeTimer); codeTimer = null; btn.disabled = false; btn.textContent = '发送验证码'; updateSubmit(); }
           else btn.textContent = n + ' s';
         }, 1000);
-        var ci = el('hmCode'); if (ci) ci.focus();
+        el('hmCode').focus();
       } else {
         btn.disabled = false; btn.textContent = oldText;
         showErr((j.error && j.error.message) || '验证码发送失败，请稍后再试');
@@ -496,45 +547,35 @@
     }).catch(function () {
       showErr('网络异常，请检查连接后重试');
     }).finally(function () {
-      btn.disabled = false; btn.textContent = '验证并登录';
+      btn.disabled = false; btn.textContent = '登录'; updateSubmit();
     });
   }
 
   function onSubmit(e) {
     e.preventDefault();
     hideErr();
-    var reg = state.mode === 'register';
+    if (!el('hmAgree').checked) { showErr('请先阅读并勾选服务协议、隐私政策与 AI 功能使用须知'); return; }
     var account = (el('hmAccount').value || '').trim();
-    if (!accountType(account)) { showErr('请输入正确的手机号或邮箱'); return; }
-    var isAdminAcct = String(account).trim().toLowerCase() === 'workhogee';
-    if (isAdminAcct && reg) { showErr('该账号为官方保留账号，请直接登录'); return; }
-    if (isAdminAcct && state.authKind === 'code') { showErr('官方运营账号请使用密码登录'); return; }
-    if (state.authKind === 'code') { submitCodeAuth(account); return; }
+
+    if (state.authKind === 'code') {
+      if (!accountType(account) || account.toLowerCase() === 'workhogee') { showErr('请输入正确的手机号'); return; }
+      return submitCodeAuth(account);
+    }
+
+    // 账号密码登录
+    if (!account) { showErr('请输入手机号 / 邮箱 / 用户名'); return; }
     var password = el('hmPassword').value || '';
     if (password.length < 8 || password.length > 64) { showErr('密码长度需为 8-64 位'); return; }
-    if (reg) {
-      var confirm = el('hmConfirm').value || '';
-      if (confirm !== password) { showErr('两次输入的密码不一致'); return; }
-    }
     var btn = el('hmSubmit');
-    btn.disabled = true;
-    btn.textContent = reg ? '注册中…' : '登录中…';
-
-    var payload = { account: account, password: password };
-    var path = reg ? '/api/member/register' : '/api/member/login';
-
-    api(path, payload).then(function (r) {
+    btn.disabled = true; btn.textContent = '登录中…';
+    api('/api/member/login', { account: account, password: password }).then(function (r) {
       var j = r.json;
-      if (r.status === 200 && j && j.ok && j.token) {
-        successAuth(j);
-      } else {
-        showErr((j && j.error && j.error.message) || (reg ? '注册失败，请稍后再试' : '登录失败，请检查账号密码'));
-      }
+      if (r.status === 200 && j && j.ok && j.token) { successAuth(j); }
+      else { showErr((j && j.error && j.error.message) || '登录失败，请检查账号密码'); }
     }).catch(function () {
       showErr('网络异常，请检查连接后重试');
     }).finally(function () {
-      btn.disabled = false;
-      btn.textContent = reg ? '注册并登录' : '登录';
+      btn.disabled = false; btn.textContent = '登录'; updateSubmit();
     });
   }
 
@@ -545,7 +586,6 @@
     renderNav();
     renderGate();
     dispatch('hogee:logout');
-    // 再异步通知后端销毁会话（fire-and-forget，不阻塞 UI）
     if (t) {
       try {
         fetch(API_BASE + '/api/member/logout', {
@@ -582,7 +622,6 @@
     if (!state.gate) return;
     var gate = el('hmGate');
     var chip = el('hmChip');
-    // 页面顶部导航已含会员区（data-member-nav）时，登录态由导航承担，不再弹右上角悬浮胶囊，避免重复与遮挡
     var hasNav = document.querySelectorAll('[data-member-nav]').length > 0;
     if (state.token) {
       if (gate) gate.classList.remove('hm-show');
@@ -611,7 +650,6 @@
     authHeaders: function () {
       return state.token ? { 'Authorization': 'Bearer ' + state.token } : {};
     },
-    /** 带会员令牌的 fetch；401 时清除登录态并抛错 */
     authFetch: function (input, init) {
       init = init || {};
       init.headers = Object.assign({}, init.headers || {}, this.authHeaders());
@@ -625,17 +663,14 @@
         return resp;
       });
     },
-    /** 流程内强制登录：未登录弹出，登录成功 resolve，取消则 reject(AUTH_CANCELLED) */
     requireAuth: function () {
       if (state.token) return Promise.resolve(state.user);
-      var self = this;
       return new Promise(function (resolve, reject) {
         state.waitResolve = resolve;
         state.waitReject = reject;
         openAuth('login');
       });
     },
-    /** 启动时用 /me 校验本地令牌是否仍有效 */
     verify: function () {
       if (!state.token) return Promise.resolve(null);
       return fetch(API_BASE + '/api/member/me', { headers: { 'Authorization': 'Bearer ' + state.token } })
