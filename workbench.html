@@ -2283,9 +2283,27 @@ function callQcVision(dataUrl){
 
 /* ================= API ================= */
 function authHeaders(){return (window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};}
-function callGenerate(prompt,imagePayload,size,refKind){
+/* 把一批 dataURL 缩到长边 longEdge（特征提取专用小图，更快）；单张失败回退原图，不阻塞 */
+function downscaleDataUrls(list,longEdge){
+ return Promise.all(list.map(function(u){return new Promise(function(res){
+  var img=new Image();
+  img.onload=function(){
+   var w=img.naturalWidth,h=img.naturalHeight,sc=longEdge/Math.max(w,h);
+   if(sc>=1){res(u);return;}
+   var c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);
+   c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+   res(c.toDataURL('image/jpeg',0.82));
+  };
+  img.onerror=function(){res(u);};
+  img.src=u;
+ });}));
+}
+async function callGenerate(prompt,imagePayload,size,refKind){
  var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},110000);
  var __gb={prompt:prompt,image:imagePayload,size:size||'2048x2048'};if(refKind)__gb.refKind=refKind;
+ if(refKind==='multi-angle'&&Array.isArray(imagePayload)&&imagePayload.length>1){
+  try{__gb.featureImages=await downscaleDataUrls(imagePayload,832);}catch(e){__gb.featureImages=null;}
+ }
  return fetch(API+'/generate',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),signal:ctrl.signal,
   body:JSON.stringify(__gb)})
  .then(function(resp){clearTimeout(timer);return resp.json().catch(function(){return null;}).then(function(j){
