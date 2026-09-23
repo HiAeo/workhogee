@@ -4258,23 +4258,28 @@ function renderSpecCard(){
 /* ================= 生成 ================= */
 function buildJobs(){
  var used=state.identity.type==='usedcar',jobs=[];
- var main=state.images[0].dataUrl,extra='';
+ if(!state.images.length)return jobs;
+ var extra='';
  if(state.extra){var ce=cleanBanned(state.extra.slice(0,120));var ex=ce.text.trim();if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品本身原有标识除外）：'+ex;}
  var carAnchor='';
  if(used&&state.product&&state.product.brand){
   carAnchor='参考图中的车辆识别为「'+productLabel()+'」'+(state.product.energy&&state.product.energy!=='燃油'?'（'+state.product.energy+'）':'')+'，车型名称仅用于帮助识别车辆；必须以参考图里的实车作为唯一准绳，严格保持车身颜色、车型轮廓、车标、轮毂、玻璃、牌照位置与全部外观细节和参考图完全一致，不得按车型名称脑补、不得更换车辆或年款外观、不得改动里程等真实车况信息。';
  }
- state.outputs.forEach(function(k){
-  if(used){
-   if(k==='showroom')jobs.push({k:k,label:'AI 展厅背景图',prompt:carAnchor+P_showroom+extra,image:main});
-   if(k==='studio')jobs.push({k:k,label:'摄影棚背景图',prompt:carAnchor+P_studio+extra,image:main});
-   if(k==='onsite'&&state.bgImage)jobs.push({k:k,label:'实地展厅合成图',prompt:carAnchor+P_onsite+extra,image:[main,state.bgImage]});
-  }else{
-   var name=state.product.name||state.identity.cat||'商品';
-   if(k==='white')jobs.push({k:k,label:'纯白底主图',prompt:P_white(name)+extra,image:main});
-   if(k==='scene'){var sp=SCENES.filter(function(s){return s.k===state.scene;})[0]||SCENES[0];jobs.push({k:k,label:'生活场景图·'+sp.t,prompt:P_scene(name,sp.p)+extra,image:main});}
-   if(k==='detail')jobs.push({k:k,label:'细节增强图',prompt:P_detail(name)+extra,image:main});
-  }
+ var multi=state.images.length>1;
+ state.images.forEach(function(im,ii){
+  var main=im.dataUrl,suf=multi?('_'+ii):'',tag=multi?(' '+(ii+1)):'';
+  state.outputs.forEach(function(k){
+   if(used){
+    if(k==='showroom')jobs.push({k:k+suf,label:'AI 展厅背景图'+tag,prompt:carAnchor+P_showroom+extra,image:main});
+    if(k==='studio')jobs.push({k:k+suf,label:'摄影棚背景图'+tag,prompt:carAnchor+P_studio+extra,image:main});
+    if(k==='onsite'&&state.bgImage)jobs.push({k:k+suf,label:'实地展厅合成图'+tag,prompt:carAnchor+P_onsite+extra,image:[main,state.bgImage]});
+   }else{
+    var name=state.product.name||state.identity.cat||'商品';
+    if(k==='white')jobs.push({k:k+suf,label:'纯白底主图'+tag,prompt:P_white(name)+extra,image:main});
+    if(k==='scene'){var sp=SCENES.filter(function(s){return s.k===state.scene;})[0]||SCENES[0];jobs.push({k:k+suf,label:'生活场景图·'+sp.t+tag,prompt:P_scene(name,sp.p)+extra,image:main});}
+    if(k==='detail')jobs.push({k:k+suf,label:'细节增强图'+tag,prompt:P_detail(name)+extra,image:main});
+   }
+  });
  });
  return jobs;
 }
@@ -4759,7 +4764,7 @@ function exportRatio(url,w,h,mode,fmt){
   return fmt==='png'?c.toDataURL('image/png'):c.toDataURL('image/jpeg',state.quality==='hd'?.96:.9);
  });
 }
-function modeFor(k){return k==='white'?'contain':'cover';}
+function modeFor(k){return k.indexOf('white')===0?'contain':'cover';}
 function downloadDataUrl(dataUrl,filename){var a=document.createElement('a');a.href=dataUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();}
 function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'_');}
 function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
@@ -5641,7 +5646,7 @@ function openUrlImport(){
  m.querySelector('#urlGo').addEventListener('click',doImport);
  inp.addEventListener('keydown',function(e){if(e.key==='Enter')doImport();});
 }
- $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();if($('#plusPop'))$('#plusPop').classList.remove('show');if(!state.identity){startOrder('general');}else if(state.stage==='welcome'){renderUploadCard();state.stage='upload';}$('#fileInput').click();});
+ $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();var pop=$('#plusPop');if(!state.identity)startOrder('general');if(pop.classList.contains('show')){pop.classList.remove('show');}else{placePop(pop,$('#btnPlus'));pop.classList.add('show');}});
  $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
   if(k==='local'||k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
   else if(k==='kb')openKbPicker();
