@@ -1967,7 +1967,7 @@ var P_onsite='第一张图是待售二手车（主体，务必完整保留），
 
 /* ================= 状态 ================= */
 function resetState(){
- return {identity:null,images:[],product:{name:'',brand:'',series:'',year:'',trim:'',energy:'',gear:''},outputs:new Set(),scene:null,bgImage:null,
+ return {identity:null,images:[],groups:[],product:{name:'',brand:'',series:'',year:'',trim:'',energy:'',gear:''},outputs:new Set(),scene:null,bgImage:null,
   sizes:new Set(['1:1']),fmt:'jpg',quality:'hd',extra:'',results:[],dyn:[],dynGrid:null,videos:[],videoCfg:{tpl:'showcase15',ratio:'9:16'},stage:'welcome',genToken:0,
   activePartner:'host',hires:new Set(['atu','awen','ashi','afa','agu']),taskId:newTaskId(),taskTitle:'',taskPinned:false,
   copy:{ready:false,channel:'general',cps:null,draft:''},showcase:null,deliverTab:'all',labTab:'skill'};
@@ -4125,6 +4125,180 @@ function identifySummary(f){
   return f.name||f.category||f.brand||'';
  }
 }
+var GMOVE_SVG='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/></svg>';
+var gMoveCtx=null;
+function ensureGroupCss(){
+ if(document.getElementById('grpCss'))return;
+ var css=".grp-block{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 12px 10px;margin-bottom:12px;background:rgba(255,255,255,.03);transition:border-color .15s,background .15s;}"
+ +".grp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}"
+ +".grp-name{font-weight:600;font-size:14px;color:#fff;}"
+ +".grp-count{font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap;}"
+ +".grp-thumbs{display:flex;flex-wrap:wrap;gap:8px;}"
+ +".grp-thumb{position:relative;width:66px;height:66px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}"
+ +".grp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}"
+ +".gt-move{position:absolute;right:2px;bottom:2px;width:21px;height:21px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}"
+ +".gt-move:hover{background:#ea580c;}"
+ +".grp-ops{margin-top:9px;display:flex;gap:8px;}"
+ +".btn-sm{padding:5px 11px;font-size:12px;border-radius:9px;}"
+ +".warn-strip{margin:2px 0 12px;padding:9px 11px;border-radius:10px;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.4);color:#fdba74;font-size:12.5px;line-height:1.55;}"
+ +"body.gmove-mode .grp-block{cursor:pointer;}"
+ +"body.gmove-mode .grp-block:hover{border-color:#ea580c;background:rgba(234,88,12,.08);}"
+ +".mi-row{display:flex;align-items:center;gap:11px;padding:9px;border:1px solid rgba(255,255,255,.09);border-radius:12px;margin-bottom:9px;background:rgba(255,255,255,.03);}"
+ +".mi-thumb{width:52px;height:52px;border-radius:9px;object-fit:cover;border:1px solid rgba(255,255,255,.1);}"
+ +".mi-name{flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:9px 11px;color:#fff;font-size:13.5px;}"
+ +".mi-name:focus{outline:none;border-color:#ea580c;}"
+ +".mi-count{font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap;}";
+ var st=document.createElement('style');st.id='grpCss';st.textContent=css;document.head.appendChild(st);
+}
+// 压缩缩略图（分组只发小图，省流量）
+function makeThumb(dataUrl,maxEdge){
+ return new Promise(function(res){
+  var img=new Image();
+  img.onload=function(){
+   var w=img.width,h=img.height,scale=Math.min(1,maxEdge/Math.max(w,h));
+   var w2=Math.max(1,Math.round(w*scale)),h2=Math.max(1,Math.round(h*scale));
+   var c=document.createElement('canvas');c.width=w2;c.height=h2;
+   c.getContext('2d').drawImage(img,0,0,w2,h2);
+   res(c.toDataURL('image/jpeg',0.72));
+  };
+  img.onerror=function(){res(dataUrl);};
+  img.src=dataUrl;
+ });
+}
+function callGroupHttp(thumbs){
+ return fetch(API+'/group',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({images:thumbs})})
+  .then(function(r){return r.json();})
+  .then(function(j){if(j&&j.ok)return {degraded:!!j.degraded,groups:j.groups};return null;})
+  .catch(function(){return null;});
+}
+// 认货入口：单图直接认；多图先视觉分组
+function startGroupFlow(){
+ ensureGroupCss();
+ if(!state.images.length){toast('先传产品图','err');return;}
+ state.stage='confirm';
+ if(state.images.length===1){
+  state.groups=[{name:'',indices:[0],identity:state.identity,product:state.product}];
+  return renderConfirmCard();
+ }
+ card('<div class="card-pad"><div class="card-title">阿图正在清点这几件货…</div><div class="card-desc">先分清哪些是同一件商品的不同角度，哪些是不同的货。</div></div>','atu');
+ (async function(){
+  var thumbs=[];
+  for(var i=0;i<state.images.length;i++){thumbs.push(await makeThumb(state.images[i].dataUrl,900));}
+  var r=await callGroupHttp(thumbs);
+  if(!r){
+   botSay('分组服务没连上，先按每张一件货列出来，你可以手动合并。','atu');
+   r={degraded:true,groups:state.images.map(function(_,i){return {name:'商品'+(i+1),indices:[i]};})};
+  }
+  state.groups=r.groups.map(function(g){return {name:g.name,indices:g.indices.slice(),identity:state.identity,product:state.product};});
+  renderGroupCard(!!r.degraded);
+ })();
+}
+function renderGroupCard(degraded){
+ ensureGroupCss();gMoveCtx=null;document.body.classList.remove('gmove-mode');
+ var h='<div class="card-pad">';
+ h+='<div class="card-title">清点好了：共 <b>'+state.groups.length+'</b> 件货</div>';
+ h+='<div class="card-desc">同一件商品的不同角度会合并、每种图只出一套；分组不对可直接合并或移图。</div>';
+ if(degraded)h+='<div class="warn-strip">自动分组没成功，已按“每张一件货”列出。请把同一件货的分组合并好，再继续。</div>';
+ state.groups.forEach(function(g,gi){
+  h+='<div class="grp-block" data-act="gblock" data-gi="'+gi+'">';
+  h+='<div class="grp-head"><span class="grp-name">'+esc(g.name||('商品'+(gi+1)))+'</span><span class="grp-count">'+g.indices.length+' 张</span></div>';
+  h+='<div class="grp-thumbs">';
+  g.indices.forEach(function(idx){
+   h+='<div class="grp-thumb"><img src="'+state.images[idx].dataUrl+'"><button type="button" class="gt-move" data-act="gmove" data-gi="'+gi+'" data-idx="'+idx+'" title="移到其他组">'+GMOVE_SVG+'</button></div>';
+  });
+  h+='</div>';
+  if(gi<state.groups.length-1)h+='<div class="grp-ops"><button type="button" class="btn btn-ghost btn-sm" data-act="gmerge" data-gi="'+gi+'">与下一组合并</button></div>';
+  h+='</div>';
+ });
+ h+='<div class="card-actions"><button class="btn btn-primary" data-act="gconfirm2">分组对，逐件认货</button><button class="btn btn-ghost" data-act="backAdd2">返回加图</button></div>';
+ h+='</div>';
+ card(h,'atu');
+}
+function groupMerge(gi){
+ gi=+gi;if(gi<0||gi>=state.groups.length-1)return;
+ var a=state.groups[gi],b=state.groups[gi+1];
+ a.indices=a.indices.concat(b.indices);
+ a.name=(a.name||'')+'、'+(b.name||'');
+ state.groups.splice(gi+1,1);
+ renderGroupCard(false);
+}
+function groupStartMove(gi,idx){
+ gMoveCtx={gi:+gi,idx:+idx};
+ document.body.classList.add('gmove-mode');
+ toast('点要移到的分组');
+}
+function groupBlockClick(gi){
+ if(!gMoveCtx)return;
+ var from=gMoveCtx.gi,idx=gMoveCtx.idx,to=+gi;
+ document.body.classList.remove('gmove-mode');
+ if(to===from){gMoveCtx=null;return;}
+ var fg=state.groups[from],p=fg.indices.indexOf(idx);
+ if(p<0){gMoveCtx=null;renderGroupCard(false);return;}
+ fg.indices.splice(p,1);
+ state.groups[to].indices.push(idx);
+ if(fg.indices.length===0)state.groups.splice(from,1);
+ gMoveCtx=null;
+ renderGroupCard(false);
+}
+// 识别字段 -> 该组 product / identity
+function productFromFields(f){
+ f=f||{};
+ var used=f.kind==='usedcar';
+ var identity={type:used?'usedcar':'general',cat:f.category||''};
+ var product;
+ if(used){
+  product={brand:f.brand||'',series:f.series||'',year:f.year||'',trim:f.trim||'',color:f.color||'',energy:f.energy||'燃油',gear:f.gear||'',name:[f.year,f.brand,f.series].filter(Boolean).join(' ')};
+ }else{
+  product={name:f.name||f.category||f.brand||'',brand:f.brand||'',series:'',year:'',trim:'',energy:'',gear:''};
+ }
+ return {identity:identity,product:product};
+}
+// 确认分组 -> 逐组识别
+function confirmGroups(){
+ ensureGroupCss();
+ var groups=state.groups;
+ card('<div class="card-pad"><div class="card-title">阿图逐件认货…</div><div class="card-desc">每件货认品牌、型号、颜色，认不全你再改。</div></div>','atu');
+ (async function(){
+  for(var gi=0;gi<groups.length;gi++){
+   var rep=groups[gi].indices[0];
+   var f=await callIdentify(state.images[rep].dataUrl);
+   var built=productFromFields(f);
+   groups[gi].fields=f||{};
+   groups[gi].product=built.product;
+   groups[gi].identity=built.identity;
+  }
+  if(groups.length===1){
+   state.identity=groups[0].identity;state.product=groups[0].product;
+   identifyFields=groups[0].fields;
+   return renderConfirmSummary();
+  }
+  renderMultiIdentify();
+ })();
+}
+function renderMultiIdentify(){
+ ensureGroupCss();
+ var h='<div class="card-pad"><div class="card-title">阿图逐件认了一遍，核对下名字</div>';
+ h+='<div class="card-desc">名字对就直接出图；要改直接在框里改。</div>';
+ state.groups.forEach(function(g,gi){
+  var nm=(g.product&&g.product.name)||g.name||('商品'+(gi+1));
+  h+='<div class="mi-row"><img class="mi-thumb" src="'+state.images[g.indices[0]].dataUrl+'"><input class="mi-name" data-gi="'+gi+'" value="'+esc(nm)+'"><span class="mi-count">'+g.indices.length+' 张</span></div>';
+ });
+ h+='<div class="card-actions"><button class="btn btn-primary" data-act="ggo">名字对，出图</button><button class="btn btn-ghost" data-act="gbackGroup">返回调整分组</button></div></div>';
+ card(h,'atu');
+}
+function multiIdentifyGo(){
+ $$('input.mi-name').forEach(function(inp){
+  var g=state.groups[+inp.dataset.gi];
+  if(!g.product)g.product={name:''};
+  g.product.name=inp.value.trim()||g.name||('商品'+(+inp.dataset.gi+1));
+ });
+ state.identity=state.groups[0].identity;
+ state.product=state.groups[0].product;
+ state.taskTitle=state.taskTitle||(state.groups.length+' 件货');
+ markTaskProgress();renderTopbar();
+ botSay('好，'+state.groups.length+' 件货都记下了。挑这单要出哪些图。','atu');
+ renderOutputsCard();
+}
 function renderConfirmCard(){
  var used=state.identity.type==='usedcar';
  // 第一步：先显示识图 loading
@@ -4257,27 +4431,32 @@ function renderSpecCard(){
 
 /* ================= 生成 ================= */
 function buildJobs(){
- var used=state.identity.type==='usedcar',jobs=[];
- if(!state.images.length)return jobs;
+ var groups=state.groups||[];
+ if(!groups.length)return [];
  var extra='';
  if(state.extra){var ce=cleanBanned(state.extra.slice(0,120));var ex=ce.text.trim();if(ex)extra='；补充的画面要求（仅用于光线、色调、构图与氛围；画面中绝不出现任何文字、字母、数字、价格、标语、招牌或水印，商品本身原有标识除外）：'+ex;}
- var carAnchor='';
- if(used&&state.product&&state.product.brand){
-  carAnchor='参考图中的车辆识别为「'+productLabel()+'」'+(state.product.energy&&state.product.energy!=='燃油'?'（'+state.product.energy+'）':'')+'，车型名称仅用于帮助识别车辆；必须以参考图里的实车作为唯一准绳，严格保持车身颜色、车型轮廓、车标、轮毂、玻璃、牌照位置与全部外观细节和参考图完全一致，不得按车型名称脑补、不得更换车辆或年款外观、不得改动里程等真实车况信息。';
- }
- var multi=state.images.length>1;
- state.images.forEach(function(im,ii){
-  var main=im.dataUrl,suf=multi?('_'+ii):'',tag=multi?(' '+(ii+1)):'';
+ function labelOf(g){var p=g.product||{};if(g.identity&&g.identity.type==='usedcar'){return [p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ')||'这台车';}return p.name||(g.identity&&g.identity.cat)||'这款商品';}
+ var multi=groups.length>1,jobs=[];
+ groups.forEach(function(g,gi){
+  var used=g.identity&&g.identity.type==='usedcar';
+  var rep=g.indices[0],single=g.indices.length===1;
+  var main=single?state.images[rep].dataUrl:g.indices.map(function(i){return state.images[i].dataUrl;});
+  var nm=labelOf(g);
+  var angPrefix=single?'':('以下 '+g.indices.length+' 张参考图是同一件商品的不同角度/部位，请综合全部参考图可见的信息融合生成；');
+  var suf=multi?('_g'+gi):'',tag=multi?(' '+(gi+1)):'';
+  var carAnchor='';
+  if(used&&g.product&&g.product.brand){
+   carAnchor='参考图中的车辆识别为「'+nm+'」'+(g.product.energy&&g.product.energy!=='燃油'?'（'+g.product.energy+'）':'')+'，车型名称仅用于帮助识别车辆；必须以参考图里的实车作为唯一准绳，严格保持车身颜色、车型轮廓、车标、轮毂、玻璃、牌照位置与全部外观细节和参考图完全一致，不得按车型名称脑补、不得更换车辆或年款外观、不得改动里程等真实车况信息。';
+  }
   state.outputs.forEach(function(k){
    if(used){
-    if(k==='showroom')jobs.push({k:k+suf,label:'AI 展厅背景图'+tag,prompt:carAnchor+P_showroom+extra,image:main});
-    if(k==='studio')jobs.push({k:k+suf,label:'摄影棚背景图'+tag,prompt:carAnchor+P_studio+extra,image:main});
-    if(k==='onsite'&&state.bgImage)jobs.push({k:k+suf,label:'实地展厅合成图'+tag,prompt:carAnchor+P_onsite+extra,image:[main,state.bgImage]});
+    if(k==='showroom')jobs.push({k:k+suf,label:'AI 展厅背景图'+tag,prompt:carAnchor+angPrefix+P_showroom+extra,image:main});
+    if(k==='studio')jobs.push({k:k+suf,label:'摄影棚背景图'+tag,prompt:carAnchor+angPrefix+P_studio+extra,image:main});
+    if(k==='onsite'&&state.bgImage){var oc=single?main:state.images[rep].dataUrl;jobs.push({k:k+suf,label:'实地展厅合成图'+tag,prompt:carAnchor+P_onsite+extra,image:[oc,state.bgImage]});}
    }else{
-    var name=state.product.name||state.identity.cat||'商品';
-    if(k==='white')jobs.push({k:k+suf,label:'纯白底主图'+tag,prompt:P_white(name)+extra,image:main});
-    if(k==='scene'){var sp=SCENES.filter(function(s){return s.k===state.scene;})[0]||SCENES[0];jobs.push({k:k+suf,label:'生活场景图·'+sp.t+tag,prompt:P_scene(name,sp.p)+extra,image:main});}
-    if(k==='detail')jobs.push({k:k+suf,label:'细节增强图'+tag,prompt:P_detail(name)+extra,image:main});
+    if(k==='white')jobs.push({k:k+suf,label:'纯白底主图'+tag,prompt:angPrefix+P_white(nm)+extra,image:main});
+    if(k==='scene'){var sp=SCENES.filter(function(s){return s.k===state.scene;})[0]||SCENES[0];jobs.push({k:k+suf,label:'生活场景图·'+sp.t+tag,prompt:angPrefix+P_scene(nm,sp.p)+extra,image:main});}
+    if(k==='detail')jobs.push({k:k+suf,label:'细节增强图'+tag,prompt:angPrefix+P_detail(nm)+extra,image:main});
    }
   });
  });
@@ -5673,8 +5852,15 @@ function handleAct(b){
  if(act==='chooseFile'){if(!state.identity){startOrder('general');}else{$('#fileInput').click();}}
  else if(act==='chooseBg'){$('#bgInput').click();}
  else if(act==='delShot'||act==='delAttach'){state.images.splice(+b.dataset.i,1);refreshShots();}
- else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}var st=botTyping('atu');setTimeout(function(){st();renderConfirmCard();},420);}
+ else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}var st=botTyping('atu');setTimeout(function(){st();startGroupFlow();},420);}
  else if(act==='backUpload'){renderUploadCard();state.stage='upload';refreshShots();}
+ else if(act==='gblock'){groupBlockClick(b.dataset.gi);}
+ else if(act==='gmove'){groupStartMove(b.dataset.gi,b.dataset.idx);}
+ else if(act==='gmerge'){groupMerge(b.dataset.gi);}
+ else if(act==='gconfirm2'){userSay('分组对，逐件认货');var _gs=botTyping('atu');setTimeout(function(){_gs();confirmGroups();},360);}
+ else if(act==='backAdd2'){renderUploadCard();state.stage='upload';refreshShots();}
+ else if(act==='ggo'){userSay('名字对，出图');var _gs2=botTyping('atu');setTimeout(function(){_gs2();multiIdentifyGo();},360);}
+ else if(act==='gbackGroup'){renderGroupCard(false);}
  else if(act==='fillBrand'){pickCarBrand(b.dataset.b);}
  else if(act==='carCat'){carFilter.cat=b.dataset.c;carFilter.letter='';renderCarPicker();}
  else if(act==='carAbc'){carFilter.letter=b.dataset.l;renderCarPicker();}
