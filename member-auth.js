@@ -78,19 +78,19 @@
     '.hm-overlay{position:fixed;inset:0;z-index:2147483001;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,7,6,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}',
     '.hm-overlay.hm-show{display:flex;animation:hmFade .22s ease;}',
     '@keyframes hmFade{from{opacity:0}to{opacity:1}}',
-    '.hm-card{width:min(900px,94vw);height:560px;max-height:94vh;display:grid;grid-template-columns:1.04fr 1fr;background:#14110d;border:1px solid rgba(255,255,255,.09);border-radius:20px;overflow:hidden;box-shadow:0 36px 90px rgba(0,0,0,.6);color:#fff;position:relative;animation:hmPop .28s cubic-bezier(.2,.8,.2,1);}',
+    '.hm-card{width:min(900px,94vw);height:560px;max-height:94vh;display:grid;grid-template-columns:1.04fr 1fr;background:radial-gradient(125% 115% at 50% -8%,#1b1820 0%,#141218 58%,#0f0d13 100%);border:1px solid rgba(255,255,255,.09);border-radius:20px;overflow:hidden;box-shadow:0 36px 90px rgba(0,0,0,.6);color:#fff;position:relative;animation:hmPop .28s cubic-bezier(.2,.8,.2,1);}',
     '@keyframes hmPop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}',
     /* ===== 左侧：伙计幻灯片 ===== */
-    '.hm-hero{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#221b12 0%,#13100c 60%,#0e0c09 100%);min-width:0;}',
+    '.hm-hero{position:relative;overflow:hidden;background:transparent;min-width:0;}',
     '.hh-viewport{position:absolute;inset:0;overflow:hidden;}',
     '.hh-track{display:flex;height:100%;transition:transform .58s cubic-bezier(.22,.8,.24,1);}',
     '.hh-slide{flex:0 0 100%;position:relative;display:flex;align-items:flex-end;justify-content:center;height:100%;}',
-    '.hh-slide::after{content:"";position:absolute;left:50%;bottom:46px;width:190px;height:26px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(251,146,60,.32),transparent 72%);filter:blur(2px);}',
+    '.hh-slide::after{content:"";position:absolute;left:50%;bottom:46px;width:190px;height:26px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent 72%);filter:blur(1px);}',
     '.hh-slide img{position:relative;z-index:1;height:88%;width:auto;object-fit:contain;object-position:bottom center;filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));}',
-    '.hh-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(10,9,7,.34);color:rgba(255,255,255,.78);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .18s,color .18s,border-color .18s;}',
+    '.hh-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(12,11,15,.4);color:rgba(255,255,255,.78);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .18s,color .18s,border-color .18s;}',
     '.hh-arrow:hover{background:rgba(234,88,12,.82);border-color:transparent;color:#fff;}',
     '.hh-arrow.prev{left:14px;}.hh-arrow.next{right:14px;}',
-    '.hh-scrim{position:absolute;left:0;right:0;bottom:0;z-index:3;height:38%;background:linear-gradient(to top,rgba(8,7,5,.82),transparent);pointer-events:none;}',
+    '.hh-scrim{position:absolute;left:0;right:0;bottom:0;z-index:3;height:38%;background:linear-gradient(to top,rgba(10,9,14,.85),transparent);pointer-events:none;}',
     '.hh-meta{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 22px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;}',
     '.hh-name{font-size:21px;font-weight:700;letter-spacing:.5px;}',
     '.hh-role{font-size:13px;color:#fd9b53;margin-top:3px;letter-spacing:1px;}',
@@ -219,15 +219,15 @@
 
   // 登录左侧幻灯片数据（图片用站点根绝对路径，任何目录引用都正确）
   var CREW = [
-    { img: '/images/hero-atu.png', name: '阿图', role: '生图伙计' },
-    { img: '/images/hero-awen.png', name: '阿文', role: '文案伙计' },
-    { img: '/images/hero-ashi.png', name: '阿视', role: '视频伙计' },
-    { img: '/images/hero-afa.png', name: '阿发', role: '发图伙计' },
-    { img: '/images/hero-agu.png', name: '阿果', role: '效果伙计' }
+    { img: '/images/auth-atu.webp', name: '阿图', role: '生图伙计' },
+    { img: '/images/auth-awen.webp', name: '阿文', role: '文案伙计' },
+    { img: '/images/auth-ashi.webp', name: '阿视', role: '视频伙计' },
+    { img: '/images/auth-afa.webp', name: '阿发', role: '发图伙计' },
+    { img: '/images/auth-agu.webp', name: '阿果', role: '效果伙计' }
   ];
 
   function slideHtml(c) {
-    return '<div class="hh-slide"><img src="' + c.img + '" alt="' + c.name + '" loading="lazy"></div>';
+    return '<div class="hh-slide"><img src="' + c.img + '" alt="' + c.name + '" decoding="async"></div>';
   }
 
   var MODAL_HTML =
