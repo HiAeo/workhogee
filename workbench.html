@@ -934,6 +934,10 @@ body[data-stage="welcome"] .hw.hw6{max-width:none;padding:0;margin:2.2vh auto 0}
 }
 /* ===== rework5 中央作品库 ===== */
 body[data-stage="works"] .composer{display:none!important}
+body.task-focus .composer{display:none!important}
+.prog-ctl{display:flex;gap:9px;margin-top:14px}
+.prog-ctl .btn{display:inline-flex;align-items:center;gap:7px}
+.prog-ctl .btn svg{width:15px;height:15px}
 body[data-stage="publish"] .composer{display:none!important}
 /* ===== 统一视图外壳（对齐效果中心，细体标题 + 深色玻璃卡） ===== */
 .view{max-width:1200px;margin:0 auto;width:100%;padding:22px 34px 90px;animation:hwIn .4s ease}
@@ -2300,6 +2304,7 @@ function downscaleDataUrls(list,longEdge){
 }
 async function callGenerate(prompt,imagePayload,size,refKind){
  var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},110000);
+ try{state._curCtrl=ctrl;}catch(e){}
  var __gb={prompt:prompt,image:imagePayload,size:size||'2048x2048'};if(refKind)__gb.refKind=refKind;
  if(refKind==='multi-angle'&&Array.isArray(imagePayload)&&imagePayload.length>1){
   try{__gb.featureImages=await downscaleDataUrls(imagePayload,832);}catch(e){__gb.featureImages=null;}
@@ -2315,13 +2320,14 @@ async function callGenerate(prompt,imagePayload,size,refKind){
   }
   if(code==='rate_limited'){var re=new Error(msg||'生成过于频繁，请稍后再试');re.code='rate_limited';throw re;}
   throw new Error(msg||('图像服务返回 '+resp.status));
- });}).catch(function(e){clearTimeout(timer);throw e;});
+ });}).catch(function(e){clearTimeout(timer);throw e;}).finally(function(){try{if(state._curCtrl===ctrl)state._curCtrl=null;}catch(e){}});
 }
 function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
  function attempt(n){return callGenerate(prompt,imagePayload,size,refKind).catch(function(e){
+  if(state&&state._abort)throw e;
   if(e&&typeof e.code==='string'&&e.code.indexOf('member')===0)throw e;
-  if(e&&e.code==='rate_limited')return sleep(2600).then(function(){return attempt(n);});
-  if(n>=2)throw e;return sleep(1300).then(function(){onTick&&onTick();return attempt(n+1);});
+  if(e&&e.code==='rate_limited'&&!state._abort)return sleep(2600).then(function(){if(state._abort)throw e;return attempt(n);});
+  if(n>=2)throw e;return sleep(1300).then(function(){if(state&&state._abort)throw e;onTick&&onTick();return attempt(n+1);});
  });}
  return attempt(1);
 }
@@ -4490,11 +4496,27 @@ function runGenerate(){
  if(!jobs.length){toast('请至少选择一种要出的图','err');return;}
  var __go=function(){
   var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
+  state._abort=false;state._pause=false;state._resume=null;enterTaskFocus();
   var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 20–40 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
-  var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div></div>','atu');
+  var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div><div class="prog-ctl"><button type="button" class="btn btn-dark" id="btnPause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/></svg><span>暂停</span></button><button type="button" class="btn btn-ghost" id="btnStop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>终止任务</span></button></div></div>','atu');
+  var __bp=pc.querySelector('#btnPause'),__bs=pc.querySelector('#btnStop');
+  if(__bp)__bp.addEventListener('click',function(){
+   var sv=this.querySelector('svg'),sp=this.querySelector('span');
+   if(state._pause){state._pause=false;if(state._resume){state._resume();state._resume=null;}sp.textContent='暂停';sv.innerHTML='<rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/>';}
+   else{state._pause=true;sp.textContent='继续';sv.innerHTML='<path d="M8 5v14l10-7z" fill="currentColor" stroke="none"/>';}
+  });
+  if(__bs)__bs.addEventListener('click',function(){
+   state._abort=true;++state.genToken;
+   try{state._curCtrl&&state._curCtrl.abort();}catch(e){}
+   if(state._pause){state._pause=false;if(state._resume){state._resume();state._resume=null;}}
+   state.stage='result';exitTaskFocus();
+   botSay('已终止本次出图。已经出好的成品仍在右侧「交付物」里，可随时查看、下载或单独重做。','atu');
+  });
   var genSize=state.quality==='hd'?'2304x2304':'2048x2048';
   (async function(){
    for(var i=0;i<jobs.length;i++){
+    if(token!==state.genToken)return;
+    if(state._pause)await new Promise(function(r){state._resume=r;});
     if(token!==state.genToken)return;
     var row=$('.prog-task[data-k="'+jobs[i].k+'"]',pc);
     if(row){row.classList.add('run');$('.pt-state',row).textContent='出图中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
@@ -4519,7 +4541,7 @@ function runGenerate(){
  if(window.HogeeMember){HogeeMember.requireAuth().then(__go).catch(function(){});}else{__go();}
 }
 function finishGenerate(){
- state.stage='result';
+ state.stage='result';exitTaskFocus();
  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以「再来一单」。','atu');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>','atu');renderDeliver();return;}
  botSay('齐活。<b>'+state.results.length+' 张成品</b>已放进右侧「交付物」，阿文的分渠道文案也备好了；看图、单张重做、打包、做画册、送达各平台都在右边。','atu');
@@ -4545,6 +4567,16 @@ function setDeliver(open){
 }
 function openDeliver(){try{sessionStorage.removeItem('hw.dlUserClosed');}catch(e){}setDeliver(true);}
 function closeDeliver(){try{sessionStorage.setItem('hw.dlUserClosed','1');}catch(e){}setDeliver(false);}
+/* 任务专注态：生图进行中自动收窄左栏（只留图标）、隐藏底部输入框、展开交付区，把空间让给处理与交付 */
+function enterTaskFocus(){
+ document.body.classList.add('task-focus');
+ document.body.dataset.rail='mini';
+ openDeliver();
+}
+function exitTaskFocus(){
+ document.body.classList.remove('task-focus');
+ document.body.dataset.rail='wide';
+}
 var CMP_PH={host:['上传产品图，伙计马上开工。'],
  atu:['上传产品图，阿图帮你出能直接上架的商品图…','白底图、场景图、详情页主图，想要哪种尽管说…','商品本身一点不动，只把背景和质感做到位…'],
  awen:['说说你卖什么、主打什么卖点，阿文按平台口吻写文案…','给我产品名和卖点，标题、正文、话题标签一次写好…','小红书、抖音、朋友圈，同款产品写出不同味道…'],
