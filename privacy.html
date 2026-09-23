@@ -7,230 +7,101 @@
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <title>隐私政策 - WorkHogee</title>
 <meta name="description" content="WorkHogee 隐私政策：我们如何收集、使用和保护您的个人信息。">
+<link rel="stylesheet" href="site.css">
 <style>
-:root {
-  --ink: #1c1917;
-  --ink-soft: #57534e;
-  --orange: #ea580c;
-  --orange-deep: #c2410c;
-  --orange-light: #fb923c;
-  --paper: #faf8f4;
-  --sand: #f0e9db;
-  --line: #e7e0d4;
-  --white: #ffffff;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-}
-a { color: inherit; text-decoration: none; }
-.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+/* ===== 文档页专属深色适配（.doc- 前缀，避免与 site.css 冲突） ===== */
+.doc-page{padding:156px 0 8px;}
+.doc-crumb{font-size:13px;color:var(--ink-muted);margin-bottom:18px;}
+.doc-crumb a{color:var(--orange-light);transition:color .2s;}
+.doc-crumb a:hover{color:var(--orange);}
+.doc-crumb span{margin:0 8px;color:var(--line-strong);}
+.doc-title{font-size:clamp(30px,4.4vw,42px);font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.15;}
+.doc-date{margin-top:14px;font-size:14px;color:var(--ink-muted);}
+.doc-date strong{color:var(--ink-soft);font-weight:600;}
 
-/* 导航栏 */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(250, 248, 244, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-.nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  height: 68px;
-}
-.nav-logo svg { height: 26px; width: auto; display: block; }
-.nav-links { display: flex; align-items: center; gap: 14px; list-style: none; }
-.nav-menu { display: flex; align-items: center; gap: 2px; }
-.nav-link { position: relative; font-size: 14.5px; font-weight: 500; line-height: 1; padding: 10px 13px; border-radius: 8px; white-space: nowrap; color: var(--ink-soft); transition: color .2s, background .2s; }
-.nav-link::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 5px; height: 2px; border-radius: 2px; background: var(--orange); transform: scaleX(0); transform-origin: left center; transition: transform .26s cubic-bezier(.22,1,.36,1); }
-.nav-link:hover { color: var(--orange-deep); background: rgba(234,88,12,.08); }
-.nav-link:hover::after { transform: scaleX(1); }
-.nav-cta { display: inline-flex; align-items: center; gap: 7px; margin-left: 10px; padding: 11px 18px; background: var(--orange); color: #fff; border-radius: 9px; font-size: 14px; font-weight: 600; white-space: nowrap; box-shadow: 0 6px 16px rgba(234,88,12,.28); transition: background .2s, transform .2s, box-shadow .2s; }
-.nav-cta:hover { background: var(--orange-deep); color: #fff; transform: translateY(-1px); box-shadow: 0 10px 22px rgba(234,88,12,.4); }
-.nav-cta svg { width: 15px; height: 15px; }
-.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 9px; background: none; border: none; margin-left: 4px; }
-.nav-toggle span { width: 22px; height: 2px; background: var(--ink); border-radius: 2px; transition: .3s; }
-/* 页面头部 */
-.page-header {
-  padding: 70px 0 50px;
-  background: var(--white);
-  border-bottom: 1px solid var(--line);
-}
-.page-header .breadcrumb {
-  font-size: 13px; color: var(--ink-soft); margin-bottom: 16px;
-}
-.page-header .breadcrumb a { color: var(--orange); }
-.page-header .breadcrumb span { margin: 0 8px; color: var(--line); }
-.page-header h1 {
-  font-size: 38px; font-weight: 800; color: var(--ink);
-  margin-bottom: 12px; letter-spacing: -0.02em;
-}
-.page-header .update-date {
-  font-size: 14px; color: var(--ink-soft);
-}
-.page-header .update-date strong { color: var(--ink); }
+.doc-main{padding:36px 0 96px;}
+.doc-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:52px;align-items:start;}
+.doc-toc{position:sticky;top:96px;}
+.doc-toc-title{font-size:12px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;}
+.doc-toc ul{list-style:none;}
+.doc-toc li{margin-bottom:4px;}
+.doc-toc a{display:block;font-size:13.5px;color:var(--ink-soft);padding:7px 12px;border-left:2px solid transparent;border-radius:0 8px 8px 0;transition:color .2s,background .2s,border-color .2s;}
+.doc-toc a:hover{color:var(--orange-light);}
+.doc-toc a.active{color:var(--orange-light);border-left-color:var(--orange);font-weight:600;background:rgba(251,122,34,.07);}
 
-/* 正文内容 */
-.content-area { padding: 60px 0 80px; }
-.content-wrapper {
-  display: grid; grid-template-columns: 240px 1fr; gap: 50px;
-}
-.toc {
-  position: sticky; top: 90px; align-self: start;
-}
-.toc-title {
-  font-size: 13px; font-weight: 700; color: var(--ink-soft);
-  text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 16px;
-}
-.toc ul { list-style: none; }
-.toc li { margin-bottom: 10px; }
-.toc a {
-  font-size: 13.5px; color: var(--ink-soft);
-  transition: all 0.2s; display: block;
-  padding-left: 12px; border-left: 2px solid transparent;
-}
-.toc a:hover { color: var(--orange); border-left-color: var(--orange); }
-.toc a.active { color: var(--orange); border-left-color: var(--orange); font-weight: 600; }
+.doc-article{max-width:780px;min-width:0;}
+.doc-article h2{font-size:24px;font-weight:800;color:var(--ink);margin:52px 0 16px;padding-top:6px;scroll-margin-top:92px;line-height:1.3;}
+.doc-article h2:first-child{margin-top:0;}
+.doc-article h3{font-size:17px;font-weight:700;color:var(--ink);margin:30px 0 12px;}
+.doc-article p{font-size:15px;color:var(--ink-soft);line-height:1.85;margin-bottom:16px;}
+.doc-article ul,.doc-article ol{margin:0 0 16px;padding-left:22px;}
+.doc-article ul{list-style:disc;}
+.doc-article ol{list-style:decimal;}
+.doc-article li{font-size:15px;color:var(--ink-soft);line-height:1.85;margin-bottom:8px;}
+.doc-article li::marker{color:var(--orange-light);}
+.doc-article strong{color:var(--ink);font-weight:600;}
+.doc-article a{color:var(--orange-light);text-decoration:underline;text-underline-offset:2px;}
 
-.doc-content { max-width: 760px; }
-.doc-content h2 {
-  font-size: 24px; font-weight: 800; color: var(--ink);
-  margin: 48px 0 16px; padding-top: 8px;
-  scroll-margin-top: 90px;
-}
-.doc-content h2:first-child { margin-top: 0; }
-.doc-content h3 {
-  font-size: 18px; font-weight: 700; color: var(--ink);
-  margin: 28px 0 12px;
-}
-.doc-content p {
-  font-size: 15px; color: var(--ink-soft); line-height: 1.8;
-  margin-bottom: 16px;
-}
-.doc-content ul, .doc-content ol {
-  margin: 0 0 16px 24px;
-}
-.doc-content li {
-  font-size: 15px; color: var(--ink-soft); line-height: 1.8;
-  margin-bottom: 8px;
-}
-.doc-content strong { color: var(--ink); font-weight: 600; }
-.doc-content .highlight-box {
-  background: #fff7ed; border: 1px solid #fed7aa;
-  border-radius: var(--radius-lg); padding: 20px 24px;
-  margin: 24px 0;
-}
-.doc-content .highlight-box p { margin-bottom: 0; color: var(--ink); }
-.doc-content .contact-box {
-  background: var(--ink); color: var(--paper);
-  border-radius: var(--radius-xl); padding: 32px;
-  margin-top: 40px;
-}
-.doc-content .contact-box h3 { color: var(--paper); margin-top: 0; }
-.doc-content .contact-box p { color: #a9a196; }
-.doc-content .contact-box a { color: var(--orange-light); }
+.doc-box{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 24px;margin:26px 0;}
+.doc-box p{margin-bottom:0;color:var(--ink-soft);}
+.doc-box--warn{background:rgba(251,122,34,.08);border-color:rgba(251,122,34,.28);}
 
-/* 页脚 */
-.footer {
-  background: var(--ink); color: #a9a196;
-  padding: 50px 0 30px; border-top: 1px solid #37322c;
-}
-.footer-grid {
-  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr);
-  gap: 40px; margin-bottom: 36px;
-}
-.footer-brand { display: flex; flex-direction: column; gap: 14px; }
-.footer-brand svg { height: 26px; width: auto; display: block; margin-left: -1px; }
-.footer-brand p { font-size: 13.5px; line-height: 1.7; max-width: 280px; }
-.footer-col h5 {
-  font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 14px;
-}
-.footer-col ul { list-style: none; }
-.footer-col li { margin-bottom: 9px; }
-.footer-col a { font-size: 13px; color: #a9a196; transition: color 0.2s; }
-.footer-col a:hover { color: var(--orange-light); }
-.footer-bottom {
-  border-top: 1px solid #37322c; padding-top: 22px;
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 12.5px;
-}
-.footer-links { display: flex; gap: 24px; }
-.footer-links a { color: #a9a196; transition: color 0.2s; }
-.footer-links a:hover { color: var(--orange-light); }
+.doc-contact{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 32px;margin-top:44px;}
+.doc-contact h3{color:var(--ink);margin:0 0 16px;font-size:18px;}
+.doc-contact p{color:var(--ink-soft);margin-bottom:8px;}
+.doc-contact p:last-child{margin-bottom:0;}
+.doc-contact a{color:var(--orange-light);text-decoration:underline;text-underline-offset:2px;}
 
-/* 响应式 */
-@media (max-width: 968px) {
-  .nav-toggle { display: flex; }
-  .nav-links { position: fixed; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 8px; padding: 14px 22px 20px; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 12px 30px rgba(24,20,16,.12); transform: translateY(-130%); visibility: hidden; opacity: 0; pointer-events: none; transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, visibility 0s linear .3s; }
-  .nav-links.open { transform: translateY(0); visibility: visible; opacity: 1; pointer-events: auto; transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, visibility 0s; }
-  .nav-menu { flex-direction: column; align-items: stretch; gap: 4px; width: 100%; }
-  .nav-link { padding: 13px 14px; font-size: 15px; border-radius: 9px; }
-  .nav-link::after { display: none; }
-  .nav-cta { margin: 6px 0 0; width: 100%; justify-content: center; padding: 14px 18px; }
-  .content-wrapper { grid-template-columns: 1fr; }
-  .toc { display: none; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
-}
-@media (max-width: 640px) {
-  .page-header h1 { font-size: 28px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+@media(max-width:900px){
+  .doc-page{padding-top:120px;}
+  .doc-layout{grid-template-columns:1fr;gap:0;}
+  .doc-toc{display:none;}
+  .doc-article{max-width:100%;}
 }
 </style>
 </head>
 <body>
 
-<!-- 导航栏 -->
-<nav class="nav light">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
-          <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
-          <g transform="translate(-1.06 -28.16)">
-            <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
-            <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
-            <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
-            <path class="wl1" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
-            <path class="wl1" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
-            <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
-          </g>
-        </svg>
-      <span class="hm-badge"><span>好货的好伙计</span></span></a>
-            <div class="nav-links" id="navLinks">
-        <div class="member-nav" data-member-nav></div>
-        </div>
-      <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
-    </div>
+<header class="nav atop" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#ffffff;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" class="wlhog">Hogee</text>
+        </g>
+      </svg>
+      <span class="nav-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <div class="member-nav" data-member-nav></div>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
-</nav>
+</header>
 
-<!-- 页面头部 -->
-<header class="page-header">
+<header class="doc-page">
   <div class="container">
-    <div class="breadcrumb">
+    <div class="doc-crumb">
       <a href="/">首页</a>
       <span>/</span>
       隐私政策
     </div>
-    <h1>隐私政策</h1>
-    <div class="update-date">最后更新：<strong>2026年9月14日</strong> · 生效日期：2026年9月14日</div>
+    <h1 class="doc-title">隐私政策</h1>
+    <div class="doc-date">最后更新：<strong>2026年9月14日</strong> · 生效日期：2026年9月14日</div>
   </div>
 </header>
 
-<!-- 正文内容 -->
-<main class="content-area">
+<main class="doc-main">
   <div class="container">
-    <div class="content-wrapper">
-      <!-- 目录 -->
-      <aside class="toc">
-        <div class="toc-title">目录</div>
+    <div class="doc-layout">
+      <aside class="doc-toc">
+        <div class="doc-toc-title">目录</div>
         <ul>
           <li><a href="#intro" class="active">引言</a></li>
           <li><a href="#collect">我们收集的信息</a></li>
@@ -246,12 +117,11 @@ a { color: inherit; text-decoration: none; }
         </ul>
       </aside>
 
-      <!-- 文档内容 -->
-      <article class="doc-content">
+      <article class="doc-article">
         <h2 id="intro">引言</h2>
         <p>WorkHogee（以下简称"我们"）深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。我们致力于维持您对我们的信任，恪守以下原则保护您的个人信息：权责一致原则、目的明确原则、选择同意原则、最少够用原则、确保安全原则、主体参与原则、公开透明原则等。</p>
         <p>本隐私政策适用于您通过 WorkHogee 网站（www.workhogee.com）、PC 客户端、移动应用、Web 管理后台以及我们提供的相关服务（以下统称"服务"）所涉及的个人信息处理活动。</p>
-        <div class="highlight-box">
+        <div class="doc-box doc-box--warn">
           <p><strong>请您注意：</strong>本隐私政策不适用于通过我们的服务而接入的第三方服务（包括任何第三方网站）收集的信息，也不适用于我们单独与您签署的协议中已另行约定的信息处理规则。</p>
         </div>
 
@@ -287,7 +157,7 @@ a { color: inherit; text-decoration: none; }
           <li><strong>通知与沟通</strong>：向您发送服务通知、产品更新、活动信息等（您可随时退订）。</li>
           <li><strong>数据分析</strong>：对服务使用情况进行统计分析，以改善服务质量和开发新功能。</li>
         </ol>
-        <div class="highlight-box">
+        <div class="doc-box doc-box--warn">
           <p><strong>重要承诺：</strong>您的业务资料（商品图片、商品资料、任务与生成记录等）仅用于为您提供服务，我们不会将其用于训练面向其他客户的通用 AI 模型，也不会向任何第三方披露。</p>
         </div>
 
@@ -367,23 +237,23 @@ a { color: inherit; text-decoration: none; }
 
         <h2 id="contact">联系我们</h2>
         <p>如果您对本隐私政策有任何疑问、意见或建议，或需要行使您的个人信息权利，请通过以下方式联系我们：</p>
-        <div class="contact-box">
+        <div class="doc-contact">
           <h3>WorkHogee 隐私保护团队</h3>
           <p>邮箱：<a href="mailto:privacy@workhogee.com">privacy@workhogee.com</a></p>
           <p>商务合作：<a href="mailto:hello@workhogee.com">hello@workhogee.com</a></p>
           <p>技术支持：<a href="mailto:support@workhogee.com">support@workhogee.com</a></p>
-          <p style="margin-top: 16px; font-size: 13px;">我们将在收到您的请求后十五个工作日内回复。</p>
+          <p style="margin-top:16px;font-size:13px;color:var(--ink-muted);">我们将在收到您的请求后十五个工作日内回复。</p>
         </div>
       </article>
     </div>
   </div>
 </main>
 
-<!-- 页脚 -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
+        <div class="fb-logo">
         <a href="/" aria-label="WorkHogee Home">
           <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:30px;width:auto;">
             <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
@@ -397,14 +267,15 @@ a { color: inherit; text-decoration: none; }
             </g>
           </svg>
         </a>
-        <p>从一张实拍图开始的商品图与图文工作台：拍几张手机图，生成可上架、可传播、可合规的图片、动态图和文案。</p>
+        <span class="nav-tag foot-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+        </div>
       </div>
       <div class="footer-col">
         <h5>产品</h5>
           <ul>
-            <li><a href="/workbench.html">Web 工作台</a></li>
-            <li><a href="/analytics.html">效果中心</a></li>
-            <li><a href="/#mpp" onclick="if(typeof mpNotify==='function'){mpNotify();return false;}">微信小程序</a></li>
+            <li><a href="/workbench.html">Hogee Web工作台</a></li>
+            <li><a href="#mpp" onclick="mpNotify();return false;">Hogee 微信小程序</a></li>
+            <li><a href="/global.html">Hogee 外贸版</a></li>
           </ul>
       </div>
       <div class="footer-col">
@@ -436,23 +307,22 @@ a { color: inherit; text-decoration: none; }
 </footer>
 
 <script>
-// 目录高亮
-const tocLinks = document.querySelectorAll('.toc a');
-const sections = document.querySelectorAll('.doc-content h2');
+// 目录高亮（滚动联动）
+const tocLinks = document.querySelectorAll('.doc-toc a');
+const sections = document.querySelectorAll('.doc-article h2');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       tocLinks.forEach(link => link.classList.remove('active'));
-      const activeLink = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+      const activeLink = document.querySelector(`.doc-toc a[href="#${entry.target.id}"]`);
       if (activeLink) activeLink.classList.add('active');
     }
   });
 }, { rootMargin: '-80px 0px -60% 0px' });
 sections.forEach(section => observer.observe(section));
-const navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
-if(navToggle&&navLinks){navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));}
 </script>
 
+<script src="site-nav.js" defer></script>
 <script src="/member-auth.js?v=feed20260922" defer></script>
 </body>
 </html>

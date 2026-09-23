@@ -6,21 +6,23 @@
 <meta name="robots" content="noindex,nofollow">
 <title>WorkHogee · 会员管理后台</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Ctext x='16' y='23' font-size='19' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../site.css">
 <style>
 :root{
-  --ink:#1c1917; --ink-soft:#57534e; --ink-muted:#a8a29e;
-  --orange:#ea580c; --orange-deep:#c2410c; --orange-soft:#fff3eb;
-  --paper:#faf8f4; --bg:#f6f4f0; --line:#e7e0d4; --line-strong:#d6cdbd;
-  --green:#16a34a; --green-soft:#ecfdf3; --red:#dc2626; --red-soft:#fef2f2;
-  --sidebar:#1c1917; --sidebar-soft:#292524; --sidebar-text:#d6d3d1; --sidebar-muted:#8a8580;
-  --radius:12px; --shadow:0 1px 2px rgba(28,25,23,.05),0 8px 24px -12px rgba(28,25,23,.18);
-  --shadow-lg:0 24px 60px -20px rgba(28,25,23,.35);
+  /* 深色适配（极光背景由 ../site.css 统一控制） */
+  --ink:#eaf0f9; --ink-soft:#94a1b6; --ink-muted:#69758c;
+  --orange:#fb7a22; --orange-deep:#f2630d; --orange-soft:rgba(251,122,34,.14);
+  --paper:#1b2333; --bg:#131a27; --line:rgba(255,255,255,.12); --line-strong:rgba(255,255,255,.22);
+  --green:#22c55e; --green-soft:rgba(34,197,94,.14); --red:#f87171; --red-soft:rgba(248,113,113,.12);
+  --sidebar:#0d1119; --sidebar-soft:rgba(255,255,255,.07); --sidebar-text:#d6d3d1; --sidebar-muted:#8a8580;
+  --radius:12px; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 60px -20px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  color:var(--ink); background:var(--bg); font-size:14px; line-height:1.55;
+  color:var(--ink); font-size:14px; line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -271,6 +273,29 @@ table.data tbody tr:last-child td{border-bottom:none}
 </head>
 <body>
 
+<header class="nav atop" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#ffffff;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" class="wlhog">Hogee</text>
+        </g>
+      </svg>
+      <span class="nav-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <div class="member-nav" data-member-nav></div>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
 <!-- ============ 登录 ============ -->
 <div id="login">
   <div class="login-card">
@@ -312,7 +337,37 @@ table.data tbody tr:last-child td{border-bottom:none}
   <aside class="sidebar">
     <a href="/" class="sidebar-logo" title="返回官网">
       <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
-        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}</style></defs>
+        <defs><style>.wl1{fill:#1c1917;}.wl2{fill:#ea580c;}
+/* ===== 深色覆盖 + 全站 fixed 导航（72px）适配 ===== */
+#login{background:radial-gradient(1200px 600px at 70% -10%,rgba(251,122,34,.10) 0%,transparent 55%),#131a27;padding-top:100px}
+.login-card{background:#1b2333;border-color:rgba(255,255,255,.1)}
+.login-logo .wl1{fill:#f4f7fd}
+.login-logo text{fill:#f4f7fd}
+.input,select.input,textarea.input{background:#1b2333;border-color:rgba(255,255,255,.18);color:var(--ink)}
+.input::placeholder{color:rgba(244,247,253,.35)}
+.input[readonly]{background:rgba(255,255,255,.05);color:var(--ink-muted)}
+.login-error{background:var(--red-soft);border-color:rgba(248,113,113,.35)}
+.btn-ghost{background:#1b2333;border-color:rgba(255,255,255,.18);color:var(--ink)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.35);background:var(--paper)}
+.btn-danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35)}
+.card{background:#1b2333;border-color:rgba(255,255,255,.1)}
+.stat-ic.gray,.cap-ic.app,.plan-tag.off,.tag{background:rgba(255,255,255,.06);color:var(--ink-soft)}
+table.data{background:#1b2333}
+table.data thead th{background:rgba(255,255,255,.04)}
+.drawer{background:#1b2333}
+.modal{background:#1b2333;border:1px solid rgba(255,255,255,.1)}
+.toast{background:#232d42;border:1px solid rgba(255,255,255,.12);color:#eaf0f9}
+.overlay{background:rgba(0,0,0,.55)}
+.note-box{background:rgba(255,255,255,.03)}
+.plan-badge{border-color:rgba(251,122,34,.35)}
+.dist-track{background:rgba(255,255,255,.06)}
+.empty svg{color:rgba(255,255,255,.25)}
+.icon-btn:hover{background:rgba(255,255,255,.06)}
+.x-btn:hover{background:rgba(255,255,255,.06)}
+.sidebar{top:72px}
+.content{padding-top:96px}
+@media(max-width:860px){.sidebar{top:72px;position:sticky}.content{padding-top:88px}}
+</style></defs>
         <g transform="translate(-1.06 -28.16)">
           <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
           <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
@@ -471,6 +526,63 @@ table.data tbody tr:last-child td{border-bottom:none}
 </div>
 
 <div id="toast"></div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="fb-logo">
+        <a href="/" aria-label="WorkHogee Home">
+          <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:30px;width:auto;">
+            <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}</style></defs>
+            <g transform="translate(-1.06 -28.16)">
+              <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+              <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+              <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+              <path class="fl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+              <path class="fl1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+              <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+            </g>
+          </svg>
+        </a>
+        <span class="nav-tag foot-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+          <ul>
+            <li><a href="/workbench.html">Hogee Web工作台</a></li>
+            <li><a href="#mpp" onclick="mpNotify();return false;">Hogee 微信小程序</a></li>
+            <li><a href="/global.html">Hogee 外贸版</a></li>
+          </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>关于</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="/privacy.html">隐私政策</a></li>
+          <li><a href="/terms.html">服务条款</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 WorkHogee. All rights reserved. 做生意，找伙计。</div>
+      <div class="footer-links">
+        <a href="/privacy.html">隐私政策</a>
+        <a href="/terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <script>
 (function(){
@@ -890,5 +1002,7 @@ table.data tbody tr:last-child td{border-bottom:none}
   if(localStorage.getItem(TOKEN_KEY))boot();else showLogin();
 })();
 </script>
+<script src="../site-nav.js" defer></script>
+<script src="/member-auth.js?v=feed20260922" defer></script>
 </body>
 </html>

@@ -6,40 +6,31 @@
 <title>WorkHogee 生意伙计 · 二手车工作台</title>
 <meta name="description" content="WorkHogee 生意伙计 · 二手车 Web 工作台：手机拍车，自动质检、车型确认、场景生成、多平台尺寸导出与车源文案。">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="site.css">
 <link rel="preconnect" href="https://miaoda.feishu.cn">
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 :root{
-  --ink:#1c1917;--ink-soft:#57534e;--ink-muted:#a8a29e;--line:#e7e0d4;
-  --orange:#ea580c;--orange-deep:#c2410c;--orange-light:#fb923c;--orange-bg:#fff4ec;
-  --paper:#f6f4f0;--card:#ffffff;--sand:#efe9dd;--green:#16a34a;--green-bg:#ecfdf3;--red:#dc2626;--red-bg:#fef2f2;
-  --shadow:0 1px 2px rgba(28,25,23,.05),0 8px 24px -12px rgba(28,25,23,.12);
-  --shadow-lg:0 24px 60px -24px rgba(28,25,23,.22);
+  /* 深色适配（极光背景由 site.css 统一控制） */
+  --ink:#eaf0f9;--ink-soft:#94a1b6;--ink-muted:#69758c;--line:rgba(255,255,255,.12);
+  --orange:#fb7a22;--orange-deep:#f2630d;--orange-light:#fd9a4d;--orange-bg:rgba(251,122,34,.14);
+  --paper:#131a27;--card:#1b2333;--sand:#232d42;--green:#22c55e;--green-bg:rgba(34,197,94,.14);--red:#f87171;--red-bg:rgba(248,113,113,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 60px -24px rgba(0,0,0,.6);
   --radius:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
 a{text-decoration:none;color:inherit}
 img{display:block;max-width:100%}
 ::selection{background:var(--orange);color:#fff}
 
-/* ===== 顶栏 ===== */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.topbar-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:16px}
-.tb-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.tb-logo svg{height:22px;width:auto;display:block}
-.tb-divider{width:1px;height:22px;background:var(--line)}
-.tb-title{font-size:15px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.tb-title small{font-weight:400;color:var(--ink-muted);font-size:12px;margin-left:6px}
-.tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
-.beta-tag{font-size:11px;font-weight:700;color:var(--orange-deep);background:var(--orange-bg);border:1px solid #fed7aa;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.tb-back{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;transition:color .2s}
-.tb-back:hover{color:var(--orange)}
-.tb-back svg{width:15px;height:15px}
+/* 顶部导航由 site.css + partials/nav.html 统一 */
+.member-nav{gap:8px}
 
 /* ===== 布局 ===== */
 .shell{max-width:1280px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:232px 1fr;gap:28px;align-items:start}
@@ -373,24 +364,30 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
   .point-grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
 }
 </style>
-<!-- workhogee-unify: legacy entry consolidated to /workbench.html; remove this block to restore -->
-<meta name="robots" content="noindex">
-<link rel="canonical" href="https://www.workhogee.com/workbench.html">
-<meta http-equiv="refresh" content="0;url=/workbench.html">
-<script>try{location.replace('/workbench.html'+location.search+location.hash);}catch(e){location.href='/workbench.html';}</script>
+<meta name="robots" content="noindex,nofollow">
 </head>
 <body data-member-gate>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="tb-logo" href="/" title="返回 WorkHogee 首页">
-      <svg viewBox="0 0 118 19.13" xmlns="http://www.w3.org/2000/svg" aria-label="WorkHogee"><defs><style>.wl1{fill:#1c1917}.wl2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text></g></svg>
+<header class="nav atop" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 118 19.13" aria-label="WorkHogee">
+        <defs><style>.wl1{fill:#ffffff;}.wl2{fill:#ea580c;}</style></defs>
+        <g transform="translate(-1.06 -28.16)">
+          <path class="wl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path class="wl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path class="wl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path class="wl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+          <path class="wl1" d="M42.25,39.39l-.64.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" class="wlhog">Hogee</text>
+        </g>
+      </svg>
+      <span class="nav-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
     </a>
-    <div class="tb-divider"></div>
-    <span class="hm-badge"><span>好货的好伙计</span></span>
-    <div class="tb-right">
+    <nav class="nav-links" id="navLinks">
       <div class="member-nav" data-member-nav></div>
-    </div>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -647,7 +644,7 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
 
   <div class="card" style="background:var(--sand);border-style:dashed">
     <div style="display:flex;gap:14px;align-items:flex-start">
-      <span style="width:38px;height:38px;border-radius:10px;background:#fff;color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
+      <span style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);color:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
       <div>
         <h4 style="font-size:14.5px;font-weight:700;margin-bottom:4px">360 看车与短视频即将开放</h4>
         <p style="font-size:12.5px;color:var(--ink-soft)">用多张外观图合成旋转序列与 8–12 秒横竖版看车视频的能力正在内测，开放后将在本工作台自动上线，无需额外付费。</p>
@@ -680,6 +677,114 @@ select:disabled{background:#f5f2ec;color:#a8a29e;cursor:not-allowed;}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="fb-logo">
+        <a href="/" aria-label="WorkHogee Home">
+          <svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:30px;width:auto;">
+            <defs><style>.fl1{fill:#ffffff;}.fl2{fill:#ea580c;}
+/* ===== 深色覆盖（硬编码浅色统一翻深，极光背景贯穿） ===== */
+.btn-primary:disabled{background:rgba(255,255,255,.14);box-shadow:none}
+.btn-ghost{background:var(--card);color:var(--ink);border-color:var(--line)}
+.btn-dark{background:var(--orange);color:#fff}
+.btn-dark:hover{background:var(--orange-deep)}
+.rail-num{background:var(--card)}
+.rail-item.done .rail-num{background:#232d42;border-color:#232d42;color:#fff}
+.shot-tab{background:var(--card)}
+.shot-tab.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.point-slot{background:rgba(255,255,255,.03)}
+.upload-zone{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.03)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:var(--orange-bg)}
+.thumb{background:var(--card)}
+.qc-summary.warn{background:rgba(251,191,36,.12);color:#fbbf24}
+.field input,.field select,.field textarea{background:var(--card)}
+.field input:focus,.field select:focus,.field textarea:focus{background:var(--sand)}
+.opt-card{background:var(--card)}
+.kb-chip{background:var(--card)}
+.kb-chip.added{background:rgba(251,122,34,.16);border-color:var(--orange);color:#fdba74}
+.kb-caution{color:#fbbf24;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.3)}
+.kb-badge{color:#fdba74;background:rgba(251,122,34,.16);border-color:rgba(251,122,34,.35)}
+.gen-task{background:var(--card)}
+.size-chip{background:var(--card)}
+.result-card{background:var(--card)}
+.copy-block{background:var(--card)}
+.copy-block .cb-text{background:rgba(255,255,255,.03)}
+.copy-block .cb-text.xhs{color:#c4cdd9}
+.toast{background:#232d42;border:1px solid rgba(255,255,255,.12);color:#eaf0f9}
+.pick-box{background:var(--card);color:var(--ink)}
+select:disabled{background:rgba(255,255,255,.06);color:var(--ink-muted)}
+.brand-dialog{background:#1b2333}
+.bd-close{color:var(--ink-soft)}
+.bd-close:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+.bd-search{background:var(--card)}
+.bd-search input{color:var(--ink)}
+.bd-powtabs button{background:var(--card);color:var(--ink-soft)}
+.bd-letters button{color:var(--ink-muted)}
+.bd-brand{background:var(--card);color:var(--ink)}
+.bd-brand:hover{background:rgba(251,122,34,.14);color:#fdba74}
+.bd-empty{color:var(--ink-muted)}
+.bd-title{color:var(--ink)}
+.spec-chip{background:var(--card)}
+.onsite-head .oc-ico{background:rgba(255,255,255,.08)}
+.onsite-preview .onsite-del{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35)}
+.onsite-empty{background:rgba(255,255,255,.03)}
+.lb-img{background:#0d1119}
+.lb-close{background:#1b2333;color:var(--ink)}
+.compliance-lock{background:#0d1119}
+.shell{padding-top:100px}
+@media(max-width:960px){.shell{padding-top:88px}}
+</style></defs>
+            <g transform="translate(-1.06 -28.16)">
+              <path class="fl1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+              <path class="fl2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+              <path class="fl1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+              <path class="fl1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/>
+              <path class="fl1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/>
+              <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text>
+            </g>
+          </svg>
+        </a>
+        <span class="nav-tag foot-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>产品</h5>
+          <ul>
+            <li><a href="/workbench.html">Hogee Web工作台</a></li>
+            <li><a href="#mpp" onclick="mpNotify();return false;">Hogee 微信小程序</a></li>
+            <li><a href="/global.html">Hogee 外贸版</a></li>
+          </ul>
+      </div>
+      <div class="footer-col">
+        <h5>资源</h5>
+        <ul>
+          <li><a href="https://github.com/HiAeo/workhogee" target="_blank">GitHub 仓库</a></li>
+          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
+          <li><a href="//www.workhogee.com/admin/" target="_blank" rel="noopener noreferrer">管理后台</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>关于</h5>
+        <ul>
+          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 WorkHogee. All rights reserved. 做生意，找伙计。</div>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+        <a href="mailto:hello@workhogee.com">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script>
 /* ================= 常量与数据 ================= */
 /* ================= 生成服务（服务端薄代理） =================
@@ -1504,6 +1609,7 @@ function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navig
 renderShotTabs();renderPoints();renderPlatforms();syncSceneCards();bindOutputSpec();bindOnsiteBg();restoreOnsiteBg();bindLightbox();
 </script>
   <div class="lightbox" id="lightbox"><div class="lb-inner"><button type="button" class="lb-close" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><img class="lb-img" alt="成品大图"><div class="lb-cap"></div></div></div>
-<script src="/member-auth.js?v=feed20260922"></script>
+<script src="site-nav.js" defer></script>
+<script src="/member-auth.js?v=feed20260922" defer></script>
 </body>
 </html>
