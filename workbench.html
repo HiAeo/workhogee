@@ -1717,6 +1717,69 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 @media(max-width:720px){.wk-lb{padding:16px}.wklb-x{top:-8px;right:-4px}}
 
 </style>
+
+<style>
+/* ===== 平台发布效果预览 + 档案补录 ===== */
+.pf-badge{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;overflow:hidden}
+.pv{background:linear-gradient(180deg,rgba(35,45,66,.92),rgba(27,35,51,.92));border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:4px 0}
+.pv-top{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line2)}
+.pv-user{font-size:12.5px;color:var(--tx);font-weight:600}
+.pv-platform{margin-left:auto;font-size:11px;color:var(--tx3);display:inline-flex;align-items:center;gap:5px}
+.pv-acts{display:flex;gap:7px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid var(--line2);background:rgba(13,17,25,.35)}
+.pv-acts .btn{font-size:12px;padding:6px 11px}
+.pv-copyok{font-size:11.5px;color:var(--ok);align-self:center}
+/* 小红书：左右分栏 */
+.pv-xhs .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start}
+.pv-xhs .pv-imgs{position:relative;border-right:1px solid var(--line2);padding:12px}
+.pv-xhs .pv-imgs .pi-main{aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#0d1119;position:relative}
+.pv-xhs .pv-imgs .pi-main img{width:100%;height:100%;object-fit:cover;display:block}
+.pv-xhs .pv-imgs .pi-count{position:absolute;right:20px;bottom:20px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px}
+.pv-xhs .pv-imgs .pi-thumbs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pv-xhs .pv-imgs .pi-thumbs img{width:34px;height:34px;border-radius:7px;object-fit:cover;border:1px solid var(--line2)}
+.pv-xhs .pv-note{padding:13px 14px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.pv-xhs .pv-title{font-size:14px;font-weight:700;color:var(--tx);line-height:1.45}
+.pv-xhs .pv-body{font-size:12.5px;line-height:1.62;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:none;overflow:visible}
+.pv-xhs .pv-tags{font-size:12px;color:#7fb0ff;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+/* 手机框（抖音 / 朋友圈） */
+.pv-phone-wrap{display:flex;justify-content:center;padding:16px;background:radial-gradient(120% 90% at 50% 0%,rgba(96,165,250,.08),transparent 60%)}
+.phone{width:248px;aspect-ratio:9/16;border-radius:26px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.16);box-shadow:0 18px 50px rgba(0,0,0,.5);background:#000}
+/* 抖音 */
+.pv-dy .ph-media{position:absolute;inset:0}
+.pv-dy .ph-media img{width:100%;height:100%;object-fit:cover;display:block}
+.pv-dy .ph-media:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,transparent 30%,transparent 55%,rgba(0,0,0,.72) 100%)}
+.pv-dy .ph-side{position:absolute;right:9px;bottom:84px;display:flex;flex-direction:column;gap:16px;align-items:center;z-index:2}
+.pv-dy .ph-side .ph-ic{color:#fff;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px}
+.pv-dy .ph-side .ph-ic svg{width:27px;height:27px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.pv-dy .ph-follow{width:34px;height:34px;border-radius:50%;border:1.5px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;position:relative}
+.pv-dy .ph-follow:after{content:'+';position:absolute;bottom:-9px;background:#fe2c55;color:#fff;border-radius:50%;width:15px;height:15px;font-size:12px;line-height:15px;text-align:center}
+.pv-dy .ph-sub{position:absolute;left:11px;right:56px;bottom:52px;z-index:2;color:#fff;font-size:12px;line-height:1.45;background:rgba(0,0,0,.32);padding:5px 8px;border-radius:7px;display:none}
+.pv-dy .ph-bottom{position:absolute;left:11px;right:11px;bottom:12px;z-index:2;color:#fff}
+.pv-dy .ph-user{font-size:12.5px;font-weight:700;margin-bottom:4px}
+.pv-dy .ph-cap{font-size:11.5px;line-height:1.4;opacity:.95;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* 朋友圈 */
+.pv-dy .phone{align-self:center}
+.pv-pyq .phone{background:#ededed;aspect-ratio:auto;height:auto;min-height:441px;align-self:center}
+.wx-bar{height:34px;background:#f7f7f7;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#111;border-bottom:1px solid #ddd}
+.wx-moments{padding:13px 12px}
+.wx-row{display:flex;gap:10px}
+.wx-ava{width:42px;height:42px;border-radius:8px;overflow:hidden;flex:0 0 auto;background:#cfd6e0}
+.wx-ava img{width:100%;height:100%;object-fit:cover}
+.wx-main{min-width:0;flex:1}
+.wx-name{color:#576b95;font-size:13.5px;font-weight:600;margin-bottom:5px}
+.wx-body{font-size:14px;color:#1a1a1a;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.wx-imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px;max-width:200px}
+.wx-imgs .wx-img{aspect-ratio:1;border-radius:4px;overflow:hidden;background:#d4dae3}
+.wx-imgs .wx-img img{width:100%;height:100%;object-fit:cover}
+.wx-time{font-size:11.5px;color:#999;margin-top:9px;display:flex;align-items:center;gap:8px}
+.wx-time .wx-two{margin-left:auto;color:#576b95}
+/* 档案补录卡 */
+.facts-card{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fc-row{display:flex;flex-direction:column;gap:4px;background:rgba(13,17,25,.4);border:1px solid var(--line2);border-radius:11px;padding:8px 10px}
+.fc-label{font-size:11.5px;color:var(--tx2);font-weight:600}
+.fc-input{background:transparent;border:0;outline:0;color:var(--tx);font-size:13px;width:100%}
+.fc-input::placeholder{color:var(--tx3);font-size:12px}
+@media(max-width:760px){.pv-xhs .pv-grid{grid-template-columns:1fr}.pv-xhs .pv-imgs{border-right:0;border-bottom:1px solid var(--line2)}.facts-card{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -5959,9 +6022,150 @@ function relayToAwen(){
  state.relayStage='awen';state.activePartner='awen';
  renderRelayBar('awen');try{setDeliverTab('copy');}catch(e){}
  userSay('让阿文写文案');
- botSay('图我都看过了。你要发<b>小红书、朋友圈，还是抖音</b>？我按每个平台的口吻写，可以多选。','awen');
+ if(factsNeeded())relayFactsCard();else awenPickPlatform();
+}
+function awenPickPlatform(){
+ botSay('要写出能打的爆款，得把<b>上牌、里程、售价</b>这些实在信息用上。你要发<b>小红书、朋友圈，还是抖音</b>？可以多选。','awen');
  relayPlatformPick('rf_awen_write','按所选平台写文案');
 }
+/* ---- 结构化事实采集（出爆款的“米”）---- */
+function collectFacts(){
+ var id=state.identity||{type:'general'},p=state.product||{},vp=state.vehicleProfile||{},f={};
+ if(id.type==='usedcar'){
+  var yp=[p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ');
+  if(yp)f['车型']=yp;
+  if(vp.regDate)f['上牌']=vp.regDate;
+  if(vp.mileage)f['里程']=vp.mileage;
+  if(vp.price)f['售价']=vp.price;
+  if(vp.transfers)f['过户']=vp.transfers;
+  if(vp.power)f['动力']=vp.power;
+  if(vp.condition)f['车况']=vp.condition;
+  if(vp.maintenance)f['保养']=vp.maintenance;
+  if(vp.config)f['配置']=vp.config;
+  if(vp.inspection)f['检测']=vp.inspection;
+  if(vp.location)f['看车']=vp.location;
+ }else{
+  if(p.name)f['商品']=p.name;
+  if(vp.price)f['价格']=vp.price;
+  if(vp.material)f['材质/规格']=vp.material;
+  if(vp.spoints)f['核心卖点']=vp.spoints;
+  if(vp.scenes)f['使用场景']=vp.scenes;
+ }
+ return f;
+}
+function factsNeeded(){
+ var id=(state.identity||{}).type,f=collectFacts();
+ if(id==='usedcar')return !(f['里程']||f['售价']||f['上牌']);
+ return !(f['价格']||f['核心卖点']);
+}
+function relayFactsCard(){
+ var used=(state.identity||{}).type==='usedcar';
+ botSay(used?'要写出能打的文案，光有车型不够，我还需要几个实在数——<b>补一次，以后这台车都不用再填</b>。':'要写出能打的文案，我需要几个具体信息，补一次就好。','awen');
+ var fields=used?[
+  ['regDate','上牌时间','如 2023年5月'],
+  ['mileage','表显里程','如 3.2万公里'],
+  ['price','售价','如 16.99万'],
+  ['transfers','过户次数','如 一手 / 0过户'],
+  ['condition','车况','如 仅右前叶1处补漆'],
+  ['config','配置亮点','如 全景天窗、座椅加热']
+ ]:[
+  ['price','价格','如 99元'],
+  ['material','材质 / 规格','如 纯棉、M码'],
+  ['spoints','核心卖点','具体、可验证'],
+  ['scenes','使用场景','适合什么人 / 什么场合']
+ ];
+ var rows=fields.map(function(x){
+  return '<label class="fc-row"><span class="fc-label">'+x[1]+'</span><input class="fc-input" data-fc="'+x[0]+'" placeholder="'+x[2]+'"></label>';
+ }).join('');
+ card('<div class="facts-card">'+rows+'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_facts_done">补好了，写文案</button><button class="btn btn-ghost btn-sm" data-quick="rf_facts_skip">先跳过</button></div>','awen');
+}
+function relayFactsDone(){
+ var vp=state.vehicleProfile||(state.vehicleProfile={});
+ $$('.facts-card .fc-input').forEach(function(i){if(i.value)vp[i.dataset.fc]=i.value.trim();});
+ userSay('补好档案');
+ awenPickPlatform();
+}
+function relayFactsSkip(){userSay('先跳过');awenPickPlatform();}
+/* ---- 平台品牌标识 ---- */
+var PF={
+ xhs:'<span class="pf-badge" style="background:#FF2442;color:#fff;font-weight:800;font-size:11px">小</span>',
+ douyin:'<span class="pf-badge" style="background:#050505;color:#fff"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M16.5 3c.3 2.1 1.7 3.7 3.8 4v2.7c-1.4 0-2.7-.5-3.8-1.2v6.1c0 3.1-2.5 5.6-5.6 5.6s-5.6-2.5-5.6-5.6 2.5-5.5 5.5-5.5c.3 0 .6 0 .9.1v2.9c-.3-.1-.6-.2-.9-.2-1.5 0-2.8 1.2-2.8 2.7s1.3 2.7 2.8 2.7 2.7-1.2 2.7-2.7V3h2z"/></svg></span>',
+ pyq:'<span class="pf-badge" style="background:#07C160;color:#fff"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M9 4C4.9 4 1.6 6.8 1.6 10.2c0 2 1.1 3.7 2.8 4.9l-.7 2.2 2.6-1.3c.8.2 1.7.3 2.6.3h.6c-.1-.5-.2-1-.2-1.5 0-3.2 3-5.8 6.7-5.8h.5C16 6.2 12.8 4 9 4zm-2.6 4.5c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1zm5.3 0c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1zM16.3 10c-3.2 0-5.7 2.2-5.7 4.9 0 2.7 2.5 4.9 5.7 4.9.7 0 1.4-.1 2-.3l2.1 1.1-.6-1.8c1.4-1 2.3-2.4 2.3-3.9 0-2.7-2.5-4.9-5.8-4.9zm-1.9 3.9c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9zm3.8 0c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9z"/></svg></span>'
+};
+var PVMETA={xhs:{name:'小红书'},douyin:{name:'抖音'},pyq:{name:'朋友圈'}};
+var PV_ICO='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+function previewUrls(){return state.results.map(function(r){return r.url;}).filter(Boolean);}
+function pvB64(t){try{return btoa(unescape(encodeURIComponent(t||'')));}catch(e){return '';}}
+function pvUnb64(v){try{return decodeURIComponent(escape(atob(v||'')));}catch(e){return '';}}
+function splitCopy(t){
+ t=t||'';var lines=t.split(/\r?\n/);
+ var fi=lines.findIndex(function(l){return l.trim();});
+ var title=fi>=0?lines[fi].trim():'';
+ var tags='';
+ for(var i=lines.length-1;i>=0;i--){if(lines[i].split('#').length>=3){tags=lines[i].trim();break;}}
+ var bodyLines=lines.slice();
+ if(fi>=0)bodyLines[fi]='';
+ if(tags){var ti=bodyLines.findIndex(function(l){return l.trim()===tags;});if(ti>=0)bodyLines[ti]='';}
+ var body=bodyLines.join('\n').replace(/^\s+|\s+$/,'');
+ return {title:title,body:body,tags:tags,full:t};
+}
+function pvActs(parts){
+ var h='<div class="pv-acts">';
+ parts.forEach(function(p){if(p[1])h+='<button type="button" class="btn btn-ghost btn-sm" data-pvt="'+pvB64(p[1])+'">'+PV_ICO+' '+p[0]+'</button>';});
+ return h+'<span class="pv-copyok"></span></div>';
+}
+function platformPreviewHtml(cid,t){
+ if(cid==='xhs')return xhsPreviewHtml(t);
+ if(cid==='douyin')return dyPreviewHtml(t);
+ return pyqPreviewHtml(t);
+}
+function xhsPreviewHtml(t){
+ var s=splitCopy(t),urls=previewUrls(),main=urls[0]||'';
+ var imgs=main?('<div class="pi-main"><img src="'+main+'"><span class="pi-count">1/'+Math.max(urls.length,1)+'</span></div>'
+  +(urls.length>1?'<div class="pi-thumbs">'+urls.slice(0,6).map(function(u){return '<img src="'+u+'">';}).join('')+'</div>':'') )
+  :'<div class="pi-main" style="display:flex;align-items:center;justify-content:center;color:var(--tx3);font-size:12px">成品图生成后显示在这里</div>';
+ return '<div class="pv pv-xhs"><div class="pv-top">'+PF.xhs+'<span class="pv-user">笔记发布预览</span><span class="pv-platform">小红书</span></div>'
+ +'<div class="pv-grid"><div class="pv-imgs">'+imgs+'</div>'
+ +'<div class="pv-note"><div class="pv-title">'+esc(s.title||'标题')+'</div><div class="pv-body">'+esc(s.body||s.full)+'</div>'
+ +(s.tags?'<div class="pv-tags">'+esc(s.tags)+'</div>':'')+'</div></div>'
+ +pvActs([['复制标题',s.title],['复制正文',s.body||s.full],['复制标签',s.tags],['复制全部',s.full]])+'</div>';
+}
+function dySideHtml(){
+ function ic(p,label){return '<div class="ph-ic"><svg viewBox="0 0 24 24" width="27" height="27" fill="currentColor">'+p+'</svg>'+label+'</div>';}
+ return '<div class="ph-follow"></div>'
+ +ic('<path d="M12 21s-7.5-4.6-10-9.2C.4 8.6 2 5 5.5 5c2 0 3.4 1.1 4.5 2.5C11.1 6.1 12.5 5 14.5 5 18 5 19.6 8.6 22 11.8 19.5 16.4 12 21 12 21z"/>','1.2w')
+ +ic('<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-4-1L3 20l1.1-3.5A8.4 8.4 0 1 1 21 11.5z"/>','842')
+ +ic('<path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.4l1.1-6.5L2.6 9.3l6.5-.9z"/>','326')
+ +ic('<path d="M14 9V4l7 7-7 7v-5H6v-4z"/>','分享');
+}
+function dyPreviewHtml(t){
+ var urls=previewUrls(),media=urls[0]||'';
+ var titleM=t.match(/发布标题[:：]\s*(.+)/),pubTitle=titleM?titleM[1].trim():'';
+ var topics=(t.match(/#[^\n]+/)||[''])[0];
+ var cap=pubTitle||splitCopy(t).title;
+ var phMedia=media?'<img src="'+media+'">':'';
+ return '<div class="pv pv-dy"><div class="pv-top">'+PF.douyin+'<span class="pv-user">视频发布预览</span><span class="pv-platform">抖音</span></div>'
+ +'<div class="pv-phone-wrap"><div class="phone"><div class="ph-media">'+phMedia+'</div>'
+ +'<div class="ph-side">'+dySideHtml()+'</div>'
+ +'<div class="ph-bottom"><div class="ph-user">@你的账号</div><div class="ph-cap">'+esc(cap)+(topics?'　'+esc(topics):'')+'</div></div></div></div>'
+ +pvActs([['复制口播脚本',t],['复制标题',pubTitle],['复制话题',topics]])+'</div>';
+}
+function pyqPreviewHtml(t){
+ var s=splitCopy(t),urls=previewUrls().slice(0,9);
+ var imgs=urls.length?'<div class="wx-imgs">'+urls.map(function(u){return '<div class="wx-img"><img src="'+u+'"></div>';}).join('')+'</div>':'';
+ var ava=urls[0]?'<img src="'+urls[0]+'">':'';
+ return '<div class="pv pv-pyq"><div class="pv-top">'+PF.pyq+'<span class="pv-user">朋友圈发布预览</span><span class="pv-platform">微信</span></div>'
+ +'<div class="pv-phone-wrap"><div class="phone"><div class="wx-bar">朋友圈</div><div class="wx-moments"><div class="wx-row">'
+ +'<div class="wx-ava">'+ava+'</div><div class="wx-main"><div class="wx-name">你的昵称</div>'
+ +'<div class="wx-body">'+esc(s.full)+'</div>'+imgs
+ +'<div class="wx-time">刚刚<span class="wx-two">•• ••</span></div></div></div></div></div></div>'
+ +pvActs([['复制文案',s.full]])+'</div>';
+}
+document.addEventListener('click',function(e){
+ var b=e.target.closest('[data-pvt]');if(!b)return;
+ var txt=pvUnb64(b.getAttribute('data-pvt'));if(!txt)return;
+ copyPlain(txt);var ok=b.parentNode.querySelector('.pv-copyok');if(ok){ok.textContent='已复制，去平台粘贴';setTimeout(function(){ok.textContent='';},2200);}
+});
 function relayPickChip(id,sel){
  var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];
  var tick='<span class="pc-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>';
@@ -5989,6 +6193,7 @@ function relAwenPayload(tone){
   identityType:(state.identity&&state.identity.type)||'general',
   category:(state.identity&&state.identity.cat)||'',
   sellingPoints:sellPoints(),
+  facts:collectFacts(),
   channels:(state.relayChannels||['xhs']).slice(),
   kbContext:(typeof getKnowledgeContext==='function')?getKnowledgeContext():'',
   extra:state.extra||'',
@@ -6000,9 +6205,8 @@ async function relAwenCore(tone){
  var toneName={kol:'口语版',pro:'专业版',short:'精简版'}[tone]||'';
  var toneRule={kol:'更口语、更接地气、像朋友真诚安利',pro:'更专业、更可信、突出品质与售后保障',short:'更简短精炼、只保留最核心的卖点'}[tone]||'';
  function showCards(ch){
-  var sfx=toneName?(' · '+toneName):'';
-  [['xhs','小红书笔记'+sfx,ch.xhs],['douyin','抖音口播脚本'+sfx,ch.douyin],['pyq','朋友圈短文'+sfx,ch.pyq]].forEach(function(bk){
-   if(bk[2])card('<div class="card-title">'+bk[0]+'</div><pre class="relay-copy-pre">'+esc(bk[2])+'</pre>','awen');
+  [['xhs',ch.xhs],['douyin',ch.douyin],['pyq',ch.pyq]].forEach(function(pr){
+   if(pr[1])card(platformPreviewHtml(pr[0],pr[1]),HOST);
   });
  }
  try{
@@ -6014,7 +6218,7 @@ async function relAwenCore(tone){
    state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh=null;
    showCards(ch);
    var bh=(j.copy.bannedHits&&j.copy.bannedHits.length)?(' 我顺手查了绝对化词「'+j.copy.bannedHits.join('、')+'」，发之前改一下，平台容易限流。'):'';
-   botSay(tone?('按你要的味道重写好了，你看看。'+bh):('按每个平台的爆款口吻写好了，你看看。要换味道点「换个口吻」。'+bh),'awen');
+   botSay(tone?('按你要的味道重写好了，下面是发布后的样子。'+bh):('写好了，<b>下面直接按“发布后”的样子预览</b>，标题、正文、标签都能一键复制，粘贴到平台就行。'+bh),'awen');
    quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
    renderDeliver();
   }else{
@@ -6150,7 +6354,8 @@ function relayAfaPack(){
  userSay(sel.map(relayPfName).join('、'));
  var klist='<div class="relay-klist">'+sel.map(relayReadyCard).join('')+'</div>';
  card(klist,'afa');
- botSay('每个平台按 1 → 2 → 3 点一遍，文案和素材就都到位了，最后「发送」你自己点。发完回来点「已发布」。','afa');
+ card('<div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13.5px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px">'+IC.qr+' 还可以生成「可追踪画册」</div><div style="font-size:12.5px;line-height:1.6;color:var(--tx2)">生成一个 H5 画册，把链接发到微信或社群，客户手机打开就能看图、复制文案、一键转发；<b>谁看了、看多久、留了电话，自动回到阿果</b>。适合私聊报价、社群传播和线下扫码。</div><div class="card-actions"><button class="btn btn-dark btn-sm" data-act="publishShowcase">生成可追踪画册 / 渠道码</button></div></div>','afa');
+ botSay('每个平台按 1 → 2 → 3 点一遍，文案和素材就都到位了，最后「发送」你自己点。需要发微信 / 社群就先生成画册。发完回来点「已发布」。','afa');
  quickPills([['rf_published','已发布',IC.check],['rf_afa_wait','我还没发',IC.send]]);
 }
 function relayPublished(){
@@ -6268,6 +6473,8 @@ function relayAction(id,el){
   case 'rf_to_awen':relayToAwen();break;
   case 'rf_atu_review':relayAtuReview();break;
   case 'rf_awen_write':relayAwenWrite();break;
+  case 'rf_facts_done':relayFactsDone();break;
+  case 'rf_facts_skip':relayFactsSkip();break;
   case 'rf_awen_ok':relayAwenOk();break;
   case 'rf_awen_redo':relayAwenRedo();break;
   case 'rf_awen_tone_kol':relayAwenTone('kol');break;
