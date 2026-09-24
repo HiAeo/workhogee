@@ -4703,7 +4703,7 @@ function runGenerate(){
  var __go=function(){
   var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
   state._abort=false;state._pause=false;state._resume=null;enterTaskFocus();
-  var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">约 20–40 秒，依次出图</div></div><span class="pt-state">排队中</span></div>';}).join('');
+  var rows=jobs.map(function(j){return '<div class="prog-task" data-k="'+j.k+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc(j.label)+'</div><div class="pt-sub">每张约 1 分钟，依次出图，含质量校验</div></div><span class="pt-state">排队中</span></div>';}).join('');
   var pc=card('<div class="card-pad"><div class="card-title">阿图正在出图，你先忙别的</div><div class="card-desc">商品一点不动，只换背景、做增强；每张出完自动报进度，成品放进右侧「交付物」。</div><div id="progList">'+rows+'</div><div class="prog-ctl"><button type="button" class="btn btn-dark" id="btnPause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/></svg><span>暂停</span></button><button type="button" class="btn btn-ghost" id="btnStop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>终止任务</span></button></div></div>','atu');
   var __bp=pc.querySelector('#btnPause'),__bs=pc.querySelector('#btnStop');
   if(__bp)__bp.addEventListener('click',function(){
@@ -6404,9 +6404,8 @@ function relaySkipAshi(){userSay('跳过视频');relayAshiNo();}
 function relayToAfa(){
  state.relayStage='afa';state.activePartner='afa';
  renderRelayBar('afa');try{setDeliverTab('reach');}catch(e){}
- userSay('让阿发发布');
- botSay('图、文案、视频都备好了。你<b>选要发哪几个平台</b>，我把每个平台的操作步骤列清楚。','afa');
- relayPlatformPick('rf_afa_pack','生成我的发布清单');
+ if(!state.relayChannels||!state.relayChannels.length)state.relayChannels=['xhs'];
+ relayAfaPack();
 }
 function relayReadyCard(id,opt){
  opt=opt||{};
