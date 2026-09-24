@@ -2014,6 +2014,12 @@ var DataVault={
 function vaultResetUI(){
   try{closeAnalytics();}catch(e){}
   try{closeDeliver();}catch(e){}
+  /* 保护 composer：welcome 态它在 chatInner 的 hwDock 内，先移回 stage（chatScroll 之后），
+     避免下面 scroll.innerHTML='' 把它连同门户销毁，导致首次登录/退出后对话框永久丢失、需刷新才恢复 */
+  try{
+    var _pc=document.querySelector('.composer'),_pst=document.querySelector('.stage'),_pchat=document.getElementById('chatScroll');
+    if(_pc&&_pst&&_pc.closest('#chatInner')){_pst.insertBefore(_pc,_pchat?_pchat.nextSibling:null);}
+  }catch(e){}
   var hires=state.hires;
   state=resetState();state.hires=hires;
   try{scroll.innerHTML='';}catch(e){}
