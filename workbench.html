@@ -182,6 +182,27 @@ body[data-deliver="open"]{--deliver:380px}
 .relay-k{border:1px solid var(--line);border-radius:13px;padding:11px 13px;background:rgba(255,255,255,.025)}
 .relay-k-head{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px}
 .relay-k-head .rk-badge{margin-left:auto;font-size:11px;color:var(--tx3);font-weight:600}
+.rdy-k{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:rgba(255,255,255,.03)}
+.rdy-k.allready{border-color:color-mix(in srgb,var(--pc) 55%,var(--line))}
+.rdy-head{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;margin-bottom:9px}
+.rdy-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.rdy-badge{font-size:10.5px;font-weight:600;color:var(--tx3);border:1px solid var(--line2);border-radius:20px;padding:2px 9px}
+.rdy-count{margin-left:auto;font-size:11.5px;color:var(--tx3);font-weight:600}
+.rdy-count b{color:var(--pc);font-size:13px}
+.rdy-steps{display:flex;flex-direction:column;gap:7px}
+.rdy-step{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:1px solid var(--line2);background:rgba(255,255,255,.02);border-radius:11px;padding:9px 11px;cursor:pointer;color:var(--tx);transition:border-color .16s,background .16s}
+.rdy-step:hover{border-color:color-mix(in srgb,var(--pc) 45%,var(--line2));background:rgba(255,255,255,.05)}
+.rdy-step .rs-n{width:22px;height:22px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:1px solid var(--line);color:var(--tx2)}
+.rdy-step .rs-n.ok{color:var(--pc);border-color:color-mix(in srgb,var(--pc) 60%,var(--line));background:color-mix(in srgb,var(--pc) 20%,transparent)}
+.rdy-step .rs-tx{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.rdy-step .rs-tx b{font-size:13px;font-weight:600;color:var(--tx)}
+.rdy-step .rs-tx small{font-size:11.5px;color:var(--tx3);line-height:1.45;font-weight:300}
+.rdy-step .rs-state{flex:none;font-size:11px;color:var(--tx3);display:inline-flex;align-items:center;gap:4px}
+.rdy-step .rs-state svg{width:13px;height:13px;color:var(--pc)}
+.rdy-step:disabled{cursor:default}
+.rdy-tips{list-style:none;margin:10px 0 0;padding:10px 11px 2px;border-top:1px dashed var(--line2);display:flex;flex-direction:column;gap:6px}
+.rdy-tips li{font-size:11.5px;color:var(--tx3);line-height:1.5;padding-left:14px;position:relative;font-weight:300}
+.rdy-tips li::before{content:"";position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--pc)}
 .relay-k ol{margin:8px 0 0;display:flex;flex-direction:column;gap:5px;list-style:none}
 .relay-k li{font-size:12.5px;color:var(--tx2);display:flex;gap:8px;align-items:flex-start}
 .relay-k li .rk-n{color:var(--pc);font-weight:800;flex:none}
@@ -4719,7 +4740,7 @@ function copySectionHtml(){
  if(!state.copy.ready)return '';
  if(!state.copy.cps)state.copy.cps=buildCopies();
  var cps=state.copy.cps;if(!cps[state.copy.channel])state.copy.channel='general';
- var chans=[['general','通用文案'],['xhs','小红书'],['pyq','朋友圈'],['tags','话题标签']];
+ var chans=[['general','通用文案'],['xhs','小红书'],['douyin','抖音'],['pyq','朋友圈'],['tags','话题标签']];
  var btns=chans.map(function(c){return '<button type="button" class="copy-chan'+(state.copy.channel===c[0]?' on':'')+'" data-act="copyChan" data-v="'+c[0]+'">'+c[1]+'</button>';}).join('');
  var val=(state.copy.channel===(state.copy._lastCh||'')&&state.copy.draft)?state.copy.draft:(cps[state.copy.channel]||cps.general);
  return '<div class="dl-sec"><h5>'+IC.pen+' 阿文文案</h5><div class="copy-box"><div class="copy-head">分渠道草拟，发布前核对真实 <button class="btn btn-ghost btn-sm" data-act="copyText">复制</button></div>'
@@ -5957,34 +5978,73 @@ function relayPickedIds(){
 function relayAwenWrite(){
  var sel=relayPickedIds();
  if(!sel.length)sel=['xhs'];
+ sel=Array.from(new Set(sel));
  state.relayChannels=sel;
  userSay(sel.map(relayPfName).join('、'));
- var cps=state.copy.cps||buildCopies();
- state.copy.ready=true;
- var blocks=[];
- if(sel.indexOf('xhs')>=0)blocks.push(['小红书笔记',cps.xhs]);
- if(sel.indexOf('pyq')>=0)blocks.push(['朋友圈短文',cps.pyq]);
- if(sel.indexOf('douyin')>=0)blocks.push(['抖音标题 + 话题',cps.general+'\n\n'+cps.tags]);
- blocks.forEach(function(bk){
-  card('<div class="card-title">'+bk[0]+'</div><pre class="relay-copy-pre">'+esc(bk[1])+'</pre>','awen');
- });
- botSay('写好了，你看看。要换味道点「换个口吻」；没问题我让阿视看看要不要剪视频。','awen');
- quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
- renderDeliver();
+ relAwenCore('');
+}
+function relAwenPayload(tone){
+ return {
+  product:productLabel(),
+  identityType:(state.identity&&state.identity.type)||'general',
+  category:(state.identity&&state.identity.cat)||'',
+  sellingPoints:sellPoints(),
+  channels:(state.relayChannels||['xhs']).slice(),
+  kbContext:(typeof getKnowledgeContext==='function')?getKnowledgeContext():'',
+  extra:state.extra||'',
+  tone:tone||''
+ };
+}
+async function relAwenCore(tone){
+ var stop=botTyping('awen');
+ var toneName={kol:'口语版',pro:'专业版',short:'精简版'}[tone]||'';
+ var toneRule={kol:'更口语、更接地气、像朋友真诚安利',pro:'更专业、更可信、突出品质与售后保障',short:'更简短精炼、只保留最核心的卖点'}[tone]||'';
+ function showCards(ch){
+  var sfx=toneName?(' · '+toneName):'';
+  [['xhs','小红书笔记'+sfx,ch.xhs],['douyin','抖音口播脚本'+sfx,ch.douyin],['pyq','朋友圈短文'+sfx,ch.pyq]].forEach(function(bk){
+   if(bk[2])card('<div class="card-title">'+bk[0]+'</div><pre class="relay-copy-pre">'+esc(bk[2])+'</pre>','awen');
+  });
+ }
+ try{
+  var j=await authPost('/copy',relAwenPayload(toneRule));
+  stop();
+  if(j&&j.ok&&j.copy&&j.copy.available&&j.copy.channels){
+   var ch=j.copy.channels;
+   state.copy.cps={general:ch.general||'',xhs:ch.xhs||'',pyq:ch.pyq||'',douyin:ch.douyin||'',tags:(ch.tags||[]).join(' ')};
+   state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh=null;
+   showCards(ch);
+   var bh=(j.copy.bannedHits&&j.copy.bannedHits.length)?(' 我顺手查了绝对化词「'+j.copy.bannedHits.join('、')+'」，发之前改一下，平台容易限流。'):'';
+   botSay(tone?('按你要的味道重写好了，你看看。'+bh):('按每个平台的爆款口吻写好了，你看看。要换味道点「换个口吻」。'+bh),'awen');
+   quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
+   renderDeliver();
+  }else{
+   var cps=buildCopies();
+   state.copy.cps={general:cps.general,xhs:cps.xhs,pyq:cps.pyq,douyin:cps.general+'\n\n'+cps.tags,tags:cps.tags};
+   state.copy.ready=true;
+   showCards({xhs:cps.xhs,douyin:cps.general+'\n\n'+cps.tags,pyq:cps.pyq});
+   botSay('AI 文案这会儿有点忙，先给你一版模板兜底；点「换个口吻」或重发，我再让阿文认真写。','awen');
+   quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
+   renderDeliver();
+  }
+ }catch(e){
+  stop();
+  var fb=buildCopies();
+  state.copy.cps={general:fb.general,xhs:fb.xhs,pyq:fb.pyq,douyin:fb.general+'\n\n'+fb.tags,tags:fb.tags};
+  state.copy.ready=true;
+  showCards({xhs:fb.xhs,douyin:fb.general+'\n\n'+fb.tags,pyq:fb.pyq});
+  botSay('网络开了点小差，先给你一版模板兜底；重新发送或点「换个口吻」即可。','awen');
+  quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
+  renderDeliver();
+ }
 }
 function relayAwenRedo(){
  botSay('想换成什么味道？','awen');
  quickPills([['rf_awen_tone_kol','更口语',IC.pen],['rf_awen_tone_pro','更专业',IC.pen],['rf_awen_tone_short','更简短',IC.pen]]);
 }
 function relayAwenTone(tone){
- var cps=state.copy.cps||buildCopies();var t=cps.xhs;var label;
- if(tone==='kol'){t='姐妹们，说真的，'+cps.xhs+'\n\n喜欢的直接冲，细节问我～';label='口语版';}
- else if(tone==='pro'){t='【实拍呈现】'+cps.general+'\n\n'+cps.tags;label='专业版';}
- else{t=cps.xhs.split('\n').filter(Boolean).slice(0,4).join('\n');label='精简版';}
- state.copy.cps=Object.assign({},cps,{xhs:t});
- card('<div class="card-title">小红书 · '+label+'</div><pre class="relay-copy-pre">'+esc(t)+'</pre>','awen');
- botSay('换好味道了，你看看。没问题让阿视剪视频，或直接发布。','awen');
- quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','再换个味道',IC.pen]]);
+ var say={kol:'换个口吻 · 更口语',pro:'换个口吻 · 更专业',short:'换个口吻 · 更简短'}[tone]||'换个口吻';
+ userSay(say);
+ relAwenCore(tone);
 }
 function relayAwenOk(){
  botSay('文案好了。让阿视看看，用这些图剪个短视频？','awen');
@@ -6028,37 +6088,69 @@ function relayToAfa(){
  botSay('图、文案、视频都备好了。你<b>选要发哪几个平台</b>，我把每个平台的操作步骤列清楚。','afa');
  relayPlatformPick('rf_afa_pack','生成我的发布清单');
 }
-function relayRbtn(pf,label,act){
- if(act==='copy')return '<button class="btn btn-dark btn-sm" data-quick="rf_copy" data-pf="'+pf+'">'+label+'</button>';
- if(act==='open')return '<button class="btn btn-ghost btn-sm" data-quick="rf_open" data-pf="'+pf+'">'+label+'</button>';
- if(act==='video')return '<button class="btn btn-dark btn-sm" data-quick="rf_savevideo">'+label+'</button>';
- return '<button class="btn btn-ghost btn-sm" data-quick="rf_savepack">'+label+'</button>';
-}
-function relayReachCard(id,cps,hasVideo){
+function relayReadyCard(id){
  var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];
- var steps='',actions='';
- if(id==='xhs'){
-  steps=relayLi(1,'点「复制小红书文案」，再点「打开小红书」')+relayLi(2,'点「保存图片」，在发布页上传（可多选）')+relayLi(3,'粘贴文案、检查话题，点「发布」');
-  actions=relayRbtn('xhs','复制小红书文案','copy')+relayRbtn('xhs','保存图片','pack')+relayRbtn('xhs','打开小红书','open');
- }else if(id==='douyin'){
-  steps=relayLi(1,(hasVideo?'点「保存视频」，':'先让阿视剪视频，')+'点「打开抖音」上传')+relayLi(2,'点「复制标题」粘贴，加上话题')+relayLi(3,'选封面、检查后点「发布」');
-  actions=(hasVideo?relayRbtn('douyin','保存视频','video'):'')+relayRbtn('douyin','复制标题','copy')+relayRbtn('douyin','打开抖音','open');
- }else{
-  steps=relayLi(1,'点「保存图片」（可做九宫格），存到手机')+relayLi(2,'点「复制朋友圈文案」')+relayLi(3,'打开手机微信 → 发现 → 朋友圈，发图、粘贴文案');
-  actions=relayRbtn('pyq','保存图片 / 打包','pack')+relayRbtn('pyq','复制朋友圈文案','copy');
+ var defs={
+  xhs:{steps:[
+   ['copy','复制小红书文案','把这篇笔记文案复制到剪贴板'],
+   ['media','保存商品图','打包下载要发的图（建议 3:4），发布页可多选上传'],
+   ['open','打开小红书发布页','直达发布页，粘贴文案、传图、检查话题']],
+   tips:['正文和评论里别留微信号、外链、二维码，平台会限流','建议 12-14 点或 20-22 点发，流量更高','发完及时回评论和私信，线索别漏']},
+  douyin:{steps:[
+   ['copy','复制标题与口播','把发布标题、口播脚本和话题复制到剪贴板'],
+   ['media','保存视频 / 封面','有视频直接下载竖版成片；没有就打包封面图'],
+   ['open','打开抖音发布页','直达上传页，传视频、粘贴标题、选封面']],
+   tips:['前 3 秒决定完播，别做标题党、别搬运','建议 12-13 点或 19-22 点发','评论区主动回复，可置顶一条引导留言']},
+  pyq:{steps:[
+   ['copy','复制朋友圈文案','把这条朋友圈短文复制到剪贴板'],
+   ['media','保存图片（九宫格）','打包下载图片，配图建议 1/3/6/9 张'],
+   ['open','手机微信发朋友圈','文案已复制、素材已存，打开手机微信发布']],
+   tips:['别群发、别频繁发硬广，容易被折叠','建议早 7-9、午 12-13、晚 20-22 点','有人点赞评论及时私信承接']}
+ };
+ var d=defs[id]||defs.xhs;
+ var steps=d.steps.map(function(st,i){
+  return '<button type="button" class="rdy-step" data-ready="'+st[0]+'" data-pf="'+id+'"><span class="rs-n">'+(i+1)+'</span><span class="rs-tx"><b>'+st[1]+'</b><small>'+st[2]+'</small></span><span class="rs-state">待办</span></button>';
+ }).join('');
+ var tips=d.tips.map(function(t){return '<li>'+t+'</li>';}).join('');
+ return '<div class="rdy-k" style="--pc:'+x.c+'"><div class="rdy-head"><span class="rdy-dot" style="background:'+x.c+'"></span><span class="rdy-name">'+x.name+'</span><span class="rdy-badge">本人发布</span><span class="rdy-count"><b>0</b>/3</span></div><div class="rdy-steps">'+steps+'</div><ul class="rdy-tips">'+tips+'</ul></div>';
+}
+function relayReady(el){
+ var pf=el.dataset.pf,step=el.dataset.ready;
+ var x=RELAY_PLATFORMS.filter(function(p){return p.id===pf;})[0];
+ var cps=state.copy.cps||{};
+ function markDone(){
+  el.classList.add('done');el.disabled=true;
+  el.querySelector('.rs-state').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 已完成';
+  var rn=el.querySelector('.rs-n');rn.textContent='✓';rn.classList.add('ok');
+  var box=el.closest('.rdy-k');
+  var n=box.querySelectorAll('.rdy-step.done').length,tot=box.querySelectorAll('.rdy-step').length;
+  box.querySelector('.rdy-count').innerHTML='<b>'+n+'</b>/'+tot;
+  if(n===tot)box.classList.add('allready');
  }
- return '<div class="relay-k" style="--pc:'+x.c+'"><div class="relay-k-head"><span style="color:'+x.c+'">●</span>'+x.name+'<span class="rk-badge">本人发布</span></div><ol>'+steps+'</ol><div class="relay-k-actions">'+actions+'</div></div>';
+ if(step==='copy'){
+  var t=cps[pf]||cps.general||'';
+  if(!t){toast('还没有文案，先让阿文写','err');return;}
+  copyPlain(t).then(function(){markDone();toast(x.name+'文案已复制');}).catch(function(){markDone();});
+ }else if(step==='media'){
+  if(pf==='douyin'&&state.videos&&state.videos.length){
+   var v=state.videos[0];var a=document.createElement('a');a.href=v.url;a.download=v.name||'video.mp4';document.body.appendChild(a);a.click();a.remove();markDone();toast('视频已保存');
+  }else if(state.results&&state.results.length){
+   packAll();markDone();toast('素材已打包，发布页挑对应规格');
+  }else toast('还没有素材，先让阿图出图','err');
+ }else{
+  if(x.url){try{window.open(x.url,'_blank','noopener');}catch(e){}markDone();toast('已打开'+x.name+'发布页');}
+  else{markDone();toast('文案已复制、素材已存，打开手机微信 → 发现 → 朋友圈发布');}
+ }
 }
 function relayAfaPack(){
  var sel=relayPickedIds();
  if(!sel.length)sel=['xhs'];
+ sel=Array.from(new Set(sel));
  state.relayPublish=sel;
  userSay(sel.map(relayPfName).join('、'));
- var cps=state.copy.cps||buildCopies();
- var hasVideo=state.videos.length>0;
- var klist='<div class="relay-klist">'+sel.map(function(id){return relayReachCard(id,cps,hasVideo);}).join('')+'</div>';
+ var klist='<div class="relay-klist">'+sel.map(relayReadyCard).join('')+'</div>';
  card(klist,'afa');
- botSay('照着每个平台的清单走，最后「发送」你自己点。发完回来告诉我一声。','afa');
+ botSay('每个平台按 1 → 2 → 3 点一遍，文案和素材就都到位了，最后「发送」你自己点。发完回来点「已发布」。','afa');
  quickPills([['rf_published','已发布',IC.check],['rf_afa_wait','我还没发',IC.send]]);
 }
 function relayPublished(){
@@ -6236,6 +6328,8 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  document.addEventListener('click',function(e){
   var cq=e.target.closest('[data-cq]');
   if(cq){cqAction(cq.dataset.cq);return;}
+  var rd=e.target.closest('[data-ready]');
+  if(rd){relayReady(rd);return;}
   var pk=e.target.closest('.pick-chip[data-pick]');
   if(pk){
    if(pk.classList.toggle('sel')){var px=RELAY_PLATFORMS.filter(function(p){return p.id===pk.dataset.pick;})[0];if(px){pk.style.setProperty('--pc',px.c);pk.style.setProperty('--pc-bg',px.c+'22');}}
