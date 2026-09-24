@@ -1805,9 +1805,9 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 .wx-time .wx-two{margin-left:auto;color:#576b95}
 /* 档案补录卡 */
 .facts-card{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.fc-row{display:flex;flex-direction:column;gap:4px;background:rgba(13,17,25,.4);border:1px solid var(--line2);border-radius:11px;padding:8px 10px}
-.fc-label{font-size:11.5px;color:var(--tx2);font-weight:600}
-.fc-input{background:transparent;border:0;outline:0;color:var(--tx);font-size:13px;width:100%;resize:none;line-height:1.55;font-family:inherit;min-height:26px;overflow:hidden;display:block;padding:0}
+.fc-row{display:flex;flex-direction:column;gap:6px;background:rgba(13,17,25,.4);border:1px solid var(--line2);border-radius:11px;padding:10px 12px}
+.fc-label{font-size:12.5px;color:var(--tx2);font-weight:600}
+.fc-input{background:transparent;border:0;outline:0;color:var(--tx);font-size:14px;width:100%;resize:none;line-height:1.6;font-family:inherit;min-height:40px;overflow:hidden;display:block;padding:0}
 .fc-input::placeholder{color:var(--tx3);font-size:12px}
 @media(max-width:760px){.pv-xhs .pv-grid{grid-template-columns:1fr}.pv-xhs .pv-imgs{border-right:0;border-bottom:1px solid var(--line2)}.facts-card{grid-template-columns:1fr}}
 </style>
@@ -2501,6 +2501,29 @@ async function callGenerate(prompt,imagePayload,size,refKind){
   if(code==='rate_limited'){var re=new Error(msg||'生成过于频繁，请稍后再试');re.code='rate_limited';throw re;}
   throw new Error(msg||('图像服务返回 '+resp.status));
  });}).catch(function(e){clearTimeout(timer);throw e;}).finally(function(){try{if(state._curCtrl===ctrl)state._curCtrl=null;}catch(e){}});
+}
+function imgNaturalSize(src){
+ return new Promise(function(res){
+  try{
+   var im=new Image();
+   im.onload=function(){res({w:im.naturalWidth||im.width,h:im.naturalHeight||im.height});};
+   im.onerror=function(){res(null);};
+   im.src=src;
+   setTimeout(function(){res(null);},4000);
+  }catch(e){res(null);}
+ });
+}
+function round8(n){return Math.max(8,Math.round(n/8)*8);}
+async function detailSizeFor(imagePayload,hd){
+ var src=Array.isArray(imagePayload)?imagePayload[0]:imagePayload;
+ var sz=await imgNaturalSize(src);
+ if(!sz||!sz.w||!sz.h)return null;
+ var longEdge=hd?2304:2048,ratio=sz.w/sz.h,w,h;
+ if(ratio>=1){w=longEdge;h=longEdge/ratio;}else{h=longEdge;w=longEdge*ratio;}
+ w=round8(w);h=round8(h);
+ if(Math.min(w,h)<1024){if(w<h){w=round8(1024*ratio);h=1024;}else{h=round8(1024/ratio);w=1024;}}
+ if(Math.max(w,h)>2560){if(w>h){h=round8(2560/ratio);w=2560;}else{w=round8(2560*ratio);h=2560;}}
+ return w+'x'+h;
 }
 function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
  function attempt(n){return callGenerate(prompt,imagePayload,size,refKind).catch(function(e){
@@ -4704,7 +4727,9 @@ function runGenerate(){
     var row=$('.prog-task[data-k="'+jobs[i].k+'"]',pc);
     if(row){row.classList.add('run');$('.pt-state',row).textContent='出图中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
     try{
-     var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,genSize,jobs[i].refKind);
+     var thisSize=genSize;
+     if(String(jobs[i].k).indexOf('detail')===0){try{var __ds=await detailSizeFor(jobs[i].image,state.quality==='hd');if(__ds)thisSize=__ds;}catch(e){}}
+     var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,thisSize,jobs[i].refKind);
      if(token!==state.genToken)return;
      var __res={url:url,label:jobs[i].label,k:jobs[i].k,ts:Date.now()};state.results.push(__res);persistResult(__res,jobs[i].label);
      if(state.results.length===1)openDeliver();
@@ -5905,7 +5930,7 @@ function routeByIntent(txt,it){
    break;
   }
   case 'extra_note':{
-   state.extra=(state.extra?state.extra+'；':'')+txt;
+   appendExtra(txt);
    botSay(it.reply||('记下了：'+esc(txt)+'。出图时按这个来。'),'atu');
    break;
   }
@@ -5925,6 +5950,13 @@ function legacyGuess(t){
  if(/(发布|上架|分发|发到|发抖音|发小红书|发朋友圈|送达|打包发|媒体发布|帮我发|一键发)/.test(t))return 'afa';
  if(/(数据|效果怎么样|浏览量|播放量|线索|转化|统计|看板|归因|多少人看)/.test(t))return 'agu';
  return null;
+}
+function appendExtra(t){
+ t=String(t||'').trim().slice(0,120);
+ if(!t)return;
+ var parts=(state.extra||'').split('；').filter(Boolean);
+ parts.push(t);
+ state.extra=parts.slice(-3).join('；').slice(0,240);
 }
 function sendFreeTextLegacy(txt){
  var ap=state.activePartner;
@@ -5951,7 +5983,6 @@ function sendFreeTextLegacy(txt){
   else{var pn=$('#productName');if(pn&&!pn.value)pn.value=txt;}
   botSay('记下了：'+esc(txt)+'。确认无误就点卡片里的按钮。','atu');
  }else{
-  state.extra=(state.extra?state.extra+'；':'')+txt;
   if(state.stage==='upload'&&(!state.images||!state.images.length)){
    botSay('收到：'+esc(txt)+'。点左下角「+」上传商品图片我就能开工；想先写文案，可在左侧伙伴里让阿文接手。','atu');
   }else{
@@ -6149,11 +6180,11 @@ async function relayFactsCard(){
  var kindLabel=kind==='flower'?'鲜花':kind==='usedcar'?'二手车':'通用';
  var rows=fields.map(function(x){
   var val=prefill[x[0]]!=null?prefill[x[0]]:'';
-  return '<label class="fc-row"><span class="fc-label">'+x[1]+'</span><textarea class="fc-input" data-fk="'+x[0]+'" rows="1" placeholder="'+x[1]+'（可留空）">'+factsEsc(val)+'</textarea></label>';
+  return '<label class="fc-row"><span class="fc-label">'+x[1]+'</span><textarea class="fc-input" data-fk="'+x[0]+'" rows="1" placeholder="'+x[1]+'">'+factsEsc(val)+'</textarea></label>';
  }).join('');
- var note=Object.keys(prefill).length?'阿文按「'+kindLabel+'」先预填了一版（价格给了市场参考、品种给了通俗名和学名），你核对、改一改，没问题就点写文案。':'下面几项补一下，文案才具体可信；不方便的可以先跳过。';
+ var note=Object.keys(prefill).length?'阿文按「'+kindLabel+'」先预填了一版（价格给了市场参考、品种给了通俗名和学名），你核对、改一改，没问题就点写文案。':'下面几项你核对、补一下，文案才具体可信。';
  var mc=loadEl.querySelector('.m-card');
- mc.innerHTML='<div class="card-pad"><div class="card-title">'+IC.pen+' 先把商品资料核对一下</div><div class="card-desc">'+note+'</div><div class="facts-card">'+rows+'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_facts_done">塭好了，写文案</button><button class="btn btn-ghost btn-sm" data-quick="rf_facts_skip">先跳过</button></div></div>';
+ mc.innerHTML='<div class="card-pad"><div class="card-title">'+IC.pen+' 先把商品资料核对一下</div><div class="card-desc">'+note+'</div><div class="facts-card">'+rows+'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_facts_done">填好了，写文案</button><button class="btn btn-ghost btn-sm" data-quick="rf_facts_skip">稍后补充</button></div></div>';
  mc.querySelectorAll('.fc-input').forEach(autoGrowFacts);
  scrollBottom();
 }
@@ -6442,7 +6473,12 @@ function relayAfaPack(){
  sel=Array.from(new Set(sel));
  state.relayPublish=sel;
  userSay(sel.map(relayPfName).join('、'));
- botSay('上面每个平台的「发布预览」卡里，先点<b>复制文案</b>，再<b>保存素材、打开发布页</b>，最后「发送」你自己点。发完回来点「已发布」。','afa');
+ botSay('都备齐了。<b>下面就是发出去后的样子</b>：每张卡按顺序点「复制 → 存素材 → 打开发布页」，最后「发送」你自己点；发完回来点「已发布」。','afa');
+ var cps=(state.copy&&state.copy.cps)||{};
+ sel.forEach(function(cid){
+  var t=cps[cid]||cps.general||'';
+  if(t)card(platformPreviewHtml(cid,t),HOST);
+ });
  quickPills([['rf_published','已发布',IC.check],['rf_afa_wait','我还没发',IC.send]]);
 }
 function relayPublished(){
