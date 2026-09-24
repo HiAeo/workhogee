@@ -4167,7 +4167,7 @@ function refreshShots(){
  renderCmpAttach();
 }
 function handleFiles(fileList){
- if(!state.identity){toast('先传张产品图，或直接告诉我你卖什么','err');return;}
+ if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
  if(!files.length)return;
  if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
