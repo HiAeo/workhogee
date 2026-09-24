@@ -104,7 +104,8 @@
     '.hm-close{width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:rgba(255,255,255,.58);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .18s,color .18s;}',
     '.hm-close:hover{background:rgba(255,255,255,.08);color:#fff;}',
     '.hp-title{font-size:23px;font-weight:700;margin:22px 0 4px;letter-spacing:.2px;}',
-    '.hp-sub{font-size:12.5px;color:rgba(255,255,255,.45);margin:0 0 18px;}',
+    '.hp-sub{font-size:12.5px;color:rgba(255,255,255,.45);margin:0 0 30px;}',
+    '#hmForm{display:flex;flex-direction:column;}',
     '.hm-field{margin-bottom:13px;flex:none;}',
     '.hm-input{width:100%;box-sizing:border-box;appearance:none;border:1px solid rgba(255,255,255,.1);background:#1e1a15;color:#fff;border-radius:12px;padding:13px 14px;font-size:14px;font-family:inherit;transition:border-color .18s,box-shadow .18s;}',
     '.hm-input::placeholder{color:rgba(255,255,255,.3);}',
@@ -119,7 +120,7 @@
     '.hm-submit:hover:not(:disabled){background:#d24e0a;}',
     '.hm-submit:active:not(:disabled){transform:translateY(1px);}',
     '.hm-submit[disabled]{background:#2b2721;color:rgba(255,255,255,.4);box-shadow:none;cursor:not-allowed;}',
-    '.hp-switch{flex:none;appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12.5px;color:rgba(255,255,255,.5);padding:6px;margin:12px 0 2px;transition:color .18s;}',
+    '.hp-switch{flex:none;align-self:flex-end;appearance:none;border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:12.5px;color:rgba(255,255,255,.5);padding:4px 2px;margin:0 0 8px;transition:color .18s;}',
     '.hp-switch:hover{color:#fd9b53;}',
     '.hm-err{display:none;flex:none;margin-top:11px;font-size:13px;line-height:1.5;color:#fb923c;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.35);border-radius:10px;padding:9px 12px;}',
     '.hm-err.hm-show{display:block;}',
@@ -258,6 +259,7 @@
           '<h2 class="hp-title">欢迎登录伙计工作台</h2>' +
           '<p class="hp-sub">未注册的手机号验证后将自动注册</p>' +
           '<form id="hmForm" autocomplete="on">' +
+            '<button type="button" class="hp-switch" id="hmSwitch">账号密码登录</button>' +
             '<div class="hm-field">' +
               '<input class="hm-input" id="hmAccount" type="text" inputmode="tel" autocomplete="username" placeholder="请输入手机号">' +
             '</div>' +
@@ -273,17 +275,16 @@
             '<button type="submit" class="hm-submit" id="hmSubmit" disabled>登录</button>' +
             '<div class="hm-err" id="hmErr"></div>' +
             '<div class="hm-soon" id="hmSoon"></div>' +
-            '<button type="button" class="hp-switch" id="hmSwitch">账号密码登录</button>' +
+            '<label class="hm-agree" for="hmAgree">' +
+              '<input type="checkbox" id="hmAgree">' +
+              '<span>已阅读并同意 <a href="/terms.html" target="_blank" rel="noopener">服务协议</a>、<a href="/privacy.html" target="_blank" rel="noopener">隐私政策</a>、<a href="/ai-notice.html" target="_blank" rel="noopener">AI功能使用须知</a></span>' +
+            '</label>' +
             '<div class="hm-others"><span class="ho-line"></span><span class="ho-t">其他登录方式</span><span class="ho-line"></span></div>' +
             '<div class="hm-social">' +
               '<button type="button" class="hm-soc" data-provider="wechat" aria-label="微信登录">' + WECHAT_WHITE + '</button>' +
               '<button type="button" class="hm-soc" data-provider="feishu" aria-label="飞书登录">' + ICON_FEISHU + '</button>' +
               '<button type="button" class="hm-soc" data-provider="douyin" aria-label="抖音登录">' + ICON_DOUYIN + '</button>' +
             '</div>' +
-            '<label class="hm-agree" for="hmAgree">' +
-              '<input type="checkbox" id="hmAgree">' +
-              '<span>已阅读并同意 <a href="/terms.html" target="_blank" rel="noopener">服务协议</a>、<a href="/privacy.html" target="_blank" rel="noopener">隐私政策</a>、<a href="/ai-notice.html" target="_blank" rel="noopener">AI功能使用须知</a></span>' +
-            '</label>' +
           '</form>' +
         '</div>' +
       '</div>' +
