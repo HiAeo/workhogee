@@ -1971,6 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
+<script src="/fidelity-pipeline.js?v=20260925"></script>
 <script>
 (function(){
 'use strict';
@@ -4661,6 +4662,61 @@ function renderSpecCard(){
 }
 
 /* ================= 生成 ================= */
+/* ================= 保真图像服务（Web 专用：Canvas 像素操作适配层；业务逻辑可复用，未来小程序替换 Canvas 为对应 API） =================
+ * 白底商品图不再走生成式重绘：/cutout 取像素级透明前景 -> 只保留最大连通域(去孤立碎片) -> 合成纯白底主图。
+ * 商品原有字母 / 型号 / Logo 100% 保留、零变形。 */
+function fidelityCutout(imageField){
+ var main=Array.isArray(imageField)?imageField[0]:imageField;
+ return authPost('/cutout',{image:main}).then(function(co){
+  if(!co||co.ok!==true||!co.foreground){var m1=co&&co.error&&co.error.message;throw {message:m1||'保真抠图未返回主体'};}
+  return keepLargestRGBA(co.foreground);
+ }).then(whiteProduct);
+}
+/* 只保留最大 alpha 连通域、丢弃孤立碎片（栈式 flood fill，4 邻域）；最大块保留原始抗锯齿 alpha。输入/输出 PNG dataURL。 */
+function keepLargestRGBA(fgDataUrl,thr){
+ thr=thr||10;
+ return loadImage(fgDataUrl).then(function(img){
+  var w=img.naturalWidth,h=img.naturalHeight,c=document.createElement('canvas');
+  c.width=w;c.height=h;var x=c.getContext('2d');x.drawImage(img,0,0);
+  var id=x.getImageData(0,0,w,h),d=id.data,n=w*h,seen=new Uint8Array(n),best=[];
+  for(var p=0;p<n;p++){
+   if(seen[p]||d[p*4+3]<=thr)continue;
+   var stk=[p],block=[];seen[p]=1;
+   while(stk.length){
+    var q=stk.pop();block.push(q);var qx=q%w,qy=(q/w)|0;
+    if(qx>0){var a=q-1;if(!seen[a]&&d[a*4+3]>thr){seen[a]=1;stk.push(a);}}
+    if(qx<w-1){var b=q+1;if(!seen[b]&&d[b*4+3]>thr){seen[b]=1;stk.push(b);}}
+    if(qy>0){var e2=q-w;if(!seen[e2]&&d[e2*4+3]>thr){seen[e2]=1;stk.push(e2);}}
+    if(qy<h-1){var f2=q+w;if(!seen[f2]&&d[f2*4+3]>thr){seen[f2]=1;stk.push(f2);}}
+   }
+   if(block.length>best.length)best=block;
+  }
+  var keep=new Uint8Array(n);
+  for(var u=0;u<best.length;u++)keep[best[u]]=1;
+  for(var t=0;t<n;t++){if(!keep[t])d[t*4+3]=0;}
+  x.putImageData(id,0,0);
+  return c.toDataURL('image/png');
+ });
+}
+/* 把透明前景合成到纯白底电商主图：商品 contain 居中，底部椭圆软接触阴影。输出 JPEG dataURL。 */
+function whiteProduct(fgDataUrl){
+ var S=1600;
+ return loadImage(fgDataUrl).then(function(img){
+  var w=img.naturalWidth,h=img.naturalHeight,c=document.createElement('canvas');
+  c.width=S;c.height=S;var x=c.getContext('2d');
+  x.fillStyle='#ffffff';x.fillRect(0,0,S,S);
+  var maxW=S*0.80,maxH=S*0.84,sc=Math.min(maxW/w,maxH/h);
+  var dw=Math.round(w*sc),dh=Math.round(h*sc);
+  var left=Math.round((S-dw)/2),top=Math.round((S-dh)/2)+Math.round(S*0.01);
+  var cx=S/2,cy=top+dh,rx=Math.max(dw*0.40,S*0.14);
+  x.save();x.translate(cx,cy);x.scale(1,0.18);
+  var g=x.createRadialGradient(0,0,0,0,0,rx);
+  g.addColorStop(0,'rgba(0,0,0,0.20)');g.addColorStop(0.65,'rgba(0,0,0,0.09)');g.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=g;x.beginPath();x.arc(0,0,rx,0,Math.PI*2);x.fill();x.restore();
+  x.drawImage(img,left,top,dw,dh);
+  return c.toDataURL('image/jpeg',0.94);
+ });
+}
 function buildJobs(){
  var groups=state.groups||[];
  if(!groups.length)return [];
@@ -4727,9 +4783,11 @@ function runGenerate(){
     var row=$('.prog-task[data-k="'+jobs[i].k+'"]',pc);
     if(row){row.classList.add('run');$('.pt-state',row).textContent='出图中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
     try{
-     var thisSize=genSize;
+     var thisSize=genSize,url;
+     var __isWhite=String(jobs[i].k).indexOf('white')===0;
      if(String(jobs[i].k).indexOf('detail')===0){try{var __ds=await detailSizeFor(jobs[i].image,state.quality==='hd');if(__ds)thisSize=__ds;}catch(e){}}
-     var url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,thisSize,jobs[i].refKind);
+     if(__isWhite){url=await fidelityCutout(jobs[i].image);}
+     else{url=await callGenerateRetry(jobs[i].prompt,jobs[i].image,thisSize,jobs[i].refKind);}
      if(token!==state.genToken)return;
      var __res={url:url,label:jobs[i].label,k:jobs[i].k,ts:Date.now()};state.results.push(__res);persistResult(__res,jobs[i].label);
      if(state.results.length===1)openDeliver();
@@ -6084,7 +6142,7 @@ function relayAtuOk(){
  state.relayStage='atu_gen';
  userSay('对，开始出图');
  applySmartDefaults();
- runGenerate();
+ relayFidelityGenerate();
 }
 function relayAtuFix(){
  card('<div class="card-desc">你直接告诉我这是什么（如“黑色 2019款 沃尔沃S90”或“陶瓷保温杯”），我改过来；也可以重新认一次。</div>'
@@ -6096,7 +6154,7 @@ function relayAtuFixGo(){
  var v=$('#rfFixInput');var t=v?v.value.trim():'';
  if(t){state.groups.forEach(function(g){g.product.name=t;});state.product.name=t;}
  userSay(t||'（直接出图）');
- applySmartDefaults();runGenerate();
+ applySmartDefaults();relayFidelityGenerate();
 }
 function relayFinishGenerate(){
  state.stage='result';
@@ -6115,7 +6173,45 @@ function relayAtuReview(){
  botSay('成品在右侧「交付物」里，可以看大图、单张重做、下载。看好了随时让阿文写文案。','atu');
  quickPills([['rf_to_awen','让阿文写文案',IC.pen],['rf_new','这单先到这',IC.brand]]);
 }
-function relayRetryGen(){runGenerate();}
+function relayRetryGen(){relayFidelityGenerate();}
+/* 阿图保真出图：每组代表图 -> HogeeFidelity.package（白底1 + 卖点局部3 + 原场景增强1），零生成式重绘 */
+function relayFidelityGenerate(){
+ state.relayStage='atu_gen';
+ var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
+ state._abort=false;enterTaskFocus();try{setDeliverTab('img');}catch(e){}openDeliver();
+ var groups=state.groups||[];
+ var grow=groups.map(function(g,i){return '<div class="prog-task" data-gi="'+i+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc((g.product&&g.product.name)||('商品'+(i+1)))+'</div><div class="pt-sub">保真抠白底 · 3 张卖点局部 · 原场景增强（不重画、不变形）</div></div><span class="pt-state">排队中</span></div>';}).join('');
+ var pc=card('<div class="card-pad"><div class="card-title">阿图正在保真处理，你先忙别的</div><div class="card-desc">商品原像素 100% 保留，只做抠图、局部放大和画质增强；每组处理完自动放进右侧「交付物」。</div><div id="relayProgList">'+grow+'</div><div class="prog-ctl"><button type="button" class="btn btn-ghost" id="btnRelayStop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>终止任务</span></button></div></div>','atu');
+ var bstop=pc.querySelector('#btnRelayStop');
+ if(bstop)bstop.addEventListener('click',function(){state._abort=true;++state.genToken;exitTaskFocus();state.stage='result';botSay('已终止本次处理。已经做好的成品仍在右侧「交付物」里。','atu');});
+ (async function(){
+  for(var gi=0;gi<groups.length;gi++){
+   if(token!==state.genToken)return;
+   var g=groups[gi],rep0=g.indices[0];
+   var nm=(g.product&&g.product.name)||((g.identity&&g.identity.cat))||'这款商品';
+   var multi=groups.length>1,suf=multi?('_g'+gi):'',tag=multi?(' '+(gi+1)):'';
+   var row=$('.prog-task[data-gi="'+gi+'"]',pc);
+   if(row){row.classList.add('run');$('.pt-state',row).textContent='处理中…';$('.pt-ico',row).innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';}
+   var out=null;
+   try{out=await HogeeFidelity.package({call:authPost,image:state.images[rep0].dataUrl,category:(g.identity&&g.identity.cat)||nm,product:nm});}catch(e){out=null;}
+   if(token!==state.genToken)return;
+   if(!out||!out.ok){
+    if(row){$('.pt-state',row).textContent='失败';$('.pt-state',row).style.color='var(--bad)';}
+    botSay('「'+esc(nm)+'」保真处理没跑成，稍后可点重试。','atu');continue;
+   }
+   var add=function(u,k,label){if(!u)return;var r={url:u,k:k+suf,label:label,ts:Date.now()};state.results.push(r);persistResult(r,label);};
+   add(out.white,'white','纯白底主图'+tag);
+   (out.details||[]).forEach(function(d){add(d.image,'detail',d.label+tag);});
+   add(out.sceneEnhanced,'scene','场景画质增强'+tag);
+   if(window.HG_bumpGen)window.HG_bumpGen();
+   try{markTaskProgress();}catch(e){}
+   if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
+   renderDeliver();scrollBottom();
+  }
+  if(token===state.genToken)relayFinishGenerate();
+ })();
+}
+
 
 /* ---------- 阶段二 · 阿文接活（只问平台，自动多版文案） ---------- */
 function relayToAwen(){
