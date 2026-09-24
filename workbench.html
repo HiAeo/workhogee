@@ -203,6 +203,17 @@ body[data-deliver="open"]{--deliver:380px}
 .rdy-tips{list-style:none;margin:10px 0 0;padding:10px 11px 2px;border-top:1px dashed var(--line2);display:flex;flex-direction:column;gap:6px}
 .rdy-tips li{font-size:11.5px;color:var(--tx3);line-height:1.5;padding-left:14px;position:relative;font-weight:300}
 .rdy-tips li::before{content:"";position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--pc)}
+.pv-ready-emb{border:0;border-top:1px dashed var(--line2);border-radius:0;background:transparent;padding:11px 14px 13px}
+.pv-ready-emb .rdy-head{margin-bottom:9px;font-size:12.5px;font-weight:600;color:var(--tx2)}
+.pv-ready-emb .rdy-steps{flex-direction:row;gap:8px}
+.pv-ready-emb .rdy-step{flex:1;min-width:0;padding:9px 10px;gap:8px}
+.pv-ready-emb .rdy-step .rs-state{display:none}
+.pv-ready-emb .rdy-step .rs-tx small{display:none}
+.pv-ready-emb details.pvr-tips{margin-top:9px}
+.pv-ready-emb details.pvr-tips summary{font-size:11.5px;color:var(--tx3);cursor:pointer;font-weight:300;list-style:none}
+.pv-ready-emb details.pvr-tips summary::-webkit-details-marker{display:none}
+.pv-ready-emb details.pvr-tips[open] summary{margin-bottom:6px}
+@media(max-width:760px){.pv-ready-emb .rdy-steps{flex-direction:column}}
 .relay-k ol{margin:8px 0 0;display:flex;flex-direction:column;gap:5px;list-style:none}
 .relay-k li{font-size:12.5px;color:var(--tx2);display:flex;gap:8px;align-items:flex-start}
 .relay-k li .rk-n{color:var(--pc);font-weight:800;flex:none}
@@ -1725,9 +1736,29 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .pv-top{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line2)}
 .pv-user{font-size:12.5px;color:var(--tx);font-weight:600}
 .pv-platform{margin-left:auto;font-size:11px;color:var(--tx3);display:inline-flex;align-items:center;gap:5px}
-.pv-acts{display:flex;gap:7px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid var(--line2);background:rgba(13,17,25,.35)}
-.pv-acts .btn{font-size:12px;padding:6px 11px}
-.pv-copyok{font-size:11.5px;color:var(--ok);align-self:center}
+.pv-acts{padding:11px 14px 12px;border-top:1px solid var(--line2);background:rgba(255,255,255,.045)}
+.pvt-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx3);margin-bottom:8px;font-weight:300}
+.pvt-lbl svg{width:12px;height:12px}
+.pvt-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.pvt-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:7px 12px;border-radius:9px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--tx2);cursor:pointer;transition:border-color .15s,background .15s,color .15s}
+.pvt-btn:hover{border-color:var(--line);color:var(--tx);background:rgba(255,255,255,.06)}
+.pvt-btn .pvt-ic{display:inline-flex}
+.pvt-btn .pvt-ic svg{width:12px;height:12px}
+.pvt-main{background:#f4f7fd;color:#0d1119;border-color:#f4f7fd;font-weight:700}
+.pvt-main .pvt-ic{color:#0d1119}
+.pvt-main:hover{background:#fff;color:#0d1119;border-color:#fff}
+.pv-copyok{font-size:11.5px;color:var(--ok);font-weight:600}
+.pyq-sc{padding:0 14px}
+.pyq-sc .pysc-loading,.pyq-sc .pysc-skip{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tx3);font-weight:300;padding:10px 0;border-top:1px dashed var(--line2)}
+.pyq-sc .pysc-loading svg{width:13px;height:13px}
+.pysc-k{display:flex;gap:11px;align-items:center;padding:11px 0;border-top:1px dashed var(--line2)}
+.pysc-qr{width:74px;height:74px;flex:none;background:#fff;border-radius:9px;padding:5px;box-sizing:border-box}
+.pysc-qr svg{width:100%;height:100%}
+.pysc-info{min-width:0;flex:1}
+.pysc-t{font-size:12.5px;font-weight:700;color:var(--tx)}
+.pysc-link{font-size:11px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:3px 0 7px}
+.pysc-btns{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+a.pvt-btn{text-decoration:none;justify-content:center}
 /* 小红书：左右分栏 */
 .pv-xhs .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start}
 .pv-xhs .pv-imgs{position:relative;border-right:1px solid var(--line2);padding:12px}
@@ -1776,7 +1807,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .facts-card{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .fc-row{display:flex;flex-direction:column;gap:4px;background:rgba(13,17,25,.4);border:1px solid var(--line2);border-radius:11px;padding:8px 10px}
 .fc-label{font-size:11.5px;color:var(--tx2);font-weight:600}
-.fc-input{background:transparent;border:0;outline:0;color:var(--tx);font-size:13px;width:100%}
+.fc-input{background:transparent;border:0;outline:0;color:var(--tx);font-size:13px;width:100%;resize:none;line-height:1.55;font-family:inherit;min-height:26px;overflow:hidden;display:block;padding:0}
 .fc-input::placeholder{color:var(--tx3);font-size:12px}
 @media(max-width:760px){.pv-xhs .pv-grid{grid-template-columns:1fr}.pv-xhs .pv-imgs{border-right:0;border-bottom:1px solid var(--line2)}.facts-card{grid-template-columns:1fr}}
 </style>
@@ -5202,6 +5233,44 @@ function downloadOne(i){
 var PUB_SOURCES=[['moments','微信朋友圈'],['wechat_group','微信群/好友'],['xiaohongshu','小红书'],['douyin','抖音/快手'],['print','线下打印/海报'],['other','其他渠道']];
 function pubSourceName(v){var f=PUB_SOURCES.filter(function(x){return x[0]===v;})[0];return f?f[1]:'分享渠道';}
 function compressForShowcase(dataUrl,max,q){return loadImage(dataUrl).then(function(img){var w=img.width,h=img.height,scale=Math.min(1,max/Math.max(w,h));var cw=Math.round(w*scale),ch=Math.round(h*scale);var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.drawImage(img,0,0,cw,ch);return c.toDataURL('image/jpeg',q||.82);});}
+function pointsFromCopy(text){
+ var s=splitCopy(text),body=s.body||'',arr=[];
+ body.split(/\n/).forEach(function(ln){
+  ln.split(/[。！!?]/).forEach(function(z){
+   z=z.replace(/^[\s•·▪\-*]+/,'').replace(/\s+$/,'').trim();
+   if(z&&z.length>=4&&z.indexOf('#')!==0)arr.push(z);
+  });
+ });
+ if(!arr.length&&body.trim())arr.push(body.trim().slice(0,40));
+ return Array.from(new Set(arr)).slice(0,6);
+}
+function fillPyqShowcase(sh){
+ var slot=document.querySelector('.pv-pyq [data-pyslot]');if(!slot)return;
+ if(!sh){slot.innerHTML='<span class="pysc-skip">画册这步可稍后在「送达」里生成</span>';return;}
+ slot.innerHTML='<div class="pysc-k"><div class="pysc-qr">'+sh.qr_svg+'</div><div class="pysc-info"><div class="pysc-t">朋友圈分享画册已同步</div><div class="pysc-link">'+sh.short_url+'</div><div class="pysc-btns"><a class="pvt-btn pvt-main" href="'+sh.short_url+'" target="_blank" rel="noopener">打开画册</a><button type="button" class="pvt-btn" data-pvt="'+pvB64(sh.short_url)+'">复制链接</button><span class="pv-copyok"></span></div></div></div>';
+}
+async function autoShowcaseForPyq(pyqText){
+ try{
+  if(state.showcase){fillPyqShowcase(state.showcase);return state.showcase;}
+  var srcImgs=(state.results&&state.results.length)?state.results.map(function(r){return r.url;}):(state.uploadedImgs||[]);
+  if(!srcImgs.length){fillPyqShowcase(null);return null;}
+  var s=splitCopy(pyqText);
+  var title=(s.title||productLabel()||'').trim();
+  var points=pointsFromCopy(pyqText);if(!points.length)points=defaultPoints();
+  var kb=(typeof kbProfLoad==='function')?kbProfLoad():{};
+  var imgs=await Promise.all(srcImgs.slice(0,8).map(function(u){return compressForShowcase(u,1280,.82);}));
+  var assets=imgs.map(function(u,i){return {asset_id:'a'+(i+1),kind:i===0?'main':'detail',url:u};});
+  var params={};if(state.identity&&state.identity.cat)params['品类']=state.identity.cat;
+  var sc=await authPost('/showcases',{title:title,assets:assets,copy:{title:title,selling_points:points,params:params},contact:{phone:kb.phone||'',wechat:kb.wechat||'',show_call:!!kb.phone}});
+  if(!sc.ok)throw new Error('showcase fail');
+  var lk=await authPost('/qr',{target_code:sc.code,source:'moments',campaign:title.slice(0,50)});
+  if(!lk.ok)throw new Error('qr fail');
+  state.showcase={code:sc.code,url:sc.url,short_url:lk.short_url,qr_svg:lk.qr_svg,source:'moments',title:title};
+  addShowcaseWork(sc.code,lk.short_url||sc.url,title);
+  fillPyqShowcase(state.showcase);
+  return state.showcase;
+ }catch(e){fillPyqShowcase(null);return null;}
+}
 function defaultPoints(){if(state.identity&&state.identity.type==='usedcar')return ['成色如图，实拍呈现、不遮不掩','支持第三方检测','看车方便，可发更多细节','里程与配置以现场看车为准'];return ['实拍主体，专业场景呈现','颜色质地如图，细节经得起放大','现货好发，咨询有问必答','发货与图一致，支持先沟通'];}
 function renderPublishCard(){
  if(!state.results.length){toast('先出图才能做画册','err');return;}
@@ -6029,60 +6098,70 @@ function awenPickPlatform(){
  relayPlatformPick('rf_awen_write','按所选平台写文案');
 }
 /* ---- 结构化事实采集（出爆款的“米”）---- */
+var FACTS_FIELDS={
+ usedcar:[['regDate','上牌时间'],['mileage','表显里程'],['price','售价'],['transfers','过户次数'],['condition','车况'],['config','配置亮点']],
+ flower:[['price','价格'],['quantity','数量/规格'],['variety','品种（通俗名+学名）'],['origin','产地'],['bloom','花期/新鲜度'],['scene','适用场景/节日'],['delivery','配送方式']],
+ general:[['price','价格'],['material','规格/材质'],['spoints','核心卖点'],['scenes','使用场景']]
+};
+function factsKind(){
+ if(state.identity&&state.identity.type==='usedcar')return 'usedcar';
+ var cat=(state.identity&&state.identity.cat)||((state.product||{}).name)||'';
+ if(/鲜花|花束|花卉|花店|flower/i.test(cat))return 'flower';
+ return 'general';
+}
+function factsFieldList(){return FACTS_FIELDS[factsKind()]||FACTS_FIELDS.general;}
+function factsEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function autoGrowFacts(el){function grow(){el.style.height='auto';el.style.height=Math.max(26,el.scrollHeight)+'px';}el.addEventListener('input',grow);grow();}
 function collectFacts(){
- var id=state.identity||{type:'general'},p=state.product||{},vp=state.vehicleProfile||{},f={};
- if(id.type==='usedcar'){
+ var id=(state.identity||{}).type,p=state.product||{},vp=state.vehicleProfile||{},inputs=state.factInputs||{},f={};
+ if(id==='usedcar'){
   var yp=[p.year,p.brand,p.series,p.trim].filter(Boolean).join(' ');
   if(yp)f['车型']=yp;
-  if(vp.regDate)f['上牌']=vp.regDate;
-  if(vp.mileage)f['里程']=vp.mileage;
-  if(vp.price)f['售价']=vp.price;
-  if(vp.transfers)f['过户']=vp.transfers;
-  if(vp.power)f['动力']=vp.power;
-  if(vp.condition)f['车况']=vp.condition;
-  if(vp.maintenance)f['保养']=vp.maintenance;
-  if(vp.config)f['配置']=vp.config;
-  if(vp.inspection)f['检测']=vp.inspection;
-  if(vp.location)f['看车']=vp.location;
+  [['regDate','上牌'],['mileage','里程'],['price','售价'],['transfers','过户'],['power','动力'],['condition','车况'],['maintenance','保养'],['config','配置'],['inspection','检测'],['location','看车']].forEach(function(x){var v=inputs[x[0]]!=null?inputs[x[0]]:vp[x[0]];if(v)f[x[1]]=v;});
  }else{
   if(p.name)f['商品']=p.name;
-  if(vp.price)f['价格']=vp.price;
-  if(vp.material)f['材质/规格']=vp.material;
-  if(vp.spoints)f['核心卖点']=vp.spoints;
-  if(vp.scenes)f['使用场景']=vp.scenes;
+  factsFieldList().forEach(function(fl){var v=inputs[fl[0]];if(v)f[fl[1]]=v;});
+  if(!f['价格']&&vp.price)f['价格']=vp.price;
+  if(!f['规格/材质']&&vp.material)f['规格/材质']=vp.material;
+  if(!f['核心卖点']&&vp.spoints)f['核心卖点']=vp.spoints;
+  if(!f['使用场景']&&vp.scenes)f['使用场景']=vp.scenes;
  }
  return f;
 }
 function factsNeeded(){
- var id=(state.identity||{}).type,f=collectFacts();
- if(id==='usedcar')return !(f['里程']||f['售价']||f['上牌']);
- return !(f['价格']||f['核心卖点']);
+ var have=state.factInputs||{},need=factsFieldList().map(function(f){return f[0];});
+ var hasPrice=!!have.price;
+ var hasDesc=need.filter(function(k){return k!=='price';}).some(function(k){return !!have[k];});
+ if(!hasPrice||!hasDesc){var f=collectFacts();
+  if(!hasPrice&&f['价格'])hasPrice=true;
+  if(!hasDesc&&Object.keys(f).some(function(k){return k!=='价格'&&k!=='商品';}))hasDesc=true;}
+ return !(hasPrice&&hasDesc);
 }
-function relayFactsCard(){
- var used=(state.identity||{}).type==='usedcar';
- botSay(used?'要写出能打的文案，光有车型不够，我还需要几个实在数——<b>补一次，以后这台车都不用再填</b>。':'要写出能打的文案，我需要几个具体信息，补一次就好。','awen');
- var fields=used?[
-  ['regDate','上牌时间','如 2023年5月'],
-  ['mileage','表显里程','如 3.2万公里'],
-  ['price','售价','如 16.99万'],
-  ['transfers','过户次数','如 一手 / 0过户'],
-  ['condition','车况','如 仅右前叶1处补漆'],
-  ['config','配置亮点','如 全景天窗、座椅加热']
- ]:[
-  ['price','价格','如 99元'],
-  ['material','材质 / 规格','如 纯棉、M码'],
-  ['spoints','核心卖点','具体、可验证'],
-  ['scenes','使用场景','适合什么人 / 什么场合']
- ];
+async function relayFactsCard(){
+ state.activePartner='awen';
+ var loadEl=card('<div style="display:flex;align-items:center;gap:9px;color:var(--tx2);font-size:13px">'+IC.pen+' 阿文按你的品类，先把资料预填一版…</div>','awen');
+ var fields=factsFieldList(),kind=factsKind(),prefill={};
+ try{
+  var img0=(state.uploadedImgs&&state.uploadedImgs[0])||(state.results&&state.results[0]&&state.results[0].url)||'';
+  var r=await authPost('/facts-prefill',{image:img0,identityType:(state.identity&&state.identity.type)||'general',category:(state.identity&&state.identity.cat)||'',product:productLabel(),facts:collectFacts()});
+  if(r&&r.ok&&r.prefill&&r.prefill.fields)prefill=r.prefill.fields;
+ }catch(e){prefill={};}
+ var kindLabel=kind==='flower'?'鲜花':kind==='usedcar'?'二手车':'通用';
  var rows=fields.map(function(x){
-  return '<label class="fc-row"><span class="fc-label">'+x[1]+'</span><input class="fc-input" data-fc="'+x[0]+'" placeholder="'+x[2]+'"></label>';
+  var val=prefill[x[0]]!=null?prefill[x[0]]:'';
+  return '<label class="fc-row"><span class="fc-label">'+x[1]+'</span><textarea class="fc-input" data-fk="'+x[0]+'" rows="1" placeholder="'+x[1]+'（可留空）">'+factsEsc(val)+'</textarea></label>';
  }).join('');
- card('<div class="facts-card">'+rows+'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_facts_done">补好了，写文案</button><button class="btn btn-ghost btn-sm" data-quick="rf_facts_skip">先跳过</button></div>','awen');
+ var note=Object.keys(prefill).length?'阿文按「'+kindLabel+'」先预填了一版（价格给了市场参考、品种给了通俗名和学名），你核对、改一改，没问题就点写文案。':'下面几项补一下，文案才具体可信；不方便的可以先跳过。';
+ var mc=loadEl.querySelector('.m-card');
+ mc.innerHTML='<div class="card-pad"><div class="card-title">'+IC.pen+' 先把商品资料核对一下</div><div class="card-desc">'+note+'</div><div class="facts-card">'+rows+'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_facts_done">塭好了，写文案</button><button class="btn btn-ghost btn-sm" data-quick="rf_facts_skip">先跳过</button></div></div>';
+ mc.querySelectorAll('.fc-input').forEach(autoGrowFacts);
+ scrollBottom();
 }
 function relayFactsDone(){
- var vp=state.vehicleProfile||(state.vehicleProfile={});
- $$('.facts-card .fc-input').forEach(function(i){if(i.value)vp[i.dataset.fc]=i.value.trim();});
- userSay('补好档案');
+ var inputs=state.factInputs||(state.factInputs={});
+ document.querySelectorAll('.facts-card .fc-input').forEach(function(i){var v=i.value.trim();if(v)inputs[i.dataset.fk]=v;});
+ state.factInputs=inputs;
+ userSay('资料核对好了');
  awenPickPlatform();
 }
 function relayFactsSkip(){userSay('先跳过');awenPickPlatform();}
@@ -6110,9 +6189,12 @@ function splitCopy(t){
  return {title:title,body:body,tags:tags,full:t};
 }
 function pvActs(parts){
- var h='<div class="pv-acts">';
- parts.forEach(function(p){if(p[1])h+='<button type="button" class="btn btn-ghost btn-sm" data-pvt="'+pvB64(p[1])+'">'+PV_ICO+' '+p[0]+'</button>';});
- return h+'<span class="pv-copyok"></span></div>';
+ var btns=parts.map(function(p){
+  if(!p[1])return '';
+  var main=/全部|脚本|文案/.test(p[0]);
+  return '<button type="button" class="pvt-btn'+(main?' pvt-main':'')+'" data-pvt="'+pvB64(p[1])+'"><span class="pvt-ic">'+PV_ICO+'</span>'+p[0]+'</button>';
+ }).join('');
+ return '<div class="pv-acts"><div class="pvt-lbl">'+PV_ICO+' 点复制，再到平台粘贴</div><div class="pvt-row">'+btns+'<span class="pv-copyok"></span></div></div>';
 }
 function platformPreviewHtml(cid,t){
  if(cid==='xhs')return xhsPreviewHtml(t);
@@ -6128,7 +6210,7 @@ function xhsPreviewHtml(t){
  +'<div class="pv-grid"><div class="pv-imgs">'+imgs+'</div>'
  +'<div class="pv-note"><div class="pv-title">'+esc(s.title||'标题')+'</div><div class="pv-body">'+esc(s.body||s.full)+'</div>'
  +(s.tags?'<div class="pv-tags">'+esc(s.tags)+'</div>':'')+'</div></div>'
- +pvActs([['复制标题',s.title],['复制正文',s.body||s.full],['复制标签',s.tags],['复制全部',s.full]])+'</div>';
+ +pvActs([['复制标题',s.title],['复制正文',s.body||s.full],['复制标签',s.tags],['复制全部',s.full]])+relayReadyCard('xhs',{embedded:true})+'</div>';
 }
 function dySideHtml(){
  function ic(p,label){return '<div class="ph-ic"><svg viewBox="0 0 24 24" width="27" height="27" fill="currentColor">'+p+'</svg>'+label+'</div>';}
@@ -6148,7 +6230,7 @@ function dyPreviewHtml(t){
  +'<div class="pv-phone-wrap"><div class="phone"><div class="ph-media">'+phMedia+'</div>'
  +'<div class="ph-side">'+dySideHtml()+'</div>'
  +'<div class="ph-bottom"><div class="ph-user">@你的账号</div><div class="ph-cap">'+esc(cap)+(topics?'　'+esc(topics):'')+'</div></div></div></div>'
- +pvActs([['复制口播脚本',t],['复制标题',pubTitle],['复制话题',topics]])+'</div>';
+ +pvActs([['复制口播脚本',t],['复制标题',pubTitle],['复制话题',topics]])+relayReadyCard('douyin',{embedded:true})+'</div>';
 }
 function pyqPreviewHtml(t){
  var s=splitCopy(t),urls=previewUrls().slice(0,9);
@@ -6159,7 +6241,7 @@ function pyqPreviewHtml(t){
  +'<div class="wx-ava">'+ava+'</div><div class="wx-main"><div class="wx-name">你的昵称</div>'
  +'<div class="wx-body">'+esc(s.full)+'</div>'+imgs
  +'<div class="wx-time">刚刚<span class="wx-two">•• ••</span></div></div></div></div></div></div>'
- +pvActs([['复制文案',s.full]])+'</div>';
+ +pvActs([['复制文案',s.full]])+'<div class="pyq-sc" data-pyslot><span class="pysc-loading">'+IC.cloud+' 同步生成朋友圈分享画册…</span></div>'+relayReadyCard('pyq',{embedded:true})+'</div>';
 }
 document.addEventListener('click',function(e){
  var b=e.target.closest('[data-pvt]');if(!b)return;
@@ -6217,6 +6299,9 @@ async function relAwenCore(tone){
    state.copy.cps={general:ch.general||'',xhs:ch.xhs||'',pyq:ch.pyq||'',douyin:ch.douyin||'',tags:(ch.tags||[]).join(' ')};
    state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh=null;
    showCards(ch);
+   if((state.relayChannels||[]).indexOf('pyq')>=0&&ch.pyq){
+    autoShowcaseForPyq(ch.pyq).then(function(sh){if(sh){botSay('朋友圈文案和分享画册都好了，二维码、链接在上面，发朋友圈或私聊直接用。','awen');renderDeliver();}});
+   }
    var bh=(j.copy.bannedHits&&j.copy.bannedHits.length)?(' 我顺手查了绝对化词「'+j.copy.bannedHits.join('、')+'」，发之前改一下，平台容易限流。'):'';
    botSay(tone?('按你要的味道重写好了，下面是发布后的样子。'+bh):('写好了，<b>下面直接按“发布后”的样子预览</b>，标题、正文、标签都能一键复制，粘贴到平台就行。'+bh),'awen');
    quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
@@ -6292,7 +6377,8 @@ function relayToAfa(){
  botSay('图、文案、视频都备好了。你<b>选要发哪几个平台</b>，我把每个平台的操作步骤列清楚。','afa');
  relayPlatformPick('rf_afa_pack','生成我的发布清单');
 }
-function relayReadyCard(id){
+function relayReadyCard(id,opt){
+ opt=opt||{};
  var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];
  var defs={
   xhs:{steps:[
@@ -6312,11 +6398,15 @@ function relayReadyCard(id){
    tips:['别群发、别频繁发硬广，容易被折叠','建议早 7-9、午 12-13、晚 20-22 点','有人点赞评论及时私信承接']}
  };
  var d=defs[id]||defs.xhs;
- var steps=d.steps.map(function(st,i){
+ var useSteps=opt.embedded?d.steps.filter(function(s){return s[0]!=='copy';}):d.steps;
+ var steps=useSteps.map(function(st,i){
   return '<button type="button" class="rdy-step" data-ready="'+st[0]+'" data-pf="'+id+'"><span class="rs-n">'+(i+1)+'</span><span class="rs-tx"><b>'+st[1]+'</b><small>'+st[2]+'</small></span><span class="rs-state">待办</span></button>';
  }).join('');
  var tips=d.tips.map(function(t){return '<li>'+t+'</li>';}).join('');
- return '<div class="rdy-k" style="--pc:'+x.c+'"><div class="rdy-head"><span class="rdy-dot" style="background:'+x.c+'"></span><span class="rdy-name">'+x.name+'</span><span class="rdy-badge">本人发布</span><span class="rdy-count"><b>0</b>/3</span></div><div class="rdy-steps">'+steps+'</div><ul class="rdy-tips">'+tips+'</ul></div>';
+ if(opt.embedded){
+  return '<div class="rdy-k pv-ready-emb" style="--pc:'+x.c+'"><div class="rdy-head"><span class="rdy-dot" style="background:'+x.c+'"></span>发布前还差 <b>'+useSteps.length+'</b> 步<span class="rdy-count"><b>0</b>/'+useSteps.length+'</span></div><div class="rdy-steps">'+steps+'</div><details class="pvr-tips"><summary>发布小贴士</summary><ul class="rdy-tips">'+tips+'</ul></details></div>';
+ }
+ return '<div class="rdy-k" style="--pc:'+x.c+'"><div class="rdy-head"><span class="rdy-dot" style="background:'+x.c+'"></span><span class="rdy-name">'+x.name+'</span><span class="rdy-badge">本人发布</span><span class="rdy-count"><b>0</b>/'+useSteps.length+'</span></div><div class="rdy-steps">'+steps+'</div><ul class="rdy-tips">'+tips+'</ul></div>';
 }
 function relayReady(el){
  var pf=el.dataset.pf,step=el.dataset.ready;
@@ -6347,15 +6437,12 @@ function relayReady(el){
  }
 }
 function relayAfaPack(){
- var sel=relayPickedIds();
- if(!sel.length)sel=['xhs'];
+ var sel=state.relayChannels||relayPickedIds();
+ if(!sel||!sel.length)sel=['xhs'];
  sel=Array.from(new Set(sel));
  state.relayPublish=sel;
  userSay(sel.map(relayPfName).join('、'));
- var klist='<div class="relay-klist">'+sel.map(relayReadyCard).join('')+'</div>';
- card(klist,'afa');
- card('<div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13.5px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px">'+IC.qr+' 还可以生成「可追踪画册」</div><div style="font-size:12.5px;line-height:1.6;color:var(--tx2)">生成一个 H5 画册，把链接发到微信或社群，客户手机打开就能看图、复制文案、一键转发；<b>谁看了、看多久、留了电话，自动回到阿果</b>。适合私聊报价、社群传播和线下扫码。</div><div class="card-actions"><button class="btn btn-dark btn-sm" data-act="publishShowcase">生成可追踪画册 / 渠道码</button></div></div>','afa');
- botSay('每个平台按 1 → 2 → 3 点一遍，文案和素材就都到位了，最后「发送」你自己点。需要发微信 / 社群就先生成画册。发完回来点「已发布」。','afa');
+ botSay('上面每个平台的「发布预览」卡里，先点<b>复制文案</b>，再<b>保存素材、打开发布页</b>，最后「发送」你自己点。发完回来点「已发布」。','afa');
  quickPills([['rf_published','已发布',IC.check],['rf_afa_wait','我还没发',IC.send]]);
 }
 function relayPublished(){
