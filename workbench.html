@@ -153,6 +153,60 @@ body[data-deliver="open"]{--deliver:380px}
 .only-mobile{display:none!important}
 .chat{flex:1;min-height:0;overflow-y:auto;padding:26px 0 14px;scroll-behavior:smooth;display:flex;flex-direction:column;align-items:center}
 .chat-inner{width:100%;max-width:880px;margin:0 auto;padding:0 22px;box-sizing:border-box}
+/* ============================================================
+   RelayFlow · 五个伙计接力服务（进度条 + 选择卡 + 交接 + 回传）
+   ============================================================ */
+.relay-bar{width:100%;max-width:880px;margin:0 auto 2px;padding:0 22px;box-sizing:border-box;position:sticky;top:-26px;z-index:30;display:none}
+.relay-bar.show{display:block}
+.relay-inner{display:flex;align-items:center;gap:4px;padding:9px 14px;border-radius:14px;background:rgba(19,26,39,.84);border:1px solid var(--line);backdrop-filter:blur(14px);box-shadow:var(--shadow-s)}
+.rb-node{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx3);font-weight:600;white-space:nowrap;transition:color .2s}
+.rb-dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;border:1.6px solid currentColor;background:transparent;flex:none;transition:.2s}
+.rb-node .rb-ic{width:13px;height:13px;display:none}
+.rb-node.done{color:var(--rb-c,var(--tx2))}
+.rb-node.done .rb-dot{background:var(--rb-c);border-color:var(--rb-c);color:#0d1119}
+.rb-node.done .rb-num{display:none}.rb-node.done .rb-ic{display:block}
+.rb-node.active{color:var(--rb-c)}
+.rb-node.active .rb-dot{animation:rbPulse 1.6s ease-in-out infinite}
+.rb-line{flex:1;height:1.5px;min-width:6px;background:var(--line);border-radius:2px}
+@keyframes rbPulse{0%,100%{box-shadow:0 0 0 3px var(--rb-glow)}50%{box-shadow:0 0 0 6px transparent}}
+@media(max-width:680px){.rb-node .rb-name{display:none}.rb-dot{width:22px;height:22px}.relay-inner{padding:8px 10px;gap:2px}}
+.pick-chips{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 2px}
+.pick-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:11px;border:1.4px solid var(--line);background:rgba(255,255,255,.03);color:var(--tx2);font-size:13px;font-weight:600;transition:.16s}
+.pick-chip .pc-tick{width:15px;height:15px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;flex:none;opacity:.55}
+.pick-chip .pc-tick svg{width:9px;height:9px;display:none}
+.pick-chip.sel{border-color:var(--pc);color:var(--pc);background:var(--pc-bg)}
+.pick-chip.sel .pc-tick{background:var(--pc);border-color:var(--pc);opacity:1;color:#0d1119}
+.pick-chip.sel .pc-tick svg{display:block}
+.pick-note{font-size:12px;color:var(--tx3);margin-top:3px}
+.relay-klist{display:flex;flex-direction:column;gap:9px;margin:4px 0}
+.relay-k{border:1px solid var(--line);border-radius:13px;padding:11px 13px;background:rgba(255,255,255,.025)}
+.relay-k-head{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px}
+.relay-k-head .rk-badge{margin-left:auto;font-size:11px;color:var(--tx3);font-weight:600}
+.relay-k ol{margin:8px 0 0;display:flex;flex-direction:column;gap:5px;list-style:none}
+.relay-k li{font-size:12.5px;color:var(--tx2);display:flex;gap:8px;align-items:flex-start}
+.relay-k li .rk-n{color:var(--pc);font-weight:800;flex:none}
+.relay-k-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.agu-ways{display:flex;flex-direction:column;gap:9px;margin:4px 0}
+.agu-way{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:13px;padding:11px 13px;background:rgba(255,255,255,.025);text-align:left;width:100%;transition:.16s}
+.agu-way:hover{border-color:var(--agu);background:rgba(192,132,252,.08)}
+.agu-way .aw-ic{width:20px;height:20px;color:var(--agu);flex:none;margin-top:1px}
+.agu-way .aw-t{font-weight:700;font-size:13.5px}
+.agu-way .aw-d{font-size:12px;color:var(--tx3);margin-top:2px}
+.agu-way .aw-rec{margin-left:auto;font-size:10.5px;color:var(--agu);font-weight:700;border:1px solid var(--agu);padding:2px 7px;border-radius:20px;flex:none}
+.agu-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0}
+.agu-form .af-fld{display:flex;flex-direction:column;gap:5px}
+.agu-form .af-fld.full{grid-column:1/-1}
+.agu-form label{font-size:11.5px;color:var(--tx3);font-weight:600}
+.agu-form input{background:rgba(255,255,255,.04);border:1.3px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--tx);font-size:13px;font-family:inherit}
+.agu-form input:focus{outline:none;border-color:var(--agu)}
+@media(max-width:560px){.agu-form{grid-template-columns:1fr}}
+.relay-step{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.4px;color:var(--pc);background:var(--pc-bg);padding:3px 9px;border-radius:20px;margin-bottom:7px}
+.relay-copy-pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:12.5px;color:var(--tx2);margin:2px 0;line-height:1.65}
+.relay-text-in{width:100%;background:rgba(255,255,255,.04);border:1.3px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--tx);font-size:13px;font-family:inherit;margin-bottom:6px;box-sizing:border-box}
+.relay-text-in:focus{outline:none;border-color:var(--orange)}
+.agu-form select{background:rgba(255,255,255,.04);border:1.3px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--tx);font-size:13px;font-family:inherit}
+.agu-form select:focus{outline:none;border-color:var(--agu)}
+
 .msg{display:flex;gap:11px;margin:18px 0;animation:msgIn .26s cubic-bezier(.2,.8,.2,1)}
 @keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .msg .m-avatar{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--orange-soft);margin-top:2px}
@@ -1688,7 +1742,7 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
       </div>
     </header>
 
-    <section class="chat" id="chatScroll"><div class="chat-inner" id="chatInner"></div></section>
+    <section class="chat" id="chatScroll"><div class="relay-bar" id="relayBar"></div><div class="chat-inner" id="chatInner"></div></section>
 
     <div class="composer">
       <div class="composer-inner">
@@ -4553,6 +4607,7 @@ function runGenerate(){
  if(window.HogeeMember){HogeeMember.requireAuth().then(__go).catch(function(){});}else{__go();}
 }
 function finishGenerate(){
+ if(state.relay){relayFinishGenerate();return;}
  state.stage='result';
  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以「再来一单」。','atu');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>','atu');renderDeliver();return;}
@@ -4931,20 +4986,25 @@ function composeVideo(sb,imgs,onProg){
   if(shot.caption&&local>0.34&&local<dur-0.16)drawCaption(x,W,H,shot.caption,Math.min(1,(local-0.34)/0.3));
   drawCorner(x,W,H);
  }
+ x.fillStyle='#0c0b09';x.fillRect(0,0,W,H);
  var stream=canvas.captureStream(30);
  var rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000});
  var chunks=[];rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data);};
  return new Promise(function(res,rej){
-  rec.onerror=function(){rej(new Error('录制失败'));};
-  rec.onstop=function(){res({blob:new Blob(chunks,{type:mime.split(';')[0]}),w:W,h:H,dur:total});};
-  var start=null,raf=0,stopped=false;
+  var start=null,raf=0,stopped=false,wd=0;
+  function doneStop(){if(stopped)return;stopped=true;clearTimeout(wd);setTimeout(function(){try{rec.stop();}catch(e){}},120);}
+  rec.onerror=function(){clearTimeout(wd);rej(new Error('录制失败'));};
+  rec.onstop=function(){clearTimeout(wd);res({blob:new Blob(chunks,{type:mime.split(';')[0]}),w:W,h:H,dur:total});};
   function loop(ts){
    if(!start)start=ts;var t=(ts-start)/1000;
-   if(t>=total){frame(total);onProg&&onProg(1);if(!stopped){stopped=true;setTimeout(function(){try{rec.stop();}catch(e){}},150);}return;}
+   try{
+   if(t>=total){frame(total);onProg&&onProg(1);doneStop();return;}
    frame(t);onProg&&onProg(Math.min(0.999,t/total));raf=requestAnimationFrame(loop);
+   }catch(e){doneStop();rej(e);}
   }
   rec.onstart=function(){raf=requestAnimationFrame(loop);};
-  setTimeout(function(){try{rec.start(200);}catch(e){rej(e);}},60);
+  wd=setTimeout(function(){if(!stopped){stopped=true;try{rec.stop();}catch(e){}rej(new Error('视频录制超时，请重试'));}},(total+10)*1000);
+  setTimeout(function(){try{rec.start(200);}catch(e){clearTimeout(wd);rej(e);}},60);
  });
 }
 function videoSectionHtml(){
@@ -4989,7 +5049,7 @@ async function videoMake(btn){
   persistVideoWork(state.videos[state.videos.length-1]);
   renderDeliver();
   toast(fb?'短视频剪好了（内置分镜，登录后用 AI 分镜）':'短视频剪好了，'+sb.shots.length+' 个镜头');
-  botSay('<b>片子剪好了，你看看。</b>'+r.w+'×'+r.h+'、'+Math.round(r.dur)+' 秒，已放进右侧「视频」，可直接下载发抖音 / 小红书 / 视频号；发布时配上平台热门 BGM 就行。','ashi');
+  if(!state.relay)botSay('<b>片子剪好了，你看看。</b>'+r.w+'×'+r.h+'、'+Math.round(r.dur)+' 秒，已放进右侧「视频」，可直接下载发抖音 / 小红书 / 视频号；发布时配上平台热门 BGM 就行。','ashi');
  }catch(e){
   toast('视频没剪成：'+(e&&e.message?e.message:'重试一下'),'err');
   renderDeliver();
@@ -5744,6 +5804,405 @@ function sendFreeTextLegacy(txt){
  }
 }
 
+/* ============================================================
+   RelayFlow · 五个伙计接力服务编排引擎
+   阿图(认货+生图) → 阿文(文案) → 阿视(视频) → 阿发(打包+引导发布) → 阿果(效果)
+   原则：每条伙计消息只问一件事；能自动的全默认；伙计间明确交接；
+        全程一条主线；发布由用户本人确认；用户只做 5 次确认，可随时结束/继续。
+   ============================================================ */
+var RELAY_ORDER=['atu','awen','ashi','afa','agu'];
+var RELAY_GLOW={atu:'rgba(251,146,60,.22)',awen:'rgba(96,165,250,.22)',ashi:'rgba(244,114,182,.22)',afa:'rgba(74,222,128,.22)',agu:'rgba(192,132,252,.22)'};
+var RELAY_PLATFORMS=[
+ {id:'xhs',name:'小红书',c:'#ff4d6d',ch:'xhs',url:'https://creator.xiaohongshu.com/publish/publish'},
+ {id:'douyin',name:'抖音',c:'#25f4ee',ch:'pyq',url:'https://creator.douyin.com/creator-micro/content/upload'},
+ {id:'pyq',name:'朋友圈',c:'#4ade80',ch:'pyq',url:''}
+];
+var RELAY_CIRC=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫'];
+function relayPfName(id){var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];return x?x.name:id;}
+function relayLi(n,t){return '<li><span class="rk-n">'+n+'</span><span>'+t+'</span></li>';}
+
+/* ---------- 顶部进度条 ---------- */
+function renderRelayBar(activeId){
+ var ai=RELAY_ORDER.indexOf(activeId);var h='<div class="relay-inner">';
+ RELAY_ORDER.forEach(function(id,i){
+  var status=i<ai?'done':(i===ai?'active':'todo');
+  h+=relayBarNode(id,i,status);
+  if(i<RELAY_ORDER.length-1)h+='<div class="rb-line'+(i<ai?' done':'')+'" style="'+(i<ai?('background:var(--'+id+')'):'')+'"></div>';
+ });
+ h+='</div>';
+ var bar=$('#relayBar');bar.innerHTML=h;bar.classList.add('show');
+}
+function relayBarNode(id,i,status){
+ var check='<svg class="rb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+ return '<div class="rb-node '+status+'" style="--rb-c:var(--'+id+');--rb-glow:'+RELAY_GLOW[id]+'">'
+  +'<span class="rb-dot"><span class="rb-num">'+(i+1)+'</span>'+check+'</span>'
+  +'<span class="rb-name">'+partnerById(id).name+'</span></div>';
+}
+
+/* ---------- 阶段一 · 阿图接活（自动分组 + 认货，只确认一次） ---------- */
+function relayBegin(){
+ if(!state.images.length){toast('先传至少一张产品图','err');return;}
+ state.relay=true;state.relayStage='atu';state.activePartner='atu';
+ renderRelayBar('atu');
+ try{setDeliverTab('img');}catch(e){}
+ var stop=botTyping('atu');
+ (async function(){
+  try{
+   var groups=[];
+   if(state.images.length===1){
+    groups=[{name:'',indices:[0]}];
+   }else{
+    var thumbs=[];for(var i=0;i<state.images.length;i++)thumbs.push(await makeThumb(state.images[i].dataUrl,900));
+    var r=await callGroupHttp(thumbs);
+    if(r&&r.groups&&r.groups.length)groups=r.groups;
+    else groups=state.images.map(function(_,i){return{name:'商品'+(i+1),indices:[i]};});
+   }
+   state.groups=groups.map(function(g){return {name:g.name,indices:g.indices.slice(),identity:state.identity,product:state.product};});
+   for(var gi=0;gi<state.groups.length;gi++){
+    var rep=state.groups[gi].indices[0];
+    var f=await callIdentify(state.images[rep].dataUrl);
+    var built=productFromFields(f);
+    state.groups[gi].fields=f||{};
+    state.groups[gi].product=built.product;
+    state.groups[gi].identity=built.identity;
+   }
+   state.identity=state.groups[0].identity;state.product=state.groups[0].product;
+   stop();
+   var names=state.groups.map(function(g){var s=identifySummary(g.fields);return s||g.name||'这件商品';});
+   var listTxt;
+   if(state.groups.length===1){
+    listTxt='我认出这是 <b>'+esc(names[0])+'</b>，对吧？';
+   }else{
+    listTxt='我清点出 <b>'+state.groups.length+'</b> 件货：<br>'
+     +names.map(function(n,i){return RELAY_CIRC[i]+' '+esc(n);}).join('<br>')+'<br>对吧？';
+   }
+   botSay('收到，图我都看过了。'+listTxt,'atu');
+   quickPills([['rf_atu_ok','对，开始出图',IC.check],['rf_atu_fix','认的不对',IC.pen]]);
+  }catch(e){stop();toast('认货没连上，稍后再试','err');}
+ })();
+}
+function applySmartDefaults(){
+ var anyUsed=state.groups.some(function(g){return g.identity&&g.identity.type==='usedcar';});
+ var anyGen=state.groups.some(function(g){return !g.identity||g.identity.type!=='usedcar';});
+ var outs=[];
+ if(anyUsed)outs=outs.concat(['showroom','studio']);
+ if(anyGen)outs=outs.concat(['white','scene','detail']);
+ if(!outs.length)outs=['white','scene','detail'];
+ state.outputs=new Set(outs);
+ state.scene='minimal';
+ state.sizes=new Set(['1:1','3:4']);
+ state.fmt='jpg';state.quality='hd';
+}
+function relayAtuOk(){
+ state.relayStage='atu_gen';
+ userSay('对，开始出图');
+ applySmartDefaults();
+ runGenerate();
+}
+function relayAtuFix(){
+ card('<div class="card-desc">你直接告诉我这是什么（如“黑色 2019款 沃尔沃S90”或“陶瓷保温杯”），我改过来；也可以重新认一次。</div>'
+  +'<input id="rfFixInput" class="relay-text-in" placeholder="这是什么？">'
+  +'<div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_atu_fix_go">改好并出图</button>'
+  +'<button class="btn btn-ghost btn-sm" data-quick="rf_atu_reid">重新认一次</button></div>','atu');
+}
+function relayAtuFixGo(){
+ var v=$('#rfFixInput');var t=v?v.value.trim():'';
+ if(t){state.groups.forEach(function(g){g.product.name=t;});state.product.name=t;}
+ userSay(t||'（直接出图）');
+ applySmartDefaults();runGenerate();
+}
+function relayFinishGenerate(){
+ state.stage='result';
+ state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
+ if(!state.results.length){
+  botSay('这批一张都没出成，换张图或稍后再试。','atu');
+  quickPills([['rf_retry_gen','重试',IC.image],['rf_new','换个商品',IC.brand]]);
+  renderDeliver();return;
+ }
+ botSay('<b>图好了，你看看。</b>'+state.results.length+' 张成品已放进右侧「交付物」——商品一点没动，只换了背景和呈现。满意的话，我让阿文接着写文案。','atu');
+ quickPills([['rf_to_awen','让阿文写文案',IC.pen],['rf_atu_review','我先看看 / 重做',IC.image]]);
+ renderDeliver();
+}
+function relayAtuReview(){
+ openDeliver();
+ botSay('成品在右侧「交付物」里，可以看大图、单张重做、下载。看好了随时让阿文写文案。','atu');
+ quickPills([['rf_to_awen','让阿文写文案',IC.pen],['rf_new','这单先到这',IC.brand]]);
+}
+function relayRetryGen(){runGenerate();}
+
+/* ---------- 阶段二 · 阿文接活（只问平台，自动多版文案） ---------- */
+function relayToAwen(){
+ state.relayStage='awen';state.activePartner='awen';
+ renderRelayBar('awen');try{setDeliverTab('copy');}catch(e){}
+ userSay('让阿文写文案');
+ botSay('图我都看过了。你要发<b>小红书、朋友圈，还是抖音</b>？我按每个平台的口吻写，可以多选。','awen');
+ relayPlatformPick('rf_awen_write','按所选平台写文案');
+}
+function relayPickChip(id,sel){
+ var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];
+ var tick='<span class="pc-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>';
+ return '<button type="button" class="pick-chip'+(sel?' sel':'')+'" data-pick="'+id+'" style="'+(sel?('--pc:'+x.c+';--pc-bg:'+x.c+'22'):'')+'">'+tick+'<span>'+x.name+'</span></button>';
+}
+function relayPlatformPick(confirmQuick,confirmLabel){
+ var chips=RELAY_PLATFORMS.map(function(p){return relayPickChip(p.id,false);}).join('');
+ card('<div class="pick-chips">'+chips+'</div><div class="pick-note">可多选；不选我默认先写小红书。</div>'
+  +'<div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="'+confirmQuick+'">'+confirmLabel+'</button></div>',state.activePartner);
+}
+function relayPickedIds(){
+ return $$('.pick-chip.sel').map(function(b){return b.dataset.pick;});
+}
+function relayAwenWrite(){
+ var sel=relayPickedIds();
+ if(!sel.length)sel=['xhs'];
+ state.relayChannels=sel;
+ userSay(sel.map(relayPfName).join('、'));
+ var cps=state.copy.cps||buildCopies();
+ state.copy.ready=true;
+ var blocks=[];
+ if(sel.indexOf('xhs')>=0)blocks.push(['小红书笔记',cps.xhs]);
+ if(sel.indexOf('pyq')>=0)blocks.push(['朋友圈短文',cps.pyq]);
+ if(sel.indexOf('douyin')>=0)blocks.push(['抖音标题 + 话题',cps.general+'\n\n'+cps.tags]);
+ blocks.forEach(function(bk){
+  card('<div class="card-title">'+bk[0]+'</div><pre class="relay-copy-pre">'+esc(bk[1])+'</pre>','awen');
+ });
+ botSay('写好了，你看看。要换味道点「换个口吻」；没问题我让阿视看看要不要剪视频。','awen');
+ quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
+ renderDeliver();
+}
+function relayAwenRedo(){
+ botSay('想换成什么味道？','awen');
+ quickPills([['rf_awen_tone_kol','更口语',IC.pen],['rf_awen_tone_pro','更专业',IC.pen],['rf_awen_tone_short','更简短',IC.pen]]);
+}
+function relayAwenTone(tone){
+ var cps=state.copy.cps||buildCopies();var t=cps.xhs;var label;
+ if(tone==='kol'){t='姐妹们，说真的，'+cps.xhs+'\n\n喜欢的直接冲，细节问我～';label='口语版';}
+ else if(tone==='pro'){t='【实拍呈现】'+cps.general+'\n\n'+cps.tags;label='专业版';}
+ else{t=cps.xhs.split('\n').filter(Boolean).slice(0,4).join('\n');label='精简版';}
+ state.copy.cps=Object.assign({},cps,{xhs:t});
+ card('<div class="card-title">小红书 · '+label+'</div><pre class="relay-copy-pre">'+esc(t)+'</pre>','awen');
+ botSay('换好味道了，你看看。没问题让阿视剪视频，或直接发布。','awen');
+ quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','再换个味道',IC.pen]]);
+}
+function relayAwenOk(){
+ botSay('文案好了。让阿视看看，用这些图剪个短视频？','awen');
+ quickPills([['rf_to_ashi','让阿视剪视频',IC.video],['rf_skip_ashi','跳过，直接发布',IC.send]]);
+}
+
+/* ---------- 阶段三 · 阿视接活（只问剪不剪，自动 15 秒） ---------- */
+function relayToAshi(){
+ state.relayStage='ashi';state.activePartner='ashi';
+ renderRelayBar('ashi');try{setDeliverTab('video');}catch(e){}
+ userSay('让阿视剪视频');
+ botSay('我用刚才的图，剪一条 <b>15 秒竖版</b>：全景 3s → 细节 5s → 卖点 4s → 品牌 3s，配字幕，适合抖音和视频号。要剪吗？','ashi');
+ quickPills([['rf_ashi_make','剪一条',IC.video],['rf_ashi_no','不剪了',IC.check]]);
+}
+function relayAshiMake(){
+ userSay('剪一条');
+ botSay('好，我开始剪，大约 1 分钟，你先忙别的。','ashi');
+ try{
+  var p=videoMake(null);
+  if(p&&p.then)p.then(function(){
+   setTimeout(function(){
+    botSay('片子剪好了，在右侧「视频」里。满意的话，我让阿发帮你发。','ashi');
+    quickPills([['rf_to_afa','让阿发发布',IC.send],['rf_ashi_make','重新剪',IC.video]]);
+   },300);
+  });
+ }catch(e){toast('视频没启动','err');}
+}
+function relayAshiNo(){
+ state.relayStage='ashi_skip';
+ userSay('不剪了');
+ botSay('行，那就用图文。让阿发帮你把图和文案发出去。','ashi');
+ quickPills([['rf_to_afa','让阿发发布',IC.send]]);
+}
+function relaySkipAshi(){userSay('跳过视频');relayAshiNo();}
+
+/* ---------- 阶段四 · 阿发接活（只问平台，打包 + 操作清单，不代点发送） ---------- */
+function relayToAfa(){
+ state.relayStage='afa';state.activePartner='afa';
+ renderRelayBar('afa');try{setDeliverTab('reach');}catch(e){}
+ userSay('让阿发发布');
+ botSay('图、文案、视频都备好了。你<b>选要发哪几个平台</b>，我把每个平台的操作步骤列清楚。','afa');
+ relayPlatformPick('rf_afa_pack','生成我的发布清单');
+}
+function relayRbtn(pf,label,act){
+ if(act==='copy')return '<button class="btn btn-dark btn-sm" data-quick="rf_copy" data-pf="'+pf+'">'+label+'</button>';
+ if(act==='open')return '<button class="btn btn-ghost btn-sm" data-quick="rf_open" data-pf="'+pf+'">'+label+'</button>';
+ if(act==='video')return '<button class="btn btn-dark btn-sm" data-quick="rf_savevideo">'+label+'</button>';
+ return '<button class="btn btn-ghost btn-sm" data-quick="rf_savepack">'+label+'</button>';
+}
+function relayReachCard(id,cps,hasVideo){
+ var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];
+ var steps='',actions='';
+ if(id==='xhs'){
+  steps=relayLi(1,'点「复制小红书文案」，再点「打开小红书」')+relayLi(2,'点「保存图片」，在发布页上传（可多选）')+relayLi(3,'粘贴文案、检查话题，点「发布」');
+  actions=relayRbtn('xhs','复制小红书文案','copy')+relayRbtn('xhs','保存图片','pack')+relayRbtn('xhs','打开小红书','open');
+ }else if(id==='douyin'){
+  steps=relayLi(1,(hasVideo?'点「保存视频」，':'先让阿视剪视频，')+'点「打开抖音」上传')+relayLi(2,'点「复制标题」粘贴，加上话题')+relayLi(3,'选封面、检查后点「发布」');
+  actions=(hasVideo?relayRbtn('douyin','保存视频','video'):'')+relayRbtn('douyin','复制标题','copy')+relayRbtn('douyin','打开抖音','open');
+ }else{
+  steps=relayLi(1,'点「保存图片」（可做九宫格），存到手机')+relayLi(2,'点「复制朋友圈文案」')+relayLi(3,'打开手机微信 → 发现 → 朋友圈，发图、粘贴文案');
+  actions=relayRbtn('pyq','保存图片 / 打包','pack')+relayRbtn('pyq','复制朋友圈文案','copy');
+ }
+ return '<div class="relay-k" style="--pc:'+x.c+'"><div class="relay-k-head"><span style="color:'+x.c+'">●</span>'+x.name+'<span class="rk-badge">本人发布</span></div><ol>'+steps+'</ol><div class="relay-k-actions">'+actions+'</div></div>';
+}
+function relayAfaPack(){
+ var sel=relayPickedIds();
+ if(!sel.length)sel=['xhs'];
+ state.relayPublish=sel;
+ userSay(sel.map(relayPfName).join('、'));
+ var cps=state.copy.cps||buildCopies();
+ var hasVideo=state.videos.length>0;
+ var klist='<div class="relay-klist">'+sel.map(function(id){return relayReachCard(id,cps,hasVideo);}).join('')+'</div>';
+ card(klist,'afa');
+ botSay('照着每个平台的清单走，最后「发送」你自己点。发完回来告诉我一声。','afa');
+ quickPills([['rf_published','已发布',IC.check],['rf_afa_wait','我还没发',IC.send]]);
+}
+function relayPublished(){
+ state.relayStage='agu';
+ userSay('已发布');
+ botSay('好嘞，发得漂亮。我让阿果盯上这单的数据。','afa');
+ setTimeout(relayToAgu,350);
+}
+function relayAfaWait(){
+ openDeliver();
+ botSay('不着急，你按清单发，发完回来点「已发布」，我让阿果接着盯。','afa');
+ quickPills([['rf_published','已发布',IC.check]]);
+}
+function relayCopy(el){
+ var pf=el.dataset.pf;var x=RELAY_PLATFORMS.filter(function(p){return p.id===pf;})[0];
+ var cps=state.copy.cps||buildCopies();var txt=cps?(cps[x.ch]||cps.general):'';
+ copyPlain(txt);toast(x.name+'文案已复制');
+}
+function relayOpen(el){
+ var pf=el.dataset.pf;var x=RELAY_PLATFORMS.filter(function(p){return p.id===pf;})[0];
+ if(x.url){window.open(x.url,'_blank','noopener');toast('已打开'+x.name);}
+ else toast('朋友圈请用手机微信发布');
+}
+function relaySaveVideo(){
+ if(!state.videos.length){toast('还没有视频，先让阿视剪','err');return;}
+ var v=state.videos[0];var a=document.createElement('a');a.href=v.url;a.download=v.name||'video.mp4';
+ document.body.appendChild(a);a.click();a.remove();toast('视频已保存');
+}
+function relaySavePack(){packAll();}
+
+/* ---------- 阶段五 · 阿果接活（数据回传三方式 + 即时计算，闭环） ---------- */
+function relayToAgu(){
+ state.relayStage='agu';state.activePartner='agu';
+ renderRelayBar('agu');
+ userSay('让阿果盯数据');
+ var ways='<div class="agu-ways">'
+  +'<button type="button" class="agu-way" data-quick="rf_agu_shot"><span class="aw-ic">'+IC.image+'</span><span><div class="aw-t">发数据页截图</div><div class="aw-d">把小红书 / 抖音后台数据页截图发我，我自动读浏览、点赞、咨询</div></span><span class="aw-rec">推荐</span></button>'
+  +'<button type="button" class="agu-way" data-quick="rf_agu_manual"><span class="aw-ic">'+IC.pen+'</span><span><div class="aw-t">手动填几个数</div><div class="aw-d">30 秒小表单，填浏览、互动、咨询和成交</div></span></button>'
+  +'<button type="button" class="agu-way" data-quick="rf_agu_api"><span class="aw-ic">'+IC.send+'</span><span><div class="aw-t">授权后自动拉取</div><div class="aw-d">已授权平台的数据我自动拉，你什么都不用做（后续开放）</div></span></button>'
+  +'</div>';
+ card(ways,'agu');
+ botSay('我盯上了。数据怎么给我？挑最省事的；也可以让我 3 天后提醒你。','agu');
+ quickPills([['rf_agu_later','3天后提醒我',IC.chart],['rf_new','这单先到这',IC.brand]]);
+}
+function relayAguShot(){
+ botSay('好，把后台<b>数据页截图</b>传上来。自动读数还在内测，我读完会把数字帮你填好，你核对就行。','agu');
+ card('<div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_agu_shot_upload">上传数据截图</button>'
+  +'<button class="btn btn-ghost btn-sm" data-quick="rf_agu_manual">改为手动填</button></div>','agu');
+}
+function relayAguShotUpload(){
+ var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+ inp.onchange=function(){
+  var f=inp.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){state.aguShot=rd.result;toast('截图已收到');relayAguManual(true);};
+  rd.readAsDataURL(f);
+ };
+ inp.click();
+}
+function aguFormHtml(){
+ var pfOpts=RELAY_PLATFORMS.map(function(p,i){return '<option value="'+p.id+'"'+(i===0?' selected':'')+'>'+p.name+'</option>';}).join('');
+ return '<div class="agu-form">'
+  +'<div class="af-fld"><label>平台</label><select id="agPf">'+pfOpts+'</select></div>'
+  +'<div class="af-fld"><label>发布几天</label><input id="agDays" type="number" inputmode="numeric" placeholder="如 3"></div>'
+  +'<div class="af-fld"><label>浏览 / 播放量</label><input id="agViews" type="number" inputmode="numeric" placeholder="如 1200"></div>'
+  +'<div class="af-fld"><label>点赞 / 收藏</label><input id="agLikes" type="number" inputmode="numeric" placeholder="如 86"></div>'
+  +'<div class="af-fld"><label>评论数</label><input id="agComments" type="number" inputmode="numeric" placeholder="如 12"></div>'
+  +'<div class="af-fld"><label>咨询 / 留资</label><input id="agLeads" type="number" inputmode="numeric" placeholder="如 5"></div>'
+  +'<div class="af-fld"><label>成交（可选）</label><input id="agDeals" type="number" inputmode="numeric" placeholder="如 1"></div>'
+  +'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_agu_submit">提交，3天后看报告</button></div>';
+}
+function relayAguManual(fromShot){
+ card(aguFormHtml(),'agu');
+ botSay(fromShot?'自动读数还在内测，你照截图把数字填一下，几秒钟。':'填几个核心数就行，其他可以留空。','agu');
+}
+function relayAguSubmit(){
+ function v(id){var e=$(id);return e?e.value.trim():'';}
+ var d={pf:v('#agPf'),days:v('#agDays'),views:v('#agViews'),likes:v('#agLikes'),comments:v('#agComments'),leads:v('#agLeads'),deals:v('#agDeals'),ts:Date.now()};
+ state.aguData=d;
+ userSay('提交数据');
+ var views=parseInt(d.views||'0',10),likes=parseInt(d.likes||'0',10),comments=parseInt(d.comments||'0',10),leads=parseInt(d.leads||'0',10);
+ var eng=views?((likes+comments)/views*100):0,leadRate=views?(leads/views*100):0;
+ botSay('收到，数据记下了。<b>当前这版：</b>互动率 '+eng.toFixed(1)+'%、咨询率 '+leadRate.toFixed(2)+'%。','agu');
+ botSay('我会持续盯着，<b>3 天后给你完整效果报告</b>：哪张图浏览最高、哪版文案互动最高、下次怎么改进；下次出图，我把这次的经验自动用上。','agu');
+ quickPills([['rf_done','完成这单',IC.check],['rf_new','再来一单',IC.brand]]);
+}
+function relayAguLater(){
+ userSay('3天后提醒我');
+ botSay('行，我记下了，数据都给你存着。3 天后回到工作台，我帮你回填、出效果报告。需要再来一单也行。','agu');
+ quickPills([['rf_new','再来一单',IC.brand],['rf_done','先这样',IC.check]]);
+}
+
+/* ---------- 结束 / 再来一单 ---------- */
+function relayNew(){
+ userSay('再来一单');
+ var hires=state.hires;state=resetState();state.hires=hires;
+ try{scroll.innerHTML='';}catch(e){}
+ startOrder('general');
+}
+function relayDone(){
+ userSay('完成这单');
+ var hires=state.hires;state=resetState();state.hires=hires;
+ try{scroll.innerHTML='';}catch(e){}
+ botSay('好嘞，这单就到这。图、文案、视频都在右侧「交付物」和「我的创作」里，随时回来找伙计。','host');
+ heroWelcome();
+}
+
+/* ---------- 动作路由 ---------- */
+function relayAction(id,el){
+ switch(id){
+  case 'rf_atu_ok':relayAtuOk();break;
+  case 'rf_atu_fix':relayAtuFix();break;
+  case 'rf_atu_fix_go':relayAtuFixGo();break;
+  case 'rf_atu_reid':relayBegin();break;
+  case 'rf_to_awen':relayToAwen();break;
+  case 'rf_atu_review':relayAtuReview();break;
+  case 'rf_awen_write':relayAwenWrite();break;
+  case 'rf_awen_ok':relayAwenOk();break;
+  case 'rf_awen_redo':relayAwenRedo();break;
+  case 'rf_awen_tone_kol':relayAwenTone('kol');break;
+  case 'rf_awen_tone_pro':relayAwenTone('pro');break;
+  case 'rf_awen_tone_short':relayAwenTone('short');break;
+  case 'rf_to_ashi':relayToAshi();break;
+  case 'rf_skip_ashi':relaySkipAshi();break;
+  case 'rf_ashi_make':relayAshiMake();break;
+  case 'rf_ashi_no':relayAshiNo();break;
+  case 'rf_to_afa':relayToAfa();break;
+  case 'rf_afa_pack':relayAfaPack();break;
+  case 'rf_published':relayPublished();break;
+  case 'rf_afa_wait':relayAfaWait();break;
+  case 'rf_agu_shot':relayAguShot();break;
+  case 'rf_agu_shot_upload':relayAguShotUpload();break;
+  case 'rf_agu_manual':relayAguManual(false);break;
+  case 'rf_agu_api':toast('授权平台自动拉取，后续开放');break;
+  case 'rf_agu_submit':relayAguSubmit();break;
+  case 'rf_agu_later':relayAguLater();break;
+  case 'rf_copy':relayCopy(el);break;
+  case 'rf_open':relayOpen(el);break;
+  case 'rf_savevideo':relaySaveVideo();break;
+  case 'rf_savepack':relaySavePack();break;
+  case 'rf_retry_gen':relayRetryGen();break;
+  case 'rf_new':relayNew();break;
+  case 'rf_done':relayDone();break;
+  default:break;
+ }
+}
+
 /* ================= 事件绑定 ================= */
 function bind(){
  /* 顶部 / 左列 */
@@ -5774,12 +6233,19 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  document.addEventListener('click',function(e){
   var cq=e.target.closest('[data-cq]');
   if(cq){cqAction(cq.dataset.cq);return;}
+  var pk=e.target.closest('.pick-chip[data-pick]');
+  if(pk){
+   if(pk.classList.toggle('sel')){var px=RELAY_PLATFORMS.filter(function(p){return p.id===pk.dataset.pick;})[0];if(px){pk.style.setProperty('--pc',px.c);pk.style.setProperty('--pc-bg',px.c+'22');}}
+   else{pk.style.removeProperty('--pc');pk.style.removeProperty('--pc-bg');}
+   return;
+  }
   var ta=e.target.closest('#taskList [data-tact]');
   if(ta){var _tt=ta.closest('[data-tid]');taskAct(ta.dataset.tact,_tt?_tt.dataset.tid:null,e);return;}
   var ti=e.target.closest('#taskList [data-tid]');
   if(ti){if(e.target.closest('.tk-edit'))return;if(e.target.closest('.tk-warn')){taskConfirmDelId=null;renderTaskList();return;}closeAnalytics();openTask(ti.dataset.tid);return;}
   var q=e.target.closest('[data-quick]');
   if(q){var a=q.dataset.quick;
+   if(a.indexOf('rf_')===0){relayAction(a,q);return;}
    if(a==='startUpload'){if(!state.identity)startOrder('general');else $('#fileInput').click();}
    else if(a==='useUsedcar')startOrder('usedcar');
    else if(a==='useGeneral')startOrder('general');
@@ -5919,7 +6385,7 @@ function handleAct(b){
  if(act==='chooseFile'){if(!state.identity){startOrder('general');}else{$('#fileInput').click();}}
  else if(act==='chooseBg'){$('#bgInput').click();}
  else if(act==='delShot'||act==='delAttach'){state.images.splice(+b.dataset.i,1);refreshShots();}
- else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}var st=botTyping('atu');setTimeout(function(){st();startGroupFlow();},420);}
+ else if(act==='toConfirm'){if(!state.images.length){toast('先传至少一张图','err');return;}relayBegin();}
  else if(act==='backUpload'){renderUploadCard();state.stage='upload';refreshShots();}
  else if(act==='gblock'){groupBlockClick(b.dataset.gi);}
  else if(act==='gmove'){groupStartMove(b.dataset.gi,b.dataset.idx);}
