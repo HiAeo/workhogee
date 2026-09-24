@@ -225,6 +225,7 @@ body[data-deliver="open"]{--deliver:380px}
 .quick button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--tx2);border-radius:999px;padding:8px 15px;font-size:13px;font-weight:600;transition:.16s;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-s)}
 .quick button svg{width:15px;height:15px}
 .quick button:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft);transform:translateY(-1px)}
+.quick button.spent,.quick button:disabled{opacity:.32;cursor:default;pointer-events:none;transform:none;border-color:var(--line);color:var(--tx2);background:var(--panel)}
 
 /* 品牌欢迎空态 */
 .hw{max-width:720px;margin:6vh auto 0;text-align:center;animation:hwIn .5s cubic-bezier(.2,.8,.2,1)}
@@ -3037,6 +3038,7 @@ function mateWelcome(mate){
  scrollBottom();
 }
 function quickPills(list){
+ if(state.relay){var __ob=scroll.querySelectorAll('.quick button:not([disabled])');for(var __i=0;__i<__ob.length;__i++){__ob[__i].disabled=true;__ob[__i].classList.add('spent');}}
  var m=document.createElement('div');m.className='msg bot';
  m.innerHTML='<span class="m-avatar" style="visibility:hidden">'+IC.brand+'</span><div class="m-body"><div class="quick">'+list.map(function(q){return '<button data-quick="'+q[0]+'">'+q[2]+'<span>'+q[1]+'</span></button>';}).join('')+'</div></div>';
  scroll.appendChild(m);scrollBottom();
@@ -6246,7 +6248,7 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
   if(ti){if(e.target.closest('.tk-edit'))return;if(e.target.closest('.tk-warn')){taskConfirmDelId=null;renderTaskList();return;}closeAnalytics();openTask(ti.dataset.tid);return;}
   var q=e.target.closest('[data-quick]');
   if(q){var a=q.dataset.quick;
-   if(a.indexOf('rf_')===0){relayAction(a,q);return;}
+   if(a.indexOf('rf_')===0){var __qbox=q.closest('.quick');if(__qbox){var __qb=__qbox.querySelectorAll('button');for(var __qi=0;__qi<__qb.length;__qi++){__qb[__qi].disabled=true;__qb[__qi].classList.add('spent');}}relayAction(a,q);return;}
    if(a==='startUpload'){if(!state.identity)startOrder('general');else $('#fileInput').click();}
    else if(a==='useUsedcar')startOrder('usedcar');
    else if(a==='useGeneral')startOrder('general');
