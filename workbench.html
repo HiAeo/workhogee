@@ -6360,11 +6360,11 @@ function openUrlImport(){
  inp.addEventListener('keydown',function(e){if(e.key==='Enter')doImport();});
 }
  $('#btnPlus').addEventListener('click',function(e){e.stopPropagation();var pop=$('#plusPop');if(!state.identity)startOrder('general');if(pop.classList.contains('show')){pop.classList.remove('show');}else{placePop(pop,$('#btnPlus'));pop.classList.add('show');}});
- $('#plusPop').addEventListener('click',function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
+ $('#plusPop').addEventListener('click',async function(e){var b=e.target.closest('[data-plus]');if(!b)return;$('#plusPop').classList.remove('show');var k=b.dataset.plus;
+  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(err){return;}}
   if(k==='local'||k==='shot'){if(!state.identity)startOrder('general');$('#fileInput').click();}
   else if(k==='kb')openKbPicker();
   else if(k==='url')openUrlImport();
-  else if(k==='bg'){if(state.identity&&state.identity.type==='usedcar'){state.outputs.add('onsite');$('#bgInput').click();}else toast('实地展厅背景用于二手车行业，先告诉伙计你在卖二手车','err');}
   else if(k==='lab')openLab('plugin');
  });
  document.addEventListener('click',function(e){if(!e.target.closest('#plusPop')&&!e.target.closest('#btnPlus'))$('#plusPop').classList.remove('show');if(!e.target.closest('#partnerPop')&&!e.target.closest('#tbPartner')){$('#partnerPop')&&$('#partnerPop').classList.remove('show');}});
