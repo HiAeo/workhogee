@@ -1,16 +1,22 @@
 /* ============================================================================
- * HogeeFidelity · 阿图保真管线（可复用 / 多端）
+ * HogeeFidelity · 阿图保真管线 v2（可复用 / 多端）
  * ----------------------------------------------------------------------------
- * 设计目标：保真类处理（抠图 / 局部裁剪 / 合成主体）绝不走生成式重绘，
- *           产品原像素 100% 保留，字母 / Logo / 型号零变形。
+ * 核心原则：保真类处理绝不走生成式重绘，产品原像素 100% 保留、零变形。
+ *
+ * v2 路线（全部基于已上线 CV 能力，无需额外开通）：
+ *   - saliency_seg（显著主体抠图）：懂“取主体”语义，轮圈镂空干净、零变形。
+ *   - lens_nnsr2 超分：把 saliency 前景 x2 放大到高清，不重绘。
+ *   - 白底：干净透明前景 -> 去边缘色晕 -> 超分 -> 上白底。
+ *   - 卖点局部：原图裁局部 -> saliency 去原场景背景 -> 超分 -> 贴干净特写底。
+ *   - 场景图：原图超分 -> 按车体收紧裁剪，放大商品占比（真实背景、零风险）。
  *
  * 分层（遵循「一次开发，多端复用」）：
- *   1. Pixel* 纯像素逻辑：只读写传入的 RGBA buffer，不碰 window/document，可复用。
- *   2. WebPlatform：Web 专用适配（Image / Canvas / 编码）。小程序端替换此对象即可。
- *   3. package()：中立 API 编排，接口 token 鉴权、参数通用，PWA/小程序可直接复用。
+ *   1. Pixel* 纯像素逻辑：只读写 RGBA buffer，不碰 window/document，可复用。
+ *   2. WebPlatform：Web 专用适配（Image / Canvas / 编码），小程序端替换即可。
+ *   3. package()：中立 API 编排，token 鉴权、参数通用，PWA/小程序可直接复用。
  *
  * 调用方注入 call(endpoint, body) -> Promise<json>（已含鉴权与超时）。
- * 输出：{ white, fg, details:[{label,image}], sceneEnhanced, replacedBg:[] }
+ * 输出：{ ok, white, fg, details:[{label,image}], sceneEnhanced, meta }
  * ========================================================================== */
 (function (global) {
   'use strict';
@@ -19,36 +25,10 @@
   const P = {
     clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; },
     // 兼容 0~1 / 0~100 / 0~1000 的归一化框 -> [x,y,w,h]（0~1）
-    normBox(b, scaleW, scaleH) {
-      let m = 1;
+    normBox(b) {
       const maxv = Math.max(b[0], b[1], b[2], b[3]);
-      if (maxv > 10) m = maxv > 200 ? 1000 : 100;
+      const m = maxv > 200 ? 1000 : (maxv > 10 ? 100 : 1);
       return [b[0] / m, b[1] / m, b[2] / m, b[3] / m];
-    },
-    // 灰度 mask（dataURL）-> 灰度 Uint8ClampedArray（尺寸 w*h）
-    maskToGray(maskImg) {
-      const w = maskImg.width, h = maskImg.height, g = new Uint8ClampedArray(w * h);
-      const d = maskImg.data;
-      for (let i = 0; i < w * h; i++) g[i] = d[i * 4]; // 灰度图 R=G=B，取 R
-      return g;
-    },
-    // mask 灰度的包围盒（>thr）
-    maskBox(gray, w, h, thr) {
-      let x0 = w, y0 = h, x1 = 0, y1 = 0, hit = false;
-      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-        if (gray[y * w + x] > thr) {
-          hit = true; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
-        }
-      }
-      return hit ? { x: x0, y: y0, w: x1 - x0, h: y1 - y0 } : null;
-    },
-    iou(a, b) {
-      const ax = a.x, ay = a.y, ax2 = a.x + a.w, ay2 = a.y + a.h;
-      const bx = b.x, by = b.y, bx2 = b.x + b.w, by2 = b.y + b.h;
-      const ix = Math.max(0, Math.min(ax2, bx2) - Math.max(ax, bx));
-      const iy = Math.max(0, Math.min(ay2, by2) - Math.max(ay, by));
-      const inter = ix * iy, uni = a.w * a.h + b.w * b.h - inter;
-      return uni > 0 ? inter / uni : 0;
     },
     // 按归一化框从源 RGBA 裁剪，返回新 {width,height,data}；pad=预留边距比例
     cropRGBA(src, box, pad) {
@@ -93,7 +73,7 @@
         if (lab[i] >= 0 && lab[i] !== big && sizes[lab[i]] < minPx) d[i * 4 + 3] = 0;
       }
     },
-    // alpha 包围盒（>thr），返回归一化 [x,y,w,h] 及像素框
+    // alpha 包围盒（>thr），返回像素框
     alphaBox(rgba, thr) {
       const W = rgba.width, H = rgba.height, d = rgba.data;
       let x0 = W, y0 = H, x1 = 0, y1 = 0, hit = false;
@@ -102,8 +82,32 @@
           hit = true; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
         }
       }
-      if (!hit) return null;
-      return { px: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 } };
+      return hit ? { px: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 } } : null;
+    },
+    // 判断是否为"真实生活场景"照片；透明底 / 纯色底（抠图、白底主图）返回 false
+    hasRealScene(rgba) {
+      const W = rgba.width, H = rgba.height, d = rgba.data;
+      const bx = Math.max(2, Math.round(W * 0.04)), by = Math.max(2, Math.round(H * 0.04));
+      let n = 0, trans = 0, rs = 0, gs = 0, bs = 0;
+      const sample = (x, y) => {
+        const q = (y * W + x) * 4; n++;
+        if (d[q + 3] < 24) { trans++; return; }
+        rs += d[q]; gs += d[q + 1]; bs += d[q + 2];
+      };
+      for (let x = 0; x < W; x++) { for (let y = 0; y < by; y++) { sample(x, y); sample(x, H - 1 - y); } }
+      for (let y = 0; y < H; y++) { for (let x = 0; x < bx; x++) { sample(x, y); sample(W - 1 - x, y); } }
+      if (n && trans / n > 0.55) return false;
+      const den = (n - trans) || 1, mr = rs / den, mg = gs / den, mb = bs / den;
+      let same = 0, m2 = 0;
+      const near = (x, y) => {
+        const q = (y * W + x) * 4; if (d[q + 3] < 24) return;
+        m2++;
+        if (Math.abs(d[q] - mr) < 14 && Math.abs(d[q + 1] - mg) < 14 && Math.abs(d[q + 2] - mb) < 14) same++;
+      };
+      for (let x = 0; x < W; x++) { for (let y = 0; y < by; y++) { near(x, y); near(x, H - 1 - y); } }
+      for (let y = 0; y < H; y++) { for (let x = 0; x < bx; x++) { near(x, y); near(W - 1 - x, y); } }
+      if (m2 && same / m2 > 0.88) return false;
+      return true;
     },
   };
 
@@ -120,11 +124,6 @@
     },
     create(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; },
     toRGBA(c) { const im = c.getContext('2d').getImageData(0, 0, c.width, c.height); return { width: c.width, height: c.height, data: im.data }; },
-    fromGray(gray, w, h) {
-      const c = this.create(w, h), x = c.getContext('2d'), im = x.createImageData(w, h);
-      for (let i = 0; i < w * h; i++) { im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = gray[i]; im.data[i * 4 + 3] = 255; }
-      x.putImageData(im, 0, 0); return c;
-    },
     rgbaToCanvas(rgba) {
       const c = this.create(rgba.width, rgba.height);
       c.getContext('2d').putImageData(new ImageData(rgba.data, rgba.width, rgba.height), 0, 0); return c;
@@ -142,81 +141,22 @@
     const d = (r && r.data) || {};
     let pb = d.productBox, wheels = d.wheels || null;
     if (!Array.isArray(pb)) return { ok: false };
-    const m = Math.max(pb[0], pb[1], pb[2], pb[3]) > 200 ? 1000 : (Math.max(pb[0], pb[1], pb[2], pb[3]) > 10 ? 100 : 1);
-    pb = [pb[0] / m, pb[1] / m, pb[2] / m, pb[3] / m];
-    if (wheels && Array.isArray(wheels)) {
-      wheels = wheels.map(z => ({ cx: z.cx, cy: z.cy, r: z.r }));
-    } else wheels = null;
+    pb = P.normBox(pb);
+    if (wheels && Array.isArray(wheels)) wheels = wheels.map(z => ({ cx: z.cx, cy: z.cy, r: z.r }));
+    else wheels = null;
     return { ok: true, productBox: pb, wheels };
   };
 
-  // 在多张高清 mask 中选出“商品实体”那一层
-  HogeeFidelity.pickMask = function (masks, loc, W, H) {
-    const pb = { x: loc.productBox[0] * W, y: loc.productBox[1] * H, w: loc.productBox[2] * W, h: loc.productBox[3] * H };
-    const cx = (loc.productBox[0] + loc.productBox[2] / 2) * W, cy = (loc.productBox[1] + loc.productBox[3] / 2) * H;
-    const wheels = loc.wheels ? loc.wheels.map(z => ({ cx: z.cx * W, cy: z.cy * H, r: z.r * W })) : [];
-    let best = -1, bestScore = -1, stats = [];
-    masks.forEach((m, idx) => {
-      const g = P.maskToGray(m), mw = m.width, mh = m.height;
-      const box = P.maskBox(g, mw, mh, 128);
-      let score = box ? P.iou(box, pb) : 0;
-      const gi = Math.round(Math.min(mh - 1, Math.max(0, cy))) * mw + Math.round(Math.min(mw - 1, Math.max(0, cx)));
-      if (g[gi] > 110) score += 1.5;
-      wheels.forEach((wz) => { const wi = Math.round(Math.min(mh - 1, Math.max(0, wz.cy))) * mw + Math.round(Math.min(mw - 1, Math.max(0, wz.cx))); if (g[wi] > 100) score += 1.5; });
-      stats.push({ idx, score: Math.round(score * 100) / 100 });
-      if (score > bestScore) { bestScore = score; best = idx; }
-    });
-    return { best, bestScore, stats };
-  };
-
-  /* 核心：高清原图 × 商品 mask，再精细键控去背景，返回高清透明前景 RGBA。
-   * 有车轮：轮圈环带精细键控（保黑辐条 / 删暗彩背景 / 删灰背景 / 保白反光片）。
-   * 通用：productBox 外删绿/褐/灰背景，Box 内仅删强彩背景。 */
-  HogeeFidelity.buildFg = function (srcRGBA, maskGray, loc) {
-    const W = srcRGBA.width, H = srcRGBA.height, od = new Uint8ClampedArray(srcRGBA.data); // 拷贝像素
-    // 1) mask 灰度直接作 alpha
-    for (let i = 0; i < W * H; i++) od[i * 4 + 3] = maskGray[i];
-    const wheels = loc.wheels ? loc.wheels.map(z => ({ cx: z.cx * W, cy: z.cy * H, r: z.r * W })) : [];
-    const pb = loc.productBox;
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const p = (y * W + x) * 4, A = od[p + 3]; if (A < 12) continue;
-      const R = od[p], G = od[p + 1], B = od[p + 2], lum = (R + G + B) / 3;
-      const mx = Math.max(R, G, B), mn = Math.min(R, G, B), sat = (mx - mn) / (mx + 1);
-      if (R > 150 && R - G > 40 && R - B > 50) continue; // 品牌橙保留
-      const inPb = x >= pb[0] * W && x <= (pb[0] + pb[2]) * W && y >= pb[1] * H && y <= (pb[1] + pb[3]) * H;
-      // 找车轮归属
-      let wh = null;
-      for (const wz of wheels) { const dd = Math.hypot(x - wz.cx, y - wz.cy); if (dd < wz.r * 0.98) { wh = { wz, dd }; break; } }
-      if (wh) {
-        const r = wh.wz.r, dd = wh.dd;
-        if (dd > r * 0.85) continue;                       // 黑色轮胎环整体保留
-        if (dd < r * 0.24) continue;                       // 中央碟刹花鼓保留
-        if (G - R > 12 && G - B > 10) { od[p + 3] = 0; continue; }
-        if (lum < 72) continue;                            // 黑辐条
-        if (lum >= 72 && lum < 112 && sat > 0.12) { od[p + 3] = 0; continue; }
-        if (lum >= 112 && lum <= 178 && sat < 0.38) { od[p + 3] = 0; continue; }
-        if (lum > 178 && sat < 0.2) { od[p] = 255; od[p + 1] = 255; od[p + 2] = 255; } // 亮白（反光片+透镂空背景）统一染白保 alpha，叠白底即净
-        continue;
-      }
-      // 非车轮区域
-      const isGreen = G - R > 14 && G - B > 12;
-      const isBrown = R > G && G >= B && (R - B) > 16 && sat > 0.12 && sat < 0.42 && lum > 98 && lum < 162;
-      const isGrey = sat < 0.36 && lum > 104 && lum < 178;
-      if (inPb) { if (isGreen) od[p + 3] = 0; continue; }  // 商品内仅删强绿
-      if (isGreen || isBrown || isGrey) od[p + 3] = 0;
+  // 去边缘彩色光晕（轮胎外缘绿边等）：半透明边缘像素去色，保留 alpha
+  HogeeFidelity.defringeEdge = function (rgba) {
+    const d = rgba.data, N = rgba.width * rgba.height;
+    for (let i = 0; i < N; i++) {
+      const p = i * 4, A = d[p + 3];
+      if (A < 24 || A > 228) continue;
+      const R = d[p], G = d[p + 1], B = d[p + 2], lum = (R + G + B) / 3;
+      const sat = (Math.max(R, G, B) - Math.min(R, G, B)) / (Math.max(R, G, B) + 1);
+      if (sat > 0.20) { d[p] = lum; d[p + 1] = lum; d[p + 2] = lum; }
     }
-    // defringe：清抗锯齿边缘的白亮低饱和半透明残留（实体边缘 A 接近 255，不受影响）
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const p = (y * W + x) * 4, A = od[p + 3];
-      if (A < 212 && A > 18) {
-        const R = od[p], G = od[p + 1], B = od[p + 2], lum = (R + G + B) / 3;
-        const mx = Math.max(R, G, B), mn = Math.min(R, G, B), sat = (mx - mn) / (mx + 1);
-        if (lum > 150 && sat < 0.25) od[p + 3] = 0;
-      }
-    }
-    const rgba = { width: W, height: H, data: od };
-    P.dropSmall(rgba, 1500, 24);
-    return rgba;
   };
 
   // trim 到 alpha 包围盒（+边距）
@@ -237,42 +177,75 @@
     const sc = Math.min(size * containW / fgRGBA.width, size * containH / fgRGBA.height);
     const fw = fgRGBA.width * sc, fh = fgRGBA.height * sc;
     const left = (size - fw) / 2, top = (size - fh) / 2;
-    // 软阴影（贴近底部）
     const gy = top + fh * 0.96;
     const g = x.createRadialGradient(size / 2, gy, 4, size / 2, gy, fw * 0.5);
     g.addColorStop(0, 'rgba(0,0,0,0.20)'); g.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = g; x.beginPath(); x.ellipse(size / 2, gy, fw * 0.5, fw * 0.06, 0, 0, 7); x.fill();
-    const fc = WebPlatform.rgbaToCanvas(fgRGBA);
-    x.drawImage(fc, left, top, fw, fh);
+    x.drawImage(WebPlatform.rgbaToCanvas(fgRGBA), left, top, fw, fh);
     return c;
   };
 
-  /* 阶段B：3 张卖点局部（视觉选框 -> 原图裁剪 -> 保真超分 x2），并行 */
-  HogeeFidelity.details = async function (call, image, srcRGBA, category, product) {
+  // 圆形放大镜标注卡：透明部件 cover 进大圆（圆边自然裁切放射辐条/斜管），下方卖点标题
+  HogeeFidelity.onSpotCard = async function (partUrl, label, size) {
+    size = size || 1200;
+    const im = await WebPlatform.loadImage(partUrl);
+    const iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height;
+    const c = WebPlatform.create(size, size), x = c.getContext('2d');
+    const bg = x.createRadialGradient(size / 2, size * 0.36, size * 0.06, size / 2, size / 2, size * 0.8);
+    bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#edf0f5');
+    x.fillStyle = bg; x.fillRect(0, 0, size, size);
+    const cx = size / 2, cy = size * 0.44, R = size * 0.30, D = R * 2;
+    // 圆投影（径向渐变，底层）
+    const sh = x.createRadialGradient(cx, cy + R * 0.10, R * 0.2, cx, cy + R * 0.10, R * 1.05);
+    sh.addColorStop(0, 'rgba(20,28,45,0.18)'); sh.addColorStop(1, 'rgba(20,28,45,0)');
+    x.fillStyle = sh; x.beginPath(); x.arc(cx, cy + R * 0.08, R * 1.02, 0, 7); x.fill();
+    // 圆内部件
+    x.save(); x.beginPath(); x.arc(cx, cy, R, 0, 7); x.clip();
+    x.fillStyle = '#ffffff'; x.fillRect(cx - R, cy - R, D, D);
+    const sc = Math.max(D / iw, D / ih) * 1.06, dw = iw * sc, dh = ih * sc;
+    x.drawImage(im, cx - dw / 2, cy - dh / 2, dw, dh);
+    x.restore();
+    // 圆边框
+    x.beginPath(); x.arc(cx, cy, R, 0, 7); x.lineWidth = 2; x.strokeStyle = '#d6dbe3'; x.stroke();
+    // 装饰短线 + 卖点标题
+    x.fillStyle = '#fb7a22'; x.fillRect(cx - 24, cy + R + 32, 48, 3);
+    x.fillStyle = '#1b2333'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.font = '600 44px "PingFang SC","Microsoft YaHei",sans-serif';
+    x.fillText(label || '细节特写', cx, cy + R + 80);
+    return c;
+  };
+
+  /* 卖点局部（3 张）：视觉选框 -> 原图裁剪 -> saliency 去原背景 -> 超分 -> 干净特写底 */
+  HogeeFidelity.details = async function (call, image, category, product) {
     const r = await call('/details-plan', { image, category: category || '', product: product || '' });
     const ds = (r && r.details) || [];
+    const srcRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
     const tasks = ds.map(async (d) => {
-      let box = P.normBox(d.bbox);
-      box = [box[0], box[1], box[2], box[3]];
-      let crop = P.cropRGBA(srcRGBA, box, 0.04);
-      // 超分输入边长 [256,1024]：先把最长边标准化到 ~800
+      const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.10);
+      let cropCanvas = WebPlatform.rgbaToCanvas(crop);
       const long = Math.max(crop.width, crop.height);
-      let normCanvas = WebPlatform.rgbaToCanvas(crop);
-      if (long > 1024 || long < 256) {
-        const t = long > 1024 ? 1024 / long : 800 / long;
-        const nw = Math.round(crop.width * t), nh = Math.round(crop.height * t);
-        const nc = WebPlatform.create(nw, nh); nc.getContext('2d').drawImage(normCanvas, 0, 0, nw, nh); normCanvas = nc;
+      if (long > 1024 || long < 320) {
+        const t = long > 1024 ? 1024 / long : 880 / long;
+        const nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
+        nc.getContext('2d').drawImage(cropCanvas, 0, 0, nc.width, nc.height); cropCanvas = nc;
       }
-      const sr = await call('/superres', { image: normCanvas.toDataURL('image/png'), quality: 'MQ' });
-      return { label: d.label, image: sr.image };
+      const cropUrl = cropCanvas.toDataURL('image/png');
+      let partUrl = null;
+      try {
+        const sal = await call('/cutout', { image: cropUrl, strategy: 'saliency' });
+        if (sal && sal.ok && sal.images && sal.images.length) partUrl = sal.images[0];
+      } catch (e) { partUrl = null; }
+      const sr = await call('/superres', { image: partUrl || cropUrl, quality: 'HQ' });
+      const bc = await HogeeFidelity.onSpotCard(sr.image, d.label, 1200);
+      return { label: d.label, image: WebPlatform.toDataURL(bc, 'image/jpeg', 0.92) };
     });
     return Promise.all(tasks);
   };
 
-  /* 阶段C（默认）：原场景画质增强 = 保真超分，零边缘问题 */
-  HogeeFidelity.sceneEnhanced = async function (call, image) {
-    // 原图若边长超 1024，超分前先降到 1024 内（超分固定 x2）
+  /* 场景图：原图超分 -> 按车体收紧裁剪（放大商品占比、真实背景、零风险） */
+  HogeeFidelity.sceneEnhanced = async function (call, image, loc) {
     const im = await WebPlatform.loadImage(image);
+    if (!P.hasRealScene(WebPlatform.toRGBA(WebPlatform.fromImage(im)))) return null;
     const w = im.naturalWidth || im.width, h = im.naturalHeight || im.height, long = Math.max(w, h);
     let inUrl = image;
     if (long > 1024) {
@@ -280,48 +253,50 @@
       c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); inUrl = c.toDataURL('image/png');
     }
     const r = await call('/superres', { image: inUrl, quality: 'MQ' });
-    return r.image;
+    if (!loc || !loc.productBox) return r.image;
+    const sim = await WebPlatform.loadImage(r.image);
+    const sRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(sim));
+    const pb = loc.productBox;
+    let cw = Math.min(1, pb[2] / 0.66), ch = Math.min(1, pb[3] / 0.74);
+    const cxp = pb[0] + pb[2] / 2, cyp = pb[1] + pb[3] / 2;
+    let x0 = Math.max(0, Math.min(1 - cw, cxp - cw / 2));
+    let y0 = Math.max(0, Math.min(1 - ch, cyp - ch / 2));
+    const crop = P.cropRGBA(sRGBA, [x0, y0, cw, ch], 0);
+    return WebPlatform.toDataURL(WebPlatform.rgbaToCanvas(crop), 'image/jpeg', 0.92);
   };
 
   /* 总入口：一张商品图 -> 保真全套
-   * o:{ call, image, category?, product?, doDetails:true, doScene:true } */
+   * o:{ call, image, category?, product?, doDetails?, doScene? } */
   HogeeFidelity.package = async function (o) {
     const call = o.call, image = o.image;
-    const img0 = await WebPlatform.loadImage(image);
-    const srcCanvas = WebPlatform.fromImage(img0);
-    const srcRGBA = WebPlatform.toRGBA(srcCanvas);
-    // 高清 mask 图层
-    const layers = await call('/cutout', { image, strategy: 'layers', maxEntity: 12 });
-    if (!layers.masks || !layers.masks.length) return { ok: false, error: 'no_mask' };
-    const maskRGBAs = await Promise.all(layers.masks.map((u) => WebPlatform.loadImage(u).then((im) => WebPlatform.fromImage(im)).then((cv) => WebPlatform.toRGBA(cv))));
-    // 定位
-    const loc = await HogeeFidelity.locate(call, image);
-    if (!loc.ok) return { ok: false, error: 'no_locate' };
-    // 选商品 mask
-    const picked = HogeeFidelity.pickMask(maskRGBAs, loc, srcRGBA.width, srcRGBA.height);
-    const maskRGBA = maskRGBAs[picked.best];
-    const maskGray = P.maskToGray(maskRGBA);
-    // 高清透明前景
-    let fgRGBA = HogeeFidelity.buildFg(srcRGBA, maskGray, loc);
+    // 1) saliency 干净透明前景
+    const sal = await call('/cutout', { image, strategy: 'saliency' });
+    if (!sal || !sal.ok || !sal.images || !sal.images.length) return { ok: false, error: 'no_saliency' };
+    const fgUrl0 = sal.images[0];
+    // 2) 超分到高清（saliency 边长 <=1024）
+    let fgHi = fgUrl0;
+    try { const sr = await call('/superres', { image: fgUrl0, quality: 'HQ' }); if (sr.ok) fgHi = sr.image; } catch (e) { fgHi = fgUrl0; }
+    // 3) 去色晕 -> trim
+    let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(fgHi)));
+    HogeeFidelity.defringeEdge(fgRGBA);
+    P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);
-    const fgCanvas = WebPlatform.rgbaToCanvas(fgRGBA);
-    // 白底
-    const whiteCanvas = HogeeFidelity.onWhite(fgRGBA, 2048, 0.84, 0.82);
+    // 4) 白底主图
+    const whiteCanvas = HogeeFidelity.onWhite(fgRGBA, 2048, 0.86, 0.84);
+    // 定位（场景收紧用）
+    let loc = { ok: false };
+    try { loc = await HogeeFidelity.locate(call, image); } catch (e) { loc = { ok: false }; }
     const out = {
       ok: true,
       white: WebPlatform.toDataURL(whiteCanvas, 'image/jpeg', 0.92),
-      fg: fgCanvas.toDataURL('image/png'),
-      meta: { picked: picked.best, score: picked.bestScore, stats: picked.stats, wheels: loc.wheels ? loc.wheels.length : 0 },
+      fg: WebPlatform.rgbaToCanvas(fgRGBA).toDataURL('image/png'),
+      meta: { method: 'saliency', wheels: loc.ok && loc.wheels ? loc.wheels.length : 0 },
     };
-    // 3 局部
     if (o.doDetails !== false) {
-      try { out.details = await HogeeFidelity.details(call, image, srcRGBA, o.category, o.product); }
-      catch (e) { out.details = []; }
+      try { out.details = await HogeeFidelity.details(call, image, o.category, o.product); } catch (e) { out.details = []; }
     }
-    // 原场景增强
     if (o.doScene !== false) {
-      try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image); }
-      catch (e) { out.sceneEnhanced = null; }
+      try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; }
     }
     return out;
   };
