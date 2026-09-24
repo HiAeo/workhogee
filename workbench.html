@@ -4166,10 +4166,11 @@ function refreshShots(){
  if(tip){if(state.images.length){tip.style.display='flex';tt.textContent='共收到 '+state.images.length+' 张。'+(badN?('有 '+badN+' 张偏糊或曝光不理想，建议重拍，不重拍也能继续。'):'质检通过，成色看得清，可以继续。');}else tip.style.display='none';}
  renderCmpAttach();
 }
-function handleFiles(fileList){
- if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
+async function handleFiles(fileList){
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
  if(!files.length)return;
+ if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
+ if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
  if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
  enterTaskFocus();
  var stop=botTyping('atu');
