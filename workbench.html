@@ -1971,7 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925d"></script>
+<script src="/fidelity-pipeline.js?v=20260925e"></script>
 <script>
 (function(){
 'use strict';
@@ -6112,6 +6112,17 @@ function relayBegin(){
     state.groups[gi].identity=built.identity;
    }
    state.identity=state.groups[0].identity;state.product=state.groups[0].product;
+   // 拍摄引导前置：纯前端全图口径预判背景复杂度（零额外后端调用、零额度）
+   var bgAdvice=false;
+   try{
+    var _g0=state.groups[0],_rep=_g0.indices[0];
+    var _im=await HogeeFidelity._platform.loadImage(state.images[_rep].dataUrl);
+    var _rgba=HogeeFidelity._platform.toRGBA(HogeeFidelity._platform.fromImage(_im));
+    var _cNone=HogeeFidelity._P.bgComplexity(_rgba,null);
+    var _cat=(_g0.identity&&_g0.identity.cat)||(_g0.product&&_g0.product.name)||'';
+    if(_cNone>0.70&&HogeeFidelity.fidelityLevel(_cat)==='A') bgAdvice=true;
+   }catch(e){bgAdvice=false;}
+   state._bgAdvice=bgAdvice;
    stop();
    var names=state.groups.map(function(g){var s=identifySummary(g.fields);return s||g.name||'这件商品';});
    var listTxt;
@@ -6122,7 +6133,12 @@ function relayBegin(){
      +names.map(function(n,i){return RELAY_CIRC[i]+' '+esc(n);}).join('<br>')+'<br>对吧？';
    }
    botSay('收到，图我都看过了。'+listTxt,'atu');
-   quickPills([['rf_atu_ok','对，开始出图',IC.check],['rf_atu_fix','认的不对',IC.pen]]);
+   if(state._bgAdvice){
+    botSay('另外提个醒：这张图<b>背景看起来有点杂</b>。这类讲究细节的货，找面<b>纯色墙、光线均匀</b>重拍一张，白底图会更干净、细节不糊；你也可以直接让我先试试。','atu');
+    quickPills([['rf_atu_ok','直接试试',IC.check],['rf_atu_reupload','重新拍一张',IC.image],['rf_atu_fix','认的不对',IC.pen]]);
+   }else{
+    quickPills([['rf_atu_ok','对，开始出图',IC.check],['rf_atu_fix','认的不对',IC.pen]]);
+   }
   }catch(e){stop();toast('认货没连上，稍后再试','err');}
  })();
 }
@@ -6143,6 +6159,11 @@ function relayAtuOk(){
  userSay('对，开始出图');
  applySmartDefaults();
  relayFidelityGenerate();
+}
+function relayAtuReupload(){
+ state.relay=false;state.relayStage='idle';
+ try{state.stage='idle';}catch(e){}
+ var fi=$('#fileInput'); if(fi) fi.click();
 }
 function relayAtuFix(){
  card('<div class="card-desc">你直接告诉我这是什么（如“黑色 2019款 沃尔沃S90”或“陶瓷保温杯”），我改过来；也可以重新认一次。</div>'
@@ -6705,6 +6726,7 @@ function relayAction(id,el){
  switch(id){
   case 'rf_atu_ok':relayAtuOk();break;
   case 'rf_atu_fix':relayAtuFix();break;
+  case 'rf_atu_reupload':relayAtuReupload();break;
   case 'rf_atu_fix_go':relayAtuFixGo();break;
   case 'rf_atu_reid':relayBegin();break;
   case 'rf_to_awen':relayToAwen();break;
