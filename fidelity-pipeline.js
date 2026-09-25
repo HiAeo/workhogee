@@ -239,17 +239,24 @@
     return 'B';
   };
 
-  // 视觉定位：productBox（必有）+ wheels（有轮商品）
+  // 视觉定位：viewType（视角/部位）+ productBox（必有）+ wheels（有轮商品）
   HogeeFidelity.locate = async function (call, image) {
-    const ask = '请定位图中待售卖的商品，只输出 JSON：{"productBox":[x,y,w,h] 为紧密包围商品主体的矩形，x、w 按图宽归一化，y、h 按图高归一化；若商品是自行车、车辆等带明显圆形车轮，再给 "wheels":[{"cx","cy","r"}]，cx、r 按图宽归一化、cy 按图高归一化，没有车轮则不要 wheels}。';
-    const r = await call('/vision-json', { image, ask, maxTokens: 700 });
+    const ask = '请分析这张待售商品图，只输出 JSON：{"viewType":"","productBox":[x,y,w,h]}。'
+      + 'viewType 按画面内容选择（汽车类）："exterior"=车辆外观整车（前/后/侧/45°，看到车身外部整体）；'
+      + '"interior"=车内座舱广角（驾驶位/副驾/后排，画面主要是方向盘、中控台、座椅等车内环境）；'
+      + '"detail"=单一局部特写（仪表盘、挡把、车标、轮毂、按键等某一部件占满画面）；'
+      + '"space"=后备箱或发动机舱等空间；"generic"=非汽车的普通单体商品（自行车、鲜花、服装、3C 等）。'
+      + 'productBox 为紧密包围待售主体的矩形，x、w 按图宽归一化、y、h 按图高归一化；'
+      + '若商品是自行车、车辆等带明显圆形车轮，再给 "wheels":[{"cx","cy","r"}]，cx、r 按图宽归一化、cy 按图高归一化，没有车轮则不要 wheels。';
+    const r = await call('/vision-json', { image, ask, maxTokens: 800 });
     const d = (r && r.data) || {};
     let pb = d.productBox, wheels = d.wheels || null;
     if (!Array.isArray(pb)) return { ok: false };
     pb = P.normBox(pb);
     if (wheels && Array.isArray(wheels)) wheels = wheels.map(z => ({ cx: z.cx, cy: z.cy, r: z.r }));
     else wheels = null;
-    return { ok: true, productBox: pb, wheels };
+    const vt = ['exterior','interior','detail','space','generic'].indexOf(d.viewType) >= 0 ? d.viewType : 'generic';
+    return { ok: true, viewType: vt, productBox: pb, wheels };
   };
 
   // 去边缘彩色光晕（轮胎外缘绿边等）：半透明边缘像素去色，保留 alpha
@@ -320,6 +327,46 @@
     return c;
   };
 
+  // 矩形卖点特写卡（方形白底、部件完整不裁圆、标题在下）
+  HogeeFidelity.onSpotCardRect = async function (partUrl, label, size) {
+    size = size || 1200;
+    const im = await WebPlatform.loadImage(partUrl);
+    const iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height;
+    const c = WebPlatform.create(size, size), x = c.getContext('2d');
+    const bg = x.createLinearGradient(0, 0, 0, size);
+    bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#edf0f5');
+    x.fillStyle = bg; x.fillRect(0, 0, size, size);
+    const areaW = size * 0.84, areaH = size * 0.70, topPad = size * 0.09;
+    const sc = Math.min(areaW / iw, areaH / ih), dw = iw * sc, dh = ih * sc;
+    const cx = size / 2, cy = topPad + areaH / 2;
+    x.fillStyle = 'rgba(20,28,45,0.13)';
+    x.beginPath(); x.ellipse(cx, cy + dh / 2 + 10, dw * 0.42, 14, 0, 0, 7); x.fill();
+    x.drawImage(im, cx - dw / 2, cy - dh / 2, dw, dh);
+    x.fillStyle = '#fb7a22'; x.fillRect(cx - 22, size * 0.875, 44, 3);
+    x.fillStyle = '#1b2333'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.font = '600 42px "PingFang SC","Microsoft YaHei",sans-serif';
+    x.fillText(label || '细节特写', cx, size * 0.935);
+    return c;
+  };
+
+  // 座舱/空间本地增强：提亮暗部、去雾化（对比微增）、白平衡、饱和度微增（不重画、不改物件）
+  HogeeFidelity.cabinEnhance = function (rgba, viewType) {
+    const d = rgba.data, N = d.length;
+    for (let p = 0; p < N; p += 4) {
+      const lift = v => {
+        let n = 255 * Math.pow(v / 255, 0.90);
+        n = (n - 128) * 1.07 + 128;
+        return n < 0 ? 0 : n > 255 ? 255 : n;
+      };
+      const R = lift(d[p]), G = lift(d[p+1]), B = lift(d[p+2]);
+      const lum = 0.299*R + 0.587*G + 0.114*B;
+      d[p]   = Math.round(lum + (R-lum)*1.06);
+      d[p+1] = Math.round(lum + (G-lum)*1.06);
+      d[p+2] = Math.round(lum + (B-lum)*1.06);
+    }
+    return WebPlatform.toDataURL(WebPlatform.rgbaToCanvas(rgba), 'image/jpeg', 0.92);
+  };
+
   // 轮圈镂空环带：保留叉腿等粗管、去除细辐条（形态学开运算）；中心实体与圈边原样
   HogeeFidelity.cleanWheelSpokes = function (rgba, wheels) {
     const opened = P.morphOpenAlpha(rgba, 2);
@@ -340,12 +387,12 @@
   };
 
   /* 卖点局部（3 张）：视觉选框 -> 原图裁剪 -> saliency 去原背景 -> 超分 -> 干净特写底 */
-  HogeeFidelity.details = async function (call, image, category, product) {
+  HogeeFidelity.details = async function (call, image, category, product, viewType) {
     const r = await call('/details-plan', { image, category: category || '', product: product || '' });
     const ds = (r && r.details) || [];
     const srcRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
     const tasks = ds.map(async (d) => {
-      const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.10);
+      const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.12);
       let partCanvas = WebPlatform.rgbaToCanvas(crop);
       const long = Math.max(crop.width, crop.height);
       if (long > 1200) {
@@ -354,7 +401,7 @@
         nc.getContext('2d').drawImage(partCanvas, 0, 0, nc.width, nc.height); partCanvas = nc;
       }
       const partUrl = WebPlatform.toDataURL(partCanvas, 'image/jpeg', 0.92);
-      const bc = await HogeeFidelity.onSpotCard(partUrl, d.label, 1200);
+      const bc = await HogeeFidelity.onSpotCardRect(partUrl, d.label, 1200);
       return { label: d.label, image: WebPlatform.toDataURL(bc, 'image/jpeg', 0.92) };
     });
     return Promise.all(tasks);
@@ -393,21 +440,28 @@
 
   HogeeFidelity.package = async function (o) {
     const call = o.call, image = o.image;
-    // 0) 视觉定位 productBox（品类由认货阶段 o.category 传入）
+    // 0) 视觉定位 + 视角分类
     let loc = o.loc || null;
     if (!loc || !loc.ok) { try { loc = await HogeeFidelity.locate(call, image); } catch (e) { loc = { ok: false }; } }
     const category = o.category || '';
+    const viewType = (loc.ok && loc.viewType) ? loc.viewType : 'generic';
     const productBox = loc.ok ? loc.productBox : null;
-    // 1) 原图背景复杂度（品类无关、主体框外）+ 保真分级
+    // 1) 原图背景复杂度 + 保真分级
     const origRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
     const bg = P.bgComplexity(origRGBA, productBox);
     const level = HogeeFidelity.fidelityLevel(category);
-    const bgComplex = bg >= 0.55, bgSimple = bg < 0.30;
-    // 2) AutoDL 自部署 BiRefNet 分块原生分辨率抠图（复杂背景细结构完整、已 refine 去色边）
+    // 2) 内饰座舱 / 空间：不抠白底（场景非单体），本地调色增强 + 矩形部件特写
+    if (viewType === 'interior' || viewType === 'space') {
+      const cabin = HogeeFidelity.cabinEnhance(origRGBA, viewType);
+      const out = { ok: true, white: null, cabin, viewType,
+        meta: { method: 'cabin-enhance', fidelity: level, viewType, bg: +bg.toFixed(3) } };
+      if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product, viewType); } catch (e) { out.details = []; } }
+      return out;
+    }
+    // 3) 外观 / 普通商品 / 细节：BiRefNet 分块原生分辨率抠图
     const mk = await call('/cutout', { image, strategy: 'autodl' });
     if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_autodl' };
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
-    // 3) 去孤立杂点 -> trim（跳过阈值化/重合成，避免损坏辐条等细结构）
     P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);
     // 4) 质检（A 级）：主体覆盖率异常低、或实心率过低（整体发虚）即拒绝
@@ -422,10 +476,12 @@
       ok: true,
       white: whiteOut,
       fg: WebPlatform.rgbaToCanvas(fgRGBA).toDataURL('image/png'),
-      meta: { method: 'autodl-birefnet-tile', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
+      viewType,
+      meta: { method: 'autodl-birefnet-tile', fidelity: level, viewType, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
     };
-    if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product); } catch (e) { out.details = []; } }
-    if (o.doScene !== false) { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
+    if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product, viewType); } catch (e) { out.details = []; } }
+    // 场景增强：外观/普通商品才做（细节特写不做）
+    if (o.doScene !== false && viewType !== 'detail') { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
     return out;
   };
 

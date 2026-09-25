@@ -1971,7 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925h"></script>
+<script src="/fidelity-pipeline.js?v=20260925i"></script>
 <script>
 (function(){
 'use strict';
@@ -6206,7 +6206,7 @@ function relayFidelityGenerate(){
  var token=++state.genToken;state.results=[];state.dyn=[];state.dynGrid=null;state.stage='generating';
  state._abort=false;enterTaskFocus();try{setDeliverTab('img');}catch(e){}openDeliver();
  var groups=state.groups||[];
- var grow=groups.map(function(g,i){return '<div class="prog-task" data-gi="'+i+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc((g.product&&g.product.name)||('商品'+(i+1)))+'</div><div class="pt-sub">保真抠白底 · 3 张卖点局部 · 原场景增强（不重画、不变形）</div></div><span class="pt-state">排队中</span></div>';}).join('');
+ var grow=groups.map(function(g,i){return '<div class="prog-task" data-gi="'+i+'"><span class="pt-ico">'+IC.image+'</span><div><div class="pt-name">'+esc((g.product&&g.product.name)||('商品'+(i+1)))+'</div><div class="pt-sub">外观出白底 · 内饰保留座舱 · 卖点局部矩形特写（不重画、不变形）</div></div><span class="pt-state">排队中</span></div>';}).join('');
  var pc=card('<div class="card-pad"><div class="card-title">阿图正在保真处理，你先忙别的</div><div class="card-desc">商品原像素 100% 保留，只做抠图、局部放大和画质增强；每组处理完自动放进右侧「交付物」。</div><div id="relayProgList">'+grow+'</div><div class="prog-ctl"><button type="button" class="btn btn-ghost" id="btnRelayStop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>终止任务</span></button></div></div>','atu');
  var bstop=pc.querySelector('#btnRelayStop');
  if(bstop)bstop.addEventListener('click',function(){state._abort=true;++state.genToken;exitTaskFocus();state.stage='result';botSay('已终止本次处理。已经做好的成品仍在右侧「交付物」里。','atu');});
@@ -6231,6 +6231,7 @@ function relayFidelityGenerate(){
    }
    var add=function(u,k,label){if(!u)return;var r={url:u,k:k+suf,label:label,ts:Date.now()};state.results.push(r);persistResult(r,label);};
    add(out.white,'white','纯白底主图'+tag);
+   add(out.cabin,'cabin','座舱内饰增强'+tag);
    (out.details||[]).forEach(function(d){add(d.image,'detail',d.label+tag);});
    add(out.sceneEnhanced,'scene','场景画质增强'+tag);
    if(window.HG_bumpGen)window.HG_bumpGen();
