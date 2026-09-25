@@ -1971,7 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925e"></script>
+<script src="/fidelity-pipeline.js?v=20260925f"></script>
 <script>
 (function(){
 'use strict';
@@ -4667,9 +4667,9 @@ function renderSpecCard(){
  * 商品原有字母 / 型号 / Logo 100% 保留、零变形。 */
 function fidelityCutout(imageField){
  var main=Array.isArray(imageField)?imageField[0]:imageField;
- return authPost('/cutout',{image:main}).then(function(co){
-  if(!co||co.ok!==true||!co.foreground){var m1=co&&co.error&&co.error.message;throw {message:m1||'保真抠图未返回主体'};}
-  return keepLargestRGBA(co.foreground);
+ return authPost('/cutout',{image:main,strategy:'rmbg'}).then(function(co){
+  if(!co||co.ok!==true||!co.image){var m1=co&&co.error&&co.error.message;throw {message:m1||'保真抠图未返回主体'};}
+  return keepLargestRGBA(co.image);
  }).then(whiteProduct);
 }
 /* 只保留最大 alpha 连通域、丢弃孤立碎片（栈式 flood fill，4 邻域）；最大块保留原始抗锯齿 alpha。输入/输出 PNG dataURL。 */

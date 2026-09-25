@@ -413,9 +413,9 @@
     if (level === 'A' && bgComplex) {
       return { ok: false, rejected: true, reason: 'complex_background', fidelity: level, bg: +bg.toFixed(3), suggestion: 'reshoot_or_scene' };
     }
-    // 3) MediaKit 通用抠图（原分辨率）
-    const mk = await call('/cutout', { image, strategy: 'mediakit', scene: 'product' });
-    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_mediakit' };
+    // 3) RMBG-2.0（BiRefNet）通用抠图（原分辨率、0.01元/次）
+    const mk = await call('/cutout', { image, strategy: 'rmbg' });
+    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_rmbg' };
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
     // 4) 简单/中等背景：alpha 强化（复杂背景 A 级已在前面拒绝）
     if (!bgComplex) HogeeFidelity.consolidateAlpha(fgRGBA);
@@ -435,7 +435,7 @@
       ok: true,
       white: WebPlatform.toDataURL(whiteCanvas, 'image/jpeg', 0.92),
       fg: WebPlatform.rgbaToCanvas(fgRGBA).toDataURL('image/png'),
-      meta: { method: 'mediakit', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
+      meta: { method: 'rmbg-2.0', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
     };
     if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product); } catch (e) { out.details = []; } }
     if (o.doScene !== false) { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
