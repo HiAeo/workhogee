@@ -392,15 +392,13 @@
     const ds = (r && r.details) || [];
     const srcRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
     const tasks = ds.map(async (d) => {
-      const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.12);
-      let partCanvas = WebPlatform.rgbaToCanvas(crop);
-      const long = Math.max(crop.width, crop.height);
-      if (long > 1200) {
-        // 过大：原像素等比缩小到 1200（保真、不重画）；过小直接用原裁剪，不依赖超分
-        const t = 1200 / long, nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
-        nc.getContext('2d').drawImage(partCanvas, 0, 0, nc.width, nc.height); partCanvas = nc;
-      }
-      const partUrl = WebPlatform.toDataURL(partCanvas, 'image/jpeg', 0.92);
+      const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.10);
+      let partUrl = WebPlatform.toDataURL(WebPlatform.rgbaToCanvas(crop), 'image/jpeg', 0.94);
+      // Real-ESRGAN x4 超分：部件 crop 真正提升有效像素（失败回落原裁剪，不阻断）
+      try {
+        const sr = await call('/superres', { image: partUrl, scale: 4 });
+        if (sr && sr.ok && sr.image) partUrl = sr.image;
+      } catch (e) {}
       const bc = await HogeeFidelity.onSpotCardRect(partUrl, d.label, 1200);
       return { label: d.label, image: WebPlatform.toDataURL(bc, 'image/jpeg', 0.92) };
     });
