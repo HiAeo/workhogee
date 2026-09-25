@@ -4667,7 +4667,7 @@ function renderSpecCard(){
  * 商品原有字母 / 型号 / Logo 100% 保留、零变形。 */
 function fidelityCutout(imageField){
  var main=Array.isArray(imageField)?imageField[0]:imageField;
- return authPost('/cutout',{image:main,strategy:'rmbg'}).then(function(co){
+ return authPost('/cutout',{image:main,strategy:'autodl'}).then(function(co){
   if(!co||co.ok!==true||!co.image){var m1=co&&co.error&&co.error.message;throw {message:m1||'保真抠图未返回主体'};}
   return keepLargestRGBA(co.image);
  }).then(whiteProduct);

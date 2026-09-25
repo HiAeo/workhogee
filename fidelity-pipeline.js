@@ -409,33 +409,26 @@
     const bg = P.bgComplexity(origRGBA, productBox);
     const level = HogeeFidelity.fidelityLevel(category);
     const bgComplex = bg >= 0.55, bgSimple = bg < 0.30;
-    // 2) A 级 + 复杂背景：拒绝白底图，引导纯色墙重拍 / 场景合成（不硬生成）
-    if (level === 'A' && bgComplex) {
-      return { ok: false, rejected: true, reason: 'complex_background', fidelity: level, bg: +bg.toFixed(3), suggestion: 'reshoot_or_scene' };
-    }
-    // 3) RMBG-2.0（BiRefNet）通用抠图（原分辨率、0.01元/次）
-    const mk = await call('/cutout', { image, strategy: 'rmbg' });
-    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_rmbg' };
+    // 2) AutoDL 自部署 BiRefNet 分块原生分辨率抠图（复杂背景细结构完整、已 refine 去色边）
+    const mk = await call('/cutout', { image, strategy: 'autodl' });
+    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_autodl' };
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
-    // 4) 简单/中等背景：alpha 强化（复杂背景 A 级已在前面拒绝）
-    if (!bgComplex) HogeeFidelity.consolidateAlpha(fgRGBA);
-    // 5) 外缘去色晕 -> 去孤立杂点 -> trim
-    HogeeFidelity.defringeEdge(fgRGBA);
+    // 3) 去孤立杂点 -> trim（跳过阈值化/重合成，避免损坏辐条等细结构）
     P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);
-    // 6) 质检（A 级）：主体覆盖率异常低、或强化后实心率仍过低（整体发虚）即拒绝
+    // 4) 质检（A 级）：主体覆盖率异常低、或实心率过低（整体发虚）即拒绝
     const qc1 = P.alphaQC(fgRGBA);
     const solidRatio = qc1.solid ? qc1.solid / (qc1.solid + qc1.mid) : 0;
     if (level === 'A' && (qc1.coverage < 0.02 || solidRatio < 0.65)) {
       return { ok: false, rejected: true, reason: 'qc_failed', fidelity: level, bg: +bg.toFixed(3), qc: { coverage: +qc1.coverage.toFixed(3), solidRatio: +solidRatio.toFixed(3) } };
     }
-    // 7) 白底主图
-    const whiteCanvas = HogeeFidelity.onWhite(fgRGBA, 2048, 0.86, 0.84);
+    // 5) 白底主图：优先用服务端返回的原生白底（保真），缺失时前端合成
+    const whiteOut = mk.white || WebPlatform.toDataURL(HogeeFidelity.onWhite(fgRGBA, 2048, 0.86, 0.84), 'image/jpeg', 0.92);
     const out = {
       ok: true,
-      white: WebPlatform.toDataURL(whiteCanvas, 'image/jpeg', 0.92),
+      white: whiteOut,
       fg: WebPlatform.rgbaToCanvas(fgRGBA).toDataURL('image/png'),
-      meta: { method: 'rmbg-2.0', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
+      meta: { method: 'autodl-birefnet-tile', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
     };
     if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product); } catch (e) { out.details = []; } }
     if (o.doScene !== false) { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
