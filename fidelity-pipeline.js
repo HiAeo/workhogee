@@ -348,18 +348,12 @@
       const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.10);
       let partCanvas = WebPlatform.rgbaToCanvas(crop);
       const long = Math.max(crop.width, crop.height);
-      if (long > 1024) {
-        // 过大：缩小到 1024（原像素，保真）
-        const t = 1024 / long, nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
+      if (long > 1200) {
+        // 过大：原像素等比缩小到 1200（保真、不重画）；过小直接用原裁剪，不依赖超分
+        const t = 1200 / long, nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
         nc.getContext('2d').drawImage(partCanvas, 0, 0, nc.width, nc.height); partCanvas = nc;
-      } else if (long < 640) {
-        // 过小：超分补救；失败则回退原图裁剪（保证 partUrl 永远有效）
-        try {
-          const sr = await call('/superres', { image: partCanvas.toDataURL('image/png'), quality: 'HQ' });
-          if (sr && sr.ok && sr.image) partCanvas = WebPlatform.fromImage(await WebPlatform.loadImage(sr.image));
-        } catch (e) { /* 回退原裁剪 */ }
       }
-      const partUrl = WebPlatform.toDataURL(partCanvas, 'image/png');
+      const partUrl = WebPlatform.toDataURL(partCanvas, 'image/jpeg', 0.92);
       const bc = await HogeeFidelity.onSpotCard(partUrl, d.label, 1200);
       return { label: d.label, image: WebPlatform.toDataURL(bc, 'image/jpeg', 0.92) };
     });
@@ -370,21 +364,21 @@
   HogeeFidelity.sceneEnhanced = async function (call, image, loc) {
     const im = await WebPlatform.loadImage(image);
     if (!P.hasRealScene(WebPlatform.toRGBA(WebPlatform.fromImage(im)))) return null;
-    const w = im.naturalWidth || im.width, h = im.naturalHeight || im.height, long = Math.max(w, h);
-    let inUrl = image;
-    if (long > 1024) {
-      const t = 1024 / long, c = WebPlatform.create(Math.round(w * t), Math.round(h * t));
-      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); inUrl = c.toDataURL('image/png');
+    const w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+    // 直接基于原图按商品框收紧裁剪（真实背景、零重绘、零超分依赖）
+    let srcCanvas = WebPlatform.fromImage(im);
+    const long = Math.max(w, h);
+    if (long > 1600) {
+      const t = 1600 / long, c = WebPlatform.create(Math.round(w * t), Math.round(h * t));
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); srcCanvas = c;
     }
-    const r = await call('/superres', { image: inUrl, quality: 'MQ' });
-    if (!loc || !loc.productBox) return r.image;
-    const sim = await WebPlatform.loadImage(r.image);
-    const sRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(sim));
+    if (!loc || !loc.productBox) return WebPlatform.toDataURL(srcCanvas, 'image/jpeg', 0.92);
+    const sRGBA = WebPlatform.toRGBA(srcCanvas);
     const pb = loc.productBox;
-    let cw = Math.min(1, pb[2] / 0.66), ch = Math.min(1, pb[3] / 0.74);
+    const cw = Math.min(1, pb[2] / 0.66), ch = Math.min(1, pb[3] / 0.74);
     const cxp = pb[0] + pb[2] / 2, cyp = pb[1] + pb[3] / 2;
-    let x0 = Math.max(0, Math.min(1 - cw, cxp - cw / 2));
-    let y0 = Math.max(0, Math.min(1 - ch, cyp - ch / 2));
+    const x0 = Math.max(0, Math.min(1 - cw, cxp - cw / 2));
+    const y0 = Math.max(0, Math.min(1 - ch, cyp - ch / 2));
     const crop = P.cropRGBA(sRGBA, [x0, y0, cw, ch], 0);
     return WebPlatform.toDataURL(WebPlatform.rgbaToCanvas(crop), 'image/jpeg', 0.92);
   };

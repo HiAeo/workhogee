@@ -1971,7 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925g"></script>
+<script src="/fidelity-pipeline.js?v=20260925h"></script>
 <script>
 (function(){
 'use strict';
@@ -2535,9 +2535,14 @@ function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
  });}
  return attempt(1);
 }
-function authPost(path,body){
- return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)})
-  .then(function(r){return r.json();}).catch(function(){return {ok:false,error:{message:'网络异常，请稍后再试'}};});
+function authPost(path,body,timeoutMs){
+ var ctrl=new AbortController(),ms=timeoutMs||120000;
+ var to=setTimeout(function(){try{ctrl.abort();}catch(e){}},ms);
+ return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body),signal:ctrl.signal})
+  .then(function(r){clearTimeout(to);return r.json();})
+  .catch(function(e){clearTimeout(to);
+   if(e&&e.name==='AbortError')return {ok:false,error:{message:'请求超时，请稍后再试'}};
+   return {ok:false,error:{message:'网络异常，请稍后再试'}};});
 }
 
 /* ================= TOS 跨端云盘（登录用户原图/成品直传；任何失败静默降级本地，绝不阻断出图） ================= */
