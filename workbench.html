@@ -1971,7 +1971,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925c"></script>
+<script src="/fidelity-pipeline.js?v=20260925d"></script>
 <script>
 (function(){
 'use strict';
@@ -6195,6 +6195,10 @@ function relayFidelityGenerate(){
    var out=null;
    try{out=await HogeeFidelity.package({call:authPost,image:state.images[rep0].dataUrl,category:(g.identity&&g.identity.cat)||nm,product:nm});}catch(e){out=null;}
    if(token!==state.genToken)return;
+   if(out&&out.rejected){
+    if(row){$('.pt-state',row).textContent='需重拍';$('.pt-state',row).style.color='var(--warn)';}
+    relayReshootCard(out,nm);continue;
+   }
    if(!out||!out.ok){
     if(row){$('.pt-state',row).textContent='失败';$('.pt-state',row).style.color='var(--bad)';}
     botSay('「'+esc(nm)+'」保真处理没跑成，稍后可点重试。','atu');continue;
@@ -6210,6 +6214,21 @@ function relayFidelityGenerate(){
   }
   if(token===state.genToken)relayFinishGenerate();
  })();
+}
+
+
+function relayReshootCard(out,nm){
+ var isQc=out.reason==='qc_failed';
+ var title=isQc?'这张图抠图质检没达标':'这张图背景太复杂，先别急着出白底';
+ var why=isQc
+  ? '这款商品属于需要高保真的品类，刚才抠出的图细结构没达到阿图的合格线，硬给你只会是一张不能用的图。'
+  : '这款商品属于需要高保真的品类（辐条、文字、按键这些细节必须清晰）。当前背景太杂，硬抠会把细节抠坏，阿图不想糊弄你。';
+ var tips=['找一面干净的纯色墙（白墙、灰墙最好）','把商品完整拍进去，四周留点空、别贴边','光线均匀，避免强阴影和逆光'];
+ var tipHtml=tips.map(function(t,i){return '<li style="display:flex;gap:10px;align-items:flex-start;margin:8px 0;color:var(--tx2);font-size:13px"><span style="flex:0 0 20px;height:20px;border-radius:50%;background:rgba(251,122,34,.15);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">'+(i+1)+'</span><span>'+t+'</span></li>';}).join('');
+ var c=card('<div class="card-pad"><div class="card-title">'+title+'</div><div class="card-desc">'+why+'</div><ul style="list-style:none;padding:0;margin:12px 0">'+tipHtml+'</ul><div class="card-actions"><button class="btn btn-primary btn-sm" id="rsReupload" type="button">重新拍一张上传</button></div></div>','atu');
+ var b=$('#rsReupload',c);
+ if(b)b.addEventListener('click',function(){try{exitTaskFocus();}catch(e){}state.stage='idle';var fi=$('#fileInput');if(fi)fi.click();});
+ scrollBottom();
 }
 
 
