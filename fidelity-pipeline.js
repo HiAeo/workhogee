@@ -109,6 +109,99 @@
       if (m2 && same / m2 > 0.88) return false;
       return true;
     },
+    // 在透明前景（整车横图）上检测两个等大、同高的轮胎圆，返回 [{cx,cy,r}*2]
+    detectWheels(rgba) {
+      const W = rgba.width, H = rgba.height, d = rgba.data;
+      const pts = [];
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const q = (y * W + x) * 4;
+        if (d[q + 3] > 180 && d[q] < 80 && d[q + 1] < 80 && d[q + 2] < 84) pts.push([x, y]);
+      }
+      if (pts.length < 200) return null;
+      const vote = (cy, R) => {
+        const Lb = new Float32Array(Math.ceil(W / 4) + 1), Rb = new Float32Array(Lb.length);
+        for (const [px, py] of pts) {
+          const dy = py - cy, rad = R * R - dy * dy; if (rad <= 0) continue;
+          const dx = Math.sqrt(rad);
+          for (const cx of [px - dx, px + dx]) {
+            if (cx >= W * 0.10 && cx <= W * 0.46) Lb[Math.round(cx / 4)]++;
+            else if (cx >= W * 0.54 && cx <= W * 0.90) Rb[Math.round(cx / 4)]++;
+          }
+        }
+        let li = 0, ri = 0;
+        for (let i = 1; i < Lb.length; i++) { if (Lb[i] > Lb[li]) li = i; if (Rb[i] > Rb[ri]) ri = i; }
+        return { lx: li * 4, rx: ri * 4, score: Lb[li] + Rb[ri] };
+      };
+      let best = null;
+      for (let cy = H * 0.46; cy <= H * 0.60; cy += 2)
+        for (let R = H * 0.40; R <= H * 0.50; R += 2) {
+          const v = vote(cy, R);
+          if (!best || v.score > best.score) best = Object.assign({ cy, R }, v);
+        }
+      if (!best || best.score < pts.length * 0.25) return null;
+      return [{ cx: best.lx, cy: best.cy, r: best.R }, { cx: best.rx, cy: best.cy, r: best.R }];
+    },
+    // alpha 二值形态学开运算（可分离：腐蚀min -> 膨胀max，窗口 2k+1），返回新 Uint8 alpha
+    morphOpenAlpha(rgba, k) {
+      const W = rgba.width, H = rgba.height, d = rgba.data, n = W * H;
+      const bin = new Uint8Array(n);
+      for (let i = 0; i < n; i++) bin[i] = d[i * 4 + 3] > 120 ? 255 : 0;
+      const tmp = new Uint8Array(n);
+      const ero = new Uint8Array(n);
+      for (let y = 0; y < H; y++) { const row = y * W; for (let x = 0; x < W; x++) {
+        let m = 255; for (let kk = -k; kk <= k; kk++) { const xx = x + kk; if (xx >= 0 && xx < W && bin[row + xx] < m) m = bin[row + xx]; }
+        tmp[row + x] = m;
+      } }
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        let m = 255; for (let kk = -k; kk <= k; kk++) { const yy = y + kk; if (yy >= 0 && yy < H && tmp[yy * W + x] < m) m = tmp[yy * W + x]; }
+        ero[y * W + x] = m;
+      }
+      for (let y = 0; y < H; y++) { const row = y * W; for (let x = 0; x < W; x++) {
+        let m = 0; for (let kk = -k; kk <= k; kk++) { const xx = x + kk; if (xx >= 0 && xx < W && ero[row + xx] > m) m = ero[row + xx]; }
+        tmp[row + x] = m;
+      } }
+      const out = new Uint8Array(n);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        let m = 0; for (let kk = -k; kk <= k; kk++) { const yy = y + kk; if (yy >= 0 && yy < H && tmp[yy * W + x] > m) m = tmp[yy * W + x]; }
+        out[y * W + x] = m;
+      }
+      return out;
+    },
+    // 背景复杂度评分 0~1（品类无关）：在 productBox（归一化[x,y,w,h]）之外
+    // 统计边缘密度 + 灰度方差；主体本身纹理（如辐条）不计入。降采样到长边256。
+    bgComplexity(rgba, productBox) {
+      const W0 = rgba.width, H0 = rgba.height, d = rgba.data;
+      const L = 256, sc = L / Math.max(W0, H0), W = Math.max(8, Math.round(W0 * sc)), H = Math.max(8, Math.round(H0 * sc));
+      const gray = new Float32Array(W * H);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const sx = Math.min(W0 - 1, Math.max(0, Math.round(x / sc))), sy = Math.min(H0 - 1, Math.max(0, Math.round(y / sc)));
+        const q = (sy * W0 + sx) * 4;
+        gray[y * W + x] = 0.299 * d[q] + 0.587 * d[q + 1] + 0.114 * d[q + 2];
+      }
+      let bx = 0, by = 0, bw = W, bh = 0;
+      if (productBox) { bx = productBox[0] * W; by = productBox[1] * H; bw = productBox[2] * W; bh = productBox[3] * H; }
+      const pad = Math.round(Math.max(bw, Math.max(bh, 1)) * 0.08);
+      const inb = (x, y) => productBox && x > bx - pad && x < bx + bw + pad && y > by - pad && y < by + bh + pad;
+      let edgeN = 0, n = 0, rsum = 0, rsq = 0;
+      for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+        if (inb(x, y)) continue;
+        n++;
+        const gx = gray[y * W + x + 1] - gray[y * W + x - 1], gyv = gray[(y + 1) * W + x] - gray[(y - 1) * W + x];
+        if (Math.abs(gx) + Math.abs(gyv) > 42) edgeN++;
+        const g = gray[y * W + x]; rsum += g; rsq += g * g;
+      }
+      if (n < 20) return 0;
+      const edgeDensity = edgeN / n, mean = rsum / n, variance = Math.max(0, rsq / n - mean * mean) / (128 * 128);
+      return Math.min(1, edgeDensity * 3.4 + variance * 0.55);
+    },
+    // alpha 质检：midAlpha=半透明(31..204)占非透明比；coverage=非透明占整图比
+    alphaQC(rgba) {
+      const W = rgba.width, H = rgba.height, d = rgba.data, N = W * H;
+      let solid = 0, mid = 0;
+      for (let i = 0; i < N; i++) { const a = d[i * 4 + 3]; if (a >= 205) solid++; else if (a > 30) mid++; }
+      const nonT = solid + mid;
+      return { midAlpha: nonT ? mid / nonT : 0, coverage: nonT / N, solid, mid };
+    },
   };
 
   /* ================= Web 平台适配层（Web 专用） =================
@@ -133,6 +226,18 @@
 
   /* ================= 保真管线编排（可复用） ================= */
   const HogeeFidelity = { _P: P, _platform: WebPlatform };
+
+  // 品类保真分级：A 只抠不画 / B 抠+轻补全 / C 允许适度重绘（可扩展、品类无关）
+  HogeeFidelity.fidelityLevel = function (category) {
+    const c = String(category || '').toLowerCase();
+    const A = ['自行车','骑行','乐器','吉他','钢琴','提琴','3c','数码','手机','电脑','相机','镜头','机械','设备','家电','电器','汽车','车辆','摩托','五金','工具','钟表','手表','键盘','平板','音响','耳机'];
+    const C = ['鲜花','花卉','花束','花艺','食品','零食','餐饮','美食','生鲜','水果','烘焙','蛋糕','饮品','奶茶','咖啡','茶','酒','农产品','蔬菜','宠物'];
+    const B = ['服装','男装','女装','童装','鞋','箱包','背包','皮具','家居','家具','家纺','母婴','玩具','运动','户外','饰品','首饰','眼镜'];
+    for (const k of A) if (c.includes(k)) return 'A';
+    for (const k of C) if (c.includes(k)) return 'C';
+    for (const k of B) if (c.includes(k)) return 'B';
+    return 'B';
+  };
 
   // 视觉定位：productBox（必有）+ wheels（有轮商品）
   HogeeFidelity.locate = async function (call, image) {
@@ -215,6 +320,25 @@
     return c;
   };
 
+  // 轮圈镂空环带：保留叉腿等粗管、去除细辐条（形态学开运算）；中心实体与圈边原样
+  HogeeFidelity.cleanWheelSpokes = function (rgba, wheels) {
+    const opened = P.morphOpenAlpha(rgba, 2);
+    const W = rgba.width, H = rgba.height, d = rgba.data;
+    for (const w of wheels) {
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const dx = x - w.cx, dy = y - w.cy, dd = Math.sqrt(dx * dx + dy * dy) / w.r;
+        if (dd > 0.90) continue;
+        let t = 0;
+        if (dd > 0.33 && dd < 0.83) t = 1;
+        else if (dd >= 0.28 && dd <= 0.33) t = (dd - 0.28) / 0.05;
+        else if (dd >= 0.83 && dd <= 0.88) t = 1 - (dd - 0.83) / 0.05;
+        if (t <= 0) continue;
+        const i = (y * W + x) * 4;
+        d[i + 3] = Math.round(d[i + 3] * (1 - t) + opened[y * W + x] * t);
+      }
+    }
+  };
+
   /* 卖点局部（3 张）：视觉选框 -> 原图裁剪 -> saliency 去原背景 -> 超分 -> 干净特写底 */
   HogeeFidelity.details = async function (call, image, category, product) {
     const r = await call('/details-plan', { image, category: category || '', product: product || '' });
@@ -222,21 +346,21 @@
     const srcRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
     const tasks = ds.map(async (d) => {
       const crop = P.cropRGBA(srcRGBA, P.normBox(d.bbox), 0.10);
-      let cropCanvas = WebPlatform.rgbaToCanvas(crop);
+      let partCanvas = WebPlatform.rgbaToCanvas(crop);
       const long = Math.max(crop.width, crop.height);
-      if (long > 1024 || long < 320) {
-        const t = long > 1024 ? 1024 / long : 880 / long;
-        const nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
-        nc.getContext('2d').drawImage(cropCanvas, 0, 0, nc.width, nc.height); cropCanvas = nc;
+      if (long > 1024) {
+        // 过大：缩小到 1024（原像素，保真）
+        const t = 1024 / long, nc = WebPlatform.create(Math.round(crop.width * t), Math.round(crop.height * t));
+        nc.getContext('2d').drawImage(partCanvas, 0, 0, nc.width, nc.height); partCanvas = nc;
+      } else if (long < 640) {
+        // 过小：超分补救；失败则回退原图裁剪（保证 partUrl 永远有效）
+        try {
+          const sr = await call('/superres', { image: partCanvas.toDataURL('image/png'), quality: 'HQ' });
+          if (sr && sr.ok && sr.image) partCanvas = WebPlatform.fromImage(await WebPlatform.loadImage(sr.image));
+        } catch (e) { /* 回退原裁剪 */ }
       }
-      const cropUrl = cropCanvas.toDataURL('image/png');
-      let partUrl = null;
-      try {
-        const sal = await call('/cutout', { image: cropUrl, strategy: 'saliency' });
-        if (sal && sal.ok && sal.images && sal.images.length) partUrl = sal.images[0];
-      } catch (e) { partUrl = null; }
-      const sr = await call('/superres', { image: partUrl || cropUrl, quality: 'HQ' });
-      const bc = await HogeeFidelity.onSpotCard(sr.image, d.label, 1200);
+      const partUrl = WebPlatform.toDataURL(partCanvas, 'image/png');
+      const bc = await HogeeFidelity.onSpotCard(partUrl, d.label, 1200);
       return { label: d.label, image: WebPlatform.toDataURL(bc, 'image/jpeg', 0.92) };
     });
     return Promise.all(tasks);
@@ -267,37 +391,54 @@
 
   /* 总入口：一张商品图 -> 保真全套
    * o:{ call, image, category?, product?, doDetails?, doScene? } */
+  // alpha 强化（简单/中等背景）：>=150 推255、<=55 推0，灰辐条变实、几何位置不变
+  HogeeFidelity.consolidateAlpha = function (rgba) {
+    const d = rgba.data, N = rgba.width * rgba.height;
+    for (let i = 0; i < N; i++) { const p = i * 4, a = d[p + 3]; if (a >= 150) d[p + 3] = 255; else if (a <= 55) d[p + 3] = 0; }
+  };
+
   HogeeFidelity.package = async function (o) {
     const call = o.call, image = o.image;
-    // 1) saliency 干净透明前景
-    const sal = await call('/cutout', { image, strategy: 'saliency' });
-    if (!sal || !sal.ok || !sal.images || !sal.images.length) return { ok: false, error: 'no_saliency' };
-    const fgUrl0 = sal.images[0];
-    // 2) 超分到高清（saliency 边长 <=1024）
-    let fgHi = fgUrl0;
-    try { const sr = await call('/superres', { image: fgUrl0, quality: 'HQ' }); if (sr.ok) fgHi = sr.image; } catch (e) { fgHi = fgUrl0; }
-    // 3) 去色晕 -> trim
-    let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(fgHi)));
+    // 0) 视觉定位 productBox（品类由认货阶段 o.category 传入）
+    let loc = o.loc || null;
+    if (!loc || !loc.ok) { try { loc = await HogeeFidelity.locate(call, image); } catch (e) { loc = { ok: false }; } }
+    const category = o.category || '';
+    const productBox = loc.ok ? loc.productBox : null;
+    // 1) 原图背景复杂度（品类无关、主体框外）+ 保真分级
+    const origRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(image)));
+    const bg = P.bgComplexity(origRGBA, productBox);
+    const level = HogeeFidelity.fidelityLevel(category);
+    const bgComplex = bg >= 0.55, bgSimple = bg < 0.30;
+    // 2) A 级 + 复杂背景：拒绝白底图，引导纯色墙重拍 / 场景合成（不硬生成）
+    if (level === 'A' && bgComplex) {
+      return { ok: false, rejected: true, reason: 'complex_background', fidelity: level, bg: +bg.toFixed(3), suggestion: 'reshoot_or_scene' };
+    }
+    // 3) MediaKit 通用抠图（原分辨率）
+    const mk = await call('/cutout', { image, strategy: 'mediakit', scene: 'product' });
+    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_mediakit' };
+    let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
+    // 4) 简单/中等背景：alpha 强化（复杂背景 A 级已在前面拒绝）
+    if (!bgComplex) HogeeFidelity.consolidateAlpha(fgRGBA);
+    // 5) 外缘去色晕 -> 去孤立杂点 -> trim
     HogeeFidelity.defringeEdge(fgRGBA);
     P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);
-    // 4) 白底主图
+    // 6) 质检（A 级）：主体覆盖率异常低、或强化后实心率仍过低（整体发虚）即拒绝
+    const qc1 = P.alphaQC(fgRGBA);
+    const solidRatio = qc1.solid ? qc1.solid / (qc1.solid + qc1.mid) : 0;
+    if (level === 'A' && (qc1.coverage < 0.02 || solidRatio < 0.65)) {
+      return { ok: false, rejected: true, reason: 'qc_failed', fidelity: level, bg: +bg.toFixed(3), qc: { coverage: +qc1.coverage.toFixed(3), solidRatio: +solidRatio.toFixed(3) } };
+    }
+    // 7) 白底主图
     const whiteCanvas = HogeeFidelity.onWhite(fgRGBA, 2048, 0.86, 0.84);
-    // 定位（场景收紧用）
-    let loc = { ok: false };
-    try { loc = await HogeeFidelity.locate(call, image); } catch (e) { loc = { ok: false }; }
     const out = {
       ok: true,
       white: WebPlatform.toDataURL(whiteCanvas, 'image/jpeg', 0.92),
       fg: WebPlatform.rgbaToCanvas(fgRGBA).toDataURL('image/png'),
-      meta: { method: 'saliency', wheels: loc.ok && loc.wheels ? loc.wheels.length : 0 },
+      meta: { method: 'mediakit', fidelity: level, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
     };
-    if (o.doDetails !== false) {
-      try { out.details = await HogeeFidelity.details(call, image, o.category, o.product); } catch (e) { out.details = []; }
-    }
-    if (o.doScene !== false) {
-      try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; }
-    }
+    if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product); } catch (e) { out.details = []; } }
+    if (o.doScene !== false) { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
     return out;
   };
 
