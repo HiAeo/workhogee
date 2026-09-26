@@ -2547,13 +2547,18 @@ function detectPrivacy(idx){
      b.setAttribute('data-act','privToggle');b.setAttribute('data-i',idx);b.textContent='看原图';
      wrap.appendChild(b);}
    }
+   var si=document.querySelector('.shot-img[data-i="'+idx+'"]');
+   if(si)si.src=orgSrc(im);
   });
  }).catch(function(){});
 }
 function privToggle(idx,btn){
  var im=state.images[idx],img=btn.parentNode.querySelector('.org-img img');
- if(im._showPrivate){im._showPrivate=false;img.src=orgSrc(im);btn.textContent='脱敏';}
- else {im._showPrivate=true;img.src=orgSrc(im);btn.textContent='看原图';}
+ if(im._showPrivate){im._showPrivate=false;btn.textContent='脱敏';}
+ else {im._showPrivate=true;btn.textContent='看原图';}
+ img.src=orgSrc(im);
+ var si=document.querySelector('.shot-img[data-i="'+idx+'"]');
+ if(si)si.src=orgSrc(im);
 }
 var _privQ=[];
 function pumpPrivacy(){var idx=_privQ.shift();if(idx===undefined)return;
@@ -4537,7 +4542,7 @@ function refreshShots(){
  if(grid)grid.innerHTML=state.images.map(function(im,i){
   var qc=im.qc,bad=qc.sharp==='bad'||qc.exp==='bad',warn=!bad&&(qc.sharp==='warn'||qc.exp==='warn');
   var cls=bad?'bad':(warn?'warn':'ok'),txt=bad?'建议重拍':(warn?'可以更好':'清晰');
-  return '<div class="shot"><img src="'+im.dataUrl+'" alt=""><span class="q '+cls+'">'+txt+'</span><button class="del" data-act="delShot" data-i="'+i+'">×</button></div>';
+  return '<div class="shot"><img class="shot-img" data-i="'+i+'" src="'+orgSrc(im)+'" alt=""><span class="q '+cls+'">'+txt+'</span><button class="del" data-act="delShot" data-i="'+i+'">×</button></div>';
  }).join('');
  var btn=$('#toConfirmBtn');if(btn)btn.disabled=state.images.length===0;
  var tip=$('#uploadTip'),tt=$('#uploadTipTxt');
