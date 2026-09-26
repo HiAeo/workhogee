@@ -199,7 +199,7 @@ a{color:var(--orange);text-decoration:none}
   <!-- STEP 1 -->
   <div class="card" id="step1">
     <h2>上传你的产品图</h2>
-    <p class="sub">支持 JPG / PNG / WebP，单张清晰主图效果最佳。产品像素将在浏览器端完成抠图合成，绝不重绘。</p>
+    <p class="sub">支持 JPG / PNG / WebP，单张清晰主图效果最佳。上传将直传 TOS 对象存储，不再占用内存做 base64。</p>
     <div class="dropzone" id="dropzone">
       <div class="dz-icon">📦</div>
       <div class="dz-t">点击或拖拽产品图到此处</div>
@@ -211,16 +211,29 @@ a{color:var(--orange);text-decoration:none}
       <div class="fn" id="fileName"></div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary" id="btnIdentify" disabled onclick="startIdentify()">开始识别 →</button>
+      <button class="btn btn-primary" id="btnIdentify" disabled onclick="goConfirmStep()">下一步：确认品类风格 →</button>
     </div>
   </div>
 
   <!-- STEP 2 -->
   <div class="card hide" id="step2">
-    <h2>确认识别结果与产品属性</h2>
-    <p class="sub">AI 已识别产品属性，可直接修改后再开始生成；修改内容将随 pipeline 请求一起下发。</p>
-    <div class="identify-banner" id="idBanner">AI 识别中…</div>
+    <h2>确认品类、风格与产品属性</h2>
+    <p class="sub">选择品类与画面风格，可直接修改下方产品属性；确认后将启动异步生成任务（含识别→抠图→场景→营销→文案→质检）。</p>
+    <div class="identify-banner" id="idBanner">请确认以下品类与风格，修改后点击"确认并开始生成"。</div>
 
+    <div class="form-row">
+      <label>产品品类</label>
+      <select id="attrCategory">
+        <option value="家居百货" selected>家居百货</option>
+        <option value="美妆个护">美妆个护</option>
+        <option value="食品饮料">食品饮料</option>
+        <option value="3C数码">3C数码</option>
+        <option value="服饰鞋包">服饰鞋包</option>
+        <option value="母婴宠物">母婴宠物</option>
+        <option value="运动户外">运动户外</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
     <div class="attr-grid">
       <div class="form-row"><label>产品名称</label><input id="attrName" placeholder="如：大豆香薰蜡烛"></div>
       <div class="form-row"><label>材质</label><input id="attrMaterial" placeholder="如：大豆蜡 + 玻璃容器"></div>
@@ -243,13 +256,14 @@ a{color:var(--orange);text-decoration:none}
   <!-- STEP 3 -->
   <div class="card hide" id="step3">
     <h2>正在生成物料包</h2>
-    <p class="sub">请保持本页打开，完成后自动进入下一步。最终图由浏览器 Canvas 实时合成。</p>
+    <p class="sub">异步任务已提交，正在轮询后端进度。请保持本页打开，完成后自动进入下一步。</p>
     <div class="prog-list" id="progList">
-      <div class="prog-item wait" data-k="vision"><div class="prog-ic">1</div>视觉识别</div>
-      <div class="prog-item wait" data-k="cut"><div class="prog-ic">2</div>智能抠图</div>
-      <div class="prog-item wait" data-k="bg"><div class="prog-ic">3</div>背景生成</div>
-      <div class="prog-item wait" data-k="copy"><div class="prog-ic">4</div>文案撰写</div>
-      <div class="prog-item wait" data-k="qc"><div class="prog-ic">5</div>质量检测</div>
+      <div class="prog-item wait" data-k="identify"><div class="prog-ic">1</div>视觉识别</div>
+      <div class="prog-item wait" data-k="cutout"><div class="prog-ic">2</div>智能抠图</div>
+      <div class="prog-item wait" data-k="scene"><div class="prog-ic">3</div>场景生成</div>
+      <div class="prog-item wait" data-k="marketing"><div class="prog-ic">4</div>营销图生成</div>
+      <div class="prog-item wait" data-k="copy"><div class="prog-ic">5</div>文案撰写</div>
+      <div class="prog-item wait" data-k="qc"><div class="prog-ic">6</div>质量检测</div>
     </div>
     <div class="bar"><i id="barFill"></i></div>
     <div class="eta" id="etaText">已用时 0 秒</div>
@@ -317,8 +331,9 @@ var STYLES = [
 
 var state = {
   file:null, fileDataUrl:'',
+  tosKey:'',           // M2.3: TOS object key（直传成功后保存）
   category:'家居百货', style:'white',
-  pipelineResp:null, cells:[], usedDemo:false,
+  pipelineResp:null, cells:[], usedDemo:false, corsFallback:false,
   activeChannel:'taobao'
 };
 
@@ -403,51 +418,50 @@ dz.ondragleave=function(){dz.classList.remove('drag')};
 dz.ondrop=function(e){e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])};
 fi.onchange=function(){if(fi.files[0])handleFile(fi.files[0])};
 
-function handleFile(file){
+async function handleFile(file){
   if(!/image\/(jpeg|png|webp)/.test(file.type)){toast('仅支持 JPG / PNG / WebP');return}
   state.file=file;
+  state.tosKey='';
   var reader=new FileReader();
-  reader.onload=function(ev){
+  reader.onload=async function(ev){
     state.fileDataUrl=ev.target.result;
     $('previewImg').src=ev.target.result;
-    $('fileName').textContent=file.name+' · '+Math.round(file.size/1024)+' KB';
+    $('fileName').textContent=file.name+' · '+Math.round(file.size/1024)+' KB · 上传中…';
     $('previewBox').style.display='block';
+    $('btnIdentify').disabled=true;
+
+    // M2.3: TOS 直传 — POST /upload-url 拿预签名 PUT URL → fetch PUT 直传
+    try{
+      var ur=await fetchTO(API_BASE+'/upload-url',{method:'POST',headers:authHeaders(),
+        body:JSON.stringify({contentType:file.type})},8000);
+      if(!ur.ok) throw new Error('upload-url http '+ur.status);
+      var uj=await ur.json();
+      if(!uj||!uj.uploadUrl) throw new Error('no uploadUrl in response');
+      var pr=await fetch(uj.uploadUrl,{method:'PUT',body:file,headers:{'Content-Type':file.type}});
+      if(!pr.ok) throw new Error('TOS PUT http '+pr.status);
+      state.tosKey=uj.key||'';
+      $('fileName').textContent=file.name+' · '+Math.round(file.size/1024)+' KB · ✓ TOS直传完成';
+      toast('TOS直传成功');
+    }catch(e){
+      console.warn('TOS直传失败，降级base64:',e);
+      state.tosKey='';
+      $('fileName').textContent=file.name+' · '+Math.round(file.size/1024)+' KB · TOS直传失败→旧模式';
+      toast('TOS直传失败，将降级为 base64 同步模式');
+    }
     $('btnIdentify').disabled=false;
   };
   reader.readAsDataURL(file);
 }
 
-/* ============ Step2 识别（productAttributes 展示与编辑） ============ */
-async function startIdentify(){
+/* ============ Step2 确认页（M2.3: 不再单独调 /identify，识别合并到 job 里） ============ */
+function goConfirmStep(){
   goStep(2); setPills(2);
-  var banner=$('idBanner');
-  banner.innerHTML='AI 识别中…';
-  var demoAttr = {productName:'大豆香薰蜡烛', material:'大豆蜡 + 玻璃容器', color:'暖米色',
-    sellingPoints:['天然大豆蜡','无烟燃烧','8小时持久留香','简约设计','送礼佳品'], packagingText:'WorkHogee · 净含量 200g'};
-  var usedDemo=false;
-  try{
-    var r=await fetchTO(API_BASE+'/identify',{method:'POST',headers:authHeaders(),
-      body:JSON.stringify({image:state.fileDataUrl})});
-    if(r.ok){
-      var j=await r.json();
-      if(j && j.data) j=j.data; // 兼容 {data:{...}} 信封
-      var attrs=(j && j.productAttributes)||j||{};
-      var name=attrs.productName||attrs.subcategory||attrs.category||'';
-      if(!name) usedDemo=true;
-      fillAttrForm(name||demoAttr.productName,
-                   attrs.material||demoAttr.material,
-                   attrs.color||demoAttr.color,
-                   (attrs.sellingPoints&&attrs.sellingPoints.length)?attrs.sellingPoints:demoAttr.sellingPoints,
-                   attrs.packagingText||demoAttr.packagingText);
-      var conf=Math.round((j.confidence||0.92)*100);
-      var cat=(j.category||'家居百货'), sub=(j.subcategory||'香薰蜡烛');
-      banner.innerHTML='AI 识别为【<b>'+cat+' / '+sub+'</b>】，置信度 <b>'+conf+'%</b>。产品属性已填入下方，可编辑。'+(usedDemo?'（后端属性字段未就绪，已用演示属性）':'');
-      return;
-    }
-  }catch(e){ usedDemo=true; }
-  // 演示兜底
-  fillAttrForm(demoAttr.productName, demoAttr.material, demoAttr.color, demoAttr.sellingPoints, demoAttr.packagingText);
-  banner.innerHTML='AI 识别为【<b>家居百货 / 香薰蜡烛</b>】，置信度 <b>92%</b>。（演示数据，后端接口调试中）';
+  // 预填默认属性（用户可编辑；真正的 AI 识别结果会在 job 完成后返回）
+  fillAttrForm('大豆香薰蜡烛','大豆蜡 + 玻璃容器','暖米色',
+    ['天然大豆蜡','无烟燃烧','8小时持久留香','简约设计','送礼佳品'],
+    'WorkHogee · 净含量 200g');
+  var mode = state.tosKey ? 'TOS直传已就绪（key: '+state.tosKey.slice(-20)+'…）' : 'TOS直传失败，将用 base64 旧模式';
+  $('idBanner').innerHTML='图片已上传（'+mode+'）。请确认品类与风格，可修改产品属性，然后点击"确认并开始生成"。';
 }
 function fillAttrForm(name,material,color,points,pack){
   $('attrName').value=name||'';
@@ -458,6 +472,7 @@ function fillAttrForm(name,material,color,points,pack){
 }
 function readAttrForm(){
   var pts=$('attrPoints').value.split(/[,，、;；\n]/).map(function(s){return s.trim()}).filter(Boolean).slice(0,5);
+  state.category=$('attrCategory').value;
   return {productName:$('attrName').value.trim(), material:$('attrMaterial').value.trim(),
           color:$('attrColor').value.trim(), sellingPoints:pts, packagingText:$('attrPack').value.trim()};
 }
@@ -465,7 +480,15 @@ function readAttrForm(){
 /* ============================================================
  *  Canvas 图层合成引擎（产品像素绝不重绘）
  * ============================================================ */
-function loadImg(src){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=function(e){rej(e)};i.src=src;});}
+/* 加载图片；cors=true 时设置 crossOrigin='anonymous'（TOS/Seedream URL 需要）。
+ * data: 开头的本地预览图不需要 CORS。 */
+function loadImg(src, cors){
+  return new Promise(function(res,rej){
+    var i=new Image();
+    if(cors && src && src.indexOf('data:')!==0) i.crossOrigin='anonymous';
+    i.onload=function(){res(i)};i.onerror=function(e){rej(e)};i.src=src;
+  });
+}
 
 /* ---------- Alpha 后处理：threshold / 最大连通域 / erode / 深色抑制 / defringe / feather ---------- */
 function processAlpha(img, opts){
@@ -654,9 +677,9 @@ function drawBgCover(x, bg){
 }
 
 /* 场景合成：背景 + 抠图产品 + 接地阴影 + 环境光融合 + 色温 */
-async function compositeScene(bgDataURL, prodCanvas, guide){
+async function compositeScene(bgUrl, prodCanvas, guide){
   guide = guide || {};
-  var bg = await loadImg(bgDataURL);
+  var bg = await loadImg(bgUrl, true); // M2.3: bg 可能是 TOS/Seedream URL，需 CORS
   var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
   var x=c.getContext('2d',{willReadFrequently:true});
   drawBgCover(x, bg);
@@ -754,9 +777,11 @@ function containOnWhite(img){
 }
 
 /* ============================================================
- *  Step3 生成：调用 /pipeline，进度条动画
+ *  Step3 生成：M2.3 异步 job 轮询（TOS 直传路径）/ 旧 base64 同步（fallback）
  * ============================================================ */
 var timer=null, seconds=0;
+var JOB_STEPS=['identify','cutout','scene','marketing','copy','qc'];
+
 async function startPipeline(){
   goStep(3); setPills(3);
   seconds=0;
@@ -766,49 +791,107 @@ async function startPipeline(){
     $('etaText').textContent='已用时 '+seconds+' 秒';
   },1000);
 
-  // 立即发起 pipeline 请求（与进度动画并行）
   var attrs=readAttrForm();
-  var pipelinePromise = (async function(){
+  var resp;
+
+  if(state.tosKey){
+    /* ---- M2.3 new path: TOS key -> POST /pipeline -> 202 jobId -> poll ---- */
     try{
-      var body={image:state.fileDataUrl, category:state.category, style:state.style, productAttributes:attrs};
-      var r=await fetchTO(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),body:JSON.stringify(body)}, 15000);
-      if(r.ok) return await r.json();
-    }catch(e){ console.warn('pipeline error', e); }
-    return null;
-  })();
-
-  // 进度动画：视觉识别→抠图→背景生成→文案→质检
-  var progSteps=['vision','cut','bg','copy','qc'];
-  var progAnim=(async function(){
-    for(var i=0;i<progSteps.length;i++){
-      var cur=document.querySelector('.prog-item[data-k="'+progSteps[i]+'"]');
-      cur.classList.remove('wait'); cur.classList.add('run');
-      cur.querySelector('.prog-ic').textContent=(i+1);
-      $('barFill').style.width=Math.round(((i+1)/progSteps.length)*100)+'%';
-      await wait(750);
-      cur.classList.remove('run'); cur.classList.add('done');
-      cur.querySelector('.prog-ic').textContent='✓';
+      var r=await fetchTO(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),
+        body:JSON.stringify({key:state.tosKey, category:state.category, style:state.style, productAttributes:attrs})},15000);
+      if(!r.ok) throw new Error('pipeline http '+r.status);
+      var j=await r.json();
+      if(!j || !j.jobId) throw new Error('no jobId');
+      toast('task submitted, polling...');
+      resp=await pollJob(j.jobId);
+      state.usedDemo=false;
+    }catch(e){
+      console.warn('async pipeline failed, fallback base64:',e);
+      toast('async task failed, fallback to base64 mode');
+      resp=await legacyBase64Pipeline(attrs);
     }
-  })();
-
-  // 等待 pipeline 返回 + 动画走完
-  var resp=await pipelinePromise;
-  if(!resp || !resp.cutout || !resp.cutout.image){
-    resp=await demoPipelineResponse();
-    state.usedDemo=true;
   } else {
-    state.usedDemo=false;
+    resp=await legacyBase64Pipeline(attrs);
   }
-  await progAnim;
   clearInterval(timer);
 
-  // 前端 Canvas 合成 8 图
   try{
-    await buildAllImages(resp);
+    if(state.tosKey && resp && resp.cutoutUrl){
+      await buildAllImagesFromURL(resp);
+    } else {
+      await buildAllImages(resp);
+    }
     showResults(resp);
   }catch(e){
-    toast('合成失败：'+e.message);
+    toast('compose failed: '+e.message);
     console.error(e);
+  }
+}
+
+/* legacy base64 sync pipeline (fallback, deprecated path) */
+async function legacyBase64Pipeline(attrs){
+  try{
+    var r=await fetchTO(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({image:state.fileDataUrl, category:state.category, style:state.style, productAttributes:attrs})},15000);
+    if(r.ok){
+      var resp=await r.json();
+      if(resp && resp.cutout && resp.cutout.image){ state.usedDemo=false; return resp; }
+    }
+  }catch(e){ console.warn('legacy pipeline error',e); }
+  await runFakeProgress();
+  state.usedDemo=true;
+  return await demoPipelineResponse();
+}
+
+/* poll GET /job?id=jobId every 3s, max 120 times (6 min) */
+async function pollJob(jobId){
+  var maxPolls=120;
+  for(var i=0;i<maxPolls;i++){
+    await wait(3000);
+    try{
+      var r=await fetch(API_BASE+'/job?id='+encodeURIComponent(jobId),{headers:{'Authorization':'Bearer '+token}});
+      if(!r.ok){ console.warn('poll http',r.status); continue; }
+      var j=await r.json();
+      updateProgressUI(j);
+      if(j.status==='done'){
+        $('barFill').style.width='100%';
+        // M2.3: backend wraps results under j.results; unwrap to top level
+        var r = j.results || {};
+        return Object.assign({}, r, {status:'done', progress:100, steps:j.steps, totalMs:j.totalMs, errors:j.errors});
+      }
+      if(j.status==='error') throw new Error('job error: '+((j.errors||[]).join('; ')||'unknown'));
+    }catch(e){
+      if(e.message && e.message.indexOf('job error')===0) throw e;
+      console.warn('poll error',e);
+    }
+  }
+  throw new Error('poll timeout (6 min)');
+}
+
+/* update progress UI from job.steps */
+function updateProgressUI(job){
+  if(typeof job.progress==='number') $('barFill').style.width=job.progress+'%';
+  (job.steps||[]).forEach(function(s){
+    var el=document.querySelector('.prog-item[data-k="'+s.name+'"]');
+    if(!el) return;
+    el.classList.remove('wait','run','done');
+    if(s.status==='done'){ el.classList.add('done'); el.querySelector('.prog-ic').textContent='OK'; el.style.color=''; }
+    else if(s.status==='running'){ el.classList.add('run'); el.querySelector('.prog-ic').textContent='...'; }
+    else if(s.status==='error'){ el.classList.add('wait'); el.querySelector('.prog-ic').textContent='!'; el.style.color='var(--bad)'; }
+    else { el.classList.add('wait'); el.querySelector('.prog-ic').textContent='.'; }
+  });
+}
+
+/* fake progress animation for fallback/demo */
+async function runFakeProgress(){
+  for(var i=0;i<JOB_STEPS.length;i++){
+    var cur=document.querySelector('.prog-item[data-k="'+JOB_STEPS[i]+'"]');
+    if(!cur) continue;
+    cur.classList.remove('wait'); cur.classList.add('run');
+    $('barFill').style.width=Math.round(((i+1)/JOB_STEPS.length)*100)+'%';
+    await wait(600);
+    cur.classList.remove('run'); cur.classList.add('done');
+    cur.querySelector('.prog-ic').textContent='OK';
   }
 }
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
@@ -848,6 +931,79 @@ async function buildAllImages(resp){
 }
 
 /* ============================================================
+ *  M2.3: URL-based Canvas composition (cutoutUrl/sceneUrls/marketingUrl)
+ *  If CORS load fails for cutout, global fallback to raw URL display.
+ * ============================================================ */
+async function buildAllImagesFromURL(job){
+  var cells=[];
+  state.corsFallback=false;
+
+  // Try loading cutout with CORS; if fails, global URL fallback
+  var cutoutImg;
+  try{
+    cutoutImg=await loadImg(job.cutoutUrl, true);
+  }catch(e){
+    console.warn('CORS failed for cutout, fallback to raw URL display', e);
+    state.corsFallback=true;
+    return buildURLCells(job);
+  }
+
+  // Alpha post-process on transparent cutout
+  var prod=processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true});
+  var orig=await loadImg(state.fileDataUrl, false);
+
+  // White bg x2
+  cells.push({tag:'white-bg', canvas:await compositeWhite(prod,0)});
+  cells.push({tag:'white-bg', canvas:await compositeWhite(prod,1)});
+
+  // Scene x3
+  var sceneUrls=job.sceneUrls||[];
+  for(var i=0;i<3;i++){
+    var bgUrl=sceneUrls[i];
+    if(!bgUrl){ cells.push({tag:'scene', url:''}); continue; }
+    try{
+      cells.push({tag:'scene', canvas:await compositeScene(bgUrl, prod, {scale:0.55, shadow:true, colorTemp:'warm'})});
+    }catch(e){
+      console.warn('scene bg CORS failed, show raw URL', e);
+      cells.push({tag:'scene', url:bgUrl});
+    }
+  }
+
+  // Detail x2 (crop from local original, no CORS needed)
+  var boxes=(job.detailBoxes && job.detailBoxes.length)?job.detailBoxes:demoBoxes();
+  for(var j=0;j<2;j++){
+    var box=boxes[j]||{label:'detail',bbox:[0.3,0.2,0.4,0.4]};
+    var det=await cropAndSuperres(orig, box.bbox);
+    cells.push({tag:'detail - '+(box.label||'closeup'), canvas:containOnWhite(det)});
+  }
+
+  // Marketing x1
+  if(job.marketingUrl){
+    try{
+      cells.push({tag:'marketing', canvas:await compositeMarketing(job.marketingUrl, prod, {scale:0.6, shadow:true, colorTemp:'warm'})});
+    }catch(e){
+      cells.push({tag:'marketing', url:job.marketingUrl});
+    }
+  }
+
+  state.cells=cells;
+  state.pipelineResp=job;
+}
+
+/* CORS fallback: just show raw URLs as <img>, no Canvas composition */
+function buildURLCells(job){
+  var cells=[];
+  cells.push({tag:'white-bg', url:job.cutoutUrl});
+  cells.push({tag:'white-bg', url:job.cutoutUrl});
+  (job.sceneUrls||[]).slice(0,3).forEach(function(u){ cells.push({tag:'scene', url:u}); });
+  // details: still crop locally (works with local data URL)
+  (async function(){})(); // no-op, details skipped in pure URL fallback
+  if(job.marketingUrl) cells.push({tag:'marketing', url:job.marketingUrl});
+  state.cells=cells;
+  state.pipelineResp=job;
+}
+
+/* ============================================================
  *  Step4 展示：质检 + 8 图网格 + 文案
  * ============================================================ */
 function showResults(resp){
@@ -856,15 +1012,14 @@ function showResults(resp){
 
   var grid=$('imgGrid'); grid.innerHTML='';
   state.cells.forEach(function(cell,i){
-    var src=cell.canvas.toDataURL('image/png');
+    var src = cell.canvas ? cell.canvas.toDataURL('image/png') : (cell.url||'');
     var el=document.createElement('div'); el.className='img-cell';
-    el.innerHTML='<div class="ph" data-i="'+i+'"><img src="'+src+'" alt="物料 '+(i+1)+'"><span class="tag">'+cell.tag+'</span></div>'+
-      '<div class="body"><div class="ttl">物料 '+(i+1)+' · '+cell.tag+'</div>'+
-      '<div class="spec-row">'+
-      '<button data-i="'+i+'" data-s="taobao">淘宝800</button>'+
-      '<button data-i="'+i+'" data-s="xhs">小红书3:4</button>'+
-      '<button data-i="'+i+'" data-s="amazon">Amazon2000</button>'+
-      '</div></div>';
+    var specBtns = cell.canvas
+      ? '<button data-i="'+i+'" data-s="taobao">taobao800</button><button data-i="'+i+'" data-s="xhs">xhs3:4</button><button data-i="'+i+'" data-s="amazon">amazon2000</button>'
+      : '<span style="font-size:11px;color:#8a93a6">URL direct (no export)</span>';
+    el.innerHTML='<div class="ph" data-i="'+i+'"><img src="'+src+'" alt="result '+(i+1)+'"><span class="tag">'+cell.tag+'</span></div>'+
+      '<div class="body"><div class="ttl">result '+(i+1)+' - '+cell.tag+'</div>'+
+      '<div class="spec-row">'+specBtns+'</div></div>';
     grid.appendChild(el);
   });
   grid.querySelectorAll('.ph').forEach(function(ph){
@@ -945,7 +1100,7 @@ function renderChannel(ch, cp){
   $('channelBody').textContent=channels[ch]||'（该平台文案待生成）';
 }
 
-function zoom(i){ $('lbImg').src=state.cells[i].canvas.toDataURL('image/png'); $('lightbox').classList.add('on'); }
+function zoom(i){ var cell=state.cells[i]; lbImg.src=cell.canvas?cell.canvas.toDataURL('image/png'):cell.url; lightbox.classList.add('on'); }
 function copyCopy(){
   var cp=state.pipelineResp&&state.pipelineResp.copy; if(!cp) return;
   var t=(cp.title||'')+'\n\n';
@@ -1008,6 +1163,7 @@ async function downloadZip(){
   var zip=new JSZip();
   var names={taobao:'淘宝800', xhs:'小红书3x4', amazon:'Amazon2000'};
   for(var i=0;i<state.cells.length;i++){
+    if(!state.cells[i].canvas) continue; // skip URL-only cells (CORS fallback)
     for(var k in names){
       var c=exportCanvasSpec(state.cells[i].canvas, k);
       var blob=await new Promise(function(res){c.toBlob(res,'image/png')});
@@ -1107,7 +1263,7 @@ function setPills(active){
   }
 }
 function resetAll(){
-  state.file=null; state.fileDataUrl=''; state.cells=[]; state.pipelineResp=null; state.usedDemo=false;
+  state.file=null; state.fileDataUrl=''; state.tosKey=''; state.cells=[]; state.pipelineResp=null; state.usedDemo=false; state.corsFallback=false;
   $('previewBox').style.display='none'; $('btnIdentify').disabled=true; $('fileInput').value='';
   $('barFill').style.width='0'; seconds=0; clearInterval(timer);
   document.querySelectorAll('.prog-item').forEach(function(p){p.classList.remove('done','run');p.classList.add('wait')});
