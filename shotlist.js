@@ -177,6 +177,43 @@
     };
   }
 
+  /* ---------------- P1：按视角归类（纯函数，供"标准看车相册"渲染） ----------------
+   * 输入 scene, items，输出按 外观→内饰→空间→细节 排好的分组，每个视角 slot 给出
+   * 对应的图片下标；未识别(other)统一进 others。UI 据此把图按看车顺序组织，而非上传顺序。
+   */
+  function organizeItems(scene, items) {
+    const sc = sceneOf(scene);
+    const byShot = {};
+    (items || []).forEach((it, i) => {
+      const k = (it.shot && it.shot !== 'other') ? it.shot : '_other';
+      (byShot[k] = byShot[k] || []).push(i);
+    });
+    const groups = sc.groups.map(g => {
+      const slots = sc.shots.filter(s => s.group === g.id)
+        .map(s => ({ id: s.id, name: s.name, indices: byShot[s.id] || [] }));
+      return { id: g.id, name: g.name, slots: slots };
+    });
+    return { groups: groups, others: byShot['_other'] || [] };
+  }
+
+  /* ---------------- P1：轻校正参数（纯函数，只做"不改车况"的曝光/白平衡） ----------------
+   * 只输出保守的 gamma/对比度/灰度世界白平衡参数，由 UI 适配层用 canvas 应用；
+   * 不扶正(无可靠角度，歪斜引导重拍)、不锐化、不重画、不改形状与颜色事实。
+   */
+  function gentleParams(it) {
+    const q = (it && it.qc) || {}, iss = (it && it.issues) || [];
+    let gamma = 1, contrast = 1;
+    if (iss.indexOf('over_expose') >= 0) { gamma = 1.22; contrast = 1.04; }
+    else if (iss.indexOf('under_expose') >= 0 || iss.indexOf('backlight') >= 0) { gamma = 0.72; contrast = 1.05; }
+    else if (q.exp === 'bad') { gamma = 0.74; }
+    else if (q.exp === 'warn') { gamma = 0.86; }
+    return { gamma: gamma, contrast: contrast, wb: true, wbStrength: 0.5 };
+  }
+  function needsGentle(it) {
+    const p = gentleParams(it);
+    return p.gamma !== 1 || p.contrast !== 1;
+  }
+
   global.HogeeShotList = {
     SHOT_LIST: SHOT_LIST,
     ISSUE_LABEL: ISSUE_LABEL,
@@ -186,5 +223,8 @@
     normalizeIssues: normalizeIssues,
     isWeakItem: isWeakItem,
     computeCoverage: computeCoverage,
+    organizeItems: organizeItems,
+    gentleParams: gentleParams,
+    needsGentle: needsGentle,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -2504,6 +2504,130 @@ async function classifyShots(indices){
  renderShotList();
  refreshShots();
 }
+function orgSrc(im){
+ if(im._showPrivate&&im.privateUrl)return im.privateUrl;
+ if(im._showCorrected&&im.corrected)return im.corrected;
+ return im.dataUrl;
+}
+function applyPrivacy(dataUrl,regions){
+ return loadImage(dataUrl).then(function(img){
+  var w=img.width,h=img.height,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  x.drawImage(img,0,0,w,h);
+  regions.forEach(function(r){
+   var bx1=Math.max(0,Math.round(r.x1)),by1=Math.max(0,Math.round(r.y1));
+   var bx2=Math.min(w,Math.round(r.x2)),by2=Math.min(h,Math.round(r.y2));
+   var ex=Math.round((bx2-bx1)*.10),ey=Math.round((by2-by1)*.10);
+   bx1=Math.max(0,bx1-ex);by1=Math.max(0,by1-ey);bx2=Math.min(w,bx2+ex);by2=Math.min(h,by2+ey);
+   var bw=bx2-bx1,bh=by2-by1;if(bw<=3||bh<=3)return;
+   var step=Math.max(10,Math.round(Math.min(bw,bh)/7));
+   var sd=x.getImageData(bx1,by1,bw,bh).data;
+   for(var yy=by1;yy<by2;yy+=step){for(var xx=bx1;xx<bx2;xx+=step){
+    var cw=Math.min(step,bx2-xx),ch=Math.min(step,by2-yy);
+    var fx=Math.min(Math.round(xx-bx1+step/2),bw-1),fy=Math.min(Math.round(yy-by1+step/2),bh-1);
+    var fi=(fy*bw+fx)*4;
+    x.fillStyle='rgb('+sd[fi]+','+sd[fi+1]+','+sd[fi+2]+')';x.fillRect(xx,yy,cw,ch);
+   }}
+  });
+  return c.toDataURL('image/jpeg',.9);
+ });
+}
+function detectPrivacy(idx){
+ var im=state.images[idx];
+ return authPost('/privacy-detect',{image:im.dataUrl},45000).then(function(r){
+  if(!r.ok||!r.data)return;
+  var regions=(r.data.faces||[]).concat(r.data.plates||[]);
+  if(!regions.length)return;
+  return applyPrivacy(im.dataUrl,regions).then(function(d){
+   im.privateUrl=d;im._showPrivate=true;
+   var cell=document.querySelector('.org-img[data-i="'+idx+'"]');
+   if(cell){cell.querySelector('img').src=orgSrc(im);
+    var wrap=cell.parentNode;
+    if(!wrap.querySelector('.priv-toggle')){
+     var b=document.createElement('button');b.type='button';b.className='org-toggle priv-toggle';
+     b.setAttribute('data-act','privToggle');b.setAttribute('data-i',idx);b.textContent='看原图';
+     wrap.appendChild(b);}
+   }
+  });
+ }).catch(function(){});
+}
+function privToggle(idx,btn){
+ var im=state.images[idx],img=btn.parentNode.querySelector('.org-img img');
+ if(im._showPrivate){im._showPrivate=false;img.src=orgSrc(im);btn.textContent='脱敏';}
+ else {im._showPrivate=true;img.src=orgSrc(im);btn.textContent='看原图';}
+}
+var _privQ=[];
+function pumpPrivacy(){var idx=_privQ.shift();if(idx===undefined)return;
+ detectPrivacy(idx).then(function(){setTimeout(pumpPrivacy,150);},function(){setTimeout(pumpPrivacy,150);});}
+function schedulePrivacy(){
+ _privQ.length=0;
+ state.images.forEach(function(im,idx){if(!im.privacyChecked){im.privacyChecked=true;_privQ.push(idx);}});
+ pumpPrivacy();
+}
+function applyGentle(dataUrl,p){
+ return loadImage(dataUrl).then(function(img){
+  var w=img.width,h=img.height,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  x.drawImage(img,0,0,w,h);
+  var d=x.getImageData(0,0,w,h),px=d.data,n=w*h,rF=1,gF=1,bF=1;
+  if(p.wb){var rS=0,gS=0,bS=0,i;
+   for(i=0;i<px.length;i+=4){rS+=px[i];gS+=px[i+1];bS+=px[i+2];}
+   var rM=rS/n,gM=gS/n,bM=bS/n,g0=(rM+gM+bM)/3,stW=p.wbStrength||.5;
+   rF=1+(g0/Math.max(1,rM)-1)*stW;gF=1+(g0/Math.max(1,gM)-1)*stW;bF=1+(g0/Math.max(1,bM)-1)*stW;
+  }
+  var gg=p.gamma||1,cf=p.contrast||1,LUT=[];
+  for(var v=0;v<256;v++){var t=(v/255-.5)*cf+.5;t=Math.pow(Math.max(0,Math.min(1,t)),gg);LUT[v]=Math.round(t*255);}
+  for(var i2=0;i2<px.length;i2+=4){
+   px[i2]=LUT[Math.max(0,Math.min(255,Math.round(px[i2]*rF)))];
+   px[i2+1]=LUT[Math.max(0,Math.min(255,Math.round(px[i2+1]*gF)))];
+   px[i2+2]=LUT[Math.max(0,Math.min(255,Math.round(px[i2+2]*bF)))];
+  }
+  x.putImageData(d,0,0);
+  return c.toDataURL('image/jpeg',.92);
+ });
+}
+function orgToggle(idx,btn){
+ var im=state.images[idx],img=btn.parentNode.querySelector('.org-img img');
+ if(im._showCorrected){im._showCorrected=false;img.src=orgSrc(im);btn.textContent='轻校正';return;}
+ btn.disabled=true;btn.textContent='处理中';
+ var p=HogeeShotList.gentleParams(im);
+ var job=im.corrected?Promise.resolve(im.corrected):applyGentle(im.dataUrl,p).then(function(d){im.corrected=d;return d;});
+ job.then(function(d){im._showCorrected=true;img.src=orgSrc(im);btn.textContent='看原图';btn.disabled=false;})
+    .catch(function(){btn.textContent='轻校正';btn.disabled=false;});
+}
+function renderOrganized(){
+ var box=$('#organizedView');if(!box||!window.HogeeShotList)return;
+ var scene=shotScene();
+ if(!scene){box.classList.remove('show');box.innerHTML='';return;}
+ var org=HogeeShotList.organizeItems(scene,state.images),H='';
+ org.groups.forEach(function(g){
+  var slots=g.slots.filter(function(s){return s.indices.length;});
+  if(!slots.length)return;
+  H+='<div class="org-group"><div class="org-gname">'+g.name+'</div><div class="org-cells">';
+  slots.forEach(function(s){
+   s.indices.forEach(function(idx){
+    var im=state.images[idx];
+    var iss=(im.issues||[]).map(function(k){return '<span class="org-iss">'+HogeeShotList.ISSUE_LABEL[k]+'</span>';}).join('');
+    var can=HogeeShotList.needsGentle(im);
+    H+='<div class="org-cell"><button class="org-img" data-act="orgZoom" data-i="'+idx+'" type="button"><img src="'+orgSrc(im)+'"></button>'
+     +'<div class="org-shot">'+s.name+'</div>'
+     +(iss?('<div class="org-issrow">'+iss+'</div>'):'')
+     +(can?('<button class="org-toggle" data-act="orgToggle" data-i="'+idx+'" type="button">'+(im._showCorrected?'看原图':'轻校正')+'</button>'):'')
+     +(im.privateUrl?('<button class="org-toggle priv-toggle" data-act="privToggle" data-i="'+idx+'" type="button">'+(im._showPrivate?'看原图':'脱敏')+'</button>'):'')
+     +'</div>';
+   });
+  });
+  H+='</div></div>';
+ });
+ if(org.others.length){
+  H+='<div class="org-group"><div class="org-gname">其他</div><div class="org-cells">';
+  org.others.forEach(function(idx){var im=state.images[idx];
+   H+='<div class="org-cell"><button class="org-img" data-act="orgZoom" data-i="'+idx+'" type="button"><img src="'+orgSrc(im)+'"></button><div class="org-shot">待归类</div>'
+    +(im.privateUrl?('<button class="org-toggle priv-toggle" data-act="privToggle" data-i="'+idx+'" type="button">'+(im._showPrivate?'看原图':'脱敏')+'</button>'):'')
+    +'</div>';});
+  H+='</div></div>';
+ }
+ box.innerHTML=H;box.classList.add('show');
+ schedulePrivacy();
+}
 function bindShotList(){
  var panel=$('#shotListPanel'); if(!panel||panel._bound)return; panel._bound=true;
  panel.addEventListener('click',function(e){
@@ -2571,6 +2695,7 @@ function renderShotList(){
  +".sl-extra{margin-top:10px;font-size:12px;color:var(--tx3);}";
  var st=document.createElement('style');st.id='slCss';st.textContent=css;document.head.appendChild(st);
 })();
+(function(){if(document.getElementById('orgCss'))return;var o=document.createElement('style');o.id='orgCss';o.textContent='.organized-view{margin-top:14px;display:none;}.organized-view.show{display:block;}.org-group{margin-bottom:16px;}.org-gname{font-size:12px;color:var(--tx3);letter-spacing:.5px;margin-bottom:9px;}.org-cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;}.org-cell{border:1px solid var(--line2);border-radius:12px;padding:8px;background:rgba(255,255,255,.02);min-width:0;}.org-img{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;border-radius:8px;overflow:hidden;}.org-img img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:8px;}.org-shot{font-size:12.5px;color:var(--tx);font-weight:600;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.org-issrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}.org-iss{font-size:10.5px;color:var(--warn);background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.28);border-radius:6px;padding:1px 6px;}.org-toggle{margin-top:7px;font-size:11px;color:var(--orange);background:rgba(251,122,34,.10);border:1px solid rgba(251,122,34,.32);border-radius:7px;padding:3px 9px;cursor:pointer;}.org-toggle:disabled{opacity:.6;cursor:default;}';document.head.appendChild(o);})();
 
 /* ================= API ================= */
 function authHeaders(){return (window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};}
@@ -4401,6 +4526,7 @@ function renderUploadCard(){
   +'<div class="drop" id="drop" data-act="chooseFile"><div class="drop-ico">'+IC.image+'</div><h4>点击或拖拽图片到这里</h4><p>支持 JPG / PNG / WebP，可一次选多张</p></div>'
   +'<div class="shot-grid" id="shotGrid"></div>'
  +'<div id="shotListPanel" class="shot-list-panel"></div>'
+ +'<div id="organizedView" class="organized-view"></div>'
   +'<div class="tip-line" id="uploadTip" style="display:none">'+IC.check+'<span id="uploadTipTxt"></span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="toConfirm" id="toConfirmBtn" disabled>传好了，认认货</button>'
   +'<button class="btn btn-ghost" data-act="chooseFile">继续加图</button></div></div>','atu');
@@ -4419,6 +4545,7 @@ function refreshShots(){
  if(tip){if(state.images.length){tip.style.display='flex';tt.textContent='共收到 '+state.images.length+' 张。'+(badN?('有 '+badN+' 张偏糊或曝光不理想，建议重拍，不重拍也能继续。'):'质检通过，成色看得清，可以继续。');}else tip.style.display='none';}
  renderCmpAttach();
  if($('#shotListPanel'))renderShotList();
+ if($('#organizedView'))renderOrganized();
 }
 async function handleFiles(fileList){
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
@@ -7124,6 +7251,9 @@ function handleAct(b){
  else if(act==='startGen'){var outs=OUTPUTS[state.identity.type==='usedcar'?'usedcar':'general'],summary=[];state.outputs.forEach(function(kk){var o=outs.filter(function(x){return x.k===kk;})[0];summary.push(o?o.t:kk);});
   scroll.innerHTML='';userSay('开始出图：'+summary.join('、')+'，尺寸 '+Array.from(state.sizes).join('/'));var stt=botTyping('atu');setTimeout(function(){stt();runGenerate();},420);}
  else if(act==='dlvPreview'){openLightbox(state.results[+b.dataset.i].url);}
+ else if(act==='orgZoom'){var imz=state.images[+b.dataset.i];openLightbox(orgSrc(imz));}
+ else if(act==='orgToggle'){orgToggle(+b.dataset.i,b);}
+ else if(act==='privToggle'){privToggle(+b.dataset.i,b);}
  else if(act==='dlvDownload'){downloadOne(+b.dataset.i);}
  else if(act==='dlvRedo'){redoOne(+b.dataset.i);}
  else if(act==='openDeliver'){setDeliverTab('all');openDeliver();}
