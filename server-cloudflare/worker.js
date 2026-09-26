@@ -31,6 +31,7 @@ import { segmentEntities, superResolve, saliencySegment, goodsSegment, carPlateD
 import { mediakitCutout, mediakitFaceDetect } from './mediakit.js';
 import { giteeMatting } from './gitee.js';
 import { autodlCutout, autodlSuperRes } from './autodl.js';
+import { picwishCutout } from './picwish.js';
 
 const ARK_ENDPOINT_DEFAULT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
 // 火山图像接口要求输出像素 ≥ 3,686,400。
@@ -569,6 +570,11 @@ async function handleCutout(req, env, origin) {
     if (!r.ok) return fail(r);
     return json({ ok: true, strategy: 'autodl', image: r.image, white: r.white, mask: r.mask, width: r.width, height: r.height, ms: r.ms }, 200, origin);
   }
+  if (strategy === 'picwish') {
+    const r = await picwishCutout(env, image);
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'picwish', image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+  }
   if (strategy === 'goods') {
     const gr = await goodsSegment(env, image, body.method || 'product');
     if (!gr.ok) return fail(gr);
@@ -760,25 +766,32 @@ async function handlePipeline(req, env, origin) {
   }
   const categoryName = categoryInfo.name || '商品';
 
-  // 2) 抠图：autodl(BiRefNet) 优先，失败降级 gitee(RMBG-2.0)。
+  // 2) 抠图降级链：picwish(商用API) → autodl(BiRefNet) → gitee(RMBG-2.0)。
   //    M2 只返回透明 PNG 给前端合成，不再生成白底图。
   const tC = Date.now();
   let cutout = null;
   let cutoutStrategy = 'none';
   let cutoutPng = null;
   let cutoutMask = null;
-  const ac = await autodlCutout(env, image);
-  if (ac.ok) {
-    cutout = ac; cutoutStrategy = 'autodl';
-    cutoutPng = ac.image; cutoutMask = ac.mask || null;
+  const pw = await picwishCutout(env, image);
+  if (pw.ok) {
+    cutout = pw; cutoutStrategy = 'picwish';
+    cutoutPng = pw.image;
   } else {
-    errors.push({ step: 'cutout.autodl', message: (ac.error && ac.error.code) || 'autodl_failed' });
-    const gm = await giteeMatting(env, image);
-    if (gm.ok) {
-      cutout = gm; cutoutStrategy = 'gitee';
-      cutoutPng = gm.image;
+    errors.push({ step: 'cutout.picwish', message: (pw.error && pw.error.code) || 'picwish_failed' });
+    const ac = await autodlCutout(env, image);
+    if (ac.ok) {
+      cutout = ac; cutoutStrategy = 'autodl';
+      cutoutPng = ac.image; cutoutMask = ac.mask || null;
     } else {
-      errors.push({ step: 'cutout.gitee', message: (gm.error && gm.error.code) || 'gitee_failed' });
+      errors.push({ step: 'cutout.autodl', message: (ac.error && ac.error.code) || 'autodl_failed' });
+      const gm = await giteeMatting(env, image);
+      if (gm.ok) {
+        cutout = gm; cutoutStrategy = 'gitee';
+        cutoutPng = gm.image;
+      } else {
+        errors.push({ step: 'cutout.gitee', message: (gm.error && gm.error.code) || 'gitee_failed' });
+      }
     }
   }
   timing.cutout = Date.now() - tC;
