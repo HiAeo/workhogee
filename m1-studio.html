@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WorkHogee · M1 物料工坊</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23fb7a22'/%3E%3Cpath d='M7 7h2.4v3.4h3.2V7H15v10h-2.4v-4.2H9.4V17H7z' fill='%23fff'/%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --ink:#161b28; --ink2:#4b5468; --ink3:#8a93a6;
+  --line:#e6e9f0; --line2:#eef1f6;
+  --orange:#fb7a22; --orange-d:#f2630d; --orange-soft:rgba(251,122,34,.12);
+  --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+  --shadow:0 6px 24px rgba(20,30,60,.08);
+  --shadow-s:0 2px 8px rgba(20,30,60,.06);
+  --r:14px;
+  --font:-apple-system,"PingFang SC","Microsoft YaHei","Trebuchet MS",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-size:14px}
+img{display:block;max-width:100%}
+a{color:var(--orange);text-decoration:none}
+
+/* layout */
+.wrap{max-width:880px;margin:0 auto;padding:20px 18px 80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .logo{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.brand .bt{font-size:17px;font-weight:800}
+.brand .bt small{display:block;font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.05em}
+.top-right{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2)}
+
+/* steps indicator */
+.steps{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 26px;flex-wrap:wrap}
+.step-pill{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--ink3);font-weight:600;transition:.2s}
+.step-pill .n{width:20px;height:20px;border-radius:50%;background:var(--line2);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.step-pill.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.step-pill.active .n{background:#fff;color:var(--orange)}
+.step-pill.done{background:var(--card);border-color:var(--ok);color:var(--ok)}
+.step-pill.done .n{background:var(--ok);color:#fff}
+.step-line{width:22px;height:2px;background:var(--line)}
+
+/* card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-s);padding:26px;margin-bottom:18px}
+.card h2{font-size:19px;font-weight:800;margin-bottom:6px}
+.card .sub{color:var(--ink3);font-size:13px;margin-bottom:20px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;padding:12px 22px;font-size:14px;font-weight:700;transition:.18s;border:1px solid transparent}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 6px 16px rgba(251,122,34,.28)}
+.btn-primary:hover{background:var(--orange-d);transform:translateY(-1px)}
+.btn-ghost{background:var(--card);border-color:var(--line);color:var(--ink2)}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-row{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+
+/* upload dropzone */
+.dropzone{border:2px dashed #cfd6e4;border-radius:var(--r);padding:46px 20px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfe}
+.dropzone:hover,.dropzone.drag{border-color:var(--orange);background:var(--orange-soft)}
+.dropzone .dz-icon{font-size:42px;margin-bottom:10px}
+.dropzone .dz-t{font-size:16px;font-weight:700;margin-bottom:4px}
+.dropzone .dz-s{font-size:12.5px;color:var(--ink3)}
+.preview-box{margin-top:18px;display:none;text-align:center}
+.preview-box img{max-height:300px;margin:0 auto;border-radius:10px;border:1px solid var(--line)}
+.preview-box .fn{font-size:12px;color:var(--ink3);margin-top:8px}
+
+/* identify result */
+.identify-banner{background:var(--orange-soft);border:1px solid rgba(251,122,34,.3);border-radius:11px;padding:14px 16px;margin-bottom:18px;font-size:14px}
+.identify-banner b{color:var(--orange-d)}
+.identify-banner .conf{color:var(--ink2)}
+
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:7px;letter-spacing:.02em}
+.form-row select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none}
+.form-row select:focus{border-color:var(--orange)}
+
+/* style presets */
+.style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.style-item{border:2px solid var(--line);border-radius:11px;overflow:hidden;cursor:pointer;transition:.15s;background:#fff}
+.style-item:hover{border-color:#cfd6e4}
+.style-item.sel{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.style-item .sw{height:60px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;text-shadow:0 1px 3px rgba(0,0,0,.25)}
+.style-item .sl{padding:8px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink2)}
+
+/* progress */
+.prog-list{display:flex;flex-direction:column;gap:14px;margin:10px 0}
+.prog-item{display:flex;align-items:center;gap:12px;font-size:14px}
+.prog-ic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;background:var(--line2);color:var(--ink3);font-weight:700}
+.prog-item.done .prog-ic{background:var(--ok);color:#fff}
+.prog-item.run .prog-ic{background:var(--orange);color:#fff;animation:pulse 1.2s infinite}
+.prog-item.run{color:var(--orange-d);font-weight:700}
+.prog-item.wait{color:var(--ink3)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(251,122,34,.4)}50%{box-shadow:0 0 0 7px rgba(251,122,34,0)}}
+.eta{text-align:center;color:var(--ink3);font-size:13px;margin-top:18px}
+.bar{height:8px;background:var(--line2);border-radius:9px;overflow:hidden;margin-top:16px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--orange-d));width:0;transition:width .4s}
+
+/* results grid */
+.img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.img-cell{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.img-cell .ph{aspect-ratio:1;overflow:hidden;cursor:zoom-in;position:relative}
+.img-cell .ph img{width:100%;height:100%;object-fit:cover}
+.img-cell .tag{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 7px;border-radius:6px}
+.img-cell .body{padding:9px}
+.img-cell .ttl{font-size:12px;font-weight:700;margin-bottom:7px}
+.spec-row{display:flex;gap:6px;flex-wrap:wrap}
+.spec-row button{font-size:10.5px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:#fafbfe;color:var(--ink2);font-weight:600}
+.spec-row button:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+
+/* copy block */
+.copy-box{background:#fafbfe;border:1px solid var(--line);border-radius:11px;padding:18px;margin-top:18px}
+.copy-box h3{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.copy-box .selling{margin:8px 0;padding-left:18px}
+.copy-box .selling li{margin-bottom:5px;font-size:13.5px;color:var(--ink2)}
+.copy-box .desc{font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.7}
+.copy-btn{font-size:12px;padding:5px 12px;border-radius:7px;background:var(--orange-soft);color:var(--orange-d);font-weight:700}
+.copy-btn:hover{background:var(--orange);color:#fff}
+
+/* lightbox */
+.lb{position:fixed;inset:0;background:rgba(10,14,25,.88);display:none;align-items:center;justify-content:center;z-index:100;padding:30px;cursor:zoom-out}
+.lb.on{display:flex}
+.lb img{max-width:92%;max-height:90%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+
+/* login */
+.login-mask{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.login-mask.on{display:flex}
+.login-card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:34px;width:100%;max-width:360px}
+.login-card h2{font-size:20px;margin-bottom:4px}
+.login-card p{font-size:13px;color:var(--ink3);margin-bottom:22px}
+.login-card input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;outline:none}
+.login-card input:focus{border-color:var(--orange)}
+.login-err{color:var(--bad);font-size:12.5px;min-height:18px;margin-bottom:6px}
+
+.hide{display:none!important}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#161b28;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:300;opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1}
+
+@media(max-width:640px){
+  .img-grid{grid-template-columns:repeat(2,1fr)}
+  .card{padding:18px}
+  .step-pill{padding:6px 10px;font-size:12px}
+  .step-line{width:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div class="bt">WorkHogee<small>M1 · 电商物料工坊</small></div>
+    </div>
+    <div class="top-right">
+      <span id="userTag"></span>
+      <button class="btn btn-ghost" style="padding:7px 14px;font-size:12.5px" onclick="logout()">退出登录</button>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-pill active" id="pill1"><span class="n">1</span>上传产品图</div>
+    <div class="step-line"></div>
+    <div class="step-pill" id="pill2"><span class="n">2</span>识别确认</div>
+    <div class="step-line"></div>
+    <div class="step-pill" id="pill3"><span class="n">3</span>生成物料</div>
+    <div class="step-line"></div>
+    <div class="step-pill" id="pill4"><span class="n">4</span>查看下载</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card" id="step1">
+    <h2>上传你的产品图</h2>
+    <p class="sub">支持 JPG / PNG / WebP，单张清晰主图效果最佳。</p>
+    <div class="dropzone" id="dropzone">
+      <div class="dz-icon">📦</div>
+      <div class="dz-t">点击或拖拽产品图到此处</div>
+      <div class="dz-s">建议背景干净、产品居中，≤ 10MB</div>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" hidden>
+    </div>
+    <div class="preview-box" id="previewBox">
+      <img id="previewImg" alt="预览">
+      <div class="fn" id="fileName"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnIdentify" disabled onclick="startIdentify()">开始识别 →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card hide" id="step2">
+    <h2>确认品类与风格</h2>
+    <p class="sub">AI 已自动识别品类，可在此修改后再开始生成。</p>
+    <div class="identify-banner" id="idBanner">AI 识别为【--】，置信度 --</div>
+
+    <div class="form-row">
+      <label>所属行业大类</label>
+      <select id="catMain" onchange="renderSubcats()"></select>
+    </div>
+    <div class="form-row">
+      <label>产品子类</label>
+      <select id="catSub"></select>
+    </div>
+
+    <div class="form-row">
+      <label>画面风格预设</label>
+      <div class="style-grid" id="styleGrid"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 重新上传</button>
+      <button class="btn btn-primary" onclick="startPipeline()">确认并开始生成 →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card hide" id="step3">
+    <h2>正在生成物料包</h2>
+    <p class="sub">请保持本页打开，预计耗时 2–5 分钟，完成后自动进入下一步。</p>
+    <div class="prog-list" id="progList">
+      <div class="prog-item done" data-k="id"><div class="prog-ic">✓</div>品类识别</div>
+      <div class="prog-item done" data-k="cut"><div class="prog-ic">✓</div>智能抠图</div>
+      <div class="prog-item run" data-k="scene"><div class="prog-ic">3/8</div>场景图生成</div>
+      <div class="prog-item wait" data-k="detail"><div class="prog-ic">4</div>细节特写图</div>
+      <div class="prog-item wait" data-k="mkt"><div class="prog-ic">5</div>营销海报图</div>
+      <div class="prog-item wait" data-k="copy"><div class="prog-ic">6</div>文案撰写</div>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="eta" id="etaText">已用时 0 秒 · 预计还需 2–5 分钟</div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="card hide" id="step4">
+    <h2>你的电商物料包已就绪</h2>
+    <p class="sub">共 8 张图 + 1 组文案。点击图片放大，选择规格导出。</p>
+    <div class="img-grid" id="imgGrid"></div>
+
+    <div class="copy-box">
+      <h3>商品文案 <button class="copy-btn" onclick="copyCopy()">复制全部</button></h3>
+      <div id="copyTitle" style="font-size:17px;font-weight:800"></div>
+      <ul class="selling" id="copyPoints"></ul>
+      <div class="desc" id="copyDesc"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnZip" onclick="downloadZip()">⬇ 全部下载 (ZIP)</button>
+      <button class="btn btn-ghost" onclick="resetAll()">↺ 重新生成</button>
+    </div>
+  </div>
+</div>
+
+<div class="lb" id="lightbox" onclick="this.classList.remove('on')"><img id="lbImg"></div>
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div class="login-mask" id="loginMask">
+  <div class="login-card">
+    <h2>登录 WorkHogee</h2>
+    <p>使用会员账号登录后开始生成物料</p>
+    <input type="text" id="loginAccount" placeholder="账号" value="workhogee">
+    <input type="password" id="loginPwd" placeholder="密码" value="123456789">
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">登 录</button>
+    <div style="text-align:center;margin-top:14px">
+      <a href="javascript:void(0)" onclick="demoLogin()" style="font-size:12.5px">本地演示模式（跳过登录）→</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 配置 ============ */
+var API_BASE = 'https://api.workhogee.com';
+var LS_TOKEN = 'hogee_mtoken';
+var token = localStorage.getItem(LS_TOKEN) || '';
+
+/* 品类数据 */
+var CATS = {
+  '家居百货': ['香薰蜡烛','收纳盒','陶瓷餐具'],
+  '3C配件': ['手机壳','数据线','蓝牙耳机'],
+  '美妆个护': ['面膜','口红','精华液'],
+  '服饰鞋包': ['纯棉T恤','运动鞋','帆布包'],
+  '食品饮料': ['每日坚果','冷萃咖啡','水果茶']
+};
+/* 风格预设：色块示意 */
+var STYLES = [
+  {id:'white',   name:'简约白底',  bg:'linear-gradient(135deg,#ffffff,#eef1f6)', ink:'#8a93a6'},
+  {id:'nordic',  name:'北欧生活',  bg:'linear-gradient(135deg,#e8dcc8,#c9b896)', ink:'#5a4a32'},
+  {id:'ins',     name:'ins风氛围', bg:'linear-gradient(135deg,#f6c9a4,#e89b6a)', ink:'#7a3e1d'},
+  {id:'festival',name:'节日促销',  bg:'linear-gradient(135deg,#e63946,#ffb703)', ink:'#fff'},
+  {id:'warehouse',name:'真实仓库', bg:'linear-gradient(135deg,#6b7280,#374151)', ink:'#fff'}
+];
+
+/* 状态 */
+var state = {
+  file:null, fileDataUrl:'', identifyResult:null,
+  category:'家居百货', sub:'香薰蜡烛', style:'white',
+  images:[], copy:null
+};
+
+/* ============ 初始化 ============ */
+function $(id){return document.getElementById(id)}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},2200)}
+
+function init(){
+  // 品类下拉
+  var cm = $('catMain');
+  Object.keys(CATS).forEach(function(k){
+    var o=document.createElement('option');o.value=k;o.textContent=k;cm.appendChild(o);
+  });
+  renderSubcats();
+  // 风格
+  var sg=$('styleGrid');
+  STYLES.forEach(function(s,i){
+    var d=document.createElement('div');
+    d.className='style-item'+(i===0?' sel':'');
+    d.onclick=function(){selectStyle(s.id,d)};
+    d.innerHTML='<div class="sw" style="background:'+s.bg+';color:'+s.ink+'">'+s.name.slice(0,2)+'</div><div class="sl">'+s.name+'</div>';
+    sg.appendChild(d);
+  });
+  state.style='white';
+  // 登录检查
+  if(token){ $('userTag').textContent='已登录'; }
+  else { $('loginMask').classList.add('on'); }
+}
+function selectStyle(id,el){
+  state.style=id;
+  document.querySelectorAll('.style-item').forEach(function(e){e.classList.remove('sel')});
+  el.classList.add('sel');
+}
+function renderSubcats(){
+  var main=$('catMain').value; state.category=main;
+  var cs=$('catSub'); cs.innerHTML='';
+  (CATS[main]||[]).forEach(function(s){
+    var o=document.createElement('option');o.value=s;o.textContent=s;cs.appendChild(o);
+  });
+  state.sub=cs.value;
+}
+
+/* ============ 登录 ============ */
+async function doLogin(){
+  var acc=$('loginAccount').value.trim(), pwd=$('loginPwd').value;
+  $('loginErr').textContent='';
+  try{
+    var r=await fetch(API_BASE+'/api/member/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({account:acc,password:pwd})
+    });
+    var j=await r.json();
+    if(j && j.token){
+      token=j.token; localStorage.setItem(LS_TOKEN,token);
+      $('loginMask').classList.remove('on'); $('userTag').textContent='已登录';
+      toast('登录成功');
+    } else {
+      $('loginErr').textContent=(j&&j.message)||'登录失败，请检查账号密码';
+    }
+  }catch(e){ $('loginErr').textContent='网络错误：'+e.message; }
+}
+function logout(){ localStorage.removeItem(LS_TOKEN); token=''; location.reload(); }
+function demoLogin(){ token='demo-local-token'; localStorage.setItem(LS_TOKEN,token); $('loginMask').classList.remove('on'); $('userTag').textContent='演示模式'; toast('已进入本地演示模式'); }
+function authHeaders(){ return {'Content-Type':'application/json','Authorization':'Bearer '+token}; }
+
+/* ============ Step1 上传 ============ */
+var dz=$('dropzone'), fi=$('fileInput');
+dz.onclick=function(){fi.click()};
+dz.ondragover=function(e){e.preventDefault();dz.classList.add('drag')};
+dz.ondragleave=function(){dz.classList.remove('drag')};
+dz.ondrop=function(e){e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])};
+fi.onchange=function(){if(fi.files[0])handleFile(fi.files[0])};
+
+function handleFile(file){
+  if(!/image\/(jpeg|png|webp)/.test(file.type)){toast('仅支持 JPG / PNG / WebP');return}
+  state.file=file;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    state.fileDataUrl=ev.target.result;
+    $('previewImg').src=ev.target.result;
+    $('fileName').textContent=file.name+' · '+Math.round(file.size/1024)+' KB';
+    $('previewBox').style.display='block';
+    $('btnIdentify').disabled=false;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============ Step2 识别 ============ */
+async function startIdentify(){
+  goStep(2);
+  setPills(2);
+  // 调真实 /identify，失败则用默认演示值
+  var banner=$('idBanner');
+  banner.innerHTML='AI 识别中…';
+  try{
+    var r=await fetch(API_BASE+'/identify',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({image:state.fileDataUrl})});
+    if(r.ok){
+      var j=await r.json();
+      var cat=(j.category||'家居百货'), sub=(j.subcategory||'香薰蜡烛'), conf=Math.round(j.confidence*100)||92;
+      state.identifyResult=j;
+      banner.innerHTML='AI 识别为【'+cat+' / '+sub+'】，置信度 <b>'+conf+'%</b>。可在下方修改。';
+      $('catMain').value=cat; renderSubcats(); $('catSub').value=sub;
+      state.category=cat; state.sub=sub;
+      return;
+    }
+  }catch(e){}
+  // 演示兜底
+  banner.innerHTML='AI 识别为【家居百货 / 香薰蜡烛】，置信度 <b>92%</b>。（后端接口调试中，已用演示结果）';
+}
+
+/* ============ Step3 生成 ============ */
+var timer=null, seconds=0;
+async function startPipeline(){
+  goStep(3); setPills(3);
+  state.category=$('catMain').value; state.sub=$('catSub').value;
+  seconds=0;
+  clearInterval(timer);
+  timer=setInterval(function(){
+    seconds++;
+    $('etaText').textContent='已用时 '+seconds+' 秒 · 预计还需 2–5 分钟';
+  },1000);
+
+  // 先尝试真实 pipeline
+  var realResult=null;
+  try{
+    var r=await fetch(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({image:state.fileDataUrl,category:state.category,subcategory:state.sub,style:state.style})});
+    if(r.ok){ realResult=await r.json(); }
+  }catch(e){}
+
+  // 推进进度动画（无论真实与否都走一遍 UI）
+  await runProgress();
+
+  if(realResult && realResult.images && realResult.images.length){
+    state.images=realResult.images;
+    state.copy=realResult.copy||defaultCopy();
+  } else {
+    // 演示：用画布生成 8 张占位图
+    state.images=makeDemoImages();
+    state.copy=defaultCopy();
+  }
+  clearInterval(timer);
+  showResults();
+}
+
+function runProgress(){
+  return new Promise(function(resolve){
+    var steps=[
+      {k:'scene', n:'3/8'}, {k:'detail',n:'4'}, {k:'mkt',n:'5'}, {k:'copy',n:'6'}
+    ];
+    var i=0;
+    (function next(){
+      if(i>0){
+        var prev=document.querySelector('.prog-item[data-k="'+steps[i-1].k+'"]');
+        prev.classList.remove('run'); prev.classList.add('done');
+        prev.querySelector('.prog-ic').textContent='✓';
+      }
+      if(i>=steps.length){ resolve(); return; }
+      var cur=document.querySelector('.prog-item[data-k="'+steps[i].k+'"]');
+      cur.classList.remove('wait'); cur.classList.add('run');
+      cur.querySelector('.prog-ic').textContent=steps[i].n;
+      var pct=Math.round(((i+1)/steps.length)*100);
+      $('barFill').style.width=pct+'%';
+      i++;
+      setTimeout(next, 900);
+    })();
+  });
+}
+
+/* 演示用：基于上传图生成 8 张占位物料图 */
+function makeDemoImages(){
+  var labels=[
+    {t:'白底主图 1', g:'white'}, {t:'白底主图 2', g:'white'},
+    {t:'场景图 1', g:'scene'}, {t:'场景图 2', g:'scene'}, {t:'场景图 3', g:'scene'},
+    {t:'细节图 1', g:'detail'}, {t:'细节图 2', g:'detail'},
+    {t:'营销海报', g:'mkt'}
+  ];
+  return labels.map(function(l){ return demoCanvasUrl(l); });
+}
+function demoCanvasUrl(label){
+  var c=document.createElement('canvas'); c.width=1024; c.height=1024;
+  var x=c.getContext('2d');
+  var palettes={white:['#ffffff','#eef1f6'],scene:['#f6c9a4','#c9b896'],detail:['#e8dcc8','#d4c4a8'],mkt:['#e63946','#ffb703']};
+  var p=palettes[label.g]||palettes.white;
+  var grd=x.createLinearGradient(0,0,1024,1024); grd.addColorStop(0,p[0]); grd.addColorStop(1,p[1]);
+  x.fillStyle=grd; x.fillRect(0,0,1024,1024);
+  x.fillStyle='rgba(0,0,0,.45)';
+  x.font='bold 52px sans-serif'; x.textAlign='center';
+  x.fillText(label.t, 512, 500);
+  x.font='28px sans-serif'; x.fillStyle='rgba(0,0,0,.35)';
+  x.fillText('WorkHogee M1 演示物料', 512, 560);
+  return c.toDataURL('image/png');
+}
+function defaultCopy(){
+  return {
+    title: state.sub+' · 提升生活质感之选',
+    points: [
+      '精选优质材质，工艺细致，经久耐用',
+      '简约百搭设计，轻松融入各种家居场景',
+      '安全环保无异味，家人使用更安心',
+      '高性价比好物，复购率超 60%',
+      '48 小时极速发货，退换无忧'
+    ],
+    desc: state.sub+'采用高品质原料与匠心工艺打造，外观简约大方，实用性与颜值兼具。无论是自用还是送礼都是理想之选，现在下单享限时优惠。'
+  };
+}
+
+/* ============ Step4 展示 ============ */
+function showResults(){
+  goStep(4); setPills(4);
+  var grid=$('imgGrid'); grid.innerHTML='';
+  var tags=['白底','白底','场景','场景','场景','细节','细节','营销'];
+  state.images.forEach(function(src,i){
+    var cell=document.createElement('div'); cell.className='img-cell';
+    cell.innerHTML='<div class="ph" onclick="zoom('+i+')"><img src="'+src+'" alt="物料图 '+(i+1)+'"><span class="tag">'+tags[i]+'</span></div>'+
+      '<div class="body"><div class="ttl">物料 '+(i+1)+' · '+tags[i]+'图</div>'+
+      '<div class="spec-row">'+
+      '<button onclick="exportImage('+i+',\'taobao\')">淘宝800</button>'+
+      '<button onclick="exportImage('+i+',\'xhs\')">小红书3:4</button>'+
+      '<button onclick="exportImage('+i+',\'amazon\')">Amazon2000</button>'+
+      '</div></div>';
+    grid.appendChild(cell);
+  });
+  // 文案
+  $('copyTitle').textContent=state.copy.title;
+  var ul=$('copyPoints'); ul.innerHTML='';
+  state.copy.points.forEach(function(p){var li=document.createElement('li');li.textContent=p;ul.appendChild(li)});
+  $('copyDesc').textContent=state.copy.desc;
+}
+function zoom(i){ $('lbImg').src=state.images[i]; $('lightbox').classList.add('on'); }
+function copyCopy(){
+  var t=state.copy.title+'\n\n';
+  state.copy.points.forEach(function(p,i){t+=(i+1)+'. '+p+'\n'});
+  t+='\n'+state.copy.desc;
+  navigator.clipboard.writeText(t).then(function(){toast('文案已复制')});
+}
+
+/* ============ Canvas 多规格导出 ============ */
+function loadImg(src){return new Promise(function(res,rej){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i)};i.onerror=rej;i.src=src})}
+
+/* 淘宝800×800：等比缩放进 800 白底画布（contain） */
+function resizeTaobao(img){
+  var S=800,c=document.createElement('canvas');c.width=S;c.height=S;var x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,S,S);
+  var r=Math.min(S/img.width,S/img.height);
+  var w=img.width*r,h=img.height*r;
+  x.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+  return c;
+}
+/* Amazon 2000×2000 白底：等比缩放进 2000 画布（contain，白底） */
+function resizeAmazon(img){
+  var S=2000,c=document.createElement('canvas');c.width=S;c.height=S;var x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,S,S);
+  var r=Math.min(S/img.width,S/img.height);
+  var w=img.width*r,h=img.height*r;
+  x.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+  return c;
+}
+/* 小红书 3:4（1536×2048）：短边铺满后居中裁剪（cover） */
+function resizeXhs(img){
+  var W=1536,H=2048,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  // cover：缩放使图覆盖整个画布
+  var r=Math.max(W/img.width,H/img.height);
+  var w=img.width*r,h=img.height*r;
+  x.drawImage(img,(W-w)/2,(H-h)/2,w,h);
+  return c;
+}
+
+async function exportImage(idx,spec){
+  try{
+    var src=state.images[idx];
+    var img=await loadImg(src);
+    var c;
+    if(spec==='taobao') c=resizeTaobao(img);
+    else if(spec==='amazon') c=resizeAmazon(img);
+    else c=resizeXhs(img);
+    var name='物料'+(idx+1)+'_'+spec+'.png';
+    c.toBlob(function(blob){
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=name;a.click();
+      setTimeout(function(){URL.revokeObjectURL(url)},2000);
+      toast('已导出 '+name);
+    },'image/png');
+  }catch(e){ toast('导出失败：'+e.message); }
+}
+
+/* 全部下载 ZIP（每张默认导出淘宝800规格打包） */
+async function downloadZip(){
+  if(typeof JSZip==='undefined'){ toast('ZIP 组件未加载，请逐张点击下载'); return; }
+  toast('正在打包…');
+  var zip=new JSZip();
+  for(var i=0;i<state.images.length;i++){
+    try{
+      var img=await loadImg(state.images[i]);
+      var c=resizeTaobao(img);
+      var blob=await new Promise(function(res){c.toBlob(res,'image/png')});
+      zip.file('物料'+(i+1)+'_淘宝800.png',blob);
+    }catch(e){}
+  }
+  zip.file('商品文案.txt', state.copy.title+'\n\n'+state.copy.points.map(function(p,j){return (j+1)+'. '+p}).join('\n')+'\n\n'+state.copy.desc);
+  var content=await zip.generateAsync({type:'blob'});
+  var url=URL.createObjectURL(content);
+  var a=document.createElement('a');a.href=url;a.download='WorkHogee物料包.zip';a.click();
+  setTimeout(function(){URL.revokeObjectURL(url)},3000);
+  toast('ZIP 已下载');
+}
+
+/* ============ 步骤切换 ============ */
+function goStep(n){
+  for(var i=1;i<=4;i++) $('step'+i).classList.toggle('hide', i!==n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setPills(active){
+  for(var i=1;i<=4;i++){
+    var p=$('pill'+i); p.classList.remove('active','done');
+    if(i<active) p.classList.add('done');
+    else if(i===active) p.classList.add('active');
+  }
+}
+function resetAll(){
+  state.file=null;state.fileDataUrl='';state.images=[];state.copy=null;state.identifyResult=null;
+  $('previewBox').style.display='none';$('btnIdentify').disabled=true;$('fileInput').value='';
+  $('barFill').style.width='0';seconds=0;clearInterval(timer);
+  goStep(1);setPills(1);
+}
+
+init();
+</script>
+</body>
+</html>
