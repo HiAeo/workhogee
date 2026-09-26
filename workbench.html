@@ -1972,6 +1972,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
 <script src="/fidelity-pipeline.js?v=20260925j"></script>
+<script src="/shotlist.js?v=20260926a"></script>
 <script>
 (function(){
 'use strict';
@@ -2447,17 +2448,9 @@ function analyzeImage(dataUrl){
   var sharp=va<55?'bad':(va<150?'warn':'ok');
   var exp=bright<48?'bad':(bright>212?'bad':(bright<72||bright>192?'warn':'ok'));
   var base={sharp:sharp,exp:exp};
-  // 异步调后端 vision 细判（遮挡/完整度/构图），失败不影响主流程
-  return callQcVision(dataUrl).then(function(v){
-   if(v&&v.available){
-    base.occlusion=v.checks.occlusion;
-    base.completeness=v.checks.completeness;
-    base.framing=v.checks.framing;
-    base.level=v.level;
-    base.tip=v.tip;
-   }
-   return base;
-  }).catch(function(){return base;});
+  // 遮挡/切边/构图等细判统一由 classifyShots 拼图识别（issues）一次返回，
+  // 不再逐张调慢的 /qc，避免上传即并发 N 个慢 vision 请求导致限流/挂起、把视角识别推迟数分钟。
+  return Promise.resolve(base);
  });
 }
 function callQcVision(dataUrl){
@@ -2465,6 +2458,119 @@ function callQcVision(dataUrl){
   .then(function(r){return r.json();})
   .then(function(j){return (j&&j.ok&&j.qc)?j.qc:null;});
 }
+/* ================= P0 收车拍摄清单（细分视角识别 + 覆盖度引导） ================= */
+function shotScene(){
+ try{return factsKind()==='usedcar'?'usedcar':null;}
+ catch(e){return (state.identity&&state.identity.type==='usedcar')?'usedcar':null;}
+}
+function _slEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+var _SL_WARN='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+var _SL_ADD='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+async function classifyShots(indices){
+ var scene=shotScene(); if(!scene||!window.HogeeShotList)return;
+ var all=state.images.map(function(_,i){return i;});
+ var todo=(indices||all).filter(function(i){var im=state.images[i];return im&&!im.shot;});
+ if(!todo.length)return;
+ // 拼图批量识别：待识别图缩成带编号网格，一次请求返回全部视角（稳定、快，避免并发限流/挂起）
+ var cols=Math.min(5,todo.length),cell=560,rows=Math.ceil(todo.length/cols);
+ var sheetCv=document.createElement('canvas');sheetCv.width=cols*cell;sheetCv.height=rows*cell;
+ var scx=sheetCv.getContext('2d');scx.fillStyle='#0d1119';scx.fillRect(0,0,sheetCv.width,sheetCv.height);
+ for(var k=0;k<todo.length;k++){
+  var lim=await loadImage(state.images[todo[k]].dataUrl);
+  var gr=Math.floor(k/cols),gc=k%cols,gx=gc*cell,gy=gr*cell;
+  var sc0=Math.max(cell/lim.width,cell/lim.height),dw=lim.width*sc0,dh=lim.height*sc0;
+  scx.save();scx.beginPath();scx.rect(gx,gy,cell,cell);scx.clip();
+  scx.drawImage(lim,gx+(cell-dw)/2,gy+(cell-dh)/2,dw,dh);scx.restore();
+  scx.fillStyle='rgba(0,0,0,.7)';scx.fillRect(gx+8,gy+8,52,52);
+  scx.fillStyle='#ffd23c';scx.font='bold 34px Arial';scx.textAlign='center';scx.textBaseline='middle';
+  scx.fillText(String(k),gx+34,gy+35);
+ }
+ var sheet=sheetCv.toDataURL('image/jpeg',.92);
+ var ask=HogeeShotList.contactAsk(scene,todo.length);
+ var r=await authPost('/vision-json',{image:sheet,ask:ask,maxTokens:1800},90000);
+ if(r&&r.ok&&r.data&&Array.isArray(r.data.items)){
+  var byIdx={};
+  r.data.items.forEach(function(it){byIdx[it.index]=it;});
+  for(var k2=0;k2<todo.length;k2++){
+   var it2=byIdx[k2],img2=state.images[todo[k2]];
+   if(it2){
+    img2.shot=HogeeShotList.normalizeShot(scene,it2.shot);
+    img2.issues=HogeeShotList.normalizeIssues(it2.issues);
+   } else {img2.shot='other';img2.issues=img2.issues||[];}
+  }
+ } else {
+  for(var k3=0;k3<todo.length;k3++){var img3=state.images[todo[k3]];img3.shot='other';img3.issues=img3.issues||[];}
+ }
+ renderShotList();
+ refreshShots();
+}
+function bindShotList(){
+ var panel=$('#shotListPanel'); if(!panel||panel._bound)return; panel._bound=true;
+ panel.addEventListener('click',function(e){
+  var b=e.target.closest('[data-shot]'); if(!b)return;
+  var id=b.getAttribute('data-shot'),holder=b.parentNode;
+  var ex=holder.querySelector('.sl-guide-row[data-for="'+id+'"]');
+  if(ex){ex.remove();return;}
+  var scene=shotScene(); if(!scene)return;
+  var shot=HogeeShotList.SHOT_LIST[scene].shots.filter(function(s){return s.id===id;})[0];
+  if(!shot)return;
+  var row=document.createElement('div');row.className='sl-guide-row';row.setAttribute('data-for',id);
+  row.innerHTML='<p>'+_slEsc(shot.guide)+'</p><button type="button" class="btn btn-primary btn-sm sl-go">我去拍这张</button>';
+  holder.insertBefore(row,b.nextSibling);
+  row.querySelector('.sl-go').addEventListener('click',function(){var fi=$('#fileInput');if(fi)fi.click();});
+ });
+}
+function renderShotList(){
+ var panel=$('#shotListPanel'); if(!panel)return;
+ bindShotList();
+ var scene=shotScene();
+ if(!scene){panel.style.display='none';panel.innerHTML='';return;}
+ var items=state.images.map(function(im){return {shot:im.shot,qc:im.qc,issues:im.issues};});
+ var cov=HogeeShotList.computeCoverage(scene,items);
+ var pct=Math.round(cov.coverage*100);
+ var H='<div class="sl-head"><div class="sl-cap">收车拍摄清单<span>必拍视角拍全，买家才敢下单</span></div>'
+  +'<div class="sl-meta">'+cov.requiredDone+'/'+cov.requiredTotal+'</div></div>'
+  +'<div class="sl-prog"><div class="sl-bar" style="width:'+pct+'%"></div></div>';
+ cov.groups.forEach(function(g){
+  H+='<div class="sl-group"><div class="sl-gname">'+g.name+'</div><div class="sl-items">';
+  g.shots.forEach(function(z){
+   var ic=z.state==='done'?IC.check:(z.state==='weak'?_SL_WARN:_SL_ADD);
+   H+='<div class="sl-item '+z.state+'" data-shot="'+z.id+'"><span class="sl-ic">'+ic+'</span>'
+    +'<span class="sl-name">'+_slEsc(z.name)+(z.required?'':'<em class="sl-rec">建议</em>')+'</span>'
+    +(z.state==='done'?'<span class="sl-done">已拍'+(z.count>1?' ×'+z.count:'')+'</span>':'<span class="sl-guide-btn">怎么拍</span>')
+    +'</div>';
+  });
+  H+='</div></div>';
+ });
+ if(cov.extraCount)H+='<div class="sl-extra">另有 '+cov.extraCount+' 张未归入标准视角，认货时可确认。</div>';
+ panel.innerHTML=H;panel.style.display='block';
+}
+(function(){
+ if(document.getElementById('slCss'))return;
+ var css=".shot-list-panel{margin-top:14px;border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px;background:rgba(255,255,255,.03);display:none;}"
+ +".sl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}"
+ +".sl-cap{font-size:14px;font-weight:600;color:var(--tx);}"
+ +".sl-cap span{font-weight:400;font-size:12px;color:var(--tx3);margin-left:7px;}"
+ +".sl-meta{font-size:13px;color:var(--orange);font-weight:600;white-space:nowrap;}"
+ +".sl-prog{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin:10px 0 4px;}"
+ +".sl-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#f59e0b,#fb7a22);transition:width .4s ease;}"
+ +".sl-group{margin-top:12px;}"
+ +".sl-gname{font-size:12px;color:var(--tx3);margin-bottom:7px;letter-spacing:.5px;}"
+ +".sl-items{display:flex;flex-wrap:wrap;gap:7px;}"
+ +".sl-item{flex:1 1 150px;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.02);cursor:pointer;min-width:0;}"
+ +".sl-item.done{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.08);}"
+ +".sl-item.weak{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08);}"
+ +".sl-ic{flex:0 0 18px;display:flex;align-items:center;justify-content:center;color:var(--tx3);}"
+ +".sl-item.done .sl-ic{color:var(--ok);}.sl-item.weak .sl-ic{color:var(--warn);}"
+ +".sl-name{font-size:12.5px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}"
+ +".sl-rec{font-style:normal;color:var(--tx3);font-size:11px;margin-left:5px;}"
+ +".sl-done{margin-left:auto;font-size:11px;color:var(--ok);white-space:nowrap;}"
+ +".sl-guide-btn{margin-left:auto;font-size:11px;color:var(--orange);white-space:nowrap;}"
+ +".sl-guide-row{flex:1 1 100%;border:1px solid rgba(251,122,34,.3);border-radius:10px;padding:10px 11px;background:rgba(251,122,34,.07);}"
+ +".sl-guide-row p{margin:0 0 9px;font-size:12.5px;line-height:1.6;color:var(--tx2);}"
+ +".sl-extra{margin-top:10px;font-size:12px;color:var(--tx3);}";
+ var st=document.createElement('style');st.id='slCss';st.textContent=css;document.head.appendChild(st);
+})();
 
 /* ================= API ================= */
 function authHeaders(){return (window.HogeeMember&&HogeeMember.authHeaders)?HogeeMember.authHeaders():{};}
@@ -4294,6 +4400,7 @@ function renderUploadCard(){
   +'<div class="card-desc">'+(used?'外观、内饰、空间都可以，多张一起传，逐张做清晰与曝光质检。':'多张一起传，第一张作为主图；逐张做清晰与曝光质检。')+'</div>'
   +'<div class="drop" id="drop" data-act="chooseFile"><div class="drop-ico">'+IC.image+'</div><h4>点击或拖拽图片到这里</h4><p>支持 JPG / PNG / WebP，可一次选多张</p></div>'
   +'<div class="shot-grid" id="shotGrid"></div>'
+ +'<div id="shotListPanel" class="shot-list-panel"></div>'
   +'<div class="tip-line" id="uploadTip" style="display:none">'+IC.check+'<span id="uploadTipTxt"></span></div>'
   +'<div class="card-actions"><button class="btn btn-primary" data-act="toConfirm" id="toConfirmBtn" disabled>传好了，认认货</button>'
   +'<button class="btn btn-ghost" data-act="chooseFile">继续加图</button></div></div>','atu');
@@ -4311,6 +4418,7 @@ function refreshShots(){
  var badN=state.images.filter(function(im){return im.qc.sharp==='bad'||im.qc.exp==='bad';}).length;
  if(tip){if(state.images.length){tip.style.display='flex';tt.textContent='共收到 '+state.images.length+' 张。'+(badN?('有 '+badN+' 张偏糊或曝光不理想，建议重拍，不重拍也能继续。'):'质检通过，成色看得清，可以继续。');}else tip.style.display='none';}
  renderCmpAttach();
+ if($('#shotListPanel'))renderShotList();
 }
 async function handleFiles(fileList){
  var files=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
@@ -4321,9 +4429,10 @@ async function handleFiles(fileList){
  enterTaskFocus();
  var stop=botTyping('atu');
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
- .then(function(arr){stop();state.images=state.images.concat(arr);refreshShots();
+ .then(function(arr){stop();var base=state.images.length;state.images=state.images.concat(arr);refreshShots();
   arr.forEach(function(it){tosSyncImage(it,'input');});
   botSay('收到 <b>'+arr.length+'</b> 张，我都看过了。传齐了点「认认货」，先把你卖的是啥确认清楚，<b>绝不张冠李戴</b>。','atu');
+  classifyShots(arr.map(function(_,k){return base+k;}));
  }).catch(function(){stop();toast('有图片没读出来，换一张试试','err');});
 }
 
