@@ -45,9 +45,11 @@ export function normalizeAccount(account) {
   return clean(account, 120).toLowerCase();
 }
 
-// 仅接受手机号或邮箱作为登录账号（用户名登录暂不开放，避免歧义）
+// 接受手机号、邮箱作为会员登录账号；保留账号 workhogee 为官方运营管理员（仅密码登录、不可自助注册）
+export const ADMIN_BOOTSTRAP_ACCOUNT = 'workhogee';
 export function accountType(account) {
   const a = normalizeAccount(account);
+  if (a === ADMIN_BOOTSTRAP_ACCOUNT) return 'admin';
   if (/^1[3-9]\d{9}$/.test(a)) return 'phone';
   if (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(a)) return 'email';
   return null;
@@ -89,7 +91,8 @@ function publicMember(m) {
     status: m.status || 'active',
     quotaTotal: Number.isFinite(Number(m.quotaTotal)) ? Number(m.quotaTotal) : -1,
     quotaUsed: Number.isFinite(Number(m.quotaUsed)) ? Number(m.quotaUsed) : 0,
-    expiresAt: m.expiresAt || null
+    expiresAt: m.expiresAt || null,
+    role: m.role === 'admin' ? 'admin' : 'member'
   };
 }
 
@@ -100,7 +103,8 @@ async function issueSession(env, member) {
     account: member.loginAccount,
     name: member.contactName || member.merchantName || member.loginAccount,
     status: member.status,
-    plan: member.plan || 'free'
+    plan: member.plan || 'free',
+    role: member.role === 'admin' ? 'admin' : 'member'
   };
   await env.MEMBERS.put(MSESS_PREFIX + token, JSON.stringify(payload), {
     expirationTtl: MSESSION_TTL_SECONDS
@@ -116,6 +120,9 @@ export async function registerMember(env, input) {
   const type = accountType(account);
   if (!type) {
     return { ok: false, reason: 'bad_account', message: '请输入正确的手机号或邮箱作为登录账号' };
+  }
+  if (type === 'admin') {
+    return { ok: false, reason: 'account_reserved', message: '该账号为官方保留账号，请直接登录' };
   }
   const password = String(body.password || '');
   if (password.length < 8 || password.length > 64) {
@@ -233,6 +240,9 @@ export async function startLoginCode(env, accountRaw) {
   if (!accountType(account)) {
     return { ok: false, reason: 'bad_account', message: '请输入正确的手机号或邮箱' };
   }
+  if (accountType(account) === 'admin') {
+    return { ok: false, reason: 'account_reserved', message: '官方账号请使用密码登录' };
+  }
   const rlKey = MCODE_RL_PREFIX + account;
   if (await env.MEMBERS.get(rlKey)) {
     return { ok: false, reason: 'rate_limited', message: '发送太频繁，请 60 秒后再试' };
@@ -270,6 +280,7 @@ export async function verifyCodeAuth(env, accountRaw, codeRaw) {
   const account = normalizeAccount(accountRaw);
   const type = accountType(account);
   if (!type) return { ok: false, reason: 'bad_account', message: '请输入正确的手机号或邮箱' };
+  if (type === 'admin') return { ok: false, reason: 'account_reserved', message: '官方账号请使用密码登录' };
   const code = String(codeRaw || '').trim();
   if (!/^\d{4,8}$/.test(code)) return { ok: false, reason: 'bad_code', message: '请输入收到的验证码' };
 
@@ -305,4 +316,58 @@ export async function verifyCodeAuth(env, accountRaw, codeRaw) {
   }
   const sess = await issueSession(env, member);
   return { ok: true, token: sess.token, expiresIn: sess.expiresIn, member: publicMember(member) };
+}
+
+/* =====================================================================
+ * 官方运营管理员引导账号（仅密码登录、不可自助注册 / 不可验证码登录）
+ * 账号 workhogee、role='admin'，用于前台工作台「Hogee上新」官方素材墙的
+ * 上传与删除；密码只取环境变量 ADMIN_MEMBER_PASSWORD（未配置则不创建引导账号），源码内不内置任何默认密码。
+ * 冷启动幂等：账号已存在则确保 role=admin；调用方用模块级 Promise 缓存，
+ * 每个 isolate 只真正执行一次。
+ * ===================================================================*/
+let _bootstrapAdminPromise = null;
+export function ensureBootstrapAdmin(env) {
+  if (!env || !env.MEMBERS) return Promise.resolve(false);
+  if (_bootstrapAdminPromise) return _bootstrapAdminPromise;
+  _bootstrapAdminPromise = (async () => {
+    try {
+      const account = ADMIN_BOOTSTRAP_ACCOUNT;
+      const existingId = await env.MEMBERS.get(ACCT_PREFIX + account);
+      if (existingId) {
+        const ex = await getMember(env, existingId);
+        if (ex && ex.role !== 'admin') {
+          ex.role = 'admin';
+          ex.status = 'active';
+          await env.MEMBERS.put(MEMBER_PREFIX + ex.id, JSON.stringify(ex));
+        }
+        return true;
+      }
+      if (!env.ADMIN_MEMBER_PASSWORD) { _bootstrapAdminPromise = null; return false; }
+      const password = String(env.ADMIN_MEMBER_PASSWORD);
+      const created = await createMember(env, {
+        source: 'manual',
+        contactName: 'WorkHogee 官方',
+        username: account
+      });
+      if (!created.ok) { _bootstrapAdminPromise = null; return false; }
+      const member = created.member;
+      const rec = await createPasswordRecord(password);
+      member.loginAccount = account;
+      member.accountType = 'admin';
+      member.role = 'admin';
+      member.plan = 'beta';
+      member.status = 'active';
+      member.salt = rec.salt;
+      member.hash = rec.hash;
+      member.iter = rec.iter;
+      member.passwordUpdatedAt = rec.updatedAt;
+      await env.MEMBERS.put(MEMBER_PREFIX + member.id, JSON.stringify(member));
+      await env.MEMBERS.put(ACCT_PREFIX + account, member.id);
+      return true;
+    } catch (e) {
+      _bootstrapAdminPromise = null; // 出错允许下次请求重试
+      return false;
+    }
+  })();
+  return _bootstrapAdminPromise;
 }

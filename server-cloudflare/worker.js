@@ -24,9 +24,13 @@ import { handleMember } from './member-api.js';
 import { getMemberSession, ensureBootstrapAdmin } from './member-auth.js';
 import { handleFeed, ensureFeedBootstrap } from './feed.js';
 import { handleAnalytics, scheduledRollup } from './analytics.js';
-import { verifyConsistency, appendGuardClauses, qcUpload, generateCopy, generateStoryboard, identifyProduct, understandIntent } from './vision.js';
+import { verifyConsistency, appendGuardClauses, qcUpload, generateCopy, generateStoryboard, identifyProduct, groupProducts, extractProductFeatures, understandIntent, prefillFacts, planDetails, chatVisionCustom, detectPlatesByVision } from './vision.js';
 import { stampImageMeta } from './image-meta.js';
 import { presignPut, presignGet } from './tos.js';
+import { segmentEntities, superResolve, saliencySegment, goodsSegment, carPlateDetection } from './cv.js';
+import { mediakitCutout, mediakitFaceDetect } from './mediakit.js';
+import { giteeMatting } from './gitee.js';
+import { autodlCutout, autodlSuperRes } from './autodl.js';
 
 const ARK_ENDPOINT_DEFAULT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
 // 火山图像接口要求输出像素 ≥ 3,686,400。
@@ -34,8 +38,11 @@ const ARK_ENDPOINT_DEFAULT = 'https://ark.cn-beijing.volces.com/api/v3/images/ge
 const ALLOWED_SIZES = ['2048x2048', '2304x2304'];
 const DEFAULT_SIZE = '2048x2048';
 const MAX_IMAGE_CHARS = 11_000_000;   // 单张 base64 体积上限（约 8MB 原图）
-const MAX_IMAGES = 2;                  // 最多 2 张参考图（实地展厅：1 车 + 1 背景）
-const MAX_TOTAL_IMAGE_CHARS = 20_000_000;
+const MAX_IMAGES = 8;                  // 最多参考图：同一商品多角度合成（实地展厅仍只用 2 张：主体 + 背景）
+const MAX_TOTAL_IMAGE_CHARS = 32_000_000;
+// 自动分组接口收的是压缩缩略图，单独限额。
+const GROUP_MAX_IMAGES = 12;
+const GROUP_TOTAL_CHARS = 8_000_000;
 const MAX_PROMPT_CHARS = 4000;
 
 // 仅允许官网与 GitHub Pages 预览来源跨域；小程序为服务端请求，不受 CORS 限制。
@@ -236,7 +243,7 @@ async function handleGenerate(req, env, origin) {
     return json({ ok: false, error: { code: 'prompt_too_long', message: '生成指令过长' } }, 400, origin);
   }
 
-  // image 支持单张 dataURL（字符串）或多张（数组，最多 2 张：主体 + 实地背景）
+  // image 支持单张 dataURL（字符串）或多张（数组：同一商品多角度，最多 MAX_IMAGES 张；实地展厅为 主体+背景 2 张）
   const images = Array.isArray(rawImage) ? rawImage : [rawImage];
   if (images.length < 1 || images.length > MAX_IMAGES
       || images.some(x => typeof x !== 'string' || !DATA_URL_RE.test(x))) {
@@ -248,10 +255,28 @@ async function handleGenerate(req, env, origin) {
   if (images.reduce((n, x) => n + x.length, 0) > MAX_TOTAL_IMAGE_CHARS) {
     return json({ ok: false, error: { code: 'image_too_large', message: '参考图总体积过大，请压缩后重试' } }, 413, origin);
   }
-  const imagePayload = images.length === 1 ? images[0] : images;
+  // 性能优化：同一商品多角度（refKind='multi-angle'）先用视觉模型 turbo 提取关键特征，
+  // Seedream 只吃 1 张代表图 + 特征文本，把多图出图从 ~87s 降到 ~25s；
+  // 特征提取失败则降级回多图直出，绝不阻塞。实地展厅 bg-composite（主体+背景）保持 2 图。
+  const refKind = body && body.refKind;
+  let seedPrompt = userPrompt;
+  let seedImages = images;
+  if (images.length > 1 && refKind === 'multi-angle') {
+    // 特征提取优先用前端给的小图（更快），没有则退回原图；输出限制 150 字
+    const featureInputs = (body && Array.isArray(body.featureImages) && body.featureImages.length > 1)
+      ? body.featureImages : images;
+    const feat = await extractProductFeatures(env, featureInputs, { timeoutMs: 40000, maxLen: 150, maxTokens: 420 });
+    if (feat.ok && feat.text) {
+      seedImages = [images[0]];
+      seedPrompt = '以下参考图是同一件商品的不同角度实拍。该商品关键视觉特征：'
+        + feat.text + '。请严格依据这些特征还原商品本体（颜色、品牌、外形、真实瑕疵一致），只改变背景与光影。\n' + userPrompt;
+    }
+    // feat 失败：seedImages 保持全部 images，走原多图路径降级
+  }
+  const imagePayload = seedImages.length === 1 ? seedImages[0] : seedImages;
 
   // 第一次生成：服务端强制追加"本体保持 + 隐私规避"硬约束（源头治理）
-  const r1 = await callSeedream(env, { prompt: appendGuardClauses(userPrompt), imagePayload, size });
+  const r1 = await callSeedream(env, { prompt: appendGuardClauses(seedPrompt), imagePayload, size });
   if (r1.error) return json({ ok: false, error: r1.error }, r1.status, origin);
 
   // 首版成品（始终先准备好，作为任何后验异常时的兜底交付）
@@ -266,7 +291,7 @@ async function handleGenerate(req, env, origin) {
     try {
       const out = await runVerifyAndRegenerate(
         env,
-        { userPrompt, imagePayload, size, images, firstStamped },
+        { userPrompt: seedPrompt, imagePayload, size, images, firstStamped },
         VERIFY_TOTAL_BUDGET_MS
       );
       stamped = out.stamped;
@@ -348,12 +373,40 @@ async function handleCopy(req, env, origin) {
   const extra = String((body && body.extra) || '').slice(0, 500);
   const category = String((body && body.category) || '').slice(0, 50);
   const tone = String((body && body.tone) || '').slice(0, 200);
-  const sellingPoints = Array.isArray(body && body.sellingPoints) ? body.sellingPoints.map(String).slice(0, 8) : [];
-  if (!product && sellingPoints.length === 0) {
+  const targetAudience = String((body && body.targetAudience) || '').slice(0, 200);
+  const scene = String((body && body.scene) || '').slice(0, 200);
+  const kbContext = String((body && body.kbContext) || '').slice(0, 2000);
+  const sellingPoints = Array.isArray(body && body.sellingPoints) ? body.sellingPoints.map(String).slice(0, 12) : [];
+  const channels = Array.isArray(body && body.channels)
+    ? body.channels.map(String).filter(c => ['xhs', 'douyin', 'pyq', 'general'].includes(c)).slice(0, 4) : [];
+  const facts = (body && body.facts && typeof body.facts === 'object')
+    ? body.facts : String((body && body.facts) || '').slice(0, 3000);
+  if (!product && sellingPoints.length === 0 && !facts) {
     return json({ ok: false, error: { code: 'bad_product', message: '缺少商品名或卖点' } }, 400, origin);
   }
-  const result = await generateCopy(env, { product, identityType, extra, sellingPoints, category, tone });
+  const result = await generateCopy(env, { product, identityType, extra, sellingPoints, category, tone, targetAudience, scene, kbContext, channels, facts });
   return json({ ok: true, copy: result }, 200, origin);
+}
+
+async function handleFactsPrefill(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = String((body && body.image) || '');
+  const identityType = String((body && body.identityType) || 'general');
+  const category = String((body && body.category) || '').slice(0, 50);
+  const product = String((body && body.product) || '').slice(0, 100);
+  const facts = (body && body.facts && typeof body.facts === 'object')
+    ? body.facts : String((body && body.facts) || '').slice(0, 2000);
+  const r = await prefillFacts(env, { image, identityType, category, product, facts });
+  if (!r.ok) {
+    return json({ ok: false, error: { code: 'prefill_failed', message: r.reason || '预填失败' } }, 200, origin);
+  }
+  return json({ ok: true, prefill: r }, 200, origin);
 }
 
 async function handleIdentify(req, env, origin) {
@@ -372,7 +425,211 @@ async function handleIdentify(req, env, origin) {
   return json({ ok: true, identify: result }, 200, origin);
 }
 
+// 商品自动分组：多图上传后，识别哪些是同一商品的多角度、哪些是不同商品（会员门禁）
+async function handleGroup(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const raw = body && body.images;
+  const images = Array.isArray(raw) ? raw : (typeof raw === 'string' ? [raw] : []);
+  if (images.length < 1 || images.length > GROUP_MAX_IMAGES
+      || images.some(x => typeof x !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(x))) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少合法图片 dataURL，最多 ' + GROUP_MAX_IMAGES + ' 张' } }, 400, origin);
+  }
+  if (images.reduce((n, x) => n + x.length, 0) > GROUP_TOTAL_CHARS) {
+    return json({ ok: false, error: { code: 'image_too_large', message: '分组图片总体积过大，请使用缩略图' } }, 413, origin);
+  }
+  const r = await groupProducts(env, images);
+  if (!r.ok) {
+    // 降级：不擅自合并（避免把不同商品错误并组少扣费 / 出错），按每张一组返回并标 degraded，
+    // 前端据此提示"自动分组没成功，请手动确认分组"。
+    const fallback = images.map((_, i) => ({ name: '商品' + (i + 1), indices: [i] }));
+    return json({ ok: true, degraded: true, groups: fallback }, 200, origin);
+  }
+  return json({ ok: true, groups: r.groups }, 200, origin);
+}
+
+// 特征提取独立端点（性能实测 / 未来复用；会员门禁）
+async function handleFeature(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const raw = body && body.images;
+  const images = Array.isArray(raw) ? raw : (typeof raw === 'string' ? [raw] : []);
+  if (!images.length || images.length > 6
+      || images.some(x => typeof x !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(x))) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少合法图片 dataURL，最多 6 张' } }, 400, origin);
+  }
+  const r = await extractProductFeatures(env, images, {
+    timeoutMs: 40000, maxLen: body.maxLen || 260, maxTokens: body.maxTokens || 800
+  });
+  if (!r.ok) return json({ ok: false, error: { code: r.error } }, 200, origin);
+  return json({ ok: true, text: r.text }, 200, origin);
+}
+
 // 阿视 · 视频分镜（P0 图文成片）：turbo 产出结构化镜头脚本，前端 Canvas 合成短视频 / GIF
+
+// 卖点局部规划（视觉选 3 个卖点 bbox，前端原图裁剪+保真超分）
+async function handleDetailsPlan(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image))
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少合法商品图 dataURL' } }, 400, origin);
+  const r = await planDetails(env, { image, category: body.category || '', product: body.product || '' });
+  if (!r.ok) return json({ ok: false, error: r.error || { code: 'details_failed' } }, 502, origin);
+  return json({ ok: true, details: r.details }, 200, origin);
+}
+
+// 通用视觉 JSON：前端按 ask 请求视觉分析（定位/计数/质检等），返回结构化 JSON（会员门禁）
+async function handleVisionJson(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image))
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少合法图片 dataURL' } }, 400, origin);
+  const ask = typeof body.ask === 'string' && body.ask ? body.ask : '请分析这张图并返回 JSON。';
+  const r = await chatVisionCustom(env, { system: body.system || '你是严谨的视觉分析助手，只输出 JSON。', user: ask, images: [image], maxTokens: body.maxTokens || 1800, temperature: 0.2, timeoutMs: 75000 });
+  if (!r.ok) return json({ ok: false, error: r.error || { code: 'vision_failed' } }, 502, origin);
+  return json({ ok: true, data: r.data }, 200, origin);
+}
+
+// 场景空背景（Seedream 文生图，只生不含产品/人物/文字的空背景，供前端保真合成）
+async function handleSceneBackground(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const category = (body && body.category) || '商品';
+  const scene = (body && body.scene) || '生活化使用场景';
+  const angle = (body && body.angle) || '自然平视';
+  const light = (body && body.light) || '明亮柔和自然光';
+  const size = ALLOWED_SIZES.includes(body && body.size) ? body.size : DEFAULT_SIZE;
+  const prompt = [
+    '一张空旷的「' + scene + '」环境背景图，用于后期合成商品，' + angle + '，' + light + '。',
+    '画面必须是空的：没有人物、没有动物、没有自行车、没有汽车等任何交通工具、没有任何商品或摆放物体、没有文字、没有logo、没有水印。',
+    '画面干净通透、有真实空间纵深感与自然光影，中央地面简洁并略微虚化（用于后续摆放商品），四周只有自然环境元素（树木、道路、远景等），高级商业摄影质感。'
+  ].join('');
+  const r = await callSeedream(env, { prompt, size, timeoutMs: 90000 });
+  if (r.error) return json({ ok: false, error: r.error }, r.status, origin);
+  return json({ ok: true, b64: r.b64, size }, 200, origin);
+}
+
+// 保真抠图 / 白底：entity_seg return_format=4，返回最大主体透明前景图+mask（像素级、不重画，会员门禁）
+async function handleCutout(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少图片 dataURL' } }, 400, origin);
+  }
+  if (image.length > MAX_IMAGE_CHARS) {
+    return json({ ok: false, error: { code: 'image_too_large', message: '图片过大，请先压缩' } }, 413, origin);
+  }
+  const strategy = body.strategy || 'max';
+  const fail = (r) => json({ ok: false, error: r.error },
+    /permission|denied|unauth|not.?activ|开通/i.test((r.error && r.error.code) || '') ? 403 : 502, origin);
+
+  if (strategy === 'layers') {
+    const r = await segmentEntities(env, image, { allLayers: true, maxEntity: body.maxEntity || 20 });
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'layers', entityNum: r.entityNum, masks: r.masks, width: r.width, height: r.height }, 200, origin);
+  }
+  if (strategy === 'saliency') {
+    const r = await saliencySegment(env, image);
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'saliency', images: r.images, imagesCount: r.imagesCount }, 200, origin);
+  }
+  if (strategy === 'mediakit') {
+    const r = await mediakitCutout(env, image, { scene: body.scene || 'product' });
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'mediakit', image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+  }
+  if (strategy === 'rmbg' || strategy === 'gitee') {
+    const r = await giteeMatting(env, image, { model: body.model || 'RMBG-2.0' });
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'rmbg', image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+  }
+  if (strategy === 'autodl' || strategy === 'biref') {
+    const r = await autodlCutout(env, image);
+    if (!r.ok) return fail(r);
+    return json({ ok: true, strategy: 'autodl', image: r.image, white: r.white, mask: r.mask, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+  }
+  if (strategy === 'goods') {
+    const gr = await goodsSegment(env, image, body.method || 'product');
+    if (!gr.ok) return fail(gr);
+    return json({ ok: true, strategy: 'goods', image: gr.image }, 200, origin);
+  }
+  if (strategy === 'probe') {
+    const out = { ok: true, strategy: 'probe' };
+    const rm = await segmentEntities(env, image, { maxEntity: body.maxEntity || 20 });
+    out.max = rm.ok ? { entityNum: rm.entityNum, foreground: rm.foreground, mask: rm.mask, imagesCount: rm.imagesCount } : { error: rm.error };
+    const rl = await segmentEntities(env, image, { allLayers: true, maxEntity: body.maxEntity || 20 });
+    out.layers = rl.ok ? { entityNum: rl.entityNum, masks: rl.masks } : { error: rl.error };
+    const rs = await saliencySegment(env, image);
+    out.saliency = rs.ok ? { images: rs.images, imagesCount: rs.imagesCount } : { error: rs.error };
+    return json(out, 200, origin);
+  }
+  const r = await segmentEntities(env, image, { maxEntity: body.maxEntity || 20 });
+  if (!r.ok) return fail(r);
+  return json({ ok: true, entityNum: r.entityNum, foreground: r.foreground, mask: r.mask, imagesCount: r.imagesCount, width: r.width, height: r.height }, 200, origin);
+}
+
+// 保真超分：图片超分辨率 lens_nnsr2_pic_common，x2 放大不重画（会员门禁）
+async function handleSuperRes(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少图片 dataURL' } }, 400, origin);
+  }
+  const scale = parseInt(body.scale, 10) || 4;
+  const r = await autodlSuperRes(env, image, scale);
+  if (!r.ok) {
+    const st = /not_configured|unauth/i.test((r.error && r.error.code) || '') ? 403 : 502;
+    return json({ ok: false, error: r.error }, st, origin);
+  }
+  return json({ ok: true, image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+}
+async function handlePrivacyDetect(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) {
+    return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  }
+  let body;
+  try { body = await req.json(); }
+  catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少图片 dataURL' } }, 400, origin);
+  }
+  const [plateR, faceR] = await Promise.all([
+    detectPlatesByVision(env, image),
+    mediakitFaceDetect(env, image)
+  ]);
+  const plates = plateR.ok ? plateR.boxes : [];
+  const faces = faceR.ok ? faceR.boxes : [];
+  return json({ ok: true, data: { plates, faces, plateError: plateR.ok ? null : plateR.error, faceError: faceR.ok ? null : faceR.error } }, 200, origin);
+}
 async function handleStoryboard(req, env, origin) {
   const session = await getMemberSession(env, req);
   if (!session) {
@@ -642,6 +899,43 @@ function ensureRuntimeBoot(env) {
   return _runtimeBootPromise;
 }
 
+// 图片链接安全代理（链接导入，前端 CORS 兜底；仅放行公网 image/*，SSRF 防护 + 15MB 上限）
+async function handleImportUrl(url, origin) {
+  const u = (url.searchParams.get('u') || '').trim();
+  const bad = (code, msg) => json({ ok: false, error: { code, message: msg } }, 400, origin);
+  let tu;
+  try { tu = new URL(u); } catch (e) { return bad('bad_url', '链接不合法'); }
+  if (tu.protocol !== 'http:' && tu.protocol !== 'https:') return bad('bad_proto', '仅支持 http(s)');
+  const host = tu.hostname.toLowerCase();
+  const priv = host === 'localhost' || host === 'metadata.google.internal' ||
+    /^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host) ||
+    /^169\.254\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    /^0\./.test(host) || host === '::1' || /^(fc|fd|fe)/.test(host) || /\.internal$/.test(host);
+  if (priv) return bad('blocked', '不允许抓取内网/保留地址');
+  try {
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 12000);
+    const r = await fetch(tu.toString(), {
+      method: 'GET', redirect: 'follow', signal: ctrl.signal,
+      headers: { 'Accept': 'image/*,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 WorkHogee-Importer' }
+    });
+    clearTimeout(to);
+    if (!r.ok) return bad('upstream', '上游返回 ' + r.status);
+    const ct = (r.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+    const cl = parseInt(r.headers.get('Content-Length') || '0', 10);
+    if (!ct.startsWith('image/')) return bad('not_image', '链接内容不是图片（网盘/飞书分享页请先下载再传）');
+    if (cl && cl > 15 * 1024 * 1024) return bad('too_large', '图片超过 15MB');
+    const buf = await r.arrayBuffer();
+    if (buf.byteLength > 15 * 1024 * 1024) return bad('too_large', '图片超过 15MB');
+    const h = corsHeaders(origin);
+    h['Content-Type'] = ct;
+    h['Cache-Control'] = 'public, max-age=3600';
+    return new Response(buf, { status: 200, headers: h });
+  } catch (e) {
+    return bad('fetch_failed', '抓取失败：链接可能需登录或不是图片直链');
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
@@ -681,10 +975,41 @@ export default {
     if (path === '/copy' && request.method === 'POST') {
       return handleCopy(request, env, origin);
     }
+    if (path === '/facts-prefill' && request.method === 'POST') {
+      return handleFactsPrefill(request, env, origin);
+    }
 
     // 商品智能识别（传图后自动抓取品牌/型号/颜色等预填）
     if (path === '/identify' && request.method === 'POST') {
       return handleIdentify(request, env, origin);
+    }
+
+    // 多图自动分组（识别同一商品多角度 / 不同商品，决定合并出图还是逐张出图）
+    if (path === '/group' && request.method === 'POST') {
+      return handleGroup(request, env, origin);
+    }
+
+    if (path === '/details-plan' && request.method === 'POST') {
+      return handleDetailsPlan(request, env, origin);
+    }
+    if (path === '/vision-json' && request.method === 'POST') {
+      return handleVisionJson(request, env, origin);
+    }
+    if (path === '/scene-background' && request.method === 'POST') {
+      return handleSceneBackground(request, env, origin);
+    }
+    if (path === '/cutout' && request.method === 'POST') {
+      return handleCutout(request, env, origin);
+    }
+    if (path === '/superres' && request.method === 'POST') {
+      return handleSuperRes(request, env, origin);
+    }
+    if (path === '/privacy-detect' && request.method === 'POST') {
+      return handlePrivacyDetect(request, env, origin);
+    }
+    // 商品视觉特征提取（多角度→可还原特征文本；性能实测 / 复用）
+    if (path === '/feature' && request.method === 'POST') {
+      return handleFeature(request, env, origin);
     }
 
     // 阿视 · 视频分镜（P0 图文成片，会员门禁防滥用）
@@ -708,6 +1033,10 @@ export default {
     }
 
     // TOS 对象存储预签名（原图/成品/视频跨端同步，浏览器直传直读）
+    if (path === '/api/import-url' && request.method === 'GET') {
+      return handleImportUrl(url, origin);
+    }
+
     if (path === '/api/storage' && request.method === 'POST') {
       return handleStorage(request, env, origin);
     }

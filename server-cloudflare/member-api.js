@@ -135,7 +135,8 @@ export async function handleMember(request, env, origin) {
         account: session.account,
         name: session.name,
         status: session.status,
-        plan: session.plan
+        plan: session.plan,
+        role: session.role === 'admin' ? 'admin' : 'member'
       }
     }, 200, origin);
   }
