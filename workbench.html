@@ -2549,6 +2549,8 @@ function detectPrivacy(idx){
    }
    var si=document.querySelector('.shot-img[data-i="'+idx+'"]');
    if(si)si.src=orgSrc(im);
+   var ci=document.querySelector('.cmp-at-img[data-i="'+idx+'"]');
+   if(ci)ci.src=orgSrc(im);
   });
  }).catch(function(){});
 }
@@ -2559,6 +2561,8 @@ function privToggle(idx,btn){
  img.src=orgSrc(im);
  var si=document.querySelector('.shot-img[data-i="'+idx+'"]');
  if(si)si.src=orgSrc(im);
+ var ci=document.querySelector('.cmp-at-img[data-i="'+idx+'"]');
+ if(ci)ci.src=orgSrc(im);
 }
 var _privQ=[];
 function pumpPrivacy(){var idx=_privQ.shift();if(idx===undefined)return;
@@ -2948,7 +2952,7 @@ function renderTopbar(){
 function renderCmpAttach(){
  var box=$('#cmpAttach');if(!box)return;
  if(!state.images.length){box.innerHTML='';return;}
- box.innerHTML=state.images.slice(0,6).map(function(im,i){return '<span class="at"><img src="'+im.dataUrl+'" alt="">'+(i===5&&state.images.length>6?('+'+(state.images.length-6)):'')+'<button class="icon-btn" style="width:18px;height:18px" data-act="delAttach" data-i="'+i+'">×</button></span>';}).join('');
+ box.innerHTML=state.images.slice(0,6).map(function(im,i){return '<span class="at"><img class="cmp-at-img" data-i="'+i+'" src="'+orgSrc(im)+'" alt="">'+(i===5&&state.images.length>6?('+'+(state.images.length-6)):'')+'<button class="icon-btn" style="width:18px;height:18px" data-act="delAttach" data-i="'+i+'">×</button></span>';}).join('');
 }
 
 /* ================= 实验室：技能 / 插件 / 伙伴 ================= */
