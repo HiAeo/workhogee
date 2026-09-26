@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>WorkHogee · M1 物料工坊</title>
+<title>WorkHogee · M2 内测引导工作台</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23fb7a22'/%3E%3Cpath d='M7 7h2.4v3.4h3.2V7H15v10h-2.4v-4.2H9.4V17H7z' fill='%23fff'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -21,18 +21,23 @@
 html,body{height:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,select{font-family:inherit;font-size:14px}
+input,select,textarea{font-family:inherit;font-size:14px}
 img{display:block;max-width:100%}
 a{color:var(--orange);text-decoration:none}
 
 /* layout */
-.wrap{max-width:880px;margin:0 auto;padding:20px 18px 80px}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px}
+.wrap{max-width:960px;margin:0 auto;padding:20px 18px 80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .logo{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
 .brand .bt{font-size:17px;font-weight:800}
 .brand .bt small{display:block;font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.05em}
-.top-right{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2)}
+.top-right{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);flex-wrap:wrap}
+.quota-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--ink2)}
+.quota-pill b{color:var(--orange-d)}
+.quota-pill button{font-size:11.5px;padding:3px 10px;border-radius:999px;background:var(--orange-soft);color:var(--orange-d);font-weight:700}
+.quota-pill button:hover{background:var(--orange);color:#fff}
+.quota-pill.low{border-color:var(--bad);color:var(--bad)}
 
 /* steps indicator */
 .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 26px;flex-wrap:wrap}
@@ -75,8 +80,11 @@ a{color:var(--orange);text-decoration:none}
 
 .form-row{margin-bottom:16px}
 .form-row label{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:7px;letter-spacing:.02em}
-.form-row select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none}
-.form-row select:focus{border-color:var(--orange)}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none;resize:vertical}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--orange)}
+.attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.attr-grid .full{grid-column:1/-1}
+@media(max-width:640px){.attr-grid{grid-template-columns:1fr}}
 
 /* style presets */
 .style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
@@ -89,7 +97,7 @@ a{color:var(--orange);text-decoration:none}
 /* progress */
 .prog-list{display:flex;flex-direction:column;gap:14px;margin:10px 0}
 .prog-item{display:flex;align-items:center;gap:12px;font-size:14px}
-.prog-ic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;background:var(--line2);color:var(--ink3);font-weight:700}
+.prog-ic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none;background:var(--line2);color:var(--ink3);font-weight:700}
 .prog-item.done .prog-ic{background:var(--ok);color:#fff}
 .prog-item.run .prog-ic{background:var(--orange);color:#fff;animation:pulse 1.2s infinite}
 .prog-item.run{color:var(--orange-d);font-weight:700}
@@ -99,10 +107,21 @@ a{color:var(--orange);text-decoration:none}
 .bar{height:8px;background:var(--line2);border-radius:9px;overflow:hidden;margin-top:16px}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--orange-d));width:0;transition:width .4s}
 
+/* quality check */
+.qcheck-banner{background:#fef2f2;border:1px solid #fecaca;border-left:4px solid var(--bad);color:#991b1b;border-radius:11px;padding:14px 16px;margin-bottom:14px;font-size:13.5px}
+.qcheck-banner b{color:var(--bad)}
+.qcheck-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid var(--ok);color:#15803d;border-radius:11px;padding:12px 16px;margin-bottom:14px;font-size:13.5px;font-weight:700}
+.qscore-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px}
+.qs-name{width:130px;flex:none;color:var(--ink2);font-weight:600}
+.qs-bar{flex:1;height:10px;background:var(--line2);border-radius:9px;overflow:hidden}
+.qs-bar i{display:block;height:100%;border-radius:9px;transition:width .5s}
+.qs-val{width:110px;flex:none;text-align:right;font-weight:700}
+.qs-val small{color:var(--ink3);font-weight:500}
+
 /* results grid */
 .img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
 .img-cell{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
-.img-cell .ph{aspect-ratio:1;overflow:hidden;cursor:zoom-in;position:relative}
+.img-cell .ph{aspect-ratio:1;overflow:hidden;cursor:zoom-in;position:relative;background:#fafbfe}
 .img-cell .ph img{width:100%;height:100%;object-fit:cover}
 .img-cell .tag{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 7px;border-radius:6px}
 .img-cell .body{padding:9px}
@@ -113,12 +132,16 @@ a{color:var(--orange);text-decoration:none}
 
 /* copy block */
 .copy-box{background:#fafbfe;border:1px solid var(--line);border-radius:11px;padding:18px;margin-top:18px}
-.copy-box h3{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.copy-box h3{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .copy-box .selling{margin:8px 0;padding-left:18px}
 .copy-box .selling li{margin-bottom:5px;font-size:13.5px;color:var(--ink2)}
 .copy-box .desc{font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.7}
 .copy-btn{font-size:12px;padding:5px 12px;border-radius:7px;background:var(--orange-soft);color:var(--orange-d);font-weight:700}
 .copy-btn:hover{background:var(--orange);color:#fff}
+.channel-tabs{display:flex;gap:8px;margin:12px 0 10px}
+.channel-tabs button{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink2);font-weight:600}
+.channel-tabs button.sel{background:var(--orange);border-color:var(--orange);color:#fff}
+.channel-body{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px;color:var(--ink2);line-height:1.7;white-space:pre-wrap;min-height:60px}
 
 /* lightbox */
 .lb{position:fixed;inset:0;background:rgba(10,14,25,.88);display:none;align-items:center;justify-content:center;z-index:100;padding:30px;cursor:zoom-out}
@@ -136,7 +159,7 @@ a{color:var(--orange);text-decoration:none}
 .login-err{color:var(--bad);font-size:12.5px;min-height:18px;margin-bottom:6px}
 
 .hide{display:none!important}
-.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#161b28;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:300;opacity:0;transition:.25s;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#161b28;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:300;opacity:0;transition:.25s;pointer-events:none;max-width:80%;text-align:center}
 .toast.on{opacity:1}
 
 @media(max-width:640px){
@@ -144,6 +167,7 @@ a{color:var(--orange);text-decoration:none}
   .card{padding:18px}
   .step-pill{padding:6px 10px;font-size:12px}
   .step-line{width:10px}
+  .qs-name{width:96px;font-size:12px}
 }
 </style>
 </head>
@@ -153,9 +177,10 @@ a{color:var(--orange);text-decoration:none}
   <div class="topbar">
     <div class="brand">
       <div class="logo">W</div>
-      <div class="bt">WorkHogee<small>M1 · 电商物料工坊</small></div>
+      <div class="bt">WorkHogee<small>M2 内测 · Canvas 图层合成工作台</small></div>
     </div>
     <div class="top-right">
+      <div class="quota-pill" id="quotaPill">额度加载中…</div>
       <span id="userTag"></span>
       <button class="btn btn-ghost" style="padding:7px 14px;font-size:12.5px" onclick="logout()">退出登录</button>
     </div>
@@ -174,7 +199,7 @@ a{color:var(--orange);text-decoration:none}
   <!-- STEP 1 -->
   <div class="card" id="step1">
     <h2>上传你的产品图</h2>
-    <p class="sub">支持 JPG / PNG / WebP，单张清晰主图效果最佳。</p>
+    <p class="sub">支持 JPG / PNG / WebP，单张清晰主图效果最佳。产品像素将在浏览器端完成抠图合成，绝不重绘。</p>
     <div class="dropzone" id="dropzone">
       <div class="dz-icon">📦</div>
       <div class="dz-t">点击或拖拽产品图到此处</div>
@@ -192,17 +217,16 @@ a{color:var(--orange);text-decoration:none}
 
   <!-- STEP 2 -->
   <div class="card hide" id="step2">
-    <h2>确认品类与风格</h2>
-    <p class="sub">AI 已自动识别品类，可在此修改后再开始生成。</p>
-    <div class="identify-banner" id="idBanner">AI 识别为【--】，置信度 --</div>
+    <h2>确认识别结果与产品属性</h2>
+    <p class="sub">AI 已识别产品属性，可直接修改后再开始生成；修改内容将随 pipeline 请求一起下发。</p>
+    <div class="identify-banner" id="idBanner">AI 识别中…</div>
 
-    <div class="form-row">
-      <label>所属行业大类</label>
-      <select id="catMain" onchange="renderSubcats()"></select>
-    </div>
-    <div class="form-row">
-      <label>产品子类</label>
-      <select id="catSub"></select>
+    <div class="attr-grid">
+      <div class="form-row"><label>产品名称</label><input id="attrName" placeholder="如：大豆香薰蜡烛"></div>
+      <div class="form-row"><label>材质</label><input id="attrMaterial" placeholder="如：大豆蜡 + 玻璃容器"></div>
+      <div class="form-row"><label>颜色</label><input id="attrColor" placeholder="如：暖米色"></div>
+      <div class="form-row"><label>包装文字</label><input id="attrPack" placeholder="如：WorkHogee · 净含量 200g"></div>
+      <div class="form-row full"><label>核心卖点（逗号分隔，最多 5 条）</label><textarea id="attrPoints" rows="2" placeholder="天然大豆蜡, 无烟燃烧, 8小时留香"></textarea></div>
     </div>
 
     <div class="form-row">
@@ -219,23 +243,23 @@ a{color:var(--orange);text-decoration:none}
   <!-- STEP 3 -->
   <div class="card hide" id="step3">
     <h2>正在生成物料包</h2>
-    <p class="sub">请保持本页打开，预计耗时 2–5 分钟，完成后自动进入下一步。</p>
+    <p class="sub">请保持本页打开，完成后自动进入下一步。最终图由浏览器 Canvas 实时合成。</p>
     <div class="prog-list" id="progList">
-      <div class="prog-item done" data-k="id"><div class="prog-ic">✓</div>品类识别</div>
-      <div class="prog-item done" data-k="cut"><div class="prog-ic">✓</div>智能抠图</div>
-      <div class="prog-item run" data-k="scene"><div class="prog-ic">3/8</div>场景图生成</div>
-      <div class="prog-item wait" data-k="detail"><div class="prog-ic">4</div>细节特写图</div>
-      <div class="prog-item wait" data-k="mkt"><div class="prog-ic">5</div>营销海报图</div>
-      <div class="prog-item wait" data-k="copy"><div class="prog-ic">6</div>文案撰写</div>
+      <div class="prog-item wait" data-k="vision"><div class="prog-ic">1</div>视觉识别</div>
+      <div class="prog-item wait" data-k="cut"><div class="prog-ic">2</div>智能抠图</div>
+      <div class="prog-item wait" data-k="bg"><div class="prog-ic">3</div>背景生成</div>
+      <div class="prog-item wait" data-k="copy"><div class="prog-ic">4</div>文案撰写</div>
+      <div class="prog-item wait" data-k="qc"><div class="prog-ic">5</div>质量检测</div>
     </div>
     <div class="bar"><i id="barFill"></i></div>
-    <div class="eta" id="etaText">已用时 0 秒 · 预计还需 2–5 分钟</div>
+    <div class="eta" id="etaText">已用时 0 秒</div>
   </div>
 
   <!-- STEP 4 -->
   <div class="card hide" id="step4">
     <h2>你的电商物料包已就绪</h2>
-    <p class="sub">共 8 张图 + 1 组文案。点击图片放大，选择规格导出。</p>
+    <p class="sub">共 8 张图（前端 Canvas 合成）+ 1 组文案。点击图片放大，每图可导三规格。</p>
+    <div id="qcheckArea"></div>
     <div class="img-grid" id="imgGrid"></div>
 
     <div class="copy-box">
@@ -243,10 +267,16 @@ a{color:var(--orange);text-decoration:none}
       <div id="copyTitle" style="font-size:17px;font-weight:800"></div>
       <ul class="selling" id="copyPoints"></ul>
       <div class="desc" id="copyDesc"></div>
+      <div class="channel-tabs" id="channelTabs">
+        <button data-ch="taobao" class="sel">淘宝</button>
+        <button data-ch="xhs">小红书</button>
+        <button data-ch="amazon">Amazon</button>
+      </div>
+      <div class="channel-body" id="channelBody"></div>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" id="btnZip" onclick="downloadZip()">⬇ 全部下载 (ZIP)</button>
+      <button class="btn btn-primary" id="btnZip" onclick="downloadZip()">⬇ 全部下载 (ZIP · 24 张)</button>
       <button class="btn btn-ghost" onclick="resetAll()">↺ 重新生成</button>
     </div>
   </div>
@@ -259,7 +289,7 @@ a{color:var(--orange);text-decoration:none}
 <div class="login-mask" id="loginMask">
   <div class="login-card">
     <h2>登录 WorkHogee</h2>
-    <p>使用会员账号登录后开始生成物料</p>
+    <p>使用内测会员账号登录后开始生成物料</p>
     <input type="text" id="loginAccount" placeholder="账号" value="workhogee">
     <input type="password" id="loginPwd" placeholder="密码" value="123456789">
     <div class="login-err" id="loginErr"></div>
@@ -275,16 +305,8 @@ a{color:var(--orange);text-decoration:none}
 var API_BASE = 'https://api.workhogee.com';
 var LS_TOKEN = 'hogee_mtoken';
 var token = localStorage.getItem(LS_TOKEN) || '';
+var COMPOSE_SIZE = 1024; // 合成画布基准边长
 
-/* 品类数据 */
-var CATS = {
-  '家居百货': ['香薰蜡烛','收纳盒','陶瓷餐具'],
-  '3C配件': ['手机壳','数据线','蓝牙耳机'],
-  '美妆个护': ['面膜','口红','精华液'],
-  '服饰鞋包': ['纯棉T恤','运动鞋','帆布包'],
-  '食品饮料': ['每日坚果','冷萃咖啡','水果茶']
-};
-/* 风格预设：色块示意 */
 var STYLES = [
   {id:'white',   name:'简约白底',  bg:'linear-gradient(135deg,#ffffff,#eef1f6)', ink:'#8a93a6'},
   {id:'nordic',  name:'北欧生活',  bg:'linear-gradient(135deg,#e8dcc8,#c9b896)', ink:'#5a4a32'},
@@ -293,25 +315,18 @@ var STYLES = [
   {id:'warehouse',name:'真实仓库', bg:'linear-gradient(135deg,#6b7280,#374151)', ink:'#fff'}
 ];
 
-/* 状态 */
 var state = {
-  file:null, fileDataUrl:'', identifyResult:null,
-  category:'家居百货', sub:'香薰蜡烛', style:'white',
-  images:[], copy:null
+  file:null, fileDataUrl:'',
+  category:'家居百货', style:'white',
+  pipelineResp:null, cells:[], usedDemo:false,
+  activeChannel:'taobao'
 };
 
-/* ============ 初始化 ============ */
 function $(id){return document.getElementById(id)}
-function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},2200)}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},2400)}
 
+/* ============ 初始化 ============ */
 function init(){
-  // 品类下拉
-  var cm = $('catMain');
-  Object.keys(CATS).forEach(function(k){
-    var o=document.createElement('option');o.value=k;o.textContent=k;cm.appendChild(o);
-  });
-  renderSubcats();
-  // 风格
   var sg=$('styleGrid');
   STYLES.forEach(function(s,i){
     var d=document.createElement('div');
@@ -320,9 +335,7 @@ function init(){
     d.innerHTML='<div class="sw" style="background:'+s.bg+';color:'+s.ink+'">'+s.name.slice(0,2)+'</div><div class="sl">'+s.name+'</div>';
     sg.appendChild(d);
   });
-  state.style='white';
-  // 登录检查
-  if(token){ $('userTag').textContent='已登录'; }
+  if(token){ $('userTag').textContent='已登录'; loadQuota(); }
   else { $('loginMask').classList.add('on'); }
 }
 function selectStyle(id,el){
@@ -330,16 +343,8 @@ function selectStyle(id,el){
   document.querySelectorAll('.style-item').forEach(function(e){e.classList.remove('sel')});
   el.classList.add('sel');
 }
-function renderSubcats(){
-  var main=$('catMain').value; state.category=main;
-  var cs=$('catSub'); cs.innerHTML='';
-  (CATS[main]||[]).forEach(function(s){
-    var o=document.createElement('option');o.value=s;o.textContent=s;cs.appendChild(o);
-  });
-  state.sub=cs.value;
-}
 
-/* ============ 登录 ============ */
+/* ============ 登录 / 额度 ============ */
 async function doLogin(){
   var acc=$('loginAccount').value.trim(), pwd=$('loginPwd').value;
   $('loginErr').textContent='';
@@ -352,15 +357,43 @@ async function doLogin(){
     if(j && j.token){
       token=j.token; localStorage.setItem(LS_TOKEN,token);
       $('loginMask').classList.remove('on'); $('userTag').textContent='已登录';
-      toast('登录成功');
+      toast('登录成功'); loadQuota();
     } else {
       $('loginErr').textContent=(j&&j.message)||'登录失败，请检查账号密码';
     }
   }catch(e){ $('loginErr').textContent='网络错误：'+e.message; }
 }
 function logout(){ localStorage.removeItem(LS_TOKEN); token=''; location.reload(); }
-function demoLogin(){ token='demo-local-token'; localStorage.setItem(LS_TOKEN,token); $('loginMask').classList.remove('on'); $('userTag').textContent='演示模式'; toast('已进入本地演示模式'); }
+function demoLogin(){ token='demo-local-token'; localStorage.setItem(LS_TOKEN,token); $('loginMask').classList.remove('on'); $('userTag').textContent='演示模式'; $('quotaPill').innerHTML='演示模式 · 额度不限'; toast('已进入本地演示模式'); }
 function authHeaders(){ return {'Content-Type':'application/json','Authorization':'Bearer '+token}; }
+/* fetch 带超时，后端挂起时快速走演示兜底 */
+function fetchTO(url, opts, ms){
+  ms = ms || 8000;
+  var ctrl = new AbortController();
+  var t = setTimeout(function(){ ctrl.abort(); }, ms);
+  opts = opts || {};
+  opts.signal = ctrl.signal;
+  return fetch(url, opts).finally(function(){ clearTimeout(t); });
+}
+
+/* GET /api/member/me → { plan, quota }（预留接口，后端未就绪时优雅降级） */
+async function loadQuota(){
+  if(!token || token==='demo-local-token'){ $('quotaPill').textContent='演示模式 · 额度不限'; return; }
+  try{
+    var r=await fetchTO(API_BASE+'/api/member/me',{headers:{'Authorization':'Bearer '+token}}, 5000);
+    if(!r.ok) throw new Error('http '+r.status);
+    var j=await r.json();
+    var plan=j.plan||j.tier||'标准版';
+    var q=(typeof j.quota==='number')?j.quota:(typeof j.remaining==='number'?j.remaining:null);
+    var html='套餐：'+plan;
+    if(q!=null) html+=' · 剩余 <b>'+q+'</b> 次';
+    html+=' <button onclick="toast(\'支付升级模块将在 M2 后续版本对接\')">升级</button>';
+    $('quotaPill').innerHTML=html;
+    if(q!=null && q<=3){ $('quotaPill').classList.add('low'); toast('额度不足 '+q+' 次，建议升级套餐'); }
+  }catch(e){
+    $('quotaPill').innerHTML='额度获取中 <button onclick="toast(\'支付升级模块将在 M2 后续版本对接\')">升级</button>';
+  }
+}
 
 /* ============ Step1 上传 ============ */
 var dz=$('dropzone'), fi=$('fileInput');
@@ -384,226 +417,570 @@ function handleFile(file){
   reader.readAsDataURL(file);
 }
 
-/* ============ Step2 识别 ============ */
+/* ============ Step2 识别（productAttributes 展示与编辑） ============ */
 async function startIdentify(){
-  goStep(2);
-  setPills(2);
-  // 调真实 /identify，失败则用默认演示值
+  goStep(2); setPills(2);
   var banner=$('idBanner');
   banner.innerHTML='AI 识别中…';
+  var demoAttr = {productName:'大豆香薰蜡烛', material:'大豆蜡 + 玻璃容器', color:'暖米色',
+    sellingPoints:['天然大豆蜡','无烟燃烧','8小时持久留香','简约设计','送礼佳品'], packagingText:'WorkHogee · 净含量 200g'};
+  var usedDemo=false;
   try{
-    var r=await fetch(API_BASE+'/identify',{method:'POST',headers:authHeaders(),
+    var r=await fetchTO(API_BASE+'/identify',{method:'POST',headers:authHeaders(),
       body:JSON.stringify({image:state.fileDataUrl})});
     if(r.ok){
       var j=await r.json();
-      var cat=(j.category||'家居百货'), sub=(j.subcategory||'香薰蜡烛'), conf=Math.round(j.confidence*100)||92;
-      state.identifyResult=j;
-      banner.innerHTML='AI 识别为【'+cat+' / '+sub+'】，置信度 <b>'+conf+'%</b>。可在下方修改。';
-      $('catMain').value=cat; renderSubcats(); $('catSub').value=sub;
-      state.category=cat; state.sub=sub;
+      if(j && j.data) j=j.data; // 兼容 {data:{...}} 信封
+      var attrs=(j && j.productAttributes)||j||{};
+      var name=attrs.productName||attrs.subcategory||attrs.category||'';
+      if(!name) usedDemo=true;
+      fillAttrForm(name||demoAttr.productName,
+                   attrs.material||demoAttr.material,
+                   attrs.color||demoAttr.color,
+                   (attrs.sellingPoints&&attrs.sellingPoints.length)?attrs.sellingPoints:demoAttr.sellingPoints,
+                   attrs.packagingText||demoAttr.packagingText);
+      var conf=Math.round((j.confidence||0.92)*100);
+      var cat=(j.category||'家居百货'), sub=(j.subcategory||'香薰蜡烛');
+      banner.innerHTML='AI 识别为【<b>'+cat+' / '+sub+'</b>】，置信度 <b>'+conf+'%</b>。产品属性已填入下方，可编辑。'+(usedDemo?'（后端属性字段未就绪，已用演示属性）':'');
       return;
     }
-  }catch(e){}
+  }catch(e){ usedDemo=true; }
   // 演示兜底
-  banner.innerHTML='AI 识别为【家居百货 / 香薰蜡烛】，置信度 <b>92%</b>。（后端接口调试中，已用演示结果）';
+  fillAttrForm(demoAttr.productName, demoAttr.material, demoAttr.color, demoAttr.sellingPoints, demoAttr.packagingText);
+  banner.innerHTML='AI 识别为【<b>家居百货 / 香薰蜡烛</b>】，置信度 <b>92%</b>。（演示数据，后端接口调试中）';
+}
+function fillAttrForm(name,material,color,points,pack){
+  $('attrName').value=name||'';
+  $('attrMaterial').value=material||'';
+  $('attrColor').value=color||'';
+  $('attrPack').value=pack||'';
+  $('attrPoints').value=(points||[]).join(', ');
+}
+function readAttrForm(){
+  var pts=$('attrPoints').value.split(/[,，、;；\n]/).map(function(s){return s.trim()}).filter(Boolean).slice(0,5);
+  return {productName:$('attrName').value.trim(), material:$('attrMaterial').value.trim(),
+          color:$('attrColor').value.trim(), sellingPoints:pts, packagingText:$('attrPack').value.trim()};
 }
 
-/* ============ Step3 生成 ============ */
+/* ============================================================
+ *  Canvas 图层合成引擎（产品像素绝不重绘）
+ * ============================================================ */
+function loadImg(src){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=function(e){rej(e)};i.src=src;});}
+
+/* ---------- Alpha 后处理：threshold / erode / defringe / feather ---------- */
+function processAlpha(img, opts){
+  opts = opts || {};
+  var threshold = (opts.threshold==null)?30:opts.threshold;
+  var erode = opts.erode!==false;
+  var defringe = opts.defringe!==false;
+  var feather = (opts.feather==null)?1:opts.feather;
+  var w=img.naturalWidth, h=img.naturalHeight;
+  if(!w||!h) return img;
+  var c=document.createElement('canvas'); c.width=w; c.height=h;
+  var x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(img,0,0);
+  var id=x.getImageData(0,0,w,h), d=id.data;
+
+  // 1) alpha 阈值化：alpha < threshold → 0
+  for(var i=0;i<d.length;i+=4){ if(d[i+3]<threshold) d[i+3]=0; }
+
+  // 2) alpha 通道 1px 腐蚀（3×3 最小值）
+  if(erode){
+    var a0=new Uint8Array(w*h);
+    for(var p=0;p<w*h;p++) a0[p]=d[p*4+3];
+    var a1=new Uint8Array(a0);
+    for(var yy=1;yy<h-1;yy++){
+      for(var xx=1;xx<w-1;xx++){
+        var m=255;
+        for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++){
+          var av=a0[(yy+dy)*w+(xx+dx)]; if(av<m)m=av;
+        }
+        a1[yy*w+xx]=m;
+      }
+    }
+    for(var p=0;p<w*h;p++) d[p*4+3]=a1[p];
+  }
+
+  // 3) defringe：边缘像素（0<alpha<255）RGB 替换为最近全不透明像素的 RGB
+  if(defringe){
+    for(var yy=1;yy<h-1;yy++){
+      for(var xx=1;xx<w-1;xx++){
+        var idx=yy*w+xx, a=d[idx*4+3];
+        if(a>0 && a<255){
+          var found=null;
+          for(var r=1;r<=6 && !found;r++){
+            for(var dy=-r;dy<=r && !found;dy++){
+              for(var dx=-r;dx<=r && !found;dx++){
+                if(Math.max(Math.abs(dx),Math.abs(dy))!==r) continue;
+                var nx=xx+dx, ny=yy+dy;
+                if(nx<0||ny<0||nx>=w||ny>=h) continue;
+                var ni=ny*w+nx;
+                if(d[ni*4+3]===255){ found=[d[ni*4],d[ni*4+1],d[ni*4+2]]; }
+              }
+            }
+          }
+          if(found){ d[idx*4]=found[0]; d[idx*4+1]=found[1]; d[idx*4+2]=found[2]; }
+        }
+      }
+    }
+  }
+
+  // 4) feather：alpha 边缘 1px 盒式模糊（近似高斯）
+  if(feather>0){
+    var src=new Uint8Array(w*h);
+    for(var p=0;p<w*h;p++) src[p]=d[p*4+3];
+    var cur=src;
+    for(var pass=0;pass<feather;pass++){
+      var bl=new Uint8Array(cur);
+      for(var yy=1;yy<h-1;yy++){
+        for(var xx=1;xx<w-1;xx++){
+          var s=0;
+          for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++) s+=cur[(yy+dy)*w+(xx+dx)];
+          bl[yy*w+xx]=Math.round(s/9);
+        }
+      }
+      cur=bl;
+    }
+    for(var p=0;p<w*h;p++) d[p*4+3]=cur[p];
+  }
+
+  x.putImageData(id,0,0);
+  return c;
+}
+
+/* ---------- 产品贴装计算 ---------- */
+function drawProduct(x, prod, cx, cy, scale){
+  // scale：产品最大边占画布比例
+  var pmax=Math.max(prod.width, prod.height);
+  var ds=(scale*COMPOSE_SIZE)/pmax;
+  var pw=prod.width*ds, ph=prod.height*ds;
+  x.drawImage(prod, cx-pw/2, cy-ph/2, pw, ph);
+  return {pw:pw, ph:ph};
+}
+/* 椭圆渐变阴影：黑色 alpha 0.15~0.25，模糊 8~15px */
+function drawShadow(x, cx, baseY, w, alpha){
+  var rw=w*0.42, rh=Math.max(6, w*0.09);
+  var g=x.createRadialGradient(cx,baseY,0,cx,baseY,rw);
+  g.addColorStop(0,'rgba(0,0,0,'+(alpha||0.2)+')');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  x.save();
+  x.translate(cx,baseY); x.scale(1, rh/rw); x.translate(-cx,-baseY);
+  x.fillStyle=g;
+  x.beginPath(); x.arc(cx,baseY,rw,0,Math.PI*2); x.fill();
+  x.restore();
+}
+/* colorTemp：soft-light 叠加温/冷色层 */
+function applyColorTemp(x, temp){
+  if(!temp || temp==='natural') return;
+  x.save();
+  x.globalCompositeOperation='soft-light';
+  if(temp==='warm'){ x.fillStyle='rgba(255,150,60,0.55)'; }
+  else if(temp==='cool'){ x.fillStyle='rgba(80,140,255,0.5)'; }
+  else { x.restore(); return; }
+  x.globalAlpha=0.6;
+  x.fillRect(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
+  x.restore();
+}
+/* 背景 cover 绘制 */
+function drawBgCover(x, bg){
+  var r=Math.max(COMPOSE_SIZE/bg.width, COMPOSE_SIZE/bg.height);
+  var w=bg.width*r, h=bg.height*r;
+  x.drawImage(bg,(COMPOSE_SIZE-w)/2,(COMPOSE_SIZE-h)/2,w,h);
+}
+
+/* 场景合成：背景 + 抠图产品 + 阴影 + 色温 */
+async function compositeScene(bgDataURL, prodCanvas, guide){
+  guide = guide || {};
+  var bg = await loadImg(bgDataURL);
+  var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
+  var x=c.getContext('2d');
+  drawBgCover(x, bg);
+  var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2;
+  var scale=guide.scale||0.55;
+  var box=drawProductMeasure(prodCanvas, scale);
+  if(guide.shadow!==false) drawShadow(x, cx, cy+box.ph*0.42, box.pw*1.05, 0.2);
+  x.drawImage(prodCanvas, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
+  applyColorTemp(x, guide.colorTemp);
+  return c;
+}
+function drawProductMeasure(prod, scale){
+  var pmax=Math.max(prod.width, prod.height);
+  var ds=(scale*COMPOSE_SIZE)/pmax;
+  return {pw:prod.width*ds, ph:prod.height*ds};
+}
+
+/* 白底图 ×2：variant 0=85%居中无阴影；1=80%居中底部柔和阴影 */
+async function compositeWhite(prodCanvas, variant){
+  var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
+  var x=c.getContext('2d');
+  x.fillStyle='#ffffff'; x.fillRect(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
+  var scale=(variant===0)?0.85:0.80;
+  var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2 + (variant===1?8:0);
+  var box=drawProductMeasure(prodCanvas, scale);
+  if(variant===1) drawShadow(x, cx, cy+box.ph*0.46, box.pw, 0.15);
+  x.drawImage(prodCanvas, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
+  return c;
+}
+
+/* 营销图：背景 + 产品（guide.marketing） */
+async function compositeMarketing(bgDataURL, prodCanvas, guide){
+  return compositeScene(bgDataURL, prodCanvas, guide||{scale:0.6, shadow:true, colorTemp:'warm'});
+}
+
+/* 细节图：按归一化 bbox 从原图裁剪 → POST /superres 超分 */
+async function cropAndSuperres(originalImg, bbox){
+  var ow=originalImg.naturalWidth, oh=originalImg.naturalHeight;
+  var sx=bbox[0]*ow, sy=bbox[1]*oh, sw=Math.max(2,bbox[2]*ow), sh=Math.max(2,bbox[3]*oh);
+  var c=document.createElement('canvas'); c.width=Math.round(sw); c.height=Math.round(sh);
+  var x=c.getContext('2d');
+  x.drawImage(originalImg, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  var dataURL=c.toDataURL('image/png');
+  try{
+    var r=await fetchTO(API_BASE+'/superres',{method:'POST',headers:authHeaders(),body:JSON.stringify({image:dataURL})}, 6000);
+    if(r.ok){ var j=await r.json(); if(j && j.image) return await loadImg(j.image); }
+  }catch(e){}
+  // 演示兜底：2x 平滑放大
+  var up=document.createElement('canvas'); up.width=c.width*2; up.height=c.height*2;
+  var ux=up.getContext('2d'); ux.imageSmoothingQuality='high';
+  ux.drawImage(c,0,0,up.width,up.height);
+  return up;
+}
+/* 任意图片 contain 到 1024 白底画布 */
+function containOnWhite(img){
+  var S=COMPOSE_SIZE;
+  var c=document.createElement('canvas'); c.width=S; c.height=S;
+  var x=c.getContext('2d');
+  x.fillStyle='#ffffff'; x.fillRect(0,0,S,S);
+  var r=Math.min(S/img.width, S/img.height);
+  var w=img.width*r, h=img.height*r;
+  x.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+  return c;
+}
+
+/* ============================================================
+ *  Step3 生成：调用 /pipeline，进度条动画
+ * ============================================================ */
 var timer=null, seconds=0;
 async function startPipeline(){
   goStep(3); setPills(3);
-  state.category=$('catMain').value; state.sub=$('catSub').value;
   seconds=0;
   clearInterval(timer);
   timer=setInterval(function(){
     seconds++;
-    $('etaText').textContent='已用时 '+seconds+' 秒 · 预计还需 2–5 分钟';
+    $('etaText').textContent='已用时 '+seconds+' 秒';
   },1000);
 
-  // 先尝试真实 pipeline
-  var realResult=null;
-  try{
-    var r=await fetch(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),
-      body:JSON.stringify({image:state.fileDataUrl,category:state.category,subcategory:state.sub,style:state.style})});
-    if(r.ok){ realResult=await r.json(); }
-  }catch(e){}
+  // 立即发起 pipeline 请求（与进度动画并行）
+  var attrs=readAttrForm();
+  var pipelinePromise = (async function(){
+    try{
+      var body={image:state.fileDataUrl, category:state.category, style:state.style, productAttributes:attrs};
+      var r=await fetchTO(API_BASE+'/pipeline',{method:'POST',headers:authHeaders(),body:JSON.stringify(body)}, 15000);
+      if(r.ok) return await r.json();
+    }catch(e){ console.warn('pipeline error', e); }
+    return null;
+  })();
 
-  // 推进进度动画（无论真实与否都走一遍 UI）
-  await runProgress();
-
-  if(realResult && realResult.images && realResult.images.length){
-    state.images=realResult.images;
-    state.copy=realResult.copy||defaultCopy();
-  } else {
-    // 演示：用画布生成 8 张占位图
-    state.images=makeDemoImages();
-    state.copy=defaultCopy();
-  }
-  clearInterval(timer);
-  showResults();
-}
-
-function runProgress(){
-  return new Promise(function(resolve){
-    var steps=[
-      {k:'scene', n:'3/8'}, {k:'detail',n:'4'}, {k:'mkt',n:'5'}, {k:'copy',n:'6'}
-    ];
-    var i=0;
-    (function next(){
-      if(i>0){
-        var prev=document.querySelector('.prog-item[data-k="'+steps[i-1].k+'"]');
-        prev.classList.remove('run'); prev.classList.add('done');
-        prev.querySelector('.prog-ic').textContent='✓';
-      }
-      if(i>=steps.length){ resolve(); return; }
-      var cur=document.querySelector('.prog-item[data-k="'+steps[i].k+'"]');
+  // 进度动画：视觉识别→抠图→背景生成→文案→质检
+  var progSteps=['vision','cut','bg','copy','qc'];
+  var progAnim=(async function(){
+    for(var i=0;i<progSteps.length;i++){
+      var cur=document.querySelector('.prog-item[data-k="'+progSteps[i]+'"]');
       cur.classList.remove('wait'); cur.classList.add('run');
-      cur.querySelector('.prog-ic').textContent=steps[i].n;
-      var pct=Math.round(((i+1)/steps.length)*100);
-      $('barFill').style.width=pct+'%';
-      i++;
-      setTimeout(next, 900);
-    })();
-  });
+      cur.querySelector('.prog-ic').textContent=(i+1);
+      $('barFill').style.width=Math.round(((i+1)/progSteps.length)*100)+'%';
+      await wait(750);
+      cur.classList.remove('run'); cur.classList.add('done');
+      cur.querySelector('.prog-ic').textContent='✓';
+    }
+  })();
+
+  // 等待 pipeline 返回 + 动画走完
+  var resp=await pipelinePromise;
+  if(!resp || !resp.cutout || !resp.cutout.image){
+    resp=await demoPipelineResponse();
+    state.usedDemo=true;
+  } else {
+    state.usedDemo=false;
+  }
+  await progAnim;
+  clearInterval(timer);
+
+  // 前端 Canvas 合成 8 图
+  try{
+    await buildAllImages(resp);
+    showResults(resp);
+  }catch(e){
+    toast('合成失败：'+e.message);
+    console.error(e);
+  }
+}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+async function buildAllImages(resp){
+  var prodImg=await loadImg(resp.cutout.image);
+  // 白底图前做 Alpha 后处理（边缘净化）
+  var prod=processAlpha(prodImg, {threshold:30, erode:true, defringe:true, feather:1});
+  var orig=await loadImg(state.fileDataUrl);
+  var cells=[];
+
+  // 白底 ×2
+  cells.push({tag:'白底主图', canvas:await compositeWhite(prod,0)});
+  cells.push({tag:'白底主图', canvas:await compositeWhite(prod,1)});
+
+  // 场景 ×3
+  var sgs=(resp.compositeGuide&&resp.compositeGuide.scene)||[];
+  for(var i=0;i<3;i++){
+    var bg=(resp.backgrounds && resp.backgrounds.scene && resp.backgrounds.scene[i]) || demoBgDataUrl('#f6c9a4','#c9b896');
+    cells.push({tag:'场景图', canvas:await compositeScene(bg, prod, sgs[i]||{scale:0.55,shadow:true,colorTemp:'warm'})});
+  }
+
+  // 细节 ×2
+  var boxes=(resp.detailBoxes && resp.detailBoxes.length)?resp.detailBoxes:demoBoxes();
+  for(var j=0;j<2;j++){
+    var box=boxes[j]||{label:'细节',bbox:[0.3,0.2,0.4,0.4]};
+    var det=await cropAndSuperres(orig, box.bbox);
+    cells.push({tag:'细节图 · '+(box.label||'局部'), canvas:containOnWhite(det)});
+  }
+
+  // 营销 ×1
+  var mBg=(resp.backgrounds && resp.backgrounds.marketing && resp.backgrounds.marketing[0]) || demoBgDataUrl('#e63946','#ffb703');
+  cells.push({tag:'营销海报', canvas:await compositeMarketing(mBg, prod, resp.compositeGuide&&resp.compositeGuide.marketing)});
+
+  state.cells=cells;
+  state.pipelineResp=resp;
 }
 
-/* 演示用：基于上传图生成 8 张占位物料图 */
-function makeDemoImages(){
-  var labels=[
-    {t:'白底主图 1', g:'white'}, {t:'白底主图 2', g:'white'},
-    {t:'场景图 1', g:'scene'}, {t:'场景图 2', g:'scene'}, {t:'场景图 3', g:'scene'},
-    {t:'细节图 1', g:'detail'}, {t:'细节图 2', g:'detail'},
-    {t:'营销海报', g:'mkt'}
-  ];
-  return labels.map(function(l){ return demoCanvasUrl(l); });
-}
-function demoCanvasUrl(label){
-  var c=document.createElement('canvas'); c.width=1024; c.height=1024;
-  var x=c.getContext('2d');
-  var palettes={white:['#ffffff','#eef1f6'],scene:['#f6c9a4','#c9b896'],detail:['#e8dcc8','#d4c4a8'],mkt:['#e63946','#ffb703']};
-  var p=palettes[label.g]||palettes.white;
-  var grd=x.createLinearGradient(0,0,1024,1024); grd.addColorStop(0,p[0]); grd.addColorStop(1,p[1]);
-  x.fillStyle=grd; x.fillRect(0,0,1024,1024);
-  x.fillStyle='rgba(0,0,0,.45)';
-  x.font='bold 52px sans-serif'; x.textAlign='center';
-  x.fillText(label.t, 512, 500);
-  x.font='28px sans-serif'; x.fillStyle='rgba(0,0,0,.35)';
-  x.fillText('WorkHogee M1 演示物料', 512, 560);
-  return c.toDataURL('image/png');
-}
-function defaultCopy(){
-  return {
-    title: state.sub+' · 提升生活质感之选',
-    points: [
-      '精选优质材质，工艺细致，经久耐用',
-      '简约百搭设计，轻松融入各种家居场景',
-      '安全环保无异味，家人使用更安心',
-      '高性价比好物，复购率超 60%',
-      '48 小时极速发货，退换无忧'
-    ],
-    desc: state.sub+'采用高品质原料与匠心工艺打造，外观简约大方，实用性与颜值兼具。无论是自用还是送礼都是理想之选，现在下单享限时优惠。'
-  };
-}
-
-/* ============ Step4 展示 ============ */
-function showResults(){
+/* ============================================================
+ *  Step4 展示：质检 + 8 图网格 + 文案
+ * ============================================================ */
+function showResults(resp){
   goStep(4); setPills(4);
+  renderQuality(resp.qualityCheck);
+
   var grid=$('imgGrid'); grid.innerHTML='';
-  var tags=['白底','白底','场景','场景','场景','细节','细节','营销'];
-  state.images.forEach(function(src,i){
-    var cell=document.createElement('div'); cell.className='img-cell';
-    cell.innerHTML='<div class="ph" onclick="zoom('+i+')"><img src="'+src+'" alt="物料图 '+(i+1)+'"><span class="tag">'+tags[i]+'</span></div>'+
-      '<div class="body"><div class="ttl">物料 '+(i+1)+' · '+tags[i]+'图</div>'+
+  state.cells.forEach(function(cell,i){
+    var src=cell.canvas.toDataURL('image/png');
+    var el=document.createElement('div'); el.className='img-cell';
+    el.innerHTML='<div class="ph" data-i="'+i+'"><img src="'+src+'" alt="物料 '+(i+1)+'"><span class="tag">'+cell.tag+'</span></div>'+
+      '<div class="body"><div class="ttl">物料 '+(i+1)+' · '+cell.tag+'</div>'+
       '<div class="spec-row">'+
-      '<button onclick="exportImage('+i+',\'taobao\')">淘宝800</button>'+
-      '<button onclick="exportImage('+i+',\'xhs\')">小红书3:4</button>'+
-      '<button onclick="exportImage('+i+',\'amazon\')">Amazon2000</button>'+
+      '<button data-i="'+i+'" data-s="taobao">淘宝800</button>'+
+      '<button data-i="'+i+'" data-s="xhs">小红书3:4</button>'+
+      '<button data-i="'+i+'" data-s="amazon">Amazon2000</button>'+
       '</div></div>';
-    grid.appendChild(cell);
+    grid.appendChild(el);
   });
+  grid.querySelectorAll('.ph').forEach(function(ph){
+    ph.onclick=function(){ zoom(+ph.getAttribute('data-i')); };
+  });
+  grid.querySelectorAll('.spec-row button').forEach(function(b){
+    b.onclick=function(){ exportImage(+b.getAttribute('data-i'), b.getAttribute('data-s')); };
+  });
+
   // 文案
-  $('copyTitle').textContent=state.copy.title;
+  var cp=resp.copy||{};
+  $('copyTitle').textContent=cp.title||'';
   var ul=$('copyPoints'); ul.innerHTML='';
-  state.copy.points.forEach(function(p){var li=document.createElement('li');li.textContent=p;ul.appendChild(li)});
-  $('copyDesc').textContent=state.copy.desc;
+  (cp.sellingPoints||[]).slice(0,5).forEach(function(p){var li=document.createElement('li');li.textContent=p;ul.appendChild(li)});
+  $('copyDesc').textContent=cp.description||'';
+  renderChannel(state.activeChannel, cp);
+
+  if(state.usedDemo){
+    toast('后端 /pipeline 未就绪，已使用演示数据跑通 Canvas 合成流程');
+  }
 }
-function zoom(i){ $('lbImg').src=state.images[i]; $('lightbox').classList.add('on'); }
+
+function renderQuality(qc){
+  var box=$('qcheckArea'); box.innerHTML='';
+  if(!qc){ return; }
+  if(!qc.passed){
+    var warn=document.createElement('div');
+    warn.className='qcheck-banner';
+    warn.innerHTML='⚠ <b>质检未通过</b>：'+(qc.issues||[]).join('；')+'。<b>建议重拍或重新生成。</b>（不阻断下载）';
+    box.appendChild(warn);
+  } else {
+    var ok=document.createElement('div');
+    ok.className='qcheck-ok'; ok.textContent='✓ 质检通过，物料可直接投放';
+    box.appendChild(ok);
+  }
+  var th=qc.thresholds||{};
+  var rows=[
+    ['主体一致性', qc.scores&&qc.scores.consistency, th.consistency==null?0.92:th.consistency],
+    ['包装文字可读性', qc.scores&&qc.scores.textReadability, th.textReadability==null?0.9:th.textReadability],
+    ['边缘干净度', qc.scores&&qc.scores.edgeCleanliness, th.edgeCleanliness==null?0.9:th.edgeCleanliness]
+  ];
+  rows.forEach(function(r){
+    var score=r[1]==null?0:r[1], t=r[2];
+    var pct=Math.round(score*100);
+    var passed=score>=t;
+    var row=document.createElement('div'); row.className='qscore-row';
+    row.innerHTML='<span class="qs-name">'+r[0]+'</span>'+
+      '<div class="qs-bar"><i style="width:'+pct+'%;background:'+(passed?'var(--ok)':'var(--bad)')+'"></i></div>'+
+      '<span class="qs-val" style="color:'+(passed?'var(--ok)':'var(--bad)')+'">'+pct+'% <small>≥'+Math.round(t*100)+'%</small></span>';
+    box.appendChild(row);
+  });
+}
+
+/* 三平台文案 tab */
+$('channelTabs').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  state.activeChannel=b.getAttribute('data-ch');
+  document.querySelectorAll('#channelTabs button').forEach(function(x){x.classList.toggle('sel', x===b)});
+  renderChannel(state.activeChannel, (state.pipelineResp&&state.pipelineResp.copy)||{});
+});
+function renderChannel(ch, cp){
+  var channels=cp.channels||{};
+  $('channelBody').textContent=channels[ch]||'（该平台文案待生成）';
+}
+
+function zoom(i){ $('lbImg').src=state.cells[i].canvas.toDataURL('image/png'); $('lightbox').classList.add('on'); }
 function copyCopy(){
-  var t=state.copy.title+'\n\n';
-  state.copy.points.forEach(function(p,i){t+=(i+1)+'. '+p+'\n'});
-  t+='\n'+state.copy.desc;
+  var cp=state.pipelineResp&&state.pipelineResp.copy; if(!cp) return;
+  var t=(cp.title||'')+'\n\n';
+  (cp.sellingPoints||[]).forEach(function(p,i){t+=(i+1)+'. '+p+'\n'});
+  t+='\n'+(cp.description||'');
   navigator.clipboard.writeText(t).then(function(){toast('文案已复制')});
 }
 
-/* ============ Canvas 多规格导出 ============ */
-function loadImg(src){return new Promise(function(res,rej){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i)};i.onerror=rej;i.src=src})}
-
-/* 淘宝800×800：等比缩放进 800 白底画布（contain） */
-function resizeTaobao(img){
-  var S=800,c=document.createElement('canvas');c.width=S;c.height=S;var x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,S,S);
-  var r=Math.min(S/img.width,S/img.height);
-  var w=img.width*r,h=img.height*r;
-  x.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+/* ============================================================
+ *  三规格导出：淘宝800×800 / 小红书1536×2048 / Amazon2000×2000
+ * ============================================================ */
+function exportCanvasSpec(srcCanvas, spec){
+  var c, x;
+  if(spec==='taobao'){
+    c=document.createElement('canvas'); c.width=800; c.height=800; x=c.getContext('2d');
+    x.fillStyle='#fff'; x.fillRect(0,0,800,800);
+    containDraw(x, srcCanvas, 800, 800);
+  } else if(spec==='amazon'){
+    c=document.createElement('canvas'); c.width=2000; c.height=2000; x=c.getContext('2d');
+    x.fillStyle='#fff'; x.fillRect(0,0,2000,2000);
+    containDraw(x, srcCanvas, 2000, 2000);
+  } else { // xhs 3:4
+    c=document.createElement('canvas'); c.width=1536; c.height=2048; x=c.getContext('2d');
+    x.fillStyle='#fff'; x.fillRect(0,0,1536,2048);
+    coverDraw(x, srcCanvas, 1536, 2048);
+  }
   return c;
 }
-/* Amazon 2000×2000 白底：等比缩放进 2000 画布（contain，白底） */
-function resizeAmazon(img){
-  var S=2000,c=document.createElement('canvas');c.width=S;c.height=S;var x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,S,S);
-  var r=Math.min(S/img.width,S/img.height);
-  var w=img.width*r,h=img.height*r;
-  x.drawImage(img,(S-w)/2,(S-h)/2,w,h);
-  return c;
-}
-/* 小红书 3:4（1536×2048）：短边铺满后居中裁剪（cover） */
-function resizeXhs(img){
-  var W=1536,H=2048,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,W,H);
-  // cover：缩放使图覆盖整个画布
-  var r=Math.max(W/img.width,H/img.height);
-  var w=img.width*r,h=img.height*r;
+function containDraw(x, img, W, H){
+  var r=Math.min(W/img.width, H/img.height);
+  var w=img.width*r, h=img.height*r;
+  x.imageSmoothingQuality='high';
   x.drawImage(img,(W-w)/2,(H-h)/2,w,h);
-  return c;
+}
+function coverDraw(x, img, W, H){
+  var r=Math.max(W/img.width, H/img.height);
+  var w=img.width*r, h=img.height*r;
+  x.imageSmoothingQuality='high';
+  x.drawImage(img,(W-w)/2,(H-h)/2,w,h);
 }
 
-async function exportImage(idx,spec){
+function exportImage(idx, spec){
   try{
-    var src=state.images[idx];
-    var img=await loadImg(src);
-    var c;
-    if(spec==='taobao') c=resizeTaobao(img);
-    else if(spec==='amazon') c=resizeAmazon(img);
-    else c=resizeXhs(img);
-    var name='物料'+(idx+1)+'_'+spec+'.png';
+    var c=exportCanvasSpec(state.cells[idx].canvas, spec);
+    var specName={taobao:'淘宝800', xhs:'小红书3x4', amazon:'Amazon2000'}[spec];
+    var name='物料'+(idx+1)+'_'+specName+'.png';
     c.toBlob(function(blob){
       var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');a.href=url;a.download=name;a.click();
+      var a=document.createElement('a'); a.href=url; a.download=name; a.click();
       setTimeout(function(){URL.revokeObjectURL(url)},2000);
-      toast('已导出 '+name);
+      toast('已导出 '+name+'（'+c.width+'×'+c.height+'）');
     },'image/png');
   }catch(e){ toast('导出失败：'+e.message); }
 }
 
-/* 全部下载 ZIP（每张默认导出淘宝800规格打包） */
+/* ZIP：每图三规格 × 8 图 = 24 PNG + 文案 + 质检报告 */
 async function downloadZip(){
   if(typeof JSZip==='undefined'){ toast('ZIP 组件未加载，请逐张点击下载'); return; }
-  toast('正在打包…');
+  toast('正在打包 24 张图…');
   var zip=new JSZip();
-  for(var i=0;i<state.images.length;i++){
-    try{
-      var img=await loadImg(state.images[i]);
-      var c=resizeTaobao(img);
+  var names={taobao:'淘宝800', xhs:'小红书3x4', amazon:'Amazon2000'};
+  for(var i=0;i<state.cells.length;i++){
+    for(var k in names){
+      var c=exportCanvasSpec(state.cells[i].canvas, k);
       var blob=await new Promise(function(res){c.toBlob(res,'image/png')});
-      zip.file('物料'+(i+1)+'_淘宝800.png',blob);
-    }catch(e){}
+      zip.file('物料'+(i+1)+'_'+names[k]+'.png', blob);
+    }
   }
-  zip.file('商品文案.txt', state.copy.title+'\n\n'+state.copy.points.map(function(p,j){return (j+1)+'. '+p}).join('\n')+'\n\n'+state.copy.desc);
+  var cp=state.pipelineResp&&state.pipelineResp.copy||{};
+  var txt=(cp.title||'')+'\n\n'+(cp.sellingPoints||[]).map(function(p,j){return (j+1)+'. '+p}).join('\n')+'\n\n'+(cp.description||'')+
+          '\n\n=== 淘宝 ===\n'+((cp.channels&&cp.channels.taobao)||'')+
+          '\n\n=== 小红书 ===\n'+((cp.channels&&cp.channels.xhs)||'')+
+          '\n\n=== Amazon ===\n'+((cp.channels&&cp.channels.amazon)||'');
+  zip.file('商品文案.txt', txt);
+  var qc=state.pipelineResp&&state.pipelineResp.qualityCheck;
+  if(qc){
+    zip.file('质检报告.txt', JSON.stringify(qc,null,2));
+  }
   var content=await zip.generateAsync({type:'blob'});
   var url=URL.createObjectURL(content);
-  var a=document.createElement('a');a.href=url;a.download='WorkHogee物料包.zip';a.click();
+  var a=document.createElement('a'); a.href=url; a.download='WorkHogee物料包.zip'; a.click();
   setTimeout(function(){URL.revokeObjectURL(url)},3000);
   toast('ZIP 已下载');
+}
+
+/* ============================================================
+ *  演示数据合成（后端 /pipeline 未就绪时跑通 Canvas 引擎）
+ * ============================================================ */
+function demoBgDataUrl(c1,c2){
+  var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
+  var x=c.getContext('2d');
+  var g=x.createLinearGradient(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
+  g.addColorStop(0,c1); g.addColorStop(1,c2);
+  x.fillStyle=g; x.fillRect(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
+  var rg=x.createRadialGradient(COMPOSE_SIZE*0.7,COMPOSE_SIZE*0.3,10,COMPOSE_SIZE*0.7,COMPOSE_SIZE*0.3,COMPOSE_SIZE*0.5);
+  rg.addColorStop(0,'rgba(255,255,255,.35)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=rg; x.fillRect(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
+  return c.toDataURL('image/png');
+}
+function demoBoxes(){ return [{label:'烛芯细节',bbox:[0.35,0.18,0.3,0.32]},{label:'蜡体纹理',bbox:[0.25,0.55,0.5,0.35]}]; }
+async function demoPipelineResponse(){
+  // 用上传图生成一张"伪抠图"：中心椭圆软 alpha 遮罩
+  var prodImg=await loadImg(state.fileDataUrl);
+  var S=800;
+  var c=document.createElement('canvas'); c.width=S; c.height=S;
+  var x=c.getContext('2d',{willReadFrequently:true});
+  var r=Math.max(S/prodImg.naturalWidth, S/prodImg.naturalHeight);
+  var w=prodImg.naturalWidth*r, h=prodImg.naturalHeight*r;
+  x.drawImage(prodImg,(S-w)/2,(S-h)/2,w,h);
+  x.globalCompositeOperation='destination-in';
+  var g=x.createRadialGradient(S/2,S/2,S*0.08,S/2,S/2,S*0.48);
+  g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(0.72,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=g; x.fillRect(0,0,S,S);
+  var cutoutPNG=c.toDataURL('image/png');
+
+  return {
+    productAttributes:{productName:'大豆香薰蜡烛',material:'大豆蜡 + 玻璃容器',color:'暖米色',
+      sellingPoints:['天然大豆蜡','无烟燃烧','8小时持久留香','简约设计','送礼佳品'],packagingText:'WorkHogee · 净含量 200g'},
+    cutout:{strategy:'demo-ellipse', image:cutoutPNG, width:S, height:S, ms:0},
+    backgrounds:{
+      scene:[demoBgDataUrl('#f6c9a4','#c9b896'), demoBgDataUrl('#d7e3dc','#9db8a8'), demoBgDataUrl('#e8dcc8','#b8a680')],
+      marketing:[demoBgDataUrl('#e63946','#ffb703')]
+    },
+    compositeGuide:{
+      scene:[
+        {position:'center',scale:0.55,shadow:true,colorTemp:'warm'},
+        {position:'center',scale:0.5,shadow:true,colorTemp:'cool'},
+        {position:'center',scale:0.6,shadow:true,colorTemp:'natural'}
+      ],
+      marketing:{position:'center',scale:0.6,shadow:true,colorTemp:'warm'}
+    },
+    detailBoxes:demoBoxes(),
+    copy:{
+      title:'【新品】大豆香薰蜡烛 · 8小时无烟持久留香',
+      sellingPoints:['天然大豆蜡，燃烧更安心','无烟配方，客厅卧室都能用','8小时持久留香，治愈系气味','简约玻璃容器，摆拍百搭','现在下单限时第二件半价'],
+      description:'精选天然大豆蜡与植物精油，燃烧充分不挂壁。暖米色玻璃容器极简百搭，无论是睡前放松、沐浴时光还是办公室午后，都能带来一缕治愈香气。现在下单享限时优惠。',
+      channels:{
+        taobao:'【包邮】大豆香薰蜡烛无烟家用卧室持久香氛摆件 买2送1',
+        xhs:'终于找到不熏人的蜡烛了！🌿 大豆蜡真的无烟，点了一整晚家里都是淡淡的木质香，玻璃罐放床头也超好看～',
+        amazon:'Natural Soy Wax Scented Candle, 8-Hour Long Lasting, Smokeless, Aromatherapy Gift for Home'
+      }
+    },
+    qualityCheck:{passed:true, scores:{consistency:0.95, textReadability:0.92, edgeCleanliness:0.93},
+      thresholds:{consistency:0.92, textReadability:0.9, edgeCleanliness:0.9}, issues:[]},
+    timing:{}, exportSpecs:{taobao:'800x800', xhs:'1536x2048', amazon:'2000x2000'}, videoReady:false
+  };
 }
 
 /* ============ 步骤切换 ============ */
@@ -619,10 +996,11 @@ function setPills(active){
   }
 }
 function resetAll(){
-  state.file=null;state.fileDataUrl='';state.images=[];state.copy=null;state.identifyResult=null;
-  $('previewBox').style.display='none';$('btnIdentify').disabled=true;$('fileInput').value='';
-  $('barFill').style.width='0';seconds=0;clearInterval(timer);
-  goStep(1);setPills(1);
+  state.file=null; state.fileDataUrl=''; state.cells=[]; state.pipelineResp=null; state.usedDemo=false;
+  $('previewBox').style.display='none'; $('btnIdentify').disabled=true; $('fileInput').value='';
+  $('barFill').style.width='0'; seconds=0; clearInterval(timer);
+  document.querySelectorAll('.prog-item').forEach(function(p){p.classList.remove('done','run');p.classList.add('wait')});
+  goStep(1); setPills(1);
 }
 
 init();
