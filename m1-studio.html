@@ -467,13 +467,18 @@ function readAttrForm(){
  * ============================================================ */
 function loadImg(src){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=function(e){rej(e)};i.src=src;});}
 
-/* ---------- Alpha 后处理：threshold / erode / defringe / feather ---------- */
+/* ---------- Alpha 后处理：threshold / 最大连通域 / erode / 深色抑制 / defringe / feather ---------- */
 function processAlpha(img, opts){
   opts = opts || {};
   var threshold = (opts.threshold==null)?30:opts.threshold;
-  var erode = opts.erode!==false;
+  // 腐蚀强度：数字 px（1/2/3），默认 2；0/false 关闭。深色背景用 2~3，浅色场景用 1
+  var erodePx = (opts.erodePx==null)?2:opts.erodePx;
+  if(opts.erode===false) erodePx=0;
   var defringe = opts.defringe!==false;
+  var defringeRadius = (opts.defringeRadius==null)?12:opts.defringeRadius;
   var feather = (opts.feather==null)?1:opts.feather;
+  var keepLargestCC = opts.keepLargestCC!==false;   // 默认开启：只保留最大前景连通域
+  var darkSuppress = opts.darkSuppress!==false;     // 默认开启：抑制深色半透明残留
   var w=img.naturalWidth, h=img.naturalHeight;
   if(!w||!h) return img;
   var c=document.createElement('canvas'); c.width=w; c.height=h;
@@ -484,31 +489,78 @@ function processAlpha(img, opts){
   // 1) alpha 阈值化：alpha < threshold → 0
   for(var i=0;i<d.length;i+=4){ if(d[i+3]<threshold) d[i+3]=0; }
 
-  // 2) alpha 通道 1px 腐蚀（3×3 最小值）
-  if(erode){
-    var a0=new Uint8Array(w*h);
-    for(var p=0;p<w*h;p++) a0[p]=d[p*4+3];
-    var a1=new Uint8Array(a0);
-    for(var yy=1;yy<h-1;yy++){
-      for(var xx=1;xx<w-1;xx++){
-        var m=255;
-        for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++){
-          var av=a0[(yy+dy)*w+(xx+dx)]; if(av<m)m=av;
+  // 2) 主体最大连通域筛选（8 邻域 flood fill）：只保留最大前景块，其余 alpha 置 0
+  //    解决蜡烛把礼盒/花/花瓶都当前景、帆布包把桌面残留当前景的问题
+  if(keepLargestCC){
+    var label=new Int32Array(w*h);
+    for(var li=0;li<w*h;li++) label[li]=-1;
+    var curLab=0, sizes=[];
+    for(var start=0; start<w*h; start++){
+      if(label[start]>=0 || d[start*4+3]===0) continue;
+      var stack=[start]; label[start]=curLab; var cnt=0;
+      while(stack.length){
+        var p=stack.pop(); cnt++;
+        var py=(p/w)|0, px=p%w;
+        for(var dy=-1;dy<=1;dy++){
+          for(var dx=-1;dx<=1;dx++){
+            if(!dx&&!dy) continue;
+            var nx=px+dx, ny=py+dy;
+            if(nx<0||ny<0||nx>=w||ny>=h) continue;
+            var q=ny*w+nx;
+            if(label[q]<0 && d[q*4+3]>0){ label[q]=curLab; stack.push(q); }
+          }
         }
-        a1[yy*w+xx]=m;
       }
+      sizes.push(cnt); curLab++;
     }
-    for(var p=0;p<w*h;p++) d[p*4+3]=a1[p];
+    if(sizes.length>1){
+      var maxLab=0;
+      for(var t=1;t<sizes.length;t++){ if(sizes[t]>sizes[maxLab]) maxLab=t; }
+      for(var pz=0;pz<w*h;pz++){ if(label[pz]!==maxLab) d[pz*4+3]=0; }
+    }
   }
 
-  // 3) defringe：边缘像素（0<alpha<255）RGB 替换为最近全不透明像素的 RGB
+  // 3) alpha 通道腐蚀：重复 N 次 3×3 最小值（默认 2px，深色背景更干净）
+  if(erodePx>0){
+    var a0=new Uint8Array(w*h);
+    for(var p=0;p<w*h;p++) a0[p]=d[p*4+3];
+    for(var pass=0;pass<erodePx;pass++){
+      var a1=new Uint8Array(a0);
+      for(var yy=1;yy<h-1;yy++){
+        for(var xx=1;xx<w-1;xx++){
+          var m=255;
+          for(var dyy=-1;dyy<=1;dyy++) for(var dx=-1;dx<=1;dx++){
+            var av=a0[(yy+dyy)*w+(xx+dx)]; if(av<m)m=av;
+          }
+          a1[yy*w+xx]=m;
+        }
+      }
+      a0.set(a1);
+    }
+    for(var p=0;p<w*h;p++) d[p*4+3]=a0[p];
+  }
+
+  // 4) 深色残留抑制：边缘半透明像素若偏暗（亮度<80）且 alpha<200，alpha×0.3
+  //    专门针对帆布包等深色桌面/背景在 alpha 边缘留下的深色毛边
+  if(darkSuppress){
+    for(var p=0;p<w*h;p++){
+      var a=d[p*4+3];
+      if(a>0 && a<200){
+        var lum=(d[p*4]+d[p*4+1]+d[p*4+2])/3;
+        if(lum<80){ d[p*4+3]=Math.round(a*0.3); }
+      }
+    }
+  }
+
+  // 5) defringe：边缘像素（0<alpha<255）RGB 替换为最近全不透明像素的 RGB（半径 12px）
+  //    找不到全不透明像素时保留原色（不动 RGB）
   if(defringe){
     for(var yy=1;yy<h-1;yy++){
       for(var xx=1;xx<w-1;xx++){
         var idx=yy*w+xx, a=d[idx*4+3];
         if(a>0 && a<255){
           var found=null;
-          for(var r=1;r<=6 && !found;r++){
+          for(var r=1;r<=defringeRadius && !found;r++){
             for(var dy=-r;dy<=r && !found;dy++){
               for(var dx=-r;dx<=r && !found;dx++){
                 if(Math.max(Math.abs(dx),Math.abs(dy))!==r) continue;
@@ -525,7 +577,7 @@ function processAlpha(img, opts){
     }
   }
 
-  // 4) feather：alpha 边缘 1px 盒式模糊（近似高斯）
+  // 6) feather：alpha 边缘 1px 盒式模糊（近似高斯）
   if(feather>0){
     var src=new Uint8Array(w*h);
     for(var p=0;p<w*h;p++) src[p]=d[p*4+3];
@@ -569,6 +621,19 @@ function drawShadow(x, cx, baseY, w, alpha){
   x.beginPath(); x.arc(cx,baseY,rw,0,Math.PI*2); x.fill();
   x.restore();
 }
+/* 接地接触阴影：产品底部与地面接触处的窄深色阴影（高 3-6px，alpha 0.4，模糊 2px） */
+function drawContactShadow(x, cx, baseY, w){
+  var h=Math.max(3, Math.round(w*0.018));
+  var g=x.createLinearGradient(0, baseY-h, 0, baseY+h*0.7);
+  g.addColorStop(0,'rgba(0,0,0,0)');
+  g.addColorStop(0.55,'rgba(0,0,0,0.42)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  x.save();
+  try{ x.filter='blur(2px)'; }catch(e){}
+  x.fillStyle=g;
+  x.fillRect(cx-w*0.46, baseY-h, w*0.92, h*1.7);
+  x.restore();
+}
 /* colorTemp：soft-light 叠加温/冷色层 */
 function applyColorTemp(x, temp){
   if(!temp || temp==='natural') return;
@@ -588,18 +653,46 @@ function drawBgCover(x, bg){
   x.drawImage(bg,(COMPOSE_SIZE-w)/2,(COMPOSE_SIZE-h)/2,w,h);
 }
 
-/* 场景合成：背景 + 抠图产品 + 阴影 + 色温 */
+/* 场景合成：背景 + 抠图产品 + 接地阴影 + 环境光融合 + 色温 */
 async function compositeScene(bgDataURL, prodCanvas, guide){
   guide = guide || {};
   var bg = await loadImg(bgDataURL);
   var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
-  var x=c.getContext('2d');
+  var x=c.getContext('2d',{willReadFrequently:true});
   drawBgCover(x, bg);
   var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2;
   var scale=guide.scale||0.55;
   var box=drawProductMeasure(prodCanvas, scale);
-  if(guide.shadow!==false) drawShadow(x, cx, cy+box.ph*0.42, box.pw*1.05, 0.2);
-  x.drawImage(prodCanvas, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
+  var dx=cx-box.pw/2, dy=cy-box.ph/2;
+
+  // 采样产品贴装区域的背景平均色（环境光色温融合用）
+  var ambient=null;
+  try{
+    var sx=Math.max(0,Math.round(dx)), sy=Math.max(0,Math.round(dy));
+    var sw=Math.min(COMPOSE_SIZE-sx, Math.round(box.pw)), sh=Math.min(COMPOSE_SIZE-sy, Math.round(box.ph));
+    if(sw>8 && sh>8){
+      var bgData=x.getImageData(sx,sy,sw,sh).data;
+      var r=0,g=0,b=0,n=0;
+      for(var i=0;i<bgData.length;i+=16){ r+=bgData[i]; g+=bgData[i+1]; b+=bgData[i+2]; n++; }
+      ambient=[Math.round(r/n),Math.round(g/n),Math.round(b/n)];
+    }
+  }catch(e){}
+
+  if(guide.shadow!==false){
+    drawShadow(x, cx, cy+box.ph*0.42, box.pw*1.05, 0.2);
+    drawContactShadow(x, cx, cy+box.ph*0.46, box.pw);
+  }
+  x.drawImage(prodCanvas, dx, dy, box.pw, box.ph);
+
+  // 环境光色温融合：以背景主色 soft-light 12% 叠加到产品矩形区，使产品色温与环境融合
+  if(ambient && guide.ambient!==false){
+    x.save();
+    x.globalCompositeOperation='soft-light';
+    x.globalAlpha=0.12;
+    x.fillStyle='rgb('+ambient[0]+','+ambient[1]+','+ambient[2]+')';
+    x.fillRect(dx,dy,box.pw,box.ph);
+    x.restore();
+  }
   applyColorTemp(x, guide.colorTemp);
   return c;
 }
@@ -617,7 +710,10 @@ async function compositeWhite(prodCanvas, variant){
   var scale=(variant===0)?0.85:0.80;
   var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2 + (variant===1?8:0);
   var box=drawProductMeasure(prodCanvas, scale);
-  if(variant===1) drawShadow(x, cx, cy+box.ph*0.46, box.pw, 0.15);
+  if(variant===1){
+    drawShadow(x, cx, cy+box.ph*0.46, box.pw, 0.15);
+    drawContactShadow(x, cx, cy+box.ph*0.49, box.pw);
+  }
   x.drawImage(prodCanvas, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
   return c;
 }
@@ -719,8 +815,8 @@ function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 async function buildAllImages(resp){
   var prodImg=await loadImg(resp.cutout.image);
-  // 白底图前做 Alpha 后处理（边缘净化）
-  var prod=processAlpha(prodImg, {threshold:30, erode:true, defringe:true, feather:1});
+  // 白底图前做 Alpha 后处理（边缘净化：最大连通域 + 2px 腐蚀 + 深色抑制 + defringe 12px）
+  var prod=processAlpha(prodImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true});
   var orig=await loadImg(state.fileDataUrl);
   var cells=[];
 
@@ -794,7 +890,16 @@ function showResults(resp){
 function renderQuality(qc){
   var box=$('qcheckArea'); box.innerHTML='';
   if(!qc){ return; }
-  if(!qc.passed){
+  var unavailable = (qc.available===false) || (qc.scores==null);
+  if(unavailable){
+    // 质检超时/不可用：不显示"未通过"，而是中性提示，分数列显示 N/A
+    var info=document.createElement('div');
+    info.className='qcheck-banner';
+    info.style.background='#fffbeb'; info.style.borderColor='#fde68a'; info.style.borderLeftColor='var(--warn)';
+    info.style.color='#92400e';
+    info.innerHTML='⏱ <b>质检超时/不可用</b>：'+(qc.issues||[]).join('；')+'。<b>已跳过评分，不阻断下载。</b>';
+    box.appendChild(info);
+  } else if(!qc.passed){
     var warn=document.createElement('div');
     warn.className='qcheck-banner';
     warn.innerHTML='⚠ <b>质检未通过</b>：'+(qc.issues||[]).join('；')+'。<b>建议重拍或重新生成。</b>（不阻断下载）';
@@ -811,13 +916,19 @@ function renderQuality(qc){
     ['边缘干净度', qc.scores&&qc.scores.edgeCleanliness, th.edgeCleanliness==null?0.9:th.edgeCleanliness]
   ];
   rows.forEach(function(r){
-    var score=r[1]==null?0:r[1], t=r[2];
-    var pct=Math.round(score*100);
-    var passed=score>=t;
+    var score=r[1], t=r[2];
     var row=document.createElement('div'); row.className='qscore-row';
-    row.innerHTML='<span class="qs-name">'+r[0]+'</span>'+
-      '<div class="qs-bar"><i style="width:'+pct+'%;background:'+(passed?'var(--ok)':'var(--bad)')+'"></i></div>'+
-      '<span class="qs-val" style="color:'+(passed?'var(--ok)':'var(--bad)')+'">'+pct+'% <small>≥'+Math.round(t*100)+'%</small></span>';
+    if(score==null){
+      row.innerHTML='<span class="qs-name">'+r[0]+'</span>'+
+        '<div class="qs-bar"><i style="width:0%"></i></div>'+
+        '<span class="qs-val" style="color:#9ca3af">N/A <small>≥'+Math.round(t*100)+'%</small></span>';
+    } else {
+      var pct=Math.round(score*100);
+      var passed=score>=t;
+      row.innerHTML='<span class="qs-name">'+r[0]+'</span>'+
+        '<div class="qs-bar"><i style="width:'+pct+'%;background:'+(passed?'var(--ok)':'var(--bad)')+'"></i></div>'+
+        '<span class="qs-val" style="color:'+(passed?'var(--ok)':'var(--bad)')+'">'+pct+'% <small>≥'+Math.round(t*100)+'%</small></span>';
+    }
     box.appendChild(row);
   });
 }

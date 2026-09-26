@@ -847,32 +847,42 @@ async function handlePipeline(req, env, origin) {
   }
 
   // 6) 质检门禁（阿果）：抠图结构 / 包装文字可读性 / 边缘干净度评分，M2 不强制阻断
+  //    修复：超时/失败不再落 0 分且 passed=true；改为 available=false, passed=false, scores=null
+  //    并用 Promise.race 15s 硬超时，绝不阻塞主出图流程。
   const tQ = Date.now();
   const QC_THRESHOLD = { consistency: 0.92, textReadability: 0.9, edgeCleanliness: 0.9 };
   let qualityCheck = {
-    passed: true,
-    scores: { consistency: 0, textReadability: 0, edgeCleanliness: 0 },
+    passed: false,
+    available: false,
+    scores: null,
     thresholds: QC_THRESHOLD,
     issues: ['qc_unavailable']
   };
   try {
     if (cutoutPng) {
-      const q = await checkCutoutQuality(env, { original: image, cutout: cutoutPng });
+      // 质检与出图解耦：视觉模型最多等 15s，超时立即降级 qc_unavailable，不等模型返回
+      const qcPromise = checkCutoutQuality(env, { original: image, cutout: cutoutPng });
+      const qcTimeout = new Promise(resolve => setTimeout(() => resolve({
+        available: false, scores: null, issues: ['vision_timeout']
+      }), 15000));
+      const q = await Promise.race([qcPromise, qcTimeout]);
       timing.quality = Date.now() - tQ;
-      if (q && q.available) {
+      if (q && q.available && q.scores) {
         qualityCheck = {
           passed: q.scores.consistency >= QC_THRESHOLD.consistency
             && q.scores.textReadability >= QC_THRESHOLD.textReadability
             && q.scores.edgeCleanliness >= QC_THRESHOLD.edgeCleanliness,
+          available: true,
           scores: q.scores,
           thresholds: QC_THRESHOLD,
           issues: q.issues || []
         };
       } else {
-        // 质检不可用：M2 放行，前端不据此拦截
+        // 质检超时/失败/不可用：passed=false, scores=null（前端显示 N/A，不落 0 分）
         qualityCheck = {
-          passed: true,
-          scores: (q && q.scores) || qualityCheck.scores,
+          passed: false,
+          available: false,
+          scores: null,
           thresholds: QC_THRESHOLD,
           issues: ['qc_unavailable'].concat((q && q.issues) || [])
         };
@@ -881,7 +891,8 @@ async function handlePipeline(req, env, origin) {
       timing.quality = Date.now() - tQ;
       qualityCheck = {
         passed: false,
-        scores: { consistency: 0, textReadability: 0, edgeCleanliness: 0 },
+        available: false,
+        scores: null,
         thresholds: QC_THRESHOLD,
         issues: ['cutout_failed_no_product_png']
       };
@@ -889,8 +900,9 @@ async function handlePipeline(req, env, origin) {
   } catch (e) {
     timing.quality = Date.now() - tQ;
     qualityCheck = {
-      passed: true,
-      scores: qualityCheck.scores,
+      passed: false,
+      available: false,
+      scores: null,
       thresholds: QC_THRESHOLD,
       issues: ['qc_error', String((e && e.message) || e)]
     };
