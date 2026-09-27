@@ -921,9 +921,14 @@ function drawContactShadow(x, cx, baseY, pw, ph){
   x.beginPath(); x.arc(cx, baseY, rw, 0, Math.PI*2); x.fill();
   x.restore();
 }
-/* 营销图文案排版：背景明暗自适应文字色，900字重大标题+副标题+图标化卖点列表，左上不遮产品 */
-function drawMarketingText(x, title, sub, points){
-  var S=COMPOSE_SIZE;
+/* 营销图独立文字层：背景明暗自适应，大标题+副标题+线框卖点图标列表
+ * x: canvas context, W/H: canvas实际尺寸（可选，默认COMPOSE_SIZE）
+ * 文字层叠加在干净底图上，不烧进底图
+ */
+function drawMarketingText(x, title, sub, points, W, H){
+  W=W||COMPOSE_SIZE; H=H||COMPOSE_SIZE;
+  var S=Math.min(W,H);
+  var sc=S/COMPOSE_SIZE; // 缩放因子
   title=String(title||'').trim();
   if(sub && typeof sub==='object') sub=sub.text||'';
   sub=String(sub||'').replace(/^卖点[：:]/,'').trim();
@@ -933,62 +938,67 @@ function drawMarketingText(x, title, sub, points){
   // 采样背景亮度决定文字色
   var lum=255;
   try{
-    var px=x.getImageData(90,90,1,1).data;
+    var sx=Math.round(90*sc), sy=Math.round(90*sc);
+    var px=x.getImageData(sx,sy,1,1).data;
     lum=0.299*px[0]+0.587*px[1]+0.114*px[2];
   }catch(e){}
-  var darkText = lum>140;           // 亮背景→深色字
+  var darkText = lum>140;
   var mainColor = darkText ? '#16181d' : '#ffffff';
   var subColor  = darkText ? '#4b5563' : 'rgba(255,255,255,0.88)';
   var strokeCol = darkText ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.35)';
   var accent    = darkText ? '#e63946' : '#ff5a5f';
   x.save();
   x.textBaseline='top';
-  var tx=64, ty=64, maxW=S-128;
-  // 顶部品牌短条
-  x.fillStyle=accent; x.fillRect(tx, ty, 54, 8);
-  ty+=26;
+  var tx=Math.round(64*sc), ty=Math.round(64*sc), maxW=W-Math.round(128*sc);
+  x.fillStyle=accent; x.fillRect(tx, ty, Math.round(54*sc), Math.round(8*sc));
+  ty+=Math.round(26*sc);
   if(title){
-    var ts=58;
-    x.font='900 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
-    while(x.measureText(title).width>maxW && ts>28){
-      ts-=2; x.font='900 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    var ts=Math.round(58*sc);
+    x.font='900 '+ts+'px "Georgia","Playfair Display","PingFang SC","Microsoft YaHei",serif';
+    while(x.measureText(title).width>maxW && ts>Math.round(28*sc)){
+      ts-=2; x.font='900 '+ts+'px "Georgia","Playfair Display","PingFang SC","Microsoft YaHei",serif';
     }
-    x.lineWidth=9; x.strokeStyle=strokeCol; x.lineJoin='round';
+    x.lineWidth=Math.round(9*sc); x.strokeStyle=strokeCol; x.lineJoin='round';
     x.strokeText(title, tx, ty);
     x.fillStyle=mainColor;
     x.fillText(title, tx, ty);
-    var afterTitle=ty+ts+18;
+    var afterTitle=ty+ts+Math.round(18*sc);
     if(sub){
-      var ss=28;
+      var ss=Math.round(28*sc);
       x.font='500 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
-      while(x.measureText(sub).width>maxW && ss>18){
+      while(x.measureText(sub).width>maxW && ss>Math.round(18*sc)){
         ss-=1; x.font='500 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
       }
       var sy=afterTitle;
-      x.lineWidth=6; x.strokeStyle=strokeCol;
+      x.lineWidth=Math.round(6*sc); x.strokeStyle=strokeCol;
       x.strokeText(sub, tx, sy);
       x.fillStyle=subColor;
       x.fillText(sub, tx, sy);
       x.fillStyle=accent;
-      x.fillRect(tx, sy+ss+12, 96, 6);
-      afterTitle=sy+ss+30;
+      x.fillRect(tx, sy+ss+Math.round(12*sc), Math.round(96*sc), Math.round(6*sc));
+      afterTitle=sy+ss+Math.round(30*sc);
     }
-    // 图标化卖点列表：圆形线框 + 对勾 + 短文本
     if(pts.length){
-      var rowY=afterTitle+18;
+      var rowY=afterTitle+Math.round(18*sc);
+      var iconR=Math.round(16*sc);
       pts.forEach(function(ptext){
-        var short=ptext.length>16?ptext.slice(0,15)+'…':ptext;
-        x.strokeStyle=accent; x.lineWidth=3;
-        x.beginPath(); x.arc(tx+16, rowY+16, 16, 0, Math.PI*2); x.stroke();
+        var maxLen=Math.round(16/sc);
+        var short=ptext.length>maxLen?ptext.slice(0,maxLen-1)+'…':ptext;
+        x.strokeStyle=accent; x.lineWidth=Math.max(1.5,Math.round(3*sc));
+        x.beginPath(); x.arc(tx+iconR, rowY+iconR, iconR, 0, Math.PI*2); x.stroke();
         x.lineCap='round';
-        x.beginPath(); x.moveTo(tx+9, rowY+16); x.lineTo(tx+14, rowY+22); x.lineTo(tx+24, rowY+10); x.stroke();
-        var fs=24;
+        x.beginPath();
+        x.moveTo(tx+Math.round(9*sc), rowY+iconR);
+        x.lineTo(tx+Math.round(14*sc), rowY+Math.round(22*sc));
+        x.lineTo(tx+Math.round(24*sc), rowY+Math.round(10*sc));
+        x.stroke();
+        var fs=Math.round(24*sc);
         x.font='600 '+fs+'px "PingFang SC","Microsoft YaHei",sans-serif';
-        x.lineWidth=6; x.strokeStyle=strokeCol;
-        x.strokeText(short, tx+48, rowY+4);
+        x.lineWidth=Math.round(6*sc); x.strokeStyle=strokeCol;
+        x.strokeText(short, tx+Math.round(48*sc), rowY+Math.round(4*sc));
         x.fillStyle=mainColor;
-        x.fillText(short, tx+48, rowY+4);
-        rowY+=46;
+        x.fillText(short, tx+Math.round(48*sc), rowY+Math.round(4*sc));
+        rowY+=Math.round(46*sc);
       });
     }
   }
@@ -1109,6 +1119,105 @@ function containOnWhite(img){
   return c;
 }
 
+/* ===== Route1: 白底精修引擎（Canvas imageData 像素级处理）===== */
+function grayWorldBalance(d,w,h){
+  var rS=0,gS=0,bS=0,n=0;
+  for(var i=0;i<d.length;i+=4){if(d[i+3]>128){rS+=d[i];gS+=d[i+1];bS+=d[i+2];n++;}}
+  if(!n)return;
+  var rA=rS/n,gA=gS/n,bA=bS/n,gray=(rA+gA+bA)/3,str=0.45;
+  var rG=1+(gray/rA-1)*str,gG=1+(gray/gA-1)*str,bG=1+(gray/bA-1)*str;
+  for(var i=0;i<d.length;i+=4){
+    if(d[i+3]>0){
+      d[i]=Math.min(255,Math.max(0,d[i]*rG));
+      d[i+1]=Math.min(255,Math.max(0,d[i+1]*gG));
+      d[i+2]=Math.min(255,Math.max(0,d[i+2]*bG));
+    }
+  }
+}
+function adjustColors(d,w,h,opts){
+  opts=opts||{};
+  var br=opts.brightness||1.06,ct=opts.contrast||1.04,st=opts.saturation||1.025,mid=128;
+  for(var i=0;i<d.length;i+=4){
+    if(!d[i+3])continue;
+    var r=d[i]*br,g=d[i+1]*br,b=d[i+2]*br;
+    r=mid+(r-mid)*ct;g=mid+(g-mid)*ct;b=mid+(b-mid)*ct;
+    var lu=0.299*r+0.587*g+0.114*b;
+    r=lu+(r-lu)*st;g=lu+(g-lu)*st;b=lu+(b-lu)*st;
+    d[i]=Math.min(255,Math.max(0,r));d[i+1]=Math.min(255,Math.max(0,g));d[i+2]=Math.min(255,Math.max(0,b));
+  }
+}
+function decontaminateEdges(d,w,h,maxR){
+  maxR=maxR||3;
+  for(var y=0;y<h;y++)for(var x=0;x<w;x++){
+    var idx=(y*w+x)*4,a=d[idx+3];
+    if(a>0&&a<250){
+      var f=null;
+      for(var r=1;r<=maxR&&!f;r++)for(var dy=-r;dy<=r&&!f;dy++)for(var dx=-r;dx<=r&&!f;dx++){
+        if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;
+        var nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=w||ny>=h)continue;
+        var ni=(ny*w+nx)*4;if(d[ni+3]===255)f=[d[ni],d[ni+1],d[ni+2]];
+      }
+      if(f){d[idx]=f[0];d[idx+1]=f[1];d[idx+2]=f[2];}
+    }
+  }
+}
+function unsharpMask(d,w,h,amt){
+  amt=amt||0.3;
+  var orig=new Uint8ClampedArray(d),blur=new Uint8ClampedArray(d.length);
+  for(var y=1;y<h-1;y++)for(var x=1;x<w-1;x++)for(var c=0;c<3;c++){
+    var s=0;for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++)s+=orig[((y+dy)*w+(x+dx))*4+c];
+    blur[(y*w+x)*4+c]=s/9;
+  }
+  for(var i=0;i<d.length;i+=4){
+    if(!d[i+3])continue;
+    for(var c=0;c<3;c++)d[i+c]=Math.min(255,Math.max(0,d[i+c]+(d[i+c]-blur[i+c])*amt));
+  }
+}
+function enhanceHighlights(d,w,h,opts){
+  opts=opts||{};var th=opts.threshold||200,bo=opts.boost||0.12;
+  for(var i=0;i<d.length;i+=4){
+    if(!d[i+3])continue;
+    var lu=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+    if(lu>th){
+      var ex=lu-th,nrm=ex/(255-th),f=1+bo*nrm;
+      d[i]=Math.min(255,d[i]*f);d[i+1]=Math.min(255,d[i+1]*f);d[i+2]=Math.min(255,d[i+2]*f);
+      d[i]=Math.min(255,d[i]+ex*0.08);d[i+1]=Math.min(255,d[i+1]+ex*0.08);d[i+2]=Math.min(255,d[i+2]+ex*0.08);
+    }
+  }
+}
+async function retouchWhitebg(cutoutImage,options){
+  options=options||{};var S=COMPOSE_SIZE;
+  var prod=trimCanvas(processAlpha(cutoutImage,{threshold:30,erodePx:2,defringe:false,feather:1,keepLargestCC:true,darkSuppress:false}));
+  var pw=prod.width,ph=prod.height;
+  var pc=prod.getContext('2d',{willReadFrequently:true});
+  var id=pc.getImageData(0,0,pw,ph),d=id.data;
+  grayWorldBalance(d,pw,ph);
+  adjustColors(d,pw,ph,{brightness:options.brightness||1.06,contrast:options.contrast||1.04,saturation:options.saturation||1.025});
+  decontaminateEdges(d,pw,ph,3);
+  unsharpMask(d,pw,ph,0.3);
+  enhanceHighlights(d,pw,ph,{threshold:200,boost:0.12});
+  pc.putImageData(id,0,0);
+  var out=document.createElement('canvas');out.width=S;out.height=S;
+  var ox=out.getContext('2d');ox.fillStyle='#fff';ox.fillRect(0,0,S,S);
+  var sc=options.scale||0.65,bx=drawProductMeasure(prod,sc);
+  var cx=S/2,by=S*(options.baseRatio||0.78);
+  var bf=prod._bodyBottom!=null?prod._bodyBottom:0.92;
+  var dy=by-bf*bx.ph;
+  drawContactShadow(ox,cx,by,bx.pw,bx.ph);
+  ox.drawImage(prod,cx-bx.pw/2,dy,bx.pw,bx.ph);
+  return out;
+}
+async function loadSceneAsCanvas(url){
+  var img=await loadImg(url,true);
+  var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+  c.getContext('2d').drawImage(img,0,0);return c;
+}
+async function loadMarketingBase(url){
+  var img=await loadImg(url,true);
+  var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+  c.getContext('2d').drawImage(img,0,0);return c;
+}
+
 /* ============================================================
  *  Step3 生成：异步 job 轮询
  * ============================================================ */
@@ -1224,13 +1333,13 @@ async function runFakeProgress(){
 }
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
-/* 根据脚本 recommendedShots 动态构建 cells */
+/* 根据脚本 recommendedShots 动态构建 cells — M3 三条路线 */
 async function buildCellsFromJob(job){
   var cells=[];
   state.corsFallback=false;
 
-  // 加载抠图
-  var cutoutImg, prod;
+  // 加载抠图（Route1白底用 + Route4细节裁切用）
+  var cutoutImg;
   if(job.cutoutUrl){
     try{ cutoutImg=await loadImg(job.cutoutUrl, true); }
     catch(e){
@@ -1238,30 +1347,28 @@ async function buildCellsFromJob(job){
       state.corsFallback=true;
       return buildURLCells(job);
     }
-    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
   } else if(job.cutout && job.cutout.image){
     cutoutImg=await loadImg(job.cutout.image);
-    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
   } else {
-    // demo
     var demoResp=await demoPipelineResponse();
     job.cutout=demoResp.cutout;
     cutoutImg=await loadImg(demoResp.cutout.image);
-    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
-    job.backgrounds=demoResp.backgrounds;
     job.detailBoxes=demoResp.detailBoxes;
     job.copy=demoResp.copy;
     job.qualityCheck=demoResp.qualityCheck;
   }
 
-  var orig=await loadImg(state.fileDataUrl, false);
+  // 原始图（细节裁切用）
+  var orig=null;
+  if(state.fileDataUrl){ try{ orig=await loadImg(state.fileDataUrl, false); }catch(e){} }
 
-  // 收集背景 URL（scene/model 共用）
-  var bgPool=[];
-  if(job.sceneUrls && job.sceneUrls.length) bgPool=job.sceneUrls.slice();
-  else if(job.backgrounds && job.backgrounds.scene) bgPool=job.backgrounds.scene.slice();
-  else bgPool=[demoBgDataUrl('#f6c9a4','#c9b896'), demoBgDataUrl('#d7e3dc','#9db8a8'), demoBgDataUrl('#e8dcc8','#b8a680')];
+  // Route2: sceneUrls 是r-background联合生成的成品图，直接展示不合成
+  var scenePool=[];
+  if(job.sceneUrls && job.sceneUrls.length) scenePool=job.sceneUrls.slice();
+  else if(job.backgrounds && job.backgrounds.scene) scenePool=job.backgrounds.scene.slice();
+  else scenePool=[demoBgDataUrl('#f6c9a4','#c9b896'), demoBgDataUrl('#d7e3dc','#9db8a8'), demoBgDataUrl('#e8dcc8','#b8a680')];
 
+  // Route3: marketingUrl 是干净底图（无文字），前端Canvas叠加文字层
   var mBg='';
   if(job.marketingUrl) mBg=job.marketingUrl;
   else if(job.backgrounds && job.backgrounds.marketing) mBg=job.backgrounds.marketing[0];
@@ -1269,37 +1376,50 @@ async function buildCellsFromJob(job){
 
   var boxes=(job.detailBoxes && job.detailBoxes.length)?job.detailBoxes:demoBoxes();
 
-  var bgIdx=0, boxIdx=0;
+  var sceneIdx=0, boxIdx=0;
   for(var gi=0; gi<state.script.recommendedShots.length; gi++){
     var grp=state.script.recommendedShots[gi];
     if(!grp.checked) continue;
     for(var i=0;i<grp.count;i++){
       if(grp.type==='white'){
-        cells.push({tag:grp.label, canvas:await compositeWhite(prod, i%2)});
-      } else if(grp.type==='scene' || grp.type==='model'){
-        var bgUrl=bgPool[bgIdx % bgPool.length]; bgIdx++;
+        // Route1: 白底精修引擎 — 从cutoutUrl透明PNG做专业精修
         try{
-          cells.push({tag:grp.label+(grp.type==='model'?' · 场景合成占位':''),
-            canvas:await compositeScene(bgUrl, prod, {scale:0.68, shadow:true, colorTemp: grp.type==='model'?'natural':'warm'})});
+          cells.push({tag:grp.label+' · 精修', canvas:await retouchWhitebg(cutoutImg, {scale:i%2?0.63:0.68})});
         }catch(e){
-          cells.push({tag:grp.label, url:bgUrl});
+          console.warn('retouchWhitebg failed',e);
+          cells.push({tag:grp.label, url:job.cutoutUrl||''});
+        }
+      } else if(grp.type==='scene' || grp.type==='model'){
+        // Route2: 直接展示r-background成品图，不贴产品不加阴影
+        var sUrl=scenePool[sceneIdx % scenePool.length]; sceneIdx++;
+        try{
+          cells.push({tag:grp.label+(grp.type==='model'?' · 场景':'')+' · rbg直出', canvas:await loadSceneAsCanvas(sUrl)});
+        }catch(e){
+          cells.push({tag:grp.label, url:sUrl});
         }
       } else if(grp.type==='detail'){
+        // Route4: cutoutUrl裁detailBoxes → 超分
         var box=boxes[boxIdx % boxes.length]; boxIdx++;
         try{
-          var det=await cropAndSuperres(orig, box.bbox);
-          cells.push({tag:grp.label+' · '+(box.label||'局部'), canvas:containOnWhite(det)});
+          var srcForCrop = orig || cutoutImg;
+          var det=await cropAndSuperres(srcForCrop, box.bbox);
+          cells.push({tag:grp.label+' · '+(box.partName||box.label||'局部'), canvas:containOnWhite(det)});
         }catch(e){
           cells.push({tag:grp.label, url:''});
         }
       } else if(grp.type==='marketing'){
+        // Route3: marketingUrl干净底图 + Canvas独立文字层（不烧进底图）
         try{
-          var mTitle=(state.script && state.script.productName)||'精选好物';
-          var mSP=(state.script && state.script.sellingPoints)||[];
-          var mSub=mSP[0]||'';
-          var mPts=mSP.slice(1,4);
-          cells.push({tag:grp.label, canvas:await compositeMarketing(mBg, prod, {scale:0.62, title:mTitle, subtitle:mSub, points:mPts, shadow:true, colorTemp:'warm'})});
+          var mTitle=(job.copy && job.copy.title) || (state.script && state.script.productName) || '精选好物';
+          var mSP=(job.copy && job.copy.sellingPoints) || (state.script && state.script.sellingPoints || []);
+          var spArr = typeof mSP[0]==='object' ? mSP.map(function(p){return p.text}) : mSP;
+          var mSub=spArr[0]||'';
+          var mPts=spArr.slice(1,5);
+          var mCanvas=await loadMarketingBase(mBg);
+          drawMarketingText(mCanvas.getContext('2d'), mTitle, mSub, mPts, mCanvas.width, mCanvas.height);
+          cells.push({tag:grp.label+' · 文字层', canvas:mCanvas});
         }catch(e){
+          console.warn('marketing text layer failed',e);
           cells.push({tag:grp.label, url:mBg});
         }
       }
@@ -1568,6 +1688,78 @@ function resetAll(){
   document.querySelectorAll('.prog-item').forEach(function(p){p.classList.remove('done','run');p.classList.add('wait')});
   goStep(1); setPills(1);
 }
+
+/* ============ M3 本地测试模式 ?test=local ============ */
+async function runLocalTest(){
+  goStep(4); setPills(4);
+  state.usedDemo=true;
+  var cells=[];
+  toast('M3本地测试：加载素材中…');
+
+  // Route1: 白底精修 — 用已有cutout PNG
+  try{
+    var cutoutImg=await loadImg('/m3-gap/feasibility-test/beauty_cutout.png', false);
+    var white1=await retouchWhitebg(cutoutImg, {scale:0.68, baseRatio:0.78});
+    cells.push({tag:'白底精修 · 美妆', canvas:white1});
+    var white2=await retouchWhitebg(cutoutImg, {scale:0.63, baseRatio:0.80});
+    cells.push({tag:'白底精修 · 美妆(变体)', canvas:white2});
+    console.log('Route1 OK: white bg retouched');
+  }catch(e){ console.warn('Route1 failed',e); }
+
+  // Route2: 场景图直出 — rbg成品图直接展示
+  try{
+    var s1=await loadSceneAsCanvas('/m3-gap/feasibility-test/beauty_rbg_cand1.jpg');
+    cells.push({tag:'场景直出 · rbg候选1', canvas:s1});
+    var s2=await loadSceneAsCanvas('/m3-gap/feasibility-test/beauty_rbg_cand2.jpg');
+    cells.push({tag:'场景直出 · rbg候选2', canvas:s2});
+    var s3=await loadSceneAsCanvas('/m3-gap/feasibility-test/food_rbg_cand1.jpg');
+    cells.push({tag:'场景直出 · 食品rbg', canvas:s3});
+    console.log('Route2 OK: scene loaded');
+  }catch(e){ console.warn('Route2 failed',e); }
+
+  // Route3: 营销海报 — 干净底图 + Canvas文字层
+  try{
+    var mBase=await loadMarketingBase('/m3-gap/feasibility-test/beauty_rbg_cand2.jpg');
+    var mCtx=mBase.getContext('2d');
+    drawMarketingText(mCtx, 'Glow Serum', '肌肤透亮 · 7天可见',
+      ['烟酰胺5%浓度','玻尿酸深层补水','敏感肌可用','皮肤科测试验证'],
+      mBase.width, mBase.height);
+    cells.push({tag:'营销海报 · 文字层叠加', canvas:mBase});
+    console.log('Route3 OK: marketing text drawn');
+  }catch(e){ console.warn('Route3 failed',e); }
+
+  // Route4: 细节裁切（用food cutout模拟）
+  try{
+    var foodCut=await loadImg('/m3-gap/feasibility-test/food_cutout.png', false);
+    // 直接用cutout当细节图占位
+    cells.push({tag:'细节特写 · 食品cutout', canvas:containOnWhite(foodCut)});
+  }catch(e){ console.warn('detail failed',e); }
+
+  state.cells=cells;
+  state.pipelineResp={
+    copy:{title:'Glow Serum 精华液', sellingPoints:['烟酰胺5%浓度','玻尿酸深层补水','敏感肌可用'],
+      description:'M3本地测试物料包', channels:{taobao:'【包邮】Glow Serum精华', xhs:'太好用了吧！', amazon:'Glow Serum'}},
+    qualityCheck:{passed:true, scores:{consistency:0.94, textReadability:0.90, edgeCleanliness:0.92},
+      thresholds:{consistency:0.92, textReadability:0.9, edgeCleanliness:0.9}, issues:[]}
+  };
+
+  showResults(state.pipelineResp);
+  toast('M3本地测试完成：'+cells.length+' 张图');
+}
+
+// Check for local test mode
+(function(){
+  var params=new URLSearchParams(location.search);
+  if(params.get('test')==='local'){
+    // Skip login, run local test
+    token='demo-local-token';
+    $('loginMask').classList.remove('on');
+    $('userTag').textContent='本地测试';
+    $('quotaPill').innerHTML='M3本地测试模式';
+    // Override init to run test
+    window.addEventListener('load', function(){ setTimeout(runLocalTest, 300); });
+  }
+})();
 
 init();
 </script>
