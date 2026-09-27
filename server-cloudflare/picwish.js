@@ -144,3 +144,70 @@ export async function picwishCutoutByUrl(env, imageUrl, opts = {}) {
     return { ok: false, error: { code: 'picwish_exception', message: String(e && e.message || e) } };
   }
 }
+
+/* =====================================================================
+ * r-background（联合背景生成）：把「透明抠图 PNG + 英文 prompt」丢给佐糖，
+ * 模型一次性把产品 + 场景/营销底图重绘融合为一张图（产品+场景一体，不贴回）。
+ * ---------------------------------------------------------------------
+ * POST {BASE}/api/tasks/visual/r-background
+ *   headers: X-API-KEY
+ *   multipart: image_file=透明PNG字节, prompt=英文描述, sync=1
+ * 响应（sync=1）：
+ *   { status:200, data:{ state:1, image_1:url, image_2:url, image_3:'', image_4:'' } }
+ *   一次返回最多 4 张候选；空串表示该槽位未出图。
+ * 用途：M3 场景图（产品+使用场景联合生成）、营销海报底图（干净背景+产品，无文字）。
+ * 注意：输出是 JPG URL（OSS 预签名，1h 过期），调用方须立即转存自有 TOS。
+ * ===================================================================*/
+
+/**
+ * 调 r-background 联合生成。
+ * @param {object} env Worker env（含 PICWISH_API_KEY）
+ * @param {Uint8Array} pngBytes 透明抠图 PNG 字节（已从 TOS 下载）
+ * @param {string} prompt 英文 prompt（产品描述+场景/底图氛围+光影+道具+负向约束）
+ * @param {object} [opts] {}
+ * @returns {Promise<{ok:true,urls:string[],taskId:string,ms:number}|
+ *                   {ok:false,error:{code:string,message?:string}}>}
+ *   urls 为非空候选图 URL 数组（已剔除空串），最多 4 个。
+ */
+export async function picwishRBackground(env, pngBytes, prompt, opts = {}) {
+  const t0 = Date.now();
+  const key = env.PICWISH_API_KEY;
+  if (!key) return { ok: false, error: { code: 'picwish_not_configured', message: 'PICWISH_API_KEY 未配置' } };
+  if (!(pngBytes instanceof Uint8Array) || pngBytes.length < 100) {
+    return { ok: false, error: { code: 'bad_png_bytes', message: 'r-background 需要透明 PNG 字节' } };
+  }
+  if (!prompt || typeof prompt !== 'string') {
+    return { ok: false, error: { code: 'bad_prompt', message: 'r-background 需要英文 prompt' } };
+  }
+  try {
+    const fd = new FormData();
+    fd.append('sync', '1');
+    fd.append('prompt', prompt);
+    fd.append('output_type', '2');   // 返回图片
+    fd.append('image_file', new Blob([pngBytes], { type: 'image/png' }), 'cutout.png');
+    const r = await fetch(BASE + '/api/tasks/visual/r-background', {
+      method: 'POST',
+      headers: { 'X-API-KEY': key },
+      body: fd,
+      signal: AbortSignal.timeout(150000),
+    });
+    const txt = await r.text();
+    if (r.status !== 200) {
+      return { ok: false, error: { code: 'picwish_rbg_http_' + r.status, message: txt.slice(0, 300) } };
+    }
+    let j;
+    try { j = JSON.parse(txt); }
+    catch { return { ok: false, error: { code: 'picwish_rbg_bad_json', message: txt.slice(0, 200) } }; }
+    if (j.status !== 200 || !j.data || j.data.state !== 1) {
+      return { ok: false, error: { code: 'picwish_rbg_task_failed', message: 'state=' + (j.data && j.data.state) + ' msg=' + (j.message || '').slice(0, 200) } };
+    }
+    const d = j.data;
+    const urls = [d.image_1, d.image_2, d.image_3, d.image_4].filter(u => typeof u === 'string' && /^https?:\/\//.test(u));
+    if (!urls.length) {
+      return { ok: false, error: { code: 'picwish_rbg_no_image', message: txt.slice(0, 200) } };
+    }
+    return { ok: true, urls, taskId: d.task_id || '', ms: Date.now() - t0 };
+  } catch (e) {
+    return { ok: false, error: { code: 'picwish_rbg_exception', message: String(e && e.message || e) } };
+  }
+}

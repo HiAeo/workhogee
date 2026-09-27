@@ -17,7 +17,8 @@ import { presignPut, presignGet, tosPut, tosGetUrl, tosHead } from './tos.js';
 import { generatePipelineCopy, checkCutoutQuality } from './vision.js';
 import { generateProductScript, normalizeScript } from './script-engine.js';
 import { saveCase } from './casebook.js';
-import { picwishCutoutByUrl } from './picwish.js';
+import { picwishCutoutByUrl, picwishRBackground } from './picwish.js';
+import { checkWhiteBackground } from './png-qc.js';
 
 const DEFAULT_SIZE = '2048x2048';
 const ARK_ENDPOINT_DEFAULT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
@@ -185,6 +186,71 @@ async function seedreamTextGenUrl(env, { prompt, size, timeoutMs = 100000 }) {
 }
 
 /**
+ * 从自有 TOS 拉取已存好的抠图 PNG 字节（r-background 质检/联合生成都需要）。
+ * 单步内短暂持有，用毕即释放，不进 KV。
+ */
+async function downloadCutoutBytes(env, job) {
+  const cfg = tosConfig(env);
+  const url = await tosGetUrl(cfg, job.results.cutoutKey, 600);
+  const r = await fetch(url, { signal: AbortSignal.timeout(30000) });
+  if (!r.ok) throw new Error('cutout_dl_http_' + r.status);
+  return new Uint8Array(await r.arrayBuffer());
+}
+
+/**
+ * r-background 场景图 prompt：产品已在透明 PNG 里，模型做「产品+使用场景」联合生成。
+ * 要求品类化：脚本 useScenes + category，含光影方向、3 层道具、构图、负向约束。
+ */
+function buildSceneRbgPrompt(script, category, useScene) {
+  const c = String(category || '');
+  const productName = String((script && script.productName) || 'the product').slice(0, 60);
+  const sp = Array.isArray(script && script.sellingPoints) ? script.sellingPoints.slice(0, 2) : [];
+  const scene = String(useScene || 'a clean lifestyle product scene').slice(0, 120);
+  const isBeauty = /美妆|护肤|口红|彩妆|面膜|香水|beauty|makeup|skincare|lip|cosmetic/i.test(c);
+  const isFood = /食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage/i.test(c);
+  const isTech = /耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c);
+  let props = 'a few softly blurred everyday objects in the far background';
+  if (isBeauty) props = 'a softly blurred vanity with makeup brushes, a compact case and pale flowers';
+  else if (isFood) props = 'a softly blurred table set with ceramic plates, cutlery and fresh ingredients';
+  else if (isTech) props = 'a softly blurred desk with a laptop, a coffee cup and a notebook';
+  return [
+    'Professional e-commerce product photography.',
+    'Keep the provided product EXACTLY identical: same shape, same colors, same label and texture. Do not reshape or redraw it.',
+    'Scene: ' + scene + '.',
+    'The product stands centered on a clean flat surface with a soft contact shadow directly under it.',
+    'Lighting: soft natural daylight from the side, gentle highlights, no harsh shadows.',
+    'Mid-ground props: ' + props + ', out of focus.',
+    'Shallow depth of field, photorealistic, 8k, premium commercial look.' + (sp.length ? ' Key visible features: ' + sp.join(', ') + '.' : ''),
+    'NEGATIVE: no text, no watermark, no logo overlay, no distorted or malformed props, no duplicate product, no extra objects touching the product, no gradient studio backdrop.'
+  ].join(' ');
+}
+
+/**
+ * r-background 营销底图 prompt：干净背景 + 产品居中，无任何烧录文字（前端再叠文字层）。
+ */
+function buildMarketingRbgPrompt(category, styleLine) {
+  const c = String(category || '');
+  let bg;
+  if (/耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c)) {
+    bg = 'dark premium tech background, deep charcoal matte surface, subtle cool rim light';
+  } else if (/美妆|护肤|口红|彩妆|面膜|香水|美|beauty|makeup|skincare|lip/i.test(c)) {
+    bg = 'soft morandi beauty background, warm beige and blush tones, diffused soft light';
+  } else if (/食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage/i.test(c)) {
+    bg = 'warm appetizing food background, walnut wood surface, soft window light';
+  } else {
+    bg = 'clean premium e-commerce background, elegant neutral gradient, soft side light';
+  }
+  return [
+    'Professional e-commerce poster background.',
+    'Keep the provided product EXACTLY identical: same shape, same colors, same label.',
+    bg + '.',
+    'Product centered, generous clean empty space around it reserved for later text overlay.',
+    'Photorealistic, 8k, premium commercial advertising look.' + (styleLine ? ' Overall style: ' + styleLine + '.' : ''),
+    'ABSOLUTELY NO text, NO watermark, NO logo, NO typography, NO letters baked into the image. Clean background and product only.'
+  ].join(' ');
+}
+
+/**
  * 下载远程图片字节并转存到自有 TOS（解决 Seedream ark 公共 bucket 无 CORS 配置的问题）。
  * 模式与 cutout 步骤一致：fetch → arrayBuffer → tosPut → 释放。逐张调用，单张内存。
  * 失败返回 null（调用方保留原 Seedream URL 作为前端 <img> 降级直显）。
@@ -246,7 +312,7 @@ async function refreshOutputUrls(env, job) {
   }
 }
 
-const STEP_ORDER = ['script', 'cutout', 'scene', 'marketing', 'copy', 'qc'];
+const STEP_ORDER = ['script', 'cutout', 'qc', 'sceneRbg', 'marketingRbg', 'copy'];
 
 function emptySteps() {
   return STEP_ORDER.map(n => ({ name: n, status: 'pending', ms: 0 }));
@@ -387,64 +453,69 @@ async function stepCutout(env, job) {
 }
 
 /**
- * M3 场景步：背景 prompt 不再硬编码品类库，而是取自脚本 useScenes（这一件商品的真实使用场景）。
- * 3 个场景槽位按 useScenes 轮询填充；脚本缺失时降级到品类预设/通用预设。
- * fashion 套版：模特图×2 本期用场景图占位（前端按 recommendedShots 的 placeholder 标注"AI模特即将上线"）。
+ * M3 场景图路线（r-background 联合生成，不贴回）：
+ * 输入 = 透明抠图 PNG + 品类化英文 prompt；佐糖一次返回最多 4 张候选，
+ * 取前 3 张转存自有 TOS。产品+场景一体图，前端直接展示，不再做贴回合成。
  */
-async function stepScene(env, job) {
+async function stepSceneRbg(env, job) {
   const script = job.results.script || {};
   const scenes = Array.isArray(script.useScenes) && script.useScenes.length ? script.useScenes : [];
-  const fallbackPresets = pickBackgrounds((job.results.category && job.results.category.name) || '商品');
-  const sceneDescs = [0, 1, 2].map(i => scenes[i] || (fallbackPresets[i] && fallbackPresets[i].bg) || GENERIC_BG_PRESETS[i].bg);
-  const styleLine = job.style || '';
-  // sceneSeedUrls = Seedream 原始 URL（生成状态 + 降级兜底）；sceneKeys = 自有 TOS key
+  const category = (job.results.category && job.results.category.name) || '';
+  if (!job.results.cutoutKey) throw new Error('no_cutout');
+
   const seedUrls = job.results.sceneSeedUrls || [null, null, null];
   const sceneKeys = job.results.sceneKeys || [null, null, null];
   const outPrefix = `outputs/${safeSeg(job.memberId)}/${safeSeg(job.jobId)}`;
-  // 第一批：前两张并行（一次轮询请求内完成）
-  const todo = [];
-  if (!seedUrls[0]) todo.push(0);
-  if (!seedUrls[1]) todo.push(1);
-  await Promise.all(todo.map(i =>
-    seedreamTextGenUrl(env, { prompt: buildScenePrompt(sceneDescs[i], (job.results.category && job.results.category.name) || '', i), size: DEFAULT_SIZE, timeoutMs: 95000 })
-      .then(u => { seedUrls[i] = u; })
-      .catch(e => { job.errors.push({ step: 'scene.' + i, message: String((e && e.message) || e) }); })
-  ));
-  // 第二批：第三张（留给下一次轮询）
-  if (!seedUrls[2]) {
-    try { seedUrls[2] = await seedreamTextGenUrl(env, { prompt: buildScenePrompt(sceneDescs[2], (job.results.category && job.results.category.name) || '', 2), size: DEFAULT_SIZE, timeoutMs: 95000 }); }
-    catch (e) { job.errors.push({ step: 'scene.2', message: String((e && e.message) || e) }); }
+
+  // 首次：调一次 r-background，缓存候选 URL（重试时不重复扣费）
+  if (!job.results._rbgSceneCandidates) {
+    const bytes = await downloadCutoutBytes(env, job);
+    const prompt = buildSceneRbgPrompt(script, category, scenes[0] || '');
+    const r = await picwishRBackground(env, bytes, prompt);
+    if (!r.ok) throw new Error((r.error && r.error.code) || 'rbg_scene_failed');
+    job.results._rbgSceneCandidates = r.urls; // 1..4 个
   }
-  // 逐张转存到自有 TOS（下载→转存→释放，单张内存；失败降级保留 Seedream URL）
+  const cands = job.results._rbgSceneCandidates || [];
+
+  // 把候选填满 3 个槽位并转存 TOS
   for (let i = 0; i < 3; i++) {
-    if (!seedUrls[i] || sceneKeys[i]) continue;
-    const up = await reuploadImageToTos(env, seedUrls[i], `${outPrefix}/scene_${i}.jpg`);
+    if (sceneKeys[i] || !cands[i]) continue;
+    seedUrls[i] = cands[i];
+    const up = await reuploadImageToTos(env, cands[i], `${outPrefix}/scene_${i}.jpg`);
     if (up) sceneKeys[i] = up.key;
   }
   job.results.sceneSeedUrls = seedUrls;
   job.results.sceneKeys = sceneKeys;
-  job.results.sceneDescs = sceneDescs;
+  job.results.sceneDescs = scenes;
+  job.results.sceneMode = 'rbg_integrated'; // 场景图已是产品+场景一体，前端不再贴回
   job.results.compositeGuide = {
-    scene: [0, 1, 2].map(() => ({ position: 'grounded', scale: 0.68, baseRatio: 0.72, shadow: true, colorTemp: 'natural' })),
-    marketing: { position: 'grounded', scale: 0.62, baseRatio: 0.74, shadow: true }
+    scene: [0, 1, 2].map(() => ({ position: 'integrated' })),
+    marketing: { position: 'integrated' }
   };
-  // 全部三张拿到才算 done
-  if (!seedUrls[0] || !seedUrls[1] || !seedUrls[2]) throw new Error('scene_partial_retry');
+  // 至少落盘 1 张才算成；否则下次轮询重试转存
+  if (!sceneKeys[0]) throw new Error('scene_partial_retry');
 }
 
-async function stepMarketing(env, job) {
-  const styleLine = job.style || '';
-  let u = job.results.marketingSeedUrl;
-  if (!u) {
-    u = await seedreamTextGenUrl(env, { prompt: buildMarketingPrompt((job.results.category && job.results.category.name) || '', styleLine), size: DEFAULT_SIZE, timeoutMs: 95000 });
-    job.results.marketingSeedUrl = u;
+/**
+ * M3 营销海报路线（r-background 底图 + 前端文字层）：
+ * r-background 只生成「干净背景+产品、无任何烧录文字」的底图；
+ * 标题/卖点/图标由前端 Canvas 独立叠加，不烧进图。
+ */
+async function stepMarketingRbg(env, job) {
+  if (!job.results.cutoutKey) throw new Error('no_cutout');
+  if (!job.results._rbgMarketingUrl) {
+    const bytes = await downloadCutoutBytes(env, job);
+    const prompt = buildMarketingRbgPrompt((job.results.category && job.results.category.name) || '', job.style || '');
+    const r = await picwishRBackground(env, bytes, prompt);
+    if (!r.ok) throw new Error((r.error && r.error.code) || 'rbg_marketing_failed');
+    job.results._rbgMarketingUrl = r.urls[0];
   }
-  // 转存到自有 TOS（失败降级保留 Seedream URL；重试时不重复生成，省一次 Seedream 调用）
   if (!job.results.marketingKey) {
     const outPrefix = `outputs/${safeSeg(job.memberId)}/${safeSeg(job.jobId)}`;
-    const up = await reuploadImageToTos(env, u, `${outPrefix}/marketing.jpg`);
+    const up = await reuploadImageToTos(env, job.results._rbgMarketingUrl, `${outPrefix}/marketing.jpg`);
     if (up) job.results.marketingKey = up.key;
   }
+  job.results.marketingMode = 'rbg_background_frontend_text'; // 前端叠文字层
 }
 
 async function stepCopy(env, job) {
@@ -471,27 +542,76 @@ async function stepCopy(env, job) {
   job.results.copy = copy;
 }
 
+/**
+ * 白底保真质检门禁（fidelity-qc）—— 在 cutout 之后、返回前执行。
+ * 白底图是交易凭证，零容忍：不达标则标记 qcFailed 并扣留 cutoutUrl（前端无法做白底合成）。
+ * 确定性闸（解码 PNG alpha）：
+ *   - bgWhite：6 个角落/边中点采样，要求 alpha 全 0（合成白底后才是 #FFFFFF）
+ *   - opaqueRatio：主体占比在 3%~95% 之间（简化 IoU，防漏抠/防背保没抠）
+ * 视觉闸（best-effort，vision 不可用时不拦截）：
+ *   - consistency / edgeCleanliness 由 checkCutoutQuality 评分
+ * 注意：本步失败不抛错中断（scene/marketing 仍用 cutoutKey 跑联合生成），
+ *      只通过 results.whitebgBlocked 扣留白底路线输出。
+ */
 async function stepQc(env, job) {
   const cfg = tosConfig(env);
   const cutoutKey = job.results.cutoutKey;
   if (!cutoutKey) throw new Error('no_cutout');
+
+  // 1) 确定性白底硬闸（下载 PNG → 解 alpha）
+  let det = null;
+  try {
+    const bytes = await downloadCutoutBytes(env, job);
+    det = await checkWhiteBackground(bytes);
+  } catch (e) {
+    det = { available: false, bgWhiteRatio: 0, opaqueRatio: 0, cornerPatchOk: 0, cornerPatchTotal: 6,
+      reasons: ['cutout_qc_download:' + String((e && e.message) || e)] };
+  }
+
+  // 2) 视觉软闸（颜色/边缘/形状一致性；失败降级不拦）
   const cutoutUrl = await tosGetUrl(cfg, cutoutKey, 600);
   const q = await checkCutoutQuality(env, { cutout: cutoutUrl });
+
+  const reasons = [];
+  if (det && det.available) {
+    if (det.bgWhiteRatio < 0.9) reasons.push('bg_not_white');
+    if (det.opaqueRatio < 0.03) reasons.push('shape_too_small');
+    if (det.opaqueRatio > 0.95) reasons.push('shape_not_cut');
+  }
+  let visBlocking = false;
+  if (q.available && q.scores) {
+    if (q.scores.consistency < 0.85) reasons.push('low_consistency');
+    if (q.scores.edgeCleanliness < 0.8) reasons.push('edge_fringe');
+    visBlocking = true;
+  }
+  // 确定性闸只要能判定，就必须达标；视觉闸不可用时不拦
+  const detPass = !det.available || (det.bgWhiteRatio >= 0.9 && det.opaqueRatio >= 0.03 && det.opaqueRatio <= 0.95);
+  const visPass = !visBlocking || reasons.indexOf('low_consistency') === -1 && reasons.indexOf('edge_fringe') === -1;
+  const passed = detPass && visPass;
+
   job.results.qualityCheck = {
-    passed: q.available && q.scores && q.scores.consistency >= 0.9 && q.scores.textReadability >= 0.9 && q.scores.edgeCleanliness >= 0.9,
-    available: !!q.available,
-    scores: q.scores || null,
-    issues: q.issues || []
+    passed,
+    route: 'whitebg',
+    available: !!(det && det.available) || q.available,
+    deterministic: det,
+    vision: { available: !!q.available, scores: q.scores || null, issues: q.issues || [] },
+    reasons
   };
+  if (!passed) {
+    job.results.qcFailed = { route: 'whitebg', reasons, at: Date.now() };
+    job.results.whitebgBlocked = true;
+  } else {
+    job.results.whitebgBlocked = false;
+  }
 }
 
 const STEP_FN = {
   script: stepScript,
   cutout: stepCutout,
-  scene: stepScene,
-  marketing: stepMarketing,
-  copy: stepCopy,
-  qc: stepQc
+  qc: stepQc,
+  sceneRbg: stepSceneRbg,
+  marketingRbg: stepMarketingRbg,
+  copy: stepCopy
 };
 
 /**
@@ -509,8 +629,10 @@ export async function getJob(env, session, jobId) {
 
   // 已结束：刷新 cutoutUrl / sceneUrls / marketingUrl 后返回
   if (job.status === 'done' || job.status === 'error') {
-    if (job.results && job.results.cutoutKey) {
+    if (job.results && job.results.cutoutKey && !job.results.whitebgBlocked) {
       try { job.results.cutoutUrl = await tosGetUrl(tosConfig(env), job.results.cutoutKey, 3600); } catch {}
+    } else if (job.results) {
+      job.results.cutoutUrl = null; // 白底质检未过：扣留白底路线输出
     }
     await refreshOutputUrls(env, job);
     return { ok: true, status: 200, job };
@@ -561,8 +683,10 @@ export async function getJob(env, session, jobId) {
   }
 
   // 刷新 cutoutUrl + sceneUrls/marketingUrl（自有 TOS 预签名）
-  if (job.results && job.results.cutoutKey) {
+  if (job.results && job.results.cutoutKey && !job.results.whitebgBlocked) {
     try { job.results.cutoutUrl = await tosGetUrl(tosConfig(env), job.results.cutoutKey, 3600); } catch {}
+  } else if (job.results) {
+    job.results.cutoutUrl = null;
   }
   await refreshOutputUrls(env, job);
   await saveJob(env, job);
