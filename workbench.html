@@ -4528,18 +4528,7 @@ function leaveHero(){
 }
 function renderUploadCard(){
  leaveHero();
- var used=state.identity&&state.identity.type==='usedcar';
- card('<div class="card-pad" id="uploadCard">'
-  +'<div class="card-title">'+IC.camera+' 把手机拍的图传给阿图</div>'
-  +'<div class="card-desc">'+(used?'外观、内饰、空间都可以，多张一起传，逐张做清晰与曝光质检。':'多张一起传，第一张作为主图；逐张做清晰与曝光质检。')+'</div>'
-  +'<div class="drop" id="drop" data-act="chooseFile"><div class="drop-ico">'+IC.image+'</div><h4>点击或拖拽图片到这里</h4><p>支持 JPG / PNG / WebP，可一次选多张</p></div>'
-  +'<div class="shot-grid" id="shotGrid"></div>'
- +'<div id="shotListPanel" class="shot-list-panel"></div>'
- +'<div id="organizedView" class="organized-view"></div>'
-  +'<div class="tip-line" id="uploadTip" style="display:none">'+IC.check+'<span id="uploadTipTxt"></span></div>'
-  +'<div class="card-actions"><button class="btn btn-primary" data-act="toConfirm" id="toConfirmBtn" disabled>传好了，认认货</button>'
-  +'<button class="btn btn-ghost" data-act="chooseFile">继续加图</button></div></div>','atu');
- refreshShots();
+ AtuStudio.open();
 }
 function refreshShots(){
  var grid=$('#shotGrid');
@@ -4561,15 +4550,14 @@ async function handleFiles(fileList){
  if(!files.length)return;
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
- if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}
- enterTaskFocus();
- var stop=botTyping('atu');
+ var already=AtuStudio.isOpen(), firstOpen=!(state.images&&state.images.length);
+ if(!already){AtuStudio.open();state.stage='upload';}
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
- .then(function(arr){stop();var base=state.images.length;state.images=state.images.concat(arr);refreshShots();
+ .then(function(arr){state.images=state.images.concat(arr);
+  AtuStudio.renderOrigin();
   arr.forEach(function(it){tosSyncImage(it,'input');});
-  botSay('收到 <b>'+arr.length+'</b> 张，我都看过了。传齐了点「认认货」，先把你卖的是啥确认清楚，<b>绝不张冠李戴</b>。','atu');
-  classifyShots(arr.map(function(_,k){return base+k;}));
- }).catch(function(){stop();toast('有图片没读出来，换一张试试','err');});
+  if(firstOpen)AtuStudio.autoSelling();
+ }).catch(function(){toast('有图片没读出来，换一张试试','err');});
 }
 
 /* ================= 认货（AI 识图自动预填，客户只需确认或跳过） ================= */
@@ -5090,7 +5078,7 @@ function enterTaskFocus(){
  document.body.classList.add('task-focus');
  document.body.dataset.rail='mini';
 }
-function exitTaskFocus(){
+window.exitTaskFocus=function exitTaskFocus(){
  document.body.classList.remove('task-focus');
  document.body.dataset.rail='wide';
 }
@@ -6478,7 +6466,7 @@ function relayFidelityGenerate(){
    add(out.white,'white','纯白底主图'+tag);
    add(out.cabin,'cabin','座舱内饰增强'+tag);
    (out.details||[]).forEach(function(d){add(d.image,'detail',d.label+tag);});
-   add(out.sceneEnhanced,'scene','场景画质增强'+tag);
+   add(out.sceneEnhanced,'scene','AI 生活场景图'+tag);
    if(window.HG_bumpGen)window.HG_bumpGen();
    try{markTaskProgress();}catch(e){}
    if(row){row.classList.remove('run');row.classList.add('done');$('.pt-state',row).textContent='好了';$('.pt-ico',row).innerHTML=IC.check;}
@@ -7103,7 +7091,7 @@ function srcModal(title,body){
  return m;
 }
 function srcEsc(e){if(e.key==='Escape'){closeSrcModal();document.removeEventListener('keydown',srcEsc);}}
-function openKbPicker(){
+window.openKbPicker=function openKbPicker(){
  if(!state.identity)startOrder('general');
  kbProjMigrate().then(kbAll).then(function(docs){
   var imgs=docs.filter(function(d){return d.blob&&kbIsImg(d.ext);});
@@ -7153,7 +7141,7 @@ function fetchImageAsFile(url){
   }).then(toFile);
  });
 }
-function openUrlImport(){
+window.openUrlImport=function openUrlImport(){
  if(!state.identity)startOrder('general');
  var body='<input class="url-in" id="urlIn" placeholder="粘贴图片直链，https://…（.jpg / .png / .webp）">'
   +'<div class="url-hint">支持“直接图片链接”。网盘 / 飞书的分享页是网页、常需登录，暂不支持自动抓取，可先存到本地或知识库再导入，该能力即将开通。</div>'
@@ -7448,6 +7436,13 @@ initLayout();
 })();
 /* rework10 fix: 跨 IIFE 桥，供下拉/语音/上传交互块调用主作用域函数 */
 window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPartners,renderTopbar:renderTopbar,setMenuActive:setMenuActive,enterMate:enterMate,startOrder:startOrder,syncSendReady:syncSendReady,refreshHmFeed:function(){if(typeof state!=='undefined'&&state._heroEl)renderHmRail(state._heroEl);}};
+/* ==== 阿图操作台桥接（可复用）：把主作用域能力暴露给独立 atu-studio.js ==== */
+window.AtuBridge={
+ get state(){return state;},
+ $:$,toast:toast,authPost:authPost,callIdentify:callIdentify,
+ openKbPicker:function(){window.openKbPicker&&window.openKbPicker();},openUrlImport:function(){window.openUrlImport&&window.openUrlImport();},exitTaskFocus:function(){window.exitTaskFocus&&window.exitTaskFocus();},
+ get HogeeFidelity(){return window.HogeeFidelity;}
+};
 })();
 
 
@@ -7557,5 +7552,6 @@ window.HG={toast:toast,setActivePartner:setActivePartner,renderPartners:renderPa
 })();
 
 </script>
+<script src="atu-studio.js"></script>
 </body>
 </html>
