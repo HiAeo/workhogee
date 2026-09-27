@@ -428,6 +428,18 @@
     return WebPlatform.toDataURL(WebPlatform.rgbaToCanvas(crop), 'image/jpeg', 0.92);
   };
 
+  /* AI 生活场景图（对标佐糖）：白底/保真产品图 + AI 联合生成完整场景，多候选 VL 质检选优；
+     场景为 AI 生成、产品可被美化，非贴回。失败返回 null（不阻断整套交付）。 */
+  HogeeFidelity.sceneGenerate = async function (call, productImage, category, product) {
+    if (!productImage) return null;
+    try {
+      const r = await call('/scene-generate',
+        { image: productImage, category: category || '', product: product || '' }, 180000);
+      if (r && r.ok && Array.isArray(r.images) && r.images.length) return r.images[0];
+    } catch (e) {}
+    return null;
+  };
+
   /* 总入口：一张商品图 -> 保真全套
    * o:{ call, image, category?, product?, doDetails?, doScene? } */
   // alpha 强化（简单/中等背景）：>=150 推255、<=55 推0，灰辐条变实、几何位置不变
@@ -457,7 +469,7 @@
       return out;
     }
     // 3) 外观 / 普通商品 / 细节：BiRefNet 分块原生分辨率抠图
-    const mk = await call('/cutout', { image, strategy: 'autodl' });
+    const mk = await call('/cutout', { image, strategy: 'picwish' });
     if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_autodl' };
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
     P.dropSmall(fgRGBA, 1200, 24);
@@ -478,8 +490,11 @@
       meta: { method: 'autodl-birefnet-tile', fidelity: level, viewType, bg: +bg.toFixed(3), midAlpha: +qc1.midAlpha.toFixed(3), solidRatio: +solidRatio.toFixed(3) },
     };
     if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product, viewType); } catch (e) { out.details = []; } }
-    // 场景增强：外观/普通商品才做（细节特写不做）
-    if (o.doScene !== false && viewType !== 'detail') { try { out.sceneEnhanced = await HogeeFidelity.sceneEnhanced(call, image, loc.ok ? loc : null); } catch (e) { out.sceneEnhanced = null; } }
+    // AI 生活场景图：外观/普通商品才做（细节特写不做）；白底产品图 + AI 联合生成，失败回落 null
+    if (o.doScene !== false && viewType !== 'detail') {
+      try { out.sceneEnhanced = await HogeeFidelity.sceneGenerate(call, whiteOut || mk.image || image, category, o.product); }
+      catch (e) { out.sceneEnhanced = null; }
+    }
     return out;
   };
 
