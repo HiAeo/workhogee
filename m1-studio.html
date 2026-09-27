@@ -921,39 +921,75 @@ function drawContactShadow(x, cx, baseY, pw, ph){
   x.beginPath(); x.arc(cx, baseY, rw, 0, Math.PI*2); x.fill();
   x.restore();
 }
-/* 营销图文案排版：大号标题 + 副标题，左上角，不遮挡产品 */
-function drawMarketingText(x, title, sub){
+/* 营销图文案排版：背景明暗自适应文字色，900字重大标题+副标题+图标化卖点列表，左上不遮产品 */
+function drawMarketingText(x, title, sub, points){
   var S=COMPOSE_SIZE;
   title=String(title||'').trim();
   if(sub && typeof sub==='object') sub=sub.text||'';
   sub=String(sub||'').replace(/^卖点[：:]/,'').trim();
-  if(!title && !sub) return;
+  var pts=[];
+  (points||[]).forEach(function(p){ if(!p) return; if(typeof p==='object') p=p.text||''; p=String(p).replace(/^卖点[：:]/,'').trim(); if(p && pts.indexOf(p)<0 && pts.length<4) pts.push(p); });
+  if(!title && !sub && !pts.length) return;
+  // 采样背景亮度决定文字色
+  var lum=255;
+  try{
+    var px=x.getImageData(90,90,1,1).data;
+    lum=0.299*px[0]+0.587*px[1]+0.114*px[2];
+  }catch(e){}
+  var darkText = lum>140;           // 亮背景→深色字
+  var mainColor = darkText ? '#16181d' : '#ffffff';
+  var subColor  = darkText ? '#4b5563' : 'rgba(255,255,255,0.88)';
+  var strokeCol = darkText ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.35)';
+  var accent    = darkText ? '#e63946' : '#ff5a5f';
   x.save();
   x.textBaseline='top';
-  var tx=64, ty=60, maxW=S-128;
+  var tx=64, ty=64, maxW=S-128;
+  // 顶部品牌短条
+  x.fillStyle=accent; x.fillRect(tx, ty, 54, 8);
+  ty+=26;
   if(title){
-    var ts=56;
-    x.font='700 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
-    while(x.measureText(title).width>maxW && ts>26){
-      ts-=2; x.font='700 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    var ts=58;
+    x.font='900 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    while(x.measureText(title).width>maxW && ts>28){
+      ts-=2; x.font='900 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
     }
-    x.lineWidth=9; x.strokeStyle='rgba(255,255,255,0.8)'; x.lineJoin='round';
+    x.lineWidth=9; x.strokeStyle=strokeCol; x.lineJoin='round';
     x.strokeText(title, tx, ty);
-    x.fillStyle='#1f2937';
+    x.fillStyle=mainColor;
     x.fillText(title, tx, ty);
+    var afterTitle=ty+ts+18;
     if(sub){
       var ss=28;
-      x.font='400 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
+      x.font='500 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
       while(x.measureText(sub).width>maxW && ss>18){
-        ss-=1; x.font='400 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
+        ss-=1; x.font='500 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
       }
-      var sy=ty+ts+20;
-      x.lineWidth=6; x.strokeStyle='rgba(255,255,255,0.75)';
+      var sy=afterTitle;
+      x.lineWidth=6; x.strokeStyle=strokeCol;
       x.strokeText(sub, tx, sy);
-      x.fillStyle='#374151';
+      x.fillStyle=subColor;
       x.fillText(sub, tx, sy);
-      x.fillStyle='#e63946';
+      x.fillStyle=accent;
       x.fillRect(tx, sy+ss+12, 96, 6);
+      afterTitle=sy+ss+30;
+    }
+    // 图标化卖点列表：圆形线框 + 对勾 + 短文本
+    if(pts.length){
+      var rowY=afterTitle+18;
+      pts.forEach(function(ptext){
+        var short=ptext.length>16?ptext.slice(0,15)+'…':ptext;
+        x.strokeStyle=accent; x.lineWidth=3;
+        x.beginPath(); x.arc(tx+16, rowY+16, 16, 0, Math.PI*2); x.stroke();
+        x.lineCap='round';
+        x.beginPath(); x.moveTo(tx+9, rowY+16); x.lineTo(tx+14, rowY+22); x.lineTo(tx+24, rowY+10); x.stroke();
+        var fs=24;
+        x.font='600 '+fs+'px "PingFang SC","Microsoft YaHei",sans-serif';
+        x.lineWidth=6; x.strokeStyle=strokeCol;
+        x.strokeText(short, tx+48, rowY+4);
+        x.fillStyle=mainColor;
+        x.fillText(short, tx+48, rowY+4);
+        rowY+=46;
+      });
     }
   }
   x.restore();
@@ -1042,7 +1078,7 @@ async function compositeWhite(prodCanvas, variant){
 async function compositeMarketing(bgDataURL, prodCanvas, guide){
   guide = guide || {};
   var c=await compositeScene(bgDataURL, prodCanvas, {scale:guide.scale||0.62, shadow:true, colorTemp:'warm', baseRatio:guide.baseRatio||0.74});
-  drawMarketingText(c.getContext('2d'), guide.title, guide.subtitle);
+  drawMarketingText(c.getContext('2d'), guide.title, guide.subtitle, guide.points);
   return c;
 }
 
@@ -1259,8 +1295,10 @@ async function buildCellsFromJob(job){
       } else if(grp.type==='marketing'){
         try{
           var mTitle=(state.script && state.script.productName)||'精选好物';
-          var mSub=(state.script && state.script.sellingPoints && state.script.sellingPoints[0])||'';
-          cells.push({tag:grp.label, canvas:await compositeMarketing(mBg, prod, {scale:0.62, title:mTitle, subtitle:mSub, shadow:true, colorTemp:'warm'})});
+          var mSP=(state.script && state.script.sellingPoints)||[];
+          var mSub=mSP[0]||'';
+          var mPts=mSP.slice(1,4);
+          cells.push({tag:grp.label, canvas:await compositeMarketing(mBg, prod, {scale:0.62, title:mTitle, subtitle:mSub, points:mPts, shadow:true, colorTemp:'warm'})});
         }catch(e){
           cells.push({tag:grp.label, url:mBg});
         }
