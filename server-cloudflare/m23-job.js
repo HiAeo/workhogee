@@ -76,11 +76,43 @@ function pickBackgrounds(category) {
   }
   return GENERIC_BG_PRESETS;
 }
-function sceneBgPrompt(bgDesc, styleLine) {
+/* M3.1 场景背景 prompt：根据这一件商品的真实使用场景(useScenes) + 子品类，
+ * 生成"真实使用环境 + 水平地面平面 + 明确光照方向"的英文摄影提示词。
+ * 严禁摄影棚/无缝背景纸/渐变背景——前端会把产品按底边 72% 接地合成。 */
+function buildScenePrompt(sceneText, category, slotIdx) {
+  const t = String(sceneText || '').toLowerCase();
+  const c = String(category || '').toLowerCase();
+  const isOffice = /办公|话务|客服|坐席|电脑|桌面|desk|office|work|call|headset|headphone/.test(t + c);
+  const isHome = /居家|家里|客厅|卧室|home|living|bedroom/.test(t);
+  const isOutdoor = /户外|室外|公园|骑行|运动|outdoor|sport|bike|cycle/.test(t);
+  const lightDirs = [
+    'soft natural window light coming from the left side of frame, gentle highlights, soft shadows falling to the right',
+    'diffused overhead daylight, even soft illumination across the desk, no harsh shadows',
+    'warm afternoon sunlight coming from the right side, gentle warm tone, soft long shadows'
+  ];
+  const li = (slotIdx || 0) % 3;
+  let surface, bg;
+  if (isOffice) {
+    surface = 'a clean modern office desk surface in warm medium-brown walnut wood, a flat horizontal desktop plane occupying the lower 55 percent of the frame, wood grain softly visible, a subtle faint reflection on the desk';
+    bg = 'a blurred bright modern office in the far background, shallow depth of field, soft bokeh';
+  } else if (isHome) {
+    surface = 'a clean home desk surface in light oak wood, a flat horizontal plane occupying the lower 55 percent of the frame, soft warm tone';
+    bg = 'a blurred cozy home room in the far background, shallow depth of field, soft bokeh';
+  } else if (isOutdoor) {
+    surface = 'a clean flat outdoor surface such as a light stone or wooden bench, a flat horizontal plane occupying the lower 55 percent of the frame';
+    bg = 'a blurred green park outdoor scene in the far background, shallow depth of field, soft bokeh';
+  } else {
+    surface = 'a clean modern desk surface in warm medium-brown walnut wood, a flat horizontal desktop plane occupying the lower 55 percent of the frame, subtle reflection';
+    bg = 'a softly blurred neutral bright background, shallow depth of field, soft bokeh';
+  }
   return [
-    'Empty e-commerce product photography background. Scene: ' + bgDesc + '.',
-    'Absolutely NO product, NO object, NO person, NO animal, NO vehicle, NO text, NO logo, NO watermark in the frame.',
-    'The center area must be clean and uncluttered, deliberately left empty for later product compositing. High-end commercial photography, natural depth of field, realistic soft lighting.' + (styleLine ? ' Overall style: ' + styleLine + '.' : '')
+    'Empty photorealistic e-commerce product photography background.',
+    surface + '.',
+    lightDirs[li] + '.',
+    bg + '.',
+    'Professional commercial product photography, photorealistic, 8k, high detail, clean composition.',
+    'Absolutely NO product, NO object on the desk, NO person, NO animal, NO vehicle, NO text, NO logo, NO watermark, NO light stand, NO studio backdrop, NO seamless paper, NO gradient background.',
+    'The central area of the desktop must be clean and uncluttered, deliberately left empty for later product compositing.'
   ].join(' ');
 }
 function marketingBgPrompt(styleLine) {
@@ -341,13 +373,13 @@ async function stepScene(env, job) {
   if (!seedUrls[0]) todo.push(0);
   if (!seedUrls[1]) todo.push(1);
   await Promise.all(todo.map(i =>
-    seedreamTextGenUrl(env, { prompt: sceneBgPrompt(sceneDescs[i], styleLine), size: DEFAULT_SIZE, timeoutMs: 95000 })
+    seedreamTextGenUrl(env, { prompt: buildScenePrompt(sceneDescs[i], (job.results.category && job.results.category.name) || '', i), size: DEFAULT_SIZE, timeoutMs: 95000 })
       .then(u => { seedUrls[i] = u; })
       .catch(e => { job.errors.push({ step: 'scene.' + i, message: String((e && e.message) || e) }); })
   ));
   // 第二批：第三张（留给下一次轮询）
   if (!seedUrls[2]) {
-    try { seedUrls[2] = await seedreamTextGenUrl(env, { prompt: sceneBgPrompt(sceneDescs[2], styleLine), size: DEFAULT_SIZE, timeoutMs: 95000 }); }
+    try { seedUrls[2] = await seedreamTextGenUrl(env, { prompt: buildScenePrompt(sceneDescs[2], (job.results.category && job.results.category.name) || '', 2), size: DEFAULT_SIZE, timeoutMs: 95000 }); }
     catch (e) { job.errors.push({ step: 'scene.2', message: String((e && e.message) || e) }); }
   }
   // 逐张转存到自有 TOS（下载→转存→释放，单张内存；失败降级保留 Seedream URL）
@@ -360,8 +392,8 @@ async function stepScene(env, job) {
   job.results.sceneKeys = sceneKeys;
   job.results.sceneDescs = sceneDescs;
   job.results.compositeGuide = {
-    scene: [0, 1, 2].map(() => ({ position: 'center', scale: 0.55, shadow: true, colorTemp: 'natural' })),
-    marketing: { position: 'center', scale: 0.5, shadow: true }
+    scene: [0, 1, 2].map(() => ({ position: 'grounded', scale: 0.68, baseRatio: 0.72, shadow: true, colorTemp: 'natural' })),
+    marketing: { position: 'grounded', scale: 0.62, baseRatio: 0.74, shadow: true }
   };
   // 全部三张拿到才算 done
   if (!seedUrls[0] || !seedUrls[1] || !seedUrls[2]) throw new Error('scene_partial_retry');

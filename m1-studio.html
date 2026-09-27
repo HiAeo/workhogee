@@ -852,16 +852,51 @@ function processAlpha(img, opts){
 }
 
 function drawProduct(x, prod, cx, cy, scale){
-  var pmax=Math.max(prod.width, prod.height);
-  var ds=(scale*COMPOSE_SIZE)/pmax;
-  var pw=prod.width*ds, ph=prod.height*ds;
-  x.drawImage(prod, cx-pw/2, cy-ph/2, pw, ph);
-  return {pw:pw, ph:ph};
+  var box=drawProductMeasure(prod, scale);
+  x.drawImage(prod, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
+  return box;
 }
+/* 自动裁剪透明边距：按 alpha>10 的包围盒裁掉四周透明区，缩放才基于产品真实大小 */
+function trimCanvas(src){
+  if(!src || !src.width || !src.height) return src;
+  var w=src.width, h=src.height;
+  var sx=src.getContext('2d',{willReadFrequently:true});
+  var id=sx.getImageData(0,0,w,h), d=id.data;
+  var minX=w, minY=h, maxX=-1, maxY=-1;
+  for(var yy=0; yy<h; yy++){
+    for(var xx=0; xx<w; xx++){
+      if(d[(yy*w+xx)*4+3] > 10){
+        if(xx<minX)minX=xx; if(xx>maxX)maxX=xx;
+        if(yy<minY)minY=yy; if(yy>maxY)maxY=yy;
+      }
+    }
+  }
+  if(maxX<0) return src;
+  var pad=6;
+  minX=Math.max(0,minX-pad); minY=Math.max(0,minY-pad);
+  maxX=Math.min(w-1,maxX+pad); maxY=Math.min(h-1,maxY+pad);
+  var cw=maxX-minX+1, ch=maxY-minY+1;
+  var c=document.createElement('canvas'); c.width=cw; c.height=ch;
+  var cx2=c.getContext('2d',{willReadFrequently:true});
+  cx2.drawImage(src, minX,minY,cw,ch, 0,0,cw,ch);
+  // 行透明度剖面：找到"实体主体"最底行（排除细线/耳机线等窄行）
+  var dd=cx2.getImageData(0,0,cw,ch).data;
+  var rowMax=0, rowCounts=new Array(ch).fill(0);
+  for(var yy=0; yy<ch; yy++){
+    var cc=0;
+    for(var xx=0; xx<cw; xx++){ if(dd[(yy*cw+xx)*4+3]>40) cc++; }
+    rowCounts[yy]=cc; if(cc>rowMax) rowMax=cc;
+  }
+  var thresh=rowMax*0.08, bodyBottom=ch-1;
+  for(var yy=ch-1; yy>=0; yy--){ if(rowCounts[yy]>thresh){ bodyBottom=yy; break; } }
+  c._bodyBottom=bodyBottom/ch;
+  return c;
+}
+/* 浮影（环境光遮蔽补充）：弱、柔和、略低于产品底部 */
 function drawShadow(x, cx, baseY, w, alpha){
-  var rw=w*0.42, rh=Math.max(6, w*0.09);
+  var rw=w*0.44, rh=Math.max(8, w*0.10);
   var g=x.createRadialGradient(cx,baseY,0,cx,baseY,rw);
-  g.addColorStop(0,'rgba(0,0,0,'+(alpha||0.2)+')');
+  g.addColorStop(0,'rgba(0,0,0,'+(alpha||0.12)+')');
   g.addColorStop(1,'rgba(0,0,0,0)');
   x.save();
   x.translate(cx,baseY); x.scale(1, rh/rw); x.translate(-cx,-baseY);
@@ -869,16 +904,58 @@ function drawShadow(x, cx, baseY, w, alpha){
   x.beginPath(); x.arc(cx,baseY,rw,0,Math.PI*2); x.fill();
   x.restore();
 }
-function drawContactShadow(x, cx, baseY, w){
-  var h=Math.max(3, Math.round(w*0.018));
-  var g=x.createLinearGradient(0, baseY-h, 0, baseY+h*0.7);
-  g.addColorStop(0,'rgba(0,0,0,0)');
-  g.addColorStop(0.55,'rgba(0,0,0,0.42)');
+/* 接触阴影：柔和椭圆径向渐变，精确落在产品底边 baseY 上 */
+function drawContactShadow(x, cx, baseY, pw, ph){
+  var sw=pw*0.84;
+  var sh=Math.max(10, sw*0.20);
+  var rw=sw/2, rh=sh/2;
+  var g=x.createRadialGradient(cx, baseY, 0, cx, baseY, rw);
+  g.addColorStop(0,'rgba(0,0,0,0.42)');
+  g.addColorStop(0.55,'rgba(0,0,0,0.20)');
   g.addColorStop(1,'rgba(0,0,0,0)');
   x.save();
-  try{ x.filter='blur(2px)'; }catch(e){}
+  x.translate(cx, baseY);
+  x.scale(1, rh/rw);
+  x.translate(-cx, -baseY);
   x.fillStyle=g;
-  x.fillRect(cx-w*0.46, baseY-h, w*0.92, h*1.7);
+  x.beginPath(); x.arc(cx, baseY, rw, 0, Math.PI*2); x.fill();
+  x.restore();
+}
+/* 营销图文案排版：大号标题 + 副标题，左上角，不遮挡产品 */
+function drawMarketingText(x, title, sub){
+  var S=COMPOSE_SIZE;
+  title=String(title||'').trim();
+  if(sub && typeof sub==='object') sub=sub.text||'';
+  sub=String(sub||'').replace(/^卖点[：:]/,'').trim();
+  if(!title && !sub) return;
+  x.save();
+  x.textBaseline='top';
+  var tx=64, ty=60, maxW=S-128;
+  if(title){
+    var ts=56;
+    x.font='700 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    while(x.measureText(title).width>maxW && ts>26){
+      ts-=2; x.font='700 '+ts+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    }
+    x.lineWidth=9; x.strokeStyle='rgba(255,255,255,0.8)'; x.lineJoin='round';
+    x.strokeText(title, tx, ty);
+    x.fillStyle='#1f2937';
+    x.fillText(title, tx, ty);
+    if(sub){
+      var ss=28;
+      x.font='400 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
+      while(x.measureText(sub).width>maxW && ss>18){
+        ss-=1; x.font='400 '+ss+'px "PingFang SC","Microsoft YaHei",sans-serif';
+      }
+      var sy=ty+ts+20;
+      x.lineWidth=6; x.strokeStyle='rgba(255,255,255,0.75)';
+      x.strokeText(sub, tx, sy);
+      x.fillStyle='#374151';
+      x.fillText(sub, tx, sy);
+      x.fillStyle='#e63946';
+      x.fillRect(tx, sy+ss+12, 96, 6);
+    }
+  }
   x.restore();
 }
 function applyColorTemp(x, temp){
@@ -904,10 +981,13 @@ async function compositeScene(bgUrl, prodCanvas, guide){
   var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
   var x=c.getContext('2d',{willReadFrequently:true});
   drawBgCover(x, bg);
-  var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2;
-  var scale=guide.scale||0.55;
+  var cx=COMPOSE_SIZE/2;
+  var scale=guide.scale||0.68;
   var box=drawProductMeasure(prodCanvas, scale);
-  var dx=cx-box.pw/2, dy=cy-box.ph/2;
+  var baseY=COMPOSE_SIZE*(guide.baseRatio||0.72);
+  var bodyFrac=prodCanvas._bodyBottom!=null?prodCanvas._bodyBottom:0.92;
+  var dy=baseY-bodyFrac*box.ph;
+  var dx=cx-box.pw/2;
 
   var ambient=null;
   try{
@@ -922,8 +1002,8 @@ async function compositeScene(bgUrl, prodCanvas, guide){
   }catch(e){}
 
   if(guide.shadow!==false){
-    drawShadow(x, cx, cy+box.ph*0.42, box.pw*1.05, 0.2);
-    drawContactShadow(x, cx, cy+box.ph*0.46, box.pw);
+    drawContactShadow(x, cx, baseY, box.pw, box.ph);
+    drawShadow(x, cx, baseY+box.ph*0.04, box.pw*1.02, 0.12);
   }
   x.drawImage(prodCanvas, dx, dy, box.pw, box.ph);
 
@@ -948,19 +1028,22 @@ async function compositeWhite(prodCanvas, variant){
   var c=document.createElement('canvas'); c.width=COMPOSE_SIZE; c.height=COMPOSE_SIZE;
   var x=c.getContext('2d');
   x.fillStyle='#ffffff'; x.fillRect(0,0,COMPOSE_SIZE,COMPOSE_SIZE);
-  var scale=(variant===0)?0.85:0.80;
-  var cx=COMPOSE_SIZE/2, cy=COMPOSE_SIZE/2 + (variant===1?8:0);
+  var scale=(variant===0)?0.90:0.88;
+  var cx=COMPOSE_SIZE/2;
   var box=drawProductMeasure(prodCanvas, scale);
-  if(variant===1){
-    drawShadow(x, cx, cy+box.ph*0.46, box.pw, 0.15);
-    drawContactShadow(x, cx, cy+box.ph*0.49, box.pw);
-  }
-  x.drawImage(prodCanvas, cx-box.pw/2, cy-box.ph/2, box.pw, box.ph);
+  var baseY=COMPOSE_SIZE*0.80;
+  var bodyFrac=prodCanvas._bodyBottom!=null?prodCanvas._bodyBottom:0.92;
+  var dy=baseY-bodyFrac*box.ph;
+  drawContactShadow(x, cx, baseY, box.pw, box.ph);
+  x.drawImage(prodCanvas, cx-box.pw/2, dy, box.pw, box.ph);
   return c;
 }
 
 async function compositeMarketing(bgDataURL, prodCanvas, guide){
-  return compositeScene(bgDataURL, prodCanvas, guide||{scale:0.6, shadow:true, colorTemp:'warm'});
+  guide = guide || {};
+  var c=await compositeScene(bgDataURL, prodCanvas, {scale:guide.scale||0.62, shadow:true, colorTemp:'warm', baseRatio:guide.baseRatio||0.74});
+  drawMarketingText(c.getContext('2d'), guide.title, guide.subtitle);
+  return c;
 }
 
 async function cropAndSuperres(originalImg, bbox){
@@ -1119,16 +1202,16 @@ async function buildCellsFromJob(job){
       state.corsFallback=true;
       return buildURLCells(job);
     }
-    prod=processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true});
+    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
   } else if(job.cutout && job.cutout.image){
     cutoutImg=await loadImg(job.cutout.image);
-    prod=processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true});
+    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
   } else {
     // demo
     var demoResp=await demoPipelineResponse();
     job.cutout=demoResp.cutout;
     cutoutImg=await loadImg(demoResp.cutout.image);
-    prod=processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true});
+    prod=trimCanvas(processAlpha(cutoutImg, {threshold:30, erodePx:2, defringe:true, feather:1, keepLargestCC:true, darkSuppress:true}));
     job.backgrounds=demoResp.backgrounds;
     job.detailBoxes=demoResp.detailBoxes;
     job.copy=demoResp.copy;
@@ -1161,7 +1244,7 @@ async function buildCellsFromJob(job){
         var bgUrl=bgPool[bgIdx % bgPool.length]; bgIdx++;
         try{
           cells.push({tag:grp.label+(grp.type==='model'?' · 场景合成占位':''),
-            canvas:await compositeScene(bgUrl, prod, {scale:0.55, shadow:true, colorTemp: grp.type==='model'?'natural':'warm'})});
+            canvas:await compositeScene(bgUrl, prod, {scale:0.68, shadow:true, colorTemp: grp.type==='model'?'natural':'warm'})});
         }catch(e){
           cells.push({tag:grp.label, url:bgUrl});
         }
@@ -1175,7 +1258,9 @@ async function buildCellsFromJob(job){
         }
       } else if(grp.type==='marketing'){
         try{
-          cells.push({tag:grp.label, canvas:await compositeMarketing(mBg, prod, {scale:0.6, shadow:true, colorTemp:'warm'})});
+          var mTitle=(state.script && state.script.productName)||'精选好物';
+          var mSub=(state.script && state.script.sellingPoints && state.script.sellingPoints[0])||'';
+          cells.push({tag:grp.label, canvas:await compositeMarketing(mBg, prod, {scale:0.62, title:mTitle, subtitle:mSub, shadow:true, colorTemp:'warm'})});
         }catch(e){
           cells.push({tag:grp.label, url:mBg});
         }
