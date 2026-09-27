@@ -91,20 +91,37 @@ function buildScenePrompt(sceneText, category, slotIdx) {
     'warm afternoon sunlight coming from the right side, gentle warm tone, soft long shadows'
   ];
   const li = (slotIdx || 0) % 3;
+  // 按品类在远景加少量虚化生活道具（必须在景深外、与产品所在桌面区分开）
+  const isBeauty = /美妆|护肤|口红|唇|彩妆|面膜|香水|beauty|makeup|skincare|lip|cosmetic/i.test(c);
+  const isFood = /食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage|cola/i.test(c);
+  const isTech = /耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c);
+  let props = '';
+  if (isBeauty) props = ', in the softly blurred far background: out-of-focus makeup brushes, a compact powder case, soft flower petals and a sheer curtain, gentle bokeh';
+  else if (isFood) props = ', in the softly blurred far background: out-of-focus ceramic plates, cutlery and fresh food ingredients on a side table, warm bokeh';
+  else if (isTech) props = ', in the softly blurred far background: out-of-focus laptop, a ceramic coffee cup and a paper notebook, soft office bokeh';
+  else if (isHome) props = ', in the softly blurred far background: out-of-focus cushions and a small potted plant, cozy bokeh';
+  const bgPost = '. The foreground desktop surface where the product stands must stay clean, flat and empty — all props are only in the distant blurred background, out of focus, never touching the product area';
   let surface, bg;
   if (isOffice) {
     surface = 'a clean modern office desk surface in warm medium-brown walnut wood, a flat horizontal desktop plane occupying the lower 55 percent of the frame, wood grain softly visible, a subtle faint reflection on the desk';
-    bg = 'a blurred bright modern office in the far background, shallow depth of field, soft bokeh';
+    bg = 'a blurred bright modern office in the far background' + (props || ', shallow depth of field, soft bokeh');
   } else if (isHome) {
     surface = 'a clean home desk surface in light oak wood, a flat horizontal plane occupying the lower 55 percent of the frame, soft warm tone';
-    bg = 'a blurred cozy home room in the far background, shallow depth of field, soft bokeh';
+    bg = 'a blurred cozy home room in the far background' + (props || ', shallow depth of field, soft bokeh');
   } else if (isOutdoor) {
     surface = 'a clean flat outdoor surface such as a light stone or wooden bench, a flat horizontal plane occupying the lower 55 percent of the frame';
     bg = 'a blurred green park outdoor scene in the far background, shallow depth of field, soft bokeh';
+  } else if (isBeauty) {
+    surface = 'a clean vanity table surface in soft light stone or pale wood, a flat horizontal plane occupying the lower 55 percent of the frame, gentle reflection';
+    bg = 'a softly blurred bright beauty vanity background' + props;
+  } else if (isFood) {
+    surface = 'a clean warm wooden dining table surface, a flat horizontal plane occupying the lower 55 percent of the frame, soft sheen';
+    bg = 'a softly blurred warm dining background' + props;
   } else {
     surface = 'a clean modern desk surface in warm medium-brown walnut wood, a flat horizontal desktop plane occupying the lower 55 percent of the frame, subtle reflection';
-    bg = 'a softly blurred neutral bright background, shallow depth of field, soft bokeh';
+    bg = 'a softly blurred neutral bright background' + (props || ', shallow depth of field, soft bokeh');
   }
+  bg += bgPost;
   return [
     'Empty photorealistic e-commerce product photography background.',
     surface + '.',
@@ -115,11 +132,26 @@ function buildScenePrompt(sceneText, category, slotIdx) {
     'The central area of the desktop must be clean and uncluttered, deliberately left empty for later product compositing.'
   ].join(' ');
 }
-function marketingBgPrompt(styleLine) {
+/* M3.2 营销海报背景：按品类调性生成，对齐佐糖"深色卡片+大标题"高级感。
+ * 3C/电子→深色科技金属；美妆→莫兰迪柔色；食品→温暖木质；家居→自然生活。 */
+function buildMarketingPrompt(category, styleLine) {
+  const c = String(category || '').toLowerCase();
+  let theme;
+  if (/耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c)) {
+    theme = 'Dark premium tech poster background, deep charcoal to matte black metallic surface, subtle cool blue rim light from the side, faint brushed-metal texture, deep soft gradient, high-end minimalist. The lower-center area must be a clean dark horizontal surface reserved for product placement.';
+  } else if (/美妆|护肤|口红|彩妆|面膜|香水|美|beauty|makeup|skincare|lip/i.test(c)) {
+    theme = 'Soft premium beauty poster background, muted morandi tones of warm beige, blush rose and cream, smooth gentle gradient, diffused soft daylight, elegant clean minimal. The lower-center area must be a clean light surface reserved for product placement.';
+  } else if (/食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage/i.test(c)) {
+    theme = 'Warm appetizing food poster background, warm walnut wood surface, soft window light from the side, shallow depth of field, cozy inviting mood, gentle warm gradient. The lower-center area must be a clean wooden surface reserved for product placement.';
+  } else if (/家居|家|香薰|蜡烛|装饰|home|decor|candle|living/i.test(c)) {
+    theme = 'Natural lifestyle home poster background, soft neutral linen and light wood tones, faint plant shadows, soft daylight, calm clean minimal. The lower-center area must be a clean surface reserved for product placement.';
+  } else {
+    theme = 'Premium e-commerce poster background, elegant deep neutral gradient, soft side light, refined minimal. The lower-center area must be a clean surface reserved for product placement.';
+  }
   return [
-    'E-commerce promotional poster background, festive but clean, soft gradient with light decorative elements (ribbons, sparkles, soft geometric shapes).',
-    'The CENTER must be a completely empty, uncluttered area reserved for later product compositing.',
-    'Absolutely NO product, NO text, NO logo, NO human figure. Professional commercial advertising layout, bright and premium mood.' + (styleLine ? ' Overall style: ' + styleLine + '.' : '')
+    theme,
+    'The background must be COMPLETELY EMPTY: absolutely NO product, NO bottle, NO cup, NO glass, NO food, NO props, NO plates, NO people, NO text, NO logo, NO watermark. Only the clean empty surface and gradient.',
+    'Professional commercial advertising layout, premium mood, photorealistic, 8k.' + (styleLine ? ' Overall style: ' + styleLine + '.' : '')
   ].join(' ');
 }
 
@@ -136,7 +168,8 @@ async function seedreamTextGenUrl(env, { prompt, size, timeoutMs = 100000 }) {
         model: env.ARK_MODEL,
         prompt,
         size: size || DEFAULT_SIZE,
-        response_format: 'url'
+        response_format: 'url',
+        watermark: false
       }),
       signal: ctrl.signal
     });
@@ -403,7 +436,7 @@ async function stepMarketing(env, job) {
   const styleLine = job.style || '';
   let u = job.results.marketingSeedUrl;
   if (!u) {
-    u = await seedreamTextGenUrl(env, { prompt: marketingBgPrompt(styleLine), size: DEFAULT_SIZE, timeoutMs: 95000 });
+    u = await seedreamTextGenUrl(env, { prompt: buildMarketingPrompt((job.results.category && job.results.category.name) || '', styleLine), size: DEFAULT_SIZE, timeoutMs: 95000 });
     job.results.marketingSeedUrl = u;
   }
   // 转存到自有 TOS（失败降级保留 Seedream URL；重试时不重复生成，省一次 Seedream 调用）
