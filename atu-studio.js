@@ -492,10 +492,36 @@ body.atu-open #atuStudio{display:flex}\
    }
    toast('重做'+(TYPE_LABELS[t]||t)+'…');
    (async function(){
-    var req={image:self._cleanImage||GS().images[0].dataUrl,type:t,size:self.planSize(t),language:self.resolvedLang(),on_screen_text:self.ostForType(t),product_facts:self.buildProductFacts(),design_requirements:''};
-    var j=null;try{j=await authPost('/marketing/generate',req,180000);}catch(e){j=null;}
+    await self.makeMarketingRef();
+    var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:self.resolvedLang(),on_screen_text:self.ostForType(t),product_facts:self.buildProductFacts(),design_requirements:''};
+    var j=null;try{j=await authPost('/marketing/generate',req,95000);}catch(e){j=null;}
     if(j&&j.ok&&j.image){self.replaceResultByType(t,j.image);self.paint();toast('重做完成');}
     else toast('重做失败：'+((j&&j.error&&j.error.message)||'稍后再试'),'err');
+   })();
+  },
+  /* 营销参考图：把干净主体降采样到长边1280 JPEG。实测高分辨率参考图（2048²）会让
+     卖点图/多宫格等复杂图种在 Ark 侧耗时越过边缘~100s 上限；降到1280后约28-40s出图，主体仍清晰 */
+  makeMarketingRef:function(){
+   var self=this;return new Promise(function(res){
+    var src=self._cleanImage||GS().images[0].dataUrl;
+    try{var im=new Image();
+     im.onload=function(){var longE=1280,sc=Math.min(1,longE/Math.max(im.naturalWidth,im.naturalHeight));
+      var w=Math.max(1,Math.round(im.naturalWidth*sc)),h=Math.max(1,Math.round(im.naturalHeight*sc));
+      var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);
+      self._mktRef=cv.toDataURL('image/jpeg',0.85);res(self._mktRef);};
+     im.onerror=function(){self._mktRef=src;res(src);};im.src=src;
+    }catch(e){self._mktRef=src;res(src);}
+   });
+  },
+  /* 单次营销生成 + 瞬时网络/超时自动重试一次（失败/审核未出图本就不计费） */
+  genMarketing:function(req){
+   var self=this;return (async function(){
+    var j=null;try{j=await authPost('/marketing/generate',req,95000);}catch(e){j=null;}
+    if(j&&j.ok)return j;
+    if(self._abort)return j;
+    await new Promise(function(r){setTimeout(r,1600);});
+    try{j=await authPost('/marketing/generate',req,95000);}catch(e){j=null;}
+    return j;
    })();
   },
   generate:function(){
@@ -518,6 +544,7 @@ body.atu-open #atuStudio{display:flex}\
     }
     if(self._abort){self._finish();return;}
     self._cleanImage=(fidOut&&fidOut.ok&&fidOut.white)?fidOut.white:GS().images[0].dataUrl;
+    await self.makeMarketingRef();
     // 白底主图
     if(types.indexOf('white_main')>=0){
      if(fidOut&&fidOut.rejected){self.addNote('白底主图：A级品类抠图保真未达标（'+(fidOut.reason||'qc')+'），请找纯色/干净背景重拍后再出，本次不硬生成。');self._failed['white_main']='rejected';}
@@ -541,8 +568,8 @@ body.atu-open #atuStudio{display:flex}\
      await self.gatePause();
      if(self._abort)break;
      self.setProgMsg('正在生成：'+(TYPE_LABELS[t]||t)+'…');self.paint();
-     var req={image:self._cleanImage,type:t,size:self.planSize(t),language:lang,on_screen_text:self.ostForType(t),product_facts:facts,design_requirements:''};
-     var j=null;try{j=await authPost('/marketing/generate',req,180000);}catch(e){j=null;}
+     var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:lang,on_screen_text:self.ostForType(t),product_facts:facts,design_requirements:''};
+     var j=await self.genMarketing(req);
      if(self._abort)break;
      self._doneTasks++;
      if(j&&j.ok&&j.image){self.addResult(j.image,TYPE_LABELS[t]||t,t);}
