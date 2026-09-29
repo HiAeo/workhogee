@@ -468,9 +468,12 @@
       if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product, viewType); } catch (e) { out.details = []; } }
       return out;
     }
-    // 3) 外观 / 普通商品 / 细节：BiRefNet 分块原生分辨率抠图
-    const mk = await call('/cutout', { image, strategy: 'picwish' });
-    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_autodl' };
+    // 3) 外观 / 普通商品 / 细节：matting 统一抠图（细结构/手持商品质检门禁）
+    const mk = await call('/cutout', { image, strategy: 'matting', category });
+    if (mk && mk.ok === false && (mk.status === 'rejected' || mk.status === 'failed')) {
+      return { ok: false, rejected: true, reason: mk.reason || ('matting_' + mk.status), guide: mk.guide || '', fidelity: level, bg: +bg.toFixed(3) };
+    }
+    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_matting' };
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
     P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);
