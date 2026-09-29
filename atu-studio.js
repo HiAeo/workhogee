@@ -35,6 +35,7 @@
 
  /* === 冻结契约枚举（API-CONTRACT §2） === */
  var LOCALE_LANG={US:'en',EU:'en',SEA:'en',JP:'ja',KR:'ko',CN:'zh-CN',generic:'en'};
+ var PLATFORM_REGION={generic:'generic',amazon:'US',taobao:'CN',jd:'CN',douyin:'CN',xiaohongshu:'CN',aliexpress:'EU',shopee:'SEA',tiktokshop:'US'};
  /* 图种 → 默认比例 → 尺寸（契约 §0/§1）；plan 返回 size 时优先用 plan 的 */
  var TYPE_RATIO={white_main:'1:1',search_main:'1:1',core_selling:'4:3',selling_point:'16:9',icon_selling:'1:1',material:'1:1',scene_show:'16:9',multi_scene:'16:9',competitor_compare:'4:3',usage_compare:'4:3',size_chart:'1:1',product_detail:'1:1',
    hero:'4:3',scene_atmosphere:'16:9',multi_angle:'1:1',series:'1:1',ingredients:'1:1',usage_guide:'1:1',accessories:'1:1',after_sales:'1:1',mood:'16:9',
@@ -321,7 +322,7 @@ body.atu-open #atuStudio{display:flex}\
    var self=this;
    (async function(){
     var body={images:imgs.map(function(x){return x.dataUrl;}).slice(0,5),
-     kit_type:self.kitType(),platform:self.platform(),locale:self.locale(),language:self.$('#setLang').value,
+     kit_type:self.kitType(),platform:self.platform(),locale:self.locale(),language:self.resolvedLang(),
      selling_text:sellingText,selected_types:self.selectedTypes()};
     var j=null;try{j=await authPost('/marketing/plan',body,180000);}catch(e){j=null;}
     // 还原 textarea
@@ -493,7 +494,7 @@ body.atu-open #atuStudio{display:flex}\
    toast('重做'+(TYPE_LABELS[t]||t)+'…');
    (async function(){
     await self.makeMarketingRef();
-    var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:self.resolvedLang(),on_screen_text:self.ostForType(t),product_facts:self.buildProductFacts(),design_requirements:''};
+    var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:self.resolvedLang(),on_screen_text:self.ostForType(t),product_facts:self.buildProductFacts(),domain:(self.planResp&&self.planResp.product?self.planResp.product.domain:''),scenes:(self.planResp&&self.planResp.product?self.planResp.product.scenes:[]),design_requirements:''};
     var j=null;try{j=await authPost('/marketing/generate',req,95000);}catch(e){j=null;}
     if(j&&j.ok&&j.image){self.replaceResultByType(t,j.image);self.paint();toast('重做完成');}
     else toast('重做失败：'+((j&&j.error&&j.error.message)||'稍后再试'),'err');
@@ -568,7 +569,7 @@ body.atu-open #atuStudio{display:flex}\
      await self.gatePause();
      if(self._abort)break;
      self.setProgMsg('正在生成：'+(TYPE_LABELS[t]||t)+'…');self.paint();
-     var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:lang,on_screen_text:self.ostForType(t),product_facts:facts,design_requirements:''};
+     var req={image:self._mktRef||self._cleanImage,type:t,size:self.planSize(t),language:lang,on_screen_text:self.ostForType(t),product_facts:facts,domain:(self.planResp&&self.planResp.product?self.planResp.product.domain:''),scenes:(self.planResp&&self.planResp.product?self.planResp.product.scenes:[]),design_requirements:''};
      var j=await self.genMarketing(req);
      if(self._abort)break;
      self._doneTasks++;
@@ -615,4 +616,9 @@ body.atu-open #atuStudio{display:flex}\
  S.$('#atsLbX').addEventListener('click',function(){S.closeLb();});
  S.$('#atsLb').addEventListener('click',function(e){if(e.target.id==='atsLb')S.closeLb();});
  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&S.isOpen())S.closeLb();});
+ function _refreshPlan(){if(S.planResp&&GS().images&&GS().images.length){clearTimeout(S._plT);S._plT=setTimeout(function(){S.runPlan();},350);}}
+ var _sp=S.$('#setPlatform'),_sr=S.$('#setRegion'),_sl=S.$('#setLang');
+ if(_sp)_sp.addEventListener('change',function(){var rg=PLATFORM_REGION[_sp.value];if(rg&&_sr)_sr.value=rg;_refreshPlan();});
+ if(_sr)_sr.addEventListener('change',_refreshPlan);
+ if(_sl)_sl.addEventListener('change',_refreshPlan);
 })();
