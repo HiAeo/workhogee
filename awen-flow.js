@@ -97,16 +97,20 @@
   }
 
   function previewHtml() {
-    var keys = Object.keys(state.results);
-    var frames = keys.map(function (plat) {
-      var d = state.results[plat].draft;
-      return '<div style="border:1px solid #262b33;border-radius:18px;overflow:hidden;width:300px;flex:none;background:#000">' +
-        '<div style="background:#111;height:38px;display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af">' + esc(PLATFORMS.find(function (x) { return x[0] === plat; })[1]) + ' · 预览</div>' +
-        '<div style="padding:14px;font-size:12.5px;color:#e5e7eb;white-space:pre-wrap"><b>' + esc(d.title || '') + '</b>\n\n' + esc(d.body || '') + '\n\n' + (d.hashtags || []).map(function (h) { return '#' + h; }).join(' ') + '</div></div>';
+    var keys = Object.keys(state.results).filter(function (k) { return state.results[k].draft; });
+    var tabs = keys.map(function (plat, i) {
+      return '<button data-ptab="' + plat + '" style="background:' + (i === 0 ? '#f97316' : '#1f2937') + ';border:none;color:' + (i === 0 ? '#fff' : '#9ca3af') + ';border-radius:9px;padding:8px 14px;cursor:pointer;font-size:13px">' + (PLATFORMS.find(function (x) { return x[0] === plat; }) || [, plat])[1] + '</button>';
     }).join('');
-    return '<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:14px">' + frames + '</div>' +
-      '<div style="margin-top:16px;font-size:13px;color:#9ca3af">操作清单 / 发布前校验 / 最佳时间 / 素材打包下载 / 二维码画册 —— 阿发模块已接入 /publishing/*，此处为预览骨架。</div>' +
-      '<button id="awBack" style="margin-top:16px;background:none;border:1px solid #374151;color:#9ca3af;border-radius:10px;padding:10px 18px;cursor:pointer">← 返回修改文案</button>';
+    return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">' + tabs + '</div>' +
+      '<div id="awPreviewBox" style="background:#161a20;border:1px solid #262b33;border-radius:16px;padding:10px;display:flex;justify-content:center;min-height:200px"></div>' +
+      '<div id="awPreviewText" style="font-size:12.5px;color:#6b7280;margin-top:8px"></div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">' +
+      '<button id="awAlbum" style="background:#f97316;border:none;color:#fff;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px">朋友圈二维码画册</button>' +
+      '<button id="awValidate" style="background:none;border:1px solid #374151;color:#cbd5e1;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px">发布前校验</button>' +
+      '<button id="awPackage" style="background:none;border:1px solid #374151;color:#cbd5e1;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px">打包素材 zip</button>' +
+      '<button id="awConfirm" style="background:none;border:1px solid #22c55e;color:#22c55e;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px">确认发布</button></div>' +
+      '<div id="awActionOut" style="margin-top:14px;font-size:12.5px;color:#9ca3af;white-space:pre-wrap"></div>' +
+      '<button id="awBack" style="margin-top:18px;background:none;border:1px solid #374151;color:#9ca3af;border-radius:10px;padding:10px 18px;cursor:pointer">← 返回修改文案</button>';
   }
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -128,7 +132,52 @@
     });
     body.querySelectorAll('[data-copyt]').forEach(function (b) { b.onclick = function () { copyText(state.results[b.getAttribute('data-copyt')].draft.title); }; });
     body.querySelectorAll('[data-copyb]').forEach(function (b) { b.onclick = function () { copyText(state.results[b.getAttribute('data-copyb')].draft.body); }; });
+    var ptab = body.querySelector('[data-ptab]'); if (ptab) loadPreview(ptab.getAttribute('data-ptab'));
+    body.querySelectorAll('[data-ptab]').forEach(function (b) {
+      b.onclick = function () {
+        body.querySelectorAll('[data-ptab]').forEach(function (x) { x.style.background = '#1f2937'; x.style.color = '#9ca3af'; });
+        b.style.background = '#f97316'; b.style.color = '#fff';
+        loadPreview(b.getAttribute('data-ptab'));
+      };
+    });
+    var album = body.querySelector('#awAlbum'); if (album) album.onclick = function () {
+      post('/publishing/album', { flowerCommon: state.ctx.productName || '产品', flowerLatin: '', gallery: [], momentsBody: state.results.wechat_moments ? state.results.wechat_moments.draft.body : '' }).then(function (j) {
+        var html = j.html || j; if (typeof html !== 'string') html = JSON.stringify(j);
+        openBlob(html, '二维码画册');
+      });
+    };
+    var val = body.querySelector('#awValidate'); if (val) val.onclick = function () {
+      post('/publishing/checklist', { platform: 'xiaohongshu', validate: true, draft: state.results.xiaohongshu && state.results.xiaohongshu.draft, media: [{ type: 'image', sizeMB: 2, width: 1080, height: 1440 }] }).then(function (j) {
+        var out = document.getElementById('awActionOut');
+        var res = (j.validation && j.validation.results) || [];
+        out.textContent = '合规校验结果：' + (j.validation && j.validation.passed ? 'PASS' : 'FAIL') + '\n' + res.map(function (r) { return (r.pass ? '✓' : '✗') + ' ' + r.rule + ' — ' + r.detail; }).join('\n');
+      });
+    };
+    var pkg = body.querySelector('#awPackage'); if (pkg) pkg.onclick = function () {
+      post('/publishing/package', { platforms: Object.keys(state.results), drafts: state.results, mediaKeys: {} }).then(function (j) {
+        document.getElementById('awActionOut').textContent = '打包结果：' + (j.ok ? 'zip 已生成（' + (j.files || j.entries || []).length + ' 项）' : JSON.stringify(j));
+        if (j.zipBase64) downloadBase64(j.zipBase64, 'awen-package.zip');
+      });
+    };
+    var cf = body.querySelector('#awConfirm'); if (cf) cf.onclick = function () {
+      post('/publishing/confirm', { platform: 'xiaohongshu', qcPassed: true, content: { title: state.results.xiaohongshu.draft.title, body: state.results.xiaohongshu.draft.body } }).then(function (j) {
+        document.getElementById('awActionOut').textContent = '发布确认：' + (j.ok ? '状态=' + (j.state || j.status || 'published') : JSON.stringify(j));
+      });
+    };
   }
+  function loadPreview(plat) {
+    var box = document.getElementById('awPreviewBox'); if (!box) return;
+    box.innerHTML = '<div style="color:#6b7280;font-size:12.5px;padding:30px">加载预览…</div>';
+    post('/publishing/preview', { platform: plat, draft: state.results[plat].draft, media: [] }).then(function (j) {
+      var html = j.html || j; if (typeof html !== 'string') html = JSON.stringify(j);
+      var ifr = document.createElement('iframe');
+      ifr.style.cssText = 'width:340px;height:680px;border:none;border-radius:14px;background:#fff;transform:scale(0.85);transform-origin:top center';
+      ifr.srcdoc = html;
+      box.innerHTML = ''; box.appendChild(ifr);
+    });
+  }
+  function openBlob(html, name) { var b = new Blob([html], { type: 'text/html' }); var w = window.open('', '_blank'); w.document.write(html); w.document.title = name; }
+  function downloadBase64(b64, name) { var a = document.createElement('a'); a.href = 'data:application/zip;base64,' + b64; a.download = name; a.click(); }
 
   function loadCard() {
     post('/copywriting/info-card', { category: state.category }).then(function (j) {
