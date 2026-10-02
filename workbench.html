@@ -5456,7 +5456,7 @@ function videoSectionHtml(){
   +'<div class="vid-row"><span class="vl">分镜模板</span>'+tplBtns+'</div>'
   +'<div class="vid-row"><span class="vl">画幅</span>'+ratioBtns+'</div>'
   +'<div class="vid-stage" id="vidStage"><canvas id="vidCanvasEl"></canvas><div class="vid-prog" id="vidProg"><i id="vidProgBar"></i></div></div>'
-  +'<div class="vid-actions"><button type="button" class="vid-btn primary" data-act="videoMake"'+(nImg?'':' disabled')+'>'+IC.video+' 用 '+nImg+' 张成品生成短视频</button><button type="button" class="vid-btn ghost" data-act="videoAiSoon">AI 图生视频 · 即将开放</button></div>'
+  +'<div class="vid-actions"><button type="button" class="vid-btn primary" data-act="videoMake"'+(nImg?'':' disabled')+'>'+IC.video+' 用 '+nImg+' 张成品生成短视频</button><button type="button" class="vid-btn ghost" data-act="videoAiReal">'+IC.video+' AI 图生视频·真实管线</button></div>'
   +(nImg?'':'<div class="vid-sub" style="margin-top:8px">先让阿图出几张成品图，阿视就能把它们剪成一条片。</div>')
   +soon+'</div>';
  return '<div class="dl-sec"><h5>'+IC.video+' 阿视短视频'+(state.videos.length?'（'+state.videos.length+'）':'')+'</h5>'+box+'<div id="vidOut">'+renderVideos()+'</div></div>';
@@ -5493,6 +5493,103 @@ async function videoMake(btn){
   toast('视频没剪成：'+(e&&e.message?e.message:'重试一下'),'err');
   renderDeliver();
  }
+}
+
+/* ================= 阿视 · 真实管线（Seedance i2v + TTS + composeNarrationVideo） =================
+   对每镜：/video/shot 提交无声片段 → /video/task 轮询 → /tts 出 mp3+words → /video-composer.js 重编码合成（720×1280 硬字幕） */
+var ASH_REAL_ARK_POLL = 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks';
+function ashFetchTimeout(path, body, ms){
+ var ctrl=new AbortController(); var to=setTimeout(function(){try{ctrl.abort();}catch(e){}},ms||120000);
+ return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body),signal:ctrl.signal})
+  .then(function(r){clearTimeout(to);return r.json();})
+  .catch(function(e){clearTimeout(to); if(e&&e.name==='AbortError')return {ok:false,error:{message:'请求超时'}}; return {ok:false,error:{message:'网络异常'}};});
+}
+function ashUrlToDataUri(url){
+ return fetch(url).then(function(r){return r.blob();}).then(function(b){return new Promise(function(res,rej){
+  var fr=new FileReader(); fr.onload=function(){res(fr.result);}; fr.onerror=rej; fr.readAsDataURL(b);
+ });});
+}
+function ashB64ToBlob(b64,mime){
+ var bin=atob(b64),len=bin.length,ua=new Uint8Array(len);
+ for(var i=0;i<len;i++)ua[i]=bin.charCodeAt(i);
+ return new Blob([ua],{type:mime||'audio/mpeg'});
+}
+// 提交并轮询单个镜头；worker 端阻塞轮询，墙钟给 200s，超时回落直查 Ark（需已透传 task_id）
+async function ashRunShot(sh, onMsg){
+ onMsg&&onMsg('提交 i2v：'+sh.frame);
+ var imageUrl = sh.imageDataUrl || await ashUrlToDataUri(sh.frameUrl);
+ var sub = await ashFetchTimeout('/video/shot',{image_url:imageUrl,prompt:sh.visualPrompt,duration:sh.duration||5,ratio:'9:16',resolution:'720p',generate_audio:false},30000);
+ if(!sub.ok||!sub.task_id) throw new Error('提交失败：'+((sub.error&&sub.error.message)||JSON.stringify(sub)));
+ var taskId=sub.task_id; onMsg&&onMsg('已提交 task '+taskId+'，等待出片…');
+ var deadline=Date.now()+20*60*1000;
+ while(Date.now()<deadline){
+  var j=null;
+  try{ j=await ashFetchTimeout('/video/task',{task_id:taskId,total_ms:20*60*1000},200000); }catch(e){}
+  if(j&&j.ok&&j.url) { onMsg&&onMsg('出片成功'); return j; }
+  // 回落：直查 Ark（复用 worker 已建立的任务 id）
+  try{
+   var r=await fetch(ASH_REAL_ARK_POLL+'/'+taskId,{headers:authHeaders()});
+   var k=await r.json();
+   onMsg&&onMsg('ark 状态='+k.status);
+   if(k.status==='succeeded') return {ok:true,url:k.content.video_url,usage:k.usage};
+   if(k.status==='failed') throw new Error('生成失败：'+(k.error&&k.error.message||''));
+  }catch(e){ if(/生成失败/.test(e.message)) throw e; }
+  await new Promise(function(r){setTimeout(r,8000);});
+ }
+ throw new Error('轮询超时');
+}
+async function ashTts(text){
+ var j=await ashFetchTimeout('/tts',{text:text},30000);
+ if(!j.ok) throw new Error('TTS 失败：'+((j.error&&j.error.message)||''));
+ return {blob:ashB64ToBlob(j.audio_b64,j.mime),words:j.words};
+}
+async function videoMakeReal(btn, productKey){
+ if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
+ var stage=document.getElementById('vidStage'),prog=document.getElementById('vidProg'),bar=document.getElementById('vidProgBar');
+ if(stage)stage.classList.add('show'); if(prog)prog.classList.add('show');
+ if(btn)btn.disabled=true;
+ function setp(f,m){ if(bar)bar.style.width=Math.round(f*100)+'%'; if(btn)btn.innerHTML=IC.video+' '+m; }
+ try{
+  setp(0.02,'读取分镜脚本…');
+  var roll=await (await fetch('/marketing-spec/aview-rollout/scripts/rollout.json',{cache:'no-store'})).json();
+  var prod=roll.products.filter(function(p){return p.product===(productKey||'3c');})[0];
+  if(!prod) throw new Error('rollout.json 无此产品');
+  // 支持用已下载到本地的片段（proof 复用，不重复计费）
+  var reuse = state._ashLocalShots || null;
+  var shotDefs = prod.shots.map(function(sh,i){ return {
+    index:sh.index, duration:sh.duration, narration:sh.narration, visualPrompt:sh.visual_prompt,
+    frameUrl:'/marketing-spec/aview-rollout/'+sh.frame,
+    localMp4: reuse? reuse[i].mp4 : null,
+    localMp3: reuse? reuse[i].mp3 : null
+  };});
+  var shotsPayload=[];
+  for(var i=0;i<shotDefs.length;i++){
+   var sd=shotDefs[i];
+   var mp4Blob, mp3, words;
+   if(sd.localMp4){ mp4Blob=await (await fetch(sd.localMp4)).blob(); }
+   else { var r=await ashRunShot(sd,function(m){setp(0.05+0.5*i/shotDefs.length,'镜'+sd.index+'：'+m);}); mp4Blob=await (await fetch(r.url)).blob(); }
+   setp(0.55+0.1*i,'镜'+sd.index+' 配音…');
+   if(sd.localMp3){ mp3=await (await fetch(sd.localMp3)).blob(); words=await (await fetch(sd.localWords)).json(); }
+   else { var t=await ashTts(sd.narration); mp3=t.blob; words=t.words; }
+   shotsPayload.push({ videoUrl:URL.createObjectURL(mp4Blob), mp3Url:URL.createObjectURL(mp3), words:words });
+  }
+  setp(0.85,'浏览器合成（烧字幕）…');
+  var mod=await import('/video-composer.js?v=ashreal1');
+  var res=await mod.composeNarrationVideo({ shots:shotsPayload, onProgress:function(f,m){setp(0.85+0.14*f,'合成 '+Math.round(f*100)+'%'); } });
+  var name='WorkHogee_'+prod.product+'_阿视.mp4';
+  state.videos.push({name:name,url:URL.createObjectURL(res.blob),blob:res.blob,w:720,h:1280,dur:res.durationSec,ext:'mp4',tpl:'ashreal',ratio:'9:16',ts:Date.now(),prod:prod.product,hashtags:prod.hashtags});
+  try{persistVideoWork(state.videos[state.videos.length-1]);}catch(e){}
+  // 阿发抖音预览：视频 + 文案 + hashtags≤5 成套
+  var cpt=(state.copy&&state.copy.cps)?state.copy.cps.general:(prod.selling_points||[]).join('，');
+  var tagStr=(prod.hashtags||[]).slice(0,5).join(' ');
+  if(!state.copy||!state.copy.cps) state.copy={ready:true,cps:{}};
+  state.copy.cps.douyin=cpt+'\n\n'+tagStr;
+  renderDeliver(); openDeliver&&setDeliverTab('video');
+  toast('真实管线出片成功：'+res.durationSec.toFixed(1)+'s，'+(res.blob.size/1024/1024).toFixed(1)+'MB');
+  botSay('<b>阿视真实管线出片完成。</b>'+res.w+'×'+res.h+'、'+res.durationSec.toFixed(1)+' 秒、'+prod.shots.length+' 个 Seedance 镜头 + 逐字字幕配音，已进右侧「视频」与阿发抖音预览。','ashi');
+ }catch(e){
+  toast('真实管线失败：'+(e&&e.message||e),'err'); renderDeliver();
+ }finally{ if(btn)btn.disabled=false; setp(0,'完成'); }
 }
 
 /* ================= 导出 / 打包 / 重做 ================= */
@@ -7267,7 +7364,7 @@ function handleAct(b){
  else if(act==='videoRatio'){state.videoCfg.ratio=b.dataset.v;$$('[data-act="videoRatio"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.videoCfg.ratio);});}
  else if(act==='videoMake'){videoMake(b);}
  else if(act==='videoDl'){var vv=state.videos[+b.dataset.i];if(vv){downloadDataUrl(vv.url,vv.name);toast('已下载 '+vv.name);}}
- else if(act==='videoAiSoon'){toast('AI 图生视频内测中，即将开放；现在先用图文成片把多张成品剪成短视频');}
+ else if(act==='videoAiReal'){videoMakeReal(b,'3c');}
  else if(act==='newOrder'){newOrder();}
  else if(act==='moreScene'){state.results=[];state.dyn=[];state.dynGrid=null;renderDeliver();renderOutputsCard();}
  else if(act==='publishShowcase'){renderPublishCard();}
