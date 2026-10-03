@@ -1937,6 +1937,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
     <div class="dl-top">
       <div class="dl-title">交付物<span class="dl-count" id="dlCount"></span></div>
       <div class="dl-actions">
+        <button class="mini" id="btnRootPipe" style="background:#f97316;border-color:#f97316;color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.6 1.5A4 4 0 0 0 6.5 19Z"/></svg>根因流水线</button>
         <button class="mini" id="btnPack" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>一键打包</button>
         <button class="icon-btn" id="btnDeliverClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </div>
@@ -4273,7 +4274,7 @@ function openConnModal(id){
  if(rm)rm.onclick=function(){var o=connLoad();delete o[id];connSave(o);closeConnModal();openConnect();if(window.toast)toast('已断开 '+d.name);};
 }
 /* ================= 账号中心（头像菜单四页，统一 .view 版面，替代旧居中弹窗） ================= */
-var APP_VER='v0.9.7 Alpha';
+var APP_VER='v0.9.8 Alpha';
 var AC_TABS=[{k:'profile',n:'账号管理'},{k:'quota',n:'会员状态'},{k:'help',n:'帮助中心'},{k:'update',n:'版本更新'}];
 function acUser(){var M=window.HogeeMember;return (M&&M.getUser)?M.getUser():{};}
 function acProf(){try{return JSON.parse(localStorage.getItem('hogee_profile')||'{}');}catch(e){return {};}}
@@ -4356,6 +4357,8 @@ function acPanelHelp(){
 }
 function acPanelUpdate(){
  var logs=[
+  ['v0.9.8','2026-10-03','五伙计根因级统一：新增统一商品上下文 buildMerchantContext，构建一次、五伙计共享同一商品/品牌/事实/语种（含品牌拉丁名/本地名多形式归一、按语种呈现事实）；阿文九平台母语级文案、联网学当下爆款、严格上下文隔离；阿视图文成片（静帧 Ken Burns+逐词卡拉OK字幕，中英双语、零黑帧）；阿发统一已发布一体预览、规格合规预检与自动修正、追踪渠道码、待发布清单；阿果闭环验证，洞察真实反哺下一次产出。'],
+  ['v0.9.7','2026-10-02','图种伙计阿图根因级重做：OCR 深读自有品牌/型号/价签/规格，火山方舟联网调研品牌官方卖点与品类消费者真实痛点，全语种 Canvas 文字层、受控并发、动态 ETA。'],
   ['v0.9.6','2026-10-03','数据伙计阿果打通：后台截图自动识别回填、外部数据落库、结构化效果报告（互动率/漏斗/平台对比/趋势折线/具体行动项）；效果中心新增「外部平台 / 综合总览」视图；平台授权改为可登记的「即将开放」卡片。'],
   ['v0.9.5','2026-09-22','账号中心改为独立页面（账号管理 / 会员状态 / 帮助中心 / 版本更新）；左栏新增「技能与连接」；素材区更名为「Hogee创作探索」。'],
   ['v0.9.4','2026-09-21','深色创作工作台改版；创作探索支持提示词与「做同款」；素材多规格瀑布流与点击放大。'],
@@ -7403,6 +7406,12 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  $('#btnDeliver').addEventListener('click',function(){if(document.body.dataset.deliver==='open')closeDeliver();else openDeliver();});
  $('#btnDeliverClose').addEventListener('click',closeDeliver);
  $('#btnPack').addEventListener('click',packAll);
+ $('#btnRootPipe').addEventListener('click',function(){
+   if(!state.images.length){toast('先上传商品图，再跑根因流水线','err');return;}
+   var imgs=state.images.map(function(im){return im.dataUrl;}).filter(Boolean);
+   if(!imgs.length){toast('没有可用的商品图','err');return;}
+   window.openRootPipeline({images:imgs,language:'zh-CN',selling_text:state.extra||''});
+ });
  $('#dlTabs').addEventListener('click',function(e){var b=e.target.closest('[data-dltab]');if(b)setDeliverTab(b.dataset.dltab);});
  /* 实验室 */
  $('#labClose').addEventListener('click',closeLab);
@@ -7960,5 +7969,9 @@ window.AtuBridge={
 </script>
 <script src="atu-studio.js?v=20261003d"></script>
 <script src="awen-flow.js?v=20260930b"></script>
+<script src="awen-studio.js?v=20261003a"></script>
+<script src="afa-studio.js?v=20261003a"></script>
+<script type="module" src="aview-studio.js?v=20261003a"></script>
+<script src="hogee-root-pipeline.js?v=20261003a"></script>
 </body>
 </html>
