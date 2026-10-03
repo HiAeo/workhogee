@@ -1053,8 +1053,8 @@ body[data-stage="welcome"] .hw.hw6{max-width:none;padding:0;margin:2.2vh auto 0}
 body[data-stage="works"] .composer{display:none!important}
 body.task-focus .composer{display:none!important}
 .prog-ctl{display:flex;gap:9px;margin-top:14px}
-.prog-ctl .btn{display:inline-flex;align-items:center;gap:7px}
-.prog-ctl .btn svg{width:15px;height:15px}
+.prog-ctl .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;min-width:108px;flex:none}
+.prog-ctl .btn svg{width:15px;height:15px;flex:none}
 body[data-stage="publish"] .composer{display:none!important}
 /* ===== 统一视图外壳（对齐效果中心，细体标题 + 深色玻璃卡） ===== */
 .view{max-width:1200px;margin:0 auto;width:100%;padding:22px 34px 90px;animation:hwIn .4s ease}
@@ -2808,9 +2808,11 @@ function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
  });}
  return attempt(1);
 }
-function authPost(path,body,timeoutMs){
+function authPost(path,body,timeoutMs,opts){
+ opts=opts||{};
  var ctrl=new AbortController(),ms=timeoutMs||120000;
  var to=setTimeout(function(){try{ctrl.abort();}catch(e){}},ms);
+ if(opts.signal)opts.signal.addEventListener('abort',function(){try{ctrl.abort();}catch(e){}});
  return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body),signal:ctrl.signal})
   .then(function(r){clearTimeout(to);return r.json();})
   .catch(function(e){clearTimeout(to);
@@ -4271,7 +4273,7 @@ function openConnModal(id){
  if(rm)rm.onclick=function(){var o=connLoad();delete o[id];connSave(o);closeConnModal();openConnect();if(window.toast)toast('已断开 '+d.name);};
 }
 /* ================= 账号中心（头像菜单四页，统一 .view 版面，替代旧居中弹窗） ================= */
-var APP_VER='v0.9.6 Alpha';
+var APP_VER='v0.9.7 Alpha';
 var AC_TABS=[{k:'profile',n:'账号管理'},{k:'quota',n:'会员状态'},{k:'help',n:'帮助中心'},{k:'update',n:'版本更新'}];
 function acUser(){var M=window.HogeeMember;return (M&&M.getUser)?M.getUser():{};}
 function acProf(){try{return JSON.parse(localStorage.getItem('hogee_profile')||'{}');}catch(e){return {};}}
@@ -4584,13 +4586,15 @@ async function handleFiles(fileList){
  if(!files.length)return;
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
- var already=AtuStudio.isOpen(), firstOpen=!(state.images&&state.images.length);
+ var already=AtuStudio.isOpen();
  if(!already){AtuStudio.open();state.stage='upload';}
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){state.images=state.images.concat(arr);
   AtuStudio.renderOrigin();
   arr.forEach(function(it){tosSyncImage(it,'input');});
-  if(firstOpen)AtuStudio.autoSelling();
+  // 每次上传完成且当前尚无图文方案时，可靠自动触发 AI 读图+联网调研（不再依赖客户点「AI 帮写」）；
+  // 换商品清空后 planResp 为空会自动重触发；已有方案时不打断。
+  if(!AtuStudio.planResp)AtuStudio.autoSelling();
  }).catch(function(){toast('有图片没读出来，换一张试试','err');});
 }
 
@@ -7954,7 +7958,7 @@ window.AtuBridge={
 })();
 
 </script>
-<script src="atu-studio.js?v=20260929e"></script>
+<script src="atu-studio.js?v=20261003d"></script>
 <script src="awen-flow.js?v=20260930b"></script>
 </body>
 </html>
