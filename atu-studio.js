@@ -812,6 +812,98 @@ body.atu-open #atuStudio{display:flex}\
     return j;
    })();
   },
+  /* ========== r-background 联合背景（产品保真）：前端编排 ========== */
+  RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,mood:1,hero:1,scene_atmosphere:1,ingredients:1},
+  _layCfg:{
+   scene_show:{cx:.32,bottom:.94,h:.74},mood:{cx:.30,bottom:.90,h:.70},scene_atmosphere:{cx:.5,bottom:.96,h:.78},
+   selling_point:{cx:.52,bottom:.97,h:.80},hero:{cx:.5,bottom:.97,h:.82},
+   core_selling:{cx:.27,bottom:.96,h:.78},icon_selling:{cx:.5,bottom:.66,h:.52},ingredients:{cx:.5,bottom:.60,h:.48},
+   material:{cx:.5,bottom:.80,h:.74},product_detail:{cx:.5,bottom:.93,h:.86},
+   default:{cx:.5,bottom:.95,h:.78}
+  },
+  _sceneEnv:{
+   lifestyle:'a bright airy real-life setting with soft natural daylight and tasteful context props, gentle background blur, warm inviting commercial lifestyle photography',
+   hero:'a clean premium studio-lifestyle setting, soft gradient backdrop with gentle bokeh, cinematic key light, aspirational premium mood',
+   info:'a clean modern minimalist studio, smooth neutral light-gray backdrop, soft even lighting, subtle soft shadows, uncluttered premium commercial look',
+   macro:'a soft neutral seamless backdrop, gentle diffused lighting, delicate soft highlights, refined texture, elegant premium product close-up',
+   mood:'an atmospheric cinematic scene, soft moody light, gentle haze, rich color grading, emotional premium ambiance'
+  },
+  _typeScene:{scene_show:'lifestyle',mood:'mood',scene_atmosphere:'mood',selling_point:'hero',hero:'hero',core_selling:'info',icon_selling:'info',ingredients:'info',material:'macro',product_detail:'macro'},
+  buildRbgPrompt:function(type,o){
+   o=o||{};var group=this._typeScene[type]||'info';var domain=String(o.domain||'product').toLowerCase();
+   return [
+    'Photorealistic commercial product scene. The product (already cut out and placed on this transparent canvas) sits in '+this._sceneEnv[group]+'.',
+    'The environment suits a '+domain+' product, with a few tasteful context-appropriate props around it, never covering the product.',
+    'Render a natural soft contact shadow under the product and matching reflections and light direction so it blends seamlessly.',
+    'IMPORTANT: preserve the product exact real shape, proportions, colors, materials and every printed label, logo and text on its packaging. Do NOT redraw, repaint, warp, distort, erase or alter the product or anything printed on it.',
+    'The generated BACKGROUND must contain absolutely NO words, letters, numbers, captions, logos, price tags, posters, stickers, watermarks or any readable text.',
+    'High detail, sharp focus on the product, professional e-commerce advertising photo, natural color.'+(o.variant?(' '+o.variant):'')
+   ].join(' ');
+  },
+  layoutCutout:function(fg,type,sizeStr){
+   var self=this;return new Promise(function(res,rej){
+    var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+    var im=new Image();
+    im.onload=function(){
+     var cfg=self._layCfg[type]||self._layCfg.default;
+     var cv=document.createElement('canvas');cv.width=W;cv.height=H;var ctx=cv.getContext('2d');
+     var dh=H*cfg.h,sc=dh/im.naturalHeight,dw=im.naturalWidth*sc;
+     ctx.drawImage(im,W*cfg.cx-dw/2,H*cfg.bottom-dh,dw,dh);
+     res(cv.toDataURL('image/png'));
+    };
+    im.onerror=function(){rej(new Error('fg_fail'));};im.src=fg;
+   });
+  },
+  buildTextLayersFE:function(recipe,ost){
+   var L=[];function push(s,t,x,y,w,h,o){t=String(t||'').trim();if(!t)return;o=o||{};L.push({slot:s,text:t,x:x,y:y,w:w,h:h,align:o.align||'left',baseline:o.baseline||'body',color:o.color||'#101826',bold:!!o.bold,max_lines:o.max_lines||1});}
+   var hl=String(ost.headline||'').trim(),sub=String(ost.subheadline||'').trim();
+   var icons=(ost.icons||[]).slice(0,6),panels=(ost.panels||[]).slice(0,3);
+   if(recipe==='core_selling'){
+    push('headline',hl,.55,.09,.40,.13,{baseline:'h2',bold:true,max_lines:2});
+    icons.forEach(function(ic,i){push('b'+i,ic.label,.56,.27+i*.115,.40,.10,{baseline:'body',max_lines:2});});
+   }else if(recipe==='selling_point'||recipe==='hero'){
+    push('headline',hl,.06,.06,.88,.13,{baseline:'h1',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.06,.20,.8,.07,{baseline:'body'});
+   }else if(recipe==='scene_show'){
+    push('headline',hl,.06,.70,.62,.13,{baseline:'h1',bold:true,color:'#FFFFFF',max_lines:2});
+    if(sub)push('sub',sub,.06,.85,.55,.07,{baseline:'body',color:'#FFFFFF'});
+   }else if(recipe==='mood'||recipe==='scene_atmosphere'){
+    push('headline',hl,.08,.78,.55,.10,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
+   }else if(recipe==='material'){
+    push('headline',hl,.1,.87,.8,.08,{baseline:'h2',bold:true,color:'#FFFFFF',align:'center',max_lines:1});
+   }else if(recipe==='product_detail'){
+    push('headline',hl,.08,.06,.84,.11,{baseline:'h2',bold:true,max_lines:2});
+   }else if(recipe==='icon_selling'||recipe==='ingredients'){
+    push('headline',hl,.08,.05,.84,.11,{baseline:'h1',bold:true,align:'center',max_lines:2});
+    icons.forEach(function(ic,i){var col=i%3,row=Math.floor(i/3);push('ic'+i,ic.label,.08+col*.30,.70+row*.13,.27,.10,{baseline:'label',align:'center',max_lines:2});});
+   }else if(recipe==='multi_scene'){
+    push('headline',hl,.05,.03,.9,.10,{baseline:'h1',bold:true,align:'center',max_lines:1});
+    panels.forEach(function(p,i){push('pc'+i,p.caption||p.title,.012+i*.333,.88,.31,.08,{baseline:'body',align:'center'});});
+   }else if(hl)push('headline',hl,.06,.06,.88,.12,{baseline:'h1',bold:true,max_lines:2});
+   return L;
+  },
+  genScene:function(req){
+   var self=this;var ac=new AbortController();(self._reqAborts=self._reqAborts||{})[req.type]=ac;
+   return (async function(){
+    var fg=self._fg||null;
+    if(!fg){
+     var co=await authPost('/cutout',{image:req.image,strategy:'picwish'},80000,{signal:ac.signal});
+     if(co&&co.ok&&co.image)fg=co.image;
+     else return {ok:false,error:(co&&co.error)||{code:'cutout_fail',message:'主体抠图失败，建议纯色背景重拍'}};
+    }
+    if(self._abort)return {ok:false};
+    var canvasPng;
+    try{canvasPng=await self.layoutCutout(fg,req.type,req.size);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
+    var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes});
+    var j=await authPost('/marketing/scene',{image:canvasPng,prompt:prompt,batch_size:2},120000,{signal:ac.signal});
+    if(!j||!j.ok||!j.images||!j.images.length)return (j&&j.ok===false)?j:{ok:false,error:(j&&j.error)||{code:'scene_fail',message:'背景生成失败'}};
+    var base=j.images[0];
+    try{var up=await authPost('/superres',{image:base,scale:2},90000,{signal:ac.signal});if(up&&up.ok&&up.image)base=up.image;}catch(e){}
+    var layers=self.buildTextLayersFE(req.type,self.ostForType(req.type));
+    var finalUrl=await self.composeFrontend({size:req.size,base_image:base,text_layers:layers});
+    return {ok:true,image:finalUrl,type:req.type,size:req.size};
+   })();
+  },
   /* 终止任务：不仅停止派发，真正 abort 所有在途 fetch */
   _abortAll:function(){
    this._abort=true;var self=this;
@@ -863,6 +955,9 @@ body.atu-open #atuStudio{display:flex}\
    if(!lines.length)lines=[text];
    ctx.font=(L.bold?'700 ':'400 ')+fs+'px '+FONT;
    ctx.fillStyle=L.color||'#101826';
+   var isLight=/^#?(fff|ffffff|white)/i.test(String(L.color||''));
+   if(isLight){ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=fs*.18;ctx.shadowOffsetY=Math.max(1,fs*.05);}
+   else{ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;}
    ctx.textAlign=L.align||'left';ctx.textBaseline='top';
    var lh=fs*1.28,totalH=lines.length*lh,ty=by+Math.max(0,(bh-totalH)/2);
    lines.forEach(function(ln,i){
@@ -895,6 +990,7 @@ body.atu-open #atuStudio{display:flex}\
     }
     if(self._abort){self._finish();return;}
     self._cleanImage=(fidOut&&fidOut.ok&&fidOut.white)?fidOut.white:GS().images[0].dataUrl;
+    self._fg=(fidOut&&fidOut.ok&&fidOut.fg)?fidOut.fg:null;
     await self.makeMarketingRef();
     // 白底主图
     if(types.indexOf('white_main')>=0){
@@ -927,7 +1023,7 @@ body.atu-open #atuStudio{display:flex}\
        var req={image:self._mktRef||self._cleanImage,type:tp,size:self.planSize(tp),language:lang,on_screen_text:self.ostForType(tp),product_facts:facts,domain:(self.planResp&&self.planResp.product?self.planResp.product.domain:''),scenes:(self.planResp&&self.planResp.product?self.planResp.product.scenes:[]),design_requirements:''};
        self._taskStart[tp]=Date.now();self._activeTasks[tp]=Date.now();
        self.paintLiveInfo();
-       var j=await self.genMarketing(req);
+       var j=self.RBG_TYPES[tp]?await self.genScene(req):await self.genMarketing(req);
        delete self._activeTasks[tp];delete self._reqAborts[tp];
        if(self._abort)return;             // 中止后在途结束即收尾，不再计张、不再发新请求
        var dur=Date.now()-(self._taskStart[tp]||Date.now());self._durations.push(dur);
