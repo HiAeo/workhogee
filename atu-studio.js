@@ -34,7 +34,7 @@
  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
  /* === 冻结契约枚举（API-CONTRACT §2） === */
- var LOCALE_LANG={US:'en',EU:'en',SEA:'en',JP:'ja',KR:'ko',CN:'zh-CN',generic:'en'};
+ var LOCALE_LANG={US:'en',EU:'en',SEA:'en',JP:'ja',KR:'ko',CN:'zh-CN',generic:'zh-CN'};
  var PLATFORM_REGION={generic:'generic',amazon:'US',taobao:'CN',jd:'CN',douyin:'CN',xiaohongshu:'CN',aliexpress:'JP',shopee:'SEA',tiktokshop:'US'};
  /* 图种 → 默认比例 → 尺寸（契约 §0/§1）；plan 返回 size 时优先用 plan 的 */
  var TYPE_RATIO={white_main:'1:1',search_main:'1:1',core_selling:'4:3',selling_point:'16:9',icon_selling:'1:1',material:'1:1',scene_show:'16:9',multi_scene:'16:9',competitor_compare:'4:3',usage_compare:'4:3',size_chart:'1:1',product_detail:'1:1',
@@ -226,7 +226,7 @@ body.atu-open #atuStudio{display:flex}\
  var ALL_TYPE_ORDER=SUITE_TYPES.ecom.map(function(p){return p[0];}).concat(SUITE_TYPES.fashion.map(function(p){return p[0];}));
  var STYLE_TAGS=['简约高级','清新自然','科技质感','温馨居家','国潮国风','轻奢质感','活泼明快','极简留白'];
 
- /* === i18n：UI 文案随 resolvedLang（zh-CN/en/ja/ko）切换，消除「标签中文+内容外文」混搭 === */
+ /* === i18n：操作界面 UI 固定中文（zh-CN），不随平台/语种切换；resolvedLang 只决定生成物料的语言 === */
  var I18N_DICT={
  'zh-CN':{
   nav_ecom:'电商套图',nav_fashion:'服装套图',nav_batch:'批量套图',nav_records:'生成记录',crumb_b:'商品图操作台',
@@ -337,7 +337,7 @@ body.atu-open #atuStudio{display:flex}\
   t_white_main:'흰색 메인',t_search_main:'검색 메인',t_core_selling:'핵심 포인트',t_selling_point:'셀링 포인트',t_icon_selling:'아이콘 포인트',t_material:'소재',t_scene_show:'생활 장면',t_multi_scene:'멀티 장면',t_competitor_compare:'경쟁 비교',t_usage_compare:'사용 전후',t_size_chart:'사이즈 차트',t_product_detail:'제품 디테일',t_hero:'히어로 배너',t_scene_atmosphere:'분위기',t_multi_angle:'다각도',t_series:'시리즈',t_ingredients:'성분',t_usage_guide:'사용 가이드',t_accessories:'액세서리',t_after_sales:'애프터 서비스',t_mood:'무드',t_f_model:'모델 착용',t_f_white:'흰색 배경',t_f_search:'검색 메인',t_f_selling:'셀링 포인트',t_f_icon:'아이콘 포인트',t_f_detail:'디테일',t_f_fabric:'원단 질감',t_f_angle:'다각도 뷰',t_f_seeding:'체험 콘텐츠',t_f_scene:'생활 장면',t_f_series:'시리즈',t_f_size:'사이즈 차트',p_generic:'범용(전 플랫폼 대응)',p_amazon:'Amazon',p_taobao:'Taobao/Tmall',p_jd:'JD',p_douyin:'Douyin',p_xhs:'Xiaohongshu',p_aliexpress:'AliExpress',p_shopee:'Shopee',p_tiktokshop:'TikTok Shop',r_generic:'글로벌',r_cn:'중국 본토',r_us:'북미(미국)',r_eu:'유럽',r_sea:'동남아시아',r_jp:'일본',r_kr:'한국',l_auto:'사이트 기준',m_auto:'자동 추천(Seedream 4.5)',plan_notready:'선택한 언어 기획안 생성 중입니다. 잠시 후 시작해 주세요'
  }
  };
- function t(k){var L=S.resolvedLang();var d=I18N_DICT[L]||I18N_DICT['zh-CN'];if(d[k]!=null)return d[k];if(I18N_DICT['zh-CN'][k]!=null)return I18N_DICT['zh-CN'][k];return k;}
+ function t(k){var d=I18N_DICT['zh-CN'];if(d&&d[k]!=null)return d[k];return k;}
  function typeLabel(tp){var k='t_'+tp;var v=t(k);return (v===k)?(TYPE_LABELS[tp]||tp):v;}
  function fmtDur(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;return (m?m+t('min'):'')+s+t('sec');}
 
@@ -355,8 +355,8 @@ body.atu-open #atuStudio{display:flex}\
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_origin">商品原图</div><button class="ats-cs mut" id="atsClear" type="button"><span data-i18n="btn_clear">清空</span></button></div><div class="ats-thumbs" id="atsThumbs"></div><div class="ats-hint" data-i18n="origin_hint">同一商品可传多角度（最多 5 张），系统按一套处理；主参考图请选主体清晰、背景简洁的实拍图。</div></div>'+
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_selling">商品卖点</div><button class="ats-cs" id="atsAiWrite" type="button">'+I.spark+'<span data-i18n="btn_aiwrite">AI 帮写</span></button></div><div id="atsSellingWrap"><textarea class="ats-ta" id="atsSelling" maxlength="2000" data-i18n-ph="selling_ph" placeholder="商品名称、核心卖点、适用人群、使用场景、规格参数都可以写在这里；没准备好就点「AI 帮写」，伙计看图先给你一版。"></textarea></div></div>'+
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_settings">生成设置</div><button class="ats-cs mut" id="atsMoreBtn" type="button"><span data-i18n="btn_more">更多设置</span></button></div><div class="ats-grid">'+
-       '<div class="ats-field"><label data-i18n="f_platform">电商平台</label><select id="setPlatform"><option value="generic">通用（全平台适配）</option><option value="amazon" selected>亚马逊 Amazon</option><option value="taobao">淘宝/天猫</option><option value="jd">京东</option><option value="douyin">抖音商城</option><option value="xiaohongshu">小红书</option><option value="aliexpress">速卖通 AliExpress</option><option value="shopee">Shopee</option><option value="tiktokshop">TikTok Shop</option></select></div>'+
-       '<div class="ats-field"><label data-i18n="f_region">销售站点 / 区域</label><select id="setRegion"><option value="generic">通用</option><option value="CN">国内（中国大陆）</option><option value="US" selected>北美（美国）</option><option value="EU">欧洲</option><option value="SEA">东南亚</option><option value="JP">日本</option><option value="KR">韩国</option></select></div>'+
+       '<div class="ats-field"><label data-i18n="f_platform">电商平台</label><select id="setPlatform"><option value="generic">通用（全平台适配）</option><option value="amazon">亚马逊 Amazon</option><option value="taobao">淘宝/天猫</option><option value="jd" selected>京东</option><option value="douyin">抖音商城</option><option value="xiaohongshu">小红书</option><option value="aliexpress">速卖通 AliExpress</option><option value="shopee">Shopee</option><option value="tiktokshop">TikTok Shop</option></select></div>'+
+       '<div class="ats-field"><label data-i18n="f_region">销售站点 / 区域</label><select id="setRegion"><option value="generic">通用</option><option value="CN" selected>国内（中国大陆）</option><option value="US">北美（美国）</option><option value="EU">欧洲</option><option value="SEA">东南亚</option><option value="JP">日本</option><option value="KR">韩国</option></select></div>'+
        '<div class="ats-field"><label data-i18n="f_lang">文案语种</label><select id="setLang"><option value="auto" selected>跟随站点</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div>'+
        '<div class="ats-field"><label data-i18n="f_q">清晰度</label><select id="setQ"><option>高清</option><option>标准</option><option>超清</option></select></div>'+
        '<div class="ats-field full"><label data-i18n="f_model">出图模型</label><select id="setModel"><option>智能推荐（Seedream 4.5）</option><option>即梦图片 4.5</option><option>即梦图片 4.0</option><option>改图模型 3.0</option><option>改图模型 2.5</option></select></div></div>'+
@@ -471,7 +471,7 @@ body.atu-open #atuStudio{display:flex}\
   /* ---- 生成设置取值（契约 §2 枚举） ---- */
   platform:function(){return this.$('#setPlatform').value||'generic';},
   locale:function(){return this.$('#setRegion').value||'generic';},
-  resolvedLang:function(){var l=this.$('#setLang').value;if(l&&l!=='auto')return l;return LOCALE_LANG[this.locale()]||'en';},
+  resolvedLang:function(){var l=this.$('#setLang').value;if(l&&l!=='auto')return l;return LOCALE_LANG[this.locale()]||'zh-CN';},
   kitType:function(){return this.suite==='fashion'?'fashion':'ecom';},
   /* ---- 已选图种（按 ALL_TYPE_ORDER 稳定排序） ---- */
   selectedTypes:function(){var self=this;return ALL_TYPE_ORDER.filter(function(t){return self.sel[t];});},
