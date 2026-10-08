@@ -17,7 +17,7 @@ import { presignPut, presignGet, tosPut, tosGetUrl, tosHead } from './tos.js';
 import { generatePipelineCopy, checkCutoutQuality } from './vision.js';
 import { generateProductScript, normalizeScript } from './script-engine.js';
 import { saveCase } from './casebook.js';
-import { picwishCutoutByUrl, picwishRBackground } from './picwish.js';
+import { picwishCutoutByUrl, picwishRBackground, picwishScale } from './picwish.js';
 import { checkWhiteBackground } from './png-qc.js';
 
 const DEFAULT_SIZE = '2048x2048';
@@ -201,52 +201,84 @@ async function downloadCutoutBytes(env, job) {
  * r-background 场景图 prompt：产品已在透明 PNG 里，模型做「产品+使用场景」联合生成。
  * 要求品类化：脚本 useScenes + category，含光影方向、3 层道具、构图、负向约束。
  */
-function buildSceneRbgPrompt(script, category, useScene) {
-  const c = String(category || '');
-  const productName = String((script && script.productName) || 'the product').slice(0, 60);
-  const sp = Array.isArray(script && script.sellingPoints) ? script.sellingPoints.slice(0, 2) : [];
-  const scene = String(useScene || 'a clean lifestyle product scene').slice(0, 120);
-  const isBeauty = /美妆|护肤|口红|彩妆|面膜|香水|beauty|makeup|skincare|lip|cosmetic/i.test(c);
-  const isFood = /食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage/i.test(c);
-  const isTech = /耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c);
-  let props = 'a few softly blurred everyday objects in the far background';
-  if (isBeauty) props = 'a softly blurred vanity with makeup brushes, a compact case and pale flowers';
-  else if (isFood) props = 'a softly blurred table set with ceramic plates, cutlery and fresh ingredients';
-  else if (isTech) props = 'a softly blurred desk with a laptop, a coffee cup and a notebook';
+// 各视觉域的场景美术（台面/道具/光线/色调）；domain 由视觉模型现场判定，只有 6 域
+const DOMAIN_SCENE_ART = {
+  beauty: {
+    surface: 'a smooth marble or silk-draped vanity tabletop',
+    props: 'makeup brushes in a holder, a compact mirror, pale flowers and a perfume bottle',
+    light: 'soft warm window light with a gentle glow on the product',
+    tone: 'warm beige, blush and champagne tones'
+  },
+  fashion: {
+    surface: 'soft draped linen over a warm wooden floor',
+    props: 'neatly folded fabrics, a structured handbag and dried flowers',
+    light: 'bright airy daylight',
+    tone: 'warm cream and neutral tones'
+  },
+  food: {
+    surface: 'a walnut wood dining table',
+    props: 'ceramic plates, a linen napkin, fresh ingredients and cutlery',
+    light: 'warm appetizing window light',
+    tone: 'warm cozy tones'
+  },
+  tech: {
+    surface: 'a clean matte desk surface',
+    props: 'a slim laptop, a notebook, a coffee cup and subtle gadgets',
+    light: 'soft cool daylight with a subtle rim light',
+    tone: 'cool neutral tones with charcoal and silver accents'
+  },
+  home: {
+    surface: 'a warm wood or stone shelf',
+    props: 'a small potted plant, stacked books and a ceramic vase',
+    light: 'soft natural daylight',
+    tone: 'warm neutral tones'
+  },
+  general: {
+    surface: 'a clean neutral tabletop',
+    props: 'a few softly blurred everyday objects',
+    light: 'soft natural side daylight',
+    tone: 'clean balanced neutral tones'
+  }
+};
+
+export function buildSceneRbgPrompt(script, categoryName, sceneObj) {
+  const domain = (script && DOMAIN_SCENE_ART[script.domain]) ? script.domain : 'general';
+  const art = DOMAIN_SCENE_ART[domain];
+  const sceneEn = (sceneObj && sceneObj.en) ? sceneObj.en : 'a clean lifestyle product scene';
+  // r-background 对自然语言氛围词响应好、对长串否定/技术指令响应差（实测会退化成冷灰植物投影）。
+  // 采用连贯自然语言，结构对齐已验证的暖金样板；保真只保留一句简短约束。
   return [
-    'Professional e-commerce product photography.',
-    'Keep the provided product EXACTLY identical: same shape, same colors, same label and texture. Do not reshape or redraw it.',
-    'Scene: ' + scene + '.',
-    'The product stands centered on a clean flat surface with a soft contact shadow directly under it.',
-    'Lighting: soft natural daylight from the side, gentle highlights, no harsh shadows.',
-    'Mid-ground props: ' + props + ', out of focus.',
-    'Shallow depth of field, photorealistic, 8k, premium commercial look.' + (sp.length ? ' Key visible features: ' + sp.join(', ') + '.' : ''),
-    'NEGATIVE: no text, no watermark, no logo overlay, no distorted or malformed props, no duplicate product, no extra objects touching the product, no gradient studio backdrop.'
+    'Professional commercial product photography, ' + sceneEn + ', keeping the product shape, colors and label exactly unchanged.',
+    'The product stands on ' + art.surface + ', with ' + art.light + '.',
+    'In the softly blurred background: ' + art.props + ', tastefully arranged, shallow depth of field.',
+    'Overall ' + art.tone + ', natural contact shadow, premium editorial advertising style, photorealistic, 8k, ultra detailed.',
+    'No text, no letters, no watermark, no logo, no distortion, no malformed objects.'
   ].join(' ');
 }
 
 /**
  * r-background 营销底图 prompt：干净背景 + 产品居中，无任何烧录文字（前端再叠文字层）。
  */
-function buildMarketingRbgPrompt(category, styleLine) {
-  const c = String(category || '');
-  let bg;
-  if (/耳机|话务|3c|电子|手机|电脑|数码|充电|线|headphone|headset|electronic|tech|digital/i.test(c)) {
-    bg = 'dark premium tech background, deep charcoal matte surface, subtle cool rim light';
-  } else if (/美妆|护肤|口红|彩妆|面膜|香水|美|beauty|makeup|skincare|lip/i.test(c)) {
-    bg = 'soft morandi beauty background, warm beige and blush tones, diffused soft light';
-  } else if (/食品|饮|食|咖啡|茶|零食|food|drink|coffee|snack|beverage/i.test(c)) {
-    bg = 'warm appetizing food background, walnut wood surface, soft window light';
-  } else {
-    bg = 'clean premium e-commerce background, elegant neutral gradient, soft side light';
-  }
+// 各视觉域营销底图（无烧录文字，前端叠文字层）
+const DOMAIN_MARKETING_BG = {
+  beauty: 'soft morandi beauty background, warm beige and blush tones, flowing silk, diffused soft light',
+  fashion: 'bright airy fashion background, cream draped fabric, soft daylight',
+  food: 'warm appetizing food background, walnut wood surface, soft window light',
+  tech: 'dark premium tech background, deep charcoal matte surface, subtle cool rim light',
+  home: 'warm minimal home background, soft neutral tones, natural light',
+  general: 'clean premium e-commerce background, elegant neutral gradient, soft side light'
+};
+function buildMarketingRbgPrompt(categoryOrDomain, styleLine) {
+  let domain = String(categoryOrDomain || '').toLowerCase().trim();
+  if (!DOMAIN_MARKETING_BG[domain]) domain = 'general';
+  const bg = DOMAIN_MARKETING_BG[domain];
+  // 与场景同理用简洁自然语言；营销底图硬要求=产品一侧、另一侧留白、画面无烧录文字。
   return [
-    'Professional e-commerce poster background.',
-    'Keep the provided product EXACTLY identical: same shape, same colors, same label.',
+    'Professional commercial advertising poster background, keeping the product shape, colors and label exactly unchanged.',
     bg + '.',
-    'Product centered, generous clean empty space around it reserved for later text overlay.',
-    'Photorealistic, 8k, premium commercial advertising look.' + (styleLine ? ' Overall style: ' + styleLine + '.' : ''),
-    'ABSOLUTELY NO text, NO watermark, NO logo, NO typography, NO letters baked into the image. Clean background and product only.'
+    'The product is placed to one side resting on a clean surface, with generous calm empty space on the other side reserved for a headline.',
+    'Natural contact shadow, premium editorial layout, photorealistic, 8k, ultra detailed.' + (styleLine ? ' Overall style: ' + styleLine + '.' : ''),
+    'No text, no letters, no typography, no watermark, no logo baked into the image, no distortion.'
   ].join(' ');
 }
 
@@ -431,7 +463,7 @@ async function stepScript(env, job) {
     sellingPoints: script.sellingPoints || [],
     packagingText: ''
   };
-  job.results.category = { name: script.category || '商品', source: job.results.scriptSource };
+  job.results.category = { name: script.category || '商品', domain: script.domain, fidelityTier: script.fidelityTier, source: job.results.scriptSource };
   // 案例沉淀（best-effort，不阻塞主流程；KV 写失败内部已吞掉）
   saveCase(env, script);
 }
@@ -443,13 +475,32 @@ async function stepCutout(env, job) {
   if (!pw.ok) throw new Error((pw.error && pw.error.code) || 'picwish_failed');
   const dataUrl = pw.image;
   const b64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
-  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  let bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  let cutoutWidth = pw.width, cutoutHeight = pw.height;
+
+  // v3: cutout 后 AI 超分（scale type=clean），注入金属拉丝/边缘真实细节，解决产品柔糊。
+  // 失败重试1次；仍失败则降级用原cutout并标记 cutoutSrDegraded=true，绝不静默跳过。
+  let srOk = false, srDegraded = false;
+  for (let attempt = 0; attempt < 2 && !srOk; attempt++) {
+    const sr = await picwishScale(env, bytes, { scaleFactor: 2 });
+    if (sr.ok) {
+      bytes = sr.bytes;
+      cutoutWidth = sr.width;
+      cutoutHeight = sr.height;
+      srOk = true;
+    } else if (attempt === 1) {
+      srDegraded = true;
+      job.errors.push({ step: 'cutout_sr', message: String((sr.error && sr.error.code) || 'scale_failed') });
+    }
+  }
+
   const cutoutKey = `cutouts/${safeSeg(job.memberId)}/${Date.now().toString(36)}.png`;
   await tosPut(cfg, cutoutKey, bytes, 'image/png');
-  // 立即释放 base64
   job.results.cutoutKey = cutoutKey;
-  job.results.cutoutWidth = pw.width;
-  job.results.cutoutHeight = pw.height;
+  job.results.cutoutWidth = cutoutWidth;
+  job.results.cutoutHeight = cutoutHeight;
+  job.results.cutoutSrApplied = srOk;
+  job.results.cutoutSrDegraded = srDegraded;
 }
 
 /**
@@ -470,7 +521,7 @@ async function stepSceneRbg(env, job) {
   // 首次：调一次 r-background，缓存候选 URL（重试时不重复扣费）
   if (!job.results._rbgSceneCandidates) {
     const bytes = await downloadCutoutBytes(env, job);
-    const prompt = buildSceneRbgPrompt(script, category, scenes[0] || '');
+    const prompt = buildSceneRbgPrompt(script, category, scenes[0] || null);
     const r = await picwishRBackground(env, bytes, prompt);
     if (!r.ok) throw new Error((r.error && r.error.code) || 'rbg_scene_failed');
     job.results._rbgSceneCandidates = r.urls; // 1..4 个
@@ -486,7 +537,7 @@ async function stepSceneRbg(env, job) {
   }
   job.results.sceneSeedUrls = seedUrls;
   job.results.sceneKeys = sceneKeys;
-  job.results.sceneDescs = scenes;
+  job.results.sceneDescs = scenes.map(s => (s && s.zh) || '');
   job.results.sceneMode = 'rbg_integrated'; // 场景图已是产品+场景一体，前端不再贴回
   job.results.compositeGuide = {
     scene: [0, 1, 2].map(() => ({ position: 'integrated' })),
@@ -505,7 +556,9 @@ async function stepMarketingRbg(env, job) {
   if (!job.results.cutoutKey) throw new Error('no_cutout');
   if (!job.results._rbgMarketingUrl) {
     const bytes = await downloadCutoutBytes(env, job);
-    const prompt = buildMarketingRbgPrompt((job.results.category && job.results.category.name) || '', job.style || '');
+    const mktScript = job.results.script || {};
+    const mktDomain = mktScript.domain || (job.results.category && job.results.category.domain) || 'general';
+    const prompt = buildMarketingRbgPrompt(mktDomain, job.style || '');
     const r = await picwishRBackground(env, bytes, prompt);
     if (!r.ok) throw new Error((r.error && r.error.code) || 'rbg_marketing_failed');
     job.results._rbgMarketingUrl = r.urls[0];

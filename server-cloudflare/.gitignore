@@ -1,0 +1,41 @@
+# 依赖
+node_modules/
+.wrangler/
+_dryrun/
+_dryrun_new/
+_dryrun_tos/
+_aguverify/
+_matting_exp/
+
+# 本地密钥（绝不提交；.dev.vars.example 为模板，保留）
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.local
+
+# 临时 / 一次性脚本与产物（下划线开头，任意层级）
+**/_*
+
+# 一次性维护 / 测试 / 日志（根目录锚定）
+/clean_kv.mjs
+/clean_kv_dry.txt
+/del_keys.json
+/deploy_log*.txt
+/deploy_priv_out*.txt
+/whoami_log.txt
+/diag_cv.mjs
+/diag_cv_out.txt
+/diag-qr.mjs
+/e2e-analytics.mjs
+/selftest-*.mjs
+/test_plate_unit.mjs
+/test-qr.mjs
+
+# 压缩包 / Word 文档 / 备份
+*.zip
+*.docx
+*.bak
+
+# 系统
+.DS_Store
+Thumbs.db

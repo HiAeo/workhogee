@@ -1,0 +1,16 @@
+# 依赖
+node_modules/
+**/node_modules/
+
+# Expo / Android 构建产物
+mobile/.expo/
+mobile/android/
+mobile/dist/
+desktop/dist/
+desktop/out/
+desktop/release/
+
+# 临时 / 系统
+*.log
+.DS_Store
+Thumbs.db

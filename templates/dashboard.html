@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}数据仪表盘 - WorkHogee 管理后台{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>数据仪表盘</h1>
+    <p>实时监控任务处理、用户运营和系统运行状态</p>
+</div>
+
+<!-- 统计卡片 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">总任务数</div>
+        <div class="stat-value">{{ total_tasks }}</div>
+        <div class="stat-sub">累计提交任务</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">已完成</div>
+        <div class="stat-value green">{{ completed_tasks }}</div>
+        <div class="stat-sub">成功率 {{ (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0 }}%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">待处理</div>
+        <div class="stat-value orange">{{ pending_tasks }}</div>
+        <div class="stat-sub">等待处理中</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">处理中</div>
+        <div class="stat-value">{{ processing_tasks }}</div>
+        <div class="stat-sub">正在生成图片</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">失败</div>
+        <div class="stat-value red">{{ failed_tasks }}</div>
+        <div class="stat-sub">需要关注</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">总用户数</div>
+        <div class="stat-value">{{ total_users }}</div>
+        <div class="stat-sub">活跃用户 {{ active_users }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">用户总余额</div>
+        <div class="stat-value orange">{{ total_balance }}</div>
+        <div class="stat-sub">点数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">累计消耗</div>
+        <div class="stat-value">{{ total_usage }}</div>
+        <div class="stat-sub">总消耗点数</div>
+    </div>
+</div>
+
+<!-- 行业分布 -->
+<div class="card">
+    <div class="card-header">
+        <h2>行业分布</h2>
+    </div>
+    <div class="card-body">
+        {% if industry_stats %}
+        <div class="industry-bar">
+            {% set max_count = industry_stats.values()|max %}
+            {% for industry, count in industry_stats.items() %}
+            <div class="industry-item">
+                <div class="industry-name">{{ industry }}</div>
+                <div class="industry-count">{{ count }}</div>
+                <div class="industry-bar-bg">
+                    <div class="industry-bar-fill" style="width: {{ (count / max_count * 100) if max_count > 0 else 0 }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📊</div>
+            <h3>暂无数据</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 最近任务 -->
+<div class="card">
+    <div class="card-header">
+        <h2>最近任务</h2>
+        <a href="/tasks" class="btn btn-secondary btn-sm">查看全部</a>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>任务ID</th>
+                    <th>用户ID</th>
+                    <th>行业</th>
+                    <th>需求</th>
+                    <th>状态</th>
+                    <th>扣费</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in recent_tasks %}
+                <tr>
+                    <td>{{ format_value(task.get('任务ID')) }}</td>
+                    <td>{{ format_value(task.get('用户ID')) or '-' }}</td>
+                    <td>{{ format_value(task.get('行业')) }}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ format_value(task.get('用户需求')) }}</td>
+                    <td>
+                        {% set status = format_value(task.get('状态')) %}
+                        {% if status == '待处理' %}
+                        <span class="status-badge pending">待处理</span>
+                        {% elif status == '处理中' %}
+                        <span class="status-badge processing">处理中</span>
+                        {% elif status == '已完成' %}
+                        <span class="status-badge completed">已完成</span>
+                        {% elif status == '失败' %}
+                        <span class="status-badge failed">失败</span>
+                        {% else %}
+                        {{ status }}
+                        {% endif %}
+                    </td>
+                    <td>{{ format_value(task.get('扣费记录')) or '-' }}</td>
+                    <td>
+                        <a href="/task/{{ task.get('record_id') }}" class="btn btn-secondary btn-sm">详情</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <h3>暂无任务</h3>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WorkHogee 管理后台{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <span class="logo-text">Work<span>Hogee</span></span>
+            <span class="logo-sub">管理后台</span>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">数据仪表盘</a></li>
+            <li><a href="/tasks" class="{% if '/tasks' in request.path %}active{% endif %}">任务管理</a></li>
+            <li><a href="/users" class="{% if '/users' in request.path %}active{% endif %}">用户管理</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 充值模态框 -->
+    <div class="modal-overlay" id="rechargeModal">
+        <div class="modal">
+            <h3>用户充值</h3>
+            <form id="rechargeForm">
+                <input type="hidden" id="rechargeUserId" name="user_id">
+                <div class="form-group">
+                    <label>用户ID</label>
+                    <input type="text" id="rechargeUserIdDisplay" disabled>
+                </div>
+                <div class="form-group">
+                    <label>充值点数</label>
+                    <input type="number" id="rechargePoints" name="points" min="1" value="100" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeRechargeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">确认充值</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 充值模态框
+        function openRechargeModal(userId) {
+            document.getElementById('rechargeUserId').value = userId;
+            document.getElementById('rechargeUserIdDisplay').value = userId;
+            document.getElementById('rechargeModal').classList.add('active');
+        }
+
+        function closeRechargeModal() {
+            document.getElementById('rechargeModal').classList.remove('active');
+        }
+
+        document.getElementById('rechargeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/user/recharge', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    closeRechargeModal();
+                    location.reload();
+                }
+            });
+        });
+
+        // 点击模态框外部关闭
+        document.getElementById('rechargeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRechargeModal();
+            }
+        });
+    </script>
+</body>
+</html>

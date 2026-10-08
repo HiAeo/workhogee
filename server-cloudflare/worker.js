@@ -1,4 +1,4 @@
-/* =====================================================================
+﻿/* =====================================================================
  * WorkHogee 生图伙计 · Cloudflare Worker 薄代理层
  * ---------------------------------------------------------------------
  * 职责（刻意保持“薄”）：
@@ -25,6 +25,7 @@ import { getMemberSession, ensureBootstrapAdmin } from './member-auth.js';
 import { checkAndDeductQuota } from './members.js';
 import { handleFeed, ensureFeedBootstrap } from './feed.js';
 import { handleAnalytics, scheduledRollup } from './analytics.js';
+import { handleAgu, getTopInsights, buildInsightsContext } from './agu.js';
 import { verifyConsistency, appendGuardClauses, qcUpload, generateCopy, generateStoryboard, identifyProduct, groupProducts, extractProductFeatures, understandIntent, prefillFacts, planDetails, chatVisionCustom, detectPlatesByVision, generatePipelineCopy, checkCutoutQuality } from './vision.js';
 import { stampImageMeta } from './image-meta.js';
 import { presignPut, presignGet, tosGetUrl } from './tos.js';
@@ -32,9 +33,19 @@ import { segmentEntities, superResolve, saliencySegment, goodsSegment, carPlateD
 import { mediakitCutout, mediakitFaceDetect } from './mediakit.js';
 import { giteeMatting } from './gitee.js';
 import { autodlCutout, autodlSuperRes } from './autodl.js';
-import { picwishCutout } from './picwish.js';
+import { picwishCutout, picwishScaleDataUrl, picwishRBackground } from './picwish.js';
 import { createUploadUrl, createAndRunJob, getJob, tryAcquireSlot, releaseSlot, headObject, keyBelongsTo } from './m23-job.js';
-import { generateProductScript } from './script-engine.js';
+import { generateProductScript, normalizeScript } from './script-engine.js';
+import { runMarketingPlan } from './marketing/marketing-plan.js';
+import { runMarketingGenerate } from './marketing/marketing-engine.js';
+import * as copywriting from './copywriting/index.js';
+import * as video from './video/index.js';
+import * as tts from './tts/index.js';
+import * as publishing from './publishing/index.js';
+import { buildMerchantContext } from './merchant-context.js';
+import * as aview from './aview/index.js';
+import { fineMatting, GRADE_A_CATEGORIES } from './matting/fine-matting.js';
+import { spokeQCVL } from './matting/spoke-qc.js';
 
 const ARK_ENDPOINT_DEFAULT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
 // 火山图像接口要求输出像素 ≥ 3,686,400。
@@ -287,6 +298,15 @@ async function handleGenerate(req, env, origin) {
     }
     // feat 失败：seedImages 保持全部 images，走原多图路径降级
   }
+  // 阿果反哺：把本店历史投放经验追加到生图提示词（best-effort，任何异常都不影响原功能）
+  let insightsUsed = 0;
+  try {
+    const ictx = await buildInsightsContext(env, session.id);
+    if (ictx) {
+      insightsUsed = ictx.split('\n').filter(Boolean).length;
+      seedPrompt = seedPrompt + '\n\n【本会员历史投放经验，供参考，优先体现在构图/场景/标题方向】\n' + ictx;
+    }
+  } catch (e) { insightsUsed = 0; }
   const imagePayload = seedImages.length === 1 ? seedImages[0] : seedImages;
 
   // 第一次生成：服务端强制追加"本体保持 + 隐私规避"硬约束（源头治理）
@@ -334,7 +354,8 @@ async function handleGenerate(req, env, origin) {
     assetId: stamped.assetId || null,
     metaStamped: stamped.stamped === true,
     regenerated,
-    verify
+    verify,
+    insights_used: insightsUsed
   }, 200, origin);
 }
 
@@ -384,7 +405,7 @@ async function handleCopy(req, env, origin) {
   catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
   const product = String((body && body.product) || '').slice(0, 100);
   const identityType = String((body && body.identityType) || 'general');
-  const extra = String((body && body.extra) || '').slice(0, 500);
+  let extra = String((body && body.extra) || '').slice(0, 500);
   const category = String((body && body.category) || '').slice(0, 50);
   const tone = String((body && body.tone) || '').slice(0, 200);
   const targetAudience = String((body && body.targetAudience) || '').slice(0, 200);
@@ -398,8 +419,18 @@ async function handleCopy(req, env, origin) {
   if (!product && sellingPoints.length === 0 && !facts) {
     return json({ ok: false, error: { code: 'bad_product', message: '缺少商品名或卖点' } }, 400, origin);
   }
+  // 阿果反哺：把本店历史投放经验追加到文案上下文（best-effort，任何异常都不影响原功能）
+  let insightsUsed = 0;
+  try {
+    const ictx = await buildInsightsContext(env, session.id);
+    if (ictx) {
+      insightsUsed = ictx.split('\n').filter(Boolean).length;
+      const block = '【本会员历史投放经验，供写文案时参考】\n' + ictx;
+      extra = extra ? (extra + '\n\n' + block) : block;
+    }
+  } catch (e) { insightsUsed = 0; }
   const result = await generateCopy(env, { product, identityType, extra, sellingPoints, category, tone, targetAudience, scene, kbContext, channels, facts });
-  return json({ ok: true, copy: result }, 200, origin);
+  return json({ ok: true, copy: result, insights_used: insightsUsed }, 200, origin);
 }
 
 async function handleFactsPrefill(req, env, origin) {
@@ -538,6 +569,362 @@ async function handleSceneBackground(req, env, origin) {
   return json({ ok: true, b64: r.b64, size }, 200, origin);
 }
 
+/* ===== AI 场景联合生成（对标佐糖电商套图）=====
+ * 产品图（保真前景/白底）+ 按视觉风格域生成的场景 prompt，Seedream 图生图直接产出
+ * “产品在场景里”的完整图（产品可被美化、场景为 AI 生成，非贴回）；多候选 + VL 质检，
+ * 自动剔除背景/道具乱码文字与产品非主体，选卖相最高分返回。 */
+const SCENE_ART = {
+  beauty: {
+    set: [
+      'a sunlit vanity table beside a window with sheer linen curtains and a marble surface, soft morning light',
+      'an elegant modern bathroom counter with a round backlit mirror, warm ambient glow and a few fresh flowers',
+      'a minimalist pastel dressing table with a golden cosmetic organizer and dreamy bokeh background'
+    ],
+    light: 'soft warm daylight with gentle specular highlights and dreamy background bokeh',
+    grade: 'warm rosy tones, clean and premium'
+  },
+  fashion: {
+    set: [
+      'a bright studio loft with large windows and a neutral beige backdrop',
+      'a minimalist scene with a clothing rack, soft shadows and indoor greenery',
+      'an airy boutique interior with a warm wooden floor and natural window light'
+    ],
+    light: 'even soft studio light with subtle, clean shadows',
+    grade: 'neutral warm editorial tones'
+  },
+  food: {
+    set: [
+      'a rustic wooden dining table near a window with a linen napkin, natural morning light',
+      'a cozy kitchen counter with fresh ingredients softly blurred in the background',
+      'an outdoor garden table setting bathed in warm golden-hour light'
+    ],
+    light: 'warm appetizing natural light with a soft glow',
+    grade: 'warm fresh tones'
+  },
+  tech: {
+    set: [
+      'a clean modern desk setup with subtle accessories and a cool ambient glow',
+      'a minimalist workspace with a soft blue-grey gradient background and even light',
+      'a sleek shelf scene with shallow depth of field and neutral tones'
+    ],
+    light: 'soft directional light with clean, controlled reflections',
+    grade: 'cool neutral tones with a subtle blue, premium feel'
+  },
+  home: {
+    set: [
+      'a cozy living-room corner with a soft rug and a warm floor lamp',
+      'a bright Scandinavian interior with wooden furniture and plants',
+      'a tidy home scene beside a window with airy curtains and daylight'
+    ],
+    light: 'warm soft indoor light',
+    grade: 'warm neutral, inviting tones'
+  },
+  auto: {
+    set: [
+      'a modern city plaza in front of sleek glass architecture at golden hour, clean paved ground',
+      'a scenic coastal road with the ocean and distant hills, warm late-afternoon light',
+      'a winding road through green hills with soft sunlight, premium automotive photography',
+      'a bright minimalist showroom with polished concrete floors and large windows',
+      'an elegant tree-lined avenue with gentle dappled sunlight'
+    ],
+    light: 'warm directional sunlight with realistic reflections on the bodywork',
+    grade: 'cinematic, clean and premium automotive tones'
+  },
+  general: {
+    set: [
+      'a bright minimal lifestyle setting with a neutral background and natural daylight',
+      'a clean studio scene with a soft gradient backdrop and gentle shadows',
+      'an airy room with large windows, light tones and subtle props'
+    ],
+    light: 'soft even natural light',
+    grade: 'clean bright neutral tones'
+  }
+};
+
+async function handleSceneGenerate(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少产品图 dataURL' } }, 400, origin);
+  }
+  const category = (body && body.category) || '';
+  const product = (body && (body.product || body.productName)) || category || 'this product';
+  const candN = Math.max(2, Math.min(6, parseInt(body && body.candidates, 10) || 4));
+  // 归一化出图脚本：由品类文本推断视觉风格域 / 保真等级 / 使用场景
+  const script = normalizeScript({ category, productName: product, useScenes: body && body.useScenes });
+  const art = SCENE_ART[script.domain] || SCENE_ART.general;
+  const scenePool = [];
+  (script.useScenes || []).forEach(s => { const e = (s && (s.en || s.zh)); if (e) scenePool.push(e); });
+  art.set.forEach(s => scenePool.push(s));
+  const buildPrompt = (sceneEn) => [
+    'Professional e-commerce lifestyle photograph featuring this exact product as the clear hero subject.',
+    'Place the product in this setting: ' + sceneEn + '.',
+    'The product is sharp, in focus and well lit, occupying roughly 40 to 55 percent of the frame at a natural eye-level angle.',
+    'Lighting: ' + art.light + '. Color grading: ' + art.grade + '.',
+    'Natural depth of field with a softly blurred background and a realistic contact shadow beneath the product; photorealistic, high-end commercial photography.',
+    'Do not add any text, letters, captions, logos or watermarks beyond the branding already printed on the product itself. Do not duplicate the product or add people unless they naturally belong in the scene.'
+  ].join(' ');
+  // 并发生成多候选
+  const generated = await Promise.all(Array.from({ length: candN }, async (_, i) => {
+    const sceneEn = scenePool[i % scenePool.length];
+    const r = await callSeedream(env, { prompt: buildPrompt(sceneEn), imagePayload: image, size: DEFAULT_SIZE, timeoutMs: 95000 });
+    if (r.error) return { error: r.error, scene: sceneEn };
+    return { image: 'data:image/png;base64,' + r.b64, scene: sceneEn };
+  }));
+  const good = generated.filter(g => g.image);
+  if (good.length === 0) return json({ ok: false, error: { code: 'all_candidates_failed', message: '场景生成失败，请稍后重试' } }, 502, origin);
+  // VL 质检：背景/道具乱码文字、产品是否清晰主体、卖相评分
+  const reviewed = await Promise.all(good.map(async (g) => {
+    const v = await chatVisionCustom(env, {
+      system: 'You are a strict QA reviewer for AI-generated product photos. Reply with JSON only.',
+      user: 'Inspect this generated e-commerce lifestyle photo and return JSON exactly: {"strayText":true if there is ANY readable or gibberish text/letters/words in the BACKGROUND, props or surfaces (IGNORE text legitimately printed on the product itself), "productHero":true if the product is clearly present, complete and is the sharp main subject, "score": an integer from 1 to 10 for overall selling appeal and realism}.',
+      images: [g.image], maxTokens: 300, temperature: 0.1, timeoutMs: 40000
+    });
+    return Object.assign({}, g, { qc: v.ok ? v.data : {} });
+  }));
+  const scoreOf = q => { const n = parseInt(q.qc && q.qc.score, 10); return Number.isFinite(n) ? n : 5; };
+  const clean = reviewed.filter(q => q.qc && q.qc.strayText === false && q.qc.productHero !== false);
+  const pool = clean.length ? clean : reviewed;
+  pool.sort((a, b) => scoreOf(b) - scoreOf(a));
+  const top = pool.slice(0, Math.min(2, pool.length)).map(q => q.image);
+  return json({
+    ok: true, images: top, domain: script.domain, candidates: candN, cleanCandidates: clean.length,
+    qc: reviewed.map(q => ({ strayText: q.qc && q.qc.strayText, productHero: q.qc && q.qc.productHero, score: scoreOf(q) }))
+  }, 200, origin);
+}
+
+// ===== 轨道B 营销视觉生成（薄：会员门禁+校验，业务在 marketing/）=====
+async function handleMarketingPlan(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const images = Array.isArray(body && body.images) ? body.images : [];
+  if (images.length === 0) return json({ ok: false, error: { code: 'bad_images', message: '至少需要1张商品图' } }, 400, origin);
+  let prebuilt = null;
+  if (body.context_id) prebuilt = await loadCachedMctx(env, session, body.context_id);
+  const r = await runMarketingPlan(env, {
+    images,
+    kit_type: body && body.kit_type,
+    platform: body && body.platform,
+    locale: body && body.locale,
+    language: body && body.language,
+    selling_text: body && body.selling_text,
+    shop: session.id,
+    mctx: prebuilt,
+    selected_types: body && body.selected_types
+  });
+  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
+  return json(r, 200, origin);
+}
+
+async function handleMarketingGenerate(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const r = await runMarketingGenerate(env, {
+    image: body && body.image,
+    type: body && body.type,
+    size: body && body.size,
+    language: body && body.language,
+    on_screen_text: body && body.on_screen_text,
+    product_desc: body && body.product_desc,
+    product_facts: body && body.product_facts,
+    domain: body && body.domain,
+    scenes: body && body.scenes,
+    design_requirements: body && body.design_requirements
+  });
+  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
+  // 单张成本记录（成功才计费；失败 r.cost=0）
+  try { console.log('[marketing-gen]', { type: r.type, size: r.size, elapsed_ms: r.elapsed_ms, cost: r.cost }); } catch {}
+  return json(r, 200, origin);
+}
+
+// 佐糖 r-background 薄路由：前端摆好构图的透明画布 PNG + 英文场景 prompt → 联合背景候选（产品本体保真）
+async function handleMarketingScene(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const image = body && body.image;
+  if (typeof image !== 'string' || !/^data:image\/png;base64,/.test(image)) {
+    return json({ ok: false, error: { code: 'bad_image', message: '缺少透明画布 PNG dataURL' } }, 400, origin);
+  }
+  const prompt = String((body && body.prompt) || '').trim();
+  if (!prompt) return json({ ok: false, error: { code: 'bad_prompt', message: '缺少场景 prompt' } }, 400, origin);
+  const b64 = image.slice(image.indexOf(',') + 1);
+  const bin = atob(b64);
+  const pngBytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) pngBytes[i] = bin.charCodeAt(i);
+  const t0 = Date.now();
+  const r = await picwishRBackground(env, pngBytes, prompt.slice(0, 1024), {
+    batchSize: body.batch_size === 1 ? 1 : 2,
+    negativePrompt: body.negative_prompt || ''
+  });
+  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
+  // 立即下载候选转 dataURL（OSS URL 1h 过期）
+  const images = [];
+  for (const u of r.urls) {
+    try {
+      const resp = await fetch(u);
+      const buf = new Uint8Array(await resp.arrayBuffer());
+      let s = '';
+      for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, Math.min(i + 0x8000, buf.length)));
+      images.push('data:image/jpeg;base64,' + btoa(s));
+    } catch {}
+  }
+  if (!images.length) return json({ ok: false, error: { code: 'download_failed', message: '候选图下载失败' } }, 502, origin);
+  return json({ ok: true, images, count: images.length, elapsed_ms: Date.now() - t0 }, 200, origin);
+}
+
+async function handlePub(env, request, origin, fn) {
+  const session = await getMemberSession(env, request);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await request.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const r = await publishing[fn](env, body || {});
+  return json(r, r && r.ok === false ? 400 : 200, origin);
+}
+// ===== 阿文 文案（薄：会员门禁+校验，业务在 copywriting/）=====
+async function handleCopywritingInfoCard(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const r = copywriting.getInfoCard(body && body.category);
+  return json(r, r.ok ? 200 : 400, origin);
+}
+async function handleCopywritingGenerate(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const r = await copywriting.generateCopy(env, { platform: body && body.platform, category: body && body.category, infoCard: (body && body.info_card) || {}, productName: body && body.product_name });
+  if (!r.ok) return json(r, 200, origin);
+  try { console.log('[copywriting]', { platform: r.platform, category: r.category, cost: r.cost }); } catch {}
+  return json(r, 200, origin);
+}
+// ===== 阿视 视频（薄：会员门禁+校验，业务在 video/）=====
+async function handleVideoShot(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  if (!body || !body.image_url) return json({ ok: false, error: { code: 'missing_image_url', message: '需要首帧图 image_url' } }, 400, origin);
+  try {
+    // generate_audio 透传给前端：默认 false（本放量需要无声片段），仅当 body.generate_audio===true 才配音
+    const id = await video.i2v(env, { imageUrl: body.image_url, prompt: body.prompt || '', duration: body.duration || 5, ratio: body.ratio || '9:16', resolution: body.resolution || '720p', generateAudio: body.generate_audio === true });
+    return json({ ok: true, task_id: id }, 200, origin);
+  } catch (e) { return json({ ok: false, error: { code: 'shot_failed', message: String(e.message || e).slice(0, 200) } }, 200, origin); }
+}
+async function handleVideoTask(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  if (!body || !body.task_id) return json({ ok: false, error: { code: 'missing_task_id', message: '需要 task_id' } }, 400, origin);
+  const r = await video.poll(env, body.task_id, null, body.total_ms || 20 * 60 * 1000);
+  if (r.ok) console.log('[video]', { task: body.task_id, usage: r.usage });
+  return json(r, 200, origin);
+}
+async function handleVideoGate(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  if (!body || !body.frames || !body.expected) return json({ ok: false, error: { code: 'missing_frames', message: '需要 frames[] 与 expected' } }, 400, origin);
+  const r = await video.frameConsistencyGate(env, { frames: body.frames, expected: body.expected });
+  return json(r, 200, origin);
+}
+
+// ---- 豆包语音 TTS（薄：会员门禁+校验，二进制协议转发在 tts/）----
+// bytes(Uint8Array) -> base64（分块避免 apply 栈溢出）
+function uint8ToB64(bytes) {
+  let bin = '';
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  return btoa(bin);
+}
+async function handleTts(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const text = body && body.text;
+  if (typeof text !== 'string' || !text.trim()) return json({ ok: false, error: { code: 'bad_text', message: '需要文本 text' } }, 400, origin);
+  try {
+    const { mp3, words } = await tts.synthesize(env, { text, speaker: body.speaker || undefined, signal: req.signal });
+    try { console.log('[tts]', { chars: text.length, mp3: mp3.length, words: words.length }); } catch {}
+    const audio_b64 = uint8ToB64(mp3);
+    return json({ ok: true, audio_b64, mp3: 'data:audio/mpeg;base64,' + audio_b64, words, mime: 'audio/mpeg' }, 200, origin);
+  } catch (e) {
+    const code = (e && e.code) || 'tts_failed';
+    const status = /misconfigured/.test(code) ? 502 : 502;
+    return json({ ok: false, error: { code, message: String(e && e.message || e).slice(0, 200) } }, status, origin);
+  }
+}
+
+// ===== 统一商品上下文（根因底座：构建一次、KV 缓存、五伙计共享同一份事实）=====
+function genContextId() {
+  try { return crypto.randomUUID().replace(/-/g, '').slice(0, 16); }
+  catch { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+}
+async function loadCachedMctx(env, session, contextId) {
+  if (!env.MEMBERS || !contextId) return null;
+  try { return await env.MEMBERS.get('mctx:' + session.id + ':' + contextId, 'json'); } catch { return null; }
+}
+async function handleMerchantContext(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  if (body.context_id) {
+    const cached = await loadCachedMctx(env, session, body.context_id);
+    if (cached) return json({ ok: true, context_id: body.context_id, mctx: cached, cached: true }, 200, origin);
+  }
+  const images = Array.isArray(body.images) ? body.images : [];
+  if (!images.length) return json({ ok: false, error: { code: 'bad_images', message: '至少需要1张商品图' } }, 400, origin);
+  const mctx = await buildMerchantContext(env, {
+    images, language: body.language, locale: body.locale,
+    selling_text: body.selling_text, shop: session.id, signal: req.signal
+  });
+  if (!mctx.ok) return json({ ok: false, error: mctx.error }, 400, origin);
+  try { delete mctx.research.raw_brief; } catch {}
+  const context_id = genContextId();
+  try { await env.MEMBERS.put('mctx:' + session.id + ':' + context_id, JSON.stringify(mctx), { expirationTtl: 900 }); } catch {}
+  return json({ ok: true, context_id, mctx }, 200, origin);
+}
+
+// ===== 阿文 v2（共享 mctx，平台风格一眼可辨、母语级、严格隔离）=====
+async function handleCopywritingGenerateV2(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  let mctx = body.mctx || null;
+  if (!mctx && body.context_id) mctx = await loadCachedMctx(env, session, body.context_id);
+  const r = await copywriting.generateCopy(env, {
+    mctx, images: body.images, language: body.language, locale: body.locale,
+    selling_text: body.selling_text, shop: session.id,
+    platforms: body.platforms, infoCard: body.info_card || {},
+    media: { images: body.media_images || [] }, signal: req.signal
+  });
+  return json(r, 200, origin);
+}
+async function handleCopywritingPrefill(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  let mctx = body.mctx || null;
+  if (!mctx && body.context_id) mctx = await loadCachedMctx(env, session, body.context_id);
+  if (!mctx) return json({ ok: false, error: { code: 'no_context', message: '需要统一上下文 mctx' } }, 400, origin);
+  return json(copywriting.buildPrefill(mctx), 200, origin);
+}
+
+// ===== 阿视分镜（共享 mctx + 阿文 copy；TTS 与合成走既有 /tts 与 video-composer）=====
+async function handleAviewStoryboard(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  let mctx = body.mctx || null;
+  if (!mctx && body.context_id) mctx = await loadCachedMctx(env, session, body.context_id);
+  const r = aview.buildStoryboard(mctx, body.copy, { platform: body.platform, images: body.images || [] });
+  return json(r, r.ok ? 200 : 400, origin);
+}
+
 // 保真抠图 / 白底：entity_seg return_format=4，返回最大主体透明前景图+mask（像素级、不重画，会员门禁）
 async function handleCutout(req, env, origin) {
   const session = await getMemberSession(env, req);
@@ -578,10 +965,34 @@ async function handleCutout(req, env, origin) {
     if (!r.ok) return fail(r);
     return json({ ok: true, strategy: 'rmbg', image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
   }
+  if (strategy === 'matting') {
+    const r = await fineMatting(env, { imageDataUrl: image, category: body.category || '', runSpokeQc: false });
+    if (r.status === 'rejected' || r.status === 'failed') {
+      return json({ ok: false, status: r.status, reason: r.reason, guide: r.guide || '', cost: 0 }, 200, origin);
+    }
+    // A 级品类（自行车等）：跑辐条对照门（原图 vs 白底），断/缺辐条即 rejected 不计费
+    const cat = String(body.category || '').toLowerCase();
+    if (GRADE_A_CATEGORIES.has(cat)) {
+      const sq = await spokeQCVL(env, { originalDataUrl: image, mattingDataUrl: r.transparentPng });
+      if (sq && sq.pass === false) {
+        return json({ ok: false, status: 'failed', reason: 'spoke_qc:' + (sq.reason || '辐条缺失/发虚'), guide: '辐条细节保留不足，请在纯色/支架背景下重拍轮圈清晰照', metrics: sq, cost: 0 }, 200, origin);
+      }
+      r.spoke = sq;
+    }
+    return json({ ok: true, strategy: 'matting', backend: r.backend, image: r.transparentPng, mask: r.mask, metrics: r.spoke || null, cost: r.cost, ms: r.ms }, 200, origin);
+  }
   if (strategy === 'autodl' || strategy === 'biref') {
-    const r = await autodlCutout(env, image);
-    if (!r.ok) return fail(r);
-    return json({ ok: true, strategy: 'autodl', image: r.image, white: r.white, mask: r.mask, width: r.width, height: r.height, ms: r.ms }, 200, origin);
+    let r, usedStrategy = 'autodl';
+    const _soft = new Promise(res => setTimeout(() => res({ __softTimeout: true }), 25000));
+    const _win = await Promise.race([autodlCutout(env, image), _soft]);
+    r = (_win && _win.__softTimeout) ? { ok: false, error: { code: 'autodl_soft_timeout' } } : _win;
+    if (!r.ok) {
+      // AutoDL 实例关机/不可达时自动降级到 PicWish 商用抠图，消除单点依赖
+      const pw = await picwishCutout(env, image);
+      if (!pw.ok) return fail(r);
+      r = pw; usedStrategy = 'picwish';
+    }
+    return json({ ok: true, strategy: usedStrategy, image: r.image, white: r.white || null, mask: r.mask || null, width: r.width, height: r.height, ms: r.ms }, 200, origin);
   }
   if (strategy === 'picwish') {
     const r = await picwishCutout(env, image);
@@ -622,10 +1033,15 @@ async function handleSuperRes(req, env, origin) {
     return json({ ok: false, error: { code: 'bad_image', message: '缺少图片 dataURL' } }, 400, origin);
   }
   const scale = parseInt(body.scale, 10) || 4;
-  const r = await autodlSuperRes(env, image, scale);
+  let r = await autodlSuperRes(env, image, scale);
   if (!r.ok) {
-    const st = /not_configured|unauth/i.test((r.error && r.error.code) || '') ? 403 : 502;
-    return json({ ok: false, error: r.error }, st, origin);
+    // AutoDL 不可用时降级到 PicWish scale（type=clean）超分，保证细节图稳定产出
+    const pw = await picwishScaleDataUrl(env, image, { scaleFactor: 2 });
+    if (!pw.ok) {
+      const st = /not_configured|unauth/i.test((r.error && r.error.code) || '') ? 403 : 502;
+      return json({ ok: false, error: r.error }, st, origin);
+    }
+    r = pw;
   }
   return json({ ok: true, image: r.image, width: r.width, height: r.height, ms: r.ms }, 200, origin);
 }
@@ -1634,6 +2050,40 @@ export default {
     if (path === '/scene-background' && request.method === 'POST') {
       return handleSceneBackground(request, env, origin);
     }
+    if (path === '/scene-generate' && request.method === 'POST') {
+      return handleSceneGenerate(request, env, origin);
+    }
+    // 轨道B 营销视觉生成
+    if (path === '/marketing/plan' && request.method === 'POST') {
+      return handleMarketingPlan(request, env, origin);
+    }
+    if (path === '/marketing/generate' && request.method === 'POST') {
+      return handleMarketingGenerate(request, env, origin);
+    }
+    if (path === '/marketing/scene' && request.method === 'POST') {
+      return handleMarketingScene(request, env, origin);
+    }
+    if (path === '/copywriting/info-card' && request.method === 'POST') return handleCopywritingInfoCard(request, env, origin);
+    if (path === '/copywriting/generate' && request.method === 'POST') return handleCopywritingGenerate(request, env, origin);
+    if (path === '/copywriting/generate-v2' && request.method === 'POST') return handleCopywritingGenerateV2(request, env, origin);
+    if (path === '/copywriting/prefill' && request.method === 'POST') return handleCopywritingPrefill(request, env, origin);
+    if (path === '/merchant/context' && request.method === 'POST') return handleMerchantContext(request, env, origin);
+    if (path === '/aview/storyboard' && request.method === 'POST') return handleAviewStoryboard(request, env, origin);
+    if (path === '/publishing/preview' && request.method === 'POST') return handlePub(env, request, origin, 'preview');
+    if (path === '/publishing/album' && request.method === 'POST') return handlePub(env, request, origin, 'album');
+    if (path === '/publishing/checklist' && request.method === 'POST') return handlePub(env, request, origin, 'checklist');
+    if (path === '/publishing/package' && request.method === 'POST') return handlePub(env, request, origin, 'package_assets');
+    if (path === '/publishing/confirm' && request.method === 'POST') return handlePub(env, request, origin, 'confirm');
+    if (path === '/publishing/tracking' && request.method === 'POST') return handlePub(env, request, origin, 'tracking');
+    if (path === '/publishing/schedule' && request.method === 'POST') return handlePub(env, request, origin, 'schedule');
+    if (path === '/publishing/platforms' && request.method === 'GET') {
+      const r = publishing.listPlatforms();
+      return json(r, 200, origin);
+    }
+    if (path === '/video/shot' && request.method === 'POST') return handleVideoShot(request, env, origin);
+    if (path === '/video/task' && request.method === 'POST') return handleVideoTask(request, env, origin);
+    if (path === '/video/gate' && request.method === 'POST') return handleVideoGate(request, env, origin);
+    if (path === '/tts' && request.method === 'POST') return handleTts(request, env, origin);
     if (path === '/cutout' && request.method === 'POST') {
       return handleCutout(request, env, origin);
     }
@@ -1690,6 +2140,11 @@ export default {
     // 管理后台（鉴权在 admin.js 内部完成，仅 /api/admin/login 公开）
     if (path === '/api/admin' || path.startsWith('/api/admin/')) {
       return handleAdmin(request, env, origin);
+    }
+
+    // 阿果（数据/收银）：外部平台数据回收 / 效果报告 / insights 反哺（在效果中心之前挂载）
+    if (path.startsWith('/agu')) {
+      return await handleAgu(request, env, ctx, origin);
     }
 
     // 效果中心：H5 画册 / 渠道短链 / 埋点 / 留资 / 渠道码 / 看板（公开+会员，鉴权在 analytics.js 内）

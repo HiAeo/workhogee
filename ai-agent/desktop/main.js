@@ -7,6 +7,14 @@ const { app, BrowserWindow, Tray, Menu, ipcMain, Notification, shell } = require
 const path = require('path');
 const http = require('http');
 
+// 自动更新（可选，需要安装 electron-updater）
+let autoUpdater = null;
+try {
+  autoUpdater = require('electron-updater').autoUpdater;
+} catch (e) {
+  console.log('自动更新模块未安装，跳过');
+}
+
 // 配置
 const CONFIG = {
   serverPort: 3000,
@@ -221,6 +229,157 @@ ipcMain.handle('open-external', (event, url) => {
   return true;
 });
 
+// ===== 新线索轮询通知 =====
+let lastLeadCheckTime = Date.now();
+let leadPollingInterval = null;
+
+async function checkNewLeads() {
+  if (!global.enableNotifications) return;
+
+  try {
+    const since = new Date(lastLeadCheckTime).toISOString();
+    const options = {
+      hostname: 'localhost',
+      port: CONFIG.serverPort,
+      path: '/api/leads?since=' + encodeURIComponent(since) + '&pageSize=5',
+      method: 'GET',
+      timeout: 3000
+    };
+
+    const req = http.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const result = JSON.parse(data);
+          if (result.success && result.data && result.data.items && result.data.items.length > 0) {
+            const newLeads = result.data.items;
+            newLeads.forEach(lead => {
+              showTrayNotification(
+                '新线索提醒',
+                `客户：${lead.name || '未知'}\n意向：${lead.intentionLevel || '-'}级\n来源：${lead.source || '-'}`
+              );
+            });
+          }
+          lastLeadCheckTime = Date.now();
+        } catch (e) {
+          // 解析失败，忽略
+        }
+      });
+    });
+
+    req.on('error', () => {});
+    req.on('timeout', () => req.destroy());
+    req.end();
+  } catch (e) {
+    // 轮询失败，忽略
+  }
+}
+
+function startLeadPolling() {
+  if (leadPollingInterval) return;
+  // 每30秒检查一次新线索
+  leadPollingInterval = setInterval(checkNewLeads, 30000);
+  console.log('[客户端] 新线索轮询已启动（每30秒）');
+}
+
+function stopLeadPolling() {
+  if (leadPollingInterval) {
+    clearInterval(leadPollingInterval);
+    leadPollingInterval = null;
+  }
+}
+
+// ===== 自动更新 =====
+function setupAutoUpdate() {
+  if (!autoUpdater) return;
+
+  try {
+    autoUpdater.autoDownload = false;
+    autoUpdater.autoInstallOnAppQuit = true;
+
+    autoUpdater.on('checking-for-update', () => {
+      console.log('[更新] 正在检查更新...');
+    });
+
+    autoUpdater.on('update-available', (info) => {
+      console.log('[更新] 发现新版本:', info.version);
+      showTrayNotification('发现新版本', `WorkHogee v${info.version} 已发布，点击下载更新`);
+      if (mainWindow) {
+        mainWindow.webContents.send('update-available', info);
+      }
+    });
+
+    autoUpdater.on('update-not-available', () => {
+      console.log('[更新] 当前已是最新版本');
+    });
+
+    autoUpdater.on('download-progress', (progress) => {
+      console.log(`[更新] 下载进度: ${Math.round(progress.percent)}%`);
+      if (mainWindow) {
+        mainWindow.webContents.send('download-progress', progress);
+      }
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('[更新] 新版本已下载，将在退出时安装');
+      showTrayNotification('更新已下载', `WorkHogee v${info.version} 将在退出时自动安装`);
+      if (mainWindow) {
+        mainWindow.webContents.send('update-downloaded', info);
+      }
+    });
+
+    autoUpdater.on('error', (err) => {
+      console.error('[更新] 检查更新失败:', err.message);
+    });
+
+    // 启动时检查更新
+    setTimeout(() => {
+      autoUpdater.checkForUpdates().catch(err => {
+        console.log('[更新] 自动检查更新失败:', err.message);
+      });
+    }, 10000);
+
+    // 每小时检查一次更新
+    setInterval(() => {
+      autoUpdater.checkForUpdates().catch(() => {});
+    }, 3600000);
+
+    console.log('[客户端] 自动更新已启用');
+  } catch (e) {
+    console.error('[更新] 自动更新初始化失败:', e.message);
+  }
+}
+
+// IPC: 手动检查更新
+ipcMain.handle('check-for-update', async () => {
+  if (!autoUpdater) return { success: false, message: '自动更新模块未安装' };
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    return { success: true, updateInfo: result?.updateInfo };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+});
+
+// IPC: 下载更新
+ipcMain.handle('download-update', async () => {
+  if (!autoUpdater) return { success: false, message: '自动更新模块未安装' };
+  try {
+    await autoUpdater.downloadUpdate();
+    return { success: true };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+});
+
+// IPC: 安装更新并重启
+ipcMain.handle('install-update', () => {
+  if (!autoUpdater) return { success: false, message: '自动更新模块未安装' };
+  autoUpdater.quitAndInstall();
+  return { success: true };
+});
+
 // ===== 应用生命周期 =====
 app.whenReady().then(async () => {
   console.log('WorkHogee 客户端启动中...');
@@ -240,6 +399,12 @@ app.whenReady().then(async () => {
 
   // 创建主窗口
   createMainWindow();
+
+  // 启动新线索轮询
+  startLeadPolling();
+
+  // 设置自动更新
+  setupAutoUpdate();
 
   // macOS 特有
   app.on('activate', () => {

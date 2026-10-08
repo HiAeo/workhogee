@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}任务管理 - WorkHogee 管理后台{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>任务管理</h1>
+    <p>查看和管理所有AI图像生成任务</p>
+</div>
+
+<!-- 筛选栏 -->
+<div class="filter-bar">
+    <select onchange="filterTasks()">
+        <option value="">全部状态</option>
+        <option value="待处理" {% if status_filter == '待处理' %}selected{% endif %}>待处理</option>
+        <option value="处理中" {% if status_filter == '处理中' %}selected{% endif %}>处理中</option>
+        <option value="已完成" {% if status_filter == '已完成' %}selected{% endif %}>已完成</option>
+        <option value="失败" {% if status_filter == '失败' %}selected{% endif %}>失败</option>
+    </select>
+    <select onchange="filterTasks()">
+        <option value="">全部行业</option>
+        <option value="餐饮" {% if industry_filter == '餐饮' %}selected{% endif %}>餐饮</option>
+        <option value="家居饰品" {% if industry_filter == '家居饰品' %}selected{% endif %}>家居饰品</option>
+    </select>
+    <span style="align-self: center; color: #78716c; font-size: 14px;">共 {{ tasks|length }} 条任务</span>
+</div>
+
+<!-- 任务列表 -->
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>任务ID</th>
+                    <th>用户ID</th>
+                    <th>行业</th>
+                    <th>用户需求</th>
+                    <th>状态</th>
+                    <th>扣费</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ format_value(task.get('任务ID')) }}</td>
+                    <td>{{ format_value(task.get('用户ID')) or '-' }}</td>
+                    <td>{{ format_value(task.get('行业')) }}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ format_value(task.get('用户需求')) }}</td>
+                    <td>
+                        {% set status = format_value(task.get('状态')) %}
+                        {% if status == '待处理' %}
+                        <span class="status-badge pending">待处理</span>
+                        {% elif status == '处理中' %}
+                        <span class="status-badge processing">处理中</span>
+                        {% elif status == '已完成' %}
+                        <span class="status-badge completed">已完成</span>
+                        {% elif status == '失败' %}
+                        <span class="status-badge failed">失败</span>
+                        {% else %}
+                        {{ status }}
+                        {% endif %}
+                    </td>
+                    <td>{{ format_value(task.get('扣费记录')) or '-' }}</td>
+                    <td>
+                        <a href="/task/{{ task.get('record_id') }}" class="btn btn-secondary btn-sm">详情</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <h3>暂无任务</h3>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function filterTasks() {
+    const status = document.querySelectorAll('.filter-bar select')[0].value;
+    const industry = document.querySelectorAll('.filter-bar select')[1].value;
+    let url = '/tasks?';
+    if (status) url += 'status=' + status + '&';
+    if (industry) url += 'industry=' + industry;
+    window.location.href = url;
+}
+</script>
+{% endblock %}

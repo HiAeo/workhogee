@@ -1,0 +1,58 @@
+[
+  {
+    "platform": "douyin",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1787,
+    "out_tokens": 129,
+    "cost_cny": 0.0017,
+    "ms": 5789
+  },
+  {
+    "platform": "taobao",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1785,
+    "out_tokens": 356,
+    "cost_cny": 0.0021,
+    "ms": 10369
+  },
+  {
+    "platform": "xiaohongshu",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1845,
+    "out_tokens": 299,
+    "cost_cny": 0.0021,
+    "ms": 10655
+  },
+  {
+    "platform": "jd",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1722,
+    "out_tokens": 292,
+    "cost_cny": 0.002,
+    "ms": 7573
+  },
+  {
+    "platform": "tiktok",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1699,
+    "out_tokens": 134,
+    "cost_cny": 0.0016,
+    "ms": 4677
+  },
+  {
+    "platform": "amazon",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1764,
+    "out_tokens": 485,
+    "cost_cny": 0.0024,
+    "ms": 12119
+  },
+  {
+    "platform": "instagram",
+    "model": "doubao-seed-2-1-turbo-260628",
+    "in_tokens": 1718,
+    "out_tokens": 313,
+    "cost_cny": 0.002,
+    "ms": 22640
+  }
+]

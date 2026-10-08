@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}任务详情 - WorkHogee 管理后台{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>任务详情</h1>
+    <p>查看任务的完整信息和处理结果</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>基本信息</h2>
+        <a href="/tasks" class="btn btn-secondary btn-sm">返回列表</a>
+    </div>
+    <div class="card-body">
+        {% if task %}
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">任务ID</div>
+                <div class="detail-value">{{ format_value(task.get('任务ID')) }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">用户ID</div>
+                <div class="detail-value">{{ format_value(task.get('用户ID')) or '-' }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">行业</div>
+                <div class="detail-value">{{ format_value(task.get('行业')) }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">状态</div>
+                <div class="detail-value">
+                    {% set status = format_value(task.get('状态')) %}
+                    {% if status == '待处理' %}
+                    <span class="status-badge pending">待处理</span>
+                    {% elif status == '处理中' %}
+                    <span class="status-badge processing">处理中</span>
+                    {% elif status == '已完成' %}
+                    <span class="status-badge completed">已完成</span>
+                    {% elif status == '失败' %}
+                    <span class="status-badge failed">失败</span>
+                    {% else %}
+                    {{ status }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">扣费点数</div>
+                <div class="detail-value">{{ format_value(task.get('扣费记录')) or '-' }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">记录ID</div>
+                <div class="detail-value" style="font-size: 12px; color: #78716c;">{{ record_id }}</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <div class="detail-item" style="background: #fff5f0; border-left: 3px solid #ea580c;">
+                <div class="detail-label">用户需求</div>
+                <div class="detail-value" style="font-size: 15px; line-height: 1.8;">{{ format_value(task.get('用户需求')) }}</div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>任务不存在</h3>
+            <p>可能已被删除或记录ID错误</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 输入输出图片对比 -->
+{% if task %}
+<div class="card">
+    <div class="card-header">
+        <h2>图片处理结果</h2>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div>
+                <h3 style="font-size: 14px; color: #78716c; margin-bottom: 12px;">输入图片</h3>
+                <div style="background: #fafaf9; border-radius: 8px; padding: 16px; text-align: center; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                    {% if format_value(task.get('输入图片')) %}
+                    <span style="color: #a8a29e;">有附件（需在飞书表格中查看）</span>
+                    {% else %}
+                    <span style="color: #a8a29e;">无输入图片</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <h3 style="font-size: 14px; color: #78716c; margin-bottom: 12px;">输出图片</h3>
+                <div style="background: #f0fdf4; border-radius: 8px; padding: 16px; text-align: center; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                    {% if format_value(task.get('输出图片')) %}
+                    <span style="color: #16a34a;">✅ 已生成输出图片（需在飞书表格中查看）</span>
+                    {% else %}
+                    <span style="color: #a8a29e;">暂无输出图片</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

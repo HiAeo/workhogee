@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}用户管理 - WorkHogee 管理后台{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>用户管理</h1>
+    <p>管理用户账户、订阅等级和余额充值</p>
+</div>
+
+<!-- 用户统计 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">总用户数</div>
+        <div class="stat-value">{{ users|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">活跃用户</div>
+        <div class="stat-value green">{{ users|selectattr('状态', 'equalto', ['正常'])|list|length if users else 0 }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">总余额</div>
+        <div class="stat-value orange">{{ users|sum(attribute='账户余额') if users else 0 }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">总消耗</div>
+        <div class="stat-value">{{ users|sum(attribute='累计消耗') if users else 0 }}</div>
+    </div>
+</div>
+
+<!-- 用户列表 -->
+<div class="card">
+    <div class="card-header">
+        <h2>用户列表</h2>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>用户ID</th>
+                    <th>用户名称</th>
+                    <th>联系方式</th>
+                    <th>订阅等级</th>
+                    <th>账户余额</th>
+                    <th>累计消耗</th>
+                    <th>状态</th>
+                    <th>注册时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><strong>{{ format_value(user.get('用户ID')) }}</strong></td>
+                    <td>{{ format_value(user.get('用户名称')) }}</td>
+                    <td>{{ format_value(user.get('联系方式')) }}</td>
+                    <td>
+                        {% set plan = format_value(user.get('订阅等级')) %}
+                        {% if plan == '免费版' %}
+                        <span style="color: #78716c;">{{ plan }}</span>
+                        {% elif plan == '基础版' %}
+                        <span style="color: #2563eb;">{{ plan }}</span>
+                        {% elif plan == '专业版' %}
+                        <span style="color: #ea580c; font-weight: 600;">{{ plan }}</span>
+                        {% elif plan == '企业版' %}
+                        <span style="color: #dc2626; font-weight: 600;">{{ plan }}</span>
+                        {% else %}
+                        {{ plan }}
+                        {% endif %}
+                    </td>
+                    <td><strong style="color: #ea580c;">{{ format_value(user.get('账户余额')) }}</strong> 点</td>
+                    <td>{{ format_value(user.get('累计消耗')) }} 点</td>
+                    <td>
+                        {% set status = format_value(user.get('状态')) %}
+                        {% if status == '正常' %}
+                        <span class="status-badge active">正常</span>
+                        {% elif status == '停用' %}
+                        <span class="status-badge inactive">停用</span>
+                        {% elif status == '欠费' %}
+                        <span class="status-badge failed">欠费</span>
+                        {% else %}
+                        {{ status }}
+                        {% endif %}
+                    </td>
+                    <td style="font-size: 12px; color: #78716c;">{{ format_value(user.get('注册时间'))[:10] if format_value(user.get('注册时间')) else '-' }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="openRechargeModal('{{ format_value(user.get('用户ID')) }}')">充值</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9">
+                        <div class="empty-state">
+                            <div class="empty-icon">👥</div>
+                            <h3>暂无用户</h3>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

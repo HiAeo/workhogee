@@ -1,4 +1,4 @@
-﻿<!doctype html>
+﻿﻿﻿﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -238,6 +238,39 @@ body[data-deliver="open"]{--deliver:380px}
 .relay-text-in:focus{outline:none;border-color:var(--orange)}
 .agu-form select{background:rgba(255,255,255,.04);border:1.3px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--tx);font-size:13px;font-family:inherit}
 .agu-form select:focus{outline:none;border-color:var(--agu)}
+.agu-rep{display:block}
+.agu-rep .ar-headline{font-size:15px;font-weight:800;line-height:1.5;color:var(--tx)}
+.agu-rep .ar-sub{font-size:12px;color:var(--tx3);margin-top:4px;line-height:1.6}
+.agu-kpis{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.agu-kpi{flex:1 1 84px;min-width:84px;background:rgba(192,132,252,.07);border:1px solid rgba(192,132,252,.26);border-radius:11px;padding:9px 11px}
+.agu-kpi .n{font-size:17px;font-weight:800;color:var(--agu);font-variant-numeric:tabular-nums;line-height:1.1}
+.agu-kpi .n small{font-size:11px;font-weight:700;color:var(--tx2);margin-left:3px}
+.agu-kpi .l{font-size:10.5px;color:var(--tx3);margin-top:3px}
+.agu-sub{font-size:12px;font-weight:700;color:var(--tx2);margin:13px 0 6px}
+.agu-fig{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-top:4px}
+.agu-funnel{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.agu-fn-row{display:flex;align-items:center;gap:9px;font-size:12px}
+.agu-fn-row .fn-l{width:56px;flex:none;color:var(--tx3)}
+.agu-fn-row .fn-track{flex:1;height:13px;background:rgba(255,255,255,.045);border-radius:4px;overflow:hidden}
+.agu-fn-row .fn-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,rgba(192,132,252,.85),rgba(192,132,252,.45));min-width:3px}
+.agu-fn-row .fn-v{font-variant-numeric:tabular-nums;color:var(--tx);font-weight:700;flex:none}
+.agu-fn-row .fn-r{font-size:10.5px;color:var(--agu);min-width:78px;flex:none;text-align:right}
+.agu-list{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.agu-list li{font-size:12.5px;color:var(--tx2);line-height:1.6;display:flex;gap:7px}
+.agu-list li::before{content:'·';color:var(--agu);font-weight:900;flex:none}
+.agu-list li b{color:var(--tx)}
+.agu-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--tx3)}
+.agu-tag.ext{border-color:rgba(192,132,252,.5);color:var(--agu)}
+.agu-tag.fp{border-color:rgba(96,165,250,.5);color:#60a5fa}
+.agu-src{font-size:10.5px;color:var(--tx3);margin-top:10px;line-height:1.5;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.agu-thumb{width:100%;max-width:220px;border-radius:10px;border:1px solid var(--line);margin-top:6px;display:block}
+.agu-note{font-size:11.5px;color:var(--tx3);margin-top:6px;line-height:1.6}
+.agu-oauth-pf{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line2)}
+.agu-oauth-pf:last-child{border-bottom:0}
+.agu-oauth-pf .opn{font-weight:700;font-size:13px}
+.agu-seg{display:inline-flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:3px}
+.agu-seg button{border:0;background:transparent;color:var(--tx3);font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit}
+.agu-seg button.on{background:rgba(192,132,252,.18);color:var(--agu)}
 
 .msg{display:flex;gap:11px;margin:18px 0;animation:msgIn .26s cubic-bezier(.2,.8,.2,1)}
 @keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
@@ -1020,8 +1053,8 @@ body[data-stage="welcome"] .hw.hw6{max-width:none;padding:0;margin:2.2vh auto 0}
 body[data-stage="works"] .composer{display:none!important}
 body.task-focus .composer{display:none!important}
 .prog-ctl{display:flex;gap:9px;margin-top:14px}
-.prog-ctl .btn{display:inline-flex;align-items:center;gap:7px}
-.prog-ctl .btn svg{width:15px;height:15px}
+.prog-ctl .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;min-width:108px;flex:none}
+.prog-ctl .btn svg{width:15px;height:15px;flex:none}
 body[data-stage="publish"] .composer{display:none!important}
 /* ===== 统一视图外壳（对齐效果中心，细体标题 + 深色玻璃卡） ===== */
 .view{max-width:1200px;margin:0 auto;width:100%;padding:22px 34px 90px;animation:hwIn .4s ease}
@@ -1904,6 +1937,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
     <div class="dl-top">
       <div class="dl-title">交付物<span class="dl-count" id="dlCount"></span></div>
       <div class="dl-actions">
+        <button class="mini" id="btnRootPipe" style="background:#f97316;border-color:#f97316;color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.6 1.5A4 4 0 0 0 6.5 19Z"/></svg>根因流水线</button>
         <button class="mini" id="btnPack" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1Z"/><path d="M10 12h4"/></svg>一键打包</button>
         <button class="icon-btn" id="btnDeliverClose" aria-label="关闭"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </div>
@@ -1971,7 +2005,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
 <script src="/workbench-vendor.js"></script>
 <script src="/workbench-data.js"></script>
 <script src="/member-auth.js?v=feed20260922"></script>
-<script src="/fidelity-pipeline.js?v=20260925j"></script>
+<script src="/fidelity-pipeline.js?v=20260929k"></script>
 <script src="/shotlist.js?v=20260926b"></script>
 <script>
 (function(){
@@ -2775,9 +2809,11 @@ function callGenerateRetry(prompt,imagePayload,size,refKind,onTick){
  });}
  return attempt(1);
 }
-function authPost(path,body,timeoutMs){
+function authPost(path,body,timeoutMs,opts){
+ opts=opts||{};
  var ctrl=new AbortController(),ms=timeoutMs||120000;
  var to=setTimeout(function(){try{ctrl.abort();}catch(e){}},ms);
+ if(opts.signal)opts.signal.addEventListener('abort',function(){try{ctrl.abort();}catch(e){}});
  return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body),signal:ctrl.signal})
   .then(function(r){clearTimeout(to);return r.json();})
   .catch(function(e){clearTimeout(to);
@@ -4238,7 +4274,7 @@ function openConnModal(id){
  if(rm)rm.onclick=function(){var o=connLoad();delete o[id];connSave(o);closeConnModal();openConnect();if(window.toast)toast('已断开 '+d.name);};
 }
 /* ================= 账号中心（头像菜单四页，统一 .view 版面，替代旧居中弹窗） ================= */
-var APP_VER='v0.9.5 Alpha';
+var APP_VER='v0.9.8 Alpha';
 var AC_TABS=[{k:'profile',n:'账号管理'},{k:'quota',n:'会员状态'},{k:'help',n:'帮助中心'},{k:'update',n:'版本更新'}];
 function acUser(){var M=window.HogeeMember;return (M&&M.getUser)?M.getUser():{};}
 function acProf(){try{return JSON.parse(localStorage.getItem('hogee_profile')||'{}');}catch(e){return {};}}
@@ -4321,6 +4357,9 @@ function acPanelHelp(){
 }
 function acPanelUpdate(){
  var logs=[
+  ['v0.9.8','2026-10-03','五伙计根因级统一：新增统一商品上下文 buildMerchantContext，构建一次、五伙计共享同一商品/品牌/事实/语种（含品牌拉丁名/本地名多形式归一、按语种呈现事实）；阿文九平台母语级文案、联网学当下爆款、严格上下文隔离；阿视图文成片（静帧 Ken Burns+逐词卡拉OK字幕，中英双语、零黑帧）；阿发统一已发布一体预览、规格合规预检与自动修正、追踪渠道码、待发布清单；阿果闭环验证，洞察真实反哺下一次产出。'],
+  ['v0.9.7','2026-10-02','图种伙计阿图根因级重做：OCR 深读自有品牌/型号/价签/规格，火山方舟联网调研品牌官方卖点与品类消费者真实痛点，全语种 Canvas 文字层、受控并发、动态 ETA。'],
+  ['v0.9.6','2026-10-03','数据伙计阿果打通：后台截图自动识别回填、外部数据落库、结构化效果报告（互动率/漏斗/平台对比/趋势折线/具体行动项）；效果中心新增「外部平台 / 综合总览」视图；平台授权改为可登记的「即将开放」卡片。'],
   ['v0.9.5','2026-09-22','账号中心改为独立页面（账号管理 / 会员状态 / 帮助中心 / 版本更新）；左栏新增「技能与连接」；素材区更名为「Hogee创作探索」。'],
   ['v0.9.4','2026-09-21','深色创作工作台改版；创作探索支持提示词与「做同款」；素材多规格瀑布流与点击放大。'],
   ['v0.9.3','2026-09-20','新增视频伙计阿视，五个伙计接力（生图 / 文案 / 视频 / 发布 / 效果）；外贸版宣传片上线。'],
@@ -4550,13 +4589,15 @@ async function handleFiles(fileList){
  if(!files.length)return;
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
- var already=AtuStudio.isOpen(), firstOpen=!(state.images&&state.images.length);
+ var already=AtuStudio.isOpen();
  if(!already){AtuStudio.open();state.stage='upload';}
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){state.images=state.images.concat(arr);
   AtuStudio.renderOrigin();
   arr.forEach(function(it){tosSyncImage(it,'input');});
-  if(firstOpen)AtuStudio.autoSelling();
+  // 每次上传完成且当前尚无图文方案时，可靠自动触发 AI 读图+联网调研（不再依赖客户点「AI 帮写」）；
+  // 换商品清空后 planResp 为空会自动重触发；已有方案时不打断。
+  if(!AtuStudio.planResp)AtuStudio.autoSelling();
  }).catch(function(){toast('有图片没读出来，换一张试试','err');});
 }
 
@@ -5456,7 +5497,7 @@ function videoSectionHtml(){
   +'<div class="vid-row"><span class="vl">分镜模板</span>'+tplBtns+'</div>'
   +'<div class="vid-row"><span class="vl">画幅</span>'+ratioBtns+'</div>'
   +'<div class="vid-stage" id="vidStage"><canvas id="vidCanvasEl"></canvas><div class="vid-prog" id="vidProg"><i id="vidProgBar"></i></div></div>'
-  +'<div class="vid-actions"><button type="button" class="vid-btn primary" data-act="videoMake"'+(nImg?'':' disabled')+'>'+IC.video+' 用 '+nImg+' 张成品生成短视频</button><button type="button" class="vid-btn ghost" data-act="videoAiSoon">AI 图生视频 · 即将开放</button></div>'
+  +'<div class="vid-actions"><button type="button" class="vid-btn primary" data-act="videoMake"'+(nImg?'':' disabled')+'>'+IC.video+' 用 '+nImg+' 张成品生成短视频</button><button type="button" class="vid-btn ghost" data-act="videoAiReal">'+IC.video+' AI 图生视频·真实管线</button></div>'
   +(nImg?'':'<div class="vid-sub" style="margin-top:8px">先让阿图出几张成品图，阿视就能把它们剪成一条片。</div>')
   +soon+'</div>';
  return '<div class="dl-sec"><h5>'+IC.video+' 阿视短视频'+(state.videos.length?'（'+state.videos.length+'）':'')+'</h5>'+box+'<div id="vidOut">'+renderVideos()+'</div></div>';
@@ -5494,6 +5535,106 @@ async function videoMake(btn){
   renderDeliver();
  }
 }
+
+/* ================= 阿视 · 真实管线（Seedance i2v + TTS + composeNarrationVideo） =================
+   对每镜：/video/shot 提交无声片段 → /video/task 轮询 → /tts 出 mp3+words → /video-composer.js 重编码合成（720×1280 硬字幕） */
+var ASH_REAL_ARK_POLL = 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks';
+function ashFetchTimeout(path, body, ms){
+ var ctrl=new AbortController(); var to=setTimeout(function(){try{ctrl.abort();}catch(e){}},ms||120000);
+ return fetch(API+path,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body),signal:ctrl.signal})
+  .then(function(r){clearTimeout(to);return r.json();})
+  .catch(function(e){clearTimeout(to); if(e&&e.name==='AbortError')return {ok:false,error:{message:'请求超时'}}; return {ok:false,error:{message:'网络异常'}};});
+}
+function ashUrlToDataUri(url){
+ return fetch(url).then(function(r){return r.blob();}).then(function(b){return new Promise(function(res,rej){
+  var fr=new FileReader(); fr.onload=function(){res(fr.result);}; fr.onerror=rej; fr.readAsDataURL(b);
+ });});
+}
+function ashB64ToBlob(b64,mime){
+ var bin=atob(b64),len=bin.length,ua=new Uint8Array(len);
+ for(var i=0;i<len;i++)ua[i]=bin.charCodeAt(i);
+ return new Blob([ua],{type:mime||'audio/mpeg'});
+}
+// 提交并轮询单个镜头；worker 端阻塞轮询，墙钟给 200s，超时回落直查 Ark（需已透传 task_id）
+async function ashRunShot(sh, onMsg){
+ onMsg&&onMsg('提交 i2v：'+sh.frame);
+ var imageUrl = sh.imageDataUrl || await ashUrlToDataUri(sh.frameUrl);
+ var sub = await ashFetchTimeout('/video/shot',{image_url:imageUrl,prompt:sh.visualPrompt,duration:sh.duration||5,ratio:'9:16',resolution:'720p',generate_audio:false},30000);
+ if(!sub.ok||!sub.task_id) throw new Error('提交失败：'+((sub.error&&sub.error.message)||JSON.stringify(sub)));
+ var taskId=sub.task_id; onMsg&&onMsg('已提交 task '+taskId+'，等待出片…');
+ var deadline=Date.now()+20*60*1000;
+ while(Date.now()<deadline){
+  var j=null;
+  try{ j=await ashFetchTimeout('/video/task',{task_id:taskId,total_ms:20*60*1000},200000); }catch(e){}
+  if(j&&j.ok&&j.url) { onMsg&&onMsg('出片成功'); return j; }
+  // 回落：直查 Ark（复用 worker 已建立的任务 id）
+  try{
+   var r=await fetch(ASH_REAL_ARK_POLL+'/'+taskId,{headers:authHeaders()});
+   var k=await r.json();
+   onMsg&&onMsg('ark 状态='+k.status);
+   if(k.status==='succeeded') return {ok:true,url:k.content.video_url,usage:k.usage};
+   if(k.status==='failed') throw new Error('生成失败：'+(k.error&&k.error.message||''));
+  }catch(e){ if(/生成失败/.test(e.message)) throw e; }
+  await new Promise(function(r){setTimeout(r,8000);});
+ }
+ throw new Error('轮询超时');
+}
+async function ashTts(text){
+ var j=await ashFetchTimeout('/tts',{text:text},30000);
+ if(!j.ok) throw new Error('TTS 失败：'+((j.error&&j.error.message)||''));
+ return {blob:ashB64ToBlob(j.audio_b64,j.mime),words:j.words};
+}
+async function videoMakeReal(btn, productKey){
+ if(window.HogeeMember){try{await HogeeMember.requireAuth();}catch(e){return;}}
+ var stage=document.getElementById('vidStage'),prog=document.getElementById('vidProg'),bar=document.getElementById('vidProgBar');
+ if(stage)stage.classList.add('show'); if(prog)prog.classList.add('show');
+ if(btn)btn.disabled=true;
+ function setp(f,m){ if(bar)bar.style.width=Math.round(f*100)+'%'; if(btn)btn.innerHTML=IC.video+' '+m; }
+ try{
+  setp(0.02,'读取分镜脚本…');
+  var roll=await (await fetch('/marketing-spec/aview-rollout/scripts/rollout.json',{cache:'no-store'})).json();
+  var prod=roll.products.filter(function(p){return p.product===(productKey||'3c');})[0];
+  if(!prod) throw new Error('rollout.json 无此产品');
+  // 支持用已下载到本地的片段（proof 复用，不重复计费）
+  var reuse = state._ashLocalShots || window._ashLocalShots || null;
+  var shotDefs = prod.shots.map(function(sh,i){ return {
+    index:sh.index, duration:sh.duration, narration:sh.narration, visualPrompt:sh.visual_prompt,
+    frameUrl:'/marketing-spec/aview-rollout/'+sh.frame,
+    localMp4: reuse? reuse[i].mp4 : null,
+    localMp3: reuse? reuse[i].mp3 : null,
+    localWords: reuse? reuse[i].localWords : null
+  };});
+  var shotsPayload=[];
+  for(var i=0;i<shotDefs.length;i++){
+   var sd=shotDefs[i];
+   var mp4Blob, mp3, words;
+   if(sd.localMp4){ mp4Blob=await (await fetch(sd.localMp4)).blob(); }
+   else { var r=await ashRunShot(sd,function(m){setp(0.05+0.5*i/shotDefs.length,'镜'+sd.index+'：'+m);}); mp4Blob=await (await fetch(r.url)).blob(); }
+   setp(0.55+0.1*i,'镜'+sd.index+' 配音…');
+   if(sd.localMp3){ mp3=await (await fetch(sd.localMp3)).blob(); var wj=await (await fetch(sd.localWords)).json(); words=Array.isArray(wj)?wj:wj.words; }
+   else { var t=await ashTts(sd.narration); mp3=t.blob; words=t.words; }
+   shotsPayload.push({ videoUrl:URL.createObjectURL(mp4Blob), mp3Url:URL.createObjectURL(mp3), words:words });
+  }
+  setp(0.85,'浏览器合成（烧字幕）…');
+  var mod=await import('/video-composer.js?v=ashreal1');
+  var res=await mod.composeNarrationVideo({ shots:shotsPayload, onProgress:function(f,m){setp(0.85+0.14*f,'合成 '+Math.round(f*100)+'%'); } });
+  var name='WorkHogee_'+prod.product+'_阿视.mp4';
+  state.videos.push({name:name,url:URL.createObjectURL(res.blob),blob:res.blob,w:720,h:1280,dur:res.durationSec,ext:'mp4',tpl:'ashreal',ratio:'9:16',ts:Date.now(),prod:prod.product,hashtags:prod.hashtags});
+  try{persistVideoWork(state.videos[state.videos.length-1]);}catch(e){}
+  // 阿发抖音预览：视频 + 文案 + hashtags≤5 成套
+  var cpt=(state.copy&&state.copy.cps)?state.copy.cps.general:(prod.selling_points||[]).join('，');
+  var tagStr=(prod.hashtags||[]).slice(0,5).join(' ');
+  if(!state.copy||!state.copy.cps) state.copy={ready:true,cps:{}};
+  state.copy.cps.douyin=cpt+'\n\n'+tagStr;
+  renderDeliver(); openDeliver&&setDeliverTab('video');
+  toast('真实管线出片成功：'+res.durationSec.toFixed(1)+'s，'+(res.blob.size/1024/1024).toFixed(1)+'MB');
+  botSay('<b>阿视真实管线出片完成。</b>'+res.w+'×'+res.h+'、'+res.durationSec.toFixed(1)+' 秒、'+prod.shots.length+' 个 Seedance 镜头 + 逐字字幕配音，已进右侧「视频」与阿发抖音预览。','ashi');
+ }catch(e){
+  toast('真实管线失败：'+(e&&e.message||e),'err'); renderDeliver();
+ }finally{ if(btn)btn.disabled=false; setp(0,'完成'); }
+}
+window._videoMakeReal = videoMakeReal;
+window._ashState = state;
 
 /* ================= 导出 / 打包 / 重做 ================= */
 function exportRatio(url,w,h,mode,fmt){
@@ -5699,7 +5840,7 @@ function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.char
 function setMenuActive(id){$$('.rmenu button').forEach(function(b){b.classList.toggle('on',b.id===id);});}
 var AG_SRC={wechat_group:'客户微信群',moments:'朋友圈',poster:'门店立牌/印刷',douyin:'抖音',xiaohongshu:'小红书',xianyu:'闲鱼',dongchedi:'懂车帝',kuaishou:'快手',gzh:'公众号',shipinhao:'视频号',sms:'短信',email:'邮件',direct:'直接访问',other:'其他'};
 var AG_ST={new:{t:'新线索'},following:{t:'跟进中'},visited:{t:'已到店'},deal:{t:'已成交'},lost:{t:'已流失'}};
-var AG={range:7,status:'all',q:'',ov:null,ch:{rows:[]},sc:{rows:[]},leads:[],showcases:[]};
+var AG={range:7,status:'all',q:'',view:'own',ov:null,ch:{rows:[]},sc:{rows:[]},leads:[],showcases:[],ext:[]};
 function agSrc(s){return AG_SRC[s]||s||'直接访问';}
 function agN(v){return (Number(v)||0).toLocaleString('en-US');}
 function agDate(off){var d=new Date(Date.now()+(off||0)*864e5+8*36e5);return d.toISOString().slice(0,10);}
@@ -5728,12 +5869,14 @@ function openAnalytics(){
  placeComposer(false);document.body.dataset.stage='analytics';
  scroll.innerHTML='';
  var v=document.createElement('div');v.className='view';v.id='agView';
- v.innerHTML='<div class="view-head"><div><div class="view-title">Hogee 效果监控</div><div class="view-sub">阿果帮你盯画册与渠道码的浏览、意向与留资；客户留资后可直接在这里跟进、改状态。</div></div>'
+ v.innerHTML='<div class="view-head"><div><div class="view-title">Hogee 效果监控</div><div class="view-sub">阿果帮你盯自有 H5 画册与外部平台投放：留资、意向、成交都会在这里汇总；客户留资后可直接跟进、改状态。</div></div>'
   +'<div class="atabs" id="agRange"><button type="button" class="atab" data-r="7">近 7 天</button><button type="button" class="atab" data-r="30">近 30 天</button><button type="button" class="atab" data-r="90">近 90 天</button></div></div>'
+  +'<div class="agu-seg" id="agViewSeg" style="margin:2px 0 14px"><button type="button" data-av="own">自有触点</button><button type="button" data-av="external">外部平台</button><button type="button" data-av="all">综合总览</button></div>'
   +'<div id="agBody"><div class="ag-loading"><div class="ag-spin"></div>正在汇总效果数据…</div></div>';
  scroll.appendChild(v);scrollBox.scrollTop=0;
  setupAgDrawerOnce();bindAg(v);
  v.querySelector('#agRange').querySelectorAll('.atab').forEach(function(b){b.classList.toggle('on',Number(b.getAttribute('data-r'))===AG.range);});
+ v.querySelector('#agViewSeg').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-av')===AG.view);});
  if(!agLoggedIn()){agGate(v);return;}
  loadAg(v);
 }
@@ -5756,18 +5899,74 @@ function loadAg(v){
   agReq('GET','/analytics/channels?from='+from+'&to='+to).catch(function(){return {data:{rows:[]}};}),
   agReq('GET','/analytics/showcases?from='+from+'&to='+to).catch(function(){return {data:{rows:[]}};}),
   agReq('GET','/leads?from='+agDate(-89)+'&to='+to).catch(function(){return {data:[]};}),
-  agReq('GET','/showcases').catch(function(){return {data:[]};})
+  agReq('GET','/showcases').catch(function(){return {data:[]};}),
+  agReq('GET','/agu/metrics?from='+from+'&to='+to).catch(function(){return {data:[]};})
  ]).then(function(rs){
   AG.ov=(rs[0]&&rs[0].data)||null;
   AG.ch=(rs[1]&&rs[1].data)||{rows:[]};
   AG.sc=(rs[2]&&rs[2].data)||{rows:[]};
   AG.leads=rs[3].data||[];AG.showcases=rs[4].data||[];
+  AG.ext=(rs[5]&&rs[5].data)||[];
   renderAg(v);
  }).catch(function(e){
   if(e&&(e.status===401||/登录|未登录|token|unauthorized|401|请先/.test(e.message||''))){agGate(v);}else agErr(v,e.message||'');
  });
 }
 function renderAg(v){
+ if(AG.view==='external'){renderAgExternal(v);return;}
+ if(AG.view==='all'){renderAgAll(v);return;}
+ renderAgOwn(v);
+}
+function agExtGrouped(){
+ var map={};
+ (AG.ext||[]).forEach(function(r){
+  var k=r.platform||'other';
+  if(!map[k])map[k]={platform:k,views:0,engagement:0,leads:0,deals:0,n:0};
+  var g=map[k];
+  g.views+=Number(r.views||0);
+  g.engagement+=(Number(r.likes||0)+Number(r.collects||0)+Number(r.comments||0));
+  g.leads+=Number(r.leads||0);
+  g.deals+=Number(r.deals||0);
+  g.n++;
+ });
+ return Object.keys(map).map(function(k){
+  var g=map[k];
+  g.engagement_rate=g.views?(g.engagement/g.views*100):null;
+  g.lead_rate=g.views?(g.leads/g.views*100):null;
+  return g;
+ }).sort(function(a,b){return b.views-a.views;});
+}
+function agExtRowsHtml(){
+ var rows=agExtGrouped();
+ if(!rows.length)return agEmpty('还没有外部平台数据','在阿果那里把小红书 / 抖音后台数据页截图发过来，或手动填几条；按平台汇总浏览、互动率、咨询率与成交。');
+ return rows.map(function(g){
+  var er=(g.engagement_rate!=null)?g.engagement_rate.toFixed(1)+'%':'—';
+  var lr=(g.lead_rate!=null)?g.lead_rate.toFixed(2)+'%':'—';
+  return '<div class="ag-row"><div class="ag-main"><div class="ag-t1">'+esc(aguPfName(g.platform))+' <span class="agu-tag ext" style="margin-left:4px">外部平台</span></div><div class="ag-t2">'+g.n+' 条记录 · 数据日期范围内</div></div>'
+   +'<div class="ag-nums"><div class="ag-num"><div class="v">'+agN(g.views)+'</div><div class="k">浏览/播放</div></div><div class="ag-num"><div class="v">'+er+'</div><div class="k">互动率</div></div><div class="ag-num"><div class="v">'+agN(g.leads)+'</div><div class="k">咨询/留资</div></div><div class="ag-num"><div class="v hot">'+agN(g.deals)+'</div><div class="k">成交</div></div></div></div>';
+ }).join('');
+}
+function renderAgExternal(v){
+ var rows=agExtGrouped();
+ var tv=rows.reduce(function(s,g){return s+g.views;},0);
+ var tl=rows.reduce(function(s,g){return s+g.leads;},0);
+ var td=rows.reduce(function(s,g){return s+g.deals;},0);
+ var te=rows.reduce(function(s,g){return s+g.engagement;},0);
+ var kpis=[{n:agN(tv),l:'外部总浏览/播放'},{n:tv?(te/tv*100).toFixed(1)+'%':'—',l:'外部互动率'},{n:agN(tl),l:'外部咨询/留资'},{n:agN(td),l:'外部成交'}];
+ var h='<div class="ac-kpis">'+kpis.map(function(k){return '<div class="ac-kpi ag-kpi"><div class="n">'+k.n+'</div><div class="l">'+k.l+'</div></div>';}).join('')+'</div>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">外部平台表现 <span class="agu-tag ext" style="margin-left:6px">来源：外部平台</span></div><div id="agExtBox">'+agExtRowsHtml()+'</div></section>';
+ v.querySelector('#agBody').innerHTML=h;
+}
+function renderAgAll(v){
+ renderAgOwn(v);
+ var body=v.querySelector('#agBody');
+ var sec=document.createElement('section');
+ sec.className='vcard ag-sec';
+ sec.style.marginTop='14px';
+ sec.innerHTML='<div class="vsec-h ag-sec-t" style="margin-bottom:13px">外部平台合并 <span class="agu-tag ext" style="margin-left:6px">来源：外部平台</span> <span class="agu-tag fp" style="margin-left:4px">自有 H5</span></div><div id="agExtBox">'+agExtRowsHtml()+'</div>';
+ body.appendChild(sec);
+}
+function renderAgOwn(v){
  var t=(AG.ov&&AG.ov.totals)||{};
  var leadRate=t.uv?((Number(t.leads)||0)/Number(t.uv)*100).toFixed(1)+'%':null;
  var kpis=[{n:agN(t.pv),l:'画册浏览（PV）'},{n:agN(t.uv),l:'独立访客（UV）'},{n:agN(t.leads),s:leadRate,l:'留资线索 · 留资率'},{n:agN(t.cta),l:'意向点击（问底价等）'}];
@@ -5832,6 +6031,7 @@ function agExportCsv(){
 }
 function bindAg(v){
  v.addEventListener('click',function(e){
+  var av=e.target.closest('[data-av]');if(av){AG.view=av.getAttribute('data-av');v.querySelectorAll('#agViewSeg button').forEach(function(b){b.classList.toggle('on',b===av);});renderAg(v);return;}
   var rb=e.target.closest('[data-r]');if(rb){AG.range=Number(rb.getAttribute('data-r'));v.querySelectorAll('#agRange .atab').forEach(function(b){b.classList.toggle('on',b===rb);});loadAg(v);return;}
   var st=e.target.closest('[data-st]');if(st){AG.status=st.getAttribute('data-st');agRenderLeads(v);return;}
   var ld=e.target.closest('[data-lead]');if(ld){openAgLead(ld.getAttribute('data-lead'));return;}
@@ -6302,6 +6502,14 @@ var RELAY_PLATFORMS=[
 ];
 var RELAY_CIRC=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫'];
 function relayPfName(id){var x=RELAY_PLATFORMS.filter(function(p){return p.id===id;})[0];return x?x.name:id;}
+/* 阿果（数据/收银）外部平台目录：id 对齐 /agu/read-shot 枚举，独立于阿发 RELAY_PLATFORMS */
+var AGU_PLATFORMS=[
+ {id:'xhs',name:'小红书'},{id:'douyin',name:'抖音'},{id:'pyq',name:'朋友圈'},
+ {id:'gzh',name:'公众号'},{id:'shipinhao',name:'视频号'},{id:'kuaishou',name:'快手'},
+ {id:'taobao',name:'淘宝'},{id:'jd',name:'京东'},{id:'amazon',name:'亚马逊'},
+ {id:'tiktok',name:'TikTok'},{id:'other',name:'其他'}
+];
+function aguPfName(id){var x=AGU_PLATFORMS.filter(function(p){return p.id===id;})[0];return x?x.name:(id||'其他');}
 function relayLi(n,t){return '<li><span class="rk-n">'+n+'</span><span>'+t+'</span></li>';}
 
 /* ---------- 顶部进度条 ---------- */
@@ -6883,22 +7091,28 @@ function relaySaveVideo(){
 }
 function relaySavePack(){packAll();}
 
-/* ---------- 阶段五 · 阿果接活（数据回传三方式 + 即时计算，闭环） ---------- */
+/* ---------- 阶段五 · 阿果接活（截图 VL 回填 + 落库 + 效果报告闭环） ---------- */
+function aguToday(){var d=new Date(Date.now()+8*36e5);return d.toISOString().slice(0,10);}
+function aguNum(v){v=String(v==null?'':v).trim();if(v==='')return null;var n=parseInt(v,10);return isNaN(n)?null:n;}
+function aguApi(method,path,body){
+ if(!(window.HogeeMember&&HogeeMember.authFetch)){var e=new Error('未登录');e.status=401;e.code='unauthorized';return Promise.reject(e);}
+ return agReq(method,path,body);
+}
 function relayToAgu(){
  state.relayStage='agu';state.activePartner='agu';
  renderRelayBar('agu');
  userSay('让阿果盯数据');
  var ways='<div class="agu-ways">'
-  +'<button type="button" class="agu-way" data-quick="rf_agu_shot"><span class="aw-ic">'+IC.image+'</span><span><div class="aw-t">发数据页截图</div><div class="aw-d">把小红书 / 抖音后台数据页截图发我，我自动读浏览、点赞、咨询</div></span><span class="aw-rec">推荐</span></button>'
+  +'<button type="button" class="agu-way" data-quick="rf_agu_shot"><span class="aw-ic">'+IC.image+'</span><span><div class="aw-t">发数据页截图</div><div class="aw-d">把小红书 / 抖音后台数据页截图发我，自动读浏览、点赞、收藏、咨询</div></span><span class="aw-rec">推荐</span></button>'
   +'<button type="button" class="agu-way" data-quick="rf_agu_manual"><span class="aw-ic">'+IC.pen+'</span><span><div class="aw-t">手动填几个数</div><div class="aw-d">30 秒小表单，填浏览、互动、咨询和成交</div></span></button>'
-  +'<button type="button" class="agu-way" data-quick="rf_agu_api"><span class="aw-ic">'+IC.send+'</span><span><div class="aw-t">授权后自动拉取</div><div class="aw-d">已授权平台的数据我自动拉，你什么都不用做（后续开放）</div></span></button>'
+  +'<button type="button" class="agu-way" data-quick="rf_agu_api"><span class="aw-ic">'+IC.send+'</span><span><div class="aw-t">平台授权自动拉取</div><div class="aw-d">直连各平台还在排期，可先登记，开通后自动同步</div></span></button>'
   +'</div>';
  card(ways,'agu');
  botSay('我盯上了。数据怎么给我？挑最省事的；也可以让我 3 天后提醒你。','agu');
  quickPills([['rf_agu_later','3天后提醒我',IC.chart],['rf_new','这单先到这',IC.brand]]);
 }
 function relayAguShot(){
- botSay('好，把后台<b>数据页截图</b>传上来。自动读数还在内测，我读完会把数字帮你填好，你核对就行。','agu');
+ botSay('好，把后台<b>数据页截图</b>传上来。我读完会把数字帮你填好，你核对一下就行。','agu');
  card('<div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_agu_shot_upload">上传数据截图</button>'
   +'<button class="btn btn-ghost btn-sm" data-quick="rf_agu_manual">改为手动填</button></div>','agu');
 }
@@ -6907,37 +7121,201 @@ function relayAguShotUpload(){
  inp.onchange=function(){
   var f=inp.files[0];if(!f)return;
   var rd=new FileReader();
-  rd.onload=function(){state.aguShot=rd.result;toast('截图已收到');relayAguManual(true);};
+  rd.onload=function(){
+   var dataUrl=rd.result;state.aguShot=dataUrl;
+   var loading=botSay('正在识别截图里的数据，几秒钟…','agu');
+   aguApi('POST','/agu/read-shot',{image:dataUrl,task_id:state.taskId})
+    .then(function(r){
+     try{loading.remove();}catch(e){}
+     var d=(r&&r.data)||{};
+     var pf=AGU_PLATFORMS.some(function(p){return p.id===d.platform;})?d.platform:'other';
+     var prefill={pf:pf,date:d.date||aguToday(),days:d.days,views:d.views,likes:d.likes,collects:d.collects,comments:d.comments,shares:d.shares,leads:d.leads,deals:d.deals};
+     relayAguManual(true,prefill,dataUrl);
+    })
+    .catch(function(){
+     try{loading.remove();}catch(e){}
+     toast('没识别成功，手动填一下');
+     relayAguManual(false,null,null);
+    });
+  };
   rd.readAsDataURL(f);
  };
  inp.click();
 }
-function aguFormHtml(){
- var pfOpts=RELAY_PLATFORMS.map(function(p,i){return '<option value="'+p.id+'"'+(i===0?' selected':'')+'>'+p.name+'</option>';}).join('');
+function aguFormHtml(prefill,shotDataUrl){
+ prefill=prefill||{};
+ function val(x){return (x==null||x==='')?'':esc(x);}
+ var pfOpts=AGU_PLATFORMS.map(function(p){var sel=(prefill.pf||'xhs')===p.id;return '<option value="'+p.id+'"'+(sel?' selected':'')+'>'+p.name+'</option>';}).join('');
+ var thumb=shotDataUrl?'<div class="agu-note" style="margin-top:8px">识别结果，请核对：</div><img class="agu-thumb" src="'+shotDataUrl+'" alt="数据截图">':'';
  return '<div class="agu-form">'
   +'<div class="af-fld"><label>平台</label><select id="agPf">'+pfOpts+'</select></div>'
-  +'<div class="af-fld"><label>发布几天</label><input id="agDays" type="number" inputmode="numeric" placeholder="如 3"></div>'
-  +'<div class="af-fld"><label>浏览 / 播放量</label><input id="agViews" type="number" inputmode="numeric" placeholder="如 1200"></div>'
-  +'<div class="af-fld"><label>点赞 / 收藏</label><input id="agLikes" type="number" inputmode="numeric" placeholder="如 86"></div>'
-  +'<div class="af-fld"><label>评论数</label><input id="agComments" type="number" inputmode="numeric" placeholder="如 12"></div>'
-  +'<div class="af-fld"><label>咨询 / 留资</label><input id="agLeads" type="number" inputmode="numeric" placeholder="如 5"></div>'
-  +'<div class="af-fld"><label>成交（可选）</label><input id="agDeals" type="number" inputmode="numeric" placeholder="如 1"></div>'
-  +'</div><div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_agu_submit">提交，3天后看报告</button></div>';
+  +'<div class="af-fld"><label>数据日期</label><input id="agDate" type="date" value="'+val(prefill.date||aguToday())+'"></div>'
+  +'<div class="af-fld"><label>发布几天</label><input id="agDays" type="number" inputmode="numeric" placeholder="如 3" value="'+val(prefill.days)+'"></div>'
+  +'<div class="af-fld"><label>浏览 / 播放量</label><input id="agViews" type="number" inputmode="numeric" placeholder="如 12000" value="'+val(prefill.views)+'"></div>'
+  +'<div class="af-fld"><label>点赞</label><input id="agLikes" type="number" inputmode="numeric" placeholder="如 860" value="'+val(prefill.likes)+'"></div>'
+  +'<div class="af-fld"><label>收藏</label><input id="agCollects" type="number" inputmode="numeric" placeholder="如 120" value="'+val(prefill.collects)+'"></div>'
+  +'<div class="af-fld"><label>评论</label><input id="agComments" type="number" inputmode="numeric" placeholder="如 45" value="'+val(prefill.comments)+'"></div>'
+  +'<div class="af-fld"><label>分享</label><input id="agShares" type="number" inputmode="numeric" placeholder="如 20" value="'+val(prefill.shares)+'"></div>'
+  +'<div class="af-fld"><label>咨询 / 留资</label><input id="agLeads" type="number" inputmode="numeric" placeholder="如 50" value="'+val(prefill.leads)+'"></div>'
+  +'<div class="af-fld"><label>成交（可选）</label><input id="agDeals" type="number" inputmode="numeric" placeholder="如 6" value="'+val(prefill.deals)+'"></div>'
+  +'<div class="af-fld"><label>图种（选填，如 封面A）</label><input id="agImgType" placeholder="选填"></div>'
+  +'<div class="af-fld"><label>文案版本（选填，如 v1）</label><input id="agCopyVer" placeholder="选填"></div>'
+  +'</div>'+thumb
+  +'<div class="card-actions"><button class="btn btn-primary btn-sm" data-quick="rf_agu_submit">提交数据</button></div>';
 }
-function relayAguManual(fromShot){
- card(aguFormHtml(),'agu');
- botSay(fromShot?'自动读数还在内测，你照截图把数字填一下，几秒钟。':'填几个核心数就行，其他可以留空。','agu');
+function relayAguManual(fromShot,prefill,shotDataUrl){
+ card(aguFormHtml(prefill,shotDataUrl),'agu');
+ botSay(fromShot?'识别完了，数字已帮你填好，<b>请核对一下</b>，不对的直接改。':'填几个核心数就行，截图里没有的可以留空。','agu');
 }
 function relayAguSubmit(){
  function v(id){var e=$(id);return e?e.value.trim():'';}
- var d={pf:v('#agPf'),days:v('#agDays'),views:v('#agViews'),likes:v('#agLikes'),comments:v('#agComments'),leads:v('#agLeads'),deals:v('#agDeals'),ts:Date.now()};
- state.aguData=d;
+ var rec={
+  task_id:state.taskId,
+  platform:v('#agPf')||'other',
+  date:v('#agDate')||aguToday(),
+  days:aguNum(v('#agDays')),
+  views:aguNum(v('#agViews')),
+  likes:aguNum(v('#agLikes')),
+  collects:aguNum(v('#agCollects')),
+  comments:aguNum(v('#agComments')),
+  shares:aguNum(v('#agShares')),
+  leads:aguNum(v('#agLeads')),
+  deals:aguNum(v('#agDeals')),
+  image_type:v('#agImgType'),
+  copy_version:v('#agCopyVer'),
+  source:state.aguShot?'screenshot':'manual'
+ };
+ state.aguData=rec;
  userSay('提交数据');
- var views=parseInt(d.views||'0',10),likes=parseInt(d.likes||'0',10),comments=parseInt(d.comments||'0',10),leads=parseInt(d.leads||'0',10);
- var eng=views?((likes+comments)/views*100):0,leadRate=views?(leads/views*100):0;
- botSay('收到，数据记下了。<b>当前这版：</b>互动率 '+eng.toFixed(1)+'%、咨询率 '+leadRate.toFixed(2)+'%。','agu');
- botSay('我会持续盯着，<b>3 天后给你完整效果报告</b>：哪张图浏览最高、哪版文案互动最高、下次怎么改进；下次出图，我把这次的经验自动用上。','agu');
- quickPills([['rf_done','完成这单',IC.check],['rf_new','再来一单',IC.brand]]);
+ var views=rec.views||0,eng=(rec.likes||0)+(rec.collects||0)+(rec.comments||0),leads=rec.leads||0,deals=rec.deals||0;
+ var engRate=views?(eng/views*100):0,leadRate=views?(leads/views*100):0;
+ botSay('收到，已记下这版数据。<b>当前：</b>互动 '+engRate.toFixed(1)+'%、咨询率 '+leadRate.toFixed(2)+'%'+(deals?('、成交 '+deals+' 单'):'')+'。','agu');
+ aguApi('POST','/agu/metrics',rec).then(function(){
+  toast('数据已同步到云端');
+ }).catch(function(e){
+  toast(e&&e.status===401?'登录后自动同步':'本地已记录，联网后再同步');
+ });
+ if((rec.days||0)>=3){botSay('这条已经发布满 3 天了，数据够看一眼完整报告。','agu');}
+ quickPills([['rf_agu_report','看效果报告',IC.chart],['rf_done','完成这单',IC.check],['rf_new','再来一单',IC.brand]]);
+}
+/* 效果报告：结构化卡片 + 轻量内联 SVG（阿果紫 #c084fc，不引图表库） */
+function aguBarSvg(rows){
+ if(!rows||!rows.length)return '';
+ var W=320,rowH=22,padL=56,padR=44,H=rows.length*rowH+6,max=1;
+ rows.forEach(function(r){max=Math.max(max,Number(r.value||0));});
+ var s=rows.map(function(r,i){
+  var y=3+i*rowH,v=Number(r.value||0);
+  var w=Math.max(2,v/max*(W-padL-padR));
+  return '<text x="0" y="'+(y+rowH/2-2)+'" font-size="10" fill="rgba(244,247,253,.65)">'+esc(r.name)+'</text>'
+   +'<rect x="'+padL+'" y="'+y+'" width="'+w+'" height="'+(rowH-10)+'" rx="3" fill="#c084fc" opacity="0.85"/>'
+   +'<text x="'+(padL+w+5)+'" y="'+(y+rowH/2-2)+'" font-size="10" fill="rgba(192,132,252,.95)">'+agN(v)+'</text>';
+ }).join('');
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img">'+s+'</svg>';
+}
+function aguTrendSvg(points){
+ if(!points||points.length<2)return '';
+ var W=320,H=120,padL=28,padR=10,padT=12,padB=20,max=1,n=points.length;
+ points.forEach(function(p){max=Math.max(max,Number(p.v||0));});
+ function xi(i){return padL+i*(W-padL-padR)/(n-1);}
+ function yi(v){return padT+(1-(Number(v)||0)/max)*(H-padT-padB);}
+ var path=points.map(function(p,i){return (i?'L':'M')+xi(i).toFixed(1)+' '+yi(p.v).toFixed(1);}).join(' ');
+ var dots=points.map(function(p,i){return '<circle cx="'+xi(i).toFixed(1)+'" cy="'+yi(p.v).toFixed(1)+'" r="2.6" fill="#c084fc"/>';}).join('');
+ var labs=points.map(function(p,i){return '<text x="'+xi(i).toFixed(1)+'" y="'+(H-6)+'" font-size="8" fill="rgba(244,247,253,.45)" text-anchor="middle">'+esc(String(p.label||'').slice(5))+'</text>';}).join('');
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img"><path d="'+path+'" fill="none" stroke="#c084fc" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+'</svg>';
+}
+function aguFunnelHtml(steps){
+ var valid=steps.filter(function(s){return s[1]!=null;});
+ if(!valid.length)return '';
+ var max=1;valid.forEach(function(s){max=Math.max(max,Number(s[1])||0);});
+ var prev=null;
+ var rows=valid.map(function(s){
+  var v=Number(s[1])||0;
+  var rate=prev?((v/prev*100).toFixed(1)+'%'):'';
+  prev=v;
+  return '<div class="agu-fn-row"><span class="fn-l">'+esc(s[0])+'</span>'
+   +'<div class="fn-track"><div class="fn-bar" style="width:'+(v/max*100).toFixed(1)+'%"></div></div>'
+   +'<span class="fn-v">'+agN(v)+'</span>'
+   +'<span class="fn-r">'+(rate?('上一步 → '+rate):'')+'</span></div>';
+ }).join('');
+ return '<div class="agu-sub">转化漏斗</div><div class="agu-fig"><div class="agu-funnel">'+rows+'</div></div>';
+}
+function aguRenderReport(r){
+ r=r||{};var d=r.data||{};var n=r.narrative||{};var m=r.meta||{};
+ var ext=d.totals_ext||{};
+ var kpis=[
+  {n:agN(ext.views||0),l:'外部总浏览 / 播放'},
+  {n:(typeof ext.engagement_rate==='number')?ext.engagement_rate.toFixed(1)+'%':'—',l:'互动率'},
+  {n:ext.leads!=null?agN(ext.leads):'—',s:(typeof ext.lead_rate==='number')?ext.lead_rate.toFixed(2)+'%':'',l:'咨询 / 留资'},
+  {n:ext.deals!=null?agN(ext.deals):'—',l:'成交'}
+ ];
+ var kpH='<div class="agu-kpis">'+kpis.map(function(k){return '<div class="agu-kpi"><div class="n">'+k.n+(k.s?'<small>'+k.s+'</small>':'')+'</div><div class="l">'+k.l+'</div></div>';}).join('')+'</div>';
+ var head=n.available===false
+  ?'<div class="ar-headline">报告已出，但智能解读暂不可用</div><div class="ar-sub">'+esc(n.reason||'解读服务暂时不可用')+'；下面是我现算的客观数据。</div>'
+  :'<div class="ar-headline">'+esc(n.headline||'效果报告')+'</div>'+(n.summary?'<div class="ar-sub">'+esc(n.summary)+'</div>':'');
+ var bp=(d.by_platform||[]).map(function(x){return {name:aguPfName(x.key),value:Number(x.views||0)};});
+ var fig1=bp.length?'<div class="agu-sub">各平台浏览对比</div><div class="agu-fig">'+aguBarSvg(bp)+'</div>':'';
+ var tr=(d.trend||[]).map(function(x){return {label:x.date,v:Number(x.views||0)};});
+ var fig2=tr.length>1?'<div class="agu-sub">浏览趋势</div><div class="agu-fig">'+aguTrendSvg(tr)+'</div>':'';
+ var fn=d.funnel||{};
+ var fig3=aguFunnelHtml([['浏览',fn.views],['互动',fn.engagement],['留资',fn.leads],['成交',fn.deals]]);
+ var bestH='';
+ if(n.best&&n.best.length){bestH='<div class="agu-sub">做得好的</div><ul class="agu-list">'+n.best.map(function(b){return '<li><b>'+esc(b.what||'')+'</b><span>'+esc(b.why||'')+'</span></li>';}).join('')+'</ul>';}
+ var findH='';
+ if(n.findings&&n.findings.length){findH='<div class="agu-sub">客观发现</div><ul class="agu-list">'+n.findings.map(function(f){return '<li><span>'+esc(f)+'</span></li>';}).join('')+'</ul>';}
+ var actH='';
+ if(n.actions&&n.actions.length){actH='<div class="agu-sub">接下来怎么做</div><ul class="agu-list">'+n.actions.map(function(a){return '<li><span><b>'+esc(a.action||'')+'</b>'+(a.target?(' → 目标 '+esc(a.target)):'')+(a.expected?('（预期 '+esc(a.expected)+'）'):'')+'</span></li>';}).join('')+'</ul>';}
+ var srcs=m.sources||[];
+ var srcTags='';
+ if(srcs.indexOf('external')>=0)srcTags+='<span class="agu-tag ext">外部平台</span>';
+ if(srcs.indexOf('first_party')>=0)srcTags+='<span class="agu-tag fp">自有 H5</span>';
+ if(!srcTags)srcTags='<span class="agu-tag">外部</span>';
+ var srcH='<div class="agu-src">数据口径：'+srcTags+'<span>'+esc((r.from||'')+' ~ '+(r.to||''))+'</span>'+(m.note?('<span>· '+esc(m.note)+'</span>'):'')+'</div>';
+ var html='<div class="agu-rep">'+head+kpH+fig1+fig2+fig3+bestH+findH+actH+srcH
+  +'<div class="card-actions" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-quick="rf_agu_regen">'+IC.redo+' 重新生成</button>'
+  +'<button class="btn btn-primary btn-sm" data-quick="rf_agu_open_center">在效果中心查看</button></div></div>';
+ card(html,'agu');
+}
+function relayAguReport(force){
+ userSay('看效果报告');
+ var done=botTyping('agu');
+ aguApi('POST','/agu/report',{task_id:state.taskId,force:!!force})
+  .then(function(r){done();aguRenderReport(r);})
+  .catch(function(e){
+   done();
+   if(e&&e.status===401){botSay('登录后我才能把这单的效果报告调出来，先登录再看。','agu');}
+   else if(e&&e.code==='no_data'){botSay('这单还没有够出报告的外部数据，先收一两条截图或手填数据再来。','agu');}
+   else{botSay('报告没拉出来（'+esc((e&&e.message)||'网络异常')+'），点下面「重新生成」再试。','agu');}
+   quickPills([['rf_agu_regen','重新生成',IC.redo],['rf_done','先这样',IC.check]]);
+  });
+}
+/* OAuth 等待登记：只展示「即将开放 + 可登记」，不做假连接 */
+function relayAguApi(){
+ card('<div id="aguOauthBox"><div class="agu-note">正在拉取平台清单…</div></div>','agu');
+ botSay('平台账号直连还在排期（要逐个过各平台授权）。先点「可登记」，开通后我第一时间告诉你；在那之前，用截图或手动填就行。','agu');
+ aguApi('GET','/agu/oauth-status')
+  .then(function(r){aguOauthRender((r&&r.data)||{});})
+  .catch(function(){aguOauthRender({});});
+}
+function aguOauthRender(st){
+ var box=document.getElementById('aguOauthBox');if(!box)return;
+ var platforms=(st.platforms&&st.platforms.length)?st.platforms:AGU_PLATFORMS;
+ var registered=st.registered||[];
+ box.innerHTML=platforms.map(function(p){
+  var id=p.id,name=p.name||aguPfName(p.id);
+  var isReg=registered.indexOf(id)>=0;
+  var right=isReg?'<span class="agu-tag ext">已登记 · 即将开放</span>'
+   :'<button type="button" class="btn btn-ghost btn-sm" data-quick="rf_agu_oauth_reg" data-pf="'+esc(id)+'">可登记</button>';
+  return '<div class="agu-oauth-pf"><span class="opn">'+esc(name)+'</span><span style="margin-left:auto">'+right+'</span></div>';
+ }).join('');
+}
+function relayAguOauthReg(el){
+ var pf=el.getAttribute('data-pf');if(!pf)return;
+ aguApi('POST','/agu/oauth-interest',{platform:pf})
+  .then(function(){
+   toast('已登记 '+aguPfName(pf)+'，开通后通知你');
+   return aguApi('GET','/agu/oauth-status').then(function(r){aguOauthRender((r&&r.data)||{});}).catch(function(){});
+  })
+  .catch(function(e){toast(e&&e.status===401?'请先登录':'登记失败，稍后再试');});
 }
 function relayAguLater(){
  userSay('3天后提醒我');
@@ -6988,9 +7366,13 @@ function relayAction(id,el){
   case 'rf_afa_wait':relayAfaWait();break;
   case 'rf_agu_shot':relayAguShot();break;
   case 'rf_agu_shot_upload':relayAguShotUpload();break;
-  case 'rf_agu_manual':relayAguManual(false);break;
-  case 'rf_agu_api':toast('授权平台自动拉取，后续开放');break;
+  case 'rf_agu_manual':relayAguManual(false,null,null);break;
+  case 'rf_agu_api':relayAguApi();break;
   case 'rf_agu_submit':relayAguSubmit();break;
+  case 'rf_agu_report':relayAguReport(false);break;
+  case 'rf_agu_regen':relayAguReport(true);break;
+  case 'rf_agu_open_center':openAnalytics();break;
+  case 'rf_agu_oauth_reg':relayAguOauthReg(el);break;
   case 'rf_agu_later':relayAguLater();break;
   case 'rf_copy':relayCopy(el);break;
   case 'rf_open':relayOpen(el);break;
@@ -7024,6 +7406,12 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
  $('#btnDeliver').addEventListener('click',function(){if(document.body.dataset.deliver==='open')closeDeliver();else openDeliver();});
  $('#btnDeliverClose').addEventListener('click',closeDeliver);
  $('#btnPack').addEventListener('click',packAll);
+ $('#btnRootPipe').addEventListener('click',function(){
+   if(!state.images.length){toast('先上传商品图，再跑根因流水线','err');return;}
+   var imgs=state.images.map(function(im){return im.dataUrl;}).filter(Boolean);
+   if(!imgs.length){toast('没有可用的商品图','err');return;}
+   window.openRootPipeline({images:imgs,language:'zh-CN',selling_text:state.extra||''});
+ });
  $('#dlTabs').addEventListener('click',function(e){var b=e.target.closest('[data-dltab]');if(b)setDeliverTab(b.dataset.dltab);});
  /* 实验室 */
  $('#labClose').addEventListener('click',closeLab);
@@ -7267,7 +7655,7 @@ function handleAct(b){
  else if(act==='videoRatio'){state.videoCfg.ratio=b.dataset.v;$$('[data-act="videoRatio"]').forEach(function(c){c.classList.toggle('on',c.dataset.v===state.videoCfg.ratio);});}
  else if(act==='videoMake'){videoMake(b);}
  else if(act==='videoDl'){var vv=state.videos[+b.dataset.i];if(vv){downloadDataUrl(vv.url,vv.name);toast('已下载 '+vv.name);}}
- else if(act==='videoAiSoon'){toast('AI 图生视频内测中，即将开放；现在先用图文成片把多张成品剪成短视频');}
+ else if(act==='videoAiReal'){videoMakeReal(b,'3c');}
  else if(act==='newOrder'){newOrder();}
  else if(act==='moreScene'){state.results=[];state.dyn=[];state.dynGrid=null;renderDeliver();renderOutputsCard();}
  else if(act==='publishShowcase'){renderPublishCard();}
@@ -7290,6 +7678,33 @@ function handleAct(b){
 
 /* ================= 初始化 ================= */
 bind();
+/* UI 走查入口：把阿果/效果中心的真实渲染入口暴露给自动化测试（业务无副作用） */
+window.__agu={relayToAgu:relayToAgu,openAnalytics:openAnalytics,relayAguApi:relayAguApi,relayAguReport:relayAguReport};
+/* 阿图操作台 → 阿文 桥接：AtuStudio 成品去重入 state.results，关闭控制台（不走 close() 的 goHome/离开确认），进入接力阿文阶段 */
+window.atuToAwen=function(ats){
+ try{
+  ats=Array.isArray(ats)?ats:[];
+  if(!Array.isArray(state.results))state.results=[];
+  ats.forEach(function(a){
+   if(!a||!a.url)return;
+   var hit=null;
+   for(var i=0;i<state.results.length;i++){if(state.results[i].url===a.url){hit=state.results[i];break;}}
+   if(hit){hit.label=a.label||hit.label;hit.k='atu';hit.type=a.type||hit.type;hit.ts=Date.now();}
+   else state.results.push({url:a.url,k:'atu',label:a.label||'成品图',type:a.type||'',ts:Date.now()});
+  });
+  /* 补齐接力漏斗所需 state 到与 relay 路径等价的最小集 */
+  state.relay=true;
+  if(!state.identity)state.identity={type:'general',label:'通用电商',cat:''};
+  if(!state.product)state.product={};
+  if(!Array.isArray(state.groups)||!state.groups.length){
+   state.groups=[{name:'',indices:[0],identity:state.identity,product:state.product,fields:{}}];
+  }
+ }catch(e){}
+ /* 交接不是中途离开：强制结束出图态、移除覆盖层，不弹确认、不 goHome */
+ try{if(window.AtuStudio){AtuStudio._running=false;AtuStudio._abort=true;}}catch(e){}
+ document.body.classList.remove('atu-open');
+ try{relayToAwen();}catch(e){toast('进入阿文失败：'+((e&&e.message)||e));}
+};
 syncQuality();
 try{syncSendReady();}catch(e){}
 ensurePartnerPop();
@@ -7552,6 +7967,11 @@ window.AtuBridge={
 })();
 
 </script>
-<script src="atu-studio.js"></script>
+<script src="atu-studio.js?v=20261003d"></script>
+<script src="awen-flow.js?v=20260930b"></script>
+<script src="awen-studio.js?v=20261003a"></script>
+<script src="afa-studio.js?v=20261003a"></script>
+<script type="module" src="aview-studio.js?v=20261003a"></script>
+<script src="hogee-root-pipeline.js?v=20261003a"></script>
 </body>
 </html>

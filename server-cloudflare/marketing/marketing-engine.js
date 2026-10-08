@@ -1,0 +1,764 @@
+﻿/* =====================================================================
+ * WorkHogee 轨道B · 营销视觉生成引擎
+ * ---------------------------------------------------------------------
+ * 输入：图种模板 + 已拟好的 on_screen_text + product_facts（外观锁体描述）
+ * 输出：带营销文案/图标/真实场景的成品图（dataURL）+ elapsed_ms + cost。
+ *
+ * Prompt 组装严格沿用 prompt-patterns.json 已实测规则：
+ *   1) 首句锁主体（Keep ... EXACTLY, do not redesign/recolor）
+ *   2) 所有上屏文字用英文双引号逐字注入 + rendered EXACTLY, zero typos, no garbled
+ *   3) 版式写死（标题位/图标排列/宫格/引线）
+ *   4) 场景写实（real environment, NOT gray studio, photorealistic）
+ *   5) 语种正确（all on-screen text in <langName>）
+ *
+ * 计费：仅成功出图返回 cost=0.25 元；失败/审核未出图返回 error 且 cost=0。
+ * 水印：先试请求参数 watermark:false；同时在 prompt 里要求右下角留干净安全边距。
+ * ===================================================================*/
+
+import { getImageType } from './image-types.js';
+import { runQc } from './qc-gate.js';
+import { chatVisionCustom } from '../vision.js';
+import { validateOnScreen } from '../lang-util.js';
+
+export const PER_IMAGE_COST_RMB = 0.25;
+const MIN_TOTAL_PIXELS = 3686400;
+
+/* 是否走「前端文字层合成」模式（底图无字 + Canvas 合成 text_layers）。
+ * 回归结论：Seedream 烤字对 ja/ko/zh-CN 不稳，英文 baked 也偶发 Q4 flaky——
+ * 为彻底消除「模型烤字」这一整类非确定性失败，现全语种统一走前端文字层合成。
+ * baked 烤字路径保留为内部兜底（args.forceBaked===true 时才走），默认不再使用。 */
+function isFrontendLang() { return true; }
+
+/* ---------- 直接调方舟图像生成（与 worker.js callSeedream 同形状，自包含可本地测） ---------- */
+export async function generateImage(env, { prompt, imagePayload, size, timeoutMs = 85000, watermark = false } = {}) {
+  if (!env.ARK_API_KEY) return { error: { code: 'server_misconfigured', message: '图像服务密钥未配置' } };
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => { try { ctrl.abort(); } catch {} }, timeoutMs);
+  let upstream, text;
+  try {
+    const body = {
+      model: env.ARK_MODEL || 'doubao-seedream-4-5-251128',
+      prompt,
+      size,
+      response_format: 'b64_json'
+    };
+    if (imagePayload) body.image = imagePayload;
+    // 契约 §4 第一步：探测关闭平台水印的参数
+    if (watermark === false) body.watermark = false;
+    upstream = await fetch(env.ARK_ENDPOINT || 'https://ark.cn-beijing.volces.com/api/v3/images/generations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + env.ARK_API_KEY },
+      body: JSON.stringify(body),
+      signal: ctrl.signal
+    });
+    text = await upstream.text();
+  } catch (e) {
+    clearTimeout(timer);
+    const aborted = e && (e.name === 'AbortError' || e.name === 'TimeoutError');
+    return { error: { code: aborted ? 'upstream_timeout' : 'upstream_network', message: aborted ? '图像模型响应超时' : '图像模型网络异常' } };
+  }
+  clearTimeout(timer);
+  if (!upstream.ok) return { error: { code: 'upstream_' + upstream.status, message: text.slice(0, 300) } };
+  let parsed; try { parsed = JSON.parse(text); } catch { return { error: { code: 'upstream_bad_json', message: '图像模型返回解析失败' } }; }
+  const first = parsed && parsed.data && parsed.data[0] || {};
+  if (!first.b64_json) return { error: { code: 'no_image', message: '图像模型未返回图片数据（可能内容审核未出图）' } };
+  return { b64: first.b64_json, usage: parsed.usage || null };
+}
+
+/* ---------- prompt 组装工具 ----------
+ * Q()：把要上屏的文字包进英文双引号，注入前做最后一道确定性清洗——
+ * 折叠相邻重复词("daily daily"->"daily")，防模型长句小字叠词。 */
+const Q = s => {
+  let t = String(s || '').replace(/\s+/g, ' ').trim();
+  t = t.replace(/\b([A-Za-z']+)(\s+\1\b)+/gi, '$1');
+  return '"' + t + '"';
+};
+const noWm = 'Leave the bottom-right corner completely clean and empty: no watermark, no logo, no text, no platform badge.';
+
+/* 全局品牌/包装保真护栏（IP 风险）：生图模型对强品牌包装轮廓会自动补全知名 logo，
+ * 仅靠 sanitizeCopy 清洗注入文案管不住，故在每条 prompt 末尾强制约束。 */
+const BRAND_GUARD = 'PACKAGING & TRADEMARK RULES: Keep ALL product packaging, labels, bottles, decals and surfaces EXACTLY as in the reference photo. If the reference packaging is plain or unlabeled, render it plain and unlabeled. Do NOT add any brand name, logo, trademark, badge, label text, signature script, or packaging artwork that is not visibly present in the reference. Never render real-world trademarks or brand logos such as Coca-Cola, Coke, Pepsi, Nike, Adidas, Apple, Louis Vuitton, Starbucks, the Amazon smile logo, or any other company brand or platform badge.';
+
+/* ---------- 品类驱动的背景环境（绝不写死某个全品类共用场景）----------
+ * 优先级：1) plan 现场推理出的 product.scenes；2) 按 domain 给一组显著差异化基调；
+ * 3) 兜底仅"干净柔和中性虚化"。禁止再出现"现代玻璃幕墙建筑广场"这种万能模板。 */
+const DOMAIN_BG = {
+  food:    'a bright fresh summer tabletop, icy cold with fizzing bubbles and condensation, light airy refreshing tone',
+  drink:   'a bright summer tabletop with ice cubes and cold fizzy drink, thirst-quenching mood',
+  beauty:  'a clean vanity surface with soft warm beauty light, pale rose-grey premium tone',
+  tech:    'a clean minimal modern desk surface, soft cool neutral tone, subtle office props',
+  home:    'a cozy bright home interior, warm linen and wood neutral tone',
+  fashion: 'a clean light neutral setting with soft natural daylight, tasteful lifestyle mood',
+  auto:    'an outdoor paved road or mountain setting, clean natural daylight',
+  sports_outdoor: 'an outdoor park trail or greenway with trees and a paved path, natural daylight with greenery, NOT an interior, room or studio',
+  flower:  'a bright fresh setting with soft natural light, pastel soft tone',
+  general: 'a clean soft-neutral blurred real environment with soft natural daylight'
+};
+function resolveBg(domain, scenes) {
+  const s = (scenes && scenes[0] && scenes[0].en) || '';
+  if (s) return 'the product set within a softly blurred, out-of-focus ' + s + ', professional commercial lighting, shallow depth of field';
+  return DOMAIN_BG[domain] || 'a clean soft-neutral blurred modern environment';
+}
+
+/* ---------- 标题安全：过长自动截短 + 安全区约束，杜绝溢出被裁 ---------- */
+function fitTitle(h) {
+  let t = String(h || '').trim();
+  const isCjk = /[一-鿿]/.test(t);
+  const max = isCjk ? 13 : 34;            // 顶部通栏大标题的安全字符上限
+  if (t.length > max) t = t.slice(0, max - 1).replace(/[\s\-—,，、/|]+$/u, '') + '…';
+  return t;
+}
+const TITLE_SAFE = 'The headline must fit ENTIRELY inside the frame with safe margins on both sides: if it is long, shrink the font size or wrap to at most two lines; never clip, crop or cut off any character at the left/right edges.';
+
+
+function langSuffix(langName) {
+  return 'All on-screen text must be rendered in ' + langName + ', perfectly spelled, zero typos, no garbled characters, no wrong characters.';
+}
+
+function lockSubject(productDesc, productFacts) {
+  return 'Keep the ' + productDesc + ' from the reference photo EXACTLY: ' + productFacts + '. Preserve the frame color, tire and sidewall color, wheel count and style, saddle, handlebar and every accessory exactly as in the reference. Do not redesign, recolor, change brand marks, add fantasy features, or add any accessory (basket, rack, fenders, lights) or packaging label/logo that is not present in the reference.';
+}
+
+/* ---------- 各 recipe 的版式文案 ---------- */
+function buildRecipePrompt(recipe, ctx) {
+  const { productDesc, productFacts, ost, langName, designReq } = ctx;
+  const lock = lockSubject(productDesc, productFacts);
+  const L = langSuffix(langName);
+  const h = fitTitle(ost.headline || '');
+  const sub = String(ost.subheadline || '').slice(0, 40);
+  const icons = ost.icons || [];
+  const panels = ost.panels || [];
+  const callouts = ost.callouts || [];
+  const bullets = ost.bullets || [];
+  const scenes = ctx.scenes || [];
+  const domain = ctx.domain || 'general';
+  const sceneEnv = (scenes[0] && scenes[0].en) || resolveBg(domain, scenes);
+  const lighting = ctx.lighting || 'soft natural daylight';
+  const bg = resolveBg(domain, scenes);
+
+  switch (recipe) {
+    case 'core_selling': {
+      const iconLines = icons.map((ic, i) => (i + 1) + ') a simple line icon of ' + (ic.icon_hint || 'feature') + ', label: ' + Q(ic.label)).join('\n');
+      return [
+        'Professional e-commerce product marketing infographic, premium marketplace A+ style.',
+        lock,
+        'Layout: the product placed left-center, occupying about half the frame, against ' + bg + '.',
+        h && 'At the TOP, one large bold headline spanning the width, dark bold sans-serif uppercase with a thin subtle outline. Render the text EXACTLY, character by character: ' + Q(h) + '.',
+        TITLE_SAFE,
+        icons.length && 'On the RIGHT side, stack ' + icons.length + ' circular flat white icon badges vertically with even spacing. Each badge contains a simple clean line icon, and directly under each badge a short all-caps label (keep each label to 1-2 short words). Render each label EXACTLY, correct spelling:',
+        iconLines,
+        noWm,
+        'Style: clean, premium, minimal, high-end advertising. Crisp vector-style icons, legible sans-serif typography. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'scene_selling': {
+      return [
+        'Cinematic advertising photo.',
+        lock,
+        'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.',
+        h && 'Overlay a large bold headline in the lower-left area, bold sans-serif uppercase with subtle drop shadow, rendered EXACTLY: ' + Q(h) + '.',
+        sub && 'Below it one smaller regular-weight sub-line, rendered EXACTLY: ' + Q(sub) + '.',
+        noWm,
+        'Style: premium commercial photography. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'multi_scene': {
+      const positions = ['left', 'middle', 'right'];
+      const panelLines = panels.slice(0, 3).map((p, i) =>
+        '- ' + (positions[i] || 'next') + ' panel: the product ' + (p.title || 'in a real scene') + ', small caption at its bottom rendered EXACTLY: ' + Q(p.caption || p.title)
+      ).join('\n');
+      return [
+        'A ' + Math.min(3, Math.max(2, panels.length || 3)) + '-panel multi-scene collage in a SINGLE image, premium marketplace A+ layout. The SAME ' + productDesc + ' must appear in EVERY panel with the EXACT same frame color, tire color, saddle, wheels and parts as the reference — never change the frame color or swap in a different bike between panels.',
+        h && 'Top of the image: a wide bold headline spanning full width, bold sans-serif uppercase, rendered EXACTLY: ' + Q(h) + '.',
+        'Below the headline, arrange equal rectangular panels side by side with thin white gutters:',
+        panelLines,
+        noWm,
+        'Style: clean premium e-commerce collage, consistent color grade across panels, photorealistic. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'detail': {
+      const co = callouts.map(c => 'Add a clean annotation callout with a thin leader line to a boxed label, rendered EXACTLY: ' + Q(c.label)).join('\n');
+      const part = (callouts[0] && callouts[0].label) || 'key part';
+      return [
+        'Premium product detail close-up photograph. A tight macro shot of the ' + part + ' of the product from the reference, sharp focus, shallow depth of field, dark moody defocused background, photorealistic, high detail.',
+        co,
+        noWm,
+        'Style: luxury technical detail infographic. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'material': {
+      return [
+        'Premium macro photograph of the product from the reference. Show ONLY surfaces and parts that actually exist in the reference: the painted or polished metal frame tubes, the saddle and grips, chrome metal parts, drivetrain, and any other parts clearly visible. The frame tubes MUST stay exactly as in the reference — do NOT wrap, cover or add rope, fabric, rattan, twine, weave or any texture not present, do not change the tube surface, and never add a basket, rack, fenders or any accessory absent from the reference.',
+        'Sharp focus on a real material detail (leather saddle / grip / paint finish / chrome), soft defocused neutral background, photorealistic, high detail.',
+        h && 'At the bottom, one short caption rendered EXACTLY: ' + Q(h) + '.',
+        noWm,
+        'Style: premium material showcase, no invented textures. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'rider': {
+      return [
+        'Cinematic cycling advertising photo.',
+        lock,
+        'Show a realistic everyday adult cyclist in casual clothing riding the SAME bike on a real paved forest road / tree-lined greenway. The rider must have natural human proportions: two hands on the handlebars, two feet on the pedals, correct arms and legs, no extra or missing limbs, no deformed hands or feet, no duplicate wheels.',
+        'Photorealistic, shallow depth of field, subtle motion blur on the background, natural daylight. NOT a studio.',
+        h && 'Overlay a bold headline in the lower-left, sans-serif uppercase with subtle shadow, rendered EXACTLY: ' + Q(h) + '.',
+        sub && 'Below it one short sub-line rendered EXACTLY: ' + Q(sub) + '.',
+        noWm,
+        'Style: premium commercial cycling photography. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'lifestyle': {
+      return [
+        'Professional e-commerce lifestyle photograph. ' + lock,
+        'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field, realistic contact shadow. NOT a gray studio.',
+        'Do NOT add any text, letters, captions, logos or watermarks beyond markings already on the product. Leave bottom-right corner clean.',
+        'Style: high-end commercial lifestyle photography.'
+      ].filter(Boolean).join('\n');
+    }
+    case 'banner':
+    case 'hero': {
+      return [
+        'Wide cinematic advertising banner. ' + lock,
+        'Place the product on the RIGHT side, in a real ' + sceneEnv + ', ' + lighting + '.',
+        h && 'On the LEFT empty area place a large bold ' + langName + ' headline, rendered EXACTLY with correct characters and no typos: ' + Q(h) + '.',
+        sub && 'Below it a smaller ' + langName + ' sub-line, rendered EXACTLY: ' + Q(sub) + '.',
+        noWm,
+        'Style: premium commercial cinematic. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'icon_grid': {
+      const n = Math.min(icons.length || 4, 6);
+      const lines = icons.slice(0, n).map((ic, i) => (i + 1) + ') a simple line icon of ' + (ic.icon_hint || 'feature') + ', label: ' + Q(ic.label)).join('\n');
+      return [
+        'Clean premium e-commerce infographic. ' + lock,
+        'Place the product centered, smaller, against ' + bg + '.',
+        h && 'At the TOP, a bold headline, rendered EXACTLY: ' + Q(h) + '.',
+        TITLE_SAFE,
+        'Arrange ' + n + ' flat circular icon badges around/below the product in a tidy grid. Under each badge a short label (1-2 words) rendered EXACTLY:',
+        lines,
+        noWm,
+        'Style: minimal vector infographic. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'compare': {
+      return [
+        'Clean e-commerce comparison infographic. ' + lock,
+        h && 'At the TOP a bold headline rendered EXACTLY: ' + Q(h) + '.',
+        'Split the frame into two equal columns divided by a thin line. Left column: "BEFORE" (or typical product), right column: the product with a check mark. Per-row short labels rendered EXACTLY.',
+        bullets.map(b => '- ' + Q(b)).join('\n'),
+        noWm,
+        'Style: clean trust-comparison layout. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'size_chart': {
+      return [
+        'Clean technical size/spec infographic on white. ' + lock,
+        h && 'At the TOP a bold headline rendered EXACTLY: ' + Q(h) + '.',
+        'Show the product with clear dimension annotation lines and arrow markers, plus a neat spec table below. Render all measurement labels EXACTLY:',
+        bullets.map(b => '- ' + Q(b)).join('\n'),
+        noWm,
+        'Style: precise technical product diagram. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'model': {
+      return [
+        'Professional fashion photography. Keep the garment/product from the reference EXACTLY in style, color and fabric. Do not redesign it.',
+        'Show a realistic adult model wearing/using the product in a natural relaxed pose, full or half body, in a real street/studio environment, ' + lighting + ', photorealistic, shallow depth of field.',
+        'Do NOT add any text or watermark. Leave bottom-right corner clean.',
+        'Style: premium commercial fashion photography, realistic skin and fabric texture.'
+      ].filter(Boolean).join('\n');
+    }
+    case 'seeding': {
+      return [
+        'Authentic lifestyle UGC-style photo. Keep the product consistent with the reference. Place it styled naturally in a real ' + sceneEnv + ', candid composition, ' + lighting + ', photorealistic.',
+        'Do NOT add text, captions or watermark. Leave bottom-right clean.',
+        'Style: warm, authentic social-content feel, not a stiff studio shot.'
+      ].filter(Boolean).join('\n');
+    }
+    case 'series':
+    case 'multi_angle': {
+      const n = Math.min(panels.length || 3, 4);
+      const lines = panels.slice(0, n).map((p, i) => '- tile ' + (i + 1) + ': ' + Q(p.caption || p.title)).join('\n');
+      return [
+        recipe === 'series' ? 'Product lineup infographic.' : 'Multi-angle infographic.',
+        lock,
+        h && 'At the TOP a bold headline rendered EXACTLY: ' + Q(h) + '.',
+        'Arrange ' + n + ' equal tiles showing the SAME product (series = different colors/variants; multi_angle = front/side/back/detail), consistent lighting on a clean light background:',
+        lines,
+        noWm,
+        'Style: clean catalog layout. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'ingredients': {
+      const lines = icons.slice(0, 5).map((ic, i) => (i + 1) + ') icon of ' + (ic.icon_hint || 'ingredient') + ', label: ' + Q(ic.label)).join('\n');
+      return [
+        'Clean ingredient/material infographic. ' + lock,
+        h && 'At the TOP a bold headline rendered EXACTLY: ' + Q(h) + '.',
+        'Place circular ingredient/material badges around the product, each with a short label rendered EXACTLY:',
+        lines,
+        noWm,
+        'Style: fresh minimal infographic. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'usage_guide': {
+      const steps = panels.slice(0, 4);
+      const lines = steps.map((p, i) => (i + 1) + '. ' + Q(p.title || p.caption)).join('\n');
+      return [
+        'Clean instructional infographic. ' + lock,
+        h && 'At the TOP a bold headline rendered EXACTLY: ' + Q(h) + '.',
+        'Arrange numbered step tiles left to right connected by arrows, each with a short step label rendered EXACTLY:',
+        lines,
+        noWm,
+        'Style: clear friendly instructional design. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'accessories': {
+      return [
+        'Clean flat-lay product-in-the-box photo. ' + lock,
+        'Arrange the product and all included accessories neatly on a clean light surface, each item with a small short label rendered EXACTLY:',
+        callouts.map(c => '- ' + Q(c.label)).join('\n'),
+        noWm,
+        'Style: tidy e-commerce flat lay. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'after_sales': {
+      const lines = icons.slice(0, 4).map((ic, i) => (i + 1) + ') shield/return icon of ' + (ic.icon_hint || 'assurance') + ', label: ' + Q(ic.label)).join('\n');
+      return [
+        'Clean trust-banner. ' + (h ? 'Headline rendered EXACTLY: ' + Q(h) + '.' : ''),
+        sub && 'Sub-line rendered EXACTLY: ' + Q(sub) + '.',
+        'A horizontal row of flat assurance icons (shield, returns, warranty), each with a short label rendered EXACTLY:',
+        lines,
+        noWm,
+        'Style: trustworthy clean light-blue trust layout. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'mood': {
+      return [
+        'Cinematic brand-mood photograph. ' + lock,
+        'Place the product small within an emotional atmospheric real environment, soft cinematic lighting, photorealistic.',
+        h && 'In a lower empty area, one short brand line rendered EXACTLY: ' + Q(h) + '.',
+        noWm,
+        'Style: atmospheric premium brand film still. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'search_main': {
+      return [
+        'Clean e-commerce search main image. ' + lock,
+        'Product placed on the right on a clean light gradient background, occupying about 60% of the frame.',
+        h && 'A single short benefit line at the lower-left, bold sans-serif, rendered EXACTLY: ' + Q(h) + '.',
+        noWm,
+        'Style: clean high-contrast marketplace search thumbnail. ' + L
+      ].filter(Boolean).join('\n');
+    }
+    case 'white_bg':
+    default: {
+      // 轨道A 图种；若被误调本引擎，给干净白底（保真仍应以 PicWish 为准）
+      return [
+        'Pure white background e-commerce main image. ' + lock,
+        'Product centered on a seamless pure-white background, even soft studio light, realistic contact shadow. No text, no watermark.',
+        'Style: clean marketplace white-background photo.'
+      ].filter(Boolean).join('\n');
+    }
+  }
+}
+
+/* =====================================================================
+ * §B2 前端文字层合成（ja/ko）：text_layers 固定版式坐标
+ * ---------------------------------------------------------------------
+ * 坐标 x/y/w/h 均为相对画布宽/高的 0~1 浮点数（前端按 size 换算像素），
+ * anchor 固定 top-left；baseline ∈ h1|h2|label|body 决定前端字号层级。
+ * 只产出 plan 阶段已生成（非空）的文字槽；空槽不产出 layer。
+ * 坐标必须与 buildNoTextPrompt 要求模型预留的空白区域一致（同一份 layers）。
+ * ===================================================================*/
+function buildTextLayers(recipe, ost) {
+  const layers = [];
+  const push = (slot, text, x, y, w, h, o = {}) => {
+    const t = String(text || '').trim();
+    if (!t) return;
+    layers.push({
+      slot, text: t,
+      x, y, w, h,
+      anchor: 'top-left',
+      align: o.align || 'left',
+      baseline: o.baseline || 'body',
+      color: o.color || '#101826',
+      bold: !!o.bold,
+      max_lines: o.max_lines || 1
+    });
+  };
+  // 前端 canvas 会自动换行 + 字号自适应缩到框内，故此处保留完整文案，不做烤字式硬截断
+  const headline = String(ost.headline || '').trim();
+  const sub = String(ost.subheadline || '').slice(0, 40);
+  const icons = (ost.icons || []).slice(0, 6);
+  const panels = (ost.panels || []).slice(0, 4);
+  const callouts = (ost.callouts || []).slice(0, 5);
+  const bullets = (ost.bullets || []).slice(0, 6);
+
+  switch (recipe) {
+    case 'core_selling':
+      push('headline', headline, 0.06, 0.05, 0.88, 0.16, { baseline: 'h1', bold: true, align: 'left', max_lines: 2 });
+      icons.forEach((ic, i) => push('icon_' + i, ic.label, 0.63, 0.22 + i * 0.21, 0.31, 0.10, { baseline: 'label', align: 'center', max_lines: 2 }));
+      break;
+    case 'scene_selling':
+    case 'rider':
+      push('headline', headline, 0.06, 0.60, 0.62, 0.18, { baseline: 'h1', bold: true, align: 'left', max_lines: 2 });
+      push('subheadline', sub, 0.06, 0.80, 0.58, 0.08, { baseline: 'body', align: 'left' });
+      break;
+    case 'banner':
+    case 'hero':
+      push('headline', headline, 0.06, 0.30, 0.44, 0.24, { baseline: 'h1', bold: true, align: 'left', max_lines: 2 });
+      push('subheadline', sub, 0.06, 0.56, 0.42, 0.09, { baseline: 'body', align: 'left' });
+      break;
+    case 'multi_scene': {
+      push('headline', headline, 0.05, 0.03, 0.90, 0.12, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      panels.slice(0, 3).forEach((p, i) => {
+        push('panel_' + i + '_caption', p.caption || p.title, 0.012 + i * 0.333, 0.86, 0.31, 0.10, { baseline: 'body', align: 'center' });
+      });
+      break;
+    }
+    case 'icon_grid':
+      push('headline', headline, 0.08, 0.04, 0.84, 0.12, { baseline: 'h1', bold: true, align: 'center', max_lines: 2 });
+      icons.forEach((ic, i) => {
+        const col = i % 3, row = Math.floor(i / 3);
+        push('icon_' + i, ic.label, 0.06 + col * 0.32, 0.70 + row * 0.17, 0.28, 0.14, { baseline: 'label', align: 'center', max_lines: 2 });
+      });
+      break;
+    case 'material':
+      push('headline', headline, 0.10, 0.86, 0.80, 0.09, { baseline: 'h2', bold: true, align: 'center', color: '#FFFFFF', max_lines: 1 });
+      break;
+    case 'mood':
+      push('headline', headline, 0.08, 0.78, 0.55, 0.10, { baseline: 'h2', bold: true, align: 'left', color: '#FFFFFF', max_lines: 1 });
+      break;
+    case 'search_main':
+      push('headline', headline, 0.06, 0.72, 0.52, 0.12, { baseline: 'h2', bold: true, align: 'left', max_lines: 2 });
+      break;
+    case 'detail':
+      callouts.forEach((c, i) => push('callout_' + i, c.label, 0.55, 0.14 + i * 0.15, 0.40, 0.10, { baseline: 'label', align: 'left', max_lines: 2 }));
+      break;
+    case 'compare':
+      push('headline', headline, 0.06, 0.05, 0.88, 0.12, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      bullets.forEach((b, i) => push('bullet_' + i, b, 0.08, 0.24 + i * 0.11, 0.84, 0.09, { baseline: 'body', align: 'left' }));
+      break;
+    case 'size_chart':
+      push('headline', headline, 0.06, 0.04, 0.88, 0.10, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      bullets.forEach((b, i) => push('bullet_' + i, b, 0.10, 0.18 + i * 0.10, 0.80, 0.08, { baseline: 'body', align: 'left' }));
+      break;
+    case 'series':
+    case 'multi_angle':
+      push('headline', headline, 0.06, 0.04, 0.88, 0.10, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      panels.slice(0, 4).forEach((p, i) => push('panel_' + i + '_caption', p.caption || p.title, 0.04 + i * 0.24, 0.86, 0.22, 0.10, { baseline: 'label', align: 'center' }));
+      break;
+    case 'ingredients':
+      push('headline', headline, 0.08, 0.04, 0.84, 0.11, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      icons.slice(0, 6).forEach((ic, i) => {
+        const col = i % 3, row = Math.floor(i / 3);
+        push('icon_' + i, ic.label, 0.06 + col * 0.30, 0.62 + row * 0.17, 0.26, 0.13, { baseline: 'label', align: 'center', max_lines: 2 });
+      });
+      break;
+    case 'usage_guide':
+      push('headline', headline, 0.06, 0.04, 0.88, 0.10, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      panels.slice(0, 4).forEach((p, i) => push('step_' + i, p.title || p.caption, 0.05 + i * 0.23, 0.80, 0.21, 0.12, { baseline: 'label', align: 'center', max_lines: 2 }));
+      break;
+    case 'accessories':
+      push('headline', headline, 0.06, 0.05, 0.88, 0.11, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      callouts.forEach((c, i) => push('callout_' + i, c.label, 0.10, 0.20 + i * 0.12, 0.50, 0.10, { baseline: 'body', align: 'left' }));
+      break;
+    case 'after_sales':
+      push('headline', headline, 0.10, 0.06, 0.80, 0.12, { baseline: 'h1', bold: true, align: 'center', max_lines: 1 });
+      push('subheadline', sub, 0.15, 0.20, 0.70, 0.07, { baseline: 'body', align: 'center' });
+      icons.slice(0, 4).forEach((ic, i) => push('icon_' + i, ic.label, 0.08 + i * 0.22, 0.74, 0.20, 0.12, { baseline: 'label', align: 'center', max_lines: 2 }));
+      break;
+    default:
+      // 纯照片类（lifestyle/model/seeding/white_bg）本就无文字；兜底给一个顶部通栏
+      if (headline) push('headline', headline, 0.06, 0.06, 0.88, 0.12, { baseline: 'h1', bold: true, align: 'center', max_lines: 2 });
+      break;
+  }
+  return layers;
+}
+
+/* ---------- §B2 无字底图 prompt：锁构图/主体/场景，文字区预留干净空带，严禁任何烤字 ---------- */
+function buildNoTextPrompt(recipe, ctx, layers) {
+  const { productDesc, productFacts, domain, scenes, lighting } = ctx;
+  const lock = lockSubject(productDesc, productFacts);
+  const bg = resolveBg(domain, scenes);
+  const sceneEnv = (scenes && scenes[0] && scenes[0].en) || bg;
+  const iconCount = (ctx.iconCount || 0);
+  const lines = [];
+
+  // —— 各 recipe 的构图/场景/主体（与烤字版同骨架，但不含任何文字渲染指令）——
+  switch (recipe) {
+    case 'core_selling':
+      lines.push('Professional e-commerce product marketing infographic, premium marketplace A+ style.');
+      lines.push(lock);
+      lines.push('Layout: the product placed left-center, occupying about half the frame, against ' + bg + '. On the RIGHT side arrange ' + Math.max(1, iconCount) + ' flat circular white line-icon badges stacked vertically with even spacing; each badge contains ONLY a simple clean line icon, with NO lettering inside or beneath it.');
+      break;
+    case 'scene_selling':
+      lines.push('Cinematic advertising photo.', lock, 'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.');
+      break;
+    case 'rider':
+      lines.push('Cinematic cycling advertising photo.', lock, 'Show a realistic everyday adult cyclist in casual clothing riding the SAME bike on a real paved forest road / tree-lined greenway, natural human proportions, correct limbs. Photorealistic, shallow depth of field, natural daylight. NOT a studio.');
+      break;
+    case 'banner':
+    case 'hero':
+      lines.push('Wide cinematic advertising banner. ' + lock, 'Place the product on the RIGHT side, in a real ' + sceneEnv + ', ' + lighting + '.');
+      break;
+    case 'multi_scene':
+      lines.push('A 3-panel multi-scene collage in a SINGLE image, premium marketplace A+ layout. The SAME ' + productDesc + ' must appear in EVERY panel with the EXACT same colors and parts as the reference. Arrange three equal rectangular panels side by side with thin white gutters, each a real scene.');
+      break;
+    case 'icon_grid':
+      lines.push('Clean premium e-commerce infographic. ' + lock, 'Place the product centered, smaller, against ' + bg + '. Arrange ' + Math.max(1, iconCount) + ' flat circular line-icon badges in a tidy grid around/below the product, each badge containing ONLY a simple line icon with NO lettering.');
+      break;
+    case 'material':
+      lines.push('Premium macro photograph of the product from the reference. Show only surfaces and parts actually present. Sharp focus on a real material detail, soft defocused neutral background, photorealistic, high detail.');
+      break;
+    case 'detail':
+      lines.push('Premium product detail close-up photograph. A tight macro shot of a key part of the product from the reference, sharp focus, shallow depth of field, dark moody defocused background, photorealistic, high detail.');
+      break;
+    case 'compare':
+      lines.push('Clean e-commerce comparison infographic. ' + lock, 'Split the frame into two equal columns divided by a thin line. Left column a typical product, right column the product. Clean white/light comparison table look.');
+      break;
+    case 'size_chart':
+      lines.push('Clean technical size/spec infographic on white. ' + lock, 'Show the product with clear dimension annotation lines and arrow markers, plus a neat blank spec table area below.');
+      break;
+    case 'series':
+    case 'multi_angle':
+      lines.push(recipe === 'series' ? 'Product lineup infographic.' : 'Multi-angle infographic.', lock, 'Arrange equal tiles showing the SAME product, consistent lighting on a clean light background.');
+      break;
+    case 'ingredients':
+      lines.push('Clean ingredient/material infographic. ' + lock, 'Place circular line-only ingredient/material badges around the product, each badge containing ONLY a simple icon with NO lettering.');
+      break;
+    case 'usage_guide':
+      lines.push('Clean instructional infographic. ' + lock, 'Arrange numbered step tiles left to right connected by arrows.');
+      break;
+    case 'accessories':
+      lines.push('Clean flat-lay product-in-the-box photo. ' + lock, 'Arrange the product and all included accessories neatly on a clean light surface.');
+      break;
+    case 'after_sales':
+      lines.push('Clean trust-banner, trustworthy clean light-blue layout. Arrange a horizontal row of flat line-icon badges (shield, returns, warranty), each containing ONLY a simple line icon with NO lettering.');
+      break;
+    case 'mood':
+      lines.push('Cinematic brand-mood photograph. ' + lock, 'Place the product small within an emotional atmospheric real environment, soft cinematic lighting, photorealistic.');
+      break;
+    case 'search_main':
+      lines.push('Clean e-commerce search main image. ' + lock, 'Product placed on the right on a clean light gradient background, occupying about 60% of the frame.');
+      break;
+    case 'lifestyle':
+    case 'model':
+    case 'seeding':
+    case 'white_bg':
+    default:
+      lines.push('Professional e-commerce product photograph. ' + lock, 'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.');
+      break;
+  }
+
+  // —— 按 text_layers 逐区引导模型：让文字区落在场景中天然简洁/虚化的部位，绝不画矩形白框 ——
+  for (const L of layers) {
+    lines.push('A text caption will be overlaid later at about ' +
+      Math.round(L.x * 100) + '% from the left, ' + Math.round(L.y * 100) + '% from the top, spanning about ' +
+      Math.round(L.w * 100) + '% of the width and ' + Math.round(L.h * 100) + '% of the height. Compose the scene so this spot is a naturally calm, even, smooth or softly defocused part of the environment (e.g. clean countertop, blurred background, gentle gradient, soft shadow, even wall), with uniform tone and low contrast, free of busy props or sharp detail, so overlaid text stays readable. The region must blend seamlessly into the surrounding scene with NO visible edge.');
+  }
+
+  // —— 全局硬约束：底图一个字都不许烤（含参考图里的价签/贴纸/数字）——
+  lines.push('CRITICAL NO-TEXT RULE: The entire image must contain ABSOLUTELY NO letters, words, numbers, digits, glyphs, characters, labels, captions, brand names, watermark text or platform badges anywhere. It is a clean scene/composition background only; all marketing wording will be overlaid by software afterwards. The reserved rectangles must be truly empty.');
+  lines.push('REFERENCE STRIP: The reference photo may contain price tags, stickers, hangtags, paper labels, handwritten marks, or printed numbers (e.g. a "¥399" price sticker, a barcode, a size label). DO NOT reproduce ANY of those onto this base image — render those spots as a clean, flat, sticker-free, label-free, unprinted surface matching the surrounding material. No price, no digits, no label paper, no sticker residue.');
+  lines.push('NO-BOX RULE: Do NOT create any white or solid-color boxes, rectangular panels, borders, frames, hard-edged blank rectangles, geometric cut-off triangles, or collage placeholders. Any space reserved for later text is a natural clean/defocused region that blends seamlessly into the scene — never a painted block with a visible edge.');
+  lines.push(noWm);
+  lines.push(BRAND_GUARD);
+  return lines.join('\n');
+}
+
+/* ---------- §B2 无字底图质检：不做语种烤字判定（Q4/Q5 跳过），改为「无文字 + 主体/场景」 ---------- */
+async function runBaseQc(env, { image, ref, productHint, domain }) {
+  const failures = [];
+  const metrics = {};
+
+  // B-Q1 底图必须零烤字（产品本体上原有的极小永久标记除外）
+  const r1 = await chatVisionCustom(env, {
+    system: 'You are a strict e-commerce background-image QA. Reply JSON only: {"has_any_text":true/false,"detail":""}.',
+    user: 'This is a BACKGROUND image that must contain NO marketing text (text will be overlaid by software later). Scan the whole image carefully: does it contain ANY marketing letters, words, numbers, digits, glyphs, characters, labels, captions or banners? (Tiny permanent markings physically printed on the product itself do NOT count.) Reply JSON.',
+    images: [image], maxTokens: 300, temperature: 0.1, timeoutMs: 45000
+  });
+  let noText = null;
+  if (r1.ok) noText = (r1.data && typeof r1.data === 'object') ? r1.data : (function () { const m = String(r1.data || '').match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch {} } return null; })();
+  metrics.noText = noText;
+  if (noText && noText.has_any_text === true) failures.push({ code: 'BASE_HAS_TEXT', reason: noText.detail || 'background still contains baked text' });
+
+  // B-Q2 主体一致 + 为主角（双图比对，沿用 qc-gate Q8 口径）
+  if (ref && productHint) {
+    const r2 = await chatVisionCustom(env, {
+      system: 'You are a TOLERANT e-commerce marketing-image QA who understands advertising composition. Reply JSON only: {"same_product":true/false,"is_protagonist":true/false,"reason":""}.',
+      user: [
+        'Image 1 = a generated MARKETING image. Image 2 = the reference product photo.',
+        'In marketing images the product is intentionally allowed to: sit inside a lifestyle scene, lie horizontally or at an angle, appear partially cropped, be shown with props/ingredients/a human model, appear as several identical units, or be shot from a different angle. A person may be using it.',
+        'Q1 same_product: Does image 1 visibly contain the SAME product as image 2 — matching category AND key packaging features (shape, colour, cap, bottle/tube form, label style, branding)? Be lenient: answer false ONLY when the product is entirely absent or is clearly a different product. Angle, partial view, props, a model and scene styling must NOT make you answer false.',
+        'Q2 is_protagonist: Is the product (or its use) the thing being promoted and a clear visual focus, even if shared with a model or props? Answer false ONLY when the product is an insignificant background object.',
+        'expected product: ' + String(productHint || '').slice(0, 80),
+        'When uncertain, answer true. Reply JSON only.'
+      ].join('\n'),
+      images: [image, ref], maxTokens: 300, temperature: 0.1, timeoutMs: 45000
+    });
+    let subj = null;
+    if (r2.ok) subj = (r2.data && typeof r2.data === 'object') ? r2.data : (function () { const m = String(r2.data || '').match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch {} } return null; })();
+    metrics.subject = subj;
+    if (subj && (subj.same_product === false || subj.is_protagonist === false)) failures.push({ code: 'BASE_SUBJECT_MISMATCH', reason: subj.reason || 'main product changed from reference' });
+  }
+
+  // B-Q3 画面瑕疵：不得有莫名白色块/矩形面板/边框/几何斜切/占位框/构图崩坏
+  const r3 = await chatVisionCustom(env, {
+    system: 'You are a strict e-commerce image artifact QA. Reply JSON only: {"has_artifact":true/false,"kind":"","detail":""}.',
+    user: 'Inspect this marketing image for compositional artifacts that should NOT exist: a large solid white or colored rectangle/box, a hard-edged blank panel, a visible border or frame around an empty area, a geometric cut-off triangle or wedge, an obvious empty placeholder box, a torn/collaged edge, or a badly broken composition. Naturally blurred backgrounds, soft gradients and normal multi-panel collages with seamless thin gutters are FINE — only flag hard, unnatural boxes/blocks/edges that look like placeholders or rendering glitches. Reply JSON.',
+    images: [image], maxTokens: 300, temperature: 0.1, timeoutMs: 45000
+  });
+  let art = null;
+  if (r3.ok) art = (r3.data && typeof r3.data === 'object') ? r3.data : (function () { const m = String(r3.data || '').match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch {} } return null; })();
+  metrics.artifact = art;
+  if (art && art.has_artifact === true) failures.push({ code: 'BASE_ARTIFACT', reason: (art.kind ? art.kind + ': ' : '') + (art.detail || 'unexpected box/block/edge') });
+
+  return { pass: failures.length === 0, failures, metrics, retryable: true };
+}
+
+/* ---------- 主入口 ---------- */
+export async function runMarketingGenerate(env, args = {}) {
+  const started = Date.now();
+  const typeId = args.type;
+  const t = getImageType(typeId);
+  if (!t) return { ok: false, error: { code: 'bad_type', message: '未知图种: ' + typeId }, cost: 0 };
+  // 内部 recipe 覆盖（不改契约字段）：如 rider 场景复用 selling_point 的 type id
+  const recipe = (args.recipe && typeof args.recipe === 'string') ? args.recipe : t.recipe;
+
+  const image = args.image;
+  if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
+    return { ok: false, error: { code: 'bad_image', message: '缺少产品图 dataURL' }, cost: 0 };
+  }
+
+  let size = args.size && /^\d{3,5}x\d{3,5}$/.test(args.size) ? args.size : t.size;
+  // 校验最小像素（契约 §1）
+  const [w, hgt] = size.split('x').map(Number);
+  if (w * hgt < MIN_TOTAL_PIXELS) size = t.size;
+
+  let _langKey = String(args.language || 'en').toLowerCase();
+  if (_langKey === 'zh-cn' || _langKey === 'zh') _langKey = 'zh-CN';
+  const langName = { en: 'English', 'zh-CN': 'Simplified Chinese', ja: 'Japanese', ko: 'Korean' }[_langKey] || 'English';
+
+  const productDesc = String(args.product_desc || 'the product').slice(0, 120);
+  const productFacts = String(args.product_facts || 'the same product shown, same colors, parts and materials').slice(0, 400);
+  const ost = args.on_screen_text && typeof args.on_screen_text === 'object' ? args.on_screen_text : {};
+
+  const scenes = args.scenes || [];
+  const lighting = args.lighting || 'soft natural daylight';
+  const domain = args.domain || '';
+
+  /* ================= 前端文字层合成模式（全语种默认；forceBaked 才走烤字兜底） ================= */
+  if (isFrontendLang(_langKey) && !args.forceBaked) {
+    // 1) plan 阶段产出的上屏文案必须确为目标语种；不符则如实返回、不出图不计费
+    const violations = validateOnScreen(ost, _langKey);
+    if (violations.length) {
+      return { ok: false, composite: 'frontend', error: { code: 'ost_lang_mismatch', message: '上屏文案与目标语种(' + _langKey + ')不符，未出图', violations }, cost: 0, elapsed_ms: Date.now() - started };
+    }
+    // 2) 固定版式 text_layers（坐标）
+    const text_layers = buildTextLayers(recipe, ost);
+    // 3) 无字底图 prompt：锁构图/主体/场景，文字区预留干净空带，严禁烤字
+    const prompt = buildNoTextPrompt(recipe, {
+      productDesc, productFacts, domain, scenes, lighting, iconCount: (ost.icons || []).length
+    }, text_layers);
+
+    // 每次重试按「上一次失败类型」追加更强指令：去文字 / 强化主体，escalating
+    const antiTextEscalation = [
+      '',
+      '\nANTI-TEXT RETRY 1: The last draft still baked text or a price tag/sticker. Strip EVERY letter, digit, price, label, sticker and hangtag; render all formerly-stuck spots as a clean flat sticker-free surface.',
+      '\nANTI-TEXT RETRY 2: Final attempt. Absolutely zero text / numbers / price-tags / stickers / hangtags anywhere on product or background; erase all such reference markings into a clean seamless surface.'
+    ];
+    const subjectEscalation = [
+      '',
+      '\nSUBJECT RETRY 1: Keep the reference product clearly recognizable, complete and as the obvious hero, matching its exact shape, colour, cap and packaging; place it prominently even within the scene.',
+      '\nSUBJECT RETRY 2: Final attempt. The reference product must be the unmistakable central focus, fully consistent with the reference photo and not replaced, obscured or cropped out by props/models.'
+    ];
+    const artifactEscalation = [
+      '',
+      '\nARTIFACT RETRY 1: Remove any solid boxes, blank panels, borders or geometric cut shapes; render the whole scene as one continuous photorealistic environment where the text area is only softly defocused — no hard edges.',
+      '\nARTIFACT RETRY 2: Final attempt. Absolutely no white/color blocks, frames, placeholders or cut-off geometry anywhere; everything must blend seamlessly with no visible rectangles.'
+    ];
+    let prevFailures = [];
+    const extraFor = (attempt, failures) => {
+      let extra = '';
+      if (failures.some(f => f.code === 'BASE_HAS_TEXT')) extra += antiTextEscalation[Math.min(attempt, 2)];
+      if (failures.some(f => f.code === 'BASE_SUBJECT_MISMATCH')) extra += subjectEscalation[Math.min(attempt, 2)];
+      if (failures.some(f => f.code === 'BASE_ARTIFACT')) extra += artifactEscalation[Math.min(attempt, 2)];
+      return extra;
+    };
+    const doGen = (attempt, failures) => generateImage(env, {
+      prompt: prompt + extraFor(attempt, failures),
+      imagePayload: image, size, timeoutMs: 85000, watermark: false
+    });
+
+    // 4) 无字底图质检：校验「无烤字 + 主体/场景」（跳过 Q4 语种/Q5 截断——底文本就无烤字）
+    //    最多 3 次尝试（首跑 + 2 次重试）；文字类 / 主体类失败都允许按类型重试，禁止单次误判一票否决
+    let baseB64 = null, qc = null;
+    const checkBase = async (b64) => runBaseQc(env, { image: 'data:image/jpeg;base64,' + b64, ref: image, productHint: productDesc, domain });
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const r = await doGen(attempt, prevFailures);
+      if (r.error) {
+        if (attempt === 2) return { ok: false, composite: 'frontend', error: r.error, cost: 0, elapsed_ms: Date.now() - started };
+        continue; // 中间出图失败：继续下一次重试，仍 0 计费
+      }
+      baseB64 = r.b64;
+      try { qc = await checkBase(baseB64); } catch {}
+      if (!qc || qc.pass) break;        // 通过或 QC 不可用即停
+      prevFailures = qc.failures;       // 记录失败类型，下一轮按类型叠加指令重试
+    }
+    const elapsed_ms = Date.now() - started;
+    if (qc && !qc.pass) {
+      return { ok: false, composite: 'frontend', error: { code: 'qc_rejected', message: '无字底图质检未通过', failures: qc.failures }, cost: 0, elapsed_ms, qc: qc.metrics };
+    }
+    return {
+      ok: true,
+      type: typeId,
+      size,
+      composite: 'frontend',
+      base_image: 'data:image/jpeg;base64,' + baseB64,
+      text_layers,
+      elapsed_ms,
+      cost: PER_IMAGE_COST_RMB,
+      qc: qc ? qc.metrics : null,
+      watermark_param_tried: 'watermark:false'
+    };
+  }
+
+  /* ================= zh-CN / en：模型烤字模式（保持现有路径） ================= */
+  const prompt = buildRecipePrompt(recipe, {
+    productDesc, productFacts, ost, langName,
+    domain, scenes, lighting,
+    designReq: args.design_requirements || ''
+  }) + '\n' + BRAND_GUARD;
+
+  const doGen = () => generateImage(env, { prompt, imagePayload: image, size, timeoutMs: 85000, watermark: false });
+  let r = await doGen();
+  if (r.error) return { ok: false, composite: 'baked', error: r.error, cost: 0, elapsed_ms: Date.now() - started };
+
+  // 强制质检门禁：生成后自动 VL 校验；失败重生成一次，仍失败则 rejected 不计费
+  let qc = null;
+  try {
+    qc = await runQc(env, { image: 'data:image/jpeg;base64,' + r.b64, type: recipe, domain, lang: _langKey, ref: image, productHint: productDesc });
+  } catch {}
+  if (qc && !qc.pass) {
+    r = await doGen();
+    if (!r.error) {
+      try { qc = await runQc(env, { image: 'data:image/jpeg;base64,' + r.b64, type: recipe, domain, lang: _langKey, ref: image, productHint: productDesc }); } catch {}
+    }
+  }
+  const elapsed_ms = Date.now() - started;
+  if (r.error) return { ok: false, composite: 'baked', error: r.error, cost: 0, elapsed_ms };
+  if (qc && !qc.pass) return { ok: false, composite: 'baked', error: { code: 'qc_rejected', message: '质检未通过', failures: qc.failures }, cost: 0, elapsed_ms, qc: qc.metrics };
+
+  return {
+    ok: true,
+    type: typeId,
+    size,
+    composite: 'baked',
+    image: 'data:image/jpeg;base64,' + r.b64,
+    elapsed_ms,
+    cost: PER_IMAGE_COST_RMB,
+    qc: qc ? qc.metrics : null,
+    watermark_param_tried: 'watermark:false'
+  };
+}

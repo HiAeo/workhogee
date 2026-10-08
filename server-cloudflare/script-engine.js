@@ -15,23 +15,63 @@ import { findSimilarCases } from './casebook.js';
 
 const KIT_TYPES = new Set(['ecommerce', 'fashion']);
 
+// 视觉风格域（只 6 个，用于选背景色调/道具/光线；不是 360 行业，由视觉模型现场判定）
+const DOMAINS = ['beauty', 'fashion', 'food', 'tech', 'home', 'auto', 'general'];
+// 各域保真等级兜底（模型没给 tier 时）：tech 细结构多→A，服饰→B，鲜花食品→C
+const DOMAIN_TIER_FALLBACK = { beauty: 'B', fashion: 'B', food: 'C', tech: 'A', home: 'B', auto: 'A', general: 'B' };
+
+// 仅在视觉模型没给 domain 时，按品类文本做轻量兜底（主路径不依赖它）
+function inferDomain(text = '') {
+  const t = String(text);
+  if (/美妆|护肤|口红|唇釉|唇泥|唇彩|彩妆|面膜|香水|粉底|眼影|腮红|眉笔|睫毛|美甲|beauty|makeup|skincare|lip|cosmetic/i.test(t)) return 'beauty';
+  if (/服装|衣|裤|裙|鞋|靴|包|帽|袜|围巾|穿|fashion|apparel|garment|shoe|bag/i.test(t)) return 'fashion';
+  if (/食品|饮|食|咖啡|茶|零食|坚果|水果|蛋糕|面包|生鲜|food|drink|coffee|snack|beverage|bakery/i.test(t)) return 'food';
+  if (/耳机|话务|3c|电子|手机|电脑|数码|充电|电器|仪器|相机|headphone|headset|electronic|tech|digital|appliance|camera/i.test(t)) return 'tech';
+  if (/家居|家具|家装|厨具|收纳|家纺|home|furniture|kitchenware/i.test(t)) return 'home';
+  if (/汽车|轿车|suv|越野车|卡车|客车|自行车|摩托|电动车|新能源车|工程车|车|car|vehicle|motor|bike|automobile/i.test(t)) return 'auto';
+  return 'general';
+}
+
+// useScenes 统一为 {zh,en}；兼容旧的纯中文字符串数组 / 用户编辑
+function normScenes(v, n = 3) {
+  if (!Array.isArray(v)) return [];
+  return v.slice(0, n).map(x => {
+    if (x && typeof x === 'object') {
+      const zh = String(x.zh ?? x.cn ?? '').trim();
+      const en = String(x.en ?? '').trim();
+      if (!zh && !en) return null;
+      return { zh: zh || en, en: en || zh };
+    }
+    const s = String(x ?? '').trim();
+    return s ? { zh: s, en: s } : null;
+  }).filter(Boolean);
+}
+
 /** 把模型输出 / 用户编辑结果归一化为标准脚本；缺字段补默认。 */
 export function normalizeScript(input = {}, kitType = 'ecommerce') {
   const kt = KIT_TYPES.has(kitType) ? kitType : 'ecommerce';
   const arr = (v, n = 99) => Array.isArray(v) ? v.map(String).filter(s => s && s.trim()).slice(0, n) : [];
+  const category = String(input.category || '').trim().slice(0, 30);
+  let domain = String(input.domain || '').toLowerCase().trim();
+  if (!DOMAINS.includes(domain)) domain = inferDomain(category || input.productName || '');
+  let fidelityTier = String(input.fidelityTier ?? input.tier ?? '').toUpperCase().trim();
+  if (!['A', 'B', 'C'].includes(fidelityTier)) fidelityTier = DOMAIN_TIER_FALLBACK[domain] || 'B';
+  const useScenes = normScenes(input.useScenes, 3);
   const script = {
     productName: String(input.productName || input.name || '').trim().slice(0, 60),
-    category: String(input.category || '').trim().slice(0, 30),
+    category,
+    domain,
+    fidelityTier,
     sellingPoints: arr(input.sellingPoints, 5),
     targetAudience: String(input.targetAudience || '').trim().slice(0, 40),
-    useScenes: arr(input.useScenes, 3),
+    useScenes,
     keyParts: arr(input.keyParts, 4)
   };
   // 兜底：至少各给一条占位，保证出图链路不崩
   if (!script.productName) script.productName = script.category || '精选商品';
   if (!script.category) script.category = '通用商品';
   if (script.sellingPoints.length === 0) script.sellingPoints = ['实拍原图，所见即所得'];
-  if (script.useScenes.length === 0) script.useScenes = ['明亮简约的生活化场景，自然光，浅色调'];
+  if (script.useScenes.length === 0) script.useScenes = [{ zh: '明亮简约的生活化场景，自然光，浅色调', en: 'a bright minimal lifestyle scene with natural daylight and light tones' }];
   if (script.keyParts.length === 0) script.keyParts = ['商品整体外观'];
   script.recommendedShots = buildSkeleton(kt, script);
   script.kitType = kt;
@@ -47,18 +87,21 @@ export function normalizeScript(input = {}, kitType = 'ecommerce') {
 export function buildSkeleton(kitType, script) {
   const scenes = script.useScenes || [];
   const parts = script.keyParts || [];
+  const sEn = i => (scenes[i] && scenes[i].en) || '';
+  const sZh = i => (scenes[i] && scenes[i].zh) || '';
   const shots = [];
   if (kitType === 'fashion') {
     shots.push({ type: 'white_main', count: 1, priority: 1 });
     // 模特图 M3 先占位：用场景合成图替代 + 前端文字标注"AI模特即将上线"
     shots.push({ type: 'model', count: 2, priority: 2, placeholder: true, note: 'AI模特即将上线，本期用场景图占位' });
-    shots.push({ type: 'seeding', count: 2, priority: 3, scenePrompt: scenes[0] || '', scenePrompt2: scenes[1] || '' });
+    shots.push({ type: 'seeding', count: 2, priority: 3, scenePrompt: sEn(0), scenePrompt2: sEn(1), sceneLabel: sZh(0), sceneLabel2: sZh(1) });
     shots.push({ type: 'detail', count: 1, priority: 4, partName: parts[0] || '商品细节' });
     shots.push({ type: 'marketing', count: 1, priority: 5 });
   } else {
     shots.push({ type: 'white_main', count: 2, priority: 1 });
     shots.push({ type: 'scene', count: 3, priority: 2,
-      scenePrompt: scenes[0] || '', scenePrompt2: scenes[1] || '', scenePrompt3: scenes[2] || '' });
+      scenePrompt: sEn(0), scenePrompt2: sEn(1), scenePrompt3: sEn(2),
+      sceneLabel: sZh(0), sceneLabel2: sZh(1), sceneLabel3: sZh(2) });
     shots.push({ type: 'detail', count: 2, priority: 3,
       partName: parts[0] || '关键细节', partName2: parts[1] || parts[0] || '关键细节' });
     shots.push({ type: 'marketing', count: 1, priority: 4 });
@@ -72,13 +115,15 @@ const SCRIPT_SYSTEM_PROMPT = [
   '全部判断必须基于图片里真实可见的内容，看不清就留空或给最保守的判断，禁止编造品牌型号、参数、价格、功效。',
   '你要输出：',
   '- productName：买家一看就懂的商品名（含颜色/规格/材质，20字内）',
-  '- category：子品类，要具体，不要大词。正确示例：山地车、头戴式降噪耳机、丝绒哑光口红、纯棉短袖T恤、每日坚果礼盒、316保温杯、缓震跑步鞋、通勤双肩包、女士真皮短靴、陶瓷马克杯',
+  '- category：子品类，要具体，不要大词。正确示例：山地车、头戴式降噪耳机、丝绒哑光唇釉、纯棉短袖T恤、每日坚果礼盒、316保温杯、缓震跑步鞋、通勤双肩包、女士真皮短靴、陶瓷马克杯',
+  '- domain：视觉风格域，只能从这 6 个里选一个：beauty（美妆个护）、fashion（服饰穿戴含鞋包）、food（餐饮食品生鲜）、tech（数码电器3C）、home（家居家装）、auto（汽车/自行车/交通工具，户外道路与城市场景）、general（其他）',
+  '- fidelityTier：保真等级，A/B/C 三选一。A=主体只能抠不能重画、有大量细结构或品牌文字（自行车、乐器、3C数码、机械、带型号标识的商品）；B=抠图后允许轻微边缘补全（服装、鞋、包、普通瓶罐）；C=允许生成模型适度重绘（鲜花、生鲜食品）',
   '- sellingPoints：3-5 个从图里看得出来的卖点（材质手感、做工细节、包装状态、配色设计、可见配件），每条 8-20 字，具体不空话',
   '- targetAudience：这件商品主要卖给谁（如：通勤上班族、大学生、户外骑行爱好者、送礼人群），20字内',
-  '- useScenes：2-3 个真实使用场景（如：地铁通勤降噪、办公室下午茶、周末郊野骑行），每条 6-15 字，后续会直接当背景图生成提示词',
+  '- useScenes：2-3 个真实使用场景，每个是 {"zh":"中文场景","en":"英文场景短语"}；zh 6-15 字（如：梳妆台日常化妆、地铁通勤降噪、周末郊野骑行），en 是可直接用于英文商业摄影出图的短语（如：daily makeup at a dressing table、noise-free commute on the subway、weekend trail riding）',
   '- keyParts：2-4 个最值得放大拍细节的部件/部位（如：避震前叉、磁吸管身、领口双车线、电脑仓夹层），每条 4-12 字',
   '只输出一个 JSON 对象，不要 markdown、不要代码块、不要任何解释。schema：',
-  '{"productName":"","category":"","sellingPoints":["",""],"targetAudience":"","useScenes":["",""],"keyParts":["",""]}'
+  '{"productName":"","category":"","domain":"beauty","fidelityTier":"B","sellingPoints":["",""],"targetAudience":"","useScenes":[{"zh":"","en":""}],"keyParts":["",""]}'
 ].join('\n');
 
 /** 把相似案例拼成 few-shot 参考文本（不直接教模型照抄，只给"写法感觉"）。 */

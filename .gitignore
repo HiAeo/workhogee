@@ -48,8 +48,69 @@ coverage/
 *.temp
 _backup/
 
-# Local secrets / tooling (added)
-.dev.vars
-**/.dev.vars
-.wrangler/
-_shots/
+# ============================================================
+# 全链路通关整理：临时脚本 / 测试 / 归档 / 产物，一律不入库
+# ============================================================
+# 下划线开头的临时文件与目录（任意层级；已跟踪的 _redirects 不受影响）
+**/_*
+
+# 测试 / 归档 / 备份目录（根目录锚定）
+/backup/
+/test-agu/
+
+# 研究与产物目录（根目录锚定，避免误伤 server-cloudflare 下同名依赖目录，如 server-cloudflare/video/）
+/design-brain/
+/atu_engine/
+/regression-suite/
+/aview-artifacts/
+/artifacts-mkt-bilingual/
+/final_pkg/
+/review-package/
+/console/
+/video/
+/vefaas/
+/skills/
+/marketing-spec/
+
+# 压缩包 / Word 文档 / 备份文件
+*.zip
+*.docx
+*.bak
+*.bak_*
+/workbench.bak_*.html
+
+# 一次性辅助脚本（根目录）
+/admin_app.py
+/agent_workflow.py
+/base_client.py
+/config_form*.py
+/create_*.py
+/enable_form_share*.py
+/generate_test_image.py
+/image_generator.py
+/knowledge_base.py
+/test_volcengine_api.py
+/upload*.py
+
+# 一次性数据 / 截图 / 素材（根目录）
+/base_config.json
+/base_fields.json
+/image_config.json
+/user_fields.json
+/generated_sample.png
+/geo_screenshot_ref.png
+/screenshot*.png
+/shot*.png
+/test_dish.jpg
+/food_knowledge_base.md
+/home_decor_knowledge_base.md
+/WorkHogee_阿图落地评审_v0.9.7.html
+/*落地评审*.html
+/*系统改造蓝图*.md
+
+# logo 目录下一次性脚本（保留 final/v18 与 favicon）
+/logo/export_*.py
+/logo/upload_*.py
+
+# 根目录一次性批处理（start-tunnel.bat 已跟踪，不受影响）
+/*.bat

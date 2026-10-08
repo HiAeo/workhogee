@@ -1,0 +1,227 @@
+{
+ "bad_input": {
+  "draft": {
+   "title": "Best Seller! The Number One adult bike helmet 100% guaranteed cheapest light helmet free shipping world's best",
+   "body": "Free shipping, money back guarantee, world's best helmet ever.",
+   "bullets": [
+    "only one weak bullet",
+    "second bullet a bit longer than the first one but fine"
+   ],
+   "price": ""
+  },
+  "media": [
+   {
+    "type": "image",
+    "w": 300,
+    "h": 300,
+    "ext": "bmp",
+    "sizeMB": 50
+   },
+   {
+    "type": "video",
+    "sizeMB": 600,
+    "dur": 300
+   }
+  ]
+ },
+ "bad_validation": {
+  "ok": true,
+  "platform": "amazon",
+  "passed": false,
+  "results": [
+   {
+    "rule": "image_count",
+    "pass": true,
+    "detail": "图片 1 张 / 要求 1~9",
+    "autoFixed": false
+   },
+   {
+    "rule": "image_ratio",
+    "pass": true,
+    "detail": "建议 2000:2000（≈1.00）；偏差 0 张",
+    "autoFixed": false,
+    "before": "符合",
+    "after": "符合"
+   },
+   {
+    "rule": "image_resolution",
+    "pass": false,
+    "detail": "建议长边≥2000px（电商需≥1000px支持放大）；偏低 1 张 → 需阿图重出高清",
+    "autoFixed": false
+   },
+   {
+    "rule": "image_white_bg",
+    "pass": true,
+    "detail": "MANDATORY: pure white background RGB(255,255,255), product fills ~85% of frame, no text/watermark/logo",
+    "autoFixed": false
+   },
+   {
+    "rule": "file_size",
+    "pass": true,
+    "detail": "无文件大小约束或无图，跳过",
+    "autoFixed": false
+   },
+   {
+    "rule": "format",
+    "pass": false,
+    "detail": "接受格式 jpeg/jpg/png；不符 1 个 → 需转格式",
+    "autoFixed": false
+   },
+   {
+    "rule": "title_length",
+    "pass": true,
+    "detail": "标题 110/200 字",
+    "autoFixed": false
+   },
+   {
+    "rule": "bullet_count",
+    "pass": false,
+    "detail": "五点 2 < 建议 5 条（需阿文补写，不能自动编造）",
+    "autoFixed": false
+   },
+   {
+    "rule": "bullet_length",
+    "pass": true,
+    "detail": "每条五点 ≤ 500 字符",
+    "autoFixed": false
+   },
+   {
+    "rule": "body_length",
+    "pass": true,
+    "detail": "正文 62/5000 字",
+    "autoFixed": false
+   },
+   {
+    "rule": "video_duration",
+    "pass": false,
+    "detail": "视频上限 120s；超时 1 个（300s）→ 需剪辑至建议15-60s",
+    "autoFixed": false
+   },
+   {
+    "rule": "hashtag_count",
+    "pass": true,
+    "detail": "无话题硬上限（按推荐执行）",
+    "autoFixed": false
+   },
+   {
+    "rule": "price_required",
+    "pass": false,
+    "detail": "电商平台价格必填 → 请补价格（不能自动编造）",
+    "autoFixed": false
+   },
+   {
+    "rule": "ad_law_words",
+    "pass": true,
+    "detail": "命中广告法极限词 [best seller、number one、100% guaranteed、money back guarantee、free shipping、cheapest、guaranteed、world's best] → 自动打码替换",
+    "autoFixed": true,
+    "before": "best seller、number one、100% guaranteed、money back guarantee、free shipping、cheapest、guaranteed、world's best",
+    "after": "▇▇▇",
+    "fixed": {
+     "title": "▇▇▇! The ▇▇▇ adult bike helmet ▇▇▇ ▇▇▇ light helmet ▇▇▇ ▇▇▇",
+     "body": "▇▇▇, ▇▇▇, ▇▇▇ helmet ever.",
+     "bullets": [
+      "only one weak bullet",
+      "second bullet a bit longer than the first one but fine"
+     ]
+    }
+   },
+   {
+    "rule": "sensitive_words",
+    "pass": true,
+    "detail": "敏感/导流词 0 命中",
+    "autoFixed": false
+   }
+  ],
+  "autoFixedCount": 1,
+  "failedRules": [
+   "image_resolution",
+   "format",
+   "bullet_count",
+   "video_duration",
+   "price_required"
+  ],
+  "fixedDraft": {
+   "title": "▇▇▇! The ▇▇▇ adult bike helmet ▇▇▇ ▇▇▇ light helmet ▇▇▇ ▇▇▇",
+   "body": "▇▇▇, ▇▇▇, ▇▇▇ helmet ever.",
+   "bullets": [
+    "only one weak bullet",
+    "second bullet a bit longer than the first one but fine"
+   ],
+   "hashtags": [],
+   "price": ""
+  }
+ },
+ "fixed_draft": {
+  "title": "▇▇▇! The ▇▇▇ adult bike helmet ▇▇▇ ▇▇▇ light helmet ▇▇▇ ▇▇▇",
+  "body": "▇▇▇, ▇▇▇, ▇▇▇ helmet ever.",
+  "bullets": [
+   "only one weak bullet",
+   "second bullet a bit longer than the first one but fine"
+  ],
+  "hashtags": [],
+  "price": ""
+ },
+ "good_validation_summary": {
+  "xiaohongshu": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_ratio",
+    "image_resolution"
+   ]
+  },
+  "douyin": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_ratio",
+    "image_resolution"
+   ]
+  },
+  "wechat_moments": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_resolution"
+   ]
+  },
+  "wechat_official": {
+   "passed": true,
+   "autofixed": 0,
+   "failed": []
+  },
+  "instagram": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_ratio",
+    "image_resolution"
+   ]
+  },
+  "tiktok": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_ratio",
+    "image_resolution"
+   ]
+  },
+  "jd": {
+   "passed": true,
+   "autofixed": 0,
+   "failed": []
+  },
+  "taobao": {
+   "passed": true,
+   "autofixed": 0,
+   "failed": []
+  },
+  "amazon": {
+   "passed": false,
+   "autofixed": 0,
+   "failed": [
+    "image_resolution"
+   ]
+  }
+ }
+}

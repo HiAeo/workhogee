@@ -243,6 +243,95 @@ module.exports = function(services) {
     }
   });
 
+  // ===== 自由对话意图理解 API =====
+
+  /**
+   * 自由输入意图理解
+   * POST /api/understand
+   * body: { text, context: { activePartner, stage, hasIdentity, identityType, hasImages, product } }
+   * 返回结构化意图，前端据此分流到对应伙计/流程
+   */
+  router.post('/understand', async (req, res) => {
+    try {
+      const { text, context = {} } = req.body || {};
+      if (!text || !text.trim()) {
+        return res.status(400).json({ success: false, error: 'text is required' });
+      }
+
+      const ctx = {
+        activePartner: context.activePartner || 'atu',
+        stage: context.stage || 'welcome',
+        hasIdentity: !!context.hasIdentity,
+        identityType: context.identityType || '',
+        hasImages: !!context.hasImages,
+        product: context.product || ''
+      };
+
+      const systemPrompt = [
+        {
+          role: 'system',
+          content: [
+            '你是 WorkHogee 工作台的意图理解引擎。WorkHogee 是帮小老板做生意的 AI 伙计工作台，有四个伙计：',
+            '- atu 阿图：负责把手机实拍做成可上架商品图（生图、换背景、修图）',
+            '- awen 阿文：负责写分渠道文案（小红书/抖音/朋友圈/详情页）',
+            '- afa 阿发：负责把素材和文案打包送达各平台（复制文案、打开发布页）',
+            '- agu 阿果：负责效果数据（浏览、留资、渠道归因）',
+            '- host Hogee：总调度，闲聊或问问题时用',
+            '',
+            '当前工作台状态：',
+            '- 当前主讲伙计：' + ctx.activePartner,
+            '- 当前流程阶段：' + ctx.stage + '（welcome=欢迎/选技能，upload=传图，confirm=认货，outputs=选图，gen=出图，done=完成）',
+            '- 是否已选行业技能：' + (ctx.hasIdentity ? '是（' + ctx.identityType + '）' : '否'),
+            '- 是否已上传图片：' + (ctx.hasImages ? '是' : '否'),
+            '- 当前商品：' + (ctx.product || '未设置'),
+            '',
+            '你的任务：判断用户这句话想干嘛，严格返回以下 JSON：',
+            '{',
+            '  "target": "atu" | "awen" | "afa" | "agu" | "host",',
+            '  "action": "start_sell" | "upload_photos" | "write_copy" | "deliver" | "show_analytics" | "choose_skill" | "chat" | "extra_note",',
+            '  "product": "如果用户在介绍自己卖什么/商品名，提取出来；否则为空字符串",',
+            '  "reply": "给用户的一句简短回复，口语化，像伙计说话，不超过40字",',
+            '  "confidence": 0到1的数字',
+            '}',
+            '',
+            '判断规则：',
+            '- 用户说"我卖XX/我是做XX的/这是XX"→ start_sell，product 填商品名',
+            '- 用户说"传图/拍照/上图/发图"→ upload_photos',
+            '- 用户说"写文案/写介绍/写小红书/写朋友圈/写标题"→ write_copy',
+            '- 用户说"发布/送达/发出去/复制文案/上架"→ deliver',
+            '- 用户说"看数据/效果/怎么样/有多少人看"→ show_analytics',
+            '- 用户说"换技能/二手车/电商"→ choose_skill',
+            '- 用户在补充出图要求/说明（如"背景要白的""要高清"）→ extra_note',
+            '- 其他闲聊/提问 → chat，target 用 host',
+            '只返回 JSON，不要任何其他文字。'
+          ].join('\n')
+        },
+        { role: 'user', content: text.trim() }
+      ];
+
+      let result;
+      try {
+        result = await llm.chatJSON(systemPrompt, { temperature: 0.1, maxTokens: 300 });
+      } catch (e) {
+        console.error('[understand] LLM parse failed:', e.message);
+        return res.json({ success: false, error: 'llm_failed', fallback: true });
+      }
+
+      const validTargets = ['atu', 'awen', 'afa', 'agu', 'host'];
+      const validActions = ['start_sell', 'upload_photos', 'write_copy', 'deliver', 'show_analytics', 'choose_skill', 'chat', 'extra_note'];
+      if (!validTargets.includes(result.target)) result.target = 'host';
+      if (!validActions.includes(result.action)) result.action = 'chat';
+      if (typeof result.product !== 'string') result.product = '';
+      if (typeof result.reply !== 'string' || !result.reply) result.reply = '收到。';
+      if (typeof result.confidence !== 'number') result.confidence = 0.5;
+
+      res.json({ success: true, data: result });
+    } catch (e) {
+      console.error('[understand] error:', e.message);
+      res.status(500).json({ success: false, error: e.message, fallback: true });
+    }
+  });
+
   // ===== 线索相关 API =====
 
   /**

@@ -184,6 +184,8 @@ export async function picwishRBackground(env, pngBytes, prompt, opts = {}) {
     fd.append('sync', '1');
     fd.append('prompt', prompt);
     fd.append('output_type', '2');   // 返回图片
+    fd.append('batch_size', String(opts.batchSize === 1 ? 1 : 2));
+    if (opts.negativePrompt) fd.append('negative_prompt', String(opts.negativePrompt).slice(0, 512));
     fd.append('image_file', new Blob([pngBytes], { type: 'image/png' }), 'cutout.png');
     const r = await fetch(BASE + '/api/tasks/visual/r-background', {
       method: 'POST',
@@ -210,4 +212,89 @@ export async function picwishRBackground(env, pngBytes, prompt, opts = {}) {
   } catch (e) {
     return { ok: false, error: { code: 'picwish_rbg_exception', message: String(e && e.message || e) } };
   }
+}
+
+/* =====================================================================
+ * scale（AI 超分/清晰化）：对抠图 PNG 做 type=clean 超分，注入真实细节。
+ * ---------------------------------------------------------------------
+ * POST {BASE}/api/tasks/visual/scale
+ *   multipart: image_file=PNG字节, sync=1, type=clean, scale_factor=2, format=png
+ * 响应：{ status:200, data:{ state:1, image:url } }
+ *   返回 URL（OSS预签名1h过期），需下载字节。输出为 RGBA PNG，alpha 保留。
+ * 计费：2 算粒/张（≤2048）。
+ * 用途：白底工艺 v3——cutout 后先超分再前端白底合成，解决产品柔糊。
+ * ===================================================================*/
+
+/**
+ * 调 scale 超分（type=clean），返回超分后的 PNG 字节。
+ * @param {object} env Worker env（含 PICWISH_API_KEY）
+ * @param {Uint8Array} pngBytes 透明抠图 PNG 字节
+ * @param {object} [opts] { scaleFactor?: number }
+ * @returns {Promise<{ok:true,bytes:Uint8Array,width:number,height:number,ms:number}|
+ *                   {ok:false,error:{code,message?}}>}
+ */
+export async function picwishScale(env, pngBytes, opts = {}) {
+  const t0 = Date.now();
+  const key = env.PICWISH_API_KEY;
+  if (!key) return { ok: false, error: { code: 'picwish_not_configured', message: 'PICWISH_API_KEY 未配置' } };
+  if (!(pngBytes instanceof Uint8Array) || pngBytes.length < 100) {
+    return { ok: false, error: { code: 'bad_png_bytes', message: 'scale 需要 PNG 字节' } };
+  }
+  try {
+    const fd = new FormData();
+    fd.append('sync', '1');
+    fd.append('type', 'clean');
+    fd.append('scale_factor', String(opts.scaleFactor || 2));
+    fd.append('format', 'png');
+    const inMime = opts.mime || 'image/png';
+    const inExt = /jpe?g/i.test(inMime) ? 'jpg' : 'png';
+    fd.append('image_file', new Blob([pngBytes], { type: inMime }), 'cutout.' + inExt);
+    const r = await fetch(BASE + '/api/tasks/visual/scale', {
+      method: 'POST',
+      headers: { 'X-API-KEY': key },
+      body: fd,
+      signal: AbortSignal.timeout(150000),
+    });
+    const txt = await r.text();
+    if (r.status !== 200) {
+      return { ok: false, error: { code: 'picwish_scale_http_' + r.status, message: txt.slice(0, 300) } };
+    }
+    let j;
+    try { j = JSON.parse(txt); }
+    catch { return { ok: false, error: { code: 'picwish_scale_bad_json', message: txt.slice(0, 200) } }; }
+    if (j.status !== 200 || !j.data || j.data.state !== 1) {
+      return { ok: false, error: { code: 'picwish_scale_task_failed', message: 'state=' + (j.data && j.data.state) + ' msg=' + (j.message || '').slice(0, 200) } };
+    }
+    const imgUrl = j.data.image;
+    if (!imgUrl || typeof imgUrl !== 'string') {
+      return { ok: false, error: { code: 'picwish_scale_no_image', message: txt.slice(0, 200) } };
+    }
+    // 下载超分图字节
+    const dl = await fetch(imgUrl, { signal: AbortSignal.timeout(60000) });
+    if (!dl.ok) {
+      return { ok: false, error: { code: 'picwish_scale_dl_http_' + dl.status, message: '下载超分图失败' } };
+    }
+    const bytes = new Uint8Array(await dl.arrayBuffer());
+    const size = pngSize(bytes);
+    return { ok: true, bytes, width: size.width, height: size.height, ms: Date.now() - t0 };
+  } catch (e) {
+    return { ok: false, error: { code: 'picwish_scale_exception', message: String(e && e.message || e) } };
+  }
+}
+
+/**
+ * dataURL 友好的 scale 超分封装（可复用）：输入图片 dataURL（jpeg/png/webp），
+ * 输出超分后的 PNG dataURL（alpha 保留）。供 /superres 在 AutoDL 不可用时降级使用。
+ * @param {object} env Worker env（含 PICWISH_API_KEY）
+ * @param {string} dataUrl 输入图片 dataURL
+ * @param {object} [opts] { scaleFactor?: number }
+ * @returns {Promise<{ok:true,image:string,width:number,height:number,ms:number}|
+ *                    {ok:false,error:{code:string,message?:string}}>}
+ */
+export async function picwishScaleDataUrl(env, dataUrl, opts = {}) {
+  const info = dataUrlToBytes(dataUrl);
+  if (!info) return { ok: false, error: { code: 'bad_dataurl', message: '图片 dataURL 不合法' } };
+  const r = await picwishScale(env, info.bytes, { ...opts, mime: info.mime });
+  if (!r.ok) return r;
+  return { ok: true, image: bytesToPngDataUrl(r.bytes), width: r.width, height: r.height, ms: r.ms };
 }
