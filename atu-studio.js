@@ -815,11 +815,11 @@ body.atu-open #atuStudio{display:flex}\
   /* ========== r-background 联合背景（产品保真）：前端编排 ========== */
   RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,mood:1,hero:1,scene_atmosphere:1,ingredients:1},
   _layCfg:{
-   scene_show:{cx:.32,bottom:.94,h:.74},mood:{cx:.30,bottom:.90,h:.70},scene_atmosphere:{cx:.5,bottom:.96,h:.78},
-   selling_point:{cx:.52,bottom:.97,h:.80},hero:{cx:.5,bottom:.97,h:.82},
-   core_selling:{cx:.27,bottom:.96,h:.78},icon_selling:{cx:.5,bottom:.66,h:.52},ingredients:{cx:.5,bottom:.60,h:.48},
-   material:{cx:.5,bottom:.80,h:.74},product_detail:{cx:.5,bottom:.93,h:.86},
-   default:{cx:.5,bottom:.95,h:.78}
+   scene_show:{cx:.50,bottom:.93,h:.64},mood:{cx:.42,bottom:.90,h:.66},scene_atmosphere:{cx:.5,bottom:.95,h:.72},
+   selling_point:{cx:.50,bottom:.97,h:.76},hero:{cx:.5,bottom:.96,h:.78},
+   core_selling:{cx:.50,bottom:.97,h:.74},icon_selling:{cx:.5,bottom:.66,h:.52},ingredients:{cx:.5,bottom:.60,h:.48},
+   material:{cx:.5,bottom:.95,h:.72},product_detail:{cx:.5,bottom:.95,h:.80},
+   default:{cx:.5,bottom:.95,h:.72}
   },
   _sceneEnv:{
    lifestyle:'a bright airy real-life setting with soft natural daylight and tasteful context props, gentle background blur, warm inviting commercial lifestyle photography',
@@ -829,80 +829,221 @@ body.atu-open #atuStudio{display:flex}\
    mood:'an atmospheric cinematic scene, soft moody light, gentle haze, rich color grading, emotional premium ambiance'
   },
   _typeScene:{scene_show:'lifestyle',mood:'mood',scene_atmosphere:'mood',selling_point:'hero',hero:'hero',core_selling:'info',icon_selling:'info',ingredients:'info',material:'macro',product_detail:'macro'},
-  buildRbgPrompt:function(type,o){
-   o=o||{};var group=this._typeScene[type]||'info';var domain=String(o.domain||'product').toLowerCase();
-   return [
-    'Photorealistic commercial product scene. The product (already cut out and placed on this transparent canvas) sits in '+this._sceneEnv[group]+'.',
-    'The environment suits a '+domain+' product, with a few tasteful context-appropriate props around it, never covering the product.',
-    'Render a natural soft contact shadow under the product and matching reflections and light direction so it blends seamlessly.',
-    'IMPORTANT: preserve the product exact real shape, proportions, colors, materials and every printed label, logo and text on its packaging. Do NOT redraw, repaint, warp, distort, erase or alter the product or anything printed on it.',
-    'The generated BACKGROUND must contain absolutely NO words, letters, numbers, captions, logos, price tags, posters, stickers, watermarks or any readable text.',
-    'High detail, sharp focus on the product, professional e-commerce advertising photo, natural color.'+(o.variant?(' '+o.variant):'')
-   ].join(' ');
+  /* 品类无关「姿态/支撑」判定（基于产品真实形态，不联网、不依赖品牌）：整套只判一次 */
+  detectPose:function(fg){
+   var self=this;
+   return (async function(){
+    try{
+     var ask='请只看这张已抠图商品（透明底），判断它在真实世界的自然放置方式，只输出JSON：'+
+      '{"pose":"stand|hang|hand|lay","loop":false,"loopPos":"top|bottom|side|none","flatBase":false}。'+
+      'stand=底部能竖直立在台面/地面（多数家电、3C、瓶罐、箱包、可自立的便携吹风机）；'+
+      'hang=挂环/挂孔位于产品【上部】、挂点在重心之上、设计为悬挂（淋浴挂件、挂饰）；'+
+      'hand=主要靠手握且无法自立；lay=平放或斜靠。'+
+      '特别注意：若挂环在产品【最底端】（例如吹风机手柄底端的电源线收纳小环），这不是悬挂，产品仍竖直放置=stand。'+
+      '"loop"=是否带挂环/孔；"loopPos"=挂环位置 top上部/bottom底端/side侧面/none无；"flatBase"=底部是否为可自立平整面。';
+     var r=await authPost('/vision-json',{image:fg,ask:ask,system:'你是严谨的视觉分析助手，只输出JSON。',maxTokens:400},60000);
+     if(r&&r.ok&&r.data){
+      var p=['stand','hang','hand','lay'].indexOf(r.data.pose)>=0?r.data.pose:'stand';
+      var loopTop=r.data.loopPos==='top';
+      if(p==='hang'&&!loopTop)p=r.data.flatBase?'stand':'hand';   // 挂点不在上部 → 不悬挂
+      if(p==='stand'&&loopTop&&!r.data.flatBase)p='hang';        // 上部挂点且无平底 → 悬挂
+      return {pose:p,loop:!!r.data.loop,loopPos:r.data.loopPos||'none',flatBase:!!r.data.flatBase};
+     }
+    }catch(e){}
+    return {pose:'stand',loop:false,loopPos:'none',flatBase:true};
+   })();
   },
-  layoutCutout:function(fg,type,sizeStr){
+  ensurePose:function(fg){
+   if(!this._posePromise)this._posePromise=this.detectPose(fg);
+   return this._posePromise;
+  },
+  buildRbgPrompt:function(type,o,pose){
+   o=o||{};pose=pose||'stand';var group=this._typeScene[type]||'info';var domain=String(o.domain||'product').toLowerCase();
+   var keep='Photorealistic commercial product photo. The product (already cut out and placed on this transparent canvas) must keep its EXACT real shape, proportions, colors, materials and every printed label, logo and text on its packaging. Do NOT redraw, repaint, warp, distort, erase or alter the product. The generated BACKGROUND must contain absolutely NO words, letters, numbers, captions, logos, price tags, posters, stickers or watermarks.';
+   var sceneTypes={scene_show:1,mood:1,scene_atmosphere:1};
+   var place;
+   if(pose==='hang'||pose==='hand'){
+    place='The product is ALREADY hanging on the simple support already drawn on the canvas. Render only a real photographic bright room wall behind it (tidy bathroom / entry / bedroom), soft natural daylight, gentle background blur, clear empty wall below. Do NOT add any hook, rail, rod, bracket, shelf, table, counter, pedestal, box, package or furniture — the support and product already exist.';
+   }else if(sceneTypes[type]){
+    place='Place the product standing upright in a real photographic interior with strong depth: a real foreground floor, a mid-ground and a distant softly blurred recognizable room (bright bathroom / bedroom / hotel / living room), large windows with natural daylight ('+this._sceneEnv[group]+'). The product stands directly on the real floor with a thin soft contact shadow and a subtle floor reflection. A few tasteful distant props may appear far in the background but must never touch or surround the product.';
+   }else{
+    place='The product stands upright in front of a clean bright light-gray smooth matte micro-cement plaster wall, soft even studio lighting, a subtle smooth vertical gradient and a faint horizontal surface line near the bottom; minimal, premium and uncluttered. Render a thin soft contact shadow where it meets the surface.';
+   }
+   var cord='If the product has a short power cord at its base, the cord rests naturally on the surface right beside the base with a slight curve; it must NOT extend away, hang into the distance, or plug into any block, box, tank, socket or object.';
+   var ban='CRITICAL: NO fabric, cloth, woven or textile weave texture filling the frame, NO noisy speckled or knitted texture, NO pedestal, cube, acrylic block, glass water tank, rubble, stones, rocks, floating platform, box, package, paper, table or shelf inserted under or around the product, and NO text anywhere in the background.';
+   return keep+' '+place+' '+cord+' '+ban+' High detail, sharp focus on the product, professional e-commerce advertising photo, natural color.'+(o.variant?(' '+o.variant):'');
+  },
+  layoutCutout:function(fg,type,sizeStr,pose){
    var self=this;return new Promise(function(res,rej){
     var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
     var im=new Image();
     im.onload=function(){
      var cfg=self._layCfg[type]||self._layCfg.default;
      var cv=document.createElement('canvas');cv.width=W;cv.height=H;var ctx=cv.getContext('2d');
-     var dh=H*cfg.h,sc=dh/im.naturalHeight,dw=im.naturalWidth*sc;
-     ctx.drawImage(im,W*cfg.cx-dw/2,H*cfg.bottom-dh,dw,dh);
+     var dw,dh,px,py,sc;
+     if(pose==='hang'||pose==='hand'){
+      // 悬挂：产品挂环扣在「确定性绘制的水平墙杆」上，杆压在环前形成真实遮挡；整体悬空、下方留空
+      dh=H*0.56;sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;
+      px=W*cfg.cx-dw/2;
+      var railY=H*0.155,py=railY-H*0.012;
+      ctx.drawImage(im,px,py,dw,dh);
+      var x1=W*0.10,x2=W*0.90,rr=H*0.011;
+      var rg=ctx.createLinearGradient(0,railY-rr,0,railY+rr);
+      rg.addColorStop(0,'#7c8185');rg.addColorStop(0.34,'#d6d9db');rg.addColorStop(0.5,'#f3f5f6');rg.addColorStop(0.66,'#c0c4c7');rg.addColorStop(1,'#696e72');
+      ctx.fillStyle=rg;ctx.fillRect(x1,railY-rr,x2-x1,rr*2);
+      ctx.fillStyle='#999fa3';
+      [x1,x2].forEach(function(x){ctx.beginPath();ctx.arc(x,railY,rr*1.95,0,Math.PI*2);ctx.fill();});
+     }else{
+      dh=H*cfg.h;sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;
+      px=W*cfg.cx-dw/2;py=H*cfg.bottom-dh;
+      ctx.drawImage(im,px,py,dw,dh);
+     }
      res(cv.toDataURL('image/png'));
     };
     im.onerror=function(){rej(new Error('fg_fail'));};im.src=fg;
    });
   },
   buildTextLayersFE:function(recipe,ost){
-   var L=[];function push(s,t,x,y,w,h,o){t=String(t||'').trim();if(!t)return;o=o||{};L.push({slot:s,text:t,x:x,y:y,w:w,h:h,align:o.align||'left',baseline:o.baseline||'body',color:o.color||'#101826',bold:!!o.bold,max_lines:o.max_lines||1});}
+   var L=[];
+   function clean(t){return String(t==null?'':t).replace(/^\s*\d{1,2}\s*[.、)]\s*/,'').replace(/^\s*[•·\-▪◦▫]\s*/,'').trim();}
+   function push(s,t,x,y,w,h,o){t=clean(t);if(!t)return;o=o||{};L.push({slot:s,text:t,x:x,y:y,w:w,h:h,align:o.align||'left',baseline:o.baseline||'body',color:o.color||'#141b28',bold:!!o.bold,max_lines:o.max_lines||2});}
    var hl=String(ost.headline||'').trim(),sub=String(ost.subheadline||'').trim();
    var icons=(ost.icons||[]).slice(0,6),panels=(ost.panels||[]).slice(0,3);
    if(recipe==='core_selling'){
-    push('headline',hl,.55,.09,.40,.13,{baseline:'h2',bold:true,max_lines:2});
-    icons.forEach(function(ic,i){push('b'+i,ic.label,.56,.27+i*.115,.40,.10,{baseline:'body',max_lines:2});});
+    push('headline',hl,.06,.07,.88,.15,{baseline:'h1',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'body'});
    }else if(recipe==='selling_point'||recipe==='hero'){
-    push('headline',hl,.06,.06,.88,.13,{baseline:'h1',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.06,.20,.8,.07,{baseline:'body'});
+    push('headline',hl,.06,.07,.88,.15,{baseline:'h1',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'body'});
    }else if(recipe==='scene_show'){
-    push('headline',hl,.06,.70,.62,.13,{baseline:'h1',bold:true,color:'#FFFFFF',max_lines:2});
-    if(sub)push('sub',sub,.06,.85,.55,.07,{baseline:'body',color:'#FFFFFF'});
+    push('headline',hl,.05,.06,.9,.15,{baseline:'h1',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.05,.22,.86,.09,{baseline:'body'});
    }else if(recipe==='mood'||recipe==='scene_atmosphere'){
-    push('headline',hl,.08,.78,.55,.10,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
+    push('headline',hl,.07,.08,.72,.12,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
    }else if(recipe==='material'){
-    push('headline',hl,.1,.87,.8,.08,{baseline:'h2',bold:true,color:'#FFFFFF',align:'center',max_lines:1});
+    push('headline',hl,.06,.07,.88,.13,{baseline:'h2',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.06,.21,.84,.08,{baseline:'body'});
    }else if(recipe==='product_detail'){
-    push('headline',hl,.08,.06,.84,.11,{baseline:'h2',bold:true,max_lines:2});
+    push('headline',hl,.06,.07,.88,.14,{baseline:'h2',bold:true,max_lines:2});
+    if(sub)push('sub',sub,.06,.22,.84,.08,{baseline:'body'});
    }else if(recipe==='icon_selling'||recipe==='ingredients'){
-    push('headline',hl,.08,.05,.84,.11,{baseline:'h1',bold:true,align:'center',max_lines:2});
-    icons.forEach(function(ic,i){var col=i%3,row=Math.floor(i/3);push('ic'+i,ic.label,.08+col*.30,.70+row*.13,.27,.10,{baseline:'label',align:'center',max_lines:2});});
+    push('headline',hl,.08,.05,.84,.12,{baseline:'h1',bold:true,align:'center',max_lines:2});
+    icons.forEach(function(ic,i){var col=i%3,row=Math.floor(i/3);push('ic'+i,ic.label,.08+col*.30,.66+row*.16,.27,.13,{baseline:'label',align:'center',max_lines:2});});
    }else if(recipe==='multi_scene'){
-    push('headline',hl,.05,.03,.9,.10,{baseline:'h1',bold:true,align:'center',max_lines:1});
-    panels.forEach(function(p,i){push('pc'+i,p.caption||p.title,.012+i*.333,.88,.31,.08,{baseline:'body',align:'center'});});
-   }else if(hl)push('headline',hl,.06,.06,.88,.12,{baseline:'h1',bold:true,max_lines:2});
+    push('headline',hl,.05,.04,.9,.11,{baseline:'h1',bold:true,align:'center',max_lines:1});
+    panels.forEach(function(p,i){push('pc'+i,p.caption||p.title,.012+i*.333,.86,.31,.10,{baseline:'body',align:'center',max_lines:2});});
+   }else if(hl)push('headline',hl,.06,.07,.88,.14,{baseline:'h1',bold:true,max_lines:2});
    return L;
   },
   genScene:function(req){
    var self=this;var ac=new AbortController();(self._reqAborts=self._reqAborts||{})[req.type]=ac;
    return (async function(){
+    try{
     var fg=self._fg||null;
     if(!fg){
      var co=await authPost('/cutout',{image:req.image,strategy:'picwish'},80000,{signal:ac.signal});
      if(co&&co.ok&&co.image)fg=co.image;
-     else return {ok:false,error:(co&&co.error)||{code:'cutout_fail',message:'主体抠图失败，建议纯色背景重拍'}};
+     else return {ok:false,error:(co&&co.error)||{code:'cutout_fail',message:'主体抠图失败，可点该图单张重做'}};
     }
     if(self._abort)return {ok:false};
+    var pose=await self.ensurePose(fg),poseName=pose.pose;
     var canvasPng;
-    try{canvasPng=await self.layoutCutout(fg,req.type,req.size);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
-    var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes});
-    var j=await authPost('/marketing/scene',{image:canvasPng,prompt:prompt,batch_size:2},120000,{signal:ac.signal});
-    if(!j||!j.ok||!j.images||!j.images.length)return (j&&j.ok===false)?j:{ok:false,error:(j&&j.error)||{code:'scene_fail',message:'背景生成失败'}};
-    var base=j.images[0];
-    try{var up=await authPost('/superres',{image:base,scale:2},90000,{signal:ac.signal});if(up&&up.ok&&up.image)base=up.image;}catch(e){}
+    try{canvasPng=await self.layoutCutout(fg,req.type,req.size,poseName);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
+    var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes},poseName);
+    var neg='text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
+    var sleepFE=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
+    // 安全请求：520/502/503/超时/网络等瞬时错误自动退避重试，且绝不把异常抛给外层
+    var postRobust=async function(path,body,to,retries){
+      var last=null;
+      for(var a=0;a<=retries;a++){
+       if(self._abort)return {ok:false,abort:true};
+       try{
+        var r=await authPost(path,body,to);
+        if(r&&r.ok)return r;
+        var c=''+((r&&r.error&&(r.error.code||r.error.message))||'');
+        last=r;
+        if(!c.match(/520|502|503|521|522|524|timeout|超时|network|fetch|failed/i)||a===retries)return r;
+       }catch(e){last={ok:false,error:{code:'network',message:''+((e&&e.message)||e)}};}
+       await sleepFE(1800*(a+1));
+      }
+      return last;
+    };
+    var callScene=async function(){
+      var s=await postRobust('/marketing/scene',{image:canvasPng,prompt:prompt,batch_size:2,pose:poseName,negative_prompt:neg},30000,3);
+      if(!s||s.ok!==true||!s.task_id)return s||{ok:false,error:{code:'scene_submit_fail',message:'背景任务提交失败'}};
+      var tid=s.task_id,deadline=Date.now()+130000;
+      while(Date.now()<deadline){
+       if(self._abort)return {ok:false};
+       await sleepFE(2000);
+       var q=await postRobust('/marketing/scene-result',{task_id:tid},20000,1);
+       if(q&&q.ok===true&&q.images&&q.images.length)return q;
+       if(q&&q.ok===false&&q.error){
+        var c=''+(q.error.code||q.error.message||'');
+        // 仅 PicWish 业务终态才判死；边缘错误继续轮询到超时
+        if(c.match(/picwish|invalid|bad_|illegal/i))return q;
+       }
+      }
+      return {ok:false,error:{code:'scene_timeout',message:'背景生成超时，已为你兜底出图'}};
+    };
+    var j=await callScene();
+    var base;
+    if(j&&j.ok&&j.images&&j.images.length){
+    // 前端多候选质检：背景乱码 / 多余承托物 / 主体缺失（浏览器端，无 Worker 资源限制）
+    var qcAsk='Inspect this e-commerce product photo: a real product cutout composited over an AI background'+(poseName==='hang'?' (the product hangs on the simple horizontal support)':' (the product stands upright)')+'. Return JSON exactly: {"strayText":true if ANY readable or gibberish letters, words or numbers appear on the background, walls, props, boxes or papers (IGNORE text printed on the product itself),"fakeSupport":true if any generated table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper pile, rubble or other object touches or supports the product that should not be there (for hang the only allowed support is the simple rail; for stand only the real surface directly under it, and a short cord may rest on that surface beside the base),"fabricBg":true if the background is entirely or mostly filled with fabric, cloth, woven or knitted textile, noisy speckled texture, or a flat texture with NO recognizable room depth and NO smooth clean plaster wall,"productHero":true if the product is complete, sharp and the clear main subject,"score": an integer 1 to 10 for overall realism and selling appeal}.';
+    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);return {image:im,qc:(v&&v.ok)?v.data:{}};};
+    var reviewed=await Promise.all(j.images.map(reviewOne));
+    var isClean=function(q){return q.qc&&q.qc.strayText===false&&q.qc.fakeSupport===false&&q.qc.fabricBg===false&&q.qc.productHero!==false;};
+    var clean=reviewed.filter(isClean);
+    if(!clean.length){
+      var j2=await callScene();
+      if(j2&&j2.ok&&j2.images&&j2.images.length){reviewed=reviewed.concat(await Promise.all(j2.images.map(reviewOne)));clean=reviewed.filter(isClean);}
+    }
+    var scoreOf=function(q){var n=parseInt(q.qc&&q.qc.score,10);return isFinite(n)?n:5;};
+    var pool=clean.length?clean:reviewed;
+    pool.sort(function(a,b){return scoreOf(b)-scoreOf(a);});
+    base=pool[0].image;
+    try{var up=await authPost('/superres',{image:base,scale:2},90000);if(up&&up.ok&&up.image)base=up.image;}catch(e){}
+    }else{
+    // 确定性兜底：干净浅墙 + 真实主体，绝不零输出、不要求客户重拍
+    base=await self.fallbackSceneBase(canvasPng);
+    }
     var layers=self.buildTextLayersFE(req.type,self.ostForType(req.type));
     var finalUrl=await self.composeFrontend({size:req.size,base_image:base,text_layers:layers});
     return {ok:true,image:finalUrl,type:req.type,size:req.size};
+    }catch(genErr){
+     try{
+      var fbAny=canvasPng||fg||null;
+      if(fbAny){
+       var bE=await self.fallbackSceneBase(fbAny);
+       var lE=self.buildTextLayersFE(req.type,self.ostForType(req.type));
+       var fE=await self.composeFrontend({size:req.size,base_image:bE,text_layers:lE});
+       return {ok:true,image:fE,type:req.type,size:req.size,degraded:true};
+      }
+     }catch(e2){}
+     return {ok:false,error:{code:'gen_exception',message:'生成失败，可点该图单张重做'}};
+    }
    })();
+  },
+  /* 确定性兜底背景：r-background 失败/超时时，用干净浅灰白微水泥渐变 + 真实主体，保证不零输出 */
+  fallbackSceneBase:function(canvasPng){
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var W=im.width,H=im.height,c=document.createElement('canvas');c.width=W;c.height=H;
+      var x=c.getContext('2d');
+      var g=x.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#f4f6f9');g.addColorStop(0.72,'#eceff3');g.addColorStop(1,'#e3e7ed');
+      x.fillStyle=g;x.fillRect(0,0,W,H);
+      x.strokeStyle='rgba(120,130,145,0.28)';x.lineWidth=Math.max(1,Math.round(H*0.004));
+      x.beginPath();x.moveTo(W*0.08,H*0.86);x.lineTo(W*0.92,H*0.86);x.stroke();
+      x.drawImage(im,0,0);
+      res(c.toDataURL('image/jpeg',0.95));
+     }catch(e){res(canvasPng);}
+    };
+    im.onerror=function(){res(canvasPng);};
+    im.src=canvasPng;
+   });
   },
   /* 终止任务：不仅停止派发，真正 abort 所有在途 fetch */
   _abortAll:function(){
@@ -911,8 +1052,14 @@ body.atu-open #atuStudio{display:flex}\
   },
   /* === 契约 §B2：ja/ko 前端文字层合成。baked 直接用 image；frontend 用 base_image+text_layers 本地 Canvas 合成 === */
   resolveResultImage:function(j){
-   if(j&&j.composite==='white_cutout'&&j.base_image){
+   if(j&&(j.composite==='white_cutout'||j.composite==='white_passthrough')&&j.base_image){
     return this.composeWhiteCutout(j);
+   }
+   if(j&&j.composite==='pose_compose'&&j.base_image){
+    return this.composePose(j);
+   }
+   if(j&&j.composite==='frontend'&&j.base_image&&(j.type==='material'||j.recipe==='material')){
+    return this.composeMaterialMacro(j);
    }
    if(j&&j.composite==='frontend'&&j.base_image&&Array.isArray(j.text_layers)){
     return this.composeFrontend(j);
@@ -951,6 +1098,74 @@ body.atu-open #atuStudio{display:flex}\
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
       ctx.drawImage(im,x0,y0,sw,sh,dx,dy,dw,dh);
       res(cv.toDataURL('image/jpeg',q));
+     }catch(e){res(j.base_image);}
+    };
+    im.onerror=function(){res(j.base_image);};
+    im.src=j.base_image;
+   });
+  },
+  /* === 轨道B 确定性姿态合成（品类无关，edge 无 canvas，全在浏览器做）：
+     产品像素来自真实 PicWish 透明 cutout，不重绘不变形。
+     hang：干净墙面+确定性挂钩，产品挂环挂钩、机身自然垂下不碰台面；
+     lay：产品旋转平放于台面，仅真实接触区一道柔和接触阴影（非灰椭圆/非底座）。 === */
+  composePose:function(j){
+   var spec=j.pose_spec||{}, pose=spec.pose||'lay', S=spec.min_size||2048;
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var pre=document.createElement('canvas');pre.width=im.width;pre.height=im.height;
+      var pc=pre.getContext('2d',{willReadFrequently:true});pc.drawImage(im,0,0);
+      var d=pc.getImageData(0,0,im.width,im.height).data;
+      var x0=im.width,y0=im.height,x1=0,y1=0,thr=12;
+      for(var y=0;y<im.height;y++)for(var x=0;x<im.width;x++){if(d[(y*im.width+x)*4+3]>thr){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}}
+      var pw=x1-x0+1, ph=y1-y0+1;
+      var cv=document.createElement('canvas');cv.width=S;cv.height=S;var ctx=cv.getContext('2d');
+      // 干净中性渐变背景
+      var g=ctx.createLinearGradient(0,0,0,S);g.addColorStop(0,'#f2f0ec');g.addColorStop(1,'#e6e3dd');
+      ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      var scale=(S*0.7)/Math.max(pw,ph);
+      if(pose==='hang'){
+        // 顶部挂钩
+        var hx=S/2, hy=S*0.20;
+        ctx.strokeStyle='#b8b4ac';ctx.lineWidth=10;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(hx,hy-40);ctx.lineTo(hx,hy);ctx.quadraticCurveTo(hx,hy+22,hx+26,hy+18);ctx.stroke();
+        // 产品挂环挂到钩，机身垂下
+        var dw=pw*scale, dh=ph*scale;
+        ctx.drawImage(im,x0,y0,pw,ph, hx-dw/2, hy, dw, dh);
+      }else{
+        // lay：旋转90°平放，放台面线~72%
+        var dw2=pw*scale, dh2=ph*scale;
+        var surfY=S*0.74;
+        // 柔和接触阴影
+        ctx.fillStyle='rgba(0,0,0,0.10)';
+        ctx.beginPath();ctx.ellipse(S/2,surfY+dh2*0.05, dw2*0.5, 18, 0, 0, Math.PI*2);ctx.fill();
+        ctx.save();ctx.translate(S/2,surfY);ctx.rotate(-Math.PI/2);
+        ctx.drawImage(im,x0,y0,pw,ph,-dh2/2,-dw2/2,dh2,dw2);
+        ctx.restore();
+      }
+      res(cv.toDataURL('image/jpeg',0.95));
+     }catch(e){res(j.base_image);}
+    };
+    im.onerror=function(){res(j.base_image);};
+    im.src=j.base_image;
+   });
+  },
+  /* === 材质图确定性微距裁切（品类无关，不靠模型自觉）：
+     对生成的材质底图居中裁出 tight 区域（边长≈短边×0.55），放大铺满输出，保证是局部特写而非整产品远景。 === */
+  composeMaterialMacro:function(j){
+   var S=2048, cropFrac=0.55;
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var sw=Math.round(Math.min(im.width,im.height)*cropFrac);
+      var sx=Math.round((im.width-sw)/2), sy=Math.round((im.height-sw)/2);
+      var cv=document.createElement('canvas');cv.width=S;cv.height=S;var ctx=cv.getContext('2d');
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(im,sx,sy,sw,sw,0,0,S,S);
+      res(cv.toDataURL('image/jpeg',0.95));
      }catch(e){res(j.base_image);}
     };
     im.onerror=function(){res(j.base_image);};
@@ -1016,7 +1231,7 @@ body.atu-open #atuStudio{display:flex}\
    if(!types.length){toast(t('toast_needtype'),'err');return;}
    if(this._planRunning||!this.planResp||this.planRespLang!==this.resolvedLang()){toast(t('plan_notready'),'err');return;} // 当前语种方案未就绪，拒绝旧方案出图
    this._running=true;this._abort=false;this._paused=false;this.ats=[];this._notes=[];this._lastErr=null;this._failed={};this._cleanImage=null;
-   this._durations=[];this._activeTasks={};this._taskStart={};this._reqAborts={};
+   this._durations=[];this._activeTasks={};this._taskStart={};this._reqAborts={};this._posePromise=null;
    this._totalTasks=types.length;this._doneTasks=0;this._progMsg='';
    this.setCanvas('progress');
    var self=this;
@@ -1033,17 +1248,17 @@ body.atu-open #atuStudio{display:flex}\
     self._cleanImage=(fidOut&&fidOut.ok&&fidOut.white)?fidOut.white:GS().images[0].dataUrl;
     self._fg=(fidOut&&fidOut.ok&&fidOut.fg)?fidOut.fg:null;
     await self.makeMarketingRef();
-    // 白底主图
+    // 白底主图（保真失败也兜底出图，绝不零输出、不要求重拍）
     if(types.indexOf('white_main')>=0){
-     if(fidOut&&fidOut.rejected){self.addNote(typeLabel('white_main')+'：A级品类抠图保真未达标（'+(fidOut.reason||'qc')+'），请找纯色/干净背景重拍后再出，本次不硬生成。');self._failed['white_main']='rejected';}
-     else if(fidOut&&fidOut.ok&&fidOut.white){self.addResult(fidOut.white,typeLabel('white_main'),'white_main');}
+     var wImg=(fidOut&&fidOut.white)||self._cleanImage;
+     if(wImg){self.addResult(wImg,typeLabel('white_main'),'white_main');if(fidOut&&fidOut.degraded)self.addNote(typeLabel('white_main')+'：保真服务异常，已用原图兜底，可点该图单张重做。');}
      else{self.addNote(typeLabel('white_main')+'：处理失败，可点该图单张重做。');self._failed['white_main']='fail';}
      self._doneTasks++;self.paintLiveInfo();self.liveRender();
     }
-    // 搜索主图（同走轨道A，复用干净抠图）
+    // 搜索主图（同走轨道A，复用干净抠图；失败同样兜底）
     if(types.indexOf('search_main')>=0){
-     if(fidOut&&fidOut.rejected){self.addNote(typeLabel('search_main')+'：轨道A 保真未达标，建议纯色背景重拍。');self._failed['search_main']='rejected';}
-     else if(fidOut&&fidOut.ok&&fidOut.white){self.addResult(fidOut.white,typeLabel('search_main'),'search_main');}
+     var sImg=(fidOut&&fidOut.white)||self._cleanImage;
+     if(sImg){self.addResult(sImg,typeLabel('search_main'),'search_main');}
      else{self.addNote(typeLabel('search_main')+'：处理失败。');self._failed['search_main']='fail';}
      self._doneTasks++;self.paintLiveInfo();self.liveRender();
     }

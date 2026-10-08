@@ -82,18 +82,23 @@ const noWm = 'Leave the bottom-right corner completely clean and empty: no water
  * 仅靠 sanitizeCopy 清洗注入文案管不住，故在每条 prompt 末尾强制约束。 */
 const BRAND_GUARD = 'PACKAGING & TRADEMARK RULES: Keep ALL product packaging, labels, bottles, decals and surfaces EXACTLY as in the reference photo. If the reference packaging is plain or unlabeled, render it plain and unlabeled. Do NOT add any brand name, logo, trademark, badge, label text, signature script, or packaging artwork that is not visibly present in the reference. Never render real-world trademarks or brand logos such as Coca-Cola, Coke, Pepsi, Nike, Adidas, Apple, Louis Vuitton, Starbucks, the Amazon smile logo, or any other company brand or platform badge.';
 
+/* ---------- P0 姿态/支撑约束（品类无关）：杜绝亚克力底座/台座/靠软线直立 ---------- */
+const NO_STAND = 'PLACEMENT & SUPPORT RULE: Do NOT place the product on any display stand, pedestal, acrylic base, plinth, block, box, riser, or holder. Do NOT insert the product into a transparent or opaque cradle. The product must rest on its OWN actual base/foot/flat bottom, be HELD by a real hand, HANG on a hook, or LAY flat on a surface — it must NEVER be propped upright by a soft power cord/wire, nor stand vertically balanced on a tiny bottom point/tail. Do not add a fake contact shadow unless it genuinely rests on a surface.';
+/* 姿态类型：stand_flat 平底直立 / stand_multi 多点接地 / hang 悬挂 / hand 手持 / lay 平放。
+   吹风机这类无平底且带软线的品类，绝不允许靠电源线直立，只能 hang/hand/lay。 */
+
 /* ---------- 品类驱动的背景环境（绝不写死某个全品类共用场景）----------
  * 优先级：1) plan 现场推理出的 product.scenes；2) 按 domain 给一组显著差异化基调；
  * 3) 兜底仅"干净柔和中性虚化"。禁止再出现"现代玻璃幕墙建筑广场"这种万能模板。 */
 const DOMAIN_BG = {
   food:    'a bright fresh summer tabletop, icy cold with fizzing bubbles and condensation, light airy refreshing tone',
   drink:   'a bright summer tabletop with ice cubes and cold fizzy drink, thirst-quenching mood',
-  beauty:  'a clean vanity surface with soft warm beauty light, pale rose-grey premium tone',
-  tech:    'a clean minimal modern desk surface, soft cool neutral tone, subtle office props',
-  home:    'a cozy bright home interior, warm linen and wood neutral tone',
-  fashion: 'a clean light neutral setting with soft natural daylight, tasteful lifestyle mood',
+  beauty:  'a clean vanity surface, soft even neutral light, pale rose-grey premium tone, no extra props',
+  tech:    'a clean minimal modern desk surface, soft cool neutral tone, no props',
+  home:    'a cozy bright home interior, warm linen and wood neutral tone, no clutter',
+  fashion: 'a clean light neutral setting with soft natural daylight, tasteful lifestyle mood, no props',
   auto:    'an outdoor paved road or mountain setting, clean natural daylight',
-  sports_outdoor: 'an outdoor park trail or greenway with trees and a paved path, natural daylight with greenery, NOT an interior, room or studio',
+  sports_outdoor: 'an outdoor park trail or greenway with a paved path, natural daylight, NOT an interior, room or studio',
   flower:  'a bright fresh setting with soft natural light, pastel soft tone',
   general: 'a clean soft-neutral blurred real environment with soft natural daylight'
 };
@@ -102,6 +107,41 @@ function resolveBg(domain, scenes) {
   if (s) return 'the product set within a softly blurred, out-of-focus ' + s + ', professional commercial lighting, shallow depth of field';
   return DOMAIN_BG[domain] || 'a clean soft-neutral blurred modern environment';
 }
+
+/* ---------- A · 姿态判定（品类无关，基于产品描述/事实关键词的规则判定；可后续升级为 VL） ----------
+ * 输出 stand_flat / stand_multi / hang / hand / lay，并据姿态给出确定性放置句。
+ * 接地/投影只在确有接触面（stand_* / lay）时绘制；hang/hand 不画落地投影。 */
+function decidePose(productDesc, productFacts) {
+  const t = ((productDesc || '') + ' ' + (productFacts || '')).toLowerCase();
+  const hasCord = /cord|电源线|软线|wire|hanging loop|挂环|挂绳/.test(t);
+  // 吹风机/手持小家电：底部挂环+软线、不能直立 → 优先 lay（折叠平放）
+  if (/hair\s*dryer|blower|吹风机|吹风|hairdryer/.test(t)) {
+    return { pose: 'lay', sentence: 'LAY the folding product flat on a clean surface (folded flat / resting on its side), with the power cord lying neatly beside it. Do NOT stand it upright, do NOT prop it on any base.' };
+  }
+  // 自行车：两轮多点接地
+  if (/bike|bicycle|自行车|单车|e-?bike/.test(t)) {
+    return { pose: 'stand_multi', sentence: 'REST the product upright on its own two wheels on the ground, with a soft natural contact shadow only where the wheels touch the surface.' };
+  }
+  // 拉杆箱：自身平底直立
+  if (/suitcase|luggage|拉杆箱|行李箱|trolley/.test(t)) {
+    return { pose: 'stand_flat', sentence: 'REST the product upright on its own flat base, with a soft natural contact shadow only where it touches the surface.' };
+  }
+  // 瓶装/软管护肤品：平底直立
+  if (/cream|lotion|serum|tube|bottle|jar|护肤|洁面|精华|膏/.test(t)) {
+    return { pose: 'stand_flat', sentence: 'REST the product upright on its own flat bottom/cap on a clean surface, with a soft natural contact shadow only at the contact point.' };
+  }
+  // 兜底：若有软线/挂环但无平底 → lay
+  if (hasCord) {
+    return { pose: 'lay', sentence: 'LAY the product flat on a clean surface, cord lying beside it; do NOT stand it upright on a cord.' };
+  }
+  return { pose: 'stand_flat', sentence: 'REST the product upright on its own flat base, soft contact shadow only where it touches the surface.' };
+}
+/* 三种非直立姿态的确定性放置句（吹风机等无平底且带软线的品类用） */
+const POSE_SENTENCE = {
+  hang: 'HANG the product by its own hanging loop on a simple wall hook; the body hangs naturally and does NOT touch any surface, the cord hangs loosely beside it. Do NOT stand it upright.',
+  hand: 'A real hand naturally holds the product while in use (e.g. drying hair); the product is NOT resting on any surface.',
+  lay: 'LAY the product flat on a clean surface (folded flat / resting on its side), with the power cord lying neatly beside it. Do NOT stand it upright, do NOT balance it on a bottom point or cord.'
+};
 
 /* ---------- 标题安全：过长自动截短 + 安全区约束，杜绝溢出被裁 ---------- */
 function fitTitle(h) {
@@ -138,6 +178,7 @@ function buildRecipePrompt(recipe, ctx) {
   const sceneEnv = (scenes[0] && scenes[0].en) || resolveBg(domain, scenes);
   const lighting = ctx.lighting || 'soft natural daylight';
   const bg = resolveBg(domain, scenes);
+  const pose = ctx.poseOverride && POSE_SENTENCE[ctx.poseOverride] ? { pose: ctx.poseOverride, sentence: POSE_SENTENCE[ctx.poseOverride] } : decidePose(productDesc, productFacts);
 
   switch (recipe) {
     case 'core_selling': {
@@ -145,7 +186,9 @@ function buildRecipePrompt(recipe, ctx) {
       return [
         'Professional e-commerce product marketing infographic, premium marketplace A+ style.',
         lock,
+        NO_STAND,
         'Layout: the product placed left-center, occupying about half the frame, against ' + bg + '.',
+        pose.sentence,
         h && 'At the TOP, one large bold headline spanning the width, dark bold sans-serif uppercase with a thin subtle outline. Render the text EXACTLY, character by character: ' + Q(h) + '.',
         TITLE_SAFE,
         icons.length && 'On the RIGHT side, stack ' + icons.length + ' circular flat white icon badges vertically with even spacing. Each badge contains a simple clean line icon, and directly under each badge a short all-caps label (keep each label to 1-2 short words). Render each label EXACTLY, correct spelling:',
@@ -158,7 +201,8 @@ function buildRecipePrompt(recipe, ctx) {
       return [
         'Cinematic advertising photo.',
         lock,
-        'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.',
+        NO_STAND,
+        'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio. ' + pose.sentence,
         h && 'Overlay a large bold headline in the lower-left area, bold sans-serif uppercase with subtle drop shadow, rendered EXACTLY: ' + Q(h) + '.',
         sub && 'Below it one smaller regular-weight sub-line, rendered EXACTLY: ' + Q(sub) + '.',
         noWm,
@@ -191,8 +235,9 @@ function buildRecipePrompt(recipe, ctx) {
     }
     case 'material': {
       return [
-        'Premium macro photograph of the product from the reference. Show ONLY surfaces and parts that actually exist in the reference: the painted or polished metal frame tubes, the saddle and grips, chrome metal parts, drivetrain, and any other parts clearly visible. The frame tubes MUST stay exactly as in the reference — do NOT wrap, cover or add rope, fabric, rattan, twine, weave or any texture not present, do not change the tube surface, and never add a basket, rack, fenders or any accessory absent from the reference.',
-        'Sharp focus on a real material detail (leather saddle / grip / paint finish / chrome), soft defocused neutral background, photorealistic, high detail.',
+        'EXTREME TIGHT MACRO CLOSE-UP. Do NOT show the whole product — crop into a real material/part detail that occupies about 80% of the frame.',
+        'Show ONLY a small surface or part that actually exists in the reference (e.g. the honeycomb grille mesh, the control dial/button, the nozzle rim, the handle finish, the hinge). Keep that detail exactly as in the reference — do NOT invent textures, wrap fabric/rope, or add accessories absent from the reference.',
+        'Sharp focus on the material detail, shallow depth of field, soft neutral defocused background, photorealistic, high detail.',
         h && 'At the bottom, one short caption rendered EXACTLY: ' + Q(h) + '.',
         noWm,
         'Style: premium material showcase, no invented textures. ' + L
@@ -484,6 +529,7 @@ function buildNoTextPrompt(recipe, ctx, layers) {
   const { productDesc, productFacts, domain, scenes, lighting } = ctx;
   const lock = lockSubject(productDesc, productFacts);
   const bg = resolveBg(domain, scenes);
+  const pose = ctx.poseOverride && POSE_SENTENCE[ctx.poseOverride] ? { pose: ctx.poseOverride, sentence: POSE_SENTENCE[ctx.poseOverride] } : decidePose(productDesc, productFacts);
   const sceneEnv = (scenes && scenes[0] && scenes[0].en) || bg;
   const iconCount = (ctx.iconCount || 0);
   const lines = [];
@@ -550,7 +596,7 @@ function buildNoTextPrompt(recipe, ctx, layers) {
     case 'seeding':
     case 'white_bg':
     default:
-      lines.push('Professional e-commerce product photograph. ' + lock, 'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.');
+      lines.push('Professional e-commerce product photograph. ' + lock, NO_STAND, pose.sentence, 'Place the product naturally in a real ' + sceneEnv + ', ' + lighting + ', photorealistic, shallow depth of field. NOT a gray studio.');
       break;
   }
 
@@ -575,16 +621,19 @@ async function runBaseQc(env, { image, ref, productHint, domain }) {
   const failures = [];
   const metrics = {};
 
-  // B-Q1 底图必须零烤字（产品本体上原有的极小永久标记除外）
+  // B-Q1 底图不得有「后加的营销烤字」；产品本体包装印刷字/品牌 logo（与参考一致）属真实产品像素，允许
   const r1 = await chatVisionCustom(env, {
-    system: 'You are a strict e-commerce background-image QA. Reply JSON only: {"has_any_text":true/false,"detail":""}.',
-    user: 'This is a BACKGROUND image that must contain NO marketing text (text will be overlaid by software later). Scan the whole image carefully: does it contain ANY marketing letters, words, numbers, digits, glyphs, characters, labels, captions or banners? (Tiny permanent markings physically printed on the product itself do NOT count.) Reply JSON.',
+    system: 'You are a strict e-commerce background-image QA. Reply JSON only: {"has_overlay_text":true/false,"detail":""}.',
+    user: 'This is a BACKGROUND image that must contain NO marketing text overlaid by software (a headline will be added later). ' +
+      'IMPORTANT: text physically printed ON the product itself (the tube/bottle/box packaging, brand logo, product name, volume, ingredient labels) is the REAL PRODUCT — it is ALLOWED and must NOT be flagged, even if it is clearly legible Chinese/English. ' +
+      'Only flag LARGE marketing/advertising text that sits in the EMPTY BACKGROUND or empty areas (a big headline, slogan, banner, caption, price, call-to-action, or overlaid watermark) which is NOT printed on the product packaging. ' +
+      'Scan: does the image contain such overlaid marketing text in the background? Reply JSON.',
     images: [image], maxTokens: 300, temperature: 0.1, timeoutMs: 45000
   });
   let noText = null;
   if (r1.ok) noText = (r1.data && typeof r1.data === 'object') ? r1.data : (function () { const m = String(r1.data || '').match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch {} } return null; })();
   metrics.noText = noText;
-  if (noText && noText.has_any_text === true) failures.push({ code: 'BASE_HAS_TEXT', reason: noText.detail || 'background still contains baked text' });
+  if (noText && noText.has_overlay_text === true) failures.push({ code: 'BASE_HAS_TEXT', reason: noText.detail || 'background still contains overlaid marketing text' });
 
   // B-Q2 主体一致 + 为主角（双图比对，沿用 qc-gate Q8 口径）
   if (ref && productHint) {
@@ -606,16 +655,19 @@ async function runBaseQc(env, { image, ref, productHint, domain }) {
     if (subj && (subj.same_product === false || subj.is_protagonist === false)) failures.push({ code: 'BASE_SUBJECT_MISMATCH', reason: subj.reason || 'main product changed from reference' });
   }
 
-  // B-Q3 画面瑕疵：不得有莫名白色块/矩形面板/边框/几何斜切/占位框/构图崩坏
+  // B-Q3 画面瑕疵：仅判背景/留白区的硬伪影（白块/矩形/边框/占位框/斜切）；产品包装上的小字渲染瑕疵放行
   const r3 = await chatVisionCustom(env, {
-    system: 'You are a strict e-commerce image artifact QA. Reply JSON only: {"has_artifact":true/false,"kind":"","detail":""}.',
-    user: 'Inspect this marketing image for compositional artifacts that should NOT exist: a large solid white or colored rectangle/box, a hard-edged blank panel, a visible border or frame around an empty area, a geometric cut-off triangle or wedge, an obvious empty placeholder box, a torn/collaged edge, or a badly broken composition. Naturally blurred backgrounds, soft gradients and normal multi-panel collages with seamless thin gutters are FINE — only flag hard, unnatural boxes/blocks/edges that look like placeholders or rendering glitches. Reply JSON.',
+    system: 'You are a strict e-commerce image artifact QA. Reply JSON only: {"has_background_artifact":true/false,"kind":"","detail":""}.',
+    user: 'Inspect ONLY the BACKGROUND and empty areas of this marketing image for compositional artifacts that should NOT exist: a large solid white/colored rectangle/box, a hard-edged blank panel, a visible border/frame around an empty area, a geometric cut-off triangle/wedge, an obvious empty placeholder box in empty space, a torn/collaged edge, or a badly broken composition in the background. ' +
+      'IMPORTANT: minor rendering flaws on the PRODUCT ITSELF (e.g. slightly garbled small printed characters on the tube/bottle/box packaging, blurry product-label text, uneven product surface texture) are the REAL PRODUCT and are ALLOWED — do NOT flag them. Naturally blurred backgrounds, soft gradients and normal multi-panel collages with seamless thin gutters are FINE. ' +
+      'Answer true ONLY for hard artifacts sitting in the empty/background areas. Reply JSON.',
     images: [image], maxTokens: 300, temperature: 0.1, timeoutMs: 45000
   });
   let art = null;
   if (r3.ok) art = (r3.data && typeof r3.data === 'object') ? r3.data : (function () { const m = String(r3.data || '').match(/\{[\s\S]*\}/); if (m) { try { return JSON.parse(m[0]); } catch {} } return null; })();
   metrics.artifact = art;
-  if (art && art.has_artifact === true) failures.push({ code: 'BASE_ARTIFACT', reason: (art.kind ? art.kind + ': ' : '') + (art.detail || 'unexpected box/block/edge') });
+  // BASE_ARTIFACT 降级为 warning（不硬拒/不零输出）：圆形图标徽标等设计元素或轻微背景瑕疵不阻断出图
+  if (art && art.has_background_artifact === true) metrics.artifact.warning = (art.kind ? art.kind + ': ' : '') + (art.detail || 'background artifact (non-blocking)');
 
   return { pass: failures.length === 0, failures, metrics, retryable: true };
 }
@@ -631,14 +683,8 @@ async function runBaseQc(env, { image, ref, productHint, domain }) {
  *   - 小图放大设上限（≤1.6x），宁可产品略小也不硬放大到糊（信息论约束）。
  * 全程不调用生成模型，故不会因生成模型重绘而变形/加阴影，也不受其超时影响。
  * ===================================================================*/
-async function dataUrlBitmap(dataUrl) {
-  const m = /^data:[^;]+;base64,(.*)$/s.exec(dataUrl);
-  if (!m) throw new Error('bad_dataurl');
-  const bin = atob(m[1]);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return createImageBitmap(new Blob([bytes]));
-}
+// 注：edge 无 createImageBitmap/OffscreenCanvas，服务端不做 canvas 合成；
+// 白底合成在前端浏览器 atu-studio.js 完成（composite='white_cutout'/'white_passthrough'）。
 
 // 保真抠图降级链：picwish（默认）→ autodl（GPU 实例）→ gitee（RMBG-2.0）
 async function cutoutWithFallback(env, image) {
@@ -651,10 +697,38 @@ async function cutoutWithFallback(env, image) {
   return { ok: false, error: { code: 'cutout_all_failed', message: '所有保真抠图服务均不可用' } };
 }
 
-async function buildWhiteMain(env, image, typeId) {
+async function buildWhiteMain(env, image, typeId, args = {}) {
   const t0 = Date.now();
+  // 白底快通道：前端已判定原图四角近纯白（skip_cutout），直接透传原图，不调抠图/结构质检
+  if (args.skip_cutout) {
+    return {
+      ok: true, type: typeId, composite: 'white_passthrough', base_image: image,
+      text_layers: [], fast_channel: true,
+      white_spec: { bg:'#ffffff', min_size:2048, ratio:0.86, max_scale:1.6, no_shadow:true, alpha_threshold:12, jpeg_quality:0.95 },
+      elapsed_ms: Date.now()-t0, cost: 0, backend: 'fast_channel'
+    };
+  }
   const cut = await cutoutWithFallback(env, image);
-  if (!cut.ok) return { ok: false, composite: 'frontend', error: cut.error, cost: 0, elapsed_ms: Date.now() - t0 };
+  // 降级出图（不允许零输出）：抠图服务全挂时，直接把原图作为 base_image 透传给前端，
+  // 由前端按 white_spec 铺纯白居中合成（原图本就接近白底时尤其实用），绝不返回错误导致空图。
+  if (!cut.ok || !cut.image) {
+    return {
+      ok: true,
+      type: typeId,
+      composite: 'white_passthrough',
+      base_image: image,                 // 原图直接透传，前端铺白居中
+      text_layers: [],
+      degraded: true,
+      degrade_reason: (cut.error && cut.error.code) || 'cutout_failed',
+      white_spec: {
+        bg: '#ffffff', min_size: 2048, ratio: 0.86, max_scale: 1.6,
+        no_shadow: true, alpha_threshold: 12, jpeg_quality: 0.95
+      },
+      elapsed_ms: Date.now() - t0,
+      cost: 0,
+      backend: 'passthrough'
+    };
+  }
 
   // Edge 运行时（compat 2026-09-16 + nodejs_compat）经隔离探针实测：createImageBitmap/OffscreenCanvas
   // 均为 undefined，服务端无法做 canvas 合成（本地 wrangler dev 同样失败）。故遵循 M2 架构：
@@ -696,7 +770,19 @@ export async function runMarketingGenerate(env, args = {}) {
 
   // 轨道A 纯白底图（white_main / f_white）：保真抠图 + 纯白 #FFFFFF 合成、无阴影、
   // 分辨率不低于原图；绝不走 generateImage 重绘（重绘必然带来加阴影/降质/变形风险）。
-  if (recipe === 'white_bg') return await buildWhiteMain(env, image, typeId);
+  if (recipe === 'white_bg') return await buildWhiteMain(env, image, typeId, args);
+
+  // 轨道B · 确定性姿态合成（hang/lay）：服务端只保真抠图回透明产品，姿态与环境由前端 canvas 合成
+  if (args.pose === 'hang' || args.pose === 'lay') {
+    const t0 = Date.now();
+    const cut = await cutoutWithFallback(env, image);
+    if (!cut.ok || !cut.image) return { ok: true, composite: 'pose_compose', base_image: image, text_layers: [], degraded: true, pose_spec: { pose: args.pose, min_size: 2048 }, elapsed_ms: Date.now()-t0, cost: 0, backend: 'passthrough' };
+    return {
+      ok: true, type: typeId, composite: 'pose_compose', base_image: cut.image, text_layers: [],
+      pose_spec: { pose: args.pose, min_size: 2048 },
+      elapsed_ms: Date.now()-t0, cost: PER_IMAGE_COST_RMB, backend: cut.backend || 'picwish'
+    };
+  }
 
   let size = args.size && /^\d{3,5}x\d{3,5}$/.test(args.size) ? args.size : t.size;
   // 校验最小像素（契约 §1）
@@ -726,7 +812,8 @@ export async function runMarketingGenerate(env, args = {}) {
     const text_layers = buildTextLayers(recipe, ost);
     // 3) 无字底图 prompt：锁构图/主体/场景，文字区预留干净空带，严禁烤字
     const prompt = buildNoTextPrompt(recipe, {
-      productDesc, productFacts, domain, scenes, lighting, iconCount: (ost.icons || []).length
+      productDesc, productFacts, domain, scenes, lighting, iconCount: (ost.icons || []).length,
+      poseOverride: args.pose
     }, text_layers);
 
     // 每次重试按「上一次失败类型」追加更强指令：去文字 / 强化主体，escalating
@@ -801,7 +888,8 @@ export async function runMarketingGenerate(env, args = {}) {
   const prompt = buildRecipePrompt(recipe, {
     productDesc, productFacts, ost, langName,
     domain, scenes, lighting,
-    designReq: args.design_requirements || ''
+    designReq: args.design_requirements || '',
+    poseOverride: args.pose
   }) + '\n' + BRAND_GUARD;
 
   const doGen = () => generateImage(env, { prompt, imagePayload: image, size, timeoutMs: 85000, watermark: false });

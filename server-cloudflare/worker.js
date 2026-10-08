@@ -33,7 +33,7 @@ import { segmentEntities, superResolve, saliencySegment, goodsSegment, carPlateD
 import { mediakitCutout, mediakitFaceDetect } from './mediakit.js';
 import { giteeMatting } from './gitee.js';
 import { autodlCutout, autodlSuperRes } from './autodl.js';
-import { picwishCutout, picwishScaleDataUrl, picwishRBackground } from './picwish.js';
+import { picwishCutout, picwishScaleDataUrl, picwishRBackground, picwishRBackgroundCreate, picwishRBackgroundQuery } from './picwish.js';
 import { createUploadUrl, createAndRunJob, getJob, tryAcquireSlot, releaseSlot, headObject, keyBelongsTo } from './m23-job.js';
 import { generateProductScript, normalizeScript } from './script-engine.js';
 import { runMarketingPlan } from './marketing/marketing-plan.js';
@@ -733,7 +733,9 @@ async function handleMarketingGenerate(req, env, origin) {
     product_facts: body && body.product_facts,
     domain: body && body.domain,
     scenes: body && body.scenes,
-    design_requirements: body && body.design_requirements
+    design_requirements: body && body.design_requirements,
+    pose: body && body.pose,
+    skip_cutout: body && body.skip_cutout
   });
   if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
   // 单张成本记录（成功才计费；失败 r.cost=0）
@@ -742,39 +744,56 @@ async function handleMarketingGenerate(req, env, origin) {
 }
 
 // 佐糖 r-background 薄路由：前端摆好构图的透明画布 PNG + 英文场景 prompt → 联合背景候选（产品本体保真）
-async function handleMarketingScene(req, env, origin) {
-  const session = await getMemberSession(env, req);
-  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
-  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
-  const image = body && body.image;
-  if (typeof image !== 'string' || !/^data:image\/png;base64,/.test(image)) {
-    return json({ ok: false, error: { code: 'bad_image', message: '缺少透明画布 PNG dataURL' } }, 400, origin);
-  }
-  const prompt = String((body && body.prompt) || '').trim();
-  if (!prompt) return json({ ok: false, error: { code: 'bad_prompt', message: '缺少场景 prompt' } }, 400, origin);
+async function decodePngDataUrl(image) {
+  if (typeof image !== 'string' || !/^data:image\/png;base64,/.test(image)) return null;
   const b64 = image.slice(image.indexOf(',') + 1);
   const bin = atob(b64);
   const pngBytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) pngBytes[i] = bin.charCodeAt(i);
-  const t0 = Date.now();
-  const r = await picwishRBackground(env, pngBytes, prompt.slice(0, 1024), {
-    batchSize: body.batch_size === 1 ? 1 : 2,
-    negativePrompt: body.negative_prompt || ''
-  });
-  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
-  // 立即下载候选转 dataURL（OSS URL 1h 过期）
+  return pngBytes;
+}
+async function ossUrlsToDataUrls(urls) {
   const images = [];
-  for (const u of r.urls) {
+  for (const u of urls) {
     try {
-      const resp = await fetch(u);
+      const resp = await fetch(u, { signal: AbortSignal.timeout(30000) });
       const buf = new Uint8Array(await resp.arrayBuffer());
       let s = '';
       for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, Math.min(i + 0x8000, buf.length)));
       images.push('data:image/jpeg;base64,' + btoa(s));
     } catch {}
   }
+  return images;
+}
+// POST /marketing/scene：异步提交，立即返回 task_id（不在 Worker 内同步长等，根治 Cloudflare 520）
+async function handleMarketingScene(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const pngBytes = await decodePngDataUrl(body && body.image);
+  if (!pngBytes) return json({ ok: false, error: { code: 'bad_image', message: '缺少透明画布 PNG dataURL' } }, 400, origin);
+  const prompt = String((body && body.prompt) || '').trim();
+  if (!prompt) return json({ ok: false, error: { code: 'bad_prompt', message: '缺少场景 prompt' } }, 400, origin);
+  const r = await picwishRBackgroundCreate(env, pngBytes, prompt.slice(0, 1024), {
+    batchSize: body.batch_size === 1 ? 1 : 2,
+    negativePrompt: body.negative_prompt || ''
+  });
+  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
+  return json({ ok: true, task_id: r.taskId }, 200, origin);
+}
+// POST /marketing/scene-result {task_id}：轻量轮询；完成则回传候选 dataURL
+async function handleMarketingSceneResult(req, env, origin) {
+  const session = await getMemberSession(env, req);
+  if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
+  let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
+  const taskId = String((body && body.task_id) || '');
+  if (!taskId) return json({ ok: false, error: { code: 'bad_task_id', message: '缺少 task_id' } }, 400, origin);
+  const r = await picwishRBackgroundQuery(env, taskId);
+  if (!r.ok) return json({ ok: false, error: r.error }, 502, origin);
+  if (r.pending) return json({ ok: true, pending: true, state: r.state, progress: r.progress }, 200, origin);
+  const images = await ossUrlsToDataUrls(r.urls || []);
   if (!images.length) return json({ ok: false, error: { code: 'download_failed', message: '候选图下载失败' } }, 502, origin);
-  return json({ ok: true, images, count: images.length, elapsed_ms: Date.now() - t0 }, 200, origin);
+  return json({ ok: true, images, count: images.length }, 200, origin);
 }
 
 async function handlePub(env, request, origin, fn) {
@@ -2062,6 +2081,9 @@ export default {
     }
     if (path === '/marketing/scene' && request.method === 'POST') {
       return handleMarketingScene(request, env, origin);
+    }
+    if (path === '/marketing/scene-result' && request.method === 'POST') {
+      return handleMarketingSceneResult(request, env, origin);
     }
     if (path === '/copywriting/info-card' && request.method === 'POST') return handleCopywritingInfoCard(request, env, origin);
     if (path === '/copywriting/generate' && request.method === 'POST') return handleCopywritingGenerate(request, env, origin);

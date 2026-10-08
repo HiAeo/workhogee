@@ -106,9 +106,10 @@ function brandGuard(draft, { mctx, p, infoCard }) {
       return true;
     });
   }
-  // 品牌在场检查
+  // 品牌在场检查（仅当确实存在品牌时才强制；无品牌商品如工业标品不要求出现品牌名）
   const allText = textKeys.map(k => d[k] || '').join(' ') + ' ' + arrKeys.map(k => (d[k] || []).join(' ')).join(' ');
-  const brandPresent = p.lang === 'en' ? (en && allText.includes(en)) : (!!zh && allText.includes(zh));
+  const hasBrand = !!(zh && zh.trim());
+  const brandPresent = !hasBrand ? true : (p.lang === 'en' ? (!!en && allText.includes(en)) : allText.includes(zh));
   return { draft: d, issues, brandPresent };
 }
 
@@ -185,11 +186,17 @@ function buildSystem(p, mctx, trendBrief) {
   const angleList = pickAngles(mctx.category && mctx.category.zh).slice(0, 4).join('；');
   const L = [];
   L.push('你是「阿文」，一名深耕' + p.label + '的资深电商文案。现在只用' + lang + '写这一份稿子。');
-  L.push('【唯一品牌】这是客户自有品牌，文案里出现的品牌名必须严格等于：' + (p.lang === 'en' ? '「' + brandEn + '」(English brand name)' : '「' + brandZh + '」') + '。');
-  L.push('【铁律·品牌锁定】');
-  L.push('- 禁止出现任何其他品牌/竞品名（包括但不限于旁氏/Pond\'s/米粹/玉兰油/Olay/欧莱雅/Nivea 等），哪怕是"对比/平替"也不行。');
-  L.push('- 外语平台一律使用规范品牌名「' + (brandEn || brandZh) + '」，禁止自行换成别的称呼或拼音以外的名字。');
-  L.push('- 不允许把客户产品写成别的牌子。');
+  const hasBrandSys = !!(brandZh && brandZh.trim());
+  if (hasBrandSys) {
+   L.push('【唯一品牌】这是客户自有品牌，文案里出现的品牌名必须严格等于：' + (p.lang === 'en' ? '「' + brandEn + '」(English brand name)' : '「' + brandZh + '」') + '。');
+   L.push('【铁律·品牌锁定】');
+   L.push('- 禁止出现任何其他品牌/竞品名（包括但不限于旁氏/Pond\'s/米粹/玉兰油/Olay/欧莱雅/Nivea 等），哪怕是"对比/平替"也不行。');
+   L.push('- 外语平台一律使用规范品牌名「' + (brandEn || brandZh) + '」，禁止自行换成别的称呼或拼音以外的名字。');
+   L.push('- 不允许把客户产品写成别的牌子。');
+  } else {
+   L.push('【无品牌·白牌商品】本商品没有品牌，文案中不要编造或出现任何品牌名、品牌型号或"大牌/名牌"字样；直接围绕品类、材质、参数、真实使用场景和消费者痛点来写，靠具体卖点（而非品牌）打动读者。');
+   L.push('【铁律】禁止出现任何品牌/竞品名（如旁氏/玉兰油/Olay/欧莱雅等），也不要写"平替某品牌"；不得把产品安到任何品牌名下。');
+  }
   L.push('【铁律·禁止编造价格】价格/规格/数字只能引用下面给定的"商品事实"；若事实里没给价格，则全文一律不得出现任何价格、货币（¥/￥/$/RMB/元/块）或"数字+元"的说法。');
   L.push('【平台打法】' + p.label + '（lang=' + p.lang + '）：');
   L.push('- 语气：' + p.tone);

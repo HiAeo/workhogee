@@ -99,6 +99,14 @@ export async function runQc(env, ctx = {}) {
   metrics.q3 = q3;
   if (q3 && q3.match === false) failures.push({ code: 'Q3_scene_domain', reason: q3.reason || 'background does not match product category' });
 
+  // Q8 不自然支撑：产品被插入底座/台座/亚克力/石头承托，或靠软电源线直立 → 判失败
+  const q8 = await judge(env,
+    'You are a product-pose QA. Reply JSON only: {"unnatural_support":true/false,"detail":""}.',
+    'Does the product appear to be artificially supported by a display stand, pedestal, acrylic/transparent base, plinth, box, rock/stone, or holder? Or is it standing upright only because a soft power cord/wire is propping it up? Answer true ONLY for such unnatural supports (a product resting on its own flat base/feet on a surface is FINE). Reply JSON.',
+    image);
+  metrics.q8 = q8;
+  if (q8 && q8.unnatural_support === true) failures.push({ code: 'Q8_unnatural_support', reason: q8.detail || 'product on a stand/pedestal/cord-prop' });
+
   // Q4 语种正确
   if (ctx.lang && ctx.lang !== 'da') {
     const q4 = await judge(env,

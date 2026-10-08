@@ -202,6 +202,52 @@
       const nonT = solid + mid;
       return { midAlpha: nonT ? mid / nonT : 0, coverage: nonT / N, solid, mid };
     },
+    // 「原图即白底/均匀浅底」检测（品类无关）：边缘带为均匀浅色，且画面含完整主体。
+    // 用于跳过抠图（白色产品也适用），避免干净白底被抠图服务的瞬时错误整体拒绝。
+    isWhiteBase(rgba) {
+      const W = rgba.width, H = rgba.height, d = rgba.data;
+      const bx = Math.max(2, Math.round(W * 0.06)), by = Math.max(2, Math.round(H * 0.06));
+      let n = 0, trans = 0, rs = 0, gs = 0, bs = 0;
+      const sample = (x, y) => { const q = (y * W + x) * 4; n++; if (d[q + 3] < 24) { trans++; return; } rs += d[q]; gs += d[q + 1]; bs += d[q + 2]; };
+      for (let x = 0; x < W; x++) { for (let y = 0; y < by; y++) { sample(x, y); sample(x, H - 1 - y); } }
+      for (let y = 0; y < H; y++) { for (let x = 0; x < bx; x++) { sample(x, y); sample(W - 1 - x, y); } }
+      const op = n - trans;
+      if (op < 20) return false;
+      const mr = rs / op, mg = gs / op, mb = bs / op, lum = (mr + mg + mb) / 3;
+      // 边缘必须是浅色（允许极轻微米白/暖灰），且整体均匀
+      if (lum < 232 || mr < 222 || mg < 222 || mb < 222) return false;
+      let same = 0, m2 = 0;
+      const near = (x, y) => { const q = (y * W + x) * 4; if (d[q + 3] < 24) return; m2++; if (Math.abs(d[q] - mr) < 16 && Math.abs(d[q + 1] - mg) < 16 && Math.abs(d[q + 2] - mb) < 16) same++; };
+      for (let x = 0; x < W; x++) { for (let y = 0; y < by; y++) { near(x, y); near(x, H - 1 - y); } }
+      for (let y = 0; y < H; y++) { for (let x = 0; x < bx; x++) { near(x, y); near(W - 1 - x, y); } }
+      if (!m2 || same / m2 < 0.90) return false;
+      // 主体完整：全图「明显异于边缘底色」的不透明像素占比需在合理区间（非空图、非背景杂乱）
+      let diff = 0, tot = 0;
+      for (let i = 0; i < W * H; i++) {
+        const p = i * 4; if (d[p + 3] < 24) continue; tot++;
+        const dr = d[p] - mr, dg = d[p + 1] - mg, db = d[p + 2] - mb;
+        if (dr * dr + dg * dg + db * db > 34 * 34) diff++;
+      }
+      const cr = tot ? diff / tot : 0;
+      return cr >= 0.012 && cr <= 0.92;
+    },
+    // 「已是透明底抠图」检测：边缘带大部分透明，中心有完整不透明主体。
+    // 此类输入无需（也不应）再次抠图，直接用其 alpha 合成白底，避免对已抠图重复处理而失败。
+    isCutoutBase(rgba) {
+      const W = rgba.width, H = rgba.height, d = rgba.data;
+      const bx = Math.max(2, Math.round(W * 0.06)), by = Math.max(2, Math.round(H * 0.06));
+      let n = 0, tr = 0;
+      const s = (x, y) => { n++; if (d[(y * W + x) * 4 + 3] < 24) tr++; };
+      for (let x = 0; x < W; x++) { for (let y = 0; y < by; y++) { s(x, y); s(x, H - 1 - y); } }
+      for (let y = 0; y < H; y++) { for (let x = 0; x < bx; x++) { s(x, y); s(W - 1 - x, y); } }
+      if (n < 20 || tr / n < 0.85) return false;
+      const b = this.alphaBox(rgba, 20);
+      if (!b) return false;
+      const w = b.px.w, h = b.px.h, ba = (w * h) / (W * H);
+      if (ba < 0.02 || ba > 0.96) return false;
+      const qc = this.alphaQC(rgba);
+      return qc.coverage >= 0.02 && qc.coverage <= 0.95;
+    },
   };
 
   /* ================= Web 平台适配层（Web 专用） =================
@@ -282,17 +328,26 @@
     return P.cropRGBA(rgba, box, 0);
   };
 
-  // 合成白底电商主图（contain 居中 + 椭圆软阴影）
+  // 「原图即白底」规范化：整张原图 contain 居中到正方形纯白画布（原图白底与画布无缝融合），
+  // 保真不重绘、无阴影/倒影，绝不裁切白色产品。
+  HogeeFidelity.normalizeWhite = function (rgba, size) {
+    const c = WebPlatform.create(size, size), x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0, 0, size, size);
+    const sc = Math.min(size / rgba.width, size / rgba.height);
+    const dw = Math.round(rgba.width * sc), dh = Math.round(rgba.height * sc);
+    x.imageSmoothingQuality = 'high';
+    x.drawImage(WebPlatform.rgbaToCanvas(rgba), (size - dw) / 2, (size - dh) / 2, dw, dh);
+    return c;
+  };
+
+  // 合成白底电商主图（contain 居中，纯白无阴影）
   HogeeFidelity.onWhite = function (fgRGBA, size, containW, containH) {
     const c = WebPlatform.create(size, size), x = c.getContext('2d');
     x.fillStyle = '#ffffff'; x.fillRect(0, 0, size, size);
     const sc = Math.min(size * containW / fgRGBA.width, size * containH / fgRGBA.height);
     const fw = fgRGBA.width * sc, fh = fgRGBA.height * sc;
     const left = (size - fw) / 2, top = (size - fh) / 2;
-    const gy = top + fh * 0.96;
-    const g = x.createRadialGradient(size / 2, gy, 4, size / 2, gy, fw * 0.5);
-    g.addColorStop(0, 'rgba(0,0,0,0.20)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-    x.fillStyle = g; x.beginPath(); x.ellipse(size / 2, gy, fw * 0.5, fw * 0.06, 0, 0, 7); x.fill();
+    x.imageSmoothingQuality = 'high';
     x.drawImage(WebPlatform.rgbaToCanvas(fgRGBA), left, top, fw, fh);
     return c;
   };
@@ -468,12 +523,36 @@
       if (o.doDetails !== false) { try { out.details = await HogeeFidelity.details(call, image, category, o.product, viewType); } catch (e) { out.details = []; } }
       return out;
     }
-    // 3) 外观 / 普通商品 / 细节：matting 统一抠图（细结构/手持商品质检门禁）
-    const mk = await call('/cutout', { image, strategy: 'matting', category });
-    if (mk && mk.ok === false && (mk.status === 'rejected' || mk.status === 'failed')) {
-      return { ok: false, rejected: true, reason: mk.reason || ('matting_' + mk.status), guide: mk.guide || '', fidelity: level, bg: +bg.toFixed(3) };
+    // 3) 快速通道：原图本身即均匀白底（含白色产品），无需抠图，直接规范化、不质检、零失败
+    if (P.isWhiteBase(origRGBA)) {
+      const whiteNow = WebPlatform.toDataURL(HogeeFidelity.normalizeWhite(origRGBA, 2048), 'image/jpeg', 0.95);
+      return { ok: true, white: whiteNow, fg: null, viewType, alreadyWhite: true,
+        meta: { method: 'already-white', fidelity: level, viewType, bg: +bg.toFixed(3) } };
     }
-    if (!mk || !mk.ok || !mk.image) return { ok: false, error: (mk && mk.error) || 'no_matting' };
+    // 3b) 快速通道：原图已是透明底抠图，直接 trim 紧框、放大合成白底，不再重复抠图
+    if (P.isCutoutBase(origRGBA)) {
+      const fg0 = HogeeFidelity.trim(origRGBA, 0.02);
+      const whiteCut = WebPlatform.toDataURL(HogeeFidelity.onWhite(fg0, 2048, 0.86, 0.86), 'image/jpeg', 0.95);
+      const fgCut = WebPlatform.toDataURL(fg0, 'image/png');
+      return { ok: true, white: whiteCut, fg: fgCut, viewType, alreadyWhite: true,
+        meta: { method: 'already-cutout', fidelity: level, viewType, bg: +bg.toFixed(3) } };
+    }
+    // 4) 外观 / 普通商品 / 细节：matting 统一抠图（细结构/手持商品质检门禁）
+    let mk = await call('/cutout', { image, strategy: 'matting', category });
+    if (!mk || mk.ok === false || !mk.image) {
+      const reason = (mk && (mk.reason || (mk.error && mk.error.code))) || 'no_matting';
+      // 瞬时错误（SSL 525 / 4xx-5xx / 超时 / 网络）重试一次
+      if (/525|timeout|network|http_[45]/.test(String(reason))) {
+        try { const rt = await call('/cutout', { image, strategy: 'matting', category }); if (rt && rt.ok && rt.image) mk = rt; } catch (e) {}
+      }
+    }
+    if (!mk || mk.ok === false || !mk.image) {
+      // 最终兜底：绝不零输出、绝不要求重拍——原图直接规范化铺白底（保真、无重绘）
+      const reason2 = (mk && (mk.reason || (mk.error && mk.error.code))) || 'no_matting';
+      const whiteFb = WebPlatform.toDataURL(HogeeFidelity.normalizeWhite(origRGBA, 2048), 'image/jpeg', 0.95);
+      return { ok: true, white: whiteFb, fg: null, viewType, degraded: true,
+        meta: { method: 'cutout-fail-fallback', reason: String(reason2).slice(0, 60), fidelity: level, bg: +bg.toFixed(3) } };
+    }
     let fgRGBA = WebPlatform.toRGBA(WebPlatform.fromImage(await WebPlatform.loadImage(mk.image)));
     P.dropSmall(fgRGBA, 1200, 24);
     fgRGBA = HogeeFidelity.trim(fgRGBA, 0.02);

@@ -214,6 +214,58 @@ export async function picwishRBackground(env, pngBytes, prompt, opts = {}) {
   }
 }
 
+// ===== r-background 异步模式（避免在一个 Worker 请求里同步长等导致 Cloudflare 520）=====
+export async function picwishRBackgroundCreate(env, pngBytes, prompt, opts = {}) {
+  const key = env.PICWISH_API_KEY;
+  if (!key) return { ok: false, error: { code: 'picwish_not_configured', message: 'PICWISH_API_KEY 未配置' } };
+  if (!(pngBytes instanceof Uint8Array) || pngBytes.length < 100) return { ok: false, error: { code: 'bad_png_bytes', message: 'r-background 需要透明 PNG 字节' } };
+  if (!prompt) return { ok: false, error: { code: 'bad_prompt', message: 'r-background 需要英文 prompt' } };
+  try {
+    const fd = new FormData();
+    fd.append('sync', '0');
+    fd.append('prompt', prompt);
+    fd.append('batch_size', String(opts.batchSize === 1 ? 1 : 2));
+    if (opts.negativePrompt) fd.append('negative_prompt', String(opts.negativePrompt).slice(0, 512));
+    fd.append('image_file', new Blob([pngBytes], { type: 'image/png' }), 'cutout.png');
+    const r = await fetch(BASE + '/api/tasks/visual/r-background', {
+      method: 'POST', headers: { 'X-API-KEY': key }, body: fd,
+      signal: AbortSignal.timeout(30000),
+    });
+    const txt = await r.text();
+    if (r.status !== 200) return { ok: false, error: { code: 'picwish_rbg_http_' + r.status, message: txt.slice(0, 300) } };
+    let j; try { j = JSON.parse(txt); } catch { return { ok: false, error: { code: 'picwish_rbg_bad_json', message: txt.slice(0, 200) } }; }
+    const tid = j.data && j.data.task_id;
+    if (!tid) return { ok: false, error: { code: 'picwish_rbg_no_task', message: txt.slice(0, 200) } };
+    return { ok: true, taskId: tid };
+  } catch (e) {
+    return { ok: false, error: { code: 'picwish_rbg_create_exception', message: String(e && e.message || e) } };
+  }
+}
+
+export async function picwishRBackgroundQuery(env, taskId) {
+  const key = env.PICWISH_API_KEY;
+  if (!key) return { ok: false, error: { code: 'picwish_not_configured', message: 'PICWISH_API_KEY 未配置' } };
+  if (!taskId) return { ok: false, error: { code: 'bad_task_id', message: '缺少 task_id' } };
+  try {
+    const r = await fetch(BASE + '/api/tasks/visual/r-background/' + encodeURIComponent(taskId), {
+      headers: { 'X-API-KEY': key },
+      signal: AbortSignal.timeout(20000),
+    });
+    const txt = await r.text();
+    if (r.status !== 200) return { ok: false, error: { code: 'picwish_rbg_q_http_' + r.status, message: txt.slice(0, 200) } };
+    let j; try { j = JSON.parse(txt); } catch { return { ok: false, error: { code: 'picwish_rbg_q_bad_json', message: txt.slice(0, 200) } }; }
+    const d = j.data || {};
+    const state = Number(d.state);
+    if (state < 0) return { ok: false, state, error: { code: 'picwish_rbg_task_failed', message: 'state=' + state + ' ' + (j.message || '').slice(0, 150) } };
+    if (state !== 1) return { ok: true, state, pending: true, progress: Number(d.progress) || 0 };
+    const urls = [d.image_1, d.image_2, d.image_3, d.image_4].filter(u => typeof u === 'string' && /^https?:\/\//.test(u));
+    if (!urls.length) return { ok: false, error: { code: 'picwish_rbg_no_image', message: txt.slice(0, 200) } };
+    return { ok: true, state: 1, urls };
+  } catch (e) {
+    return { ok: false, error: { code: 'picwish_rbg_q_exception', message: String(e && e.message || e) } };
+  }
+}
+
 /* =====================================================================
  * scale（AI 超分/清晰化）：对抠图 PNG 做 type=clean 超分，注入真实细节。
  * ---------------------------------------------------------------------
