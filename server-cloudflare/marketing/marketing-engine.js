@@ -19,6 +19,9 @@ import { getImageType } from './image-types.js';
 import { runQc } from './qc-gate.js';
 import { chatVisionCustom } from '../vision.js';
 import { validateOnScreen } from '../lang-util.js';
+import { picwishCutout } from '../picwish.js';
+import { autodlCutout } from '../autodl.js';
+import { giteeMatting } from '../gitee.js';
 
 export const PER_IMAGE_COST_RMB = 0.25;
 const MIN_TOTAL_PIXELS = 3686400;
@@ -618,6 +621,66 @@ async function runBaseQc(env, { image, ref, productHint, domain }) {
 }
 
 /* ---------- 主入口 ---------- */
+/* =====================================================================
+ * 轨道A · 纯白底图（white_main / f_white，recipe='white_bg'）确定性保真路径
+ * ---------------------------------------------------------------------
+ * 纪律：产品像素绝不重绘。
+ *   - 保真抠图（picwish→autodl→gitee 降级），产品为客户实拍真实像素；
+ *   - 在纯白 #FFFFFF 正方形画布上居中合成，绝不加任何地面阴影/倒影/灰渐变；
+ *   - 画布边长不低于原图最长边且 ≥2048，输出分辨率不低于原图；
+ *   - 小图放大设上限（≤1.6x），宁可产品略小也不硬放大到糊（信息论约束）。
+ * 全程不调用生成模型，故不会因生成模型重绘而变形/加阴影，也不受其超时影响。
+ * ===================================================================*/
+async function dataUrlBitmap(dataUrl) {
+  const m = /^data:[^;]+;base64,(.*)$/s.exec(dataUrl);
+  if (!m) throw new Error('bad_dataurl');
+  const bin = atob(m[1]);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return createImageBitmap(new Blob([bytes]));
+}
+
+// 保真抠图降级链：picwish（默认）→ autodl（GPU 实例）→ gitee（RMBG-2.0）
+async function cutoutWithFallback(env, image) {
+  let r = await picwishCutout(env, image, { type: 'object' });
+  if (r.ok) return r;
+  r = await autodlCutout(env, image);
+  if (r.ok) return r;
+  r = await giteeMatting(env, image, { model: 'RMBG-2.0' });
+  if (r.ok) return r;
+  return { ok: false, error: { code: 'cutout_all_failed', message: '所有保真抠图服务均不可用' } };
+}
+
+async function buildWhiteMain(env, image, typeId) {
+  const t0 = Date.now();
+  const cut = await cutoutWithFallback(env, image);
+  if (!cut.ok) return { ok: false, composite: 'frontend', error: cut.error, cost: 0, elapsed_ms: Date.now() - t0 };
+
+  // Edge 运行时（compat 2026-09-16 + nodejs_compat）经隔离探针实测：createImageBitmap/OffscreenCanvas
+  // 均为 undefined，服务端无法做 canvas 合成（本地 wrangler dev 同样失败）。故遵循 M2 架构：
+  // 服务端只做保真抠图（产品真实像素、绝不重绘），回透明 cutout PNG + 确定性合成规格，
+  // 由浏览器 atu-studio.js 在前端 canvas 里合成白底成品（浏览器必有完整 canvas API）。
+  return {
+    ok: true,
+    type: typeId,
+    composite: 'white_cutout',
+    base_image: cut.image,                 // 透明 PNG dataURL，保真未重绘
+    text_layers: [],
+    white_spec: {
+      bg: '#ffffff',                       // 纯白底
+      min_size: 2048,                      // 正方形边长 S=max(原图最长边,2048)
+      ratio: 0.86,                         // 产品目标占比
+      max_scale: 1.6,                      // 小图放大封顶，宁可略小不硬放大到糊
+      no_shadow: true,                     // 无地面阴影/倒影/灰渐变
+      alpha_threshold: 12,                 // bbox 判定 alpha 阈值
+      jpeg_quality: 0.95
+    },
+    elapsed_ms: Date.now() - t0,
+    cost: PER_IMAGE_COST_RMB,
+    backend: cut.backend || 'picwish'
+  };
+}
+
 export async function runMarketingGenerate(env, args = {}) {
   const started = Date.now();
   const typeId = args.type;
@@ -630,6 +693,10 @@ export async function runMarketingGenerate(env, args = {}) {
   if (typeof image !== 'string' || !/^data:image\/(jpe?g|png|webp);base64,/.test(image)) {
     return { ok: false, error: { code: 'bad_image', message: '缺少产品图 dataURL' }, cost: 0 };
   }
+
+  // 轨道A 纯白底图（white_main / f_white）：保真抠图 + 纯白 #FFFFFF 合成、无阴影、
+  // 分辨率不低于原图；绝不走 generateImage 重绘（重绘必然带来加阴影/降质/变形风险）。
+  if (recipe === 'white_bg') return await buildWhiteMain(env, image, typeId);
 
   let size = args.size && /^\d{3,5}x\d{3,5}$/.test(args.size) ? args.size : t.size;
   // 校验最小像素（契约 §1）
@@ -698,8 +765,14 @@ export async function runMarketingGenerate(env, args = {}) {
     for (let attempt = 0; attempt < 3; attempt++) {
       const r = await doGen(attempt, prevFailures);
       if (r.error) {
+        // 上游超时/限流/5xx：立即返回，不再立即重试。
+        // 并发排队/限流下重试只会更慢——一次 85s 超时被放大成 3×≈200s 墙钟，触发边缘裸 520。
+        const code = (r.error && r.error.code) || '';
+        if (code === 'upstream_timeout' || /^upstream_(4\d\d|5\d\d)$/.test(code)) {
+          return { ok: false, composite: 'frontend', error: r.error, cost: 0, elapsed_ms: Date.now() - started };
+        }
         if (attempt === 2) return { ok: false, composite: 'frontend', error: r.error, cost: 0, elapsed_ms: Date.now() - started };
-        continue; // 中间出图失败：继续下一次重试，仍 0 计费
+        continue; // 中间出图失败（如 no_image）：继续下一次重试，仍 0 计费
       }
       baseB64 = r.b64;
       try { qc = await checkBase(baseB64); } catch {}

@@ -911,10 +911,51 @@ body.atu-open #atuStudio{display:flex}\
   },
   /* === 契约 §B2：ja/ko 前端文字层合成。baked 直接用 image；frontend 用 base_image+text_layers 本地 Canvas 合成 === */
   resolveResultImage:function(j){
+   if(j&&j.composite==='white_cutout'&&j.base_image){
+    return this.composeWhiteCutout(j);
+   }
    if(j&&j.composite==='frontend'&&j.base_image&&Array.isArray(j.text_layers)){
     return this.composeFrontend(j);
    }
    return Promise.resolve(j&&j.image);
+  },
+  /* === 轨道A 白底确定性合成（浏览器 canvas）。服务端 edge 无 canvas，只回透明 cutout PNG + white_spec；
+     浏览器按规格合成：alpha>阈值求 bbox → 正方形 S=max(原图长边,min_size) → 占比 ratio、放大封顶 max_scale
+     → 纯白 #FFFFFF 居中 → JPEG。无阴影/倒影/灰渐变；产品像素来自保真抠图，绝不重绘。 === */
+  composeWhiteCutout:function(j){
+   var spec=j.white_spec||{};
+   var minSize=spec.min_size||2048, ratio=spec.ratio||0.86, maxScale=spec.max_scale||1.6;
+   var alphaThr=spec.alpha_threshold||12, q=spec.jpeg_quality||0.95;
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var pre=document.createElement('canvas');pre.width=im.width;pre.height=im.height;
+      var pctx=pre.getContext('2d',{willReadFrequently:true});
+      pctx.drawImage(im,0,0);
+      var d=pctx.getImageData(0,0,im.width,im.height).data;
+      var x0=im.width,y0=im.height,x1=0,y1=0;
+      for(var y=0;y<im.height;y++){for(var x=0;x<im.width;x++){
+       if(d[(y*im.width+x)*4+3]>alphaThr){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+      }}
+      if(x1<=x0||y1<=y0){res(j.base_image);return;}
+      var sw=x1-x0+1,sh=y1-y0+1;
+      var S=Math.max(im.width,im.height,minSize);
+      var longB=Math.max(sw,sh);
+      var scale=(S*ratio)/longB;if(scale>maxScale)scale=maxScale;
+      var dw=Math.round(sw*scale),dh=Math.round(sh*scale);
+      var dx=Math.round((S-dw)/2),dy=Math.round((S-dh)/2);
+      var cv=document.createElement('canvas');cv.width=S;cv.height=S;
+      var ctx=cv.getContext('2d');
+      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,S,S);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(im,x0,y0,sw,sh,dx,dy,dw,dh);
+      res(cv.toDataURL('image/jpeg',q));
+     }catch(e){res(j.base_image);}
+    };
+    im.onerror=function(){res(j.base_image);};
+    im.src=j.base_image;
+   });
   },
   composeFrontend:function(j){
    var self=this;return new Promise(function(res){
