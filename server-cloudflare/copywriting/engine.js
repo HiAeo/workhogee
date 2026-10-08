@@ -41,6 +41,77 @@ const TOTAL_BUDGET = 150000;
 const MAX_CONCURRENCY = 3;
 const MAX_ATTEMPTS = 2;
 
+/* ---------- P1 品牌锁定 / 反竞品 / 反虚构价 确定性校验 ---------- */
+// 中文品牌 → 规范外文名（缺省回退拼音）。外语平台文案必须用规范名，不得漂移。
+const BRAND_EN = {
+  '百雀羚': 'Pechoin', '自然堂': 'Chando', '珀莱雅': 'PROYA', '薇诺娜': 'Winona',
+  '完美日记': 'Perfect Diary', '花西子': 'Florasis', '李宁': 'Li-Ning', '安踏': 'ANTA'
+};
+// 竞品/误写词表（命中即剔除；持续命中判不合格）。小而精，按品类可扩。
+const COMPETITOR_WORDS = [
+  '旁氏', "Pond's", 'Ponds', '米粹', '玉兰油', 'Olay', 'SK-II', 'SK2', '欧莱雅',
+  'L\'Oreal', '巴黎欧莱雅', '妮维雅', 'Nivea', '舒肤佳', 'Safeguard'
+];
+// 价格/货币片段（用于剔除模型虚构价）
+const PRICE_RE = /(?:¥|￥|RMB|rmb|\$|USD|元|块钱?|块)\s?\d+(?:\.\d+)?[元块]?|\d+(?:\.\d+)?\s?(?:元|块钱?|块|RMB|rmb)/g;
+
+function canonicalBrand(mctx, p) {
+  const zh = (mctx.brand || '').trim();
+  if (p && p.lang === 'en') return { zh, en: BRAND_EN[zh] || zh };
+  return { zh, en: BRAND_EN[zh] || '' };
+}
+// 判断输入事实里是否真的给了价格（给了就允许保留，没给就一律剔除）
+function inputHasPrice(mctx, infoCard) {
+  const blob = [mctx && mctx.factsBrief, mctx && mctx.price, infoCard && infoCard['价格']].filter(Boolean).join(' ');
+  return /(¥|￥|\$|RMB|元|price|价格)/i.test(blob);
+}
+function splitSentences(s) { return String(s).split(/(?<=[。！!？?\n；;])/).map(x => x.trim()).filter(Boolean); }
+
+/**
+ * 确定性品牌/价格守门：返回 { draft, issues[], clean }
+ *  - 剔除含竞品词的整句/标签；
+ *  - 输入无价格则剔除所有价格片段；
+ *  - 检查品牌是否出现（中文平台含 zh 品牌；英文平台含规范 en 品牌）。
+ */
+function brandGuard(draft, { mctx, p, infoCard }) {
+  const issues = [];
+  const { zh, en } = canonicalBrand(mctx, p);
+  const wantPrice = inputHasPrice(mctx, infoCard);
+  const d = { ...draft };
+  const textKeys = ['title', 'body', 'subtitle', 'detail', 'description'];
+  const arrKeys = ['hashtags', 'selling_points', 'bullets'];
+  const hitComp = (s) => COMPETITOR_WORDS.some(w => s.includes(w));
+  // 标量字段：删整句竞品；删价格片段
+  for (const k of textKeys) {
+    if (typeof d[k] !== 'string' || !d[k]) continue;
+    let s = d[k];
+    if (hitComp(s)) {
+      const kept = splitSentences(s).filter(sent => !hitComp(sent));
+      s = kept.join(' ');
+      issues.push(`${k}:剔除含竞品句子`);
+    }
+    if (!wantPrice && PRICE_RE.test(s)) {
+      s = s.replace(PRICE_RE, '').replace(/\s{2,}/g, ' ').replace(/[，。、\s]+(?=[。！？；])/g, '').trim();
+      issues.push(`${k}:剔除虚构价格`);
+      PRICE_RE.lastIndex = 0;
+    }
+    d[k] = s;
+  }
+  // 数组字段：删竞品标签/卖点；删价格
+  for (const k of arrKeys) {
+    if (!Array.isArray(d[k])) continue;
+    d[k] = d[k].map(t => String(t)).filter(t => {
+      if (hitComp(t)) { issues.push(`${k}:剔除竞品项「${t.slice(0, 20)}」`); return false; }
+      if (!wantPrice && PRICE_RE.test(t)) { issues.push(`${k}:剔除含价格项`); PRICE_RE.lastIndex = 0; return false; }
+      return true;
+    });
+  }
+  // 品牌在场检查
+  const allText = textKeys.map(k => d[k] || '').join(' ') + ' ' + arrKeys.map(k => (d[k] || []).join(' ')).join(' ');
+  const brandPresent = p.lang === 'en' ? (en && allText.includes(en)) : (!!zh && allText.includes(zh));
+  return { draft: d, issues, brandPresent };
+}
+
 /* ---------- 纯文本 LLM 调用（硬超时+外部信号） ---------- */
 async function chatText(env, { system, user, maxTokens = 900, temperature = 0.75, timeoutMs = PER_CALL_TIMEOUT, signal }) {
   const key = env && (env.ARK_API_KEY || env.VISION_API_KEY);
@@ -110,9 +181,16 @@ function extractJson(text) {
 /* ---------- 平台 system prompt（只含打法，不含任何商品事实） ---------- */
 function buildSystem(p, mctx, trendBrief) {
   const lang = p.lang === 'en' ? 'English' : '简体中文';
+  const { zh: brandZh, en: brandEn } = canonicalBrand(mctx, p);
   const angleList = pickAngles(mctx.category && mctx.category.zh).slice(0, 4).join('；');
   const L = [];
   L.push('你是「阿文」，一名深耕' + p.label + '的资深电商文案。现在只用' + lang + '写这一份稿子。');
+  L.push('【唯一品牌】这是客户自有品牌，文案里出现的品牌名必须严格等于：' + (p.lang === 'en' ? '「' + brandEn + '」(English brand name)' : '「' + brandZh + '」') + '。');
+  L.push('【铁律·品牌锁定】');
+  L.push('- 禁止出现任何其他品牌/竞品名（包括但不限于旁氏/Pond\'s/米粹/玉兰油/Olay/欧莱雅/Nivea 等），哪怕是"对比/平替"也不行。');
+  L.push('- 外语平台一律使用规范品牌名「' + (brandEn || brandZh) + '」，禁止自行换成别的称呼或拼音以外的名字。');
+  L.push('- 不允许把客户产品写成别的牌子。');
+  L.push('【铁律·禁止编造价格】价格/规格/数字只能引用下面给定的"商品事实"；若事实里没给价格，则全文一律不得出现任何价格、货币（¥/￥/$/RMB/元/块）或"数字+元"的说法。');
   L.push('【平台打法】' + p.label + '（lang=' + p.lang + '）：');
   L.push('- 语气：' + p.tone);
   L.push('- 标题打法：' + p.titleFormulas.join('；'));
@@ -242,9 +320,10 @@ export async function generateCopy(env, args = {}) {
     const sys = buildSystem(p, mctx, trend.brief);
     const usr = buildUser(mctx, args.infoCard, trend.ms);
     let draft = null, qc = null, attempts = 0, rejected = false, lastErr = '';
+    let brandLog = [], corrNote = '', brandOk = false;
     for (; attempts < MAX_ATTEMPTS; attempts++) {
       if (Date.now() - startedAt > TOTAL_BUDGET) { rejected = true; break; }
-      const r = await chatText(env, { system: sys, user: usr, maxTokens: ['wechat_official', 'amazon', 'xiaohongshu', 'taobao'].includes(platform) ? 1600 : 900, signal });
+      const r = await chatText(env, { system: sys, user: usr + corrNote, maxTokens: ['wechat_official', 'amazon', 'xiaohongshu', 'taobao'].includes(platform) ? 1600 : 900, signal });
       if (r.usage) {
         const cost = (r.usage.in_tokens / 1000) * PRICE.inPer1k + (r.usage.out_tokens / 1000) * PRICE.outPer1k;
         costBook.push({ platform, model: r.model, in_tokens: r.usage.in_tokens, out_tokens: r.usage.out_tokens, cost_cny: +cost.toFixed(4), ms: r.ms });
@@ -259,17 +338,29 @@ export async function generateCopy(env, args = {}) {
         continue;
       }
       draft = sanitize(parsed, p);
+      // P1 品牌/价格确定性守门
+      const bg = brandGuard(draft, { mctx, p, infoCard: args.infoCard });
+      draft = bg.draft;
+      brandOk = bg.brandPresent;
+      brandLog.push({ platform, attempt: attempts + 1, issues: bg.issues, brandPresent: bg.brandPresent });
       qc = qualityCheck(draft, { platform, mctx });
-      if (qc.pass) break;
+      // 品牌未锁定或仍有问题 → 追加纠正指令，再生成一次（利用现有 attempt）
+      if (!bg.brandPresent || bg.issues.length) {
+        corrNote += `\n【纠正指令·上一稿不合格】品牌名必须严格为「${p.lang === 'en' ? canonicalBrand(mctx, p).en : canonicalBrand(mctx, p).zh}」；删除一切竞品名/其他品牌；若事实无价格则删除一切价格/货币片段。请重写合规。`;
+      }
+      if (qc.pass && bg.brandPresent && !bg.issues.length) break;
       if (qc.fails.some(f => f.fatal)) { rejected = true; break; }
     }
     const costSum = costBook.filter(c => c.platform === platform).reduce((a, c) => a + c.cost_cny, 0);
+    const brandFail = !brandOk;
+    if (brandFail) rejected = true;
     return {
       platform, label: p.label, lang: p.lang,
-      ok: !rejected && !!(draft && qc && qc.pass),
+      ok: !rejected && !!(draft && qc && qc.pass && brandOk),
       rejected,
-      reason: rejected ? 'quality_gate_fatal' : (draft ? 'gate_not_passed' : 'llm_failed'),
+      reason: rejected ? (brandFail ? 'brand_lock_failed' : 'quality_gate_fatal') : (draft ? 'gate_not_passed' : 'llm_failed'),
       draft,
+      brandLog,
       qc: qc ? { pass: qc.pass, fails: qc.fails, warns: qc.warns, metrics: qc.metrics } : null,
       media: { images: media.images || [], aspect: p.aspect, suggestion: p.key + ' 配图建议：' + p.aspect },
       cost_cny: +costSum.toFixed(4),

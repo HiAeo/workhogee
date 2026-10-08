@@ -35,6 +35,10 @@ function brandCandidates(mctx = {}) {
       }
     }
   }
+  // P1：中文品牌→规范外文别名也作为候选（英文稿用 Pechoin 等也判品牌在场）
+  const BRAND_EN = { '百雀羚': 'Pechoin', '自然堂': 'Chando', '珀莱雅': 'PROYA', '薇诺娜': 'Winona', '完美日记': 'Perfect Diary', '花西子': 'Florasis', '李宁': 'Li-Ning', '安踏': 'ANTA' };
+  const zh = String(mctx.brand || '').trim();
+  if (BRAND_EN[zh]) out.add(BRAND_EN[zh].toLowerCase());
   return [...out];
 }
 
