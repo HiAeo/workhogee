@@ -867,7 +867,7 @@ body.atu-open #atuStudio{display:flex}\
    }else if(sceneTypes[type]){
     place='Place the product standing upright in a real photographic interior with strong depth: a real foreground floor, a mid-ground and a distant softly blurred recognizable room (bright bathroom / bedroom / hotel / living room), large windows with natural daylight ('+this._sceneEnv[group]+'). The product stands directly on the real floor with a thin soft contact shadow and a subtle floor reflection. A few tasteful distant props may appear far in the background but must never touch or surround the product.';
    }else{
-    place='The product stands upright in front of a clean bright light-gray smooth matte micro-cement plaster wall, soft even studio lighting, a subtle smooth vertical gradient and a faint horizontal surface line near the bottom; minimal, premium and uncluttered. Render a thin soft contact shadow where it meets the surface.';
+    place='The product stands upright in front of a clean bright light-gray wall that is a completely smooth, flat, even, seamless solid surface with absolutely NO surface texture, soft even studio lighting, a subtle smooth vertical gradient and a faint horizontal surface line near the bottom; minimal, premium and uncluttered. Render a thin soft contact shadow where it meets the surface.';
    }
    var cord='If the product has a short power cord at its base, the cord rests naturally on the surface right beside the base with a slight curve; it must NOT extend away, hang into the distance, or plug into any block, box, tank, socket or object.';
    var ban='CRITICAL: NO fabric, cloth, woven or textile weave texture filling the frame, NO noisy speckled or knitted texture, NO pedestal, cube, acrylic block, glass water tank, rubble, stones, rocks, floating platform, box, package, paper, table or shelf inserted under or around the product, and NO text anywhere in the background.';
@@ -941,16 +941,23 @@ body.atu-open #atuStudio{display:flex}\
     try{
     var fg=self._fg||null;
     if(!fg){
-     var co=await authPost('/cutout',{image:req.image,strategy:'picwish'},80000,{signal:ac.signal});
-     if(co&&co.ok&&co.image)fg=co.image;
-     else return {ok:false,error:(co&&co.error)||{code:'cutout_fail',message:'主体抠图失败，可点该图单张重做'}};
+     // 1) 原图/干净图本身就是透明底已抠图（如 RGBA 商品图），直接复用，不再重复抠图
+     var cand=self._cleanImage||req.image||null;
+     if(cand){try{if(await GF().isCutoutBase(cand))fg=cand;}catch(e0){}}
     }
+    if(!fg&&req.image){
+     // 2) 调 /cutout 获取透明主体；失败/超时不直接判死
+     try{var co=await authPost('/cutout',{image:req.image,strategy:'picwish'},80000);if(co&&co.ok&&co.image)fg=co.image;}catch(ce){}
+    }
+    // 3) 实在拿不到透明主体：用原图继续（保证不零输出、不卡死、不要求重拍）
+    if(!fg)fg=self._cleanImage||req.image;
+    if(fg&&!self._fg)self._fg=fg;   // 主体只取一次并缓存，其余图种复用，避免并发重复抠图超时
     if(self._abort)return {ok:false};
     var pose=await self.ensurePose(fg),poseName=pose.pose;
     var canvasPng;
     try{canvasPng=await self.layoutCutout(fg,req.type,req.size,poseName);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
     var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes},poseName);
-    var neg='text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
+    var neg='fabric, cloth, textile, woven, knitted, knit, weave, wall texture, plaster texture, concrete texture, rough surface, grain, noisy speckled texture, text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
     var sleepFE=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
     // 安全请求：520/502/503/超时/网络等瞬时错误自动退避重试，且绝不把异常抛给外层
     var postRobust=async function(path,body,to,retries){
@@ -990,19 +997,23 @@ body.atu-open #atuStudio{display:flex}\
     if(j&&j.ok&&j.images&&j.images.length){
     // 前端多候选质检：背景乱码 / 多余承托物 / 主体缺失（浏览器端，无 Worker 资源限制）
     var qcAsk='Inspect this e-commerce product photo: a real product cutout composited over an AI background'+(poseName==='hang'?' (the product hangs on the simple horizontal support)':' (the product stands upright)')+'. Return JSON exactly: {"strayText":true if ANY readable or gibberish letters, words or numbers appear on the background, walls, props, boxes or papers (IGNORE text printed on the product itself),"fakeSupport":true if any generated table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper pile, rubble or other object touches or supports the product that should not be there (for hang the only allowed support is the simple rail; for stand only the real surface directly under it, and a short cord may rest on that surface beside the base),"fabricBg":true if the background is entirely or mostly filled with fabric, cloth, woven or knitted textile, noisy speckled texture, or a flat texture with NO recognizable room depth and NO smooth clean plaster wall,"productHero":true if the product is complete, sharp and the clear main subject,"score": an integer 1 to 10 for overall realism and selling appeal}.';
-    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);return {image:im,qc:(v&&v.ok)?v.data:{}};};
+    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);var tex=await self.bgTextureRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex};};
     var reviewed=await Promise.all(j.images.map(reviewOne));
-    var isClean=function(q){return q.qc&&q.qc.strayText===false&&q.qc.fakeSupport===false&&q.qc.fabricBg===false&&q.qc.productHero!==false;};
+    var isClean=function(q){return q.qc&&q.qc.strayText===false&&q.qc.fakeSupport===false&&q.qc.fabricBg===false&&q.qc.productHero!==false&&(typeof q.tex!=='number'||q.tex<=0.30);};
     var clean=reviewed.filter(isClean);
     if(!clean.length){
       var j2=await callScene();
       if(j2&&j2.ok&&j2.images&&j2.images.length){reviewed=reviewed.concat(await Promise.all(j2.images.map(reviewOne)));clean=reviewed.filter(isClean);}
     }
     var scoreOf=function(q){var n=parseInt(q.qc&&q.qc.score,10);return isFinite(n)?n:5;};
-    var pool=clean.length?clean:reviewed;
-    pool.sort(function(a,b){return scoreOf(b)-scoreOf(a);});
-    base=pool[0].image;
-    try{var up=await authPost('/superres',{image:base,scale:2},90000);if(up&&up.ok&&up.image)base=up.image;}catch(e){}
+    if(clean.length){
+      clean.sort(function(a,b){return scoreOf(b)-scoreOf(a);});
+      base=clean[0].image;
+      try{var up=await authPost('/superres',{image:base,scale:2},90000);if(up&&up.ok&&up.image)base=up.image;}catch(e){}
+    }else{
+      // AI 背景两轮均未通过质检：绝不交付已知劣质背景（织物/乱码/假支撑），改用确定性干净棚拍背景（背景完全程序化，物理上无任何瑕疵）
+      base=await self.fallbackSceneBase(canvasPng);
+    }
     }else{
     // 确定性兜底：干净浅墙 + 真实主体，绝不零输出、不要求客户重拍
     base=await self.fallbackSceneBase(canvasPng);
@@ -1043,6 +1054,33 @@ body.atu-open #atuStudio{display:flex}\
     };
     im.onerror=function(){res(canvasPng);};
     im.src=canvasPng;
+   });
+  },
+  /* 客观背景纹理检测：取图像上下边缘条带（r-background 原始图无文字、产品居中，边缘基本是背景），
+     用 Sobel 梯度统计高密度纹理占比。满屏织物/流体/大理石纹理→高；干净棚拍墙面→低。纯像素判定，不依赖 VL。 */
+  bgTextureRatio:function(dataUrl){
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var W=im.width,H=im.height,N=256,band=0.15;
+      var c=document.createElement('canvas');c.width=N;c.height=Math.round(N*0.6);
+      var x=c.getContext('2d',{willReadFrequently:true});
+      x.drawImage(im,0,0,W,H*band,0,0,N,N*0.30);
+      x.drawImage(im,0,H*(1-band),W,H*band,0,N*0.30,N,N*0.30);
+      var dd=x.getImageData(0,0,c.width,c.height),w=c.width,h=c.height;
+      var g=new Float32Array(w*h);
+      for(var y=0;y<h;y++)for(var xx=0;xx<w;xx++){var i=(y*w+xx)*4;g[y*w+xx]=0.299*dd.data[i]+0.587*dd.data[i+1]+0.114*dd.data[i+2];}
+      var hi=0,tot=0;
+      for(var yy=1;yy<h-1;yy++)for(var xxx=1;xxx<w-1;xxx++){
+       var k=yy*w+xxx,gx=g[k+1]-g[k-1],gy=g[k+w]-g[k-w],m=Math.sqrt(gx*gx+gy*gy);
+       tot++;if(m>40)hi++;
+      }
+      res(hi/Math.max(1,tot));
+     }catch(e){res(0);}
+    };
+    im.onerror=function(){res(0);};
+    im.src=dataUrl;
    });
   },
   /* 终止任务：不仅停止派发，真正 abort 所有在途 fetch */
