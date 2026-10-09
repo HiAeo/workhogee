@@ -815,11 +815,11 @@ body.atu-open #atuStudio{display:flex}\
   /* ========== r-background 联合背景（产品保真）：前端编排 ========== */
   RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,mood:1,hero:1,scene_atmosphere:1,ingredients:1},
   _layCfg:{
-   scene_show:{cx:.50,bottom:.93,h:.64},mood:{cx:.42,bottom:.90,h:.66},scene_atmosphere:{cx:.5,bottom:.95,h:.72},
-   selling_point:{cx:.50,bottom:.97,h:.76},hero:{cx:.5,bottom:.96,h:.78},
-   core_selling:{cx:.50,bottom:.97,h:.74},icon_selling:{cx:.5,bottom:.66,h:.52},ingredients:{cx:.5,bottom:.60,h:.48},
-   material:{cx:.5,bottom:.95,h:.72},product_detail:{cx:.5,bottom:.95,h:.80},
-   default:{cx:.5,bottom:.95,h:.72}
+   scene_show:{cx:.50,bottom:.96,h:.63},mood:{cx:.42,bottom:.90,h:.66},scene_atmosphere:{cx:.5,bottom:.95,h:.72},
+   selling_point:{cx:.50,bottom:.98,h:.65},hero:{cx:.5,bottom:.98,h:.65},
+   core_selling:{cx:.50,bottom:.98,h:.65},icon_selling:{cx:.5,bottom:.62,h:.45},ingredients:{cx:.5,bottom:.58,h:.41},
+   material:{cx:.5,bottom:.98,h:.67},product_detail:{cx:.5,bottom:.97,h:.64},
+   default:{cx:.5,bottom:.97,h:.64}
   },
   _sceneEnv:{
    lifestyle:'a bright airy real-life setting with soft natural daylight and tasteful context props, gentle background blur, warm inviting commercial lifestyle photography',
@@ -1019,6 +1019,11 @@ body.atu-open #atuStudio{display:flex}\
     base=await self.fallbackSceneBase(canvasPng);
     }
     var layers=self.buildTextLayersFE(req.type,self.ostForType(req.type));
+    var NEED_TEXT={core_selling:1,selling_point:1,scene_show:1,hero:1,material:1,product_detail:1,multi_scene:1,icon_selling:1,ingredients:1};
+    if((!layers||!layers.length)&&NEED_TEXT[req.type]){
+      var _pr=(self.planResp&&self.planResp.product)||{};
+      layers=self.buildTextLayersFE(req.type,{headline:_pr.name||'',subheadline:(_pr.core_points&&_pr.core_points[0])||'',icons:[],panels:[]});
+    }
     var finalUrl=await self.composeFrontend({size:req.size,base_image:base,text_layers:layers});
     return {ok:true,image:finalUrl,type:req.type,size:req.size};
     }catch(genErr){

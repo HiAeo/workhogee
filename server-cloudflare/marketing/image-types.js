@@ -92,8 +92,8 @@ export const IMAGE_TYPES = {
     purpose: '还原真实使用场景', kit: 'ecom', track: 'b',
     flags: { real_scene: true, real_model: false, multi_panel: false, info_icon: false, size_anno: false },
     ratio: '16:9', size: SIZES.W169, recipe: 'lifestyle',
-    layout: { titlePos: 'none', headlineTier: 0, sellingPos: 'none', iconPos: 'none', composition: 'product naturally placed in real use environment', productRatio: 0.45, bg: 'real lifestyle environment, daylight' },
-    textSlots: []
+    layout: { titlePos: 'top-left', headlineTier: 1, sellingPos: 'sub line below headline', iconPos: 'none', composition: 'product naturally placed in real use environment', productRatio: 0.45, bg: 'real lifestyle environment, daylight' },
+    textSlots: ['headline', 'subheadline']
   },
   multi_scene: {
     id: 'multi_scene', name_zh: '多场景拼图', name_en: 'Multi-Scene Collage',

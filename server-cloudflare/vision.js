@@ -963,12 +963,12 @@ export async function generateCopy(env, input = {}) {
     try {
       const text = await callCopyModel(env, COPY_PLATFORM_PROMPTS[pf], ctx, pf === 'general' ? 0.5 : 0.85);
       return [pf, text];
-    } catch (e) { return [pf, '']; }
+    } catch (e) { return [pf, '', e && e.message]; }
   }));
-  const out = {};
-  entries.forEach(([pf, t]) => { out[pf] = t; });
+  const out = {}, errs = {};
+  entries.forEach((e) => { out[e[0]] = e[1]; if (!e[1] && e[2]) errs[e[0]] = e[2]; });
   const anyOk = ['xhs', 'douyin', 'pyq', 'general'].some(pf => out[pf]);
-  if (!anyOk) return { available: false, reason: 'all_empty' };
+  if (!anyOk) return { available: false, reason: 'all_empty', errors: errs };
   const xhsText = out.xhs || '';
   const titleLine = (xhsText.split('\n').map(l => l.trim()).filter(Boolean)[0]) || input.product || '';
   const tagMatches = xhsText.match(/#[^#\s]+/g) || [];
