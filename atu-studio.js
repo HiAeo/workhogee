@@ -541,7 +541,12 @@ body.atu-open #atuStudio{display:flex}\
     var body={images:imgs.map(function(x){return x.dataUrl;}).slice(0,5),
      kit_type:self.kitType(),platform:self.platform(),locale:self.locale(),language:self.resolvedLang(),
      selling_text:sellingText,selected_types:self.selectedTypes()};
-    var j=null;try{j=await authPost('/marketing/plan',body,180000);}catch(e){j=null;}
+    var j=null;
+    for(var at=0;at<3;at++){
+     try{j=await authPost('/marketing/plan',body,180000);}catch(e){j=null;}
+     if(j&&j.ok)break;                       // 成功即止
+     if(at<2)await new Promise(function(r){setTimeout(r,2000);}); // 瞬时 520/超时退避后重试
+    }
     if(mySeq!==self._planSeq){self._planRunning=false;return;} // 语种/平台已变，旧方案作废，不落地
     // 还原 textarea（保留 data-i18n-ph 占位）
     if(wrap){wrap.innerHTML='<textarea class="ats-ta" id="atsSelling" maxlength="2000" data-i18n-ph="selling_ph" placeholder="'+esc(t('selling_ph'))+'"></textarea>';}
@@ -1371,7 +1376,8 @@ body.atu-open #atuStudio{display:flex}\
    if(this._running)return;
    var types=this.selectedTypes();
    if(!types.length){toast(t('toast_needtype'),'err');return;}
-   if(this._planRunning||!this.planResp||this.planRespLang!==this.resolvedLang()){toast(t('plan_notready'),'err');return;} // 当前语种方案未就绪，拒绝旧方案出图
+   if(this._planRunning){toast(t('plan_notready'),'err');return;} // 方案仍在请求中，避免并发；结束后再点生成
+   var needReplan=!this.planResp||this.planRespLang!==this.resolvedLang();
    this._running=true;this._abort=false;this._paused=false;this.ats=[];this._notes=[];this._lastErr=null;this._failed={};this._cleanImage=null;
    this._durations=[];this._activeTasks={};this._taskStart={};this._reqAborts={};this._posePromise=null;
    this._totalTasks=types.length;this._doneTasks=0;this._progMsg='';
@@ -1379,6 +1385,13 @@ body.atu-open #atuStudio{display:flex}\
    var self=this;
    (async function(){
     var cat=(GS().identity&&GS().identity.cat)||'',pn=(GS().product&&GS().product.name)||'这款商品';
+    // 方案缺失/语种不符：后台异步补规划（runPlan 内含重试，不阻塞出图），同时立即用轻量降级方案出图——不卡顿、不零产出
+    if(needReplan){
+     try{self.runPlan();}catch(e){}
+     self.planResp={ok:true,degraded:true,language:self.resolvedLang(),product:{name:pn,domain:cat,core_points:[],scenes:[],materials:[],specs:[]},plan:[],recommended_types:[]};
+     self.planRespLang=self.resolvedLang();self.planByType={};
+     self.addNote('图文规划在后台补跑中，先按默认规格出图；需要更精准可点该图单张重做。');
+    }
     var needTrackA=(types.indexOf('white_main')>=0||types.indexOf('search_main')>=0);
     var fidOut=null;
     // 轨道A：只取干净白底主体（不再产裸局部/假影棚）——仍先行
