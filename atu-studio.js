@@ -822,7 +822,7 @@ body.atu-open #atuStudio{display:flex}\
    default:{cx:.5,bottom:.97,h:.64}
   },
   _sceneEnv:{
-   lifestyle:'a bright airy real-life setting with soft natural daylight and tasteful context props, gentle background blur, warm inviting commercial lifestyle photography',
+   lifestyle:'a bright airy real-life setting with soft natural daylight, gentle background blur, warm inviting commercial lifestyle photography',
    hero:'a clean premium studio-lifestyle setting, soft gradient backdrop with gentle bokeh, cinematic key light, aspirational premium mood',
    info:'a clean modern minimalist studio, smooth neutral light-gray backdrop, soft even lighting, subtle soft shadows, uncluttered premium commercial look',
    macro:'a soft neutral seamless backdrop, gentle diffused lighting, delicate soft highlights, refined texture, elegant premium product close-up',
@@ -865,12 +865,12 @@ body.atu-open #atuStudio{display:flex}\
    if(pose==='hang'||pose==='hand'){
     place='The product is ALREADY hanging on the simple support already drawn on the canvas. Render only a real photographic bright room wall behind it (tidy bathroom / entry / bedroom), soft natural daylight, gentle background blur, clear empty wall below. Do NOT add any hook, rail, rod, bracket, shelf, table, counter, pedestal, box, package or furniture — the support and product already exist.';
    }else if(sceneTypes[type]){
-    place='Place the product standing upright in a real photographic interior with strong depth: a real foreground floor, a mid-ground and a distant softly blurred recognizable room (bright bathroom / bedroom / hotel / living room), large windows with natural daylight ('+this._sceneEnv[group]+'). The product stands directly on the real floor with a thin soft contact shadow and a subtle floor reflection. A few tasteful distant props may appear far in the background but must never touch or surround the product.';
+    place='Place the product standing upright in a real photographic interior with strong depth: a real foreground floor, a mid-ground and a distant softly blurred recognizable room (bright bathroom / bedroom / hotel / living room), large windows with natural daylight ('+this._sceneEnv[group]+'). The product stands directly on the real floor with a thin soft contact shadow and a subtle floor reflection. The room is tidy and nearly empty, containing only fixed architecture (walls, floor, window, at most one distant built-in cabinet). Absolutely NO loose objects, props, extra products, bags, bottles, plants or decorations near or around the product.';
    }else{
     place='The product stands upright in front of a clean bright light-gray wall that is a completely smooth, flat, even, seamless solid surface with absolutely NO surface texture, soft even studio lighting, a subtle smooth vertical gradient and a faint horizontal surface line near the bottom; minimal, premium and uncluttered. Render a thin soft contact shadow where it meets the surface.';
    }
    var cord='If the product has a short power cord at its base, the cord rests naturally on the surface right beside the base with a slight curve; it must NOT extend away, hang into the distance, or plug into any block, box, tank, socket or object.';
-   var ban='CRITICAL: NO fabric, cloth, woven or textile weave texture filling the frame, NO noisy speckled or knitted texture, NO pedestal, cube, acrylic block, glass water tank, rubble, stones, rocks, floating platform, box, package, paper, table or shelf inserted under or around the product, and NO text anywhere in the background.';
+   var ban='CRITICAL: NO fire, flame, smoke, explosion, heat waves or glowing embers, NO liquid, fluid or energy swirls, NO melting, twisted or distorted shapes or glass shards, NO plastic bag, bottle or can, NO fabric, cloth, woven or textile weave texture filling the frame, NO noisy speckled or knitted texture, NO pedestal, cube, acrylic block, glass water tank, rubble, stones, rocks, floating platform, box, package, paper, table or shelf inserted under or around the product, and NO text anywhere in the background.';
    return keep+' '+place+' '+cord+' '+ban+' High detail, sharp focus on the product, professional e-commerce advertising photo, natural color.'+(o.variant?(' '+o.variant):'');
   },
   layoutCutout:function(fg,type,sizeStr,pose){
@@ -957,7 +957,7 @@ body.atu-open #atuStudio{display:flex}\
     var canvasPng;
     try{canvasPng=await self.layoutCutout(fg,req.type,req.size,poseName);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
     var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes},poseName);
-    var neg='fabric, cloth, textile, woven, knitted, knit, weave, wall texture, plaster texture, concrete texture, rough surface, grain, noisy speckled texture, text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
+    var neg='fire, flame, smoke, explosion, heat waves, glowing embers, liquid, fluid, energy swirl, melting, twisted, distorted, glass shards, plastic bag, bottle, can, fabric, cloth, textile, woven, knitted, knit, weave, wall texture, plaster texture, concrete texture, rough surface, grain, noisy speckled texture, text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
     var sleepFE=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
     // 安全请求：520/502/503/超时/网络等瞬时错误自动退避重试，且绝不把异常抛给外层
     var postRobust=async function(path,body,to,retries){
@@ -992,14 +992,23 @@ body.atu-open #atuStudio{display:flex}\
       }
       return {ok:false,error:{code:'scene_timeout',message:'背景生成超时，已为你兜底出图'}};
     };
+    var LIFESTYLE={scene_show:1,mood:1,scene_atmosphere:1};
+    var bgWhole=null;
+    if(LIFESTYLE[req.type]){
     var j=await callScene();
-    var base;
     if(j&&j.ok&&j.images&&j.images.length){
     // 前端多候选质检：背景乱码 / 多余承托物 / 主体缺失（浏览器端，无 Worker 资源限制）
     var qcAsk='Inspect this e-commerce product photo: a real product cutout composited over an AI background'+(poseName==='hang'?' (the product hangs on the simple horizontal support)':' (the product stands upright)')+'. Return JSON exactly: {"strayText":true if ANY readable or gibberish letters, words or numbers appear on the background, walls, props, boxes or papers (IGNORE text printed on the product itself),"fakeSupport":true if any generated table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper pile, rubble or other object touches or supports the product that should not be there (for hang the only allowed support is the simple rail; for stand only the real surface directly under it, and a short cord may rest on that surface beside the base),"fabricBg":true if the background is entirely or mostly filled with fabric, cloth, woven or knitted textile, noisy speckled texture, or a flat texture with NO recognizable room depth and NO smooth clean plaster wall,"productHero":true if the product is complete, sharp and the clear main subject,"score": an integer 1 to 10 for overall realism and selling appeal}.';
-    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);var tex=await self.bgTextureRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex};};
+    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);var tex=await self.bgTextureRatio(im);var col=await self.bgColorRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex,col:col};};
     var reviewed=await Promise.all(j.images.map(reviewOne));
-    var isClean=function(q){return q.qc&&q.qc.strayText===false&&q.qc.fakeSupport===false&&q.qc.fabricBg===false&&q.qc.productHero!==false&&(typeof q.tex!=='number'||q.tex<=0.30);};
+    var isClean=function(q){
+      var Q=q.qc||{},sc=parseInt(Q.score,10);
+      // VL 疑罪从有：每个维度必须明确为安全值，任一为 true/null/缺失即弃；评分需≥7
+      var vl=Q.strayText===false&&Q.fakeSupport===false&&Q.fabricBg===false&&Q.productHero===true&&isFinite(sc)&&sc>=7;
+      var tx=(typeof q.tex!=='number')||q.tex<=0.30;
+      var cl=q.col&&q.col.highSat<=0.06&&q.col.warm<=0.06;
+      return vl&&tx&&cl;
+    };
     var clean=reviewed.filter(isClean);
     if(!clean.length){
       var j2=await callScene();
@@ -1008,16 +1017,13 @@ body.atu-open #atuStudio{display:flex}\
     var scoreOf=function(q){var n=parseInt(q.qc&&q.qc.score,10);return isFinite(n)?n:5;};
     if(clean.length){
       clean.sort(function(a,b){return scoreOf(b)-scoreOf(a);});
-      base=clean[0].image;
-      try{var up=await authPost('/superres',{image:base,scale:2},90000);if(up&&up.ok&&up.image)base=up.image;}catch(e){}
-    }else{
-      // AI 背景两轮均未通过质检：绝不交付已知劣质背景（织物/乱码/假支撑），改用确定性干净棚拍背景（背景完全程序化，物理上无任何瑕疵）
-      base=await self.fallbackSceneBase(canvasPng);
+      bgWhole=clean[0].image;
+      try{var up=await authPost('/superres',{image:bgWhole,scale:2},90000);if(up&&up.ok&&up.image)bgWhole=up.image;}catch(e){}
     }
-    }else{
-    // 确定性兜底：干净浅墙 + 真实主体，绝不零输出、不要求客户重拍
-    base=await self.fallbackSceneBase(canvasPng);
     }
+    }
+    if(!bgWhole)bgWhole=await self.studioBgOnly(req.size);
+    var base=await self.mergeBgFg(bgWhole,canvasPng,req.size);
     var layers=self.buildTextLayersFE(req.type,self.ostForType(req.type));
     var NEED_TEXT={core_selling:1,selling_point:1,scene_show:1,hero:1,material:1,product_detail:1,multi_scene:1,icon_selling:1,ingredients:1};
     if((!layers||!layers.length)&&NEED_TEXT[req.type]){
@@ -1047,18 +1053,87 @@ body.atu-open #atuStudio{display:flex}\
     im.onload=function(){
      try{
       var W=im.width,H=im.height,c=document.createElement('canvas');c.width=W;c.height=H;
+      var pre=document.createElement('canvas');pre.width=W;pre.height=H;
+      var pctx=pre.getContext('2d',{willReadFrequently:true});pctx.drawImage(im,0,0);
+      var pd=pctx.getImageData(0,0,W,H).data,x0=W,y0=H,x1=-1,y1=-1;
+      for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){
+       if(pd[(yy*W+xx)*4+3]>16){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}
+      }
       var x=c.getContext('2d');
-      var g=x.createLinearGradient(0,0,0,H);
-      g.addColorStop(0,'#f4f6f9');g.addColorStop(0.72,'#eceff3');g.addColorStop(1,'#e3e7ed');
-      x.fillStyle=g;x.fillRect(0,0,W,H);
-      x.strokeStyle='rgba(120,130,145,0.28)';x.lineWidth=Math.max(1,Math.round(H*0.004));
-      x.beginPath();x.moveTo(W*0.08,H*0.86);x.lineTo(W*0.92,H*0.86);x.stroke();
+      var horizon=H*0.78;
+      var wg=x.createLinearGradient(0,0,0,horizon);
+      wg.addColorStop(0,'#f6f8fb');wg.addColorStop(1,'#eceff3');
+      x.fillStyle=wg;x.fillRect(0,0,W,horizon);
+      var gg=x.createLinearGradient(0,horizon,0,H);
+      gg.addColorStop(0,'#e6e9ef');gg.addColorStop(1,'#d7dce3');
+      x.fillStyle=gg;x.fillRect(0,horizon,W,H-horizon);
+      x.strokeStyle='rgba(110,120,135,0.10)';x.lineWidth=1;
+      x.beginPath();x.moveTo(0,horizon);x.lineTo(W,horizon);x.stroke();
+      if(x1>=x0&&y1>=0){
+       var cxP=(x0+x1)/2,cyP=y1+H*0.004,cwP=(x1-x0)*0.62,chP=Math.max(6,H*0.016);
+       x.save();x.translate(cxP,cyP);x.scale(1,chP/cwP);
+       var rg=x.createRadialGradient(0,0,2,0,0,cwP);
+       rg.addColorStop(0,'rgba(38,46,58,0.20)');rg.addColorStop(1,'rgba(38,46,58,0)');
+       x.fillStyle=rg;x.beginPath();x.arc(0,0,cwP,0,Math.PI*2);x.fill();x.restore();
+      }
       x.drawImage(im,0,0);
       res(c.toDataURL('image/jpeg',0.95));
      }catch(e){res(canvasPng);}
     };
     im.onerror=function(){res(canvasPng);};
     im.src=canvasPng;
+   });
+  },
+  /* 纯棚拍背景（不含产品）：墙-地柔和空间，物理零瑕疵。信息/卖点/材质类图种的确定性背景。 */
+  studioBgOnly:function(sizeStr){
+   return new Promise(function(res){
+    try{
+     var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+     var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+     var horizon=H*0.78;
+     var wg=x.createLinearGradient(0,0,0,horizon);
+     wg.addColorStop(0,'#f6f8fb');wg.addColorStop(1,'#eceff3');
+     x.fillStyle=wg;x.fillRect(0,0,W,horizon);
+     var gg=x.createLinearGradient(0,horizon,0,H);
+     gg.addColorStop(0,'#e6e9ef');gg.addColorStop(1,'#d7dce3');
+     x.fillStyle=gg;x.fillRect(0,horizon,W,H-horizon);
+     x.strokeStyle='rgba(110,120,135,0.10)';x.lineWidth=1;
+     x.beginPath();x.moveTo(0,horizon);x.lineTo(W,horizon);x.stroke();
+     res(c.toDataURL('image/jpeg',0.95));
+    }catch(e){res(null);}
+   });
+  },
+  /* 真实主体确定性贴回：背景在下，真实 fg（layoutCutout 输出，透明底）在上，
+     并在产品脚下补自然椭圆接触阴影。产品像素 100% 来自客户实拍，模型只负责背景。 */
+  mergeBgFg:function(bgDataUrl,layoutPng,sizeStr){
+   return new Promise(function(res){
+    var im=new Image(),bg=new Image(),n=0;
+    var done=function(){
+     try{
+      var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      if(bgDataUrl){x.drawImage(bg,0,0,W,H);}else{x.fillStyle='#eef1f5';x.fillRect(0,0,W,H);}
+      var pre=document.createElement('canvas');pre.width=W;pre.height=H;
+      var px=pre.getContext('2d',{willReadFrequently:true});px.drawImage(im,0,0,W,H);
+      var pd=px.getImageData(0,0,W,H).data,x0=W,x1=-1,y1=-1;
+      for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){if(pd[(yy*W+xx)*4+3]>16){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy>y1)y1=yy;}}
+      if(x1>=x0&&y1>=0){
+       var cxP=(x0+x1)/2,cyP=y1+H*0.004,cwP=(x1-x0)*0.62,chP=Math.max(6,H*0.016);
+       x.save();x.translate(cxP,cyP);x.scale(1,chP/cwP);
+       var rg=x.createRadialGradient(0,0,2,0,0,cwP);
+       rg.addColorStop(0,'rgba(38,46,58,0.20)');rg.addColorStop(1,'rgba(38,46,58,0)');
+       x.fillStyle=rg;x.beginPath();x.arc(0,0,cwP,0,Math.PI*2);x.fill();x.restore();
+      }
+      x.drawImage(im,0,0,W,H);
+      res(c.toDataURL('image/png'));
+     }catch(e){res(layoutPng);}
+    };
+    im.onload=function(){n++;if(n>=2)done();};
+    bg.onload=function(){n++;if(n>=2)done();};
+    im.onerror=function(){res(layoutPng);};
+    bg.onerror=function(){if(bgDataUrl){n++;if(n>=2)done();}else done();};
+    im.src=layoutPng;
+    if(bgDataUrl)bg.src=bgDataUrl;else{n++;if(n>=2)done();}
    });
   },
   /* 客观背景纹理检测：取图像上下边缘条带（r-background 原始图无文字、产品居中，边缘基本是背景），
@@ -1087,6 +1162,30 @@ body.atu-open #atuStudio{display:flex}\
     im.onerror=function(){res(0);};
     im.src=dataUrl;
    });
+  },
+  /* 客观高饱和/火焰检测：Sobel 对"大尺度平滑流体/火焰/色块"无效（边缘密度低），
+     故另用像素颜色判定——高饱和彩色占比、暖橙(火焰)占比。纯像素，不依赖 VL。 */
+  bgColorRatio:function(dataUrl){
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var N=256,c=document.createElement('canvas');c.width=N;c.height=Math.max(64,Math.round(N*im.height/im.width));
+      var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,c.width,c.height);
+      var d=x.getImageData(0,0,c.width,c.height).data,w=c.width,h=c.height;
+      var hi=0,warm=0,tot=0;
+      for(var y=0;y<h;y++)for(var xx=0;xx<w;xx++){
+       var i=(y*w+xx)*4,R=d[i],G=d[i+1],B=d[i+2];
+       var mx=Math.max(R,G,B),mn=Math.min(R,G,B);tot++;
+       if((mx-mn)>60&&mx>80)hi++;            // 高饱和彩色（异常蓝袋/绿流体）
+       if((R-G)>45&&(R-B)>45&&R>120)warm++;   // 暖橙红（火焰/热浪）
+      }
+      res({highSat:hi/tot,warm:warm/tot});
+     }catch(e){res({highSat:0,warm:0});}
+    };
+    im.onerror=function(){res({highSat:0,warm:0});};
+    im.src=dataUrl;
+  });
   },
   /* 终止任务：不仅停止派发，真正 abort 所有在途 fetch */
   _abortAll:function(){
