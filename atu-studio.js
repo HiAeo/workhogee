@@ -881,6 +881,10 @@ body.atu-open #atuStudio{display:flex}\
   },
   /* G3 品类→真实使用场地映射（r-background 只画固定环境，道具极简，产品像素最后贴回） */
   buildVenue:function(domain,scenes,name){
+   if(Array.isArray(this._inferredVenues)&&this._inferredVenues.length&&this._inferredVenues[0].en)return this._inferredVenues[0].en;
+   return this._staticVenue(domain,scenes,name);
+  },
+  _staticVenue:function(domain,scenes,name){
    var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
    if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack|箱/.test(txt))return'a real bright airport terminal interior with a polished hard floor and distant blurred floor-to-ceiling windows and check-in architecture, or a tidy modern hotel lobby with a real floor and window daylight';
    if(/美妆|护肤|化妆|洁面|面膜|口红|香水|cosmetic|skincare|makeup|beauty|serum|cream|lotion|perfume|cleanser/.test(txt))return'a real bright bathroom vanity scene: a real marble or wood washstand countertop with a softly blurred mirror, vertical blinds, a folded towel and faint water reflections on the counter, natural window light';
@@ -1202,12 +1206,64 @@ body.atu-open #atuStudio{display:flex}\
   },
   /* 标准「真实空场地、单一台面」底板 prompt 外壳（enLocation 为具体地点） */
   _plateShell:function(en){
-   return'Photorealistic EMPTY background plate of a real location, used to composite a product onto later. Location: '+en+'. Eye-level view with strong real-room depth. In the FOREGROUND is exactly ONE single flat horizontal surface (a clean countertop, tabletop or dresser top) whose straight front edge crosses the whole frame at about 78% of the image height; the surface top is clean, flat and empty in the lower-center where the product will stand, and extends a short way back. Behind and above it is the softly blurred real room with fixed architecture (window, door, cabinets or shelves, walls), natural daylight, realistic perspective. STRICTLY only ONE level surface; NO steps, raised platform, ledge or second surface. No people, no product, no loose objects on the surface, no text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
+   return'Photorealistic EMPTY background plate of a real location, used to composite a product onto later. Location: '+en+'. Eye-level view with strong real-room depth. In the FOREGROUND is exactly ONE single flat horizontal surface whose material and type MATCH the location described above (for example a metal workbench, solid wood table, marble counter, concrete floor or shelf board), with a straight front edge crossing the whole frame at roughly 70-82% of the image height; the surface top is clean, flat and empty in the lower-center where the product will stand, and extends a short way back. Behind and above it is the softly blurred real location with its OWN characteristic fixed architecture (window, door, cabinets, shelves, equipment or racking appropriate to that place) and realistic natural lighting appropriate to that place, realistic perspective. Each location must look visually distinct in its surface material, background architecture and light. STRICTLY only ONE level surface; NO steps, raised platform, ledge or second surface. No people, no product, no loose objects on the surface, no text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
   },
   _PLATE_QC:'This is an AI-generated EMPTY background plate with NO product in it yet; a product will be composited onto the lower-center later. Return JSON exactly: {"sceneText":true ONLY if there is PROMINENT readable or gibberish text such as signage, posters, banners or big words on walls; false otherwise (IGNORE a small semi-transparent "AI generated" watermark in a corner and tiny switches/sockets),"realVenue":true ONLY if it is a recognizable REAL photographed room/location with clear spatial depth and fixed architecture (window/door/counter/cabinet edges, a real floor with a horizon); FALSE for a seamless cyclorama, infinite cove, flat solid wall, green screen or 3D/CGI render,"render3d":true if it looks like CGI/3D instead of a photograph,"singleLevel":true if there is exactly ONE foreground standing surface (counter/table) with one straight front edge around 70-85% height and NO steps or second level,"surfaceY":a decimal 0.65-0.92 for the y of that single surface TOP at lower-center where a product base rests,"score":integer 1-10 for photographic realism and suitability}.',
   _plateOkSmall:function(q){var Q=(q&&q.qc)||{},sc=parseInt(Q.score,10);return Q.sceneText!==true&&Q.realVenue===true&&Q.render3d!==true&&Q.singleLevel!==false&&isFinite(sc)&&sc>=6;},
-  /* G7 每品类 4 个不同真实场地（en=底板地点，zh=格内标签） */
+  /* G7/G3 场景来源：视觉模型看着真实商品动态推导"用途差异化"场地（一次调用，单场景取[0]、四宫格取前4）；写死品类库仅作 VL 不可用时的离线兜底。
+     根治"品类库没覆盖就掉进通用家居四格"与"靠人工逐品类维护场景"两个问题 */
+  inferVenues:function(count){
+   var self=this;count=count||4;
+   var pr=(self.planResp&&self.planResp.product)||{};
+   var key=self.resolvedLang()+'|'+String(pr.name||'')+'|'+String(pr.domain||'');
+   if(self._inferredVenues&&self._inferVenueKey===key&&self._inferredVenues.length>=4)return Promise.resolve(self._inferredVenues);
+   if(self._inferVenuePromise&&self._inferVenueKey===key)return self._inferVenuePromise;
+   self._inferVenueKey=key;
+   self._inferVenuePromise=(async function(){
+    var fb=self._staticVenueList(pr.domain,pr.scenes,pr.name||'');
+    try{
+     var img=self._mktRef||self._cleanImage||(GS().images&&GS().images[0]?GS().images[0].dataUrl:null);
+     var sc=Array.isArray(pr.scenes)?pr.scenes.join('、'):String(pr.scenes||'');
+     var ask='你正在为电商"商品多场景展示图"选景。图中是客户的真实商品（稍后会把真实商品像素贴回，你只需决定背景场地，画面里不要画产品）。请像资深电商美术指导，为它挑选 6 个现实中最有说服力、彼此用途明显不同的真实场地（第1个是最具代表性的主使用场景，前4个用于四宫格）。\n'
+      +'硬性要求：\n'
+      +'1. 必须是该商品现实中真正被使用、操作、陈列或售卖的具体场所，按用途/使用情境区分；6 个场地要分布在功能明显不同的空间（专业作业现场、门店或经营场所、居家不同功能区、出行或户外等，按商品属性合理组合）。严禁同一房间换机位，严禁仅光线或角度不同。\n'
+      +'2. 专业工具、设备、五金、仪器、汽配类，必须给其真实作业现场（如汽修工位、装修工地、生产车间、维修工作台、库房或随车场景），不得放进居家客厅、餐桌、书桌等无关生活场景。\n'
+      +'3. 每个 en 用英文一句话描述空背景底板，以 a real 开头：写清该场所特有的背景固定结构（门窗/柜体/设备/货架等，柔和虚化）、一个水平承托面及其真实材质（金属工作台、木桌、大理石台面、水泥地面、货架层板等）、真实光线；画面中下部留出干净空位放产品；不得有人、产品本身、散放杂物、任何文字字母数字标牌水印。若是门店、专柜、展厅、库房等经营场所，招牌、灯箱、货架海报必须是空白或完全虚化，不得出现任何可读品牌名或字母，也不要出现带人脸的海报。\n'
+      +'4. zh 是 2-4 个中文字的具体场景标签（如 汽修换胎、装修施工、梳妆台、机场出行），禁止 场景一、客厅场景 这类泛词。\n'
+      +'商品参考：名称「'+String(pr.name||'这款商品')+'」，类目「'+String(pr.domain||'')+'」，已知使用场景「'+sc+'」。\n'
+      +'只输出JSON，不要解释：{"venues":[{"zh":"汽修换胎","en":"a real auto repair garage service bay with a vehicle wheel, blurred tool cabinets and a concrete floor"}]}';
+     var v=img?await self._vlPost({image:img,ask:ask,system:'你是资深电商美术指导，只输出JSON。',maxTokens:1000},60000):null;
+     var got=self._parseVenues(v&&v.ok?v.data:null);
+     var out=[],seenZ={},seenE={};
+     for(var i=0;i<got.length&&out.length<6;i++){
+      var z=String(got[i].zh||'').trim().slice(0,6),e=String(got[i].en||'').trim().replace(/\s+/g,' ');
+      if(!z||!e||e.length<18)continue;if(seenZ[z]||seenE[e.toLowerCase()])continue;
+      seenZ[z]=1;seenE[e.toLowerCase()]=1;out.push({zh:z,en:e});
+     }
+     for(var k=0;k<fb.length&&out.length<count;k++){if(!seenZ[fb[k].zh]){seenZ[fb[k].zh]=1;out.push({zh:fb[k].zh,en:fb[k].en});}}
+     var guard=0;while(out.length<count&&guard++<20){var f=fb[out.length%fb.length];if(!seenZ[f.zh]){seenZ[f.zh]=1;out.push({zh:f.zh,en:f.en});}else if(out.length>=fb.length)break;}
+     self._inferredVenues=out;
+    }catch(e){self._inferredVenues=fb;}
+    return self._inferredVenues;
+   })();
+   return self._inferVenuePromise;
+  },
+  _parseVenues:function(d){
+   if(!d)return[];
+   if(typeof d==='string'){
+    var s=d.trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
+    try{d=JSON.parse(s);}catch(e){var a=s.indexOf('['),b=s.lastIndexOf(']');if(a>=0&&b>a){try{d=JSON.parse(s.slice(a,b+1));}catch(e2){return[];}}else return[];}
+   }
+   var arr=(d&&d.venues)||(Array.isArray(d)?d:null);
+   return Array.isArray(arr)?arr:[];
+  },
+  /* 多场景场地：优先用视觉模型按真实商品动态推导的场地；未就绪/失败时回落写死品类库 */
   buildVenueList:function(domain,scenes,name){
+   if(Array.isArray(this._inferredVenues)&&this._inferredVenues.length>=4)return this._inferredVenues.slice(0,4).map(function(p){return{en:p.en,zh:p.zh};});
+   return this._staticVenueList(domain,scenes,name);
+  },
+  /* G7 每品类 4 个不同真实场地（en=底板地点，zh=格内标签）——写死库，仅作 VL 不可用时的离线兜底 */
+  _staticVenueList:function(domain,scenes,name){
    var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
    var L;
    if(/行李|拉杆|箱包|旅行箱|行李箱|登机箱|托运箱|背包|suitcase|luggage|trolley|travel|backpack/.test(txt))L=[
@@ -1251,10 +1307,10 @@ body.atu-open #atuStudio{display:flex}\
     ['a real factory quality-inspection workbench with a metal surface and blurred gauges and shelving','质检工位'],
     ['a real warehouse packing table with blurred shelving and a concrete floor, industrial light','仓储发货']];
    else L=[
-    ['a real bright modern living room with a table surface, a blurred sofa and a window','客厅场景'],
-    ['a real modern home desk with blurred shelves and window daylight','书桌场景'],
-    ['a real bright dining area with a wood table and blurred cabinetry','餐桌场景'],
-    ['a real bright side table by a window with soft daylight and blurred curtains','窗边场景']];
+    ['a real modern living room with a wooden coffee table top in the foreground, a blurred fabric sofa and a floor-to-ceiling window with warm daylight','客厅茶几'],
+    ['a real home study with a dark wooden desk top, blurred floor-to-ceiling bookshelves and a window with cool daylight','书房办公'],
+    ['a real dining area with a solid wood dining table top, blurred wooden chairs and a sideboard, warm overhead light','餐厅用餐'],
+    ['a real home entryway with a narrow console table top, a blurred entrance door and shoe cabinet, soft daylight from a side window','玄关收纳']];
    return L.map(function(p){return{en:p[0],zh:p[1]};});
   },
   _rr:function(x,bx,by,w,h,r){x.beginPath();x.moveTo(bx+r,by);x.arcTo(bx+w,by,bx+w,by+h,r);x.arcTo(bx+w,by+h,bx,by+h,r);x.arcTo(bx,by+h,bx,by,r);x.arcTo(bx,by,bx+w,by,r);x.closePath();},
@@ -2199,6 +2255,7 @@ body.atu-open #atuStudio{display:flex}\
    var needReplan=!this.planResp||this.planRespLang!==this.resolvedLang();
    this._running=true;this._abort=false;this._paused=false;this.ats=[];this._notes=[];this._lastErr=null;this._failed={};this._cleanImage=null;
    this._durations=[];this._activeTasks={};this._taskStart={};this._reqAborts={};this._posePromise=null;
+   this._inferredVenues=null;this._inferVenuePromise=null;this._inferVenueKey='';
    this._totalTasks=types.length;this._doneTasks=0;this._progMsg='';
    this.setCanvas('progress');
    var self=this;
@@ -2222,6 +2279,7 @@ body.atu-open #atuStudio{display:flex}\
     self._cleanImage=(fidOut&&fidOut.ok&&fidOut.white)?fidOut.white:GS().images[0].dataUrl;
     self._fg=(fidOut&&fidOut.ok&&fidOut.fg)?fidOut.fg:null;
     await self.makeMarketingRef();
+    try{await self.inferVenues(4);}catch(e){} // 场景类图种开跑前，先让视觉模型按真实商品动态推导用途差异化场地（失败静默回落写死库，绝不阻塞出图）
     // 白底主图（保真失败也兜底出图，绝不零输出、不要求重拍）
     if(types.indexOf('white_main')>=0){
      var wImg=(fidOut&&fidOut.white)||self._cleanImage;
