@@ -916,21 +916,21 @@ body.atu-open #atuStudio{display:flex}\
    var icons=(ost.icons||[]).slice(0,6),panels=(ost.panels||[]).slice(0,3);
    if(recipe==='core_selling'){
     push('headline',hl,.06,.07,.88,.15,{baseline:'h1',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'body'});
+    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'sub'});
    }else if(recipe==='selling_point'||recipe==='hero'){
     push('headline',hl,.06,.07,.88,.15,{baseline:'h1',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'body'});
+    if(sub)push('sub',sub,.06,.23,.84,.09,{baseline:'sub'});
    }else if(recipe==='scene_show'){
     push('headline',hl,.05,.06,.9,.15,{baseline:'h1',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.05,.22,.86,.09,{baseline:'body'});
+    if(sub)push('sub',sub,.05,.22,.86,.09,{baseline:'sub'});
    }else if(recipe==='mood'||recipe==='scene_atmosphere'){
     push('headline',hl,.07,.08,.72,.12,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
    }else if(recipe==='material'){
     push('headline',hl,.06,.07,.88,.13,{baseline:'h2',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.06,.21,.84,.08,{baseline:'body'});
+    if(sub)push('sub',sub,.06,.21,.84,.08,{baseline:'sub'});
    }else if(recipe==='product_detail'){
     push('headline',hl,.06,.07,.88,.14,{baseline:'h2',bold:true,max_lines:2});
-    if(sub)push('sub',sub,.06,.22,.84,.08,{baseline:'body'});
+    if(sub)push('sub',sub,.06,.22,.84,.08,{baseline:'sub'});
    }else if(recipe==='icon_selling'||recipe==='ingredients'){
     push('headline',hl,.08,.05,.84,.12,{baseline:'h1',bold:true,align:'center',max_lines:2});
     icons.forEach(function(ic,i){var col=i%3,row=Math.floor(i/3);push('ic'+i,ic.label,.08+col*.30,.66+row*.16,.27,.13,{baseline:'label',align:'center',max_lines:2});});
@@ -1337,7 +1337,7 @@ body.atu-open #atuStudio{display:flex}\
   _drawLayer:function(ctx,L,W,H){
    var text=String(L.text||'').trim();if(!text)return;
    var bx=(L.x||0)*W,by=(L.y||0)*H,bw=(L.w||1)*W,bh=(L.h||1)*H;
-   var FS={h1:0.34,h2:0.26,label:0.17,body:0.14}[L.baseline]||0.15;
+   var FS={h1:0.34,h2:0.26,sub:0.28,label:0.17,body:0.14}[L.baseline]||0.15;
    var FONT="'Hiragino Sans','Yu Gothic','Meiryo','Malgun Gothic','Apple SD Gothic Neo','Microsoft YaHei UI','Microsoft YaHei','Noto Sans CJK SC','Noto Sans JP',sans-serif";
    var maxLines=L.max_lines||1;
    function wrapAt(fs){
