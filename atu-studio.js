@@ -1210,7 +1210,7 @@ body.atu-open #atuStudio{display:flex}\
   buildVenueList:function(domain,scenes,name){
    var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
    var L;
-   if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack|箱/.test(txt))L=[
+   if(/行李|拉杆|箱包|旅行箱|行李箱|登机箱|托运箱|背包|suitcase|luggage|trolley|travel|backpack/.test(txt))L=[
     ['a real bright airport terminal interior with a polished hard floor and distant blurred floor-to-ceiling windows and check-in architecture','机场出行'],
     ['a tidy modern hotel lobby with a real polished floor, a reception area and window daylight','酒店大堂'],
     ['a real modern railway-station waiting hall with pillars, seating and blurred departure boards with no readable text, a real floor','高铁车站'],
@@ -1240,6 +1240,11 @@ body.atu-open #atuStudio{display:flex}\
     ['a real wooden dining table scene with blurred chairs and warm daylight','餐桌分享'],
     ['a real cafe wooden table by a window with a softly blurred interior and daylight','下午茶'],
     ['a real outdoor picnic table in a park with softly blurred greenery and natural light','户外野餐']];
+   else if(/电动工具|五金工具|电动扳手|冲击扳手|电扳手|风炮|手电钻|电钻|角磨机|磨光机|切割机|电锤|电锯|电动起子|电动螺丝刀|螺丝刀|扳手|工具箱|工具套装|汽修|汽保|维修工具|电动|装修|施工|工地|车库|power ?tool|impact wrench|cordless|drill|wrench|grinder|toolbox|tool kit|garage|auto repair|automotive|construction|renovation|\bdiy\b/i.test(txt))L=[
+    ['a real auto repair garage service bay with a vehicle wheel on a lift, blurred tool cabinets and a concrete floor, workshop light, no readable text or signage','汽修换胎'],
+    ['a real home renovation and interior construction site with unfinished walls, a sturdy workbench and blurred building materials, daylight, no readable text or signage','装修施工'],
+    ['a real construction site workshop with a metal workbench, blurred steel framing and scaffolding, work light, no readable text or signage','工地车间'],
+    ['a real tidy home garage DIY repair workbench with a pegboard of hand tools, blurred storage shelves and daylight, no readable text or signage','家居维修']];
    else if(/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|bearing|industrial|hardware|machinery|gear|metal part|workshop/.test(txt))L=[
     ['a real clean modern factory workshop metal machine workbench with softly blurred industrial equipment','生产车间'],
     ['a real industrial equipment bench with structured wall panels and softly blurred machine elements, workshop light','设备台面'],
