@@ -556,16 +556,25 @@ async function handleSceneBackground(req, env, origin) {
   if (!session) return json({ ok: false, error: { code: 'member_unauthorized', message: '请先登录会员账号' } }, 401, origin);
   let body; try { body = await req.json(); } catch { return json({ ok: false, error: { code: 'bad_json', message: '请求体不是合法 JSON' } }, 400, origin); }
   const category = (body && body.category) || '商品';
-  const scene = (body && body.scene) || '生活化使用场景';
-  const angle = (body && body.angle) || '自然平视';
-  const light = (body && body.light) || '明亮柔和自然光';
-  const size = ALLOWED_SIZES.includes(body && body.size) ? body.size : DEFAULT_SIZE;
-  const prompt = [
-    '一张空旷的「' + scene + '」环境背景图，用于后期合成商品，' + angle + '，' + light + '。',
-    '画面必须是空的：没有人物、没有动物、没有自行车、没有汽车等任何交通工具、没有任何商品或摆放物体、没有文字、没有logo、没有水印。',
-    '画面干净通透、有真实空间纵深感与自然光影，中央地面简洁并略微虚化（用于后续摆放商品），四周只有自然环境元素（树木、道路、远景等），高级商业摄影质感。'
-  ].join('');
-  const r = await callSeedream(env, { prompt, size, timeoutMs: 90000 });
+  const BG_SIZES = ['2048x2048', '2304x2304', '2560x1440', '2240x1680', '1680x2240', '1440x2560'];
+  const size = BG_SIZES.includes(body && body.size) ? body.size : DEFAULT_SIZE;
+  const bgPrompt = (body && body.bgPrompt) ? String(body.bgPrompt).slice(0, 900).trim() : '';
+  let prompt;
+  if (bgPrompt) {
+    // 前端给的精准「空场地」英文描述：只生成不含产品/人物/道具的空背景底板，供前端确定性贴回真实商品
+    prompt = bgPrompt +
+      ' The plate is EMPTY: absolutely no people, no animals, no product, no merchandise, no loose props or objects resting on the surface, no text, letters, numbers, logo or watermark. Photorealistic photograph, not a 3D/CGI render, natural color, high detail.';
+  } else {
+    const scene = (body && body.scene) || '生活化使用场景';
+    const angle = (body && body.angle) || '自然平视';
+    const light = (body && body.light) || '明亮柔和自然光';
+    prompt = [
+      '一张空旷的「' + scene + '」环境背景图，用于后期合成商品，' + angle + '，' + light + '。',
+      '画面必须是空的：没有人物、没有动物、没有自行车、没有汽车等任何交通工具、没有任何商品或摆放物体、没有文字、没有logo、没有水印。',
+      '画面干净通透、有真实空间纵深感与自然光影，中央地面简洁并略微虚化（用于后续摆放商品），四周只有自然环境元素（树木、道路、远景等），高级商业摄影质感。'
+    ].join('');
+  }
+  const r = await callSeedream(env, { prompt, size, timeoutMs: 95000, responseFormat: 'b64' });
   if (r.error) return json({ ok: false, error: r.error }, r.status, origin);
   return json({ ok: true, b64: r.b64, size }, 200, origin);
 }

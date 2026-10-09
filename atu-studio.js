@@ -646,6 +646,22 @@ body.atu-open #atuStudio{display:flex}\
      base.icons=labs.map(function(lb,idx){return {label:lb,icon_hint:hints[idx]||''};});
     }
    }
+   // 图标卖点图兜底：后端未给 icons 时，用卖点 bullets / 商品核心卖点确定性补成图标卡（客户给什么图都能出，不依赖规划字段完美）
+   if((t==='icon_selling'||t==='ingredients')&&(!base.icons||!base.icons.length)){
+    var cp=((this.planResp&&this.planResp.product&&this.planResp.product.core_points)||[]);
+    var src=(base.bullets&&base.bullets.length)?base.bullets:cp;
+    base.icons=src.slice(0,6).map(function(s){return {label:String(s).replace(/^[\s·•\-\d.、]+/,'').slice(0,18),icon_hint:''};});
+   }
+   // 标题净化：识别不到商品名时规划可能给出“这款商品/该产品”等无信息标题，确定性替换为真实商品名或首个核心卖点，杜绝废话上屏
+   var _pr0=(this.planResp&&this.planResp.product)||{};
+   var _badHl=/^\s*(这[款个支瓶台件条]?|该|此)?\s*(商品|产品|宝贝|物品|东西)\s*[。.！!]?\s*$/;
+   var _hl0=String(base.headline||'').trim();
+   if(!_hl0||_badHl.test(_hl0)){
+    var _nm=String(_pr0.name||'').trim();
+    var _cp=( _pr0.core_points||[]).map(function(s){return String(s).replace(/^[\s·•\-\d.、]+/,'').trim();}).filter(Boolean);
+    var _cand=(_nm&&!_badHl.test(_nm))?_nm:(_cp[0]||'');
+    if(_cand)base.headline=_cand.slice(0,20);
+   }
    return base;
   },
   planSize:function(t){
@@ -820,7 +836,7 @@ body.atu-open #atuStudio{display:flex}\
   /* ========== r-background 联合背景（产品保真）：前端编排 ========== */
   RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,mood:1,hero:1,scene_atmosphere:1,ingredients:1},
   _layCfg:{
-   scene_show:{cx:.50,bottom:.96,h:.63},mood:{cx:.42,bottom:.90,h:.66},scene_atmosphere:{cx:.5,bottom:.95,h:.72},
+   scene_show:{cx:.44,bottom:.80,h:.50},mood:{cx:.44,bottom:.82,h:.60},scene_atmosphere:{cx:.5,bottom:.92,h:.72},
    selling_point:{cx:.50,bottom:.98,h:.65},hero:{cx:.5,bottom:.98,h:.65},
    core_selling:{cx:.50,bottom:.98,h:.65},icon_selling:{cx:.5,bottom:.62,h:.45},ingredients:{cx:.5,bottom:.58,h:.41},
    material:{cx:.5,bottom:.98,h:.67},product_detail:{cx:.5,bottom:.97,h:.64},
@@ -862,15 +878,28 @@ body.atu-open #atuStudio{display:flex}\
    if(!this._posePromise)this._posePromise=this.detectPose(fg);
    return this._posePromise;
   },
+  /* G3 品类→真实使用场地映射（r-background 只画固定环境，道具极简，产品像素最后贴回） */
+  buildVenue:function(domain,scenes,name){
+   var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
+   if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack|箱/.test(txt))return'a real bright airport terminal interior with a polished hard floor and distant blurred floor-to-ceiling windows and check-in architecture, or a tidy modern hotel lobby with a real floor and window daylight';
+   if(/美妆|护肤|化妆|洁面|面膜|口红|香水|cosmetic|skincare|makeup|beauty|serum|cream|lotion|perfume|cleanser/.test(txt))return'a real bright bathroom vanity scene: a real marble or wood washstand countertop with a softly blurred mirror, vertical blinds, a folded towel and faint water reflections on the counter, natural window light';
+   if(/吹风|个护|剃须|牙刷|美发|直发|hair ?dryer|shaver|toothbrush|personal care|styler/.test(txt))return'a real tidy bedroom dresser or bathroom counter in a bright home, with a real counter surface, a blurred wardrobe and window daylight, a soft reflection on the counter';
+   if(/3c|数码|电子|耳机|音箱|充电器|手机|电脑|键盘|摄像|平板|earphone|speaker|charger|phone|laptop|keyboard|camera|digital|electronic/.test(txt))return'a real modern home desk or living-room scene: a real wooden desk surface with a blurred bookshelf or sofa and large window daylight in the background, strong room depth';
+   if(/家电|家居|厨房|锅|煲|水壶|吸尘|净化|kitchen|appliance|cooker|kettle|vacuum|purifier|home/.test(txt))return'a real bright modern kitchen counter or living-room scene with real cabinetry, a countertop surface and blurred window daylight, strong interior depth';
+   if(/食品|零食|饮料|茶|咖啡|水果|food|snack|beverage|coffee|tea|drink/.test(txt))return'a real bright kitchen dining scene with a real wood table surface, blurred kitchen cabinetry and window daylight';
+   if(/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|bearing|industrial|hardware|machinery|gear|metal part|workshop/.test(txt))return'a real clean modern factory workshop or equipment-bench scene: a real metal machine workbench surface with softly blurred industrial equipment and structured wall panels, realistic workshop lighting';
+   return'a real bright modern interior room with strong depth: a real floor, a mid-ground and a distant softly blurred room with windows and fixed architecture, natural daylight';
+  },
   buildRbgPrompt:function(type,o,pose){
    o=o||{};pose=pose||'stand';var group=this._typeScene[type]||'info';var domain=String(o.domain||'product').toLowerCase();
+   var venue=this.buildVenue(domain,o.scenes,o.name);
    var keep='Photorealistic commercial product photo. The product (already cut out and placed on this transparent canvas) must keep its EXACT real shape, proportions, colors, materials and every printed label, logo and text on its packaging. Do NOT redraw, repaint, warp, distort, erase or alter the product. The generated BACKGROUND must contain absolutely NO words, letters, numbers, captions, logos, price tags, posters, stickers or watermarks.';
    var sceneTypes={scene_show:1,mood:1,scene_atmosphere:1};
    var place;
    if(pose==='hang'||pose==='hand'){
     place='The product is ALREADY hanging on the simple support already drawn on the canvas. Render only a real photographic bright room wall behind it (tidy bathroom / entry / bedroom), soft natural daylight, gentle background blur, clear empty wall below. Do NOT add any hook, rail, rod, bracket, shelf, table, counter, pedestal, box, package or furniture — the support and product already exist.';
    }else if(sceneTypes[type]){
-    place='Place the product standing upright in a real photographic interior with strong depth: a real foreground floor, a mid-ground and a distant softly blurred recognizable room (bright bathroom / bedroom / hotel / living room), large windows with natural daylight ('+this._sceneEnv[group]+'). The product stands directly on the real floor with a thin soft contact shadow and a subtle floor reflection. The room is tidy and nearly empty, containing only fixed architecture (walls, floor, window, at most one distant built-in cabinet). Absolutely NO loose objects, props, extra products, bags, bottles, plants or decorations near or around the product.';
+    place='Place the product standing upright in a REAL PHOTOGRAPHED LOCATION, not a studio backdrop: '+venue+'. The shot MUST show strong real-room depth with a visible foreground surface, a mid-ground and a distant softly blurred background, plus real fixed architecture (walls, window frames, a door, counter or cabinet edges) and a clear horizon/floor line. The product physically stands directly on the real floor or counter with a correct thin contact shadow and a grounded reflection; it must look photographed in that place, not cut out and pasted or floating. The location is tidy and may contain only the fixed architecture and at most one or two context-appropriate fixed elements. Absolutely NO loose props, extra products, bags, bottles, plants or decorations near the product. The background must be a genuine location: NOT a seamless paper cyclorama, NOT an infinite white cove, NOT a flat solid-color wall, NOT a green screen, NOT a 3D or CGI render.';
    }else{
     place='The product stands upright in front of a clean bright light-gray wall that is a completely smooth, flat, even, seamless solid surface with absolutely NO surface texture, soft even studio lighting, a subtle smooth vertical gradient and a faint horizontal surface line near the bottom; minimal, premium and uncluttered. Render a thin soft contact shadow where it meets the surface.';
    }
@@ -885,7 +914,7 @@ body.atu-open #atuStudio{display:flex}\
     im.onload=function(){
      var cfg=self._layCfg[type]||self._layCfg.default;
      var cv=document.createElement('canvas');cv.width=W;cv.height=H;var ctx=cv.getContext('2d');
-     var dw,dh,px,py,sc;
+     var dw,dh,px,py,sc;var abInfo=self._alphaInfo(im),ab=abInfo.bbox||{x:0,y:0,w:1,h:1};
      if(pose==='hang'||pose==='hand'){
       // 悬挂：产品挂环扣在「确定性绘制的水平墙杆」上，杆压在环前形成真实遮挡；整体悬空、下方留空
       dh=H*0.56;sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;
@@ -901,8 +930,18 @@ body.atu-open #atuStudio{display:flex}\
      }else{
       dh=H*cfg.h;sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;
       px=W*cfg.cx-dw/2;py=H*cfg.bottom-dh;
+      // core_selling 占满型（圆形/方形大件，可见左缘侵入左侧卖点胶囊列）：微缩并向右靠，给左胶囊列腾位、右侧仍留放大窗；窄长产品不触发
+      if(type==='core_selling'){
+       var _fxl=(px+ab.x*dw)/W;
+       if(_fxl<0.332){
+        dh=H*0.56;sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;py=H*cfg.bottom-dh;
+        px=(0.34-ab.x*dw/W)*W;
+        if(px+dw>W*0.985)px=W*0.985-dw;
+       }
+      }
       ctx.drawImage(im,px,py,dw,dh);
      }
+     self._lastFgBox={x:(px+ab.x*dw)/W,y:(py+ab.y*dh)/H,w:ab.w*dw/W,h:ab.h*dh/H};
      res(cv.toDataURL('image/png'));
     };
     im.onerror=function(){rej(new Error('fg_fail'));};im.src=fg;
@@ -932,8 +971,8 @@ body.atu-open #atuStudio{display:flex}\
     push('headline',hl,.06,.07,.88,.14,{baseline:'h2',bold:true,max_lines:2});
     if(sub)push('sub',sub,.06,.22,.84,.08,{baseline:'sub'});
    }else if(recipe==='icon_selling'||recipe==='ingredients'){
+    // 图标卡（白板+图标+标注）统一由 drawComponents/drawIconCard 绘制，这里只放标题，避免文字层与卡片重复画标签造成重影
     push('headline',hl,.08,.05,.84,.12,{baseline:'h1',bold:true,align:'center',max_lines:2});
-    icons.forEach(function(ic,i){var col=i%3,row=Math.floor(i/3);push('ic'+i,ic.label,.08+col*.30,.66+row*.16,.27,.13,{baseline:'label',align:'center',max_lines:2});});
    }else if(recipe==='multi_scene'){
     push('headline',hl,.05,.04,.9,.11,{baseline:'h1',bold:true,align:'center',max_lines:1});
     panels.forEach(function(p,i){push('pc'+i,p.caption||p.title,.012+i*.333,.86,.31,.10,{baseline:'body',align:'center',max_lines:2});});
@@ -959,10 +998,29 @@ body.atu-open #atuStudio{display:flex}\
     if(fg&&!self._fg)self._fg=fg;   // 主体只取一次并缓存，其余图种复用，避免并发重复抠图超时
     if(self._abort)return {ok:false};
     var pose=await self.ensurePose(fg),poseName=pose.pose;
-    var canvasPng;
-    try{canvasPng=await self.layoutCutout(fg,req.type,req.size,poseName);}catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
-    var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes},poseName);
-    var neg='fire, flame, smoke, explosion, heat waves, glowing embers, liquid, fluid, energy swirl, melting, twisted, distorted, glass shards, plastic bag, bottle, can, fabric, cloth, textile, woven, knitted, knit, weave, wall texture, plaster texture, concrete texture, rough surface, grain, noisy speckled texture, text, words, letters, watermark, table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper, furniture, stones, water, hand, clutter';
+    var brand=await self.extractBrand(fg);
+    var _ost=self.ostForType(req.type);
+    var _pr=(self.planResp&&self.planResp.product)||{};
+    var bullets=((_pr.core_points&&_pr.core_points.slice)?_pr.core_points:[]).map(function(s){return String(s||'').replace(/^\s*\d{1,2}\s*[.、)]\s*/,'').replace(/^\s*[•·\-▪◦▫]\s*/,'').trim();}).filter(Boolean).slice(0,3);
+    var macroHint=bullets.join('；')+' '+((_pr.materials||[]).concat(_pr.key_parts||[])).join('，');
+    var spec={type:req.type,fgBox:null,loupeImg:null,part:null,bullets:bullets,icons:(_ost.icons||[]),partLabel:'',brand:brand.brand};
+    var canvasPng,base=null,bgWhole=null,macroMode=false,macro=null,venuePlate=false;
+    var getMacro=function(){if(self._macroShared&&self._macroShared.src===fg)return Promise.resolve(self._macroShared.v);return self.extractMacro(fg,macroHint).then(function(r){self._macroShared={src:fg,v:r};return r;}).catch(function(){return{ok:false,fallback:true};});};
+    if(self.MACRO_TYPES[req.type]){
+      try{macro=await getMacro();}catch(e){macro={ok:false};}
+      if(macro&&macro.ok){try{var ml=await self.macroLayoutCutout(macro.png,req.size);canvasPng=ml.png;spec.fgBox=ml.fgBox;spec.partLabel=macro.label||'';macroMode=true;}catch(eM){macroMode=false;}}
+      if(!macroMode&&macro&&macro.fallback!==true&&macro.ok===false){self.addNote(typeLabel(req.type)+'：原图该部位有效像素约 '+(macro.srcPx||0)+'px，不足以支撑部件微距，已按整产品呈现；补传一张部件近照即可出微距特写。');}
+    }
+    if(req.type==='core_selling'){try{macro=await getMacro();}catch(e){macro=null;}}
+    if(!canvasPng){
+     try{canvasPng=await self.layoutCutout(fg,req.type,req.size,poseName);spec.fgBox=self._lastFgBox||spec.fgBox;}
+     catch(e){return {ok:false,error:{code:'layout_fail',message:'构图失败'}};}
+    }
+    if(req.type==='core_selling'&&macro&&macro.ok&&spec.fgBox&&macro.box){
+     try{spec.loupeImg=macro.png;var bc=macro.box,fb=spec.fgBox;spec.part={x:fb.x+(bc.x+bc.w/2)*fb.w,y:fb.y+(bc.y+bc.h/2)*fb.h};if(macro.label)spec.partLabel=macro.label;}catch(e){}
+    }
+    var prompt=self.buildRbgPrompt(req.type,{domain:req.domain,scenes:req.scenes,name:_pr.name||''},poseName);
+    var neg='fire, flame, smoke, explosion, heat waves, glowing embers, liquid swirl, fluid energy swirl, melting, twisted, distorted, glass shards, plastic bag, full-frame fabric, full-frame knitted or woven textile covering the view, noisy speckled texture covering the frame, text, words, letters, numbers, watermark, logo, price tag, poster, sticker, pedestal, display stand, bracket, platform, cube, acrylic block, box, package, paper pile, rubble, stones, floating platform, extra products, duplicated product, people, person, face, hands, clutter, seamless studio backdrop, cyclorama wall, infinite white cove, green screen, chroma key, 3d render, cgi, digitally rendered illustration, flat solid color background, plain smooth gradient wall with no room, cutout pasted look, floating object with no shadow, no horizon, posterized, cartoon';
     var sleepFE=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
     // 安全请求：520/502/503/超时/网络等瞬时错误自动退避重试，且绝不把异常抛给外层
     var postRobust=async function(path,body,to,retries){
@@ -1000,50 +1058,56 @@ body.atu-open #atuStudio{display:flex}\
     var LIFESTYLE={scene_show:1,mood:1,scene_atmosphere:1};
     var bgWhole=null;
     if(LIFESTYLE[req.type]){
-    var j=await callScene();
-    if(j&&j.ok&&j.images&&j.images.length){
-    // 前端多候选质检：背景乱码 / 多余承托物 / 主体缺失（浏览器端，无 Worker 资源限制）
-    var qcAsk='Inspect this e-commerce product photo: a real product cutout composited over an AI background'+(poseName==='hang'?' (the product hangs on the simple horizontal support)':' (the product stands upright)')+'. Return JSON exactly: {"strayText":true if ANY readable or gibberish letters, words or numbers appear on the background, walls, props, boxes or papers (IGNORE text printed on the product itself),"fakeSupport":true if any generated table, shelf, stand, bracket, pedestal, platform, cube, box, package, paper pile, rubble or other object touches or supports the product that should not be there (for hang the only allowed support is the simple rail; for stand only the real surface directly under it, and a short cord may rest on that surface beside the base),"fabricBg":true if the background is entirely or mostly filled with fabric, cloth, woven or knitted textile, noisy speckled texture, or a flat texture with NO recognizable room depth and NO smooth clean plaster wall,"productHero":true if the product is complete, sharp and the clear main subject,"score": an integer 1 to 10 for overall realism and selling appeal}.';
-    var reviewOne=async function(im){var v=await authPost('/vision-json',{image:im,ask:qcAsk,system:'You are a strict QA reviewer for AI product photos. Reply with JSON only.',maxTokens:320},60000);var tex=await self.bgTextureRatio(im);var col=await self.bgColorRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex,col:col};};
-    var reviewed=await Promise.all(j.images.map(reviewOne));
-    var isClean=function(q){
-      var Q=q.qc||{},sc=parseInt(Q.score,10);
-      // VL 疑罪从有：每个维度必须明确为安全值，任一为 true/null/缺失即弃；评分需≥7
-      var vl=Q.strayText===false&&Q.fakeSupport===false&&Q.fabricBg===false&&Q.productHero===true&&isFinite(sc)&&sc>=7;
-      var tx=(typeof q.tex!=='number')||q.tex<=0.30;
-      var cl=q.col&&q.col.highSat<=0.06&&q.col.warm<=0.06;
-      return vl&&tx&&cl;
+    // G3：让 Seedream 只生成「不含产品的真实空场地底板」，再把客户真实产品确定性贴回，
+    // 避开 r-background 抱着大尺寸产品只肯补无影墙的倾向；空场景无产品可复制，保真由贴回像素保证。
+    var venue=self.buildVenue(req.domain,req.scenes,_pr.name||'');
+    var bgPrompt='Photorealistic EMPTY background plate of a real location, used to composite a small home appliance onto later. Location: '+venue+'. Eye-level view with strong real-room depth. In the FOREGROUND is exactly ONE single flat horizontal surface (a clean countertop, tabletop or dresser top) whose straight front edge crosses the whole frame at about 78% of the image height; the surface top is clean, flat and empty in the lower-center where the appliance will stand, and extends a short way back. Behind and above this single surface is the softly blurred real room with fixed architecture (a window, a door, cabinets or shelves, walls), natural daylight, realistic perspective. STRICTLY: only ONE level surface; NO steps, NO raised platform or ledge, NO sunken lower floor in front of it, NO second surface; the area below the front edge is a simple plain cabinet face or out-of-focus floor, not another standing level. No people, no product, no loose objects on the surface, no text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
+    var sizeForBg=(String(req.size).indexOf('x')>0)?req.size:'2304x2304';
+    var genPlate=async function(){
+      var r=await postRobust('/scene-background',{bgPrompt:bgPrompt,size:sizeForBg},95000,2);
+      if(r&&r.ok&&r.b64)return 'data:image/png;base64,'+r.b64;
+      var r2=await postRobust('/scene-background',{bgPrompt:bgPrompt,size:'2304x2304'},95000,1);
+      return(r2&&r2.ok&&r2.b64)?('data:image/png;base64,'+r2.b64):null;
     };
-    var clean=reviewed.filter(isClean);
-    if(!clean.length){
-      var j2=await callScene();
-      if(j2&&j2.ok&&j2.images&&j2.images.length){reviewed=reviewed.concat(await Promise.all(j2.images.map(reviewOne)));clean=reviewed.filter(isClean);}
-    }
-    var scoreOf=function(q){var n=parseInt(q.qc&&q.qc.score,10);return isFinite(n)?n:5;};
+    var plateQcAsk='This is an AI-generated EMPTY background plate with NO product in it yet; a product will be composited onto the lower-center later. Return JSON exactly: {"sceneText":true ONLY if there is PROMINENT readable or gibberish text in the scene such as signage, posters, banners, big words on packaging, or large lettering on walls; FALSE otherwise (IGNORE a small semi-transparent "AI generated" watermark in a bottom corner, and IGNORE tiny wall switches, sockets or outlets),"realVenue":true ONLY if it is a recognizable REAL photographed room or location with clear spatial depth AND fixed architecture such as window frames, a door, counter or cabinet edges, walls, a real floor or counter with a horizon; FALSE for a seamless paper cyclorama, an infinite white or gray cove, a flat solid-color or smooth gradient wall with no room, a green screen, or a 3D/CGI render,"seamlessBackdrop":true if it is a seamless/infinite cove or a flat solid/smooth-gradient studio background with no room depth,"greenScreen":true if green or chroma-key screen,"render3d":true if it looks like a 3D render or CGI instead of a photograph,"clearSurface":true if the lower-center floor or counter area is clean, empty and evenly lit so a product can be placed there,"singleLevel":true if there is exactly ONE foreground standing surface (a countertop or tabletop) with one straight front edge around 70-85% of the height and NO steps, raised platform, ledge or a second lower standing level,"surfaceY": a decimal from 0.65 to 0.92 indicating the y coordinate (0=top, 1=bottom) of that single surface TOP at the lower-center, where the base of a standing product should rest,"score": an integer 1 to 10 for photographic realism and suitability as a product scene}.';
+    var reviewPlate=async function(im){var v=await authPost('/vision-json',{image:im,ask:plateQcAsk,system:'You are a strict QA reviewer. Reply with JSON only.',maxTokens:280},60000);var tex=await self.bgTextureRatio(im);var col=await self.bgColorRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex,col:col};};
+    var plateOk=function(q){var Q=q.qc||{},sc=parseInt(Q.score,10);var base=Q.sceneText!==true&&Q.realVenue===true&&Q.seamlessBackdrop===false&&Q.greenScreen===false&&Q.render3d===false&&Q.clearSurface!==false&&Q.singleLevel!==false&&isFinite(sc)&&sc>=7;var tx=(typeof q.tex!=='number')||q.tex<=0.34;var cl=q.col&&q.col.highSat<=0.08&&q.col.warm<=0.16;return base&&tx&&cl;};
+    var pickPlates=async function(n){var imgs=(await Promise.all(Array.from({length:n},genPlate))).filter(Boolean);if(!imgs.length)return [];return await Promise.all(imgs.map(reviewPlate));};
+    var reviewed=await pickPlates(3);
+    var clean=reviewed.filter(plateOk);
+    if(!clean.length){reviewed=reviewed.concat(await pickPlates(2));clean=reviewed.filter(plateOk);}
+    try{self._sceneDebug=reviewed.map(function(r){return{qc:r.qc,tex:Math.round(r.tex*100)/100,col:r.col};});if(!clean.length&&reviewed[0]&&reviewed[0].image)self._sceneDebugImg=await self._coverTo(reviewed[0].image,req.size);}catch(e){}
     if(clean.length){
-      clean.sort(function(a,b){return scoreOf(b)-scoreOf(a);});
-      bgWhole=clean[0].image;
-      try{var up=await authPost('/superres',{image:bgWhole,scale:2},90000);if(up&&up.ok&&up.image)bgWhole=up.image;}catch(e){}
+      clean.sort(function(a,b){return(parseInt(b.qc.score,10)||5)-(parseInt(a.qc.score,10)||5);});
+      var pick=clean[0];
+      venuePlate=true;
+      bgWhole=await self._coverTo(pick.image,req.size);
+      // 按视觉模型返回的承托面 y 坐标，把真实产品垂直重定位到台面上，避免产品穿过台面/悬浮
+      var sY=parseFloat(pick.qc&&pick.qc.surfaceY);
+      if(isFinite(sY)){sY=Math.max(0.70,Math.min(0.90,sY));canvasPng=await self._reanchorFg(canvasPng,req.size,sY);}
     }
     }
+    if(macroMode){
+      if(!base){var mbg=await self.macroBgOnly(req.size,brand.brand);base=await self.mergeSimple(mbg,canvasPng,req.size);}
+    }else{
+      if(!bgWhole){bgWhole=await self.studioBgOnly(req.size);if(LIFESTYLE[req.type])self.addNote(typeLabel(req.type)+'：真实场景未通过实景质检，已先出棚拍版兜底（可点该图单张重做真实场景）。');}
+      base=await self.mergeBgFg(bgWhole,canvasPng,req.size);
+      if(venuePlate)base=await self._zoomCropCorner(base,req.size,0.10);
     }
-    if(!bgWhole)bgWhole=await self.studioBgOnly(req.size);
-    var base=await self.mergeBgFg(bgWhole,canvasPng,req.size);
-    var layers=self.buildTextLayersFE(req.type,self.ostForType(req.type));
+    var layers=self.buildTextLayersFE(req.type,_ost);
     var NEED_TEXT={core_selling:1,selling_point:1,scene_show:1,hero:1,material:1,product_detail:1,multi_scene:1,icon_selling:1,ingredients:1};
     if((!layers||!layers.length)&&NEED_TEXT[req.type]){
-      var _pr=(self.planResp&&self.planResp.product)||{};
       layers=self.buildTextLayersFE(req.type,{headline:_pr.name||'',subheadline:(_pr.core_points&&_pr.core_points[0])||'',icons:[],panels:[]});
     }
-    var finalUrl=await self.composeFrontend({size:req.size,base_image:base,text_layers:layers});
+    var finalUrl=await self.composeFrontend({size:req.size,base_image:base,text_layers:layers,spec:spec});
     return {ok:true,image:finalUrl,type:req.type,size:req.size};
     }catch(genErr){
      try{
       var fbAny=canvasPng||fg||null;
       if(fbAny){
        var bE=await self.fallbackSceneBase(fbAny);
-       var lE=self.buildTextLayersFE(req.type,self.ostForType(req.type));
-       var fE=await self.composeFrontend({size:req.size,base_image:bE,text_layers:lE});
+       var lE=self.buildTextLayersFE(req.type,_ost);
+       var fE=await self.composeFrontend({size:req.size,base_image:bE,text_layers:lE,spec:{type:req.type,fgBox:spec.fgBox,icons:spec.icons,bullets:spec.bullets,partLabel:'',brand:(spec.brand||'#fb7a22')}});
        return {ok:true,image:fE,type:req.type,size:req.size,degraded:true};
       }
      }catch(e2){}
@@ -1140,6 +1204,399 @@ body.atu-open #atuStudio{display:flex}\
     im.src=layoutPng;
     if(bgDataUrl)bg.src=bgDataUrl;else{n++;if(n>=2)done();}
    });
+  },
+  /* 把任意比例底图按 cover 裁到成品比例（空房间方形底板 → 16:9/4:3 等），略偏下取以保留地面/台面 */
+  _coverTo:function(dataUrl,sizeStr){
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      var ir=im.naturalWidth/im.naturalHeight,tr=W/H,sx,sy,sw,sh;
+      if(ir>tr){sh=im.naturalHeight;sw=sh*tr;sx=(im.naturalWidth-sw)*0.5;sy=0;}
+      else{sw=im.naturalWidth;sh=sw/tr;sx=0;sy=(im.naturalHeight-sh)*0.52;}
+      x.drawImage(im,sx,sy,sw,sh,0,0,W,H);
+      res(c.toDataURL('image/jpeg',0.95));
+     }catch(e){res(dataUrl);}
+    };
+    im.onerror=function(){res(dataUrl);};
+    im.src=dataUrl;
+   });
+  },
+  /* 把透明产品画布整体垂直平移，使产品 alpha 底边对齐到承托面 bottomY(0-1)，限幅防视觉模型离谱值 */
+  _reanchorFg:function(fgDataUrl,sizeStr,bottomY){
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+      var c0=document.createElement('canvas');c0.width=W;c0.height=H;var x0=c0.getContext('2d',{willReadFrequently:true});x0.drawImage(im,0,0,W,H);
+      var d=x0.getImageData(0,0,W,H).data,y1=-1;
+      for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){if(d[(yy*W+xx)*4+3]>16&&yy>y1)y1=yy;}
+      if(y1<0){res(fgDataUrl);return;}
+      var dy=Math.round(bottomY*H)-y1;
+      dy=Math.max(-Math.round(H*0.10),Math.min(Math.round(H*0.12),dy));
+      if(Math.abs(dy)<4){res(fgDataUrl);return;}
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      x.drawImage(c0,0,dy);res(c.toDataURL('image/png'));
+     }catch(e){res(fgDataUrl);}
+    };
+    im.onerror=function(){res(fgDataUrl);};
+    im.src=fgDataUrl;
+   });
+  },
+  /* 成品等比放大裁切：把模型在右下角加盖的合规水印随右/下边缘整体裁掉，产品与背景一起变换、接地关系不变，无局部修补痕 */
+  _zoomCropCorner:function(dataUrl,sizeStr,k){
+   k=k||0.06;
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+      var sw=im.naturalWidth*(1-k),sh=im.naturalHeight*(1-k);
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      x.drawImage(im,0,0,sw,sh,0,0,W,H);res(c.toDataURL('image/jpeg',0.95));
+     }catch(e){res(dataUrl);}
+    };
+    im.onerror=function(){res(dataUrl);};
+    im.src=dataUrl;
+   });
+  },
+  /* ================= 图种语法引擎（G1 景别微距 / G2 确定性组件 / G6 主色字色） ================= */
+  /* ---- G6 品牌主色提取 + WCAG 对比度派生（纯前端、确定性、同商品可复现） ---- */
+  _clamp:function(v,a,b){return Math.max(a,Math.min(b,v));},
+  _hex2:function(n){n=this._clamp(Math.round(n),0,255);return ('0'+n.toString(16)).slice(-2);},
+  _hex:function(r,g,b){return '#'+this._hex2(r)+this._hex2(g)+this._hex2(b);},
+  _rgbArr:function(hex){var m=/^#?([0-9a-f]{6})$/i.exec(String(hex||''));if(!m)return[251,122,34];var n=parseInt(m[1],16);return[(n>>16)&255,(n>>8)&255,n&255];},
+  _hsv:function(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360;}return{h:h,s:mx?d/mx:0,v:mx};},
+  _hsvToRgb:function(h,s,v){h=(h%360)/360;var i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s),r,g,b;i=i%6;if(i===0){r=v;g=t;b=p;}else if(i===1){r=q;g=v;b=p;}else if(i===2){r=p;g=v;b=t;}else if(i===3){r=p;g=q;b=v;}else if(i===4){r=t;g=p;b=v;}else{r=v;g=p;b=q;}return[r*255,g*255,b*255];},
+  _relLum:function(r,g,b){function f(c){c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);}return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);},
+  _contrast:function(a,b){var L1=this._relLum(a[0],a[1],a[2]),L2=this._relLum(b[0],b[1],b[2]);return(Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);},
+  /* 从透明主体 alpha 内像素量化取主色；主体近乎无彩色（黑白家电/金属/工业件）→ 回退品牌橙作强调 */
+  extractBrand:function(fg){
+   var self=this;
+   if(self._brand&&self._brand.src===fg)return Promise.resolve(self._brand);
+   return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var N=144,cv=document.createElement('canvas');cv.width=N;cv.height=N;var x=cv.getContext('2d',{willReadFrequently:true});
+      x.drawImage(im,0,0,N,N);var d=x.getImageData(0,0,N,N).data,HUE=24,bk=[];for(var k=0;k<HUE;k++)bk[k]={n:0,r:0,g:0,b:0};
+      var ct=0,nt=0,sR=0,sG=0,sB=0;
+      for(var p=0;p<d.length;p+=4){var r=d[p],g=d[p+1],b=d[p+2],a=d[p+3];if(a<48)continue;nt++;sR+=r;sG+=g;sB+=b;
+       var hv=self._hsv(r,g,b);
+       if(hv.s>0.24&&hv.v>0.25&&!(r>243&&g>243&&b>243)){var bi=Math.min(HUE-1,Math.floor(hv.h/360*HUE));var w=hv.s*(0.4+0.6*hv.v);bk[bi].n+=w;bk[bi].r+=r*w;bk[bi].g+=g*w;bk[bi].b+=b*w;ct+=w;}}
+      var best=-1,bn=0;for(var q2=0;q2<HUE;q2++){var n2=bk[q2].n+bk[(q2+1)%HUE].n*0.6+bk[(q2+HUE-1)%HUE].n*0.6;if(n2>bn){bn=n2;best=q2;}}
+      var neutral=!(ct>nt*0.12&&bn>ct*0.16),brand='#fb7a22';
+      if(!neutral&&best>=0){var B=bk[best],rr=B.r/B.n,gg=B.g/B.n,bb=B.b/B.n,hsv=self._hsv(rr,gg,bb);
+       hsv.s=self._clamp(Math.max(hsv.s,0.58),0,0.9);hsv.v=self._clamp(hsv.v,0.42,0.8);
+       var rgb=self._hsvToRgb(hsv.h,hsv.s,hsv.v);brand=self._hex(rgb[0],rgb[1],rgb[2]);}
+      var out={src:fg,brand:brand,neutral:neutral,avg:[Math.round(sR/nt),Math.round(sG/nt),Math.round(sB/nt)]};self._brand=out;res(out);
+     }catch(e){var fb={src:fg,brand:'#fb7a22',neutral:true,avg:[238,240,244]};self._brand=fb;res(fb);}
+    };
+    im.onerror=function(){res({src:fg,brand:'#fb7a22',neutral:true,avg:[238,240,244]});};
+    im.src=fg;
+   });
+  },
+  _loadImg:function(src){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im);};im.onerror=rej;im.src=src;});},
+  /* 采样已加载底图某归一化矩形的平均相对亮度(0..1) */
+  _regionLum:function(im,box){
+   try{var n=24,cv=document.createElement('canvas');cv.width=n;cv.height=n;var x=cv.getContext('2d',{willReadFrequently:true});
+    var W=im.naturalWidth,H=im.naturalHeight,sx=Math.round(box.x*W),sy=Math.round(box.y*H),sw=Math.max(2,Math.round(box.w*W)),sh=Math.max(2,Math.round(box.h*H));
+    x.drawImage(im,sx,sy,sw,sh,0,0,n,n);var d=x.getImageData(0,0,n,n).data,sum=0,c=0;
+    for(var i=0;i<d.length;i+=4){sum+=this._relLum(d[i],d[i+1],d[i+2]);c++;}
+    return sum/Math.max(1,c);
+   }catch(e){return 0.9;}
+  },
+  /* 依据文字落点背景明度 + 品牌主色派生整套设计 token；确定性可复现 */
+  deriveTypeColors:function(im,brandHex,forceLight){
+   var top=this._regionLum(im,{x:.03,y:0,w:.94,h:.30});
+   var topDark=forceLight?false:(top>0.60);                 // 背景亮→深字；背景暗→白字
+   var ink=topDark?'#1c2430':'#ffffff';
+   var inkSoft=topDark?'#5d6775':'#e6eaf0';
+   var br=this._rgbArr(brandHex),hsv=this._hsv(br[0],br[1],br[2]);
+   var bgRGB=topDark?[255,255,255]:[22,27,38];
+   // 强调色迭代到与背景对比≥3.0（图形/大字）；亮背景压深、暗背景提亮
+   var rgb=br.slice(),guard=0;
+   while(this._contrast(rgb,bgRGB)<3.0&&guard<24){hsv.v+=topDark?-0.045:0.045;hsv.v=this._clamp(hsv.v,0.12,0.92);var t=this._hsvToRgb(hsv.h,hsv.s,hsv.v);rgb=[t[0],t[1],t[2]];guard++;}
+   var accent=this._hex(rgb[0],rgb[1],rgb[2]);
+   var accentInk=this._contrast([255,255,255],rgb)>=2.1?'#ffffff':'#241505';
+   return {ink:ink,inkSoft:inkSoft,accent:accent,accentInk:accentInk,topDark:topDark,brandStrong:!(this._brand&&this._brand.neutral)};
+  },
+  /* ---- G1 部件微距：对客户真实像素局部高分辨率裁切 + 超分，AI 不脑补部件 ---- */
+  MACRO_TYPES:{material:1,product_detail:1},
+  _bboxAlphaImg:function(im){
+   try{var W=im.naturalWidth,H=im.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);
+    var d=x.getImageData(0,0,W,H).data,x0=W,y0=H,x1=-1,y1=-1;
+    for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){if(d[(yy*W+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
+    if(x1<x0)return null;return{x:x0/W,y:y0/H,w:(x1-x0)/W,h:(y1-y0)/H};
+   }catch(e){return null;}
+  },
+  locatePart:function(fg,hint){
+   var self=this;
+   if(self._partByFg&&self._partByFg.src===fg)return Promise.resolve(self._partByFg);
+   return (async function(){
+    var ask='这是一张已抠图（透明底）的商品图。请在商品上选出【一个】最值得特写、最能体现做工/材质/核心卖点的局部部件（如：按键、网罩、出风口、接缝、封口、拉链、拉杆、锁扣、轮子、轴承钢珠与刻印、接口、面料纹理、logo刻印）。只输出JSON：{"x":0到1,"y":0到1,"w":0到1,"h":0到1,"label":"部件名(4字内)"}。坐标相对整图左上角原点；框紧贴该部件、只框局部，宽和高都必须在0.20到0.42之间，严禁框住整个商品；优先选纹理/结构清晰、对焦实的部位。'+(hint?('卖点参考：'+String(hint).slice(0,120)):'');
+    var box=null,label='';
+    try{var r=await authPost('/vision-json',{image:fg,ask:ask,system:'你只输出JSON，坐标为相对宽高的比例。',maxTokens:200},60000);
+     if(r&&r.ok&&r.data){var b=r.data;['x','y','w','h'].forEach(function(k){b[k]=parseFloat(b[k]);});
+      if(isFinite(b.x)&&isFinite(b.y)&&isFinite(b.w)&&isFinite(b.h)&&b.w>0&&b.h>0){
+       b.w=self._clamp(b.w,0.20,0.42);b.h=self._clamp(b.h,0.20,0.42);b.x=self._clamp(b.x,0,1-b.w);b.y=self._clamp(b.y,0,1-b.h);
+       box={x:b.x,y:b.y,w:b.w,h:b.h};label=String(b.label||'').slice(0,8);}}
+    }catch(e){}
+    var out={src:fg,box:box,label:label};self._partByFg=out;return out;
+   })();
+  },
+  /* 返回 {ok(分辨率是否足够),png(透明局部高清),box,label,srcPx,zoom,fallback} */
+  extractMacro:function(fg,hint){
+   var self=this;
+   return (async function(){
+    var im;try{im=await self._loadImg(fg);}catch(e){return{ok:false,fallback:true};}
+    var W=im.naturalWidth,H=im.naturalHeight,info=self._alphaInfo(im),ab=info.bbox;
+    if(info.transRatio<0.02)return{ok:false,fallback:true,srcPx:0};   // 非透明图（白底原图/照片）不硬做透明微距
+    var loc=await self.locatePart(fg,hint),box=loc.box;
+    if(!box){
+     if(ab){box={x:ab.x+ab.w*0.16,y:ab.y+ab.h*0.08,w:ab.w*0.66,h:ab.w*0.66};if(box.y+box.h>ab.y+ab.h*0.98)box.y=ab.y+ab.h*0.98-box.h;}
+     else box={x:.26,y:.26,w:.48,h:.48};
+    }
+    if(ab){var ix=Math.max(box.x,ab.x),iy=Math.max(box.y,ab.y),ix2=Math.min(box.x+box.w,ab.x+ab.w),iy2=Math.min(box.y+box.h,ab.y+ab.h);
+     if(ix2>ix&&iy2>iy&&(ix2-ix)>=0.10&&(iy2-iy)>=0.10){box={x:ix,y:iy,w:ix2-ix,h:iy2-iy};}
+     else{box={x:ab.x+ab.w*0.20,y:ab.y+ab.h*0.12,w:ab.w*0.60,h:ab.w*0.60};if(box.y+box.h>ab.y+ab.h)box.y=ab.y+ab.h-box.h;}}
+    var sx=Math.round(box.x*W),sy=Math.round(box.y*H),sw=Math.max(8,Math.round(box.w*W)),sh=Math.max(8,Math.round(box.h*H));
+    var mx=Math.round(sw*0.12),my=Math.round(sh*0.12);sx=Math.max(0,sx-mx);sy=Math.max(0,sy-my);sw=Math.min(W-sx,sw+2*mx);sh=Math.min(H-sy,sh+2*my);
+    var srcShort=Math.min(sw,sh);
+    var cc=document.createElement('canvas');cc.width=sw;cc.height=sh;var cx=cc.getContext('2d');cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';cx.drawImage(im,sx,sy,sw,sh,0,0,sw,sh);
+    // 超分补救：超分底座多不保留透明通道 → 局部先贴浅灰不透明底送超分(最多2次=4x)，再用放大后的原 alpha 扣回，兼顾细节与透明
+    var upSR=async function(url){try{var up=await authPost('/superres',{image:url,scale:2},100000);if(up&&up.ok&&up.image)return await self._loadImg(up.image);return null;}catch(e){return null;}};
+    var flat=document.createElement('canvas');flat.width=sw;flat.height=sh;var fcx=flat.getContext('2d');fcx.fillStyle='#f2f3f5';fcx.fillRect(0,0,sw,sh);fcx.drawImage(cc,0,0);
+    var rgbCv=flat,finW=sw,finH=sh,zoom=1;
+    var i1=await upSR(flat.toDataURL('image/jpeg',0.95));
+    if(i1){var c1=document.createElement('canvas');c1.width=i1.naturalWidth;c1.height=i1.naturalHeight;c1.getContext('2d').drawImage(i1,0,0);rgbCv=c1;finW=c1.width;finH=c1.height;zoom=2;
+     if(Math.min(c1.width,c1.height)<480){var i2=await upSR(c1.toDataURL('image/jpeg',0.95));if(i2){var c2=document.createElement('canvas');c2.width=i2.naturalWidth;c2.height=i2.naturalHeight;c2.getContext('2d').drawImage(i2,0,0);rgbCv=c2;finW=c2.width;finH=c2.height;zoom=4;}}}
+    var mask=document.createElement('canvas');mask.width=finW;mask.height=finH;var mcx=mask.getContext('2d');mcx.imageSmoothingEnabled=true;mcx.imageSmoothingQuality='high';mcx.drawImage(cc,0,0,finW,finH);
+    var out=document.createElement('canvas');out.width=finW;out.height=finH;var ocx=out.getContext('2d');ocx.drawImage(rgbCv,0,0);
+    try{var od=ocx.getImageData(0,0,finW,finH),md=mcx.getImageData(0,0,finW,finH);for(var pi=3;pi<od.data.length;pi+=4)od.data[pi]=md.data[pi];ocx.putImageData(od,0,0);}catch(e){}
+    var crop=out.toDataURL('image/png'),curShort=Math.min(finW,finH);
+    var MIN_OUT=420,enough=curShort>=MIN_OUT;   // 超分后短边≥420 才支撑微距铺满（起点，需分品类实测校准）
+    return {ok:enough,enough:enough,png:crop,box:box,label:loc.label,srcPx:Math.round(srcShort),outPx:Math.round(curShort),zoom:zoom,fallback:false};
+   })();
+  },
+  _alphaInfo:function(im){
+   try{var W=im.naturalWidth,H=im.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);
+    var d=x.getImageData(0,0,W,H).data,x0=W,y0=H,x1=-1,y1=-1,opaque=0,tot=0;
+    for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){var a=d[(yy*W+xx)*4+3];tot++;if(a>24){opaque++;if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
+    var bbox=(x1<x0)?null:{x:x0/W,y:y0/H,w:(x1-x0)/W,h:(y1-y0)/H};
+    return{bbox:bbox,transRatio:1-opaque/Math.max(1,tot)};
+   }catch(e){return{bbox:null,transRatio:0.5};}
+  },
+  /* 微距主体布局：1:1 偏下铺满（顶部留标题）；横图偏右（左侧留卖点/放大窗）。返回 {png,fgBox} */
+  macroLayoutCutout:function(macroPng,sizeStr){
+   var self=this;return new Promise(function(res,rej){
+    var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920,land=W>H;
+    var im=new Image();
+    im.onload=function(){
+     var cv=document.createElement('canvas');cv.width=W;cv.height=H;var ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+     var dw,dh,px,py;
+     if(land){dh=H*0.84;var sc=dh/im.naturalHeight;dw=im.naturalWidth*sc;dh=im.naturalHeight*sc;py=H*0.13;px=self._clamp(W*0.66-dw/2,W*0.34,W*0.97-dw);}
+     else{dh=H*0.80;var sc2=dh/im.naturalHeight;dw=im.naturalWidth*sc2;dh=im.naturalHeight*sc2;px=(W-dw)/2;py=H*0.985-dh;}
+     ctx.drawImage(im,px,py,dw,dh);
+     res({png:cv.toDataURL('image/png'),fgBox:{x:px/W,y:py/H,w:dw/W,h:dh/H}});
+    };
+    im.onerror=function(){rej(new Error('macro_layout_fail'));};im.src=macroPng;
+   });
+  },
+  /* 微距专用无缝背景：柔和中性渐变 + 极淡品牌色晕，无地平线（特写不需要地面） */
+  macroBgOnly:function(sizeStr,brandHex){
+   var self=this;
+   return new Promise(function(res){
+    try{
+     var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+     var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+     var g=x.createLinearGradient(0,0,W*0.25,H);g.addColorStop(0,'#f7f9fb');g.addColorStop(0.55,'#eef1f5');g.addColorStop(1,'#e3e7ed');
+     x.fillStyle=g;x.fillRect(0,0,W,H);
+     var br=self._rgbArr(brandHex||'#fb7a22');
+     var rg=x.createRadialGradient(W*0.72,H*0.78,10,W*0.72,H*0.78,W*0.75);
+     rg.addColorStop(0,'rgba('+br[0]+','+br[1]+','+br[2]+',0.10)');rg.addColorStop(1,'rgba('+br[0]+','+br[1]+','+br[2]+',0)');
+     x.fillStyle=rg;x.fillRect(0,0,W,H);
+     res(c.toDataURL('image/jpeg',0.95));
+    }catch(e){res(null);}
+   });
+  },
+  /* 两层简单叠合（微距用，不画地面接触阴影） */
+  mergeSimple:function(bgDataUrl,layoutPng,sizeStr){
+   return new Promise(function(res){
+    var im=new Image(),bg=new Image(),n=0;
+    var done=function(){try{
+     var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
+     var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+     if(bgDataUrl)x.drawImage(bg,0,0,W,H);else{x.fillStyle='#eef1f5';x.fillRect(0,0,W,H);}
+     x.drawImage(im,0,0,W,H);res(c.toDataURL('image/png'));
+    }catch(e){res(layoutPng);}};
+    im.onload=function(){n++;if(n>=2)done();};bg.onload=function(){n++;if(n>=2)done();};
+    im.onerror=function(){res(layoutPng);};bg.onerror=function(){n++;if(n>=2)done();};
+    im.src=layoutPng;if(bgDataUrl)bg.src=bgDataUrl;else{n++;if(n>=2)done();}
+   });
+  },
+  /* ================= G2 确定性卖点图形组件（Canvas，颜色取 G6 主色，避让主体） ================= */
+  _FONT:"'Hiragino Sans','Yu Gothic','Meiryo','Malgun Gothic','Apple SD Gothic Neo','Microsoft YaHei UI','Microsoft YaHei','Noto Sans CJK SC',sans-serif",
+  _overlap:function(a,b,pad){pad=pad||0;return !(a.x+a.w+pad<b.x||b.x+b.w+pad<a.x||a.y+a.h+pad<b.y||b.y+b.h+pad<a.y);},
+  _roundRect:function(ctx,x,y,w,h,r){r=Math.min(r,h/2,w/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();},
+  matchIcon:function(txt){
+   var s=String(txt||'').toLowerCase();
+   if(/风|吹风|出风|wind|airflow/.test(s))return'wind';
+   if(/防水|水|湿|浴|雨|water|waterproof|drop/.test(s))return'drop';
+   if(/电|快充|充电|电池|power|charge|volt|雷/.test(s))return'bolt';
+   if(/锁|安全|防盗|tsa|lock|safe/.test(s))return'lock';
+   if(/轮|万向|推行|滚轮|wheel|roller/.test(s))return'wheel';
+   if(/拉杆|伸缩|手柄|提拉|handle|telesc|rod/.test(s))return'handle';
+   if(/材质|金属|铝合金|钢|面料|皮革|material|metal|alum|steel|fabric|leather/.test(s))return'layers';
+   if(/尺寸|容量|大容|升|空间|大号|size|capacity|litre|liter|volume/.test(s))return'box';
+   if(/便携|折叠|轻便|轻量|收纳|携带|fold|portable|lightweight|compact/.test(s))return'fold';
+   if(/温度|热风|恒温|温控|热|冷|temp|heat|cool/.test(s))return'temp';
+   if(/封口|密封|拉链|闭合|seal|zipper|close/.test(s))return'seal';
+   if(/静音|噪音|噪|noise|quiet|silent/.test(s))return'mute';
+   if(/耐用|坚固|防摔|抗|防护|durable|strong|guard|protect/.test(s))return'shield';
+   return'check';
+  },
+  _ICON_PATHS:{
+   check:{p:['M5 12.5L10 17L19 7']},
+   wind:{p:['M3 9h10.5a2.8 2.8 0 1 0-2.8-2.8','M3 14h14.5a2.8 2.8 0 1 1-2.8 2.8','M3 19h7']},
+   drop:{p:['M12 3C12 3 6 10 6 14a6 6 0 0 0 12 0C18 10 12 3 12 3Z']},
+   bolt:{p:['M13 3L5 13.5h5.5L10 21l8-11h-5.5L13 3Z']},
+   lock:{p:['M7.5 11V8a4.5 4.5 0 0 1 9 0v3','M5.5 11h13v9.5h-13z']},
+   wheel:{p:['M12 3.8v4.4','M12 15.8v4.4','M3.8 12h4.4','M15.8 12h4.4'],a:[[12,12,8.2],[12,12,2.4]]},
+   handle:{p:['M12 3.5v17','M8.5 7l3.5-3.5 3.5 3.5','M8.5 17l3.5 3.5 3.5-3.5']},
+   layers:{p:['M12 3l9 5-9 5-9-5 9-5Z','M3.2 13l8.8 4.9 8.8-4.9']},
+   box:{p:['M4 4h16v16H4z','M14 4h6v6','M20 4L9.5 14.5']},
+   fold:{p:['M4.5 19.5L19.5 4.5','M13.5 4.5h6v6']},
+   temp:{p:['M10 4.2a2 2 0 0 1 4 0v9.6a4.6 4.6 0 1 1-4 0V4.2Z','M12 9v6.4']},
+   seal:{p:['M4 9h16','M4 15h16','M7 6.6v10.8','M17 6.6v10.8']},
+   mute:{p:['M4 9.5v5h3.5L13 18.5v-13L7.5 9.5H4z','M16 9l5 6','M21 9l-5 6']},
+   shield:{p:['M12 3l8 3v5.5c0 5-3.6 8-8 9.2C7.6 19.5 4 16.5 4 11.5V6l8-3Z','M8.6 12l2.4 2.4 4.4-4.8']}
+  },
+  _drawIcon:function(ctx,name,x,y,s,color){
+   var ic=this._ICON_PATHS[name]||this._ICON_PATHS.check;
+   ctx.save();ctx.translate(x,y);ctx.scale(s/24,s/24);
+   ctx.strokeStyle=color;ctx.lineWidth=1.9;ctx.lineCap='round';ctx.lineJoin='round';ctx.lineJoin='round';
+   (ic.p||[]).forEach(function(d){try{ctx.stroke(new Path2D(d));}catch(e){}});
+   (ic.a||[]).forEach(function(c){try{var p=new Path2D();p.arc(c[0],c[1],c[2],0,Math.PI*2);ctx.stroke(p);}catch(e){}});
+   ctx.restore();
+  },
+  _fitOneLine:function(ctx,text,maxW,fs){var f=fs;ctx.font='600 '+f+'px '+this._FONT;while(f>11&&ctx.measureText(text).width>maxW){f-=2;ctx.font='600 '+f+'px '+this._FONT;}if(ctx.measureText(text).width>maxW){while(ctx.measureText(text+'…').width>maxW&&text.length>1){text=text.slice(0,-1);}text+='…';}return{text:text,fs:f};},
+  /* 卖点胶囊：半透明圆角板 + accent 圆图标 + 单行文字 */
+  drawCapsule:function(ctx,o,W,H){
+   try{
+    var x=o.x*W,y=o.y*H,w=o.w*W,h=o.h*H,r=h/2,dark=!o.token.topDark;
+    ctx.save();ctx.shadowColor='rgba(15,22,33,0.18)';ctx.shadowBlur=h*0.12;ctx.shadowOffsetY=h*0.04;
+    ctx.fillStyle=dark?'rgba(16,22,32,0.60)':'rgba(255,255,255,0.94)';this._roundRect(ctx,x,y,w,h,r);ctx.fill();ctx.restore();
+    var ccx=x+h*0.52,ccy=y+h/2,cr=h*0.33;
+    ctx.fillStyle=o.token.accent;ctx.beginPath();ctx.arc(ccx,ccy,cr,0,Math.PI*2);ctx.fill();
+    this._drawIcon(ctx,o.icon||'check',ccx-cr*0.95,ccy-cr*0.95,cr*1.9,o.token.accentInk);
+    var fs=h*0.40,fit=this._fitOneLine(ctx,o.text,w-h*1.02,fs);
+    ctx.font='600 '+fit.fs+'px '+this._FONT;ctx.fillStyle=dark?'#ffffff':o.token.ink;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(fit.text,x+h*0.92,y+h/2+fit.fs*0.04);
+   }catch(e){}
+  },
+  /* 图标卡片（icon_selling/ingredients）：白板 + accent 圆图标 + 居中标注 */
+  drawIconCard:function(ctx,o,W,H){
+   try{
+    var x=o.x*W,y=o.y*H,w=o.w*W,h=o.h*H,r=h*0.16,dark=!o.token.topDark;
+    ctx.save();ctx.shadowColor='rgba(15,22,33,0.16)';ctx.shadowBlur=h*0.10;ctx.shadowOffsetY=h*0.03;
+    ctx.fillStyle=dark?'rgba(16,22,32,0.60)':'rgba(255,255,255,0.95)';this._roundRect(ctx,x,y,w,h,r);ctx.fill();ctx.restore();
+    var ic=Math.min(w,h)*0.30,ccx=x+w/2,ccy=y+h*0.34;
+    ctx.fillStyle=o.token.accent;ctx.beginPath();ctx.arc(ccx,ccy,ic*0.62,0,Math.PI*2);ctx.fill();
+    this._drawIcon(ctx,o.icon||'check',ccx-ic*0.59,ccy-ic*0.59,ic*1.18,o.token.accentInk);
+    var fs=h*0.16,fit=this._fitOneLine(ctx,o.text,w*0.88,fs);
+    ctx.font='600 '+fit.fs+'px '+this._FONT;ctx.fillStyle=dark?'#f2f5f9':o.token.ink;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(fit.text,x+w/2,y+h*0.74);
+   }catch(e){}
+  },
+  /* 白色描边圆形放大窗：窗内=G1 真实微距像素；指引线连到主体部件 */
+  drawLoupe:function(ctx,o,W,H){
+   try{
+    var cx=o.cx*W,cy=o.cy*H,r=o.r*W,img=o.img;
+    if(o.leader){var lx=o.leader.x*W,ly=o.leader.y*H;
+     var dx=cx-lx,dy=cy-ly,L=Math.sqrt(dx*dx+dy*dy)||1,ex=cx-dx/L*r,ey=cy-dy/L*r;
+     ctx.save();ctx.strokeStyle='rgba(255,255,255,0.92)';ctx.lineWidth=Math.max(2,W*0.0035);ctx.lineCap='round';
+     ctx.shadowColor='rgba(15,22,33,0.25)';ctx.shadowBlur=W*0.004;ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(ex,ey);ctx.stroke();ctx.restore();
+     ctx.fillStyle=o.token.accent;ctx.beginPath();ctx.arc(lx,ly,Math.max(3,W*0.006),0,Math.PI*2);ctx.fill();}
+    ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();
+    if(img){var iw=img.naturalWidth||r*2,ih=img.naturalHeight||r*2,sc=Math.max((2*r)/iw,(2*r)/ih);ctx.drawImage(img,cx-(iw*sc)/2,cy-(ih*sc)/2,iw*sc,ih*sc);}
+    else{ctx.fillStyle='#e7ebf0';ctx.fillRect(cx-r,cy-r,2*r,2*r);}
+    ctx.restore();
+    ctx.save();ctx.shadowColor='rgba(15,22,33,0.30)';ctx.shadowBlur=r*0.18;ctx.shadowOffsetY=r*0.05;
+    ctx.strokeStyle='#ffffff';ctx.lineWidth=r*0.10;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();ctx.restore();
+    ctx.strokeStyle='rgba(255,255,255,0.85)';ctx.lineWidth=Math.max(1.5,r*0.03);ctx.beginPath();ctx.arc(cx,cy,r*1.02,0,Math.PI*2);ctx.stroke();
+   }catch(e){}
+  },
+  /* 部件卖点示意弧线（活动范围/结构强调），accent 半透明 + 两端箭头 */
+  drawArcSweep:function(ctx,o,W,H){
+   try{
+    var cx=o.cx*W,cy=o.cy*H,r=o.r*W,a0=o.a0,a1=o.a1,col=o.token.accent;
+    function pt(a,rr){return [cx+Math.cos(a)*rr,cy+Math.sin(a)*rr];}
+    ctx.save();ctx.lineCap='round';
+    ctx.strokeStyle=this._rgba(col,0.22);ctx.lineWidth=Math.max(6,W*0.016);ctx.beginPath();ctx.arc(cx,cy,r,a0,a1);ctx.stroke();
+    ctx.strokeStyle=this._rgba(col,0.85);ctx.lineWidth=Math.max(2,W*0.005);ctx.beginPath();ctx.arc(cx,cy,r,a0,a1);ctx.stroke();
+    [[a0],[a1]].forEach(function(aa){var a=aa[0],p=pt(a,r),pb=pt(a,r*0.80),tang=a+Math.PI/2;
+     ctx.fillStyle=col;ctx.beginPath();ctx.arc(p[0],p[1],Math.max(3,W*0.007),0,Math.PI*2);ctx.fill();});
+    ctx.restore();
+   }catch(e){}
+  },
+  _rgba:function(hex,al){var c=this._rgbArr(hex);return 'rgba('+c[0]+','+c[1]+','+c[2]+','+al+')';},
+  /* 标题下品牌小横杠（确定性品牌点缀） */
+  drawAccentBar:function(ctx,o,W,H){try{ctx.fillStyle=o.token.accent;this._roundRect(ctx,o.x*W,o.y*H,o.w*W,o.h*H,(o.h*H)/2);ctx.fill();}catch(e){}},
+  /* 组件编排：依据图种、主体占位 fgBox 做避让，任何组件失败都不影响出图 */
+  drawComponents:function(ctx,spec,imgs,W,H){
+   var tk=spec.token,self=this;
+   try{
+    var fg=spec.fgBox||{x:.3,y:.3,w:.4,h:.6},pad=0.012;
+    var free=function(box){return !self._overlap(box,fg,pad);};
+    if(spec.type==='icon_selling'||spec.type==='ingredients'){
+     // 图标卡按数量居中：≤3 单行；4 转 2×2；5 为 3+2（第二行居中）；6 为 3×2，避免 3+1 孤卡
+     var ilist=(spec.icons||[]).slice(0,6),inN=ilist.length;
+     var icw=.285,ich=.135,igx=.025,igy=.025;
+     ilist.forEach(function(ic,i){
+      var cols,rows,row,colf;
+      if(inN<=3){cols=inN;rows=1;row=0;colf=i;}
+      else if(inN===4){cols=2;rows=2;row=Math.floor(i/2);colf=i%2;}
+      else if(inN===5){cols=3;rows=2;row=Math.floor(i/3);colf=i<3?i:(i-3+0.5);}
+      else {cols=3;rows=2;row=Math.floor(i/3);colf=i%3;}
+      var totW=cols*icw+(cols-1)*igx,ix0=(1-totW)/2;
+      var totH=rows*ich+(rows-1)*igy,iy0=.965-totH;
+      var bx=ix0+colf*(icw+igx),by=iy0+row*(ich+igy);
+      self.drawIconCard(ctx,{x:bx,y:by,w:icw,h:ich,text:ic.label,icon:self.matchIcon(ic.icon_hint||ic.label),token:tk},W,H);});
+      return;
+    }
+    // 标题左侧品牌竖条（确定性品牌点缀，不占纵向空间、不压副标）
+    if(['core_selling','selling_point','hero','material','product_detail'].indexOf(spec.type)>=0){
+      this.drawAccentBar(ctx,{x:.028,y:.072,w:.012,h:.078,token:tk},W,H);
+    }
+    var bullets=(spec.bullets||[]).slice(0,3);
+    if(spec.type==='core_selling'||spec.type==='selling_point'||spec.type==='hero'){
+     // 卖点胶囊：逐颗找位，左列竖排优先，放不下的颗转底部横排兜底——能放几颗放几颗，绝不压主体，也不因一颗碰撞就整列弃画
+     var cw=.28,ch=.082;
+     bullets.forEach(function(bt,i){
+      var cands=[{x:.04,y:.34+i*(ch+.018),w:cw,h:ch},{x:.05+i*.325,y:.875,w:.29,h:.072}];
+      for(var k=0;k<cands.length;k++){if(free(cands[k])){self.drawCapsule(ctx,{x:cands[k].x,y:cands[k].y,w:cands[k].w,h:cands[k].h,text:bt,icon:self.matchIcon(bt),token:tk},W,H);break;}}
+     });
+     // 放大窗（仅 core_selling 且有真实微距）：四角候选，半径自适应缩小，尽量在大件/圆形产品上也能落位
+     if(spec.type==='core_selling'&&imgs&&imgs.loupe&&spec.part){
+      var cand=[{cx:.86,cy:.64},{cx:.14,cy:.64},{cx:.87,cy:.30},{cx:.13,cy:.30}],pick=null,rr=.13;
+      for(var rt=0;rt<2&&!pick;rt++){var rtry=rt===0?.13:.10;
+       for(var ci=0;ci<cand.length;ci++){var c=cand[ci],box={x:c.cx-rtry,y:c.cy-rtry,w:2*rtry,h:2*rtry};if(free(box)){pick=c;rr=rtry;break;}}}
+      if(pick)this.drawLoupe(ctx,{cx:pick.cx,cy:pick.cy,r:rr,img:imgs.loupe,leader:spec.part,token:tk},W,H);
+      // 部件弧线：以部件点为中心，朝放大窗反方向小弧
+      if(pick){var px=spec.part.x,py=spec.part.y,side=pick.cx>px?Math.PI:0;
+       this.drawArcSweep(ctx,{cx:px,cy:py,r:.075,a0:side-0.7,a1:side+0.7,token:tk},W,H);}
+     }
+    }
+    // 材质/细节微距：右下角部件名小标签
+    if((spec.type==='material'||spec.type==='product_detail')&&spec.partLabel){
+      var w=.16+spec.partLabel.length*0.018,box2={x:.97-w,y:.90,w:w,h:.06};
+      if(free(box2))this.drawCapsule(ctx,{x:box2.x,y:box2.y,w:box2.w,h:box2.h,text:spec.partLabel,icon:'layers',token:tk},W,H);
+    }
+   }catch(e){}
   },
   /* 客观背景纹理检测：取图像上下边缘条带（r-background 原始图无文字、产品居中，边缘基本是背景），
      用 Sobel 梯度统计高密度纹理占比。满屏织物/流体/大理石纹理→高；干净棚拍墙面→低。纯像素判定，不依赖 VL。 */
@@ -1324,12 +1781,31 @@ body.atu-open #atuStudio{display:flex}\
     var size=String(j.size||'1920x1920').split('x');var W=+size[0]||1920,H=+size[1]||1920;
     var cv=document.createElement('canvas');cv.width=W;cv.height=H;var ctx=cv.getContext('2d');
     ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
-    var im=new Image();
-    im.onload=function(){
-     try{ctx.drawImage(im,0,0,W,H);}catch(e){}
-     (j.text_layers||[]).forEach(function(L){self._drawLayer(ctx,L,W,H);});
-     try{res(cv.toDataURL('image/jpeg',0.92));}catch(e){res(j.base_image);}
+    var finish=function(baseImg){
+      (async function(){
+       try{
+        ctx.drawImage(baseImg,0,0,W,H);
+        var spec=j.spec||null,token=null,loupeImg=null;
+        if(spec){
+         token=self.deriveTypeColors(baseImg,spec.brand||'#fb7a22');spec.token=token;   // G6 字色/主色
+         if(spec.loupeImg){try{loupeImg=await self._loadImg(spec.loupeImg);}catch(e){loupeImg=null;}}
+         self.drawComponents(ctx,spec,{loupe:loupeImg},W,H);                            // G2 确定性组件
+        }
+        (j.text_layers||[]).forEach(function(L){
+         if(token&&String(L.slot||'').indexOf('ic')!==0){                               // ic 标注已由图标卡绘制
+          var big=(L.baseline==='h1'||L.baseline==='h2'),white=/^#?(fff|ffffff|white)/i.test(String(L.color||''));
+          if(big){L.color=white?(token.topDark?token.ink:'#ffffff'):((token.topDark&&token.brandStrong)?token.accent:token.ink);}
+          else if(L.baseline==='sub'){L.color=token.inkSoft;}
+          else{L.color=token.ink;}
+         }
+         self._drawLayer(ctx,L,W,H);
+        });
+        res(cv.toDataURL('image/jpeg',0.92));
+       }catch(e){try{res(cv.toDataURL('image/jpeg',0.92));}catch(e2){res(j.base_image);}}
+      })();
     };
+    var im=new Image();
+    im.onload=function(){finish(im);};
     im.onerror=function(){res(j.base_image);};
     im.src=j.base_image;
    });
