@@ -4590,7 +4590,7 @@ async function handleFiles(fileList){
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
  var already=AtuStudio.isOpen();
- if(!already){AtuStudio.open();state.stage='upload';}
+ if(!already){try{leaveHero();}catch(e){}AtuStudio.open();state.stage='upload';}
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){state.images=state.images.concat(arr);
   AtuStudio.renderOrigin();
@@ -7712,6 +7712,14 @@ window.atuToAwen=function(ats){
  /* 交接不是中途离开：强制结束出图态、移除覆盖层，不弹确认、不 goHome */
  try{if(window.AtuStudio){AtuStudio._running=false;AtuStudio._abort=true;}}catch(e){}
  document.body.classList.remove('atu-open');
+ /* 若从首页 hero 直接传图进阿图，关闭覆盖层会露出首页上传墙，看起来像“跳回首页”。
+    交接前确保落到工作台聊天态：leaveHero() 幂等，非首页态无副作用；并展开交付区。 */
+ try{
+  leaveHero();
+  if(state.stage==='welcome')state.stage='work';
+  if(typeof renderDeliver==='function')renderDeliver();
+  try{openDeliver();}catch(e){}
+ }catch(e){}
  try{relayToAwen();}catch(e){toast('进入阿文失败：'+((e&&e.message)||e));}
 };
 syncQuality();
