@@ -1376,7 +1376,10 @@ body.atu-open #atuStudio{display:flex}\
    if(this._running)return;
    var types=this.selectedTypes();
    if(!types.length){toast(t('toast_needtype'),'err');return;}
-   if(this._planRunning){toast(t('plan_notready'),'err');return;} // 方案仍在请求中，避免并发；结束后再点生成
+   var planWasRunning=false;
+   if(this._planRunning){ // 方案仍在请求中：不再硬拒绝零产出——作废旧规划（结果不落地），立即转降级出图，绝不卡住客户
+    this._planSeq++; this._planRunning=false; planWasRunning=true;
+   }
    var needReplan=!this.planResp||this.planRespLang!==this.resolvedLang();
    this._running=true;this._abort=false;this._paused=false;this.ats=[];this._notes=[];this._lastErr=null;this._failed={};this._cleanImage=null;
    this._durations=[];this._activeTasks={};this._taskStart={};this._reqAborts={};this._posePromise=null;
@@ -1387,7 +1390,7 @@ body.atu-open #atuStudio{display:flex}\
     var cat=(GS().identity&&GS().identity.cat)||'',pn=(GS().product&&GS().product.name)||'这款商品';
     // 方案缺失/语种不符：后台异步补规划（runPlan 内含重试，不阻塞出图），同时立即用轻量降级方案出图——不卡顿、不零产出
     if(needReplan){
-     try{self.runPlan();}catch(e){}
+     if(!planWasRunning){try{self.runPlan();}catch(e){}} // 旧规划刚被作废则不重复起（避免竞态），直接降级出图
      self.planResp={ok:true,degraded:true,language:self.resolvedLang(),product:{name:pn,domain:cat,core_points:[],scenes:[],materials:[],specs:[]},plan:[],recommended_types:[]};
      self.planRespLang=self.resolvedLang();self.planByType={};
      self.addNote('图文规划在后台补跑中，先按默认规格出图；需要更精准可点该图单张重做。');
@@ -1397,7 +1400,7 @@ body.atu-open #atuStudio{display:flex}\
     // 轨道A：只取干净白底主体（不再产裸局部/假影棚）——仍先行
     if(needTrackA){
      self.setProgMsg(t('trackA'));
-     try{fidOut=await GF().package({call:retryCall,image:GS().images[0].dataUrl,category:cat,product:pn,doDetails:false,doScene:false});}catch(e){fidOut=null;}
+     try{fidOut=await Promise.race([GF().package({call:retryCall,image:GS().images[0].dataUrl,category:cat,product:pn,doDetails:false,doScene:false}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('package_timeout'));},60000);})]);}catch(e){fidOut=null;} // 强制60s超时：保真服务挂起也不阻塞，回落原图兜底
     }
     if(self._abort){self._finish();return;}
     self._cleanImage=(fidOut&&fidOut.ok&&fidOut.white)?fidOut.white:GS().images[0].dataUrl;
