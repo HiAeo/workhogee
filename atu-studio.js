@@ -37,8 +37,8 @@
  var LOCALE_LANG={US:'en',EU:'en',SEA:'en',JP:'ja',KR:'ko',CN:'zh-CN',generic:'zh-CN'};
  var PLATFORM_REGION={generic:'generic',amazon:'US',taobao:'CN',jd:'CN',douyin:'CN',xiaohongshu:'CN',aliexpress:'JP',shopee:'SEA',tiktokshop:'US'};
  /* 图种 → 默认比例 → 尺寸（契约 §0/§1）；plan 返回 size 时优先用 plan 的 */
- var TYPE_RATIO={white_main:'1:1',search_main:'1:1',core_selling:'4:3',selling_point:'16:9',icon_selling:'1:1',material:'1:1',scene_show:'16:9',multi_scene:'16:9',competitor_compare:'4:3',usage_compare:'4:3',size_chart:'1:1',product_detail:'1:1',
-   hero:'4:3',scene_atmosphere:'16:9',multi_angle:'1:1',series:'1:1',ingredients:'1:1',usage_guide:'1:1',accessories:'1:1',after_sales:'1:1',mood:'16:9',
+ var TYPE_RATIO={white_main:'1:1',search_main:'1:1',core_selling:'4:3',selling_point:'16:9',icon_selling:'1:1',material:'1:1',scene_show:'16:9',multi_scene:'16:9',search_promo:'1:1',competitor_compare:'4:3',usage_compare:'4:3',size_chart:'1:1',product_detail:'1:1',
+   hero:'4:3',scene_atmosphere:'16:9',multi_angle:'1:1',series:'1:1',ingredients:'1:1',usage_guide:'1:1',accessories:'1:1',after_sales:'1:1',mood:'16:9',atmosphere:'16:9',model_show:'3:4',
    f_model:'3:4',f_white:'1:1',f_search:'1:1',f_selling:'4:3',f_icon:'1:1',f_detail:'1:1',f_fabric:'1:1',f_angle:'1:1',f_seeding:'3:4',f_scene:'16:9',f_series:'1:1',f_size:'1:1'};
  var RATIO_SIZE={'1:1':'1920x1920','4:3':'2240x1680','16:9':'2560x1440','3:4':'1680x2240'};
 
@@ -217,7 +217,7 @@ body.atu-open #atuStudio{display:flex}\
 
  /* === 图种 ID 与冻结契约 §0 对齐（不再使用旧短码） === */
  var SUITE_TYPES={
-  ecom:[['white_main','白底主图'],['search_main','搜索主图'],['core_selling','核心卖点图'],['selling_point','卖点图'],['icon_selling','图标卖点图'],['material','材质图'],['scene_show','场景展示图'],['multi_scene','多场景拼图'],['competitor_compare','竞品对比图'],['usage_compare','使用对比图'],['size_chart','尺寸/容量图'],['product_detail','产品细节图']],
+  ecom:[['white_main','白底主图'],['search_main','搜索主图'],['search_promo','营销搜索图'],['core_selling','核心卖点图'],['selling_point','卖点图'],['icon_selling','图标卖点图'],['material','材质图'],['scene_show','场景展示图'],['atmosphere','氛围场景图'],['model_show','模特/手持图'],['multi_scene','多场景拼图'],['competitor_compare','竞品对比图'],['usage_compare','使用对比图'],['size_chart','尺寸/容量图'],['product_detail','产品细节图']],
   detail:[['hero','首屏主视觉'],['product_detail','产品细节图'],['scene_atmosphere','场景氛围图'],['multi_angle','多角度图'],['series','系列展示图'],['ingredients','商品成分图'],['usage_guide','使用建议图'],['accessories','配件/赠品图'],['after_sales','售后保障图'],['mood','氛围渲染图']],
   fashion:[['f_model','模特图'],['f_white','白底图'],['f_search','搜索主图'],['f_selling','卖点图'],['f_icon','图标卖点图'],['f_detail','细节图'],['f_fabric','面料质感图'],['f_angle','多角度视图'],['f_seeding','种草图'],['f_scene','多场景图'],['f_series','系列展示图'],['f_size','尺码图']]
  };
@@ -647,10 +647,10 @@ body.atu-open #atuStudio{display:flex}\
     }
    }
    // 图标卖点图兜底：后端未给 icons 时，用卖点 bullets / 商品核心卖点确定性补成图标卡（客户给什么图都能出，不依赖规划字段完美）
-   if((t==='icon_selling'||t==='ingredients')&&(!base.icons||!base.icons.length)){
+   if((t==='icon_selling'||t==='ingredients'||t==='search_promo')&&(!base.icons||!base.icons.length)){
     var cp=((this.planResp&&this.planResp.product&&this.planResp.product.core_points)||[]);
     var src=(base.bullets&&base.bullets.length)?base.bullets:cp;
-    base.icons=src.slice(0,6).map(function(s){return {label:String(s).replace(/^[\s·•\-\d.、]+/,'').slice(0,18),icon_hint:''};});
+    base.icons=src.slice(0,t==='search_promo'?3:6).map(function(s){return {label:String(s).replace(/^[\s·•\-\d.、]+/,'').slice(0,t==='search_promo'?6:18).replace(/[，,、；;：:]+$/,''),icon_hint:''};});
    }
    // 标题净化：识别不到商品名时规划可能给出“这款商品/该产品”等无信息标题，确定性替换为真实商品名或首个核心卖点，杜绝废话上屏
    var _pr0=(this.planResp&&this.planResp.product)||{};
@@ -834,11 +834,12 @@ body.atu-open #atuStudio{display:flex}\
    })();
   },
   /* ========== r-background 联合背景（产品保真）：前端编排 ========== */
-  RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,mood:1,hero:1,scene_atmosphere:1,ingredients:1},
+  RBG_TYPES:{core_selling:1,selling_point:1,icon_selling:1,material:1,scene_show:1,product_detail:1,multi_scene:1,search_promo:1,model_show:1,mood:1,atmosphere:1,hero:1,scene_atmosphere:1,ingredients:1},
   _layCfg:{
-   scene_show:{cx:.44,bottom:.80,h:.50},mood:{cx:.44,bottom:.82,h:.60},scene_atmosphere:{cx:.5,bottom:.92,h:.72},
+   scene_show:{cx:.44,bottom:.80,h:.50},mood:{cx:.44,bottom:.84,h:.58},atmosphere:{cx:.44,bottom:.84,h:.58},scene_atmosphere:{cx:.5,bottom:.92,h:.70},
    selling_point:{cx:.50,bottom:.98,h:.65},hero:{cx:.5,bottom:.98,h:.65},
    core_selling:{cx:.50,bottom:.98,h:.65},icon_selling:{cx:.5,bottom:.62,h:.45},ingredients:{cx:.5,bottom:.58,h:.41},
+   search_promo:{cx:.50,bottom:.80,h:.50},model_show:{cx:.42,bottom:.97,h:.58},
    material:{cx:.5,bottom:.98,h:.67},product_detail:{cx:.5,bottom:.97,h:.64},
    default:{cx:.5,bottom:.97,h:.64}
   },
@@ -849,7 +850,7 @@ body.atu-open #atuStudio{display:flex}\
    macro:'a soft neutral seamless backdrop, gentle diffused lighting, delicate soft highlights, refined texture, elegant premium product close-up',
    mood:'an atmospheric cinematic scene, soft moody light, gentle haze, rich color grading, emotional premium ambiance'
   },
-  _typeScene:{scene_show:'lifestyle',mood:'mood',scene_atmosphere:'mood',selling_point:'hero',hero:'hero',core_selling:'info',icon_selling:'info',ingredients:'info',material:'macro',product_detail:'macro'},
+  _typeScene:{scene_show:'lifestyle',mood:'mood',atmosphere:'mood',scene_atmosphere:'mood',selling_point:'hero',hero:'hero',core_selling:'info',search_promo:'info',icon_selling:'info',ingredients:'info',material:'macro',product_detail:'macro'},
   /* 品类无关「姿态/支撑」判定（基于产品真实形态，不联网、不依赖品牌）：整套只判一次 */
   detectPose:function(fg){
    var self=this;
@@ -862,7 +863,7 @@ body.atu-open #atuStudio{display:flex}\
       'hand=主要靠手握且无法自立；lay=平放或斜靠。'+
       '特别注意：若挂环在产品【最底端】（例如吹风机手柄底端的电源线收纳小环），这不是悬挂，产品仍竖直放置=stand。'+
       '"loop"=是否带挂环/孔；"loopPos"=挂环位置 top上部/bottom底端/side侧面/none无；"flatBase"=底部是否为可自立平整面。';
-     var r=await authPost('/vision-json',{image:fg,ask:ask,system:'你是严谨的视觉分析助手，只输出JSON。',maxTokens:400},60000);
+     var r=await self._vlPost({image:fg,ask:ask,system:'你是严谨的视觉分析助手，只输出JSON。',maxTokens:400},60000);
      if(r&&r.ok&&r.data){
       var p=['stand','hang','hand','lay'].indexOf(r.data.pose)>=0?r.data.pose:'stand';
       var loopTop=r.data.loopPos==='top';
@@ -890,11 +891,28 @@ body.atu-open #atuStudio{display:flex}\
    if(/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|bearing|industrial|hardware|machinery|gear|metal part|workshop/.test(txt))return'a real clean modern factory workshop or equipment-bench scene: a real metal machine workbench surface with softly blurred industrial equipment and structured wall panels, realistic workshop lighting';
    return'a real bright modern interior room with strong depth: a real floor, a mid-ground and a distant softly blurred room with windows and fixed architecture, natural daylight';
   },
+  /* G4 品类卖点氛围素材：只允许出现在背景/台面远边缘的点缀元素（中央产品放置区必须留空），真实产品最后贴回，素材天然不侵入主体 mask */
+  buildAmbience:function(domain,scenes,name){
+   var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
+   if(/美妆|护肤|化妆|洁面|面膜|口红|香水|cosmetic|skincare|makeup|beauty|serum|cream|lotion|perfume|cleanser/.test(txt))
+    return'a few soft cleansing foam bubbles, gentle water ripples and tiny fresh water droplets gathered only at the FAR EDGES of the counter, one or two fresh green leaves softly out of focus in the background, a dewy fresh spa atmosphere';
+   if(/食品|零食|饮料|茶|咖啡|水果|food|snack|beverage|coffee|tea|drink/.test(txt))
+    return'gentle appetizing steam and a few fresh ingredient accents such as leaves, beans or fruit kept only at the far edges and heavily blurred, a warm inviting gourmet glow';
+   if(/3c|数码|电子|耳机|音箱|充电器|手机|电脑|键盘|摄像|平板|earphone|speaker|charger|phone|laptop|keyboard|camera|digital|electronic/.test(txt))
+    return'subtle blue-cyan rim light, a few faint glowing thin tech light lines in the softly blurred background and delicate bokeh light particles, a sleek high-tech mood';
+   if(/吹风|个护|剃须|牙刷|美发|直发|hair ?dryer|shaver|toothbrush|personal care|styler|家电|家居|吸尘|净化|appliance|purifier/.test(txt))
+    return'soft wisps of fresh steam and fine water droplets kept near the blurred background edges, airy clean freshness with gentle highlights';
+   if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack/.test(txt))
+    return'soft travel bokeh of distant window lights, gentle sunbeams through the window with a few floating dust motes, an airy journey mood';
+   if(/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|bearing|industrial|hardware|machinery|gear|metal part|workshop/.test(txt))
+    return'cool subtle blue-cyan rim light grazing the metal, faint machined sheen highlights in the blurred equipment background, a crisp industrial mood, absolutely no sparks and no smoke';
+   return'tasteful soft atmospheric bokeh and gentle light haze with a few subtle decorative accents kept only at the far edges';
+  },
   buildRbgPrompt:function(type,o,pose){
    o=o||{};pose=pose||'stand';var group=this._typeScene[type]||'info';var domain=String(o.domain||'product').toLowerCase();
    var venue=this.buildVenue(domain,o.scenes,o.name);
    var keep='Photorealistic commercial product photo. The product (already cut out and placed on this transparent canvas) must keep its EXACT real shape, proportions, colors, materials and every printed label, logo and text on its packaging. Do NOT redraw, repaint, warp, distort, erase or alter the product. The generated BACKGROUND must contain absolutely NO words, letters, numbers, captions, logos, price tags, posters, stickers or watermarks.';
-   var sceneTypes={scene_show:1,mood:1,scene_atmosphere:1};
+   var sceneTypes={scene_show:1,mood:1,scene_atmosphere:1,atmosphere:1};
    var place;
    if(pose==='hang'||pose==='hand'){
     place='The product is ALREADY hanging on the simple support already drawn on the canvas. Render only a real photographic bright room wall behind it (tidy bathroom / entry / bedroom), soft natural daylight, gentle background blur, clear empty wall below. Do NOT add any hook, rail, rod, bracket, shelf, table, counter, pedestal, box, package or furniture — the support and product already exist.';
@@ -962,7 +980,7 @@ body.atu-open #atuStudio{display:flex}\
    }else if(recipe==='scene_show'){
     push('headline',hl,.05,.06,.9,.15,{baseline:'h1',bold:true,max_lines:2});
     if(sub)push('sub',sub,.05,.22,.86,.09,{baseline:'sub'});
-   }else if(recipe==='mood'||recipe==='scene_atmosphere'){
+   }else if(recipe==='mood'||recipe==='scene_atmosphere'||recipe==='atmosphere'){
     push('headline',hl,.07,.08,.72,.12,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
    }else if(recipe==='material'){
     push('headline',hl,.06,.07,.88,.13,{baseline:'h2',bold:true,max_lines:2});
@@ -973,9 +991,16 @@ body.atu-open #atuStudio{display:flex}\
    }else if(recipe==='icon_selling'||recipe==='ingredients'){
     // 图标卡（白板+图标+标注）统一由 drawComponents/drawIconCard 绘制，这里只放标题，避免文字层与卡片重复画标签造成重影
     push('headline',hl,.08,.05,.84,.12,{baseline:'h1',bold:true,align:'center',max_lines:2});
+   }else if(recipe==='search_promo'){
+    // G7 营销搜索图：顶部居中品牌大标题 + 副标；图标胶囊/光带由 drawComponents 绘制
+    push('headline',hl,.08,.055,.84,.12,{baseline:'h1',bold:true,align:'center',max_lines:2});
+    if(sub)push('sub',sub,.1,.185,.8,.07,{baseline:'sub',align:'center',max_lines:1});
+   }else if(recipe==='model_show'){
+    // G5 模特图：仅左下角一行品名小白字（人物背景复杂，白字自动带投影），不堆卖点、不压人和产品
+    push('mname',hl,.05,.87,.62,.09,{baseline:'h2',bold:true,color:'#FFFFFF',max_lines:1});
    }else if(recipe==='multi_scene'){
-    push('headline',hl,.05,.04,.9,.11,{baseline:'h1',bold:true,align:'center',max_lines:1});
-    panels.forEach(function(p,i){push('pc'+i,p.caption||p.title,.012+i*.333,.86,.31,.10,{baseline:'body',align:'center',max_lines:2});});
+    // G7 多场景拼图：每格场景标签由 genMultiScene 在格内顶部安全区确定性绘制，外层不再叠任何文字（杜绝压主体）
+    return L;
    }else if(hl)push('headline',hl,.06,.07,.88,.14,{baseline:'h1',bold:true,max_lines:2});
    return L;
   },
@@ -1005,6 +1030,9 @@ body.atu-open #atuStudio{display:flex}\
     var macroHint=bullets.join('；')+' '+((_pr.materials||[]).concat(_pr.key_parts||[])).join('，');
     var spec={type:req.type,fgBox:null,loupeImg:null,part:null,bullets:bullets,icons:(_ost.icons||[]),partLabel:'',brand:brand.brand};
     var canvasPng,base=null,bgWhole=null,macroMode=false,macro=null,venuePlate=false;
+    // G5 真人模特 / G7 多场景拼图：独立管线（人物底板或多格底板 + 真实产品确定性贴回），不进微距/单图流程
+    if(req.type==='model_show'){return await self.genModelShow({req:req,fg:fg,brand:brand,ost:_ost,poseName:poseName});}
+    if(req.type==='multi_scene'){return await self.genMultiScene({req:req,fg:fg,brand:brand,poseName:poseName});}
     var getMacro=function(){if(self._macroShared&&self._macroShared.src===fg)return Promise.resolve(self._macroShared.v);return self.extractMacro(fg,macroHint).then(function(r){self._macroShared={src:fg,v:r};return r;}).catch(function(){return{ok:false,fallback:true};});};
     if(self.MACRO_TYPES[req.type]){
       try{macro=await getMacro();}catch(e){macro={ok:false};}
@@ -1055,27 +1083,32 @@ body.atu-open #atuStudio{display:flex}\
       }
       return {ok:false,error:{code:'scene_timeout',message:'背景生成超时，已为你兜底出图'}};
     };
-    var LIFESTYLE={scene_show:1,mood:1,scene_atmosphere:1};
+    var LIFESTYLE={scene_show:1,mood:1,scene_atmosphere:1,atmosphere:1};
     var bgWhole=null;
     if(LIFESTYLE[req.type]){
     // G3：让 Seedream 只生成「不含产品的真实空场地底板」，再把客户真实产品确定性贴回，
     // 避开 r-background 抱着大尺寸产品只肯补无影墙的倾向；空场景无产品可复制，保真由贴回像素保证。
     var venue=self.buildVenue(req.domain,req.scenes,_pr.name||'');
     var bgPrompt='Photorealistic EMPTY background plate of a real location, used to composite a small home appliance onto later. Location: '+venue+'. Eye-level view with strong real-room depth. In the FOREGROUND is exactly ONE single flat horizontal surface (a clean countertop, tabletop or dresser top) whose straight front edge crosses the whole frame at about 78% of the image height; the surface top is clean, flat and empty in the lower-center where the appliance will stand, and extends a short way back. Behind and above this single surface is the softly blurred real room with fixed architecture (a window, a door, cabinets or shelves, walls), natural daylight, realistic perspective. STRICTLY: only ONE level surface; NO steps, NO raised platform or ledge, NO sunken lower floor in front of it, NO second surface; the area below the front edge is a simple plain cabinet face or out-of-focus floor, not another standing level. No people, no product, no loose objects on the surface, no text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
+    var isMoodPlate=(req.type==='mood'||req.type==='scene_atmosphere'||req.type==='atmosphere');
+    if(isMoodPlate){
+     // G4 氛围层：仅在背景/远边缘点缀品类氛围素材，中央产品放置区保持干净；产品最后确定性贴回，素材不侵入主体
+     bgPrompt+=' ADD TASTEFUL ATMOSPHERE IN THE BACKGROUND AND AT THE FAR EDGES ONLY: '+self.buildAmbience(req.domain,req.scenes,_pr.name||'')+'. Keep these decorative elements small, sparse and softly out of focus; they MUST stay clear of the lower-center standing area, MUST NOT cover the center of the countertop and MUST NOT fill or texture the whole frame. Use stronger cinematic shallow depth of field and slightly richer premium color grading, but keep the lower-center product area clean, flat and neutral.';
+    }
     var sizeForBg=(String(req.size).indexOf('x')>0)?req.size:'2304x2304';
     var genPlate=async function(){
-      var r=await postRobust('/scene-background',{bgPrompt:bgPrompt,size:sizeForBg},95000,2);
+      var r=await self._withBgGate(function(){return postRobust('/scene-background',{bgPrompt:bgPrompt,size:sizeForBg},95000,2);});
       if(r&&r.ok&&r.b64)return 'data:image/png;base64,'+r.b64;
-      var r2=await postRobust('/scene-background',{bgPrompt:bgPrompt,size:'2304x2304'},95000,1);
+      var r2=await self._withBgGate(function(){return postRobust('/scene-background',{bgPrompt:bgPrompt,size:'2304x2304'},95000,1);});
       return(r2&&r2.ok&&r2.b64)?('data:image/png;base64,'+r2.b64):null;
     };
     var plateQcAsk='This is an AI-generated EMPTY background plate with NO product in it yet; a product will be composited onto the lower-center later. Return JSON exactly: {"sceneText":true ONLY if there is PROMINENT readable or gibberish text in the scene such as signage, posters, banners, big words on packaging, or large lettering on walls; FALSE otherwise (IGNORE a small semi-transparent "AI generated" watermark in a bottom corner, and IGNORE tiny wall switches, sockets or outlets),"realVenue":true ONLY if it is a recognizable REAL photographed room or location with clear spatial depth AND fixed architecture such as window frames, a door, counter or cabinet edges, walls, a real floor or counter with a horizon; FALSE for a seamless paper cyclorama, an infinite white or gray cove, a flat solid-color or smooth gradient wall with no room, a green screen, or a 3D/CGI render,"seamlessBackdrop":true if it is a seamless/infinite cove or a flat solid/smooth-gradient studio background with no room depth,"greenScreen":true if green or chroma-key screen,"render3d":true if it looks like a 3D render or CGI instead of a photograph,"clearSurface":true if the lower-center floor or counter area is clean, empty and evenly lit so a product can be placed there,"singleLevel":true if there is exactly ONE foreground standing surface (a countertop or tabletop) with one straight front edge around 70-85% of the height and NO steps, raised platform, ledge or a second lower standing level,"surfaceY": a decimal from 0.65 to 0.92 indicating the y coordinate (0=top, 1=bottom) of that single surface TOP at the lower-center, where the base of a standing product should rest,"score": an integer 1 to 10 for photographic realism and suitability as a product scene}.';
-    var reviewPlate=async function(im){var v=await authPost('/vision-json',{image:im,ask:plateQcAsk,system:'You are a strict QA reviewer. Reply with JSON only.',maxTokens:280},60000);var tex=await self.bgTextureRatio(im);var col=await self.bgColorRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex,col:col};};
-    var plateOk=function(q){var Q=q.qc||{},sc=parseInt(Q.score,10);var base=Q.sceneText!==true&&Q.realVenue===true&&Q.seamlessBackdrop===false&&Q.greenScreen===false&&Q.render3d===false&&Q.clearSurface!==false&&Q.singleLevel!==false&&isFinite(sc)&&sc>=7;var tx=(typeof q.tex!=='number')||q.tex<=0.34;var cl=q.col&&q.col.highSat<=0.08&&q.col.warm<=0.16;return base&&tx&&cl;};
+    var reviewPlate=async function(im){var v=await self._vlPost({image:im,ask:plateQcAsk,system:'You are a strict QA reviewer. Reply with JSON only.',maxTokens:280},60000);var tex=await self.bgTextureRatio(im);var col=await self.bgColorRatio(im);return {image:im,qc:(v&&v.ok)?v.data:{},tex:tex,col:col};};
+    var plateOk=function(q){var Q=q.qc||{},sc=parseInt(Q.score,10);var base=Q.sceneText!==true&&Q.realVenue===true&&Q.seamlessBackdrop===false&&Q.greenScreen===false&&Q.render3d===false&&Q.clearSurface!==false&&Q.singleLevel!==false&&isFinite(sc)&&sc>=7;var lim=isMoodPlate?{tex:.50,sat:.14,warm:.24}:{tex:.34,sat:.08,warm:.16};var tx=(typeof q.tex!=='number')||q.tex<=lim.tex;var cl=q.col&&q.col.highSat<=lim.sat&&q.col.warm<=lim.warm;return base&&tx&&cl;};
     var pickPlates=async function(n){var imgs=(await Promise.all(Array.from({length:n},genPlate))).filter(Boolean);if(!imgs.length)return [];return await Promise.all(imgs.map(reviewPlate));};
-    var reviewed=await pickPlates(3);
+    var reviewed=await pickPlates(isMoodPlate?2:3);
     var clean=reviewed.filter(plateOk);
-    if(!clean.length){reviewed=reviewed.concat(await pickPlates(2));clean=reviewed.filter(plateOk);}
+    if(!clean.length){reviewed=reviewed.concat(await pickPlates(isMoodPlate?1:2));clean=reviewed.filter(plateOk);}
     try{self._sceneDebug=reviewed.map(function(r){return{qc:r.qc,tex:Math.round(r.tex*100)/100,col:r.col};});if(!clean.length&&reviewed[0]&&reviewed[0].image)self._sceneDebugImg=await self._coverTo(reviewed[0].image,req.size);}catch(e){}
     if(clean.length){
       clean.sort(function(a,b){return(parseInt(b.qc.score,10)||5)-(parseInt(a.qc.score,10)||5);});
@@ -1113,6 +1146,285 @@ body.atu-open #atuStudio{display:flex}\
      }catch(e2){}
      return {ok:false,error:{code:'gen_exception',message:'生成失败，可点该图单张重做'}};
     }
+   })();
+  },
+  /* ============ G4/G5/G7 共用：AI 只画底板，客户真实产品最后确定性贴回 ============ */
+  /* 全局背景出图信号量：多个图种（氛围/模特/拼图多格）在并发池里会同时各发数个 /scene-background，
+     瞬时高并发会触发上游限流导致整批底板失败（串行单测均成功）。用全局限流把在途背景请求压到 2、其余排队。 */
+  _bgGateRun:function(limit){
+   var self=this;
+   if(!self._bgQ)self._bgQ=[];if(typeof self._bgN!=='number')self._bgN=0;
+   return new Promise(function(res){
+    var job=function(){if(self._bgN>=limit)return false;self._bgN++;res(function(){self._bgN--;var nx=self._bgQ.shift();if(nx)setTimeout(nx,0);});return true;};
+    if(!job())self._bgQ.push(job);
+   });
+  },
+  _withBgGate:function(fn,limit){var self=this;return(async function(){var rel=await self._bgGateRun(limit||2);try{return await fn();}finally{rel();}})();},
+  /* VL 质检独立信号量：每张底板都触发一次 vision-json，高并发同样会挤占上游、把出图请求拖到超时，统一限流到 2 */
+  _vlGateRun:function(limit){
+   var self=this;
+   if(!self._vlQ)self._vlQ=[];if(typeof self._vlN!=='number')self._vlN=0;
+   return new Promise(function(res){
+    var job=function(){if(self._vlN>=limit)return false;self._vlN++;res(function(){self._vlN--;var nx=self._vlQ.shift();if(nx)setTimeout(nx,0);});return true;};
+    if(!job())self._vlQ.push(job);
+   });
+  },
+  _withVlGate:function(fn,limit){var self=this;return(async function(){var rel=await self._vlGateRun(limit||2);try{return await fn();}finally{rel();}})();},
+  _vlPost:function(body,to){var self=this;return self._withVlGate(function(){return authPost('/vision-json',body,to||60000);});},
+  /* 通用「空底板」生成 + VL 质检选优（G7 拼图格 / G5 模特与降级实景共用）。returnAll 返回全部合格候选（已按分排序） */
+  genScenePlate:function(opt){
+   var self=this;opt=opt||{};
+   return (async function(){
+    var sizeStr=opt.size||'2304x2304',n=opt.n||3;
+    var one=async function(){
+     for(var a=0;a<3;a++){
+      try{
+       var r=await self._withBgGate(function(){return authPost('/scene-background',{bgPrompt:opt.bgPrompt,size:sizeStr},65000);});
+       if(r&&r.ok&&r.b64)return'data:image/png;base64,'+r.b64;
+      }catch(e){}
+      await new Promise(function(r){setTimeout(r,2000*(a+1));});
+     }
+     return null;
+    };
+    var review=async function(im){
+     var v=null;try{v=await self._vlPost({image:im,ask:opt.qcAsk,system:'You are a strict QA reviewer. Reply with JSON only.',maxTokens:340},60000);}catch(e){}
+     return{image:im,qc:(v&&v.ok)?v.data:{}};
+    };
+    var batch=async function(k){var imgs=(await Promise.all(Array.from({length:k},one))).filter(Boolean);return await Promise.all(imgs.map(review));};
+    var rv=await batch(n);var good=rv.filter(opt.okFn);
+    if(!good.length&&opt.extra){rv=rv.concat(await batch(opt.extra));good=rv.filter(opt.okFn);}
+    good.sort(function(a,b){return(parseInt((b.qc&&b.qc.score),10)||5)-(parseInt((a.qc&&a.qc.score),10)||5);});
+    if(opt.returnAll)return{good:good,all:rv};
+    if(good.length)return{url:good[0].image,qc:good[0].qc};
+    if(rv.length)return{url:rv[0].image,qc:rv[0].qc,fallback:true};
+    return null;
+   })();
+  },
+  /* 标准「真实空场地、单一台面」底板 prompt 外壳（enLocation 为具体地点） */
+  _plateShell:function(en){
+   return'Photorealistic EMPTY background plate of a real location, used to composite a product onto later. Location: '+en+'. Eye-level view with strong real-room depth. In the FOREGROUND is exactly ONE single flat horizontal surface (a clean countertop, tabletop or dresser top) whose straight front edge crosses the whole frame at about 78% of the image height; the surface top is clean, flat and empty in the lower-center where the product will stand, and extends a short way back. Behind and above it is the softly blurred real room with fixed architecture (window, door, cabinets or shelves, walls), natural daylight, realistic perspective. STRICTLY only ONE level surface; NO steps, raised platform, ledge or second surface. No people, no product, no loose objects on the surface, no text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
+  },
+  _PLATE_QC:'This is an AI-generated EMPTY background plate with NO product in it yet; a product will be composited onto the lower-center later. Return JSON exactly: {"sceneText":true ONLY if there is PROMINENT readable or gibberish text such as signage, posters, banners or big words on walls; false otherwise (IGNORE a small semi-transparent "AI generated" watermark in a corner and tiny switches/sockets),"realVenue":true ONLY if it is a recognizable REAL photographed room/location with clear spatial depth and fixed architecture (window/door/counter/cabinet edges, a real floor with a horizon); FALSE for a seamless cyclorama, infinite cove, flat solid wall, green screen or 3D/CGI render,"render3d":true if it looks like CGI/3D instead of a photograph,"singleLevel":true if there is exactly ONE foreground standing surface (counter/table) with one straight front edge around 70-85% height and NO steps or second level,"surfaceY":a decimal 0.65-0.92 for the y of that single surface TOP at lower-center where a product base rests,"score":integer 1-10 for photographic realism and suitability}.',
+  _plateOkSmall:function(q){var Q=(q&&q.qc)||{},sc=parseInt(Q.score,10);return Q.sceneText!==true&&Q.realVenue===true&&Q.render3d!==true&&Q.singleLevel!==false&&isFinite(sc)&&sc>=6;},
+  /* G7 每品类 4 个不同真实场地（en=底板地点，zh=格内标签） */
+  buildVenueList:function(domain,scenes,name){
+   var txt=String(domain||'').toLowerCase()+' '+(Array.isArray(scenes)?scenes.join(' '):(scenes||''))+' '+String(name||'').toLowerCase();
+   var L;
+   if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack|箱/.test(txt))L=[
+    ['a real bright airport terminal interior with a polished hard floor and distant blurred floor-to-ceiling windows and check-in architecture','机场出行'],
+    ['a tidy modern hotel lobby with a real polished floor, a reception area and window daylight','酒店大堂'],
+    ['a real modern railway-station waiting hall with pillars, seating and blurred departure boards with no readable text, a real floor','高铁车站'],
+    ['a bright tidy bedroom corner with a wooden dresser top, a blurred bed and window daylight','居家收纳']];
+   else if(/美妆|护肤|化妆|洁面|面膜|口红|香水|cosmetic|skincare|makeup|beauty|serum|cream|lotion|perfume|cleanser/.test(txt))L=[
+    ['a real bright bathroom vanity with a marble or wood washstand, a softly blurred mirror, vertical blinds and faint water reflections','清新浴室'],
+    ['a real bright bedroom dressing table with a large soft-focus mirror, warm daylight and a tidy wood top','梳妆台'],
+    ['a real bedside table in a bright bedroom with a blurred headboard and lamp, soft morning light','床头护理'],
+    ['a clean modern hotel bathroom counter with a blurred mirror, towels and bright window light','差旅护理']];
+   else if(/吹风|个护|剃须|牙刷|美发|直发|hair ?dryer|shaver|toothbrush|personal care|styler/.test(txt))L=[
+    ['a real tidy bedroom dresser in a bright home with a blurred wardrobe and window daylight','卧室梳妆'],
+    ['a real bright bathroom counter with a blurred mirror, towels and soft window light','浴室打理'],
+    ['a real walk-in closet vanity area with softly blurred shelving and a dressing mirror, daylight','衣帽间'],
+    ['a clean modern hotel room vanity desk with a blurred curtain and window light','差旅便携']];
+   else if(/3c|数码|电子|耳机|音箱|充电器|手机|电脑|键盘|摄像|平板|earphone|speaker|charger|phone|laptop|keyboard|camera|digital|electronic/.test(txt))L=[
+    ['a real modern home wooden desk with a blurred bookshelf and large window daylight','居家办公'],
+    ['a real living-room coffee table scene with a blurred sofa and a window, warm light','客厅休闲'],
+    ['a real bedside table in a modern bedroom with a blurred lamp and headboard, soft light','床头使用'],
+    ['a real cafe wooden table near a window with softly blurred seating and daylight','咖啡办公']];
+   else if(/家电|家居|厨房|锅|煲|水壶|吸尘|净化|kitchen|appliance|cooker|kettle|vacuum|purifier|home/.test(txt))L=[
+    ['a real bright modern kitchen counter with blurred cabinetry and window daylight','现代厨房'],
+    ['a real wooden dining table scene in a bright home with a blurred kitchen behind and daylight','餐厅场景'],
+    ['a real living-room sideboard scene with a blurred sofa and a window','客厅家居'],
+    ['a real bright home bar counter with softly blurred greenery and daylight','居家水吧']];
+   else if(/食品|零食|饮料|茶|咖啡|水果|food|snack|beverage|coffee|tea|drink/.test(txt))L=[
+    ['a real bright kitchen counter with blurred cabinetry and window light','厨房料理'],
+    ['a real wooden dining table scene with blurred chairs and warm daylight','餐桌分享'],
+    ['a real cafe wooden table by a window with a softly blurred interior and daylight','下午茶'],
+    ['a real outdoor picnic table in a park with softly blurred greenery and natural light','户外野餐']];
+   else if(/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|bearing|industrial|hardware|machinery|gear|metal part|workshop/.test(txt))L=[
+    ['a real clean modern factory workshop metal machine workbench with softly blurred industrial equipment','生产车间'],
+    ['a real industrial equipment bench with structured wall panels and softly blurred machine elements, workshop light','设备台面'],
+    ['a real factory quality-inspection workbench with a metal surface and blurred gauges and shelving','质检工位'],
+    ['a real warehouse packing table with blurred shelving and a concrete floor, industrial light','仓储发货']];
+   else L=[
+    ['a real bright modern living room with a table surface, a blurred sofa and a window','客厅场景'],
+    ['a real modern home desk with blurred shelves and window daylight','书桌场景'],
+    ['a real bright dining area with a wood table and blurred cabinetry','餐桌场景'],
+    ['a real bright side table by a window with soft daylight and blurred curtains','窗边场景']];
+   return L.map(function(p){return{en:p[0],zh:p[1]};});
+  },
+  _rr:function(x,bx,by,w,h,r){x.beginPath();x.moveTo(bx+r,by);x.arcTo(bx+w,by,bx+w,by+h,r);x.arcTo(bx+w,by+h,bx,by+h,r);x.arcTo(bx,by+h,bx,by,r);x.arcTo(bx,by,bx+w,by,r);x.closePath();},
+  /* G7 在拼图格内顶部安全区画场景标签（半透明胶囊白字，产品在中下部，绝不压主体） */
+  _drawCellTag:function(dataUrl,sizeStr,text){
+   var self=this;return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){
+     try{
+      var sz=String(sizeStr).split('x'),W=+sz[0]||1280,H=+sz[1]||720;
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');x.drawImage(im,0,0,W,H);
+      var FONT="'Hiragino Sans','Yu Gothic','Meiryo','Malgun Gothic','Microsoft YaHei UI','Microsoft YaHei','Noto Sans CJK SC',sans-serif";
+      var fs=Math.round(H*.052);x.font='700 '+fs+'px '+FONT;
+      var tw=x.measureText(String(text)).width,padX=fs*.72,padY=fs*.42,bh=fs+padY*2,bw=tw+padX*2,bx=W*.045,by=H*.045;
+      x.fillStyle='rgba(16,22,32,.55)';self._rr(x,bx,by,bw,bh,bh*.30);x.fill();
+      x.fillStyle='#ffffff';x.textAlign='left';x.textBaseline='middle';x.fillText(String(text),bx+padX,by+bh/2+fs*.04);
+      res(c.toDataURL('image/jpeg',.92));
+     }catch(e){res(dataUrl);}
+    };
+    im.onerror=function(){res(dataUrl);};im.src=dataUrl;
+   });
+  },
+  /* G7 真·多场景拼图：4 个不同真实场地底板各贴同一真实产品，2×2 白缝，格内顶部标签不压产品 */
+  genMultiScene:function(arg){
+   var self=this,req=arg.req,fg=arg.fg,poseName=arg.poseName;
+   return (async function(){
+    try{
+     var pr=(self.planResp&&self.planResp.product)||{};
+     var venues=self.buildVenueList(req.domain,req.scenes,pr.name||'');
+     var W=2560,H=1440,gap=14,cellW=Math.round((W-3*gap)/2),cellH=Math.round((H-3*gap)/2),cs=cellW+'x'+cellH;
+     var oneCell=async function(v){
+      var bg=null,sY=null;
+      try{
+       var pl=await self.genScenePlate({bgPrompt:self._plateShell(v.en),size:'2560x1440',qcAsk:self._PLATE_QC,okFn:self._plateOkSmall,n:1,extra:1});
+       if(pl&&pl.url){bg=await self._coverTo(pl.url,cs);var y=parseFloat(pl.qc&&pl.qc.surfaceY);if(isFinite(y))sY=self._clamp(y,.68,.9);}
+      }catch(e){}
+      if(!bg)bg=await self.studioBgOnly(cs);
+      var lay=await self.layoutCutout(fg,'scene_show',cs,poseName);
+      if(sY)lay=await self._reanchorFg(lay,cs,sY);
+      var merged=await self.mergeBgFg(bg,lay,cs);
+      if(bg)merged=await self._zoomCropCorner(merged,cs,.08);
+      return await self._drawCellTag(merged,cs,v.zh);
+     };
+     var half1=await Promise.all([oneCell(venues[0]),oneCell(venues[1])]);
+     var half2=await Promise.all([oneCell(venues[2]),oneCell(venues[3])]);
+     var cells=half1.concat(half2);
+     var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+     x.fillStyle='#ffffff';x.fillRect(0,0,W,H);
+     var pos=[[gap,gap],[2*gap+cellW,gap],[gap,2*gap+cellH],[2*gap+cellW,2*gap+cellH]];
+     for(var i=0;i<4;i++){var im=await self._loadImg(cells[i]);x.drawImage(im,pos[i][0],pos[i][1],cellW,cellH);}
+     return{ok:true,image:c.toDataURL('image/jpeg',.92),type:'multi_scene',size:req.size};
+    }catch(e){
+     try{var bg=await self.studioBgOnly(req.size);var lay=await self.layoutCutout(fg,'scene_show',req.size,poseName);var m=await self.mergeBgFg(bg,lay,req.size);
+      return{ok:true,image:m,type:'multi_scene',size:req.size,degraded:true};}catch(e2){return{ok:false,error:{code:'multi_fail',message:'多场景拼图生成失败，可点单张重做'}};}
+    }
+   })();
+  },
+  /* G5 品类门控：工业件/五金/裸零件不做真人手持，改真实场景（服装/美妆/箱包/个护/3C/食品/家电优先） */
+  modelSuitable:function(txt){
+   return!/轴承|工业|零件|五金|机械|螺丝|齿轮|管件|法兰|轴承钢|bearing|industrial|hardware|machinery|gear|flange|shaft|metal part|workshop|bolt|nut\b/i.test(String(txt));
+  },
+  buildModelPlate:function(o){
+   var txt=String(o.domain||'').toLowerCase()+' '+(Array.isArray(o.scenes)?o.scenes.join(' '):(o.scenes||''))+' '+String(o.name||'').toLowerCase();
+   var who,loc,act;
+   if(/美妆|护肤|化妆|洁面|面膜|口红|香水|cosmetic|skincare|makeup|beauty|serum|cream|lotion|perfume|cleanser/.test(txt)){
+    who='one adult woman';loc='a bright modern bathroom vanity and dressing area with a real countertop, a softly blurred mirror and natural window light';
+    act='She stands slightly LEFT of center, turned three-quarter toward the right with a calm natural expression. Both hands stay on her LEFT side: one hand rests gently near her collarbone, the other arm relaxed at her side; her hands must NOT reach toward, point at or hover over the empty countertop on the right. The RIGHT side of the countertop in the lower-right of the frame is flat, frontal, evenly lit and in SHARP FOCUS, clean, bare and empty, reserved for a skincare product that will be added later.';
+   }else if(/吹风|个护|剃须|牙刷|美发|直发|hair ?dryer|shaver|toothbrush|personal care|styler/.test(txt)){
+    who='one adult woman';loc='a bright modern bedroom dresser or bathroom with a real countertop, a blurred wardrobe or mirror and window daylight';
+    act='She stands slightly LEFT of center as if styling her hair, one hand raised beside her head in a relaxed holding pose with the hand completely EMPTY, the other arm relaxed. The RIGHT side of the dresser top in the lower-right is clean, bare and empty, reserved for a hair-styling appliance that will be added later.';
+   }else if(/行李|拉杆|箱包|旅行箱|背包|suitcase|luggage|trolley|travel|backpack/.test(txt)){
+    who='one adult traveler';loc='a real bright airport terminal or modern hotel lobby with a polished real floor, blurred architecture and natural light';
+    act='The traveler stands slightly LEFT of center facing slightly right, one arm hanging naturally by the right thigh with the hand loosely closed as if holding an invisible telescopic handle while holding NOTHING, the other arm relaxed. The open floor area to the traveler\u2019s RIGHT in the lower-right of the frame is clean and empty, reserved for one upright rolling suitcase that will be added later.';
+   }else if(/3c|数码|电子|耳机|音箱|充电器|手机|电脑|键盘|摄像|平板|earphone|speaker|charger|phone|laptop|keyboard|camera|digital|electronic/.test(txt)){
+    who='one adult person';loc='a real modern home desk or living room with a real desk surface, a blurred bookshelf or sofa and window daylight';
+    act='The person stands slightly LEFT of center, one hand making a natural relaxed presenting gesture over the desk with the hand EMPTY, the other arm relaxed. The RIGHT side of the desk surface in the lower-right is clean, bare and empty, reserved for one electronic device that will be added later.';
+   }else if(/食品|零食|饮料|茶|咖啡|水果|food|snack|beverage|coffee|tea|drink/.test(txt)){
+    who='one adult person';loc='a real bright kitchen counter or dining scene with a real wood surface, blurred cabinetry and window daylight';
+    act='The person stands slightly LEFT of center with one hand making a warm relaxed presenting gesture over the counter while holding NOTHING, the other arm relaxed. The RIGHT side of the counter in the lower-right is clean, bare and empty, reserved for one food product that will be added later.';
+   }else{
+    who='one adult person';loc='a real bright modern room with a real table or countertop, a blurred window and natural daylight';
+    act='The person stands slightly LEFT of center, turned slightly toward the right, one hand making a natural relaxed presenting gesture with the hand EMPTY, the other arm relaxed. The RIGHT side of the table or floor in the lower-right is clean, bare and empty, reserved for one product that will be added later.';
+   }
+   return'Photorealistic vertical 3:4 lifestyle photograph with ONE single '+who+' in a real location: '+loc+'. '+act+' The person occupies roughly the LEFT half to two thirds of the frame, framed from head to mid-thigh, with a natural relaxed expression, looking slightly toward the empty reserved area. CRITICAL: the hands are completely EMPTY and hold NOTHING; both hands remain on their own side and must NOT reach over, point at or hover above the reserved empty surface area; there is NO product, bottle, tube, device, phone, bag, suitcase or any loose object anywhere in the frame yet, and the reserved surface or floor area is bare. Exactly TWO natural arms and TWO hands with five fingers each; NO extra arms, hands, fingers, fused or deformed limbs. Eye-level camera, the reserved countertop/floor surface and its surroundings are in SHARP, even focus with soft balanced lighting (only the far background is gently blurred), natural daylight, realistic skin and fabric, a real location with spatial depth. No text, letters, logo or watermark. Photorealistic photograph, not a 3D render.';
+  },
+  _MODEL_QC:'This is an AI-generated VERTICAL lifestyle photo that must contain ONE person and NO product yet; a product will later be composited into an empty reserved spot beside the person. Return JSON exactly: {"personCount":integer number of people (must be 1),"hands":integer number of visible hands (0 to 2),"extraLimbs":true if there are extra, fused or deformed arms/hands/fingers, otherwise false,"productInFrame":true if ANY product, bottle, tube, device, phone, bag, suitcase or loose object is already held or visible anywhere (must be false; ignore fixed furniture and architecture),"slot":{"x":,"y":,"w":,"h":} normalized rect of the CLEAN, bare, flat and evenly lit empty table or floor area beside the person where one product should be placed (located in the middle/lower part of the frame, not over the face),"slotSurface":"table" or "floor","surfaceY":decimal 0.62-0.95 for the y of the slot supporting surface TOP where the product base rests,"sceneText":true only for prominent readable or gibberish signage or big wall words (ignore a small corner AI watermark),"render3d":true if CGI/3D instead of a photograph,"score":integer 1-10 for realism and a clean, well-placed empty slot}.',
+  _modelPlateOk:function(q){
+   var Q=(q&&q.qc)||{},sc=parseInt(Q.score,10),s=Q.slot||{};
+   var sw=parseFloat(s.w),sh=parseFloat(s.h),sx=parseFloat(s.x),sy=parseFloat(s.y);
+   var slotOk=isFinite(sw)&&isFinite(sh)&&isFinite(sx)&&isFinite(sy)&&sw>=.10&&sw<=.55&&sh>=.10&&sh<=.75&&sx>=.08&&sx<=.88&&(sx+sw)<=.99&&sy>=.34;
+   return parseInt(Q.personCount,10)===1&&parseInt(Q.hands,10)<=2&&Q.extraLimbs!==true&&Q.productInFrame!==true&&slotOk&&Q.sceneText!==true&&Q.render3d!==true&&isFinite(sc)&&sc>=7;
+  },
+  /* G5 把真实产品按 VL 锚点矩形等比 contain 贴到人物身侧/手边的台面或地面（只平移缩放、不做透视变形，保真实像素），再由 mergeBgFg 补接地阴影 */
+  _mergeModelFg:function(bgDataUrl,fg,qc,sizeStr){
+   var self=this;
+   return new Promise(function(res){
+    (async function(){
+     try{
+      var sz=String(sizeStr).split('x'),W=+sz[0]||1680,H=+sz[1]||2240;
+      /* 复用 G3 场景图成熟落地布局（占比/底边/接地参数已验证），不再用 VL slot 矩形独立 contain（透视台面上会错位、偏大） */
+      var lay=await self.layoutCutout(fg,'scene_show',sizeStr,'stand');
+      var im=await self._loadImg(lay);
+      var tmp=document.createElement('canvas');tmp.width=W;tmp.height=H;
+      var tx=tmp.getContext('2d',{willReadFrequently:true});tx.drawImage(im,0,0,W,H);
+      var td=tx.getImageData(0,0,W,H).data,x0=W,x1=-1,y1=-1;
+      for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){if(td[(yy*W+xx)*4+3]>16){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy>y1)y1=yy;}}
+      if(x1<x0||y1<0){res(await self.mergeBgFg(bgDataUrl,lay,sizeStr));return;}
+      var pcx=(x0+x1)/2,baseY=y1;
+      var s=(qc&&qc.slot)||{},rawCx=parseFloat(s.x)+(parseFloat(s.w)||0)/2;
+      var targetCx=self._clamp(isFinite(rawCx)?rawCx:0.6,0.5,0.66)*W;
+      var MODEL_SCALE=0.56; /* 有人物作尺度参照，产品≈人头高0.6；绕底边缩放、底边不动 */
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      /* 景深/边缘融合：真人底板为浅景深柔焦，给贴入产品做轻微高斯柔化（顺带羽化硬剪边、降低棚拍贴片感），不重绘像素 */
+      x.save();x.filter='blur(1.4px)';x.translate(targetCx,baseY);x.scale(MODEL_SCALE,MODEL_SCALE);x.translate(-pcx,-baseY);x.drawImage(im,0,0);x.restore();
+      var placed=c.toDataURL('image/png');
+      var sy=parseFloat(qc&&qc.surfaceY);
+      if(isFinite(sy))placed=await self._reanchorFg(placed,sizeStr,self._clamp(sy,0.66,0.9));
+      res(await self.mergeBgFg(bgDataUrl,placed,sizeStr,{model:true}));
+     }catch(e){
+      try{var lay2=await self.layoutCutout(fg,'scene_show',sizeStr,'stand');res(await self.mergeBgFg(bgDataUrl,lay2,sizeStr));}catch(e2){res(bgDataUrl);}
+     }
+    })();
+   });
+  },
+  _modelFinalQc:function(dataUrl){
+   var self=this;return new Promise(function(res){
+    (async function(){
+     var ask='This is a finished composite e-commerce image showing one real photographed person in a real scene, with ONE product placed beside them (the product was composited from a real photo and must look naturally placed, as if really there). Return JSON exactly: {"personCount":integer (should be 1),"productCount":integer number of the SAME product clearly shown (should be 1; do NOT count furniture or fixed room elements),"extraHands":true if there are more than two hands or extra/fused fingers or arms,"productFloating":true if the product has no contact with the table/floor and wrongly floats,"pasted":true if the product looks like a flat cutout badly pasted (wrong scale, hard outline, no shadow, impossible overlap) instead of sitting naturally in the scene,"scaleOk":false if the product is absurdly too big or too small relative to the person and room,"score":integer 1-10}.';
+     try{
+      var v=await self._vlPost({image:dataUrl,ask:ask,system:'You are a strict QA reviewer. Reply with JSON only.',maxTokens:300},60000),Q=(v&&v.ok&&v.data)||{};
+      var ok=parseInt(Q.personCount,10)===1&&parseInt(Q.productCount,10)===1&&Q.extraHands!==true&&Q.productFloating!==true&&Q.pasted!==true&&Q.scaleOk!==false&&(parseInt(Q.score,10)||0)>=6;
+      res({ok:ok,qc:Q});
+     }catch(e){res({ok:false,qc:{}});}
+    })();
+   });
+  },
+  /* G5 真人模特 + 真实产品贴回；门控不适合或融合质检不过 → 诚实降级真实使用场景，绝不硬出恐怖图、绝不零输出 */
+  genModelShow:function(arg){
+   var self=this,req=arg.req,fg=arg.fg,ost=arg.ost,poseName=arg.poseName;
+   return (async function(){
+    var pr=(self.planResp&&self.planResp.product)||{},sizeStr=req.size;
+    var compose=async function(base){var layers=self.buildTextLayersFE('model_show',ost);return await self.composeFrontend({size:sizeStr,base_image:base,text_layers:layers,spec:null});};
+    var degrade=async function(note){
+     if(note)self.addNote(typeLabel('model_show')+'：'+note);
+     var bg=null,sY=null;
+     try{
+      var pl=await self.genScenePlate({bgPrompt:self._plateShell(self.buildVenue(req.domain,req.scenes,pr.name||'')),size:'1680x2240',qcAsk:self._PLATE_QC,okFn:self._plateOkSmall,n:2,extra:1});
+      if(pl&&pl.url){bg=await self._coverTo(pl.url,sizeStr);var y=parseFloat(pl.qc&&pl.qc.surfaceY);if(isFinite(y))sY=self._clamp(y,.68,.92);}
+     }catch(e){}
+     if(!bg)bg=await self.studioBgOnly(sizeStr);
+     var lay=await self.layoutCutout(fg,'scene_show',sizeStr,poseName);
+     if(sY)lay=await self._reanchorFg(lay,sizeStr,sY);
+     var m=await self.mergeBgFg(bg,lay,sizeStr);if(bg)m=await self._zoomCropCorner(m,sizeStr,.10);
+     return{ok:true,image:await compose(m),type:'model_show',size:sizeStr,degraded:true};
+    };
+    var txt=String(req.domain||'')+' '+(Array.isArray(req.scenes)?req.scenes.join(' '):(req.scenes||''))+' '+(pr.name||'');
+    if(!self.modelSuitable(txt))return await degrade('该品类更适合真实使用场景，已为你换成场景展示图。');
+    var good=[],allPlates=[];
+    try{
+     var pres=await self.genScenePlate({bgPrompt:self.buildModelPlate({domain:req.domain,scenes:req.scenes,name:pr.name||''}),size:'1680x2240',qcAsk:self._MODEL_QC,okFn:self._modelPlateOk,n:2,extra:1,returnAll:true});
+     good=(pres&&pres.good)||[];allPlates=(pres&&pres.all)||[];
+    }catch(e){good=[];allPlates=[];}
+    self._modelDebug={plateTotal:allPlates.length,plateGood:good.length,plateAllQc:allPlates.map(function(r){return r.qc;}),plateImgs:allPlates.slice(0,3).map(function(r){return r.image;}),finals:[],finalImgs:[]};
+    for(var i=0;i<Math.min(3,good.length);i++){
+     try{
+      var bg=await self._coverTo(good[i].image,sizeStr);
+      var merged=await self._mergeModelFg(bg,fg,good[i].qc,sizeStr);
+      merged=await self._zoomCropCorner(merged,sizeStr,.07);
+      self._modelDebug.finalImgs.push(merged);
+      var vf=await self._modelFinalQc(merged);
+      self._modelDebug.finals.push(vf.qc);
+      if(vf.ok)return{ok:true,image:await compose(merged),type:'model_show',size:sizeStr};
+     }catch(e){}
+    }
+    return await degrade('真人模特场景未通过融合质检，已为你换成真实使用场景图（可点该图单张重做）。');
    })();
   },
   /* 确定性兜底背景：r-background 失败/超时时，用干净浅灰白微水泥渐变 + 真实主体，保证不零输出 */
@@ -1174,9 +1486,15 @@ body.atu-open #atuStudio{display:flex}\
   },
   /* 真实主体确定性贴回：背景在下，真实 fg（layoutCutout 输出，透明底）在上，
      并在产品脚下补自然椭圆接触阴影。产品像素 100% 来自客户实拍，模型只负责背景。 */
-  mergeBgFg:function(bgDataUrl,layoutPng,sizeStr){
+  mergeBgFg:function(bgDataUrl,layoutPng,sizeStr,opts){
    return new Promise(function(res){
     var im=new Image(),bg=new Image(),n=0;
+    var drawOval=function(g,cx,cy,cw,ch,alpha){
+     g.save();g.translate(cx,cy);g.scale(1,ch/cw);
+     var rg=g.createRadialGradient(0,0,2,0,0,cw);
+     rg.addColorStop(0,'rgba(38,46,58,'+alpha+')');rg.addColorStop(1,'rgba(38,46,58,0)');
+     g.fillStyle=rg;g.beginPath();g.arc(0,0,cw,0,Math.PI*2);g.fill();g.restore();
+    };
     var done=function(){
      try{
       var sz=String(sizeStr||'1920x1920').split('x'),W=+sz[0]||1920,H=+sz[1]||1920;
@@ -1187,11 +1505,14 @@ body.atu-open #atuStudio{display:flex}\
       var pd=px.getImageData(0,0,W,H).data,x0=W,x1=-1,y1=-1;
       for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2){if(pd[(yy*W+xx)*4+3]>16){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy>y1)y1=yy;}}
       if(x1>=x0&&y1>=0){
-       var cxP=(x0+x1)/2,cyP=y1+H*0.004,cwP=(x1-x0)*0.62,chP=Math.max(6,H*0.016);
-       x.save();x.translate(cxP,cyP);x.scale(1,chP/cwP);
-       var rg=x.createRadialGradient(0,0,2,0,0,cwP);
-       rg.addColorStop(0,'rgba(38,46,58,0.20)');rg.addColorStop(1,'rgba(38,46,58,0)');
-       x.fillStyle=rg;x.beginPath();x.arc(0,0,cwP,0,Math.PI*2);x.fill();x.restore();
+       var cxP=(x0+x1)/2,pw=(x1-x0);
+       if(opts&&opts.model){
+        /* 真人台面：双层接地阴影（外围环境遮蔽 + 深色紧接触核），治悬浮/贴片 */
+        drawOval(x,cxP,y1+H*0.008,pw*0.98,Math.max(8,H*0.030),0.14);
+        drawOval(x,cxP,y1+H*0.002,pw*0.52,Math.max(5,H*0.013),0.34);
+       }else{
+        drawOval(x,cxP,y1+H*0.004,pw*0.62,Math.max(6,H*0.016),0.20);
+       }
       }
       x.drawImage(im,0,0,W,H);
       res(c.toDataURL('image/png'));
@@ -1339,7 +1660,7 @@ body.atu-open #atuStudio{display:flex}\
    return (async function(){
     var ask='这是一张已抠图（透明底）的商品图。请在商品上选出【一个】最值得特写、最能体现做工/材质/核心卖点的局部部件（如：按键、网罩、出风口、接缝、封口、拉链、拉杆、锁扣、轮子、轴承钢珠与刻印、接口、面料纹理、logo刻印）。只输出JSON：{"x":0到1,"y":0到1,"w":0到1,"h":0到1,"label":"部件名(4字内)"}。坐标相对整图左上角原点；框紧贴该部件、只框局部，宽和高都必须在0.20到0.42之间，严禁框住整个商品；优先选纹理/结构清晰、对焦实的部位。'+(hint?('卖点参考：'+String(hint).slice(0,120)):'');
     var box=null,label='';
-    try{var r=await authPost('/vision-json',{image:fg,ask:ask,system:'你只输出JSON，坐标为相对宽高的比例。',maxTokens:200},60000);
+    try{var r=await self._vlPost({image:fg,ask:ask,system:'你只输出JSON，坐标为相对宽高的比例。',maxTokens:200},60000);
      if(r&&r.ok&&r.data){var b=r.data;['x','y','w','h'].forEach(function(k){b[k]=parseFloat(b[k]);});
       if(isFinite(b.x)&&isFinite(b.y)&&isFinite(b.w)&&isFinite(b.h)&&b.w>0&&b.h>0){
        b.w=self._clamp(b.w,0.20,0.42);b.h=self._clamp(b.h,0.20,0.42);b.x=self._clamp(b.x,0,1-b.w);b.y=self._clamp(b.y,0,1-b.h);
@@ -1566,6 +1887,20 @@ body.atu-open #atuStudio{display:flex}\
       var totH=rows*ich+(rows-1)*igy,iy0=.965-totH;
       var bx=ix0+colf*(icw+igx),by=iy0+row*(ich+igy);
       self.drawIconCard(ctx,{x:bx,y:by,w:icw,h:ich,text:ic.label,icon:self.matchIcon(ic.icon_hint||ic.label),token:tk},W,H);});
+      return;
+    }
+    if(spec.type==='search_promo'){
+      // G7 营销搜索主图：产品身后品牌色柔光 + 底部弧形光带 + 三颗居中图标胶囊（确定性绘制，1:1 强缩略冲击）
+      var ac=self._rgbArr(tk.accent),mW=Math.min(W,H);
+      var gcx=.50*W,gcy=.55*H,gr=.42*mW;
+      var rg2=ctx.createRadialGradient(gcx,gcy,gr*.12,gcx,gcy,gr);
+      rg2.addColorStop(0,'rgba('+ac.join(',')+',.16)');rg2.addColorStop(.62,'rgba('+ac.join(',')+',.05)');rg2.addColorStop(1,'rgba('+ac.join(',')+',0)');
+      ctx.fillStyle=rg2;ctx.beginPath();ctx.arc(gcx,gcy,gr,0,Math.PI*2);ctx.fill();
+      ctx.save();ctx.strokeStyle='rgba('+ac.join(',')+',.55)';ctx.lineWidth=Math.max(3,W*0.006);ctx.lineCap='round';
+      ctx.beginPath();ctx.arc(.5*W,.83*H,.30*mW,Math.PI*0.94,Math.PI*2.06);ctx.stroke();ctx.restore();
+      var sp=((spec.icons&&spec.icons.length)?spec.icons.map(function(i){return i.label;}):(spec.bullets||[])).slice(0,3);
+      var pw=.265,ph=.078,gap=.022,tot=sp.length*pw+Math.max(0,sp.length-1)*gap,px0=(1-tot)/2;
+      sp.forEach(function(tx2,i){var box={x:px0+i*(pw+gap),y:.885,w:pw,h:ph};if(free(box))self.drawCapsule(ctx,{x:box.x,y:box.y,w:box.w,h:box.h,text:tx2,icon:self.matchIcon(tx2),token:tk},W,H);});
       return;
     }
     // 标题左侧品牌竖条（确定性品牌点缀，不占纵向空间、不压副标）
