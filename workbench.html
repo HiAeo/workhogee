@@ -1946,9 +1946,10 @@ a.pvt-btn{text-decoration:none;justify-content:center}
       <button data-dltab="all" class="on">全部</button>
       <button data-dltab="img">图片<span class="n" id="nImg"></span></button>
       <button data-dltab="dyn">动态<span class="n" id="nDyn"></span></button>
-      <button data-dltab="video">视频<span class="n" id="nVid"></span></button>
       <button data-dltab="copy">图文</button>
+      <button data-dltab="video">视频<span class="n" id="nVid"></span></button>
       <button data-dltab="reach">送达</button>
+      <button data-dltab="agu">效果<span class="n" id="nAgu"></span></button>
     </div>
     <div class="dl-body" id="deliverBody"></div>
   </aside>
@@ -2972,7 +2973,8 @@ function partnerTakeover(id){
    quickPills([['startUpload','先让阿图出图',IC.image]]);
   }
  }else if(id==='agu'){
-  botSay('我是<b>阿果</b>，专管效果。画册和渠道码投出去后，谁看了、扫了码、留了电话，我汇成明白账，到点提醒你该跟进谁。','agu');
+  setDeliverTab('agu');openDeliver();
+  botSay('我是<b>阿果</b>，专管画册和效果。右侧「效果」可以把成品做成可追踪 H5 画册和渠道二维码；投出去后，谁看了、扫了码、留了电话，我汇成明白账，到点提醒你该跟进谁。','agu');
   aguCard();
  }
  scrollBottom();
@@ -5091,13 +5093,12 @@ function finishGenerate(){
  state.stage='result';
  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以「再来一单」。','atu');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>','atu');renderDeliver();return;}
- botSay('齐活。<b>'+state.results.length+' 张成品</b>已放进右侧「交付物」，阿文的分渠道文案也备好了；看图、单张重做、打包、做画册、送达各平台都在右边。','atu');
+ botSay('齐活。<b>'+state.results.length+' 张成品</b>已放进右侧「交付物 · 图片」，商品一点没动。看好了，下一步让阿文按平台写文案；哪张要重做、换背景也可以直接说。','atu');
  card('<div class="card-pad"><div class="card-title">'+IC.check+' 成品已放入交付物</div>'
-  +'<div class="card-desc">右侧可看大图、单张重做、下载；阿文文案在「图文」，阿发送达在「送达」。</div>'
+  +'<div class="card-desc">右侧「图片」可看大图、单张重做、下载。确认没问题，就交给阿文写文案，之后还能让阿视剪视频、阿发送达。</div>'
   +'<div class="card-actions">'
-  +'<button class="btn btn-primary" data-act="openDeliver">'+IC.pack+' 查看交付物</button>'
-  +'<button class="btn btn-dark" data-act="pack">一键打包</button>'
-  +'<button class="btn btn-ghost" data-act="publishShowcase">'+IC.share+' 生成画册</button>'
+  +'<button class="btn btn-primary" data-quick="rf_to_awen">'+IC.pen+' 交给阿文写文案</button>'
+  +'<button class="btn btn-dark" data-act="openDeliver">'+IC.pack+' 查看 / 重做图片</button>'
   +'<button class="btn btn-ghost" data-act="moreScene">换背景 / 补图</button>'
   +'<button class="btn btn-ghost" data-act="newOrder">再来一单</button></div></div>','atu');
  renderTopbar();renderDeliver();setTimeout(scrollBottom,120);setTimeout(scrollBottom,500);
@@ -5159,7 +5160,11 @@ function syncCmpTabs(){
 }
 function selectTab(k){
  state.activePartner=k;renderPartners();renderTopbar();
- if(k==='ashi')setDeliverTab('video');else if(k==='afa')setDeliverTab('reach');
+ if(k==='atu')setDeliverTab('img');
+ else if(k==='awen')setDeliverTab('copy');
+ else if(k==='ashi')setDeliverTab('video');
+ else if(k==='afa')setDeliverTab('reach');
+ else if(k==='agu')setDeliverTab('agu');
  var inp=$('#composerInput');if(inp)setTimeout(function(){inp.focus();},30);
 }
 function initLayout(){
@@ -5207,12 +5212,16 @@ function copySectionHtml(){
 function reachSectionHtml(){
  var noAsset=!state.results.length&&!state.copy.ready;
  var btns=REACH_PLATFORMS.map(function(x){return '<button type="button" class="reach-btn" data-act="reach" data-p="'+x.p+'" data-url="'+x.url+'">'+x.name+(x.url?IC.external:'')+'</button>';}).join('');
- var pub=state.showcase?showcaseDeliverHtml():('<button class="btn btn-dark btn-sm" data-act="publishShowcase">'+IC.qr+' 生成可追踪画册 / 渠道码</button>');
- var tip=noAsset?'先让阿图出图、阿文写文案；素材一备好，回到这里选平台，复制文案、打开发布页，最后一下由你本人点发送。':'图片用「一键打包」素材包；手机发朋友圈可先生成画册，把链接发到微信，手机打开即可存图、复制文案。';
+ var tip=noAsset?'先让阿图出图、阿文写文案；素材一备好，回到这里选平台，复制文案、打开发布页，最后一下由你本人点发送。':'图片用「一键打包」素材包；要发朋友圈 / 私域并追踪谁看了、谁留了电话，到右边「效果」生成可追踪画册。';
  return '<div class="dl-sec"><h5>'+IC.send+' 阿发送达</h5>'
   +'<div class="reach-box"><div class="reach-head">选平台：复制文案 + 打开发布页<span class="rh-sub">最后一下由你本人发布，阿发不碰账号密码</span></div><div class="reach-grid">'+btns+'</div>'
-  +'<div class="reach-tip">'+tip+'</div></div>'
-  +'<div class="reach-box"><div class="reach-head">'+IC.qr+' H5 画册与渠道码<span class="rh-sub">谁看了、看多久、留了联系方式，回到阿果效果中心</span></div>'+pub+'</div></div>';
+  +'<div class="reach-tip">'+tip+'</div></div></div>';
+}
+function aguSectionHtml(){
+ var pub=state.showcase?showcaseDeliverHtml():('<button class="btn btn-dark btn-sm" data-act="publishShowcase">'+IC.qr+' 生成可追踪画册 / 渠道码</button>');
+ return '<div class="dl-sec"><h5>'+IC.chart+' 阿果 · 画册与效果</h5>'
+  +'<div class="reach-box"><div class="reach-head">'+IC.qr+' H5 画册与渠道码<span class="rh-sub">把成品做成手机画册，生成链接和渠道二维码；谁看了、看多久、留了联系方式，阿果都帮你记下</span></div>'+pub+'</div>'
+  +'<div class="reach-box"><div class="reach-head">'+IC.chart+' 效果监控<span class="rh-sub">画册浏览、渠道二维码归因、访客留资与成交都在这里汇总</span></div><button class="btn btn-dark btn-sm" data-act="dlAnalytics">'+IC.chart+' 打开效果监控</button></div></div>';
 }
 function emptyDeliverHtml(){
  return '<div class="dl-empty"><div class="de-ico">'+IC.pack+'</div><h4>还没有交付物</h4><p>传几张手机实拍让阿图出图，或让阿文先写一版文案；成品、动态图、图文和送达素材都会汇集到这里。</p></div>';
@@ -5223,15 +5232,17 @@ function renderDeliver(){
  var tab=state.deliverTab,html='',has=state.results.length||state.dyn.length||state.dynGrid||state.copy.ready||state.showcase;
  if(tab==='video'){body.innerHTML=videoSectionHtml();}
  else if(tab==='reach'){body.innerHTML=reachSectionHtml();}
+ else if(tab==='agu'){body.innerHTML=aguSectionHtml();}
  else if(!has){body.innerHTML=emptyDeliverHtml();}
  else if(tab==='img'){body.innerHTML=imagesSectionHtml()||emptyDeliverHtml();}
  else if(tab==='dyn'){body.innerHTML=dynSectionHtml();}
  else if(tab==='copy'){body.innerHTML=copySectionHtml()||emptyDeliverHtml();}
- else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+videoSectionHtml()+copySectionHtml()+reachSectionHtml();}
+ else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+copySectionHtml()+videoSectionHtml()+reachSectionHtml()+aguSectionHtml();}
  var n=deliverCount();$('#dlCount').textContent=n;$('#dlCount').classList.toggle('show',n>0);
  $('#nImg').textContent=state.results.length?('('+state.results.length+')'):'';
  var dn=state.dyn.length+(state.dynGrid?1:0);$('#nDyn').textContent=dn?('('+dn+')'):'';
  var vn=state.videos.length;var nV=$('#nVid');if(nV)nV.textContent=vn?('('+vn+')'):'';
+ var nA=$('#nAgu');if(nA)nA.textContent=state.showcase?'(1)':'';
  $('#btnPack').disabled=!state.results.length;
  if($('#copyText')){refreshCopyScan();bindCopyTextLive();}
  if($('#dynOut'))renderDyn();
@@ -6142,9 +6153,9 @@ var CMP_MODES=[
  {id:'image',n:'图片生成',sub:'阿图 · 白底 / 场景 / 多尺寸商品图'},
  {id:'video',n:'视频生成',sub:'阿视 · 图文成片（内测）'},
  {id:'copy',n:'文案生成',sub:'阿文 · 分渠道爆款文案'},
- {id:'catalog',n:'画册生成',sub:'阿发 · 可追踪 H5 上架画册'}
+ {id:'catalog',n:'画册生成',sub:'阿果 · 可追踪 H5 上架画册'}
 ];
-var CMP_MODE_PARTNER={image:'atu',video:'ashi',copy:'awen',catalog:'afa'};
+var CMP_MODE_PARTNER={image:'atu',video:'ashi',copy:'awen',catalog:'agu'};
 var CMP_SKILLS_READY=[
  {id:'general',n:'通用电商',sub:'全行业商品，默认能力'},
  {id:'usedcar',n:'二手车商',sub:'车源图 / 展厅 / 车况话术'}
@@ -6315,9 +6326,9 @@ function routeByCmpMode(mode,txt){
   state.activePartner='awen';renderPartners();renderTopbar();
   awenFlow(txt||'',CMP.p.tone||'');
  }else if(mode==='catalog'){
-  state.activePartner='afa';renderPartners();renderTopbar();
-  if(state.results&&state.results.length){renderPublishCard();}
-  else{if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}botSay('H5 上架画册要先用阿图出好商品图。先传图出图，成品一好我就生成可追踪画册和渠道码。','afa');}
+  state.activePartner='agu';renderPartners();renderTopbar();
+  if(state.results&&state.results.length){setDeliverTab('agu');openDeliver();botSay('成品齐了，就在右边「效果」里点「生成可追踪画册 / 渠道码」，我把它做成手机 H5 画册，谁看了、留了电话我都记下。','agu');}
+  else{if(!$('#uploadCard')){renderUploadCard();state.stage='upload';}botSay('H5 画册要先用阿图出好商品图。先传图出图，成品一好我就生成可追踪画册和渠道码。','agu');}
  }
 }
 function cmpInit(){
@@ -6525,7 +6536,7 @@ function renderRelayBar(activeId){
 }
 function relayBarNode(id,i,status){
  var check='<svg class="rb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
- return '<div class="rb-node '+status+'" style="--rb-c:var(--'+id+');--rb-glow:'+RELAY_GLOW[id]+'">'
+ return '<div class="rb-node '+status+'" data-rb="'+id+'" title="回到'+partnerById(id).name+'" style="--rb-c:var(--'+id+');--rb-glow:'+RELAY_GLOW[id]+';cursor:pointer">'
   +'<span class="rb-dot"><span class="rb-num">'+(i+1)+'</span>'+check+'</span>'
   +'<span class="rb-name">'+partnerById(id).name+'</span></div>';
 }
@@ -6922,9 +6933,6 @@ async function relAwenCore(tone){
    state.copy.cps={general:ch.general||'',xhs:ch.xhs||'',pyq:ch.pyq||'',douyin:ch.douyin||'',tags:(ch.tags||[]).join(' ')};
    state.copy.ready=true;state.copy.channel='general';state.copy.draft='';state.copy._lastCh=null;
    showCards(ch);
-   if((state.relayChannels||[]).indexOf('pyq')>=0&&ch.pyq){
-    autoShowcaseForPyq(ch.pyq).then(function(sh){if(sh){botSay('朋友圈文案和分享画册都好了，二维码、链接在上面，发朋友圈或私聊直接用。','awen');renderDeliver();}});
-   }
    var bh=(j.copy.bannedHits&&j.copy.bannedHits.length)?(' 我顺手查了绝对化词「'+j.copy.bannedHits.join('、')+'」，发之前改一下，平台容易限流。'):'';
    botSay(tone?('按你要的味道重写好了，下面是发布后的样子。'+bh):('写好了，<b>下面直接按“发布后”的样子预览</b>，标题、正文、标签都能一键复制，粘贴到平台就行。'+bh),'awen');
    quickPills([['rf_awen_ok','可以，继续',IC.check],['rf_awen_redo','换个口吻',IC.pen]]);
@@ -7110,6 +7118,7 @@ function aguApi(method,path,body){
 function relayToAgu(){
  state.relayStage='agu';state.activePartner='agu';
  renderRelayBar('agu');
+ try{setDeliverTab('agu');openDeliver();}catch(e){}
  userSay('让阿果盯数据');
  var ways='<div class="agu-ways">'
   +'<button type="button" class="agu-way" data-quick="rf_agu_shot"><span class="aw-ic">'+IC.image+'</span><span><div class="aw-t">发数据页截图</div><div class="aw-d">把小红书 / 抖音后台数据页截图发我，自动读浏览、点赞、收藏、咨询</div></span><span class="aw-rec">推荐</span></button>'
@@ -7117,7 +7126,7 @@ function relayToAgu(){
   +'<button type="button" class="agu-way" data-quick="rf_agu_api"><span class="aw-ic">'+IC.send+'</span><span><div class="aw-t">平台授权自动拉取</div><div class="aw-d">直连各平台还在排期，可先登记，开通后自动同步</div></span></button>'
   +'</div>';
  card(ways,'agu');
- botSay('我盯上了。数据怎么给我？挑最省事的；也可以让我 3 天后提醒你。','agu');
+ botSay('我盯上了。右边「效果」里还能把成品做成<b>可追踪 H5 画册和渠道码</b>，发朋友圈 / 私域正好用，谁看了、留了电话我都记下。公开发布的数据怎么给我？挑最省事的，也可以让我 3 天后提醒你。','agu');
  quickPills([['rf_agu_later','3天后提醒我',IC.chart],['rf_new','这单先到这',IC.brand]]);
 }
 function relayAguShot(){
@@ -7422,6 +7431,8 @@ $('#mainMenu').addEventListener('click',function(){if(window.innerWidth<=900){$(
    window.openRootPipeline({images:imgs,language:'zh-CN',selling_text:state.extra||''});
  });
  $('#dlTabs').addEventListener('click',function(e){var b=e.target.closest('[data-dltab]');if(b)setDeliverTab(b.dataset.dltab);});
+ /* 顶部五伙计进度节点：点任一棒跳到该伙计并定位对应交付 tab（不重置进行中的任务） */
+ $('#relayBar').addEventListener('click',function(e){var b=e.target.closest('[data-rb]');if(b&&typeof partnerTakeover==='function')partnerTakeover(b.dataset.rb);});
  /* 实验室 */
  $('#labClose').addEventListener('click',closeLab);
  $('#labModal').addEventListener('click',function(e){if(e.target.id==='labModal')closeLab();});
