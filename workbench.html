@@ -2334,13 +2334,24 @@ function markTaskProgress(){
  var arr=loadTasks(),i=arr.findIndex(function(t){return t.id===state.taskId;});
  var fallback=skill==='usedcar'?'二手车出图任务':'商品出图任务';
  var rec={id:state.taskId,lineId:state.lineId||'',title:state.taskTitle||(state.product&&state.product.name)||fallback,pinned:state.taskPinned,ts:Date.now(),skill:skill,product:state.product||{},imgs:(state.images||[]).length,results:(state.results||[]).length,partner:state.activePartner,inputKeys:(state.images||[]).map(function(x){return x.tosKey;}).filter(Boolean),resultKeys:(state.results||[]).map(function(x){return x.tosKey;}).filter(Boolean)};
- if(i>=0){rec.title=arr[i].title||rec.title;rec.msgs=arr[i].msgs;arr[i]=Object.assign(arr[i],rec);}else arr.unshift(rec);
+ if(i>=0){rec.title=state.taskTitle||arr[i].title||rec.title;rec.msgs=arr[i].msgs;arr[i]=Object.assign(arr[i],rec);}else arr.unshift(rec);
  arr.sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;});
  saveTasks(arr);renderTaskList();
 }
 function archiveCurrentTask(){if(state.identity&&((state.product&&state.product.name)||(state.results&&state.results.length)||state.images.length))markTaskProgress();}
 var taskEditingId=null,taskConfirmDelId=null,taskListExpanded=false;
 function pinTaskSort(a,b){return (b.pinned?1:0)-(a.pinned?1:0)||b.ts-a.ts;}
+/* 商品识别 / AI 帮写得到产品名后回传：写入 state.product.name；用户未手动命名时，把对话标题自动改成产品名，
+   不再千篇一律“商品出图任务”。手动重命名过的标题不覆盖。 */
+function setProductName(name){
+ name=String(name==null?'':name).replace(/\s+/g,' ').trim().slice(0,40);
+ if(!name)return;
+ if(!state.product)state.product={};
+ state.product.name=name;
+ var DEFAULT_TITLE={'':1,'新对话':1,'商品出图任务':1,'二手车出图任务':1};
+ if(DEFAULT_TITLE[state.taskTitle||''])state.taskTitle=name;
+ try{markTaskProgress();}catch(e){}
+}
 var ICHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 var IX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 function renderTaskList(){
@@ -2398,7 +2409,8 @@ function taskAct(act,id,e){
 }
 function openTask(id){
  taskConfirmDelId=null;
- var t=loadTasks().filter(function(x){return x.id===id;})[0];if(!t)return;
+ var arr0=loadTasks();
+ var t=arr0.filter(function(x){return x.id===id;})[0]||arr0.filter(function(x){return x.lineId&&x.lineId===id;})[0];if(!t)return;
  archiveCurrentTask();
  var hires=state.hires;
  state=resetState();state.hires=hires;
@@ -2421,6 +2433,14 @@ function openTask(id){
  botSay(sum,'host');
  if(t.resultKeys&&t.resultKeys.length){restoreCloudResults(t.resultKeys);}
  scrollBottom();
+ /* 打开历史对话：若是阿图操作台商品任务，直接恢复该商品当时的操作台现场（原图/卖点/设置/成品）继续操作，
+    而不是只回放聊天让人一头雾水；阿文/阿视等无操作台现场的任务才保留聊天回放。 */
+ if(t.product&&t.product.name){try{setProductName(t.product.name);}catch(e){}}
+ var lid=t.lineId||'';
+ if(lid&&window.AtuStudio&&AtuStudio.hasLineSession&&AtuStudio.hasLineSession(lid)){
+  state.stage='upload';
+  try{AtuStudio.open({lineId:lid});}catch(e){}
+ }
 }
 /* ================= composer 常驻快捷能力 ================= */
 function cqAction(k){
@@ -4589,9 +4609,21 @@ function leaveHero(){
  if(hh&&hh.parentNode){placeComposer(false);state.stage='work';}
  if(typeof state!=='undefined')state._heroEl=null;
 }
-function renderUploadCard(){
+function renderUploadCard(opts){
+ var isFresh=(typeof state!=='undefined'&&state.stage==='welcome'); /* 须在 leaveHero 改 stage 前判断：门户首页/新建对话主动进入=全新商品 */
  leaveHero();
- AtuStudio.open();
+ if(isFresh){
+  /* 全新一单：归档旧任务、重置商品状态，再开干净操作台，绝不带上一件商品的原图/卖点/成品 */
+  try{archiveCurrentTask();}catch(e){}
+  var hires=state.hires;
+  state=resetState();state.hires=hires;state.stage='upload';
+  try{document.body.classList.remove('atu-open');}catch(e){}
+  AtuStudio.open();
+ }else if(opts&&opts.lineId){
+  AtuStudio.open({lineId:opts.lineId});          /* 从历史对话/我的创作恢复指定商品现场 */
+ }else if(!AtuStudio.isOpen()){
+  AtuStudio.open({resume:true});                 /* 流程中返回上传：恢复当前商品，不丢现场 */
+ }
 }
 function refreshShots(){
  var grid=$('#shotGrid');
@@ -4614,7 +4646,7 @@ async function handleFiles(fileList){
  if(!state.identity){state.identity={type:'general',label:'通用电商',cat:''};saveId();}
  if(!HogeeMember.isLoggedIn()){try{await HogeeMember.requireAuth();}catch(e){return;}}
  var already=AtuStudio.isOpen();
- if(!already){try{leaveHero();}catch(e){}AtuStudio.open();state.stage='upload';}
+ if(!already){try{renderUploadCard();}catch(e){try{leaveHero();}catch(e2){}AtuStudio.open({resume:true});}state.stage='upload';}
  Promise.all(files.map(function(f){return prepareImage(f).then(function(dataUrl){return analyzeImage(dataUrl).then(function(qc){return {dataUrl:dataUrl,qc:qc,name:f.name};});});}))
  .then(function(arr){state.images=state.images.concat(arr);
   AtuStudio.renderOrigin();
@@ -6123,6 +6155,7 @@ function newOrder(){
  archiveCurrentTask();
  var hires=state.hires;
  state=resetState();state.hires=hires;
+ try{document.body.classList.remove('atu-open');}catch(e){}  /* 新建对话收起操作台；下次进入按全新商品开干净会话 */
  placeComposer(false);
  try{sessionStorage.removeItem('hw.dlUserClosed');}catch(e){}
  setDeliver(false);
@@ -7912,6 +7945,8 @@ window.AtuBridge={
  /* 商品创作主线：操作台开/恢复会话时绑定，保证一件商品的图/文/视频跨刷新归同一条“我的创作” */
  ensureLine:function(){return ensureLine();},
  bindLine:function(id){return bindLine(id);},
+ /* 商品识别/AI 帮写得到产品名后回传：自动作为对话标题（用户手动改过名则不覆盖），不再千篇一律“商品出图任务” */
+ setProductName:function(name){return setProductName(name);},
  /* 操作台成品统一入库入口：同步 state.results + 持久化到 hogee_works（data: 走 TOS/IDB，http(s) 直接登记）。
     以前操作台裸调闭包内 persistResult（作用域不通、恒为 undefined），导致成品只进内存、刷新即丢，此处根治。 */
  ingestResult:function(rec,replace){
@@ -8036,7 +8071,7 @@ window.AtuBridge={
 })();
 
 </script>
-<script src="atu-studio.js?v=20261010g20"></script>
+<script src="atu-studio.js?v=20261010g21"></script>
 <script src="awen-flow.js?v=20260930b"></script>
 <script src="awen-studio.js?v=20261003a"></script>
 <script src="afa-studio.js?v=20261003a"></script>

@@ -375,24 +375,52 @@ body.atu-open #atuStudio{display:flex}\
  var S={root:root,suite:'ecom',seg:'main',ats:[],sel:{},planResp:null,planByType:{},ostEdits:{},_running:false,_abort:false,_paused:false,_cleanImage:null,_failed:{},_totalTasks:0,_doneTasks:0,_progMsg:'',
   $:function(sel){return root.querySelector(sel);},
   isOpen:function(){return document.body.classList.contains('atu-open');},
-  open:function(){
+  open:function(opts){
+   opts=opts||{};
    document.body.classList.add('atu-open');
    try{if(typeof exitTaskFocus==='function')exitTaskFocus();}catch(e){}
    this._lastErr=null;
-   this._restoreSession(); // 有已存会话则自动恢复（刷新/重登后接着看）
-   this._bindLine();      // 恢复/建立“商品创作主线”，保证同商品跨刷新归同一条“我的创作”
+   if(opts.lineId){        /* 从历史对话/我的创作恢复指定商品现场 */
+    this._restoreSession(opts.lineId);this._lineId=null;this._bindLine();
+   }else if(opts.resume){  /* 流程中返回/显式继续：恢复最近一件商品 */
+    this._restoreSession();this._lineId=null;this._bindLine();
+   }else{                  /* 默认=全新商品：绝不带上一件的原图/卖点/成品 */
+    this._resetStudio();this._bindLine();
+   }
+   var pn=this.planResp&&this.planResp.product&&this.planResp.product.name;
+   if(pn){try{var BN=window.AtuBridge||{};if(BN.setProductName)BN.setProductName(pn);}catch(e){}}
    this._saveSession();
    this.applyI18n();this.renderOrigin();this.renderSuiteChips();this.updateSelCount();this._syncGenBtn();
    if(this.ats&&this.ats.length){
-    /* 刷新恢复后把成品重新同步进 state.results 并补录到“我的创作”（按图种/标签幂等去重，不产生重复），
+    /* 刷新/恢复后把成品重新同步进 state.results 并补录到“我的创作”（按图种/标签幂等去重，不产生重复），
        根治修复前老会话成品只在操作台、刷新后作品库里找不到的问题 */
     var self=this;this.ats.forEach(function(r){self._ingest(r.url,r.label,r.type,false);});
     this.setCanvas('result');
    }else this.setCanvas('empty');
   },
-  /* ================= 会话持久化（localStorage，刷新/重登不丢） ================= */
-  SESSION_KEY:'hogee_atu_session_v1',
-  hasSavedSession:function(){try{return !!localStorage.getItem(this.SESSION_KEY);}catch(e){return false;}},
+  /* 全新商品：清空操作台一切商品相关状态（平台/区域/语种等偏好保留），回到干净空态 */
+  _resetStudio:function(){
+   var G=GS();
+   if(G){G.images=[];G.results=[];if(!G.product)G.product={};}
+   this.ats=[];this.sel={};this.planResp=null;this.planRespLang=null;this.planByType={};this.ostEdits={};this._notes=[];this._failed={};
+   this._lineId=null;this._restoredLineId=null;
+   try{var B0=window.AtuBridge||{};if(B0.bindLine)B0.bindLine(null);}catch(e){}
+   var ta=this.$('#atsSelling');if(ta)ta.value='';
+   var pc=this.$('#planCard');if(pc)pc.style.display='none';
+   this.suite='ecom';this.seg='main';
+   root.querySelectorAll('.ats-nav').forEach(function(n){n.classList.toggle('on',n.dataset.suite==='ecom');});
+  },
+  /* ===== 会话持久化：按商品主线分键存储 + current 指针 + LRU（刷新/重登/回看历史都能恢复当时现场） ===== */
+  SESSION_KEY:'hogee_atu_session_v1',   /* current 指针 {cur:lineId,ts}；兼容旧版（可能直接是 v:1 完整会话） */
+  LINES_INDEX:'hogee_atu_lines',
+  MAX_LINES:8,
+  _lineKey:function(id){return 'hogee_atu_line_'+id;},
+  hasSavedSession:function(){try{var c=this._readCur();return !!(c&&c.cur&&localStorage.getItem(this._lineKey(c.cur)));}catch(e){return false;}},
+  hasLineSession:function(id){try{return !!(id&&localStorage.getItem(this._lineKey(id)));}catch(e){return false;}},
+  _readCur:function(){try{var raw=localStorage.getItem(this.SESSION_KEY);if(!raw)return null;var o=JSON.parse(raw);return(o&&o.cur)?o:null;}catch(e){return null;}},
+  _readIndex:function(){try{var a=JSON.parse(localStorage.getItem(this.LINES_INDEX)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}},
+  _writeIndex:function(a){try{localStorage.setItem(this.LINES_INDEX,JSON.stringify(a));}catch(e){}},
+  _dropLine:function(id){try{localStorage.removeItem(this._lineKey(id));}catch(e){}},
   _compress:function(dataUrl){
    return new Promise(function(res){
     if(!dataUrl||dataUrl.indexOf('data:image/')!==0)return res(dataUrl);
@@ -412,30 +440,51 @@ body.atu-open #atuStudio{display:flex}\
     im.src=dataUrl;
    });
   },
-  _saveSession:function(){ // 关键节点防抖保存；体积感知：超限先丢图，方案+成品优先保留
+  _saveSession:function(){ // 关键节点防抖保存；按商品分键，体积感知：超限先丢图、再 LRU 淘汰最旧商品现场
    clearTimeout(this._svT);var self=this;
    this._svT=setTimeout(function(){
+    self._bindLine();var lid=self._lineId;if(!lid)return;
     var imgs=(GS()&&GS().images)||[];
     Promise.all(imgs.map(function(it){return self._compress(it.dataUrl);})).then(function(cd){
-     var s={v:1,ts:Date.now(),lineId:self._lineId||'',
+     var label=(((self.planResp&&self.planResp.product&&self.planResp.product.name)||(self.$('#atsSelling')||{}).value||'')+'').split('\n')[0].slice(0,40);
+     var s={v:1,ts:Date.now(),lineId:lid,
       platform:self.platform(),region:self.locale(),lang:(self.$('#setLang')||{}).value||'auto',
       suite:self.suite,seg:self.seg,sel:self.sel,
       planResp:self.planResp,planRespLang:self.planRespLang,planByType:self.planByType,ostEdits:self.ostEdits,
       selling:(self.$('#atsSelling')||{}).value||'',
       results:self.ats.map(function(r){return {url:r.url,label:r.label,type:r.type,ts:r.ts||Date.now()};}),
       notes:self._notes||[],images:cd};
-     try{localStorage.setItem(self.SESSION_KEY,JSON.stringify(s));}
-     catch(e){try{s.images=[];localStorage.setItem(self.SESSION_KEY,JSON.stringify(s));}catch(e2){}
+     var ok=false;
+     try{localStorage.setItem(self._lineKey(lid),JSON.stringify(s));ok=true;}
+     catch(e){try{s.images=[];localStorage.setItem(self._lineKey(lid),JSON.stringify(s));ok=true;}catch(e2){ok=false;}}
+     if(!ok)return;
+     var idx=self._readIndex().filter(function(x){return x.lineId!==lid;});
+     idx.unshift({lineId:lid,ts:s.ts,label:label});
+     idx.sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+     while(idx.length>self.MAX_LINES){var old=idx.pop();if(old&&old.lineId!==lid)self._dropLine(old.lineId);}
+     self._writeIndex(idx);
+     try{localStorage.setItem(self.SESSION_KEY,JSON.stringify({cur:lid,ts:s.ts}));}
+     catch(e){ /* 配额仍不足：逐个淘汰最旧的其它商品现场（成品本身在作品库/IDB，不丢作品，只丢现场） */
+      for(var k=idx.length-1;k>=0;k--){if(idx[k].lineId===lid)continue;self._dropLine(idx[k].lineId);idx.splice(k,1);
+       try{localStorage.setItem(self.SESSION_KEY,JSON.stringify({cur:lid,ts:s.ts}));self._writeIndex(idx);break;}catch(e3){}}
      }
     });
    },400);
   },
-  _clearSession:function(){try{localStorage.removeItem(this.SESSION_KEY);}catch(e){}},
-  _restoreSession:function(){
-   var raw=null;try{raw=localStorage.getItem(this.SESSION_KEY);}catch(e){}
-   this._restoredLineId=null;
-   if(!raw)return;var s=null;try{s=JSON.parse(raw);}catch(e){}
-   if(!s||s.v!==1)return;
+  _clearSession:function(){
+   try{
+    var lid=this._lineId;
+    if(lid)this._dropLine(lid);
+    this._writeIndex(this._readIndex().filter(function(x){return x.lineId!==lid;}));
+    var cur=this._readCur();if(cur&&cur.cur===lid)localStorage.removeItem(this.SESSION_KEY);
+   }catch(e){}
+  },
+  _applySession:function(s){
+   if(!s||s.v!==1)return false;
+   /* 先清干净再载入，避免从另一件商品现场切过来时残留其成品/原图/卖点 */
+   this.ats=[];this.sel={};this.planResp=null;this.planRespLang=null;this.planByType={};this.ostEdits={};this._notes=[];
+   if(GS())GS().images=[];
+   var ta0=this.$('#atsSelling');if(ta0)ta0.value='';
    this._restoredLineId=s.lineId||null;
    if(s.platform){var p=this.$('#setPlatform');if(p)p.value=s.platform;}
    if(s.region){var r=this.$('#setRegion');if(r)r.value=s.region;}
@@ -450,6 +499,19 @@ body.atu-open #atuStudio{display:flex}\
    if(Array.isArray(s.results)&&s.results.length){this.ats=s.results.map(function(r){return {url:r.url,label:r.label,type:r.type||'',ts:r.ts||Date.now()};});}
    if(s.selling){var ta=this.$('#atsSelling');if(ta)ta.value=s.selling;}
    if(Array.isArray(s.notes))this._notes=s.notes;
+   return true;
+  },
+  _restoreSession:function(lid){
+   this._restoredLineId=null;var raw=null,s=null;
+   try{
+    if(lid){raw=localStorage.getItem(this._lineKey(lid));}
+    else{var cur=this._readCur();if(cur&&cur.cur)raw=localStorage.getItem(this._lineKey(cur.cur));
+     if(!raw)raw=localStorage.getItem(this.SESSION_KEY);} /* 兼容旧版：该键直接存 v:1 完整会话 */
+   }catch(e){raw=null;}
+   if(raw){try{s=JSON.parse(raw);}catch(e){s=null;}}
+   var applied=this._applySession(s);
+   if(applied&&s&&s.lineId&&!this.hasLineSession(s.lineId)){this._lineId=s.lineId;try{this._saveSession();}catch(e){}} /* 旧版首次恢复即迁移到分键 */
+   return applied;
   },
   /* ---- i18n：把带 data-i18n / data-i18n-ph 的静态文案随当前语种刷一遍 ---- */
   applyI18n:function(){
@@ -568,6 +630,7 @@ body.atu-open #atuStudio{display:flex}\
      self.planByType={};self.ostEdits={};
      (j.plan||[]).forEach(function(e){self.planByType[e.type]=e;});
      var p=j.product||{},lines=[];
+     if(p.name){try{GS().product=GS().product||{};GS().product.name=p.name;if(B.setProductName)B.setProductName(p.name);}catch(e){}}
      if(p.brand)lines.push(t('l_brand')+'：'+p.brand);
      if(p.name)lines.push(p.name);
      if(p.model)lines.push(t('l_model')+'：'+p.model);
@@ -605,7 +668,7 @@ body.atu-open #atuStudio{display:flex}\
    var img0=GS().images[0].dataUrl;
    var self=this;
    (async function(){
-    try{var f=await callIdentify(img0);if(f){var cat=f.category||f.cat||f.name||'';if(cat&&/(服装|衣|裤|裙|鞋|帽|袜|包|fashion|apparel|cloth|wear|dress|shirt|shoe|bag)/i.test(cat))self.setSuite('fashion');if(f.name)GS().product=GS().product||{};}}catch(e){}
+    try{var f=await callIdentify(img0);if(f){var cat=f.category||f.cat||f.name||'';if(cat&&/(服装|衣|裤|裙|鞋|帽|袜|包|fashion|apparel|cloth|wear|dress|shirt|shoe|bag)/i.test(cat))self.setSuite('fashion');if(f.name){GS().product=GS().product||{};GS().product.name=f.name;try{if(B.setProductName)B.setProductName(f.name);}catch(e){}}}}catch(e){}
     self.runPlan();
    })();
   },
@@ -2405,8 +2468,8 @@ body.atu-open #atuStudio{display:flex}\
  if(_sp)_sp.addEventListener('change',function(){var rg=PLATFORM_REGION[_sp.value];if(rg&&_sr)_sr.value=rg;_onLocaleChange();});
  if(_sr)_sr.addEventListener('change',_onLocaleChange);
  if(_sl)_sl.addEventListener('change',_onLocaleChange);
- // 刷新/重登后：有已存会话则自动打开阿图并恢复（方案+成品+设置）
+ // 刷新/重登后：有已存会话则自动恢复最近一件商品现场（显式 resume，不走“门户主动进入=全新”分流）
  window.addEventListener('load',function(){
-  try{if(S.hasSavedSession()){if(typeof renderUploadCard==='function')renderUploadCard();else S.open();}}catch(e){}
+  try{if(S.hasSavedSession()){S.open({resume:true});}}catch(e){}
  });
 })();
