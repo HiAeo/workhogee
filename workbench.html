@@ -6225,6 +6225,29 @@ function chWorks(v,b){
  b.innerHTML=h;
  b.querySelector('#chWorkList').innerHTML=list.length?list.map(chWorkRowHtml).join(''):agEmpty('还没有作品','导入官方数据，或点「手动登记作品」先建一条；之后每次后台更新数据再导入或追加快照，就能看增长曲线与近期时速。');
 }
+function chEvPills(ev){
+ if(ev==null)return '';
+ if(typeof ev==='string'||typeof ev==='number')return '<span class="ag-pill" style="font-size:11px;line-height:1.6;margin-right:6px">'+esc(String(ev))+'</span>';
+ if(typeof ev!=='object')return '';
+ var pct0=function(z){return z==null?'—':(z*100).toFixed(0)+'%';};
+ var map={
+  sample:function(z){return '样本 '+agN(z)+' 条';},
+  top_quartile_finish_median:function(z){return '高播放完播中位数 '+pct0(z);},
+  overall_finish_median:function(z){return '整体完播中位数 '+pct0(z);},
+  top_share_fav_per_play:function(z){return '高播放 分享收藏/播放 '+(z*100).toFixed(2)+'%';},
+  rest_share_fav_per_play:function(z){return '其余作品 '+(z*100).toFixed(2)+'%';},
+  multiplier:function(z){return '相差 '+(Number(z)).toFixed(1)+' 倍';},
+  tags:function(z){return '覆盖题材 '+(z?z.length:0)+' 类';},
+  slots:function(z){return '覆盖时段 '+(z?z.length:0)+' 段';}
+ };
+ var out=[];
+ Object.keys(ev).forEach(function(k){
+  var z=ev[k];if(z==null)return;
+  if(map[k])out.push(map[k](z));
+  else if(typeof z!=='object')out.push(esc(k)+' '+esc(String(z)));
+ });
+ return out.map(function(t){return '<span class="ag-pill" style="font-size:11px;line-height:1.6;margin-right:6px;margin-bottom:4px;white-space:normal">'+t+'</span>';}).join('');
+}
 function chIns(v,b){
  var x=AG.ops.ins;
  if(!x){b.innerHTML=agEmpty('复盘还没生成','先导入或登记 5 条以上作品，阿果会按播放、完播率、分享收藏、题材标签和发布时段，找出你这个频道的破圈规律。');return;}
@@ -6233,7 +6256,7 @@ function chIns(v,b){
   +'<div class="ag-t2">样本 '+agN(meta.sample_size)+' 条作品 · 近 '+meta.range_days+' 天 · '+(meta.confident?'<span class="agu-tag fp">规律较稳，可参考</span>':'<span class="agu-tag ext">样本不足，仅为初步趋势，勿当定论</span>')+'</div></section>';
  (x.findings||[]).forEach(function(f){
   var color=f.level==='good'?'#34d399':(f.level==='warn'?'#fbbf24':'var(--tx3)');
-  h+='<section class="vcard ag-sec" style="margin-bottom:12px;border-left:3px solid '+color+'"><div style="font-size:14px;font-weight:600;margin-bottom:7px">'+esc(f.title)+'</div><div class="ag-t2" style="line-height:1.75;margin-bottom:9px">'+esc(f.detail)+'</div>'+(f.evidence?'<span class="ag-pill" style="font-size:11px;line-height:1.6">'+esc(f.evidence)+'</span>':'')+'</section>';
+  h+='<section class="vcard ag-sec" style="margin-bottom:12px;border-left:3px solid '+color+'"><div style="font-size:14px;font-weight:600;margin-bottom:7px">'+esc(f.title)+'</div><div class="ag-t2" style="line-height:1.75;margin-bottom:9px">'+esc(f.detail)+'</div>'+chEvPills(f.evidence)+'</section>';
  });
  if((x.suggestions||[]).length)h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:10px">下一步建议</div><ul style="margin:0;padding-left:18px;line-height:1.95;font-size:13px;color:var(--tx2)">'+x.suggestions.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul></section>';
  b.innerHTML=h;

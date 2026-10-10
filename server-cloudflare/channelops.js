@@ -255,6 +255,7 @@ function buildIndexItem(w) {
     updated_at: w.updated_at,
     latest: {
       snapshot_at: last.snapshot_at || null,
+      source: last.source || null,
       play: last.play ?? null, like: last.like ?? null, comment: last.comment ?? null,
       share: last.share ?? null, favorite: last.favorite ?? null,
       finish_rate: last.finish_rate ?? null, avg_play_sec: last.avg_play_sec ?? null,
