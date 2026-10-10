@@ -539,7 +539,7 @@ body.atu-open #atuStudio{display:flex}\
    if(this._running){if(!confirm('伙计正在出图，确定离开吗？已生成的成品会保留。'))return;}
    this._abortAll();this._running=false;
    document.body.classList.remove('atu-open');
-   try{if(typeof goHome==='function')goHome();}catch(e){}
+   try{var _B=window.AtuBridge;if(_B&&_B.goHome)_B.goHome();else if(typeof goHome==='function')goHome();}catch(e){}
   },
   /* ---- 生成设置取值（契约 §2 枚举） ---- */
   platform:function(){return this.$('#setPlatform').value||'generic';},
