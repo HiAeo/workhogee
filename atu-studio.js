@@ -53,7 +53,8 @@ body.atu-open #atuStudio{display:flex}\
 .ats-crumb b{color:var(--orange);font-weight:600}\
 .ats-tr{display:flex;align-items:center;gap:10px}\
 .ats-pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px;border-radius:999px;background:rgba(251,122,34,.12);border:1px solid rgba(251,122,34,.28);color:#ffb084;font-size:12px;font-weight:500;white-space:nowrap;flex:none}\.ats-pill svg{width:14px;height:14px;flex:none}\
-.ats-back{appearance:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx2);display:grid;place-items:center;cursor:pointer;transition:.16s}\
+.ats-back{appearance:none;height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx2);display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;cursor:pointer;transition:.16s}\
+.ats-back svg{width:16px;height:16px;flex:none}\
 .ats-back:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-soft)}\
 .ats-body{position:relative;z-index:1;flex:1;min-height:0;display:flex}\
 .ats-rail{flex:none;width:86px;display:flex;flex-direction:column;gap:6px;padding:8px 10px}\
@@ -346,9 +347,10 @@ body.atu-open #atuStudio{display:flex}\
  var EMPTY_ART='<svg width="232" height="158" viewBox="0 0 232 158" fill="none"><g opacity=".9"><rect x="14" y="30" width="92" height="92" rx="16" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.18)" stroke-dasharray="5 5"/><circle cx="42" cy="58" r="8" fill="rgba(251,122,34,.55)"/><path d="M28 102l22-20 16 14 14-12 20 18" stroke="rgba(255,255,255,.4)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M118 70h22" stroke="#fb7a22" stroke-width="2.4" stroke-linecap="round"/><path d="M132 64l8 6-8 6" stroke="#fb7a22" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><g><rect x="150" y="18" width="68" height="52" rx="11" fill="rgba(251,122,34,.16)" stroke="rgba(251,122,34,.5)"/><rect x="158" y="66" width="68" height="52" rx="11" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.2)"/><rect x="120" y="86" width="68" height="52" rx="11" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.16)"/></g></svg>';
 
  function el(html){var d=document.createElement('div');d.innerHTML=html;return d.firstChild;}
+ var ARROW_LEFT='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>';
  var root=el('<div id="atuStudio"></div>');
  root.innerHTML=
-  '<div class="ats-top"><div class="ats-tl"><a class="ats-logo" href="/" aria-label="WorkHogee">'+LOGO_FULL+'</a><span class="ats-crumb">阿图 · <b data-i18n="crumb_b">商品图操作台</b></span></div><div class="ats-tr"><span class="ats-pill">'+I.spark+'Alpha 内测 · 出图不限</span><button class="ats-back" id="atsBack" type="button" title="返回工作台">'+I.back+'</button></div></div>'+
+  '<div class="ats-top"><div class="ats-tl"><a class="ats-logo" href="/" aria-label="WorkHogee">'+LOGO_FULL+'</a><span class="ats-crumb">阿图 · <b data-i18n="crumb_b">商品图操作台</b></span></div><div class="ats-tr"><span class="ats-pill">'+I.spark+'Alpha 内测 · 出图不限</span><button class="ats-back" id="atsBack" type="button" title="返回工作台首页" aria-label="返回工作台首页">'+ARROW_LEFT+'<span class="ats-back-tx">返回首页</span></button></div></div>'+
   '<div class="ats-body">'+
    '<div class="ats-rail"><button class="ats-nav on" data-suite="ecom" type="button">'+I.bag+'<span data-i18n="nav_ecom">电商套图</span></button><button class="ats-nav" data-suite="fashion" type="button">'+I.hanger+'<span data-i18n="nav_fashion">服装套图</span></button><button class="ats-nav" data-suite="batch" type="button">'+I.layers+'<span data-i18n="nav_batch">批量套图</span></button><button class="ats-nav" data-suite="records" type="button">'+I.clock+'<span data-i18n="nav_records">生成记录</span></button></div>'+
    '<div class="ats-panel"><div class="ats-scroll" id="atsScroll">'+
@@ -365,7 +367,7 @@ body.atu-open #atuStudio{display:flex}\
      '<div class="ats-card"><div class="ats-fold" id="foldPlan"><div class="ats-ct"><span data-i18n="style_title">智能视觉风格</span> <span style="font-size:11.5px;color:var(--tx3);font-weight:400" data-i18n="style_opt">（可选）</span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody"><div class="ats-switch-row"><span data-i18n="style_switch">智能风格推荐（关闭则由 AI 自动匹配）</span><button class="ats-sw" id="swStyle" type="button"></button></div><div class="ats-chips" id="styleChips" style="display:none">'+STYLE_TAGS.map(function(t,i){return '<button class="ats-chip" data-style="'+i+'" type="button">'+t+'</button>';}).join('')+'</div></div></div>'+
      '<div class="ats-card"><div class="ats-fold open" id="foldSuite"><div class="ats-ct" data-i18n="suite_title">套图选择 <span class="ats-selcount" id="selCount"></span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody" style="display:flex"><div style="display:flex;align-items:center;justify-content:space-between"><div class="ats-seg" id="suiteSeg"><button class="on" data-seg="main" type="button">套图</button><button data-seg="detail" id="segDetail" type="button">详情 / A+</button></div><button class="ats-cs" id="aiSelect" type="button"><span data-i18n="btn_aipick">AI 帮选</span></button></div><div class="ats-chips" id="suiteChips"></div></div></div>'+
    '</div><div class="ats-genbar"><div class="ats-free"><span class="ats-free-l" data-i18n="free_left">内测剩余额度：</span><b data-i18n="free_val">不限</b><span class="ats-free-n" data-i18n="free_note">（仅对成功出图计费，失败/审核未出图不扣费）</span></div><button class="ats-gen" id="atsGen" type="button"><span data-i18n="btn_start">开始生成</span></button></div></div>'+
-   '<div class="ats-stage"><div class="ats-stage-tabs" id="stageTabs" style="display:none"><div class="ats-stage-tt"><span data-i18n="deliver">交付成品</span> <span class="cnt" id="stageCnt"></span></div><div class="ats-stage-ops"><button class="ats-obtn" id="dlAll" type="button">'+I.download+'<span data-i18n="btn_dlall">全部下载</span></button><button class="ats-obtn pri" id="toAwen" type="button">'+I.pen+'<span data-i18n="btn_toawen">交给阿文写文案</span></button></div></div><div class="ats-canvas" id="atsCanvas"></div></div>'+
+   '<div class="ats-stage"><div class="ats-stage-tabs" id="stageTabs" style="display:none"><div class="ats-stage-tt"><span data-i18n="deliver">交付成品</span> <span class="cnt" id="stageCnt"></span></div><div class="ats-stage-ops"><button class="ats-obtn" id="stageHome" type="button" title="返回工作台首页">'+ARROW_LEFT+'<span>返回首页</span></button><button class="ats-obtn" id="dlAll" type="button">'+I.download+'<span data-i18n="btn_dlall">全部下载</span></button><button class="ats-obtn pri" id="toAwen" type="button">'+I.pen+'<span data-i18n="btn_toawen">交给阿文写文案</span></button></div></div><div class="ats-canvas" id="atsCanvas"></div></div>'+
   '</div><div class="ats-lb" id="atsLb"><button class="ats-lb-x" id="atsLbX" type="button">×</button><img id="atsLbImg" alt="成品大图"></div>'+
   '<div class="ats-srcmenu" id="atsSrcMenu"></div>';
  document.body.appendChild(root);
@@ -378,8 +380,15 @@ body.atu-open #atuStudio{display:flex}\
    try{if(typeof exitTaskFocus==='function')exitTaskFocus();}catch(e){}
    this._lastErr=null;
    this._restoreSession(); // 有已存会话则自动恢复（刷新/重登后接着看）
+   this._bindLine();      // 恢复/建立“商品创作主线”，保证同商品跨刷新归同一条“我的创作”
+   this._saveSession();
    this.applyI18n();this.renderOrigin();this.renderSuiteChips();this.updateSelCount();this._syncGenBtn();
-   if(this.ats&&this.ats.length)this.setCanvas('result');else this.setCanvas('empty');
+   if(this.ats&&this.ats.length){
+    /* 刷新恢复后把成品重新同步进 state.results 并补录到“我的创作”（按图种/标签幂等去重，不产生重复），
+       根治修复前老会话成品只在操作台、刷新后作品库里找不到的问题 */
+    var self=this;this.ats.forEach(function(r){self._ingest(r.url,r.label,r.type,false);});
+    this.setCanvas('result');
+   }else this.setCanvas('empty');
   },
   /* ================= 会话持久化（localStorage，刷新/重登不丢） ================= */
   SESSION_KEY:'hogee_atu_session_v1',
@@ -408,7 +417,7 @@ body.atu-open #atuStudio{display:flex}\
    this._svT=setTimeout(function(){
     var imgs=(GS()&&GS().images)||[];
     Promise.all(imgs.map(function(it){return self._compress(it.dataUrl);})).then(function(cd){
-     var s={v:1,ts:Date.now(),
+     var s={v:1,ts:Date.now(),lineId:self._lineId||'',
       platform:self.platform(),region:self.locale(),lang:(self.$('#setLang')||{}).value||'auto',
       suite:self.suite,seg:self.seg,sel:self.sel,
       planResp:self.planResp,planRespLang:self.planRespLang,planByType:self.planByType,ostEdits:self.ostEdits,
@@ -424,8 +433,10 @@ body.atu-open #atuStudio{display:flex}\
   _clearSession:function(){try{localStorage.removeItem(this.SESSION_KEY);}catch(e){}},
   _restoreSession:function(){
    var raw=null;try{raw=localStorage.getItem(this.SESSION_KEY);}catch(e){}
+   this._restoredLineId=null;
    if(!raw)return;var s=null;try{s=JSON.parse(raw);}catch(e){}
    if(!s||s.v!==1)return;
+   this._restoredLineId=s.lineId||null;
    if(s.platform){var p=this.$('#setPlatform');if(p)p.value=s.platform;}
    if(s.region){var r=this.$('#setRegion');if(r)r.value=s.region;}
    if(s.lang){var l=this.$('#setLang');if(l)l.value=s.lang;}
@@ -722,13 +733,32 @@ body.atu-open #atuStudio{display:flex}\
   addNote:function(t){this._notes=this._notes||[];this._notes.push(t);},
   addResult:function(url,label,type){
    var r={url:url,label:label,type:type||'',ts:Date.now()};this.ats.push(r);
+   this._bindLine();
    this._saveSession();
-   try{if(typeof persistResult==='function')persistResult({url:url,k:'atu',label:label,ts:Date.now()},label);}catch(e){}
-   if(!GS().results)GS().results=[];GS().results.push({url:url,k:'atu',label:label,ts:Date.now()});
+   this._ingest(url,label,type,false);
+  },
+  /* 绑定“商品创作主线”：优先当前工作台 state.lineId / 已恢复会话 lineId，否则向 workbench 申请新建。
+     保证一件商品的图→文→视频跨刷新、跨接力都归同一条“我的创作”。 */
+  _bindLine:function(){
+   try{var B=window.AtuBridge||{};
+    if(!this._lineId){this._lineId=this._restoredLineId||(B.state&&B.state.lineId)||(B.ensureLine?B.ensureLine():null)||null;}
+    if(this._lineId&&B.bindLine)B.bindLine(this._lineId);
+   }catch(e){}
+  },
+  /* 成品统一交给 workbench（AtuBridge.ingestResult）：同步 state.results + 持久化到“我的创作”。
+     以前这里裸调闭包内 persistResult（作用域不通、恒 undefined），成品只进内存、刷新即丢；桥缺失时兜底写 state.results，不阻断出图。 */
+  _ingest:function(url,label,type,replace){
+   var ok=false;
+   try{var B=window.AtuBridge||{};
+    this._bindLine();
+    if(B.ingestResult){B.ingestResult({url:url,tosKey:'',label:label,type:type||'',ts:Date.now()},!!replace);ok=true;}
+   }catch(e){ok=false;}
+   if(!ok){try{var g=GS();if(!g.results)g.results=[];g.results.push({url:url,k:'atu',label:label,type:type||'',ts:Date.now()});}catch(e){}}
   },
   replaceResultByType:function(t,url){
    var hit=null;for(var i=0;i<this.ats.length;i++){if(this.ats[i].type===t){hit=this.ats[i];break;}}
-   if(hit){hit.url=url;hit.ts=Date.now();}else{this.addResult(url,TYPE_LABELS[t]||t,t);}
+   if(hit){hit.url=url;hit.ts=Date.now();this._bindLine();this._saveSession();this._ingest(url,hit.label||TYPE_LABELS[t]||t,t,true);}
+   else{this.addResult(url,TYPE_LABELS[t]||t,t);}
   },
   /* 统一渲染：进行中=livebar+按图种分组网格；完成=分组网格 */
   paint:function(){
@@ -2353,7 +2383,8 @@ body.atu-open #atuStudio{display:flex}\
 
  root.querySelectorAll('.ats-nav').forEach(function(n){n.addEventListener('click',function(){S.setSuite(n.dataset.suite);});});
  S.$('#atsBack').addEventListener('click',function(){S.close();});
- S.$('#atsClear').addEventListener('click',function(){if(GS().images&&GS().images.length){if(confirm('清空全部已传原图？')){GS().images=[];S.planResp=null;S.planByType={};S.ostEdits={};S.ats=[];S._notes=[];S.renderOrigin();S._clearSession();S.setCanvas('empty');}}});
+ var _sh=S.$('#stageHome');if(_sh)_sh.addEventListener('click',function(){S.close();});
+ S.$('#atsClear').addEventListener('click',function(){if(GS().images&&GS().images.length){if(confirm('清空全部已传原图？')){GS().images=[];S.planResp=null;S.planByType={};S.ostEdits={};S.ats=[];S._notes=[];S._lineId=null;S._restoredLineId=null;try{var B0=window.AtuBridge||{};if(B0.bindLine)B0.bindLine(null);}catch(e){}S.renderOrigin();S._clearSession();S.setCanvas('empty');}}});
  S.$('#atsAiWrite').addEventListener('click',function(){S.aiWrite();});
  S.$('#atsMoreBtn').addEventListener('click',function(){var m=S.$('#atsMore'),b=S.$('#atsMoreBtn');m.classList.toggle('show');b.textContent=m.classList.contains('show')?t('btn_less'):t('btn_more');});
  S.$('#swStyle').addEventListener('click',function(){this.classList.toggle('on');S.$('#styleChips').style.display=this.classList.contains('on')?'flex':'none';});
