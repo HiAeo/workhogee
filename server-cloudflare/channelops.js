@@ -677,7 +677,8 @@ export async function handleChannelOps(request, env, ctx, origin) {
     const w = await getWork(env, shop, m[1]);
     if (!w || w.shop !== shop) return J({ ok: false, error: { code: 'not_found', message: '作品不存在' } }, 404, origin);
     const acc = await getAccount(env, shop, w.aid);
-    return J({ ok: true, data: { ...w, account: acc ? { aid: acc.aid, name: acc.name, platform: acc.platform } : null } }, 200, origin);
+    const idx = buildIndexItem(w);
+    return J({ ok: true, data: { ...w, latest: idx.latest, velocity: idx.velocity, account: acc ? { aid: acc.aid, name: acc.name, platform: acc.platform } : null } }, 200, origin);
   }
 
   // ----- 追加指标快照 -----
