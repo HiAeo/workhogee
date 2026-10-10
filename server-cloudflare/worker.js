@@ -25,6 +25,7 @@ import { getMemberSession, ensureBootstrapAdmin } from './member-auth.js';
 import { checkAndDeductQuota } from './members.js';
 import { handleFeed, ensureFeedBootstrap } from './feed.js';
 import { handleAnalytics, scheduledRollup } from './analytics.js';
+import { handleChannelOps } from './channelops.js';
 import { handleAgu, getTopInsights, buildInsightsContext } from './agu.js';
 import { verifyConsistency, appendGuardClauses, qcUpload, generateCopy, generateStoryboard, identifyProduct, groupProducts, extractProductFeatures, understandIntent, prefillFacts, planDetails, chatVisionCustom, detectPlatesByVision, generatePipelineCopy, checkCutoutQuality } from './vision.js';
 import { stampImageMeta } from './image-meta.js';
@@ -2178,6 +2179,10 @@ export default {
     if (path.startsWith('/agu')) {
       return await handleAgu(request, env, ctx, origin);
     }
+
+    // 阿果·频道运营：第三方平台作品登记/导入、作品仓库、频道看板、规则复盘
+    const channelResp = await handleChannelOps(request, env, ctx, origin);
+    if (channelResp) return channelResp;
 
     // 效果中心：H5 画册 / 渠道短链 / 埋点 / 留资 / 渠道码 / 看板（公开+会员，鉴权在 analytics.js 内）
     const analyticsResp = await handleAnalytics(request, env, ctx, origin);

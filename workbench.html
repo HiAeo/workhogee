@@ -1229,6 +1229,8 @@ body[data-stage="analytics"] .composer{display:none!important}
 .ag-ta:focus{border-color:var(--orange)}
 .ag-sec-label{font-size:12px;font-weight:600;color:var(--tx2);margin:16px 0 9px}
 .ag-db .ac-btn.primary{width:100%;justify-content:center;margin-top:11px}
+.ch-kpis5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:900px){.ch2col{grid-template-columns:1fr!important}.ch-kpis5{grid-template-columns:repeat(2,1fr)!important}}
 @media(max-width:680px){.ag-nums{gap:14px;order:3;width:100%;justify-content:space-between}.ag-row{flex-wrap:wrap;gap:11px}.ag-pill{order:1}.ag-sel{order:2}.ag-acts{order:1;margin-left:auto}.ag-thumb,.ag-thumb-ph{width:44px;height:44px}}
 @media(max-width:860px){.view{padding:14px 15px 60px}.view-title{font-size:22px}.skill-grid{grid-template-columns:1fr}.conn-grid{grid-template-columns:repeat(2,1fr)}.pv,.wv{padding:14px 15px 60px}}
 @media(max-width:520px){.conn-grid{grid-template-columns:1fr}}
@@ -5907,7 +5909,7 @@ function aguCard(){card('<div class="card-pad"><div class="card-title">'+IC.char
 function setMenuActive(id){$$('.rmenu button').forEach(function(b){b.classList.toggle('on',b.id===id);});}
 var AG_SRC={wechat_group:'客户微信群',moments:'朋友圈',poster:'门店立牌/印刷',douyin:'抖音',xiaohongshu:'小红书',xianyu:'闲鱼',dongchedi:'懂车帝',kuaishou:'快手',gzh:'公众号',shipinhao:'视频号',sms:'短信',email:'邮件',direct:'直接访问',other:'其他'};
 var AG_ST={new:{t:'新线索'},following:{t:'跟进中'},visited:{t:'已到店'},deal:{t:'已成交'},lost:{t:'已流失'}};
-var AG={range:7,status:'all',q:'',view:'own',ov:null,ch:{rows:[]},sc:{rows:[]},leads:[],showcases:[],ext:[]};
+var AG={range:7,status:'all',q:'',view:'own',ov:null,ch:{rows:[]},sc:{rows:[]},leads:[],showcases:[],ext:[],ops:{range:30,tab:'dash',accounts:[],works:[],dash:null,ins:null,loaded:false}};
 function agSrc(s){return AG_SRC[s]||s||'直接访问';}
 function agN(v){return (Number(v)||0).toLocaleString('en-US');}
 function agDate(off){var d=new Date(Date.now()+(off||0)*864e5+8*36e5);return d.toISOString().slice(0,10);}
@@ -5938,7 +5940,7 @@ function openAnalytics(){
  var v=document.createElement('div');v.className='view';v.id='agView';
  v.innerHTML='<div class="view-head"><div><div class="view-title">Hogee 效果监控</div><div class="view-sub">阿果帮你盯自有 H5 画册与外部平台投放：留资、意向、成交都会在这里汇总；客户留资后可直接跟进、改状态。</div></div>'
   +'<div class="atabs" id="agRange"><button type="button" class="atab" data-r="7">近 7 天</button><button type="button" class="atab" data-r="30">近 30 天</button><button type="button" class="atab" data-r="90">近 90 天</button></div></div>'
-  +'<div class="agu-seg" id="agViewSeg" style="margin:2px 0 14px"><button type="button" data-av="own">自有触点</button><button type="button" data-av="external">外部平台</button><button type="button" data-av="all">综合总览</button></div>'
+  +'<div class="agu-seg" id="agViewSeg" style="margin:2px 0 14px"><button type="button" data-av="own">私域效果</button><button type="button" data-av="channel">频道运营</button><button type="button" data-av="all">综合总览</button></div>'
   +'<div id="agBody"><div class="ag-loading"><div class="ag-spin"></div>正在汇总效果数据…</div></div>';
  scroll.appendChild(v);scrollBox.scrollTop=0;
  setupAgDrawerOnce();bindAg(v);
@@ -5980,7 +5982,7 @@ function loadAg(v){
  });
 }
 function renderAg(v){
- if(AG.view==='external'){renderAgExternal(v);return;}
+ if(AG.view==='channel'){renderAgChannel(v);return;}
  if(AG.view==='all'){renderAgAll(v);return;}
  renderAgOwn(v);
 }
@@ -6027,6 +6029,11 @@ function renderAgExternal(v){
 function renderAgAll(v){
  renderAgOwn(v);
  var body=v.querySelector('#agBody');
+ var chsec=document.createElement('section');
+ chsec.className='vcard ag-sec';
+ chsec.style.marginTop='14px';
+ body.appendChild(chsec);
+ renderAgAllChannel(chsec);
  var sec=document.createElement('section');
  sec.className='vcard ag-sec';
  sec.style.marginTop='14px';
@@ -6096,10 +6103,284 @@ function agExportCsv(){
   setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);toast('CSV 已导出');
  }).catch(function(e){toast(e.message||'导出失败');});
 }
+/* ================= 阿果·频道运营（账号/作品仓库 + 官方CSV导入 + 频道看板 + 规则复盘） ================= */
+var CH_PF={douyin:'抖音',wechat_channel:'视频号',xhs:'小红书',other:'其他'};
+var CH_SRC={official_api:'官方接口',official_export:'官方导出',browser_session:'本人会话',manual:'手工录入'};
+function chPf(p){return CH_PF[p]||p||'其他';}
+function chSrcName(s){return CH_SRC[s]||s||'手工录入';}
+function chPct(x){return (x==null||x===''||!isFinite(x))?'—':(Number(x)*100).toFixed(1)+'%';}
+function chVel(x){if(x==null||!isFinite(x))return '—';var v=Number(x);return (v>=100?Math.round(v):v.toFixed(1))+'/h';}
+function chDay(ts){if(!ts)return '—';var d=new Date(Number(ts)+8*36e5);return d.toISOString().slice(0,10);}
+function chAge(pub){if(!pub)return '—';var h=(Date.now()-Number(pub))/36e5;if(h<24)return Math.max(0,Math.round(h))+' 小时';return Math.round(h/24)+' 天';}
+function chNowLocal(){var d=new Date(),p=function(x){return (x<10?'0':'')+x;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function chEnsureLoad(force){
+ if(AG.ops.loaded&&!force)return Promise.resolve();
+ var R=AG.ops.range;
+ return Promise.all([
+  agReq('GET','/channels/accounts').catch(function(){return {data:[]};}),
+  agReq('GET','/channels/works').catch(function(){return {data:[]};}),
+  agReq('GET','/channels/dashboard?range='+R).catch(function(){return {data:null};}),
+  agReq('GET','/channels/insights?range='+R).catch(function(){return {data:null};})
+ ]).then(function(rs){
+  AG.ops.accounts=(rs[0]&&rs[0].data)||[];
+  AG.ops.works=(rs[1]&&rs[1].data)||[];
+  AG.ops.dash=(rs[2]&&rs[2].data)||null;
+  AG.ops.ins=(rs[3]&&rs[3].data)||null;
+  AG.ops.loaded=true;
+ });
+}
+function chReload(v){AG.ops.loaded=false;AG.ops.dash=null;AG.ops.ins=null;if(v)renderAgChannel(v);}
+function chGoChannel(){AG.view='channel';document.querySelectorAll('#agViewSeg button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-av')==='channel');});var v=document.getElementById('agView');if(v)renderAgChannel(v);}
+function renderAgChannel(v){
+ var body=v.querySelector('#agBody');
+ var tabs=[['dash','频道看板'],['works','作品与导入'],['ins','环比复盘']];
+ var h='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:2px 0 14px">'
+  +'<div class="atabs" id="chTabs">'+tabs.map(function(t){return '<button type="button" class="atab'+(AG.ops.tab===t[0]?' on':'')+'" data-chtab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'
+  +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+  +'<button type="button" class="ac-btn" data-chact="addaccount" style="padding:8px 13px;font-size:12px">添加账号</button>'
+  +'<button type="button" class="ac-btn" data-chact="register" style="padding:8px 13px;font-size:12px">登记作品</button>'
+  +'<button type="button" class="ac-btn primary" data-chact="import" style="padding:8px 13px;font-size:12px">导入官方 CSV/TSV</button>'
+  +'</div></div>'
+  +'<div id="chBody"><div class="ag-loading"><div class="ag-spin"></div>正在汇总频道数据…</div></div>';
+ body.innerHTML=h;
+ chBind(v);
+ if(!agLoggedIn()){agGate(v);return;}
+ chEnsureLoad().then(function(){chRoute(v);}).catch(function(e){
+  var cb=body.querySelector('#chBody');if(!cb)return;
+  if(e&&(e.status===401||/登录|未登录|token|unauthorized|请先/.test(e.message||''))){agGate(v);}else cb.innerHTML=agEmpty('频道数据没加载出来',(e.message||'网络异常')+'，可以重试一次。','<button type="button" class="ac-btn primary" data-chact="refresh">重新加载</button>');
+ });
+}
+function chRoute(v){var b=v.querySelector('#chBody');if(!b)return;if(AG.ops.tab==='works')chWorks(v,b);else if(AG.ops.tab==='ins')chIns(v,b);else chDash(v,b);}
+function chBind(v){
+ var body=v.querySelector('#agBody');if(!body||body.__chBound)return;body.__chBound=1;
+ body.addEventListener('click',function(e){
+  var tab=e.target.closest('[data-chtab]');
+  if(tab){AG.ops.tab=tab.getAttribute('data-chtab');body.querySelectorAll('#chTabs [data-chtab]').forEach(function(x){x.classList.toggle('on',x===tab);});var cb=body.querySelector('#chBody');if(cb)cb.innerHTML='<div class="ag-loading"><div class="ag-spin"></div>切换中…</div>';if(AG.ops.loaded){chRoute(v);}else{chEnsureLoad().then(function(){chRoute(v);}).catch(function(){});}return;}
+  var rr=e.target.closest('[data-chr]');if(rr){AG.ops.range=Number(rr.getAttribute('data-chr'));chReload(v);return;}
+  var act=e.target.closest('[data-chact]');if(act){var a=act.getAttribute('data-chact');if(a==='addaccount')chAddAccount(v);else if(a==='register')chRegisterWork(v);else if(a==='import')chImport(v);else if(a==='template')chDownloadTemplate();else if(a==='refresh')chReload(v);else if(a==='gotochannel')chGoChannel();return;}
+  var wk=e.target.closest('[data-chwork]');if(wk){chWorkDetail(v,wk.getAttribute('data-chwork'));return;}
+ });
+}
+function chDash(v,b){
+ var d=AG.ops.dash;
+ if(!d){b.innerHTML=agEmpty('还没有频道数据','添加账号、手动登记作品，或导入抖音 / 视频号 / 小红书「创作者中心-数据中心」导出的 CSV/TSV，阿果帮你建作品仓库、算时速、做环比复盘。','<button type="button" class="ac-btn primary" data-chact="import">导入官方 CSV/TSV</button><button type="button" class="ac-btn" data-chact="register">手动登记作品</button>');return;}
+ var t=d.totals||{};
+ var inter=(Number(t.likes)||0)+(Number(t.comments)||0)+(Number(t.shares)||0)+(Number(t.favorites)||0);
+ var kpis=[{n:agN(t.works),l:'在档作品'},{n:agN(t.plays),l:'总播放'},{n:agN(inter),l:'总互动（赞评藏分）'},{n:agN(t.followers_gained),l:'区间涨粉'},{n:chPct(t.avg_finish_rate),l:'平均完播率'}];
+ var ranges=[7,30,90];
+ var h='<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><div class="atabs">'+ranges.map(function(r){return '<button type="button" class="atab'+(AG.ops.range===r?' on':'')+'" data-chr="'+r+'">近 '+r+' 天</button>';}).join('')+'</div><span class="agu-tag fp">来源：官方导出 / 手工录入</span><button type="button" class="ac-btn" data-chact="refresh" style="margin-left:auto;padding:6px 12px;font-size:12px">刷新</button></div>';
+ h+='<div class="ac-kpis ch-kpis5">'+kpis.map(function(k){return '<div class="ac-kpi ag-kpi"><div class="n">'+k.n+'</div><div class="l">'+k.l+'</div></div>';}).join('')+'</div>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">账号总览</div><div id="chAcc"></div></section>';
+ h+='<div class="ch2col" style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:8px">爆款榜 TOP 10</div><div id="chTop"></div></section><section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:8px">上升最快 <span style="font-weight:400;font-size:11px;color:var(--tx3)">近期时速优先</span></div><div id="chRising"></div></section></div>';
+ h+='<section class="vcard ag-sec" style="margin-top:14px"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">近 14 天播放趋势</div><div id="chTrend"></div></section>';
+ h+='<section class="vcard ag-sec" style="margin-top:14px"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">最新发布</div><div id="chLatest"></div></section>';
+ b.innerHTML=h;
+ b.querySelector('#chAcc').innerHTML=chAccHtml(d.accounts);
+ b.querySelector('#chTop').innerHTML=chRankHtml(d.top,10);
+ b.querySelector('#chRising').innerHTML=chRankHtml(d.rising,5);
+ b.querySelector('#chTrend').innerHTML=chTrendHtml(d.trend_14d);
+ b.querySelector('#chLatest').innerHTML=(d.latest&&d.latest.length)?d.latest.map(chWorkRowHtml).join(''):'<div class="ag-t2">暂无作品</div>';
+}
+function chAccHtml(accs){
+ if(!accs||!accs.length)return '<div class="ag-t2">暂无账号；不添加账号也能直接导入，会自动归到该平台默认账号。</div>';
+ return accs.map(function(a){
+  return '<div class="ag-row"><div class="ag-main"><div class="ag-t1">'+chPf(a.platform)+' · '+esc(a.name||'默认账号')+'</div><div class="ag-t2">作品 '+agN(a.works_count)+(a.latest_followers!=null?' · 粉丝 '+agN(a.latest_followers):'')+'</div></div>'
+  +'<div class="ag-nums"><div class="ag-num"><div class="v">'+agN(a.plays)+'</div><div class="k">区间播放</div></div><div class="ag-num"><div class="v '+(a.followers_gained>0?'hot':'')+'">'+(a.followers_gained>0?'+':'')+agN(a.followers_gained)+'</div><div class="k">区间涨粉</div></div></div></div>';
+ }).join('');
+}
+function chRankHtml(items,limit){
+ if(!items||!items.length)return '<div class="ag-t2">暂无数据</div>';
+ return items.slice(0,limit).map(function(w,i){
+  var L=w.latest||{},vel=w.velocity||{};
+  var velTxt=(vel.per_hour!=null)?((vel.kind==='recent'?'近期 ':'均 ')+chVel(vel.per_hour)):'';
+  return '<div class="ag-row" style="padding:8px 0"><div class="ag-main"><div class="ag-t1" style="font-size:13px;font-weight:500"><span style="color:var(--orange);font-weight:700;margin-right:7px">'+(i+1)+'</span>'+esc((w.title||'未命名').slice(0,24))+'</div><div class="ag-t2">'+chPf(w.platform)+(velTxt?' · '+velTxt:'')+'</div></div><div class="ag-nums"><div class="ag-num"><div class="v" style="font-size:16px">'+agN(L.play)+'</div><div class="k">播放</div></div></div></div>';
+ }).join('');
+}
+function chTrendHtml(days){
+ if(!days||!days.length)return '<div class="ag-t2">暂无趋势数据</div>';
+ var max=Math.max.apply(null,days.map(function(d){return Number(d.plays)||0;}).concat([1]));
+ return '<div style="display:flex;align-items:flex-end;gap:6px;min-height:140px;overflow-x:auto;padding-top:12px">'+days.map(function(d){
+  var hh=Math.round(18+(Number(d.plays)||0)/max*96);
+  return '<div style="flex:1;min-width:26px;display:flex;flex-direction:column;align-items:center;gap:5px"><div style="font-size:10px;color:var(--tx3);font-variant-numeric:tabular-nums">'+((d.plays||0)>=10000?((d.plays||0)/10000).toFixed(1)+'w':(d.plays||0))+'</div><div title="'+(d.date||'')+'：'+agN(d.plays)+' 播放，'+(d.works||0)+' 件作品" style="width:100%;max-width:34px;height:'+hh+'px;background:linear-gradient(180deg,var(--orange),rgba(255,138,76,.3));border-radius:5px 5px 0 0"></div><div style="font-size:9px;color:var(--tx3)">'+String(d.date||'').slice(5)+'</div></div>';
+ }).join('')+'</div>';
+}
+function chWorkRowHtml(w){
+ var L=w.latest||{},vel=w.velocity||{};
+ var velTxt=vel.kind==='recent'?chVel(vel.per_hour):(vel.per_hour!=null?('均 '+chVel(vel.per_hour)):'—');
+ return '<div class="ag-row"><div class="ag-main"><div class="ag-t1">'+esc(w.title||'未命名作品')+'</div>'
+  +'<div class="ag-t2"><span class="ag-pill">'+chPf(w.platform)+'</span><span style="margin-left:7px">'+(w.published_at?(chDay(w.published_at)+' · 发布 '+chAge(w.published_at)):'未填发布时间')+' · '+chSrcName(L.source)+'</span></div></div>'
+  +'<div class="ag-nums"><div class="ag-num"><div class="v">'+agN(L.play)+'</div><div class="k">播放</div></div><div class="ag-num"><div class="v">'+agN(L.like)+'</div><div class="k">赞</div></div><div class="ag-num"><div class="v">'+agN(L.comment)+'</div><div class="k">评</div></div><div class="ag-num"><div class="v">'+agN((Number(L.share)||0)+(Number(L.favorite)||0))+'</div><div class="k">分享+收藏</div></div><div class="ag-num"><div class="v hot">'+velTxt+'</div><div class="k">时速</div></div></div>'
+  +'<button type="button" class="ag-icon" data-chwork="'+esc(w.wid)+'" title="详情 / 追加指标">'+agEye()+'</button></div>';
+}
+function chWorks(v,b){
+ var list=AG.ops.works.slice().sort(function(a,c){return (c.published_at||c.created_at||0)-(a.published_at||a.created_at||0);});
+ var h='<section class="vcard ag-sec" style="margin-bottom:14px"><div class="vsec-h ag-sec-t" style="margin-bottom:12px">导入 / 登记</div>'
+  +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+  +'<button type="button" class="ac-btn primary" data-chact="import" style="padding:8px 14px;font-size:12px">导入官方 CSV/TSV</button>'
+  +'<button type="button" class="ac-btn" data-chact="register" style="padding:8px 14px;font-size:12px">手动登记作品</button>'
+  +'<button type="button" class="ac-btn" data-chact="addaccount" style="padding:8px 14px;font-size:12px">添加账号</button>'
+  +'<button type="button" class="ac-btn" data-chact="template" style="padding:8px 14px;font-size:12px">下载 CSV 模板</button></div>'
+  +'<div class="ag-t2" style="line-height:1.75">支持抖音 / 视频号 / 小红书「创作者中心-数据中心」导出的 CSV/TSV，自动识别中文列名（播放量、点赞、评论、分享、收藏、完播率、平均播放时长、涨粉、发布时间等）；数字支持「1.2万 / 1,200 / 3.5亿」，含逗号的数字按 CSV 规范用英文双引号包裹。每条数据都标注来源，阿果只回收你本人的数据，<b>不爬取、不存平台密码、不代登录</b>。</div></section>';
+ h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:13px">作品追踪 <span class="ag-pill" style="margin-left:6px">'+list.length+' 件</span></div><div id="chWorkList"></div></section>';
+ b.innerHTML=h;
+ b.querySelector('#chWorkList').innerHTML=list.length?list.map(chWorkRowHtml).join(''):agEmpty('还没有作品','导入官方数据，或点「手动登记作品」先建一条；之后每次后台更新数据再导入或追加快照，就能看增长曲线与近期时速。');
+}
+function chIns(v,b){
+ var x=AG.ops.ins;
+ if(!x){b.innerHTML=agEmpty('复盘还没生成','先导入或登记 5 条以上作品，阿果会按播放、完播率、分享收藏、题材标签和发布时段，找出你这个频道的破圈规律。');return;}
+ var meta=x.meta||{};
+ var h='<section class="vcard ag-sec" style="margin-bottom:14px"><div style="font-size:18px;font-weight:600;line-height:1.5;margin-bottom:10px">'+esc(x.headline||'')+'</div>'
+  +'<div class="ag-t2">样本 '+agN(meta.sample_size)+' 条作品 · 近 '+meta.range_days+' 天 · '+(meta.confident?'<span class="agu-tag fp">规律较稳，可参考</span>':'<span class="agu-tag ext">样本不足，仅为初步趋势，勿当定论</span>')+'</div></section>';
+ (x.findings||[]).forEach(function(f){
+  var color=f.level==='good'?'#34d399':(f.level==='warn'?'#fbbf24':'var(--tx3)');
+  h+='<section class="vcard ag-sec" style="margin-bottom:12px;border-left:3px solid '+color+'"><div style="font-size:14px;font-weight:600;margin-bottom:7px">'+esc(f.title)+'</div><div class="ag-t2" style="line-height:1.75;margin-bottom:9px">'+esc(f.detail)+'</div>'+(f.evidence?'<span class="ag-pill" style="font-size:11px;line-height:1.6">'+esc(f.evidence)+'</span>':'')+'</section>';
+ });
+ if((x.suggestions||[]).length)h+='<section class="vcard ag-sec"><div class="vsec-h ag-sec-t" style="margin-bottom:10px">下一步建议</div><ul style="margin:0;padding-left:18px;line-height:1.95;font-size:13px;color:var(--tx2)">'+x.suggestions.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul></section>';
+ b.innerHTML=h;
+}
+function chSparkline(snaps){
+ if(!snaps||snaps.length<2)return '<div class="ag-t2" style="padding:14px 0">目前只有 1 条快照；隔天再追加一次，就能看到播放增长曲线与近期时速。</div>';
+ var W=520,H=160,pad=30;
+ var xs=snaps.map(function(s){return Number(s.snapshot_at);}),ys=snaps.map(function(s){return Number(s.play)||0;});
+ var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y1=Math.max.apply(null,ys)||1;
+ function X(t){return pad+(x1===x0?((W-pad*2)/2):(t-x0)/(x1-x0)*(W-pad*2));}
+ function Y(vv){return H-pad-(vv/y1)*(H-pad*2);}
+ var pts=snaps.map(function(s){return X(s.snapshot_at).toFixed(1)+','+Y(Number(s.play)||0).toFixed(1);}).join(' ');
+ var dots=snaps.map(function(s){return '<circle cx="'+X(s.snapshot_at).toFixed(1)+'" cy="'+Y(Number(s.play)||0).toFixed(1)+'" r="3.2" fill="var(--orange)"><title>'+chDay(s.snapshot_at)+' · '+agN(s.play)+' 播放</title></circle>';}).join('');
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;background:rgba(255,255,255,.03);border-radius:10px"><polyline points="'+pts+'" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/> '+dots+'<text x="'+pad+'" y="16" fill="var(--tx3)" font-size="11">播放量增长（'+snaps.length+' 次快照）</text><text x="'+(W-pad)+'" y="'+(Y(y1)-8)+'" text-anchor="end" fill="var(--tx2)" font-size="11">'+agN(y1)+'</text></svg>';
+}
+function chModal(title,sub,inner,bindFn){
+ document.getElementById('agDTitle').textContent=title;
+ document.getElementById('agDSub').textContent=sub||'';
+ var body=document.getElementById('agDBody');body.innerHTML=inner;
+ document.getElementById('agDrawer').classList.add('show');document.getElementById('agDrawer').setAttribute('aria-hidden','false');document.getElementById('agMask').classList.add('show');
+ if(bindFn)bindFn(body);
+}
+function chField(label,id,ph){return '<label style="display:block;margin-bottom:10px"><span style="display:block;font-size:12px;color:var(--tx3);margin-bottom:5px">'+label+'</span><input class="ag-search" id="'+id+'" placeholder="'+ph+'" style="max-width:none;width:100%"></label>';}
+function chSelectField(label,id,opts){return '<label style="display:block;margin-bottom:10px"><span style="display:block;font-size:12px;color:var(--tx3);margin-bottom:5px">'+label+'</span><select class="ag-sel" id="'+id+'" style="width:100%;padding:9px 12px;border-radius:10px">'+opts.map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>';}).join('')+'</select></label>';}
+function chWorkDetail(v,wid){
+ agReq('GET','/channels/works/'+encodeURIComponent(wid)).then(function(r){
+  var w=r.data;if(!w){toast('作品不存在');return;}
+  var L=w.latest||{},acc=w.account||{};
+  var cells=[['播放', agN(L.play)],['点赞',agN(L.like)],['评论',agN(L.comment)],['分享',agN(L.share)],['收藏',agN(L.favorite)],['完播率',chPct(L.finish_rate)],['平均播放',(L.avg_play_sec!=null&&L.avg_play_sec!=='')?L.avg_play_sec+' 秒':'—'],['粉丝数',agN(L.followers)],['本次涨粉','+'+agN(L.followers_gained)]];
+  var inner='<div class="ag-t2" style="margin-bottom:8px"><span class="ag-pill">'+chPf(w.platform)+'</span><span style="margin-left:7px">'+esc(acc.name||'')+' · 来源 '+chSrcName(L.source)+'</span></div>'
+   +(w.work_url?'<div style="margin-bottom:10px"><a href="'+esc(w.work_url)+'" target="_blank" rel="noopener noreferrer" style="color:var(--orange);font-size:13px">打开原作品 ↗</a></div>':'')
+   +'<div class="ag-t2" style="margin-bottom:12px">发布于 '+(w.published_at?chDay(w.published_at):'未填')+(w.topic_tags&&w.topic_tags.length?' · 标签：'+w.topic_tags.map(esc).join('、'):'')+'</div>'
+   +chSparkline(w.snapshots)
+   +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0">'+cells.map(function(x){return '<div style="border:1px solid var(--line);border-radius:10px;padding:9px 11px"><div style="font-size:16px;font-weight:600">'+x[1]+'</div><div style="font-size:11px;color:var(--tx3);margin-top:3px">'+x[0]+'</div></div>';}).join('')+'</div>'
+   +'<div class="ag-sec-label">快照历史（'+w.snapshots.length+'）</div><div style="max-height:170px;overflow:auto;margin-bottom:14px">'+w.snapshots.slice().reverse().map(function(s){return '<div class="ag-t2" style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)"><span>'+chDay(s.snapshot_at)+' · '+chSrcName(s.source)+'</span><span style="white-space:nowrap">'+agN(s.play)+' 播放 · '+agN(s.like)+' 赞</span></div>';}).join('')+'</div>'
+   +'<button type="button" class="ac-btn primary" id="chAddMetric" style="width:100%;justify-content:center">追加一条指标快照</button>';
+  chModal('作品追踪',(w.title||'未命名').slice(0,30),inner,function(body){
+   body.querySelector('#chAddMetric').onclick=function(){chAddMetrics(v,wid);};
+  });
+ }).catch(function(e){toast(e.message||'加载失败');});
+}
+function chAddMetrics(v,wid){
+ var inner='<div class="ag-t2" style="margin-bottom:12px;line-height:1.7">把后台最新数据填进来（支持 1.2万 / 52% / 00:45 这类写法），阿图据此计算近期时速。</div>'
+  +chField('快照时间（不填=现在）','cmTime','2026-10-10 20:00')
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">'
+  +chField('播放量','cmPlay','如 5800')+chField('点赞','cmLike','')
+  +chField('评论','cmComment','')+chField('分享','cmShare','')
+  +chField('收藏','cmFav','')+chField('完播率','cmFinish','如 0.52 或 52%')
+  +chField('平均播放时长','cmDur','如 00:38')+chField('本次涨粉','cmFG','如 120')+'</div>'
+  +'<button type="button" class="ac-btn primary" id="cmSave" style="width:100%;justify-content:center;margin-top:6px">保存快照</button>';
+ chModal('追加指标快照','数据将标注为「手工录入」',inner,function(body){
+  body.querySelector('#cmTime').value=chNowLocal();
+  body.querySelector('#cmSave').onclick=function(){
+   var payload={snapshot_at:body.querySelector('#cmTime').value.trim(),play:body.querySelector('#cmPlay').value,like:body.querySelector('#cmLike').value,comment:body.querySelector('#cmComment').value,share:body.querySelector('#cmShare').value,favorite:body.querySelector('#cmFav').value,finish_rate:body.querySelector('#cmFinish').value,avg_play_sec:body.querySelector('#cmDur').value,followers_gained:body.querySelector('#cmFG').value};
+   agReq('POST','/channels/works/'+encodeURIComponent(wid)+'/metrics',payload).then(function(){toast('快照已保存');closeAgLead();chReload(v);}).catch(function(e){toast(e.message||'保存失败');});
+  };
+ });
+}
+function chAddAccount(v){
+ var inner=chSelectField('平台','caPf',[['douyin','抖音'],['wechat_channel','视频号'],['xhs','小红书'],['other','其他']])
+  +chField('账号名称 / 昵称','caName','如 柱子哥TzFilm')
+  +chField('主页链接（可选）','caUrl','https://...')
+  +chField('当前粉丝数（可选）','caFans','如 12000')
+  +'<button type="button" class="ac-btn primary" id="caSave" style="width:100%;justify-content:center;margin-top:6px">保存账号</button>';
+ chModal('添加频道账号','用于区分多平台 / 多账号的数据',inner,function(body){
+  body.querySelector('#caSave').onclick=function(){
+   var payload={platform:body.querySelector('#caPf').value,name:body.querySelector('#caName').value.trim(),profile_url:body.querySelector('#caUrl').value.trim(),followers:body.querySelector('#caFans').value};
+   if(!payload.name){toast('填一下账号名称');return;}
+   agReq('POST','/channels/accounts',payload).then(function(){toast('账号已添加');closeAgLead();chReload(v);}).catch(function(e){toast(e.message||'保存失败');});
+  };
+ });
+}
+function chRegisterWork(v){
+ var inner=chSelectField('平台','rwPf',[['douyin','抖音'],['wechat_channel','视频号'],['xhs','小红书'],['other','其他']])
+  +chField('作品标题','rwTitle','必填，如 AI做电商图第1集')
+  +chField('作品链接（可选，有链接去重最准）','rwUrl','https://...')
+  +chField('发布时间','rwPub','2026-10-09 20:00')
+  +chField('题材标签（逗号分隔，可选）','rwTags','如 AI教程,电商')
+  +'<div class="ag-sec-label">首条指标（可选，可稍后追加）</div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">'
+  +chField('播放量','rwPlay','')+chField('点赞','rwLike','')+chField('评论','rwComment','')+chField('分享','rwShare','')+chField('收藏','rwFav','')+chField('完播率','rwFinish','如 52%')+'</div>'
+  +'<button type="button" class="ac-btn primary" id="rwSave" style="width:100%;justify-content:center;margin-top:6px">登记作品</button>';
+ chModal('手动登记作品','适合没有导出文件、先记一两条',inner,function(body){
+  body.querySelector('#rwPub').value=chNowLocal();
+  body.querySelector('#rwSave').onclick=function(){
+   var title=body.querySelector('#rwTitle').value.trim();if(!title){toast('填一下作品标题');return;}
+   var tags=body.querySelector('#rwTags').value.split(/[,，、]/).map(function(s){return s.trim();}).filter(Boolean);
+   var metrics={play:body.querySelector('#rwPlay').value,like:body.querySelector('#rwLike').value,comment:body.querySelector('#rwComment').value,share:body.querySelector('#rwShare').value,favorite:body.querySelector('#rwFav').value,finish_rate:body.querySelector('#rwFinish').value};
+   var payload={platform:body.querySelector('#rwPf').value,title:title,work_url:body.querySelector('#rwUrl').value.trim(),published_at_raw:body.querySelector('#rwPub').value,topic_tags:tags};
+   if(metrics.play||metrics.like)payload.metrics=metrics;
+   agReq('POST','/channels/works',payload).then(function(){toast('作品已登记');closeAgLead();chReload(v);}).catch(function(e){toast(e.message||'保存失败');});
+  };
+ });
+}
+function chDownloadTemplate(){
+ var tpl='﻿'+'作品标题,作品链接,发布时间,采集时间,播放量,点赞数,评论数,分享数,收藏数,完播率,平均播放时长,涨粉,话题\n'
+  +'示例：AI做电商图,https://www.douyin.com/video/demo1,2026-10-01 20:00,2026-10-09 12:00,20.5万,8000,600,3000,9000,52%,00:45,3200,AI教程\n'
+  +'示例：小红书笔记,https://www.xiaohongshu.com/explore/demo2,2026-10-02 21:00,2026-10-09 12:00,"1,200",520,30,80,300,48%,00:38,60,好物分享\n';
+ var blob=new Blob([tpl],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='workhogee-频道数据模板.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},800);toast('模板已下载');
+}
+function chImport(v){
+ var inner=chSelectField('平台（这些作品归属的频道）','imPf',[['douyin','抖音'],['wechat_channel','视频号'],['xhs','小红书'],['other','其他']])
+  +'<div class="ag-t2" style="margin-bottom:7px">方式一：选择后台导出的 CSV / TSV 文件</div>'
+  +'<input type="file" id="imFile" accept=".csv,.tsv,.txt" style="margin-bottom:14px;color:var(--tx2);font-size:12px;width:100%">'
+  +'<div class="ag-t2" style="margin-bottom:6px">方式二：直接粘贴表格文本（首行需是列名）</div>'
+  +'<textarea class="ag-ta" id="imText" placeholder="作品标题,作品链接,发布时间,播放量,点赞数,评论数,分享数,收藏数,完播率…" style="min-height:120px;margin-bottom:12px"></textarea>'
+  +'<div style="display:flex;gap:8px;margin-bottom:12px"><button type="button" class="ac-btn" id="imTpl" style="padding:8px 13px;font-size:12px">下载 CSV 模板</button><button type="button" class="ac-btn" id="imHelp" style="padding:8px 13px;font-size:12px">支持哪些列？</button></div>'
+  +'<div id="imReport"></div><div id="imHelpBox" style="display:none;margin-bottom:12px;line-height:1.75" class="ag-t2">支持列名（可中英文、顺序任意）：作品标题/标题、作品链接/链接、发布时间、采集时间、播放量/播放数/累计播放/views、点赞数、评论数、分享数、收藏数、完播率（如 52%）、平均播放时长（如 00:38）、粉丝数、涨粉、话题/题材标签（多个用逗号或顿号分隔，用于题材复盘）。数字支持「1.2万 / 1,200 / 3.5亿」，含逗号的数字需用英文双引号包裹。</div>'
+  +'<button type="button" class="ac-btn primary" id="imSave" style="width:100%;justify-content:center">开始导入</button>';
+ chModal('导入官方 CSV / TSV','数据来自你本人后台导出，阿果不爬取、不代登录',inner,function(body){
+  var fileText='';
+  body.querySelector('#imFile').addEventListener('change',function(ev){var f=ev.target.files&&ev.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){fileText=String(rd.result||'');body.querySelector('#imText').value=fileText;toast('已读取文件，可直接导入');};rd.readAsText(f,'utf-8');});
+  body.querySelector('#imTpl').onclick=chDownloadTemplate;
+  body.querySelector('#imHelp').onclick=function(){var hb=body.querySelector('#imHelpBox');hb.style.display=hb.style.display==='none'?'block':'none';};
+  body.querySelector('#imSave').onclick=function(){
+   var text=(body.querySelector('#imText').value||fileText).trim();
+   if(!text){toast('先选文件或粘贴表格文本');return;}
+   var btn=body.querySelector('#imSave');btn.disabled=true;btn.textContent='导入中…';
+   agReq('POST','/channels/import',{platform:body.querySelector('#imPf').value,text:text}).then(function(r){
+    var d=r.data||{},errs=(d.errors||[]).slice(0,3).join('；');
+    body.querySelector('#imReport').innerHTML='<span class="ag-pill" style="margin:6px 0;font-size:12px;white-space:normal">识别 '+d.parsed_rows+' / '+d.total_rows+' 行 · 作品 '+d.imported_works+' 件 · 快照 '+d.upserted_snapshots+' 条'+(d.skipped?(' · 跳过 '+d.skipped):'')+'</span>'+(errs?'<div class="ag-t2" style="color:#fbbf24;margin-top:8px;line-height:1.6">部分行未识别：'+esc(errs)+'</div>':'');
+    toast('导入完成：'+d.imported_works+' 件作品，'+d.upserted_snapshots+' 条快照');
+    btn.disabled=false;btn.textContent='继续导入';
+    closeAgLead();chReload(v);
+   }).catch(function(e){btn.disabled=false;btn.textContent='开始导入';toast(e.message||'导入失败');});
+  };
+ });
+}
+function renderAgAllChannel(c){
+ if(!AG.ops.loaded||!AG.ops.dash){
+  c.innerHTML='<div class="vsec-h ag-sec-t" style="margin-bottom:10px">频道运营（抖音 / 视频号 / 小红书）</div>'+agEmpty('频道数据未加载','导入官方 CSV/TSV 后，这里汇总播放、互动、涨粉与环比复盘。','<button type="button" class="ac-btn primary" data-chact="gotochannel">打开频道运营</button>');
+  var b0=c.querySelector('[data-chact="gotochannel"]');if(b0)b0.onclick=chGoChannel;
+  if(!agLoggedIn())return;
+  chEnsureLoad().then(function(){if(AG.ops.dash)renderAgAllChannel(c);}).catch(function(){});
+  return;
+ }
+ var d=AG.ops.dash,t=d.totals||{},inter=(Number(t.likes)||0)+(Number(t.comments)||0)+(Number(t.shares)||0)+(Number(t.favorites)||0);
+ var kpis=[{n:agN(t.works),l:'频道作品'},{n:agN(t.plays),l:'总播放'},{n:agN(inter),l:'总互动'},{n:agN(t.followers_gained),l:'区间涨粉'}];
+ c.innerHTML='<div class="vsec-h ag-sec-t" style="margin-bottom:12px;display:flex;align-items:center">频道运营（抖音 / 视频号 / 小红书）<button type="button" class="ac-btn" data-chact="gotochannel" style="margin-left:auto;padding:6px 12px;font-size:12px">进入频道运营</button></div>'
+  +'<div class="ac-kpis" style="margin-bottom:14px">'+kpis.map(function(k){return '<div class="ac-kpi ag-kpi"><div class="n">'+k.n+'</div><div class="l">'+k.l+'</div></div>';}).join('')+'</div><div id="allChTop"></div>';
+ c.querySelector('#allChTop').innerHTML=chRankHtml((d.top||[]).slice(0,5),5);
+ var b1=c.querySelector('[data-chact="gotochannel"]');if(b1)b1.onclick=chGoChannel;
+}
 function bindAg(v){
  v.addEventListener('click',function(e){
   var av=e.target.closest('[data-av]');if(av){AG.view=av.getAttribute('data-av');v.querySelectorAll('#agViewSeg button').forEach(function(b){b.classList.toggle('on',b===av);});renderAg(v);return;}
-  var rb=e.target.closest('[data-r]');if(rb){AG.range=Number(rb.getAttribute('data-r'));v.querySelectorAll('#agRange .atab').forEach(function(b){b.classList.toggle('on',b===rb);});loadAg(v);return;}
+  var rb=e.target.closest('[data-r]');if(rb){var rng=Number(rb.getAttribute('data-r'));v.querySelectorAll('#agRange .atab').forEach(function(b){b.classList.toggle('on',b===rb);});if(AG.view==='channel'){AG.ops.range=rng;chReload(v);}else{AG.range=rng;loadAg(v);}return;}
   var st=e.target.closest('[data-st]');if(st){AG.status=st.getAttribute('data-st');agRenderLeads(v);return;}
   var ld=e.target.closest('[data-lead]');if(ld){openAgLead(ld.getAttribute('data-lead'));return;}
   var cp=e.target.closest('[data-copy]');if(cp){agCopy(cp.getAttribute('data-copy'),'画册链接已复制');return;}
