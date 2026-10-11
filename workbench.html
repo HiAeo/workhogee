@@ -6170,7 +6170,7 @@ function chBind(v){
 }
 function chDash(v,b){
  var d=AG.ops.dash;
- if(!d){b.innerHTML=agEmpty('还没有频道数据','添加账号、手动登记作品，或导入抖音 / 视频号 / 小红书「创作者中心-数据中心」导出的 CSV/TSV，阿果帮你建作品仓库、算时速、做环比复盘。','<button type="button" class="ac-btn primary" data-chact="import">导入官方 CSV/TSV</button><button type="button" class="ac-btn" data-chact="register">手动登记作品</button>');return;}
+ if(!d){b.innerHTML=agEmpty('还没有频道数据','添加账号、手动登记作品，或导入抖音 / 视频号 / 小红书「创作者中心-数据中心」导出的 CSV/TSV，阿果帮你建作品仓库、算时速、做环比复盘。若你刚导入过却没显示，多半是网络抖动，点重新加载再试一次。','<button type="button" class="ac-btn primary" data-chact="refresh">重新加载</button><button type="button" class="ac-btn primary" data-chact="import">导入官方 CSV/TSV</button><button type="button" class="ac-btn" data-chact="register">手动登记作品</button>');return;}
  var t=d.totals||{};
  var inter=(Number(t.likes)||0)+(Number(t.comments)||0)+(Number(t.shares)||0)+(Number(t.favorites)||0);
  var kpis=[{n:agN(t.works),l:'在档作品'},{n:agN(t.plays),l:'总播放'},{n:agN(inter),l:'总互动（赞评藏分）'},{n:agN(t.followers_gained),l:'区间涨粉'},{n:chPct(t.avg_finish_rate),l:'平均完播率'}];
