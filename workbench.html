@@ -6113,14 +6113,21 @@ function chVel(x){if(x==null||!isFinite(x))return '—';var v=Number(x);return (
 function chDay(ts){if(!ts)return '—';var d=new Date(Number(ts)+8*36e5);return d.toISOString().slice(0,10);}
 function chAge(pub){if(!pub)return '—';var h=(Date.now()-Number(pub))/36e5;if(h<24)return Math.max(0,Math.round(h))+' 小时';return Math.round(h/24)+' 天';}
 function chNowLocal(){var d=new Date(),p=function(x){return (x<10?'0':'')+x;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function chTO(p,ms){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error('请求超时'));},ms);})]);}
+function chGet(path,fb){
+ // 单请求最多 2 次尝试，每次 10s 超时；无论失败还是网络挂起，最终都 resolve 兜底值，
+ // 绝不让某个挂死的 fetch 把整组 Promise.all 永久卡在 loading。
+ function once(){return chTO(agReq('GET',path),10000);}
+ return once().catch(function(){return once();}).catch(function(){return {data:fb};});
+}
 function chEnsureLoad(force){
  if(AG.ops.loaded&&!force)return Promise.resolve();
  var R=AG.ops.range;
  return Promise.all([
-  agReq('GET','/channels/accounts').catch(function(){return {data:[]};}),
-  agReq('GET','/channels/works').catch(function(){return {data:[]};}),
-  agReq('GET','/channels/dashboard?range='+R).catch(function(){return {data:null};}),
-  agReq('GET','/channels/insights?range='+R).catch(function(){return {data:null};})
+  chGet('/channels/accounts',[]),
+  chGet('/channels/works',[]),
+  chGet('/channels/dashboard?range='+R,null),
+  chGet('/channels/insights?range='+R,null)
  ]).then(function(rs){
   AG.ops.accounts=(rs[0]&&rs[0].data)||[];
   AG.ops.works=(rs[1]&&rs[1].data)||[];
