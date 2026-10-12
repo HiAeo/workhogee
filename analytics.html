@@ -268,7 +268,7 @@ html.embed .qr-box .short{background:var(--l2);color:var(--ink2)}
 html.embed .xbtn:hover{background:var(--line);color:var(--ink)}
 html.embed .thumb{background:var(--l)}
 </style>
-<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="theme.css?v=20261012b">
 <script>(function(){try{var m=localStorage.getItem('hogee_theme')||'auto';var h=new Date().getHours();var e=(m==='light'||m==='dark')?m:((h>=7&&h<19)?'light':'dark');var d=document.documentElement;d.setAttribute('data-theme',e);d.setAttribute('data-theme-mode',m);}catch(err){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 </head>
 <body data-member-gate>
@@ -973,7 +973,7 @@ function bindQrUI(){
   $('printQrBtn').addEventListener('click',function(){
     if(!S.lastQr)return;
     var w=window.open('','_blank');
-    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>渠道二维码</title><style>body{font-family:-apple-system,"PingFang SC",sans-serif;text-align:center;padding:40px}img{width:300px;height:300px}h2{margin:18px 0 6px}p{color:#78716c;font-size:14px}.b{font-weight:700;color:#ea580c}</style></head><body><img src="'+S.lastQr.imgSrc+'"/><h2>扫码看图 · WorkHogee</h2><p>投放渠道：<b class="b">'+esc(srcLabel(S.lastQr.source))+(S.lastQr.content?(' · '+esc(S.lastQr.content)):'')+'</b></p><p style="font-family:monospace">'+esc(S.lastQr.short_url)+'</p><scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},300);};<\/scr'+'ipt><script src="theme.js" defer></script>
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>渠道二维码</title><style>body{font-family:-apple-system,"PingFang SC",sans-serif;text-align:center;padding:40px}img{width:300px;height:300px}h2{margin:18px 0 6px}p{color:#78716c;font-size:14px}.b{font-weight:700;color:#ea580c}</style></head><body><img src="'+S.lastQr.imgSrc+'"/><h2>扫码看图 · WorkHogee</h2><p>投放渠道：<b class="b">'+esc(srcLabel(S.lastQr.source))+(S.lastQr.content?(' · '+esc(S.lastQr.content)):'')+'</b></p><p style="font-family:monospace">'+esc(S.lastQr.short_url)+'</p><scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},300);};<\/scr'+'ipt><script src="theme.js?v=20261012b" defer></script>
 </body></html>');
     w.document.close();
   });

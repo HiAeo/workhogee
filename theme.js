@@ -62,42 +62,97 @@
     render(document.getElementById('hogeeThemeBtn'), mode);
   }
 
-  function mount() {
-    var existing = document.getElementById('hogeeThemeBtn');
-    if (existing) { render(existing, readMode()); return true; }
+  // 把同一个按钮节点放到当前视图应在的位置（appendChild 会自动从旧位置移走）
+  function place(btn) {
+    if (!btn) return false;
+    // —— 工作台 / 阿图操作台 ——
+    var brand = document.querySelector('.rail-brand');
+    if (brand) {
+      var inStudio = document.body.classList.contains('atu-open');
+      var atsTr = inStudio ? document.querySelector('#atuStudio .ats-tr') : null;
+      if (atsTr) { if (btn.parentNode !== atsTr) atsTr.appendChild(btn); return true; }
+      // 窄屏左栏是 fixed 平移抽屉（关闭时在屏外），把按钮挂到常驻顶栏汉堡旁，
+      // 避免漏出与汉堡重叠；宽屏左栏常驻文档流，仍挂品牌行
+      var rail = document.getElementById('rail');
+      var railDrawer = rail && getComputedStyle(rail).position === 'fixed';
+      if (railDrawer) {
+        var tb = document.querySelector('.topbar');
+        var br = document.getElementById('btnRail');
+        if (tb) {
+          if (br && br.parentNode === tb) { tb.insertBefore(btn, br.nextSibling); return true; }
+          if (btn.parentNode !== tb) tb.insertBefore(btn, tb.firstChild);
+          return true;
+        }
+      }
+      if (btn.parentNode !== brand) brand.appendChild(btn);
+      return true;
+    }
+    // —— 官网 / 子页 ——
+    var navInner = document.querySelector('.nav-inner');
+    if (navInner) {
+      var navLinks = navInner.querySelector('.nav-links');
+      // 桌面宽屏导航链接区是文档流里常驻可见的容器：与会员区成组放进去；
+      // 窄屏它变成 fixed/absolute 的抽屉（即便关闭也可能 offsetParent 非 null），
+      // 此时改挂到汉堡 .nav-toggle 之前，保证手机顶栏常驻可见、且不随抽屉开合跳动
+      var lc = navLinks ? getComputedStyle(navLinks) : null;
+      var lr = navLinks ? navLinks.getBoundingClientRect() : null;
+      var linksVisible = navLinks && lc.display !== 'none' && lc.visibility !== 'hidden' &&
+        (lc.position === 'static' || lc.position === 'relative') &&
+        lr.width > 0 && lr.height > 0;
+      if (linksVisible) { if (btn.parentNode !== navLinks) navLinks.appendChild(btn); return true; }
+      var toggle = navInner.querySelector('.nav-toggle');
+      if (toggle && toggle.parentNode === navInner) { navInner.insertBefore(btn, toggle); return true; }
+      navInner.appendChild(btn);
+      return true;
+    }
+    return false;
+  }
+
+  function buildBtn() {
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.id = 'hogeeThemeBtn';
     btn.className = 'hogee-theme-btn';
-    btn.addEventListener('click', function () {
-      setMode(nextMode(readMode()));
-    });
+    btn.addEventListener('click', function () { setMode(nextMode(readMode())); });
     render(btn, readMode());
+    return btn;
+  }
 
-    // 官网 / 子页：导航右侧（汉堡按钮之前）
-    var navInner = document.querySelector('.nav-inner');
-    if (navInner) {
-      var toggle = navInner.querySelector('.nav-toggle');
-      if (toggle && toggle.parentNode === navInner) navInner.insertBefore(btn, toggle);
-      else navInner.appendChild(btn);
-      return true;
-    }
-    // 操作台：挂到左栏底部 .rail-foot（账号区上方）；不存在时回退品牌行
-    var railFoot = document.querySelector('.rail-foot');
-    if (railFoot) { railFoot.insertBefore(btn, railFoot.firstChild); return true; }
-    var railBrand = document.querySelector('.rail-brand');
-    if (railBrand) { railBrand.appendChild(btn); return true; }
-    return false;
+  function mount() {
+    var btn = document.getElementById('hogeeThemeBtn') || buildBtn();
+    render(btn, readMode());
+    return place(btn);
+  }
+
+  var observed = false;
+  function observe() {
+    if (observed || !document.body) return;
+    observed = true;
+    var mo = new MutationObserver(function () {
+      var b = document.getElementById('hogeeThemeBtn');
+      if (b) place(b);
+    });
+    // 阿图操作台开合会切换 body.atu-open，并向 body 注入 / 移除 #atuStudio
+    mo.observe(document.body, { attributes: true, attributeFilter: ['class'], childList: true });
+    // 跨桌面/移动断点（官网导航在宽屏显示 .nav-links、窄屏收进汉堡），重挂按钮
+    var rz;
+    window.addEventListener('resize', function () {
+      clearTimeout(rz);
+      rz = setTimeout(function () {
+        var b = document.getElementById('hogeeThemeBtn');
+        if (b) place(b);
+      }, 150);
+    });
   }
 
   // 启动：先校正一次状态，再尝试挂载（操作台 DOM 可能异步渲染，做有限重试）
   apply(readMode());
   var tries = 0;
-  function tryMount() {
-    if (mount() || tries++ > 40) { if (mountedTimer) clearInterval(mountedTimer); }
-  }
-  var mountedTimer = setInterval(tryMount, 500);
-  tryMount();
+  var mountedTimer = setInterval(function () {
+    if (mount() || tries++ > 40) { clearInterval(mountedTimer); observe(); }
+  }, 500);
+  mount();
+  observe();
 
   // 昼夜自动翻转：每 30s 轻量校正（auto 下跨过 07:00/19:00 即切换）
   setInterval(function () {
