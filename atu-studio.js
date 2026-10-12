@@ -45,7 +45,7 @@
  var CSS = " \
 #atuStudio{position:fixed;inset:0;z-index:400;display:none;flex-direction:column;background:var(--stage);color:var(--tx);overflow:hidden}\
 body.atu-open #atuStudio{display:flex}\
-#atuStudio::before{content:'';position:absolute;inset:0;background:radial-gradient(900px 520px at 78% -8%,rgba(251,122,34,.10),transparent 60%),radial-gradient(760px 480px at 12% 110%,rgba(86,140,255,.08),transparent 60%);pointer-events:none}\
+#atuStudio::before{content:'';position:absolute;inset:0;background:radial-gradient(900px 520px at 78% -8%,rgba(251,122,34,.08),transparent 60%),radial-gradient(rgba(255,255,255,.022) 1px,transparent 1.5px);background-size:100% 100%,30px 30px;pointer-events:none}\
 .ats-top{position:relative;z-index:2;height:58px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px}\
 .ats-tl{display:flex;align-items:center;gap:13px}\
 .ats-logo svg{height:23px;width:auto;display:block}\
@@ -90,7 +90,7 @@ body.atu-open #atuStudio{display:flex}\
 .ats-field{display:flex;flex-direction:column;gap:6px}\
 .ats-field.full{grid-column:1/-1}\
 .ats-field label{font-size:11.5px;color:var(--tx3)}\
-.ats-field select{appearance:none;-webkit-appearance:none;width:100%;height:38px;padding:0 30px 0 11px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--tx);font-size:12.5px;font-family:inherit;cursor:pointer;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa5bd' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center}\
+.ats-field select{appearance:none;-webkit-appearance:none;width:100%;height:38px;padding:0 30px 0 11px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--tx);font-size:12.5px;font-family:inherit;cursor:pointer;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center}\
 .ats-field select:focus{outline:none;border-color:var(--orange)}\
 .ats-more{margin-top:10px;display:none;flex-direction:column;gap:10px}\
 .ats-more.show{display:flex}\
@@ -113,7 +113,7 @@ body.atu-open #atuStudio{display:flex}\
 .ats-seg button{appearance:none;border:0;background:transparent;color:var(--tx3);font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit}\
 .ats-seg button.on{background:var(--orange-soft);color:var(--orange)}\
 .ats-selcount{font-size:11.5px;color:var(--tx3);font-weight:400}\
-.ats-genbar{position:absolute;left:0;right:0;bottom:0;padding:24px 18px 18px;background:linear-gradient(to top,var(--stage) 88%,rgba(19,26,39,0))}\
+.ats-genbar{position:absolute;left:0;right:0;bottom:0;padding:24px 18px 18px;background:linear-gradient(to top,var(--stage) 88%,rgba(22,22,22,0))}\
 .ats-free{font-size:11.5px;color:var(--tx3);margin:0 2px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.5}\
 .ats-free-l{white-space:nowrap;flex:none}\
 .ats-free b{color:var(--orange);font-weight:600;white-space:nowrap;flex:none}\
