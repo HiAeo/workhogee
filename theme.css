@@ -8,72 +8,72 @@
      操作台：    --bg --stage --panel --elev --tx --line ...
    ============================================================ */
 
-/* ---------- 一、官网 / 子页 变量 ---------- */
+/* ---------- 一、官网 / 子页 变量（v3 暖白分层：暖中性色板，阴影带暖棕，不再冷灰） ---------- */
 html[data-theme="light"]{
-  --ink:#111827;
-  --coal:#eef0f3;
-  --coal-2:#e2e6ea;
-  --ink-soft:rgba(17,24,39,.85);
-  --ink-muted:rgba(17,24,39,.62);
+  --ink:#1c1917;
+  --coal:#f4f2ed;          /* footer / 收尾CTA 暖白 */
+  --coal-2:#e9e6df;
+  --ink-soft:rgba(28,25,23,.86);
+  --ink-muted:rgba(28,25,23,.62);
   --orange:#ea580c;
   --orange-deep:#c2410c;
   --orange-light:#f97316;
-  --orange-soft:rgba(234,88,12,.10);
-  --paper:#f2f3f5;
+  --orange-soft:#fdf1e7;
+  --paper:#f6f5f1;         /* 主区极浅暖白 */
   --sand:#ffffff;
-  --sand-2:#f6f7f9;
-  --line:rgba(17,24,39,.10);
-  --line-strong:rgba(17,24,39,.16);
+  --sand-2:#f7f6f2;
+  --line:rgba(28,25,23,.10);
+  --line-strong:rgba(28,25,23,.16);
   --white:#ffffff;
   --green:#15803d;
-  --shadow-sm:0 1px 3px rgba(17,24,39,.10);
-  --shadow-md:0 10px 30px rgba(17,24,39,.12);
-  --shadow-lg:0 24px 60px rgba(17,24,39,.18);
+  --shadow-sm:0 1px 2px rgba(60,46,30,.05);
+  --shadow-md:0 8px 26px rgba(60,46,30,.09);
+  --shadow-lg:0 22px 56px rgba(60,46,30,.14);
 }
 
-/* ---------- 二、操作台（workbench）变量 ---------- */
+/* ---------- 二、操作台（workbench）变量（v3：侧栏纯白、主区暖白、卡片纯白） ---------- */
 html[data-theme="light"]{
-  --bg:#f2f3f5;
-  --stage:#f2f3f5;
-  --panel:#ffffff;
-  --panel2:#f6f7f9;
+  --bg:#ffffff;            /* 侧栏 / 弹层基底：纯白，与主区拉开层级 */
+  --stage:#f6f5f1;         /* 主工作区：极浅暖白 */
+  --panel:#ffffff;         /* 卡片：纯白浮起 */
+  --panel2:#f7f6f2;
   --elev:#ffffff;
-  --line:rgba(17,24,39,.12);
-  --line2:rgba(17,24,39,.07);
-  --tx:#111827;
-  --tx2:rgba(17,24,39,.85);
-  --tx3:rgba(17,24,39,.60);
+  --line:rgba(28,25,23,.10);
+  --line2:rgba(28,25,23,.07);
+  --tx:#1c1917;
+  --tx2:rgba(28,25,23,.85);
+  --tx3:rgba(28,25,23,.58);
   --orange:#ea580c;
   --orange-d:#c2410c;
-  --orange-soft:rgba(234,88,12,.10);
+  --orange-soft:#fdf1e7;
   --atu:#ea580c; --awen:#2563eb; --ashi:#db2777; --afa:#16a34a; --agu:#9333ea; --host:#ea580c;
   --ok:#15803d; --warn:#b45309; --bad:#dc2626;
-  --shadow-s:0 1px 2px rgba(17,24,39,.10);
-  --shadow:0 8px 24px rgba(17,24,39,.10);
-  --shadow-l:0 20px 50px rgba(17,24,39,.16);
+  --shadow-s:0 1px 2px rgba(60,46,30,.05);
+  --shadow:0 8px 26px rgba(60,46,30,.09);
+  --shadow-l:0 20px 48px rgba(60,46,30,.14);
 }
 
 /* ============================================================
    官网 / 子页
    ============================================================ */
 
-/* 浅色极光背景：替换 DARK-UNIFY 的深色 body */
+/* 浅色背景 v3：暖白主调，只保留两束克制的暖橙光晕，去除冷蓝/紫极光 */
 html[data-theme="light"] body{
-  background-color:#f4f6fa;
+  background-color:#f7f6f2;
   background-image:
-    radial-gradient(1100px 620px at 76% -12%, rgba(234,88,12,.12), rgba(234,88,12,0) 62%),
-    radial-gradient(940px 660px at 97% -8%, rgba(37,99,235,.08), rgba(37,99,235,0) 60%),
-    radial-gradient(840px 620px at -3% 4%, rgba(147,51,234,.07), rgba(147,51,234,0) 58%),
-    radial-gradient(900px 540px at 50% 120%, rgba(234,88,12,.06), rgba(234,88,12,0) 66%),
-    radial-gradient(rgba(15,23,42,.05) 1px, transparent 1.5px);
-  color:#161b26;
+    radial-gradient(1100px 620px at 78% -14%, rgba(234,88,12,.10), rgba(234,88,12,0) 60%),
+    radial-gradient(900px 580px at -4% 2%, rgba(249,168,98,.07), rgba(249,168,98,0) 56%),
+    radial-gradient(rgba(60,46,30,.04) 1px, transparent 1.5px);
+  background-size:100% 100%,100% 100%,34px 34px;
+  background-attachment:fixed;
+  color:#1c1917;
 }
 
-/* 窄屏：彩色极光光斑会铺满全屏显脏，移动端只保留干净浅底 + 淡网点 */
+/* 窄屏：暖光晕铺满会显脏，移动端只保留干净暖白 + 淡暖网点 */
 @media (max-width:860px){
   html[data-theme="light"] body{
-    background-color:#f4f6fa;
-    background-image:radial-gradient(rgba(15,23,42,.045) 1px, transparent 1.5px);
+    background-color:#f7f6f2;
+    background-image:radial-gradient(rgba(60,46,30,.04) 1px, transparent 1.5px);
     background-size:34px 34px;
     background-attachment:scroll;
   }
@@ -303,18 +303,24 @@ html[data-theme="light"] .rail-brand a.wm-mark svg path[fill="#f4f7fd"]{fill:var
   .nav-inner .hogee-theme-btn{width:34px;height:34px;}
 }
 
-/* ===== 操作台浅色：关闭深色多彩极光固定层，杜绝浅底彩雾 ===== */
+/* ===== 操作台浅色 v3：主区暖白 + 侧栏纯白，靠白/暖白拉出层级，去掉冷灰雾 ===== */
 /* .app::before 是 fixed 全屏 5 彩光呼吸层，浅色下直接移除 */
 html[data-theme="light"] .app::before{background:none;animation:none;}
-/* .stage::before 仅保留一层极淡顶部暖光作层次 */
+/* 主工作区基底：暖白 */
+html[data-theme="light"] .app{background:#f6f5f1;}
+html[data-theme="light"] .stage{background:transparent;border-right-color:transparent;}
+/* .stage::before 仅保留一层极淡顶部暖橙光作层次 */
 html[data-theme="light"] .stage::before{
- background:radial-gradient(1100px 560px at 50% -18%, rgba(234,88,12,.10), rgba(234,88,12,0) 66%);
+ background:radial-gradient(1100px 560px at 50% -18%, rgba(234,88,12,.09), rgba(234,88,12,0) 66%);
 }
-/* 白色网点在浅底翻为深色淡网点 */
-html[data-theme="light"] .app::after{background-image:radial-gradient(rgba(15,23,42,.045) 1px,transparent 1.4px);}
-html[data-theme="light"] .stage::after{background-image:radial-gradient(rgba(15,23,42,.04) 1px,transparent 1.4px);opacity:.5;}
-/* 左栏 rail 自带的橙蓝渐变在浅底改干净 */
-html[data-theme="light"] .rail{background:var(--bg);}
+/* 网点翻为极淡暖灰 */
+html[data-theme="light"] .app::after{background-image:radial-gradient(rgba(60,46,30,.04) 1px,transparent 1.4px);}
+html[data-theme="light"] .stage::after{background-image:radial-gradient(rgba(60,46,30,.035) 1px,transparent 1.4px);opacity:.5;}
+/* 左栏 rail：纯白 + 右侧暖色细分隔线（覆盖深色橙蓝渐变），白侧栏浮在暖白主区上 */
+html[data-theme="light"] .rail{
+  background:#ffffff;
+  border-right:1px solid #ebe8e2;
+}
 
 /* composer 玻璃输入卡：深色是 8% 白玻璃 + 大黑投影，浅色下改实色白底 + 柔和浅影，
    否则卡片近乎透明、黑色大投影在浅底散开成灰晕（窄屏尤其脏） */
@@ -531,3 +537,149 @@ html[data-theme="light"] .rail-foot .wb-ab:hover{background:#f2f3f5;border-color
 @media(max-width:900px){
   .rail-brand .nav-tag{display:none!important;}
 }
+
+/* ============================================================
+   浅色 v3 · 暖白分层质感层（2026-10-12）
+   白侧栏 + 暖白主区 + 纯白卡片（柔和暖阴影+细描边）+ 白底描边输入框；
+   暖中性色板、品牌橙点缀；选中态统一淡橙底+深橙字；去冷灰、去彩虹紫。
+   ============================================================ */
+
+/* 1. 工作台白卡：白底 + 暖描边 + 柔和分层暖阴影（让卡片从暖白主区浮起） */
+html[data-theme="light"] .wk-card,
+html[data-theme="light"] .wk-thread,
+html[data-theme="light"] .wk-empty,
+html[data-theme="light"] .ag-row,
+html[data-theme="light"] .ac-kpi,
+html[data-theme="light"] .ag-empty,
+html[data-theme="light"] .pv-stat,
+html[data-theme="light"] .pv-row,
+html[data-theme="light"] .pv-empty,
+html[data-theme="light"] .ac-benefit,
+html[data-theme="light"] .shop-card,
+html[data-theme="light"] .kb-tile,
+html[data-theme="light"] .kb-doccard,
+html[data-theme="light"] .kb-drop,
+html[data-theme="light"] .kb-linkform,
+html[data-theme="light"] .kb-catpane,
+html[data-theme="light"] .vcard{
+  background:#ffffff;
+  border:1px solid rgba(28,25,23,.06);
+  box-shadow:0 1px 2px rgba(60,46,30,.04),0 8px 24px rgba(60,46,30,.06);
+}
+html[data-theme="light"] .ag-row:hover,
+html[data-theme="light"] .pv-row:hover,
+html[data-theme="light"] .wk-card:hover{
+  box-shadow:0 2px 6px rgba(60,46,30,.05),0 14px 34px rgba(60,46,30,.10);
+}
+
+/* 2. 分段控件容器白底（时间范围 / 状态） */
+html[data-theme="light"] .atabs{background:#ffffff;border-color:rgba(28,25,23,.08);box-shadow:0 1px 2px rgba(60,46,30,.04);}
+html[data-theme="light"] .atab.on{background:#fdf1e7;color:#c2410c;}
+
+/* 3. 输入框：白底 + 浅描边 + 聚焦橙边（替换灰底输入框，白卡内更干净） */
+html[data-theme="light"] .ac-input,
+html[data-theme="light"] .conn-input,
+html[data-theme="light"] .ag-search,
+html[data-theme="light"] .ag-sel,
+html[data-theme="light"] .ag-ta,
+html[data-theme="light"] .kbp-field input,
+html[data-theme="light"] .kbp-field textarea,
+html[data-theme="light"] #atuStudio select,
+html[data-theme="light"] #atuStudio .ats-ta{
+  background:#ffffff;
+  border:1px solid #e4e1da;
+  color:#1c1917;
+}
+html[data-theme="light"] .ac-input[readonly],
+html[data-theme="light"] .ac-input[disabled]{background:#f6f5f1;}
+html[data-theme="light"] .ac-input:focus,
+html[data-theme="light"] .kbp-field input:focus,
+html[data-theme="light"] .kbp-field textarea:focus,
+html[data-theme="light"] .ag-search:focus,
+html[data-theme="light"] .ag-sel:focus,
+html[data-theme="light"] .ag-ta:focus,
+html[data-theme="light"] #atuStudio select:focus,
+html[data-theme="light"] #atuStudio .ats-ta:focus{
+  border-color:#f0b389;
+  box-shadow:0 0 0 3px rgba(234,88,12,.12);
+  outline:none;
+}
+html[data-theme="light"] .ag-ta::placeholder,
+html[data-theme="light"] .ag-search::placeholder,
+html[data-theme="light"] .kbp-field input::placeholder,
+html[data-theme="light"] #atuStudio .ats-ta::placeholder{color:rgba(28,25,23,.42);}
+
+/* 4. 知识库顶部分段 / 分类 tab：选中态淡橙底 + 深橙字（修复白字消失） */
+html[data-theme="light"] .kb-seg,
+html[data-theme="light"] .kb-gtab{background:#ffffff;border-color:rgba(28,25,23,.10);color:var(--tx2);}
+html[data-theme="light"] .kb-seg:hover,
+html[data-theme="light"] .kb-gtab:hover{border-color:#f0b389;color:var(--tx);}
+html[data-theme="light"] .kb-seg.on,
+html[data-theme="light"] .kb-gtab.on{
+  background:#fdf1e7;color:#c2410c;border-color:rgba(234,88,12,.42);
+}
+html[data-theme="light"] .kb-gtab.on .kb-gtab-c{background:#fbe3d2;color:#c2410c;}
+html[data-theme="light"] .kb-catr.on{background:#fdf1e7;color:#c2410c;}
+html[data-theme="light"] .kb-catr.on .kb-catr-c{background:#fbe3d2;color:#c2410c;}
+
+/* 5. 阿果"私域效果 / 频道运营 / 综合总览"：紫色选中收敛为品牌橙 */
+html[data-theme="light"] .agu-seg{background:#ffffff;border-color:rgba(28,25,23,.10);}
+html[data-theme="light"] .agu-seg button{color:var(--tx3);}
+html[data-theme="light"] .agu-seg button.on{background:#fdf1e7;color:#c2410c;}
+
+/* 6. 官网收尾 CTA：暖白 + 深字（修复副文白字） */
+html[data-theme="light"] .mcta{
+  background:linear-gradient(180deg,#ffffff 0%,#f4f2ed 100%);
+  color:#1c1917;
+}
+html[data-theme="light"] .mcta h2{color:#1c1917;}
+html[data-theme="light"] .mcta p{color:rgba(28,25,23,.68);}
+html[data-theme="light"] .mcta .mp-line{color:rgba(28,25,23,.45);}
+html[data-theme="light"] .mcta .mp-line button{color:rgba(28,25,23,.62);}
+html[data-theme="light"] .mcta .mp-line button:hover{color:#c2410c;}
+html[data-theme="light"] .mcta .btn-ghost-light{
+  background:#ffffff;color:#1c1917;border:1px solid rgba(28,25,23,.14);
+}
+html[data-theme="light"] .mcta .btn-ghost-light:hover{border-color:#f0b389;color:#c2410c;}
+
+/* 7. 官网 footer：暖白 + 深字，修复大字 logo "Hogee" 白字 */
+html[data-theme="light"] .footer{background:#f4f2ed;color:rgba(28,25,23,.66);}
+html[data-theme="light"] .footer-grid{border-bottom-color:rgba(28,25,23,.10);}
+html[data-theme="light"] .footer-col h5{color:#1c1917;}
+html[data-theme="light"] .footer .footer-brand p{color:rgba(28,25,23,.58);}
+html[data-theme="light"] .footer .fb-logo svg text{fill:#1c1917;}
+html[data-theme="light"] .footer .footer-bottom,
+html[data-theme="light"] .footer .footer-links a{color:rgba(28,25,23,.55);}
+
+/* 8. 工作台门户 composer：暖阴影 */
+html[data-theme="light"] .cmp-card{
+  box-shadow:0 1px 2px rgba(60,46,30,.05),0 14px 40px rgba(60,46,30,.09), inset 0 0 0 1px rgba(28,25,23,.06);
+}
+
+/* 9. 阿图操作台全屏：暖白根 + 白色卡（设置卡浮起）+ 有质感的禁用按钮 */
+html[data-theme="light"] #atuStudio{background:#f6f5f1;color:#1c1917;}
+html[data-theme="light"] #atuStudio .ats-card,
+html[data-theme="light"] #atuStudio .ats-livebar{
+  background:#ffffff;border:1px solid rgba(28,25,23,.06);
+  box-shadow:0 1px 2px rgba(60,46,30,.04),0 10px 28px rgba(60,46,30,.07);
+}
+html[data-theme="light"] #atuStudio .ats-cell{
+  background:#ffffff;border:1px solid rgba(28,25,23,.06);
+}
+html[data-theme="light"] #atuStudio .ats-gen:disabled,
+html[data-theme="light"] #atuStudio .ats-gen[disabled]{
+  opacity:1!important;
+  background:#e9e7e2!important;
+  color:#8f897e!important;
+  border:1px solid #e0ddd6!important;
+  box-shadow:none!important;
+}
+
+/* 10. 窄屏（<=900）顶部栏：深色玻璃翻为白玻璃 */
+html[data-theme="light"] .topbar{
+  background:rgba(255,255,255,.88);
+  border-bottom:1px solid rgba(28,25,23,.08);
+  color:#1c1917;
+}
+html[data-theme="light"] .topbar .btn-rail,
+html[data-theme="light"] .topbar button{color:#1c1917;}
