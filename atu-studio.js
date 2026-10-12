@@ -2468,8 +2468,13 @@ body.atu-open #atuStudio{display:flex}\
  if(_sp)_sp.addEventListener('change',function(){var rg=PLATFORM_REGION[_sp.value];if(rg&&_sr)_sr.value=rg;_onLocaleChange();});
  if(_sr)_sr.addEventListener('change',_onLocaleChange);
  if(_sl)_sl.addEventListener('change',_onLocaleChange);
- // 刷新/重登后：有已存会话则自动恢复最近一件商品现场（显式 resume，不走“门户主动进入=全新”分流）
+ // 自动恢复现场只在「页内刷新(reload)或浏览器前进后退(back_forward)」时发生；
+ // 从官网首页点「打开 Web 工作台」等正常导航(navigate)进入，一律落门户全新空态，绝不自动跳回上一件商品
  window.addEventListener('load',function(){
-  try{if(S.hasSavedSession()){S.open({resume:true});}}catch(e){}
+  try{
+   var nt='navigate';
+   try{var _ne=performance.getEntriesByType('navigation')[0];if(_ne&&_ne.type)nt=_ne.type;}catch(_){}
+   if((nt==='reload'||nt==='back_forward')&&S.hasSavedSession()){S.open({resume:true});}
+  }catch(e){}
  });
 })();
