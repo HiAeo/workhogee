@@ -422,16 +422,17 @@ html[data-theme="light"] .ac-btn:not(.primary){background:#ffffff;}
 html[data-theme="light"] .ac-benefit{background:#ffffff;}
 
 /* ===== 主题切换按钮：随视图安置到顶部栏，不再压账号区/对话列表 ===== */
-/* 工作台门户：左栏顶部品牌行右端 */
-.rail-brand .hogee-theme-btn{width:32px;height:32px;border-radius:9px;color:var(--tx2);margin-left:auto;align-self:flex-end;}
-.rail-brand .hogee-theme-btn:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-soft);}
+/* 工作台门户（宽屏）：品牌区相对定位，主题钮绝对定位到 logo 第一行右端，
+   不再被纵向 flex 挤到第三行、也不撑高品牌区（窄屏按钮改挂常驻 .topbar，本条不生效） */
+@media(min-width:901px){
+  .rail-brand{position:relative;}
+  .rail-brand .hogee-theme-btn{position:absolute;top:13px;right:8px;width:32px;height:32px;border-radius:9px;color:var(--tx2);margin-left:0;align-self:auto;}
+  .rail-brand .hogee-theme-btn:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-soft);}
+}
 /* 阿图全屏操作台：顶栏右侧，与返回首页同组 */
 #atuStudio .ats-tr .hogee-theme-btn{width:34px;height:34px;border-radius:9px;margin-left:8px;color:inherit;}
 /* 官网 / 子页：挂进 .nav-links，与会员区成组，不孤悬最右角 */
 .nav-links .hogee-theme-btn{width:36px;height:36px;border-radius:9px;margin-left:10px;color:inherit;vertical-align:middle;}
-@media(max-width:900px){
-  .rail-brand .hogee-theme-btn{width:30px;height:30px;}
-}
 
 /* 创作探索媒体卡：浅色海报 / 白底图上白色标题会看不清，补底部深色渐隐 scrim
    （封面标题通用做法，深图浅图都可读；失败占位 .rc-fail z-index 更高不受影响） */
@@ -525,3 +526,8 @@ html[data-theme="light"] .rail-foot .wb-ab:hover{background:#f2f3f5;border-color
 /* 工作台窄屏：主题钮挂在常驻顶栏汉堡右侧 */
 .topbar .hogee-theme-btn{width:34px;height:34px;border-radius:9px;margin-left:8px;color:var(--tx2);flex:0 0 auto;}
 .topbar .hogee-theme-btn:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-soft);}
+/* 工作台窄屏：关闭的抽屉 #rail 内，品牌副标题胶囊(.nav-tag)横排放不下、右缘溢出抽屉
+   边界，会在屏幕左上角露出半截圆弧；窄抽屉品牌区只留 logo，隐藏副标题（宽屏左栏不受影响） */
+@media(max-width:900px){
+  .rail-brand .nav-tag{display:none!important;}
+}
