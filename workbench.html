@@ -781,6 +781,11 @@ body[data-stage="welcome"] .cmp-hint{margin-top:13px}
 .rmenu .rgroup-add{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;min-width:24px;flex:none;margin:0;padding:0;gap:0;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
 .rmenu .rgroup-add svg{width:15px;height:15px;flex:none}
 .rmenu .rgroup-add:hover{color:var(--orange);background:var(--orange-soft)}
+.rgroup-ops{display:flex;align-items:center;gap:2px;flex:none}
+.rgroup-clear{appearance:none;border:0;background:transparent;color:var(--tx3);width:24px;height:24px;min-width:24px;flex:none;margin:0;padding:0;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+.rgroup-clear svg{width:14px;height:14px;flex:none}
+.rgroup-clear:hover{color:#f87171;background:rgba(248,113,113,.14)}
+.rgroup-clear.sure{width:auto;padding:0 8px;font-size:11px;color:#f87171;gap:4px}
 body[data-rail="mini"] .rail:hover .rgroup{display:flex}
 .task-item .tk-name{font-size:13px}
 .task-empty{font-size:12.5px}
@@ -1727,6 +1732,15 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .wkf:hover{border-color:var(--brand);color:var(--brand)}
 .wkf.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .wkf-n{opacity:.85;font-size:12px}
+/* 板块一键清空：filters 行右侧 */
+.wk-clear-tab{margin-left:auto;font-size:12px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--tx2);cursor:pointer;transition:.15s;white-space:nowrap}
+.wk-clear-tab:hover{border-color:#f87171;color:#f87171}
+.wk-clear-tab.sure{border-color:#f87171;color:#fff;background:#f87171}
+/* 整条创作主线删除 */
+.wkt-head-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.wkt-del{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--tx2);cursor:pointer;transition:.15s;white-space:nowrap}
+.wkt-del:hover{border-color:#f87171;color:#f87171}
+.wkt-del.sure{border-color:#f87171;color:#fff;background:#f87171}
 .wk-empty{border:1px dashed var(--line2);border-radius:18px;padding:54px 24px;text-align:center;color:var(--tx2);font-size:14px;line-height:1.9;background:rgba(255,255,255,.02)}
 .wk-empty .btn{margin-top:16px}
 .wk-thread{background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:18px;margin-bottom:18px}
@@ -1750,9 +1764,12 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .wm-retry:hover{color:var(--brand)}
 .wkc-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.58);color:#fff;font-size:11px;padding:2px 9px;border-radius:999px;pointer-events:none}
 .wkc-tag.static{position:static;display:inline-block;align-self:flex-start;background:rgba(234,88,12,.14);color:var(--brand);margin-bottom:8px}
-.wkc-copy{padding:14px;min-height:128px;display:flex;flex-direction:column}.wk-card.wk-copy{align-self:start}.wkc-copy p{overflow-wrap:anywhere;word-break:break-word}
-.wkc-copy p{font-size:12.5px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;margin:0}
-.wkc-show{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;min-height:128px;text-decoration:none;color:var(--tx)}
+.wkc-copy{padding:14px;flex:none;width:100%;box-sizing:border-box;aspect-ratio:4/3;display:flex;flex-direction:column}
+.wkc-copy p{flex:1;min-height:0;font-size:12.5px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;margin:0;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
+.wkc-full{align-self:flex-start;margin-top:8px;font-size:11.5px;border:0;background:transparent;color:var(--brand);padding:0;cursor:pointer;line-height:1.4;flex:none}
+.wkc-full:hover{text-decoration:underline}
+.wk-card.wktype-showcase .wkc-show{flex:none;width:100%;box-sizing:border-box;aspect-ratio:4/3}
+.wkc-show{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;text-decoration:none;color:var(--tx)}
 .wkc-show b{font-size:14px;font-weight:600}
 .wkc-show .wkc-go{margin-top:auto;color:var(--brand);font-size:12.5px}
 .wkc-meta{padding:9px 12px 0}
@@ -1772,6 +1789,9 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .wklb-bar{display:flex;align-items:center;gap:16px;color:#fff;font-size:13px}
 .wklb-bar button{padding:7px 18px;border-radius:999px;border:0;background:var(--brand);color:#fff;font-size:13px;cursor:pointer}
 @media(max-width:720px){.wk-lb{padding:16px}.wklb-x{top:-8px;right:-4px}}
+.wklb-text{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:26px 28px;max-width:min(92vw,720px);max-height:78vh;overflow:auto;color:var(--tx);white-space:pre-wrap;line-height:1.8;font-size:14px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.wklb-text .wklb-th{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--tx);display:flex;align-items:center;gap:8px}
+.wklb-copy-btn{margin-top:18px;padding:8px 18px;border-radius:999px;border:0;background:var(--brand);color:#fff;font-size:13px;cursor:pointer}
 
 </style>
 
@@ -1878,7 +1898,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
         <button id="navPublish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>发布管理</button>
         <button id="menuAnalytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>效果监控</button>
         <button id="navConnect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.6-2.6a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-2.6 2.6a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg>技能与连接</button>
-        <div class="rgroup"><span class="rgroup-txt">对话</span><button class="rgroup-add" id="btnNewChat" type="button" title="新建对话" aria-label="新建对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        <div class="rgroup"><span class="rgroup-txt">对话</span><span class="rgroup-ops"><button class="rgroup-clear" id="btnClearChats" type="button" title="清空全部历史对话" aria-label="清空全部历史对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg></button><button class="rgroup-add" id="btnNewChat" type="button" title="新建对话" aria-label="新建对话"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></span></div>
         <div id="taskList" class="tasklist"></div>
       </nav>
 
@@ -2421,6 +2441,19 @@ function taskAct(act,id,e){
  }
  var i=arr.findIndex(function(t){return t.id===id;});if(i<0)return;
  if(act==='pin'){arr[i].pinned=!arr[i].pinned;if(arr[i].id===state.taskId)state.taskPinned=arr[i].pinned;toast(arr[i].pinned?'已置顶':'已取消置顶');arr.sort(pinTaskSort);saveTasks(arr);renderTaskList();renderTopbar();}
+}
+/* 一键清空全部历史对话：先重置当前会话（避免归档把对话又写回），再清空本地+云端列表，
+   并清理阿图操作台本地会话，最后回到门户首页。 */
+function clearAllTasks(){
+ var hires=state.hires;
+ state=resetState();state.hires=hires;
+ saveTasks([]);
+ try{Object.keys(localStorage).forEach(function(k){if(/^hogee_atu_/.test(k)){try{localStorage.removeItem(k);}catch(e){}}});}catch(e){}
+ taskListExpanded=false;taskEditingId=null;taskConfirmDelId=null;
+ try{document.body.classList.remove('atu-open');}catch(e){}
+ try{goHome();}catch(e){}
+ renderTaskList();
+ toast('已清空全部历史对话');
 }
 function openTask(id){
  taskConfirmDelId=null;
@@ -3791,6 +3824,27 @@ function addWork(rec){
 function removeWorkById(id){writeWorksRaw(readWorksRaw().filter(function(x){return x.id!==id;}));if(typeof HGCloud!=='undefined')HGCloud.schedulePush();}
 function getStoredWorks(){return readWorksRaw();}
 function removeStoredWork(i){var a=readWorksRaw();if(i>=0&&i<a.length){var w=a[i];if(w.localId&&typeof HGIDB!=='undefined')HGIDB.del(w.localId);a.splice(i,1);writeWorksRaw(a);if(typeof HGCloud!=='undefined')HGCloud.schedulePush();}}
+/* 删除满足 pred 的作品：清理本地 IndexedDB 大图（localId）后写回并同步云端。
+   用于「整条创作主线删除」与「按板块一键清空」。 */
+function _dropWorks(pred){
+ var a=readWorksRaw(),kept=[];
+ for(var i=0;i<a.length;i++){var w=a[i];
+  if(pred(w)){if(w.localId&&typeof HGIDB!=='undefined'){try{HGIDB.del(w.localId);}catch(e){}}}
+  else kept.push(w);
+ }
+ writeWorksRaw(kept);
+ if(typeof HGCloud!=='undefined')HGCloud.schedulePush();
+ return a.length-kept.length;
+}
+/* 删除一条创作主线（threadId）下的全部交付物 */
+function removeThreadWorks(tid){
+ return _dropWorks(function(w){return (w.threadId||'legacy')===(tid||'legacy');});
+}
+/* 按类型清空板块：type='all' 清空全部；其余 img/video/copy/showcase 只清该类型 */
+function removeWorksByType(type){
+ if(type==='all')return _dropWorks(function(){return true;});
+ return _dropWorks(function(w){return w.type===type;});
+}
 /* 兼容旧调用 rememberWork(type,item) */
 function rememberWork(type,item){
  item=item||{};
@@ -4132,7 +4186,8 @@ function renderWorks(){
  wkCurList=worksTab==='all'?all:all.filter(function(w){return w.type===worksTab;});
  var groups=groupWorks(wkCurList);
  var h='<div class="wv-head"><div><h2 class="wv-title">我的创作</h2><p class="wv-sub">同一件商品的商品图、视频、文案、画册，归在同一条创作主线里。</p></div><button class="btn btn-primary btn-sm" id="wkNewCreate">+ 新的创作</button></div>';
- h+='<div class="wk-filters">'+tabs.map(function(t){return '<button type="button" class="wkf'+(worksTab===t[0]?' on':'')+'" data-wtab="'+t[0]+'">'+t[1]+(counts[t[0]]?' <span class="wkf-n">'+counts[t[0]]+'</span>':'')+'</button>';}).join('')+'</div>';
+ var curTabName=(tabs.filter(function(t){return t[0]===worksTab;})[0]||tabs[0])[1];
+ h+='<div class="wk-filters">'+tabs.map(function(t){return '<button type="button" class="wkf'+(worksTab===t[0]?' on':'')+'" data-wtab="'+t[0]+'">'+t[1]+(counts[t[0]]?' <span class="wkf-n">'+counts[t[0]]+'</span>':'')+'</button>';}).join('')+(wkCurList.length?'<button type="button" class="wk-clear-tab" data-wcleartab="'+worksTab+'">'+(worksTab==='all'?'清空全部作品':'清空「'+curTabName+'」板块')+'</button>':'')+'</div>';
  if(!groups.length){h+='<div class="wk-empty">还没有作品。回操作台传一张产品图，阿图出图、阿文写文案、阿视剪视频，都会自动归到这里。<br><button class="btn btn-primary btn-sm" id="wkEmptyGo" type="button">去创作</button></div>';}
  else{h+=groups.map(wkThreadCard).join('');}
  v.innerHTML=h;bindWorksEvents(v);hydrateWorkThumbs(v,wkCurList);
@@ -4140,16 +4195,18 @@ function renderWorks(){
 function wkThreadCard(g){
  var skillLabel=({usedcar:'二手车商',general:'通用电商'})[g.skill]||(g.skill&&g.skill!=='general'?g.skill:'');
  var resume=(g.id&&g.id!=='legacy')?'<button type="button" class="wkt-resume" data-wresume="'+rcEsc(g.id)+'">继续这场对话</button>':'';
- return '<section class="wk-thread"><div class="wkt-head"><div class="wkt-tt"><b>'+esc(g.title||'这款商品')+'</b>'+(skillLabel?'<span class="wkt-skill">'+esc(skillLabel)+'</span>':'')+'<span class="wkt-time">'+fmtWTime(g.ts)+'</span><span class="wkt-count">'+g.items.length+' 件交付物</span></div>'+resume+'</div><div class="wkt-grid">'+g.items.map(wkItemCard).join('')+'</div></section>';
+ var delBtn='<button type="button" class="wkt-del" data-wdelthread="'+rcEsc(g.id)+'">删除整条</button>';
+ var rightBtns='<div class="wkt-head-r">'+delBtn+resume+'</div>';
+ return '<section class="wk-thread"><div class="wkt-head"><div class="wkt-tt"><b>'+esc(g.title||'这款商品')+'</b>'+(skillLabel?'<span class="wkt-skill">'+esc(skillLabel)+'</span>':'')+'<span class="wkt-time">'+fmtWTime(g.ts)+'</span><span class="wkt-count">'+g.items.length+' 件交付物</span></div>'+rightBtns+'</div><div class="wkt-grid">'+g.items.map(wkItemCard).join('')+'</div></section>';
 }
 function wkItemCard(w){
  var idx=wkCurList.indexOf(w),tag=worksKindLabel(w.type),body='';
  if(w.type==='img')body='<button type="button" class="wkc-thumb" data-wl="'+idx+'"><img data-wmid="'+idx+'" alt="'+esc(w.label||'商品图')+'"><span class="wkc-tag">'+tag+'</span></button>';
  else if(w.type==='video')body='<button type="button" class="wkc-thumb video" data-wl="'+idx+'"><video data-wmid="'+idx+'" muted preload="metadata" playsinline></video><span class="wkc-play"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="wkc-tag">'+tag+'</span></button>';
- else if(w.type==='copy')body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span><p>'+esc(w.text||'')+'</p></div>';
+ else if(w.type==='copy')body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span><p>'+esc(w.text||'')+'</p>'+((w.text||'').length>110?'<button type="button" class="wkc-full" data-wfull="'+idx+'">查看全文</button>':'')+'</div>';
  else if(w.type==='showcase')body='<a class="wkc-show" href="'+esc(w.url||'#')+'" target="_blank" rel="noopener"><span class="wkc-tag static">'+tag+'</span><b>'+esc(w.label||'智能画册')+'</b><span class="wkc-go">打开画册 ↗</span></a>';
  else body='<div class="wkc-copy"><span class="wkc-tag static">'+tag+'</span></div>';
- return '<article class="wk-card wk-'+w.type+'">'+body+'<div class="wkc-meta"><span class="wkc-label">'+esc(w.label||tag)+'</span></div><div class="wkc-acts">'+wkItemActs(w,idx)+'</div></article>';
+ return '<article class="wk-card wktype-'+w.type+'">'+body+'<div class="wkc-meta"><span class="wkc-label">'+esc(w.label||tag)+'</span></div><div class="wkc-acts">'+wkItemActs(w,idx)+'</div></article>';
 }
 function wkItemActs(w,idx){
  var a='';
@@ -4178,6 +4235,16 @@ function wkRecreate(w){
 }
 function closeWkLightbox(){var ov=document.getElementById('wkLightbox');if(ov){ov.remove();document.body.style.overflow='';}}
 function openWkLightbox(w){
+ if(w.type==='copy'){
+  var ovc=document.getElementById('wkLightbox');if(ovc)ovc.remove();
+  ovc=document.createElement('div');ovc.id='wkLightbox';ovc.className='wk-lb';
+  ovc.innerHTML='<div class="wklb-mask" data-wlb="x"></div><div class="wklb-box"><button type="button" class="wklb-x" data-wlb="x" aria-label="关闭">'+WK_X+'</button>'
+   +'<div class="wklb-text"><div class="wklb-th">'+esc(w.label||'文案')+'</div><div id="wklbCopyBody">'+esc(w.text||'')+'</div><button type="button" class="wklb-copy-btn" id="wklbCp">复制文案</button></div></div>';
+  document.body.appendChild(ovc);document.body.style.overflow='hidden';
+  ovc.addEventListener('click',function(e){if(e.target.closest('[data-wlb="x"]'))closeWkLightbox();});
+  var cpb=ovc.querySelector('#wklbCp');if(cpb)cpb.addEventListener('click',function(){copyPlain(w.text||'').then(function(){toast('文案已复制');});});
+  return;
+ }
  ensureWorkMediaUrl(w).then(function(u){
   var ov=document.getElementById('wkLightbox');if(ov)ov.remove();
   ov=document.createElement('div');ov.id='wkLightbox';ov.className='wk-lb';
@@ -4206,6 +4273,19 @@ function bindWorksEvents(v){
    var id=t.getAttribute('data-wdel');
    if(t.dataset.confirm==='1'){removeWorkById(id);toast('已删除');renderWorks();}
    else{t.dataset.confirm='1';var orig=t.textContent;t.textContent='确认删除？';var btn=t;setTimeout(function(){delete btn.dataset.confirm;btn.textContent=orig;},2200);}
+   return;
+  }
+  if(t=e.target.closest('[data-wfull]')){openWkLightbox(wkCurList[parseInt(t.getAttribute('data-wfull'),10)]);return;}
+  if(t=e.target.closest('[data-wdelthread]')){
+   var tid=t.getAttribute('data-wdelthread');
+   if(t.dataset.confirm==='1'){removeThreadWorks(tid);toast('已删除整条创作主线');renderWorks();}
+   else{t.dataset.confirm='1';t.classList.add('sure');var o1=t.textContent;t.textContent='确认删除？';var b1=t;setTimeout(function(){delete b1.dataset.confirm;b1.classList.remove('sure');b1.textContent=o1;},2200);}
+   return;
+  }
+  if(t=e.target.closest('[data-wcleartab]')){
+   var cty=t.getAttribute('data-wcleartab');
+   if(t.dataset.confirm==='1'){removeWorksByType(cty);toast(cty==='all'?'已清空全部作品':'已清空该板块');renderWorks();}
+   else{t.dataset.confirm='1';t.classList.add('sure');var o2=t.textContent;t.textContent='确认清空？';var b2=t;setTimeout(function(){delete b2.dataset.confirm;b2.classList.remove('sure');b2.textContent=o2;},2200);}
    return;
   }
  });
@@ -7799,6 +7879,22 @@ function bind(){
  /* 左上角 logo 回工作台首页（不再跳官网）；窄轨小图标/宽轨完整字标都绑定 */
  document.querySelectorAll('.js-wb-home').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();try{goHome();}catch(err){}});});
 (function(){var nc=document.getElementById('btnNewChat');if(nc)nc.addEventListener('click',function(){closeAnalytics();newOrder();});})();
+(function(){
+ var cc=document.getElementById('btnClearChats');
+ if(cc){
+  var CC_ICON=cc.innerHTML,ccTimer=null;
+  cc.addEventListener('click',function(){
+   if(cc.dataset.confirm==='1'){
+    cc.dataset.confirm='';cc.classList.remove('sure');cc.innerHTML=CC_ICON;clearTimeout(ccTimer);
+    clearAllTasks();
+    return;
+   }
+   cc.dataset.confirm='1';cc.classList.add('sure');cc.textContent='确认清空？';
+   clearTimeout(ccTimer);
+   ccTimer=setTimeout(function(){cc.dataset.confirm='';cc.classList.remove('sure');cc.innerHTML=CC_ICON;},2200);
+  });
+ }
+})();
  $('#navKnowledge').addEventListener('click',openKnowledgeView);
  $('#navWorks').addEventListener('click',openWorks);
  $('#navPublish').addEventListener('click',openPublish);
