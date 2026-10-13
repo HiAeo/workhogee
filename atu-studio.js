@@ -350,7 +350,7 @@ body.atu-open #atuStudio{display:flex}\
  var ARROW_LEFT='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>';
  var root=el('<div id="atuStudio"></div>');
  root.innerHTML=
-  '<div class="ats-top"><div class="ats-tl"><a class="ats-logo" href="/" aria-label="WorkHogee">'+LOGO_FULL+'</a><span class="ats-crumb">阿图 · <b data-i18n="crumb_b">商品图操作台</b></span></div><div class="ats-tr"><span class="ats-pill">'+I.spark+'Alpha 内测 · 出图不限</span><button class="ats-back" id="atsBack" type="button" title="返回工作台首页" aria-label="返回工作台首页">'+ARROW_LEFT+'<span class="ats-back-tx">返回首页</span></button></div></div>'+
+  '<div class="ats-top"><div class="ats-tl"><a class="ats-logo" href="javascript:void(0)" title="返回工作台首页" aria-label="返回工作台首页">'+LOGO_FULL+'</a><span class="ats-crumb">阿图 · <b data-i18n="crumb_b">商品图操作台</b></span></div><div class="ats-tr"><span class="ats-pill">'+I.spark+'Alpha 内测 · 出图不限</span><button class="ats-back" id="atsBack" type="button" title="返回工作台首页" aria-label="返回工作台首页">'+ARROW_LEFT+'<span class="ats-back-tx">返回首页</span></button></div></div>'+
   '<div class="ats-body">'+
    '<div class="ats-rail"><button class="ats-nav on" data-suite="ecom" type="button">'+I.bag+'<span data-i18n="nav_ecom">电商套图</span></button><button class="ats-nav" data-suite="fashion" type="button">'+I.hanger+'<span data-i18n="nav_fashion">服装套图</span></button><button class="ats-nav" data-suite="batch" type="button">'+I.layers+'<span data-i18n="nav_batch">批量套图</span></button><button class="ats-nav" data-suite="records" type="button">'+I.clock+'<span data-i18n="nav_records">生成记录</span></button></div>'+
    '<div class="ats-panel"><div class="ats-scroll" id="atsScroll">'+
@@ -2447,6 +2447,8 @@ body.atu-open #atuStudio{display:flex}\
  root.querySelectorAll('.ats-nav').forEach(function(n){n.addEventListener('click',function(){S.setSuite(n.dataset.suite);});});
  S.$('#atsBack').addEventListener('click',function(){S.close();});
  var _sh=S.$('#stageHome');if(_sh)_sh.addEventListener('click',function(){S.close();});
+ /* 操作台左上角 logo：回工作台首页（与"返回首页"一致），不跳官网 */
+ var _lg=S.$('.ats-logo');if(_lg)_lg.addEventListener('click',function(e){e.preventDefault();S.close();});
  S.$('#atsClear').addEventListener('click',function(){if(GS().images&&GS().images.length){if(confirm('清空全部已传原图？')){GS().images=[];S.planResp=null;S.planByType={};S.ostEdits={};S.ats=[];S._notes=[];S._lineId=null;S._restoredLineId=null;try{var B0=window.AtuBridge||{};if(B0.bindLine)B0.bindLine(null);}catch(e){}S.renderOrigin();S._clearSession();S.setCanvas('empty');}}});
  S.$('#atsAiWrite').addEventListener('click',function(){S.aiWrite();});
  S.$('#atsMoreBtn').addEventListener('click',function(){var m=S.$('#atsMore'),b=S.$('#atsMoreBtn');m.classList.toggle('show');b.textContent=m.classList.contains('show')?t('btn_less'):t('btn_more');});
@@ -2468,13 +2470,7 @@ body.atu-open #atuStudio{display:flex}\
  if(_sp)_sp.addEventListener('change',function(){var rg=PLATFORM_REGION[_sp.value];if(rg&&_sr)_sr.value=rg;_onLocaleChange();});
  if(_sr)_sr.addEventListener('change',_onLocaleChange);
  if(_sl)_sl.addEventListener('change',_onLocaleChange);
- // 自动恢复现场只在「页内刷新(reload)或浏览器前进后退(back_forward)」时发生；
- // 从官网首页点「打开 Web 工作台」等正常导航(navigate)进入，一律落门户全新空态，绝不自动跳回上一件商品
- window.addEventListener('load',function(){
-  try{
-   var nt='navigate';
-   try{var _ne=performance.getEntriesByType('navigation')[0];if(_ne&&_ne.type)nt=_ne.type;}catch(_){}
-   if((nt==='reload'||nt==='back_forward')&&S.hasSavedSession()){S.open({resume:true});}
-  }catch(e){}
- });
+ // 无论正常导航(navigate)、页内刷新(reload)还是浏览器前进后退(back_forward)，加载工作台一律落门户首页空态，
+ // 绝不自动跳回上一件商品操作台（避免刷新即进入历史商品现场）。需要恢复某件商品现场，只由用户
+ // 主动点左侧历史对话触发 openTask→AtuStudio.open({lineId})；流程中返回上传由 AtuStudio.open({resume:true}) 显式恢复。
 })();
