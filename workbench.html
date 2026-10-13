@@ -1591,8 +1591,9 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .shops-group-tt{font-size:14px;font-weight:600;color:var(--tx);margin:20px 0 12px}
 .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));gap:12px}
 .shop-card{display:flex;gap:11px;align-items:center;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.03);padding:11px 12px}
-.shop-badge{flex:none;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.shop-badge{flex:none;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden}
 .shop-badge span{white-space:nowrap}
+.shop-badge img{width:24px;height:24px;display:block}
 .shop-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .shop-name{display:flex;align-items:center;gap:8px}
 .shop-name b{font-size:13.5px;color:var(--tx);font-weight:600}
@@ -3247,24 +3248,24 @@ function bindKbView(root){
  /* ---- Tab 4：店铺信息（国内外电商平台，录入店铺地址并随账号持久化） ---- */
  var SHOP_GROUPS=[
   {g:'国内电商平台',items:[
-   {id:'taobao',name:'淘宝',bc:'#ff5000',ab:'淘',site:'https://www.taobao.com'},
-   {id:'tmall',name:'天猫',bc:'#d7000f',ab:'猫',site:'https://www.tmall.com'},
-   {id:'jd',name:'京东',bc:'#e1251b',ab:'京东',site:'https://www.jd.com'},
-   {id:'pdd',name:'拼多多',bc:'#e02e24',ab:'拼',site:'https://www.pinduoduo.com'},
-   {id:'vip',name:'唯品会',bc:'#f2303a',ab:'唯',site:'https://www.vip.com'},
-   {id:'douyin',name:'抖音小店',bc:'#161823',ab:'抖',site:'https://fxg.jinritemai.com'},
-   {id:'kuaishou',name:'快手小店',bc:'#ff4906',ab:'快',site:'https://s.kwaixiaodian.com'},
-   {id:'xhs',name:'小红书店铺',bc:'#ff2442',ab:'红',site:'https://www.xiaohongshu.com'}
+   {id:'taobao',name:'淘宝',bc:'#ff5000',ab:'淘',logo:'taobao',site:'https://www.taobao.com'},
+   {id:'tmall',name:'天猫',bc:'#d7000f',ab:'猫',logo:'',site:'https://www.tmall.com'},
+   {id:'jd',name:'京东',bc:'#e1251b',ab:'京东',logo:'',site:'https://www.jd.com'},
+   {id:'pdd',name:'拼多多',bc:'#e02e24',ab:'拼',logo:'',site:'https://www.pinduoduo.com'},
+   {id:'vip',name:'唯品会',bc:'#f2303a',ab:'唯',logo:'',site:'https://www.vip.com'},
+   {id:'douyin',name:'抖音小店',bc:'#161823',ab:'抖',logo:'douyin',site:'https://fxg.jinritemai.com'},
+   {id:'kuaishou',name:'快手小店',bc:'#ff4906',ab:'快',logo:'kuaishou',site:'https://s.kwaixiaodian.com'},
+   {id:'xhs',name:'小红书店铺',bc:'#ff2442',ab:'红',logo:'xhs',site:'https://www.xiaohongshu.com'}
   ]},
   {g:'海外电商平台',items:[
-   {id:'amazon',name:'Amazon',bc:'#ff9900',ab:'a',site:'https://www.amazon.com'},
-   {id:'ebay',name:'eBay',bc:'#e53238',ab:'ebay',site:'https://www.ebay.com'},
-   {id:'aliexpress',name:'AliExpress',bc:'#ff4747',ab:'Ali',site:'https://www.aliexpress.com'},
-   {id:'temu',name:'Temu',bc:'#fb7701',ab:'Temu',site:'https://www.temu.com'},
-   {id:'tiktokshop',name:'TikTok Shop',bc:'#161823',ab:'TT',site:'https://seller.tiktokglobalshop.com'},
-   {id:'shopee',name:'Shopee',bc:'#ee4d2d',ab:'Shopee',site:'https://shopee.com'},
-   {id:'shopify',name:'Shopify',bc:'#95bf47',ab:'Shopify',site:'https://www.shopify.com'},
-   {id:'walmart',name:'Walmart',bc:'#0071dc',ab:'W',site:'https://www.walmart.com'}
+   {id:'amazon',name:'Amazon',bc:'#ff9900',ab:'a',logo:'amazon',site:'https://www.amazon.com'},
+   {id:'ebay',name:'eBay',bc:'#e53238',ab:'ebay',logo:'',site:'https://www.ebay.com'},
+   {id:'aliexpress',name:'AliExpress',bc:'#ff4747',ab:'Ali',logo:'',site:'https://www.aliexpress.com'},
+   {id:'temu',name:'Temu',bc:'#fb7701',ab:'Temu',logo:'',site:'https://www.temu.com'},
+   {id:'tiktokshop',name:'TikTok Shop',bc:'#161823',ab:'TT',logo:'tiktok',site:'https://seller.tiktokglobalshop.com'},
+   {id:'shopee',name:'Shopee',bc:'#ee4d2d',ab:'Shopee',logo:'shopee',site:'https://shopee.com'},
+   {id:'shopify',name:'Shopify',bc:'#95bf47',ab:'Shopify',logo:'',site:'https://www.shopify.com'},
+   {id:'walmart',name:'Walmart',bc:'#0071dc',ab:'W',logo:'',site:'https://www.walmart.com'}
   ]}
  ];
  function shopsLoad(){try{return JSON.parse(localStorage.getItem('hogee_shops')||'{}');}catch(e){return {};}}
@@ -3276,7 +3277,8 @@ function bindKbView(root){
    h+='<div class="shops-group-tt">'+gr.g+'</div><div class="shops-grid">';
    h+=gr.items.map(function(it){
     var val=saved[it.id]||'';
-    return '<div class="shop-card"><div class="shop-badge" style="background:'+it.bc+'"><span>'+it.ab+'</span></div>'
+    var badge=it.logo?'<img src="images/brands/'+it.logo+'.svg" alt="" loading="lazy">':'<span>'+it.ab+'</span>';
+    return '<div class="shop-card"><div class="shop-badge" style="background:'+it.bc+'">'+badge+'</div>'
      +'<div class="shop-meta"><div class="shop-name"><b>'+it.name+'</b><a class="shop-site" href="'+it.site+'" target="_blank" rel="noopener">官网 ↗</a></div>'
      +'<input class="shop-url" data-shop="'+it.id+'" placeholder="粘贴店铺首页地址" value="'+esc(val)+'"></div></div>';
    }).join('');
@@ -4232,17 +4234,17 @@ var CONN_SKILLS=[
 ];
 var CONN_IM=[
  {id:'wechat',name:'微信',ic:'chat',kind:'im',color:'#07C160',logo:'wechat',home:'https://weixin.qq.com/'},
- {id:'wxwork',name:'企业微信',ic:'chat',kind:'im',color:'#0187FF',logo:'',home:'https://work.weixin.qq.com/'},
- {id:'feishu',name:'飞书',ic:'chat',kind:'im',color:'#3370FF',logo:'',home:'https://www.feishu.cn/'},
- {id:'dingtalk',name:'钉钉',ic:'chat',kind:'im',color:'#1677FF',logo:'',home:'https://www.dingtalk.com/'},
+ {id:'wxwork',name:'企业微信',ic:'chat',kind:'im',color:'#0187FF',logo:'wxwork',home:'https://work.weixin.qq.com/'},
+ {id:'feishu',name:'飞书',ic:'chat',kind:'im',color:'#3370FF',logo:'feishu',home:'https://www.feishu.cn/'},
+ {id:'dingtalk',name:'钉钉',ic:'chat',kind:'im',color:'#1677FF',logo:'dingtalk',home:'https://www.dingtalk.com/'},
  {id:'qq',name:'QQ',ic:'chat',kind:'im',color:'#12B7F5',logo:'qq',home:'https://im.qq.com/index/'},
  {id:'email',name:'邮箱',ic:'mail',kind:'email',color:'#FB7A22',logo:'',home:''}
 ];
 var CONN_MEDIA_CN=[
  {id:'xhs',name:'小红书',ic:'feed',color:'#FF2442',logo:'xhs',home:'https://www.xiaohongshu.com/'},
  {id:'douyin',name:'抖音',ic:'video',color:'#111111',logo:'douyin',home:'https://www.douyin.com/'},
- {id:'shipinhao',name:'视频号',ic:'video',color:'#07C160',logo:'',home:'https://channels.weixin.qq.com/'},
- {id:'gongzhonghao',name:'微信公众号',ic:'feed',color:'#07C160',logo:'',home:'https://mp.weixin.qq.com/'},
+ {id:'shipinhao',name:'视频号',ic:'video',color:'#07C160',logo:'shipinhao',home:'https://channels.weixin.qq.com/'},
+ {id:'gongzhonghao',name:'微信公众号',ic:'feed',color:'#07C160',logo:'gongzhonghao',home:'https://mp.weixin.qq.com/'},
  {id:'weibo',name:'微博',ic:'feed',color:'#E6162D',logo:'weibo',home:'https://weibo.com/'},
  {id:'xianyu',name:'闲鱼',ic:'shop',color:'#F5A623',logo:'',home:'https://www.goofish.com/'},
  {id:'kuaishou',name:'快手',ic:'video',color:'#FF4906',logo:'kuaishou',home:'https://www.kuaishou.com/'},
