@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>WorkHogee · 生意伙计工作台</title>
+<title>WorkHogee · 商品图工作台</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%231c1917'/%3E%3Cpath d='M7 7h2.4v3.4h3.2V7H15v10h-2.4v-4.2H9.4V17H7z' fill='%23fff'/%3E%3Cpath d='M16.4 7h.4c1.5 0 2.5.8 2.5 2.2 0 .9-.4 1.5-1.1 1.8.9.3 1.4 1 1.4 2 0 1.6-1.1 2.5-2.8 2.5h-.4zm2.2 2.3c0-.6-.4-1-1.1-1h-.7v2.1h.7c.7 0 1.1-.4 1.1-1.1zm.2 3.5c0-.7-.4-1.1-1.2-1.1h-.8v2.3h.8c.8 0 1.2-.5 1.2-1.2z' fill='%23fb923c'/%3E%3C/svg%3E">
 <style>
 /* ============================================================
@@ -1793,6 +1793,19 @@ body[data-rail="mini"] .wb-menu{left:8px;right:auto;width:188px}
 .wklb-text .wklb-th{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--tx);display:flex;align-items:center;gap:8px}
 .wklb-copy-btn{margin-top:18px;padding:8px 18px;border-radius:999px;border:0;background:var(--brand);color:#fff;font-size:13px;cursor:pointer}
 
+/* ===== 阿图单目标内测：下线四伙计入口（代码保留、仅隐藏，可随时恢复） ===== */
+/* 左栏：发布管理（阿发）、效果监控（阿果）、技能与连接（阿发/阿果通道） */
+#navPublish,#menuAnalytics,#navConnect{display:none!important}
+/* 顶部：五伙计切换 @Hogee、五伙计接力进度条 */
+#tbPartner{display:none!important}
+#relayBar{display:none!important}
+/* 交付物：视频（阿视）、送达（阿发）、效果（阿果）三类 Tab */
+#dlTabs [data-dltab="video"],#dlTabs [data-dltab="reach"],#dlTabs [data-dltab="agu"]{display:none!important}
+/* 上传菜单：发布账号与渠道（阿发通道） */
+#plusPop [data-plus="lab"]{display:none!important}
+/* 对话框：创作类型切换（含视频/文案/画册）、技能行业切换 */
+#cmpModeBtn,#cmpSkillBtn{display:none!important}
+
 </style>
 
 <style>
@@ -1886,7 +1899,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
     <div class="rail-brand">
       <a href="javascript:void(0)" class="wm wm-mark js-wb-home" title="回工作台首页" aria-label="回工作台首页"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></a>
       <a href="javascript:void(0)" class="wm wm-full js-wb-home" title="回工作台首页" aria-label="回工作台首页" style="align-items:center"><svg viewBox="0 0 118 19.13" aria-label="WorkHogee" style="height:23px;width:auto;display:block"><defs><style>.wb1{fill:#ffffff}.wb2{fill:#ea580c}</style></defs><g transform="translate(-1.06 -28.16)"><path class="wb1" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path class="wb2" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/><path class="wb1" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/><path class="wb1" d="M33.75,32.32a.43,.43,0,0,1,.43.43h0a.43,.43,0,0,0,.69,.34,4.61,4.61,0,0,1,2.26-1,.4,.4,0,0,1,.45.4v1.82a.4,.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43,.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4,.4,0,0,1-.4-.4V32.73a.4,.4,0,0,1,.4-.41Z"/><path class="wb1" d="M42.25,39.39l-.64,.68a.58,.58,0,0,0-.15.39V42.4a.57,.57,0,0,1-.57.57H39.23a.56,.56,0,0,1-.57-.57V28.84a.56,.56,0,0,1,.57-.57h1.66a.57,.57,0,0,1,.57.57v6.68a.57,.57,0,0,0,1,.37l2.86-3.37a.6,.6,0,0,1,.43-.2h1.93a.57,.57,0,0,1,.43,1L45,36.81a.57,.57,0,0,0,0,.71l3.39,4.54a.57,.57,0,0,1-.45.91H45.86a.56,.56,0,0,1-.47-.24l-2.25-3.28A.57,.57,0,0,0,42.25,39.39Z"/><text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#ffffff">Hogee</text></g></svg></a>
-      <span class="nav-tag"><span class="nav-tag-txt">你生意的好伙计</span></span>
+      <span class="nav-tag"><span class="nav-tag-txt">商品图 · 一键上架</span></span>
     </div>
     <div class="rail-scroll">
       <nav class="rmenu" id="mainMenu">
@@ -1917,7 +1930,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
         <span class="tb-avatar" id="tbAvatar"></span>
         <div style="min-width:0">
           <div class="tb-title" id="tbTitle">新任务</div>
-          <div class="tb-sub" id="tbSub">Hogee · 生意伙计 在线</div>
+          <div class="tb-sub" id="tbSub">WorkHogee · 商品图工作台</div>
         </div>
       </div>
       <div class="tb-right">
@@ -1938,7 +1951,7 @@ a.pvt-btn{text-decoration:none;justify-content:center}
               <span>上传产品图</span>
             </button>
             <div class="cmp-main">
-              <textarea id="composerInput" rows="1" placeholder="上传产品图，伙计马上开工。"></textarea>
+              <textarea id="composerInput" rows="1" placeholder="上传产品图，马上生成整套商品图。"></textarea>
               <div class="cmp-foot">
                 <div class="cmp-tools" id="cmpTools">
                   <button type="button" class="cmp-pill" id="cmpModeBtn" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18.6 14.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/></svg><span class="lbl" id="cmpModeLabel">Agent 模式</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -2132,7 +2145,7 @@ var PARTNERS=[
  {id:'afa',name:'阿发',role:'分发伙计',ico:IC.send},
  {id:'agu',name:'阿果',role:'效果伙计',ico:IC.chart}
 ];
-var HOST={id:'host',name:'Hogee',role:'生意伙计',ico:IC.brand};
+var HOST={id:'host',name:'Hogee',role:'商品图',ico:IC.brand};
 function partnerById(id){if(id==='host')return HOST;return PARTNERS.filter(function(p){return p.id===id;})[0]||HOST;}
 function pavatarHTML(p,size){return '<span class="pavatar" style="'+(size?('width:'+size+'px;height:'+size+'px'):'')+'">'+p.ico+'</span>';}
 
@@ -3563,8 +3576,8 @@ function heroWelcome(){
   };
   h.innerHTML='<div class="hw6-hero">'
    +'<div class="alpha-row"><span class="alpha-tag">Alpha内测版</span></div>'
-   +'<h1 class="hw6-title">Work Hogee 你生意的好伙计</h1>'
-   +'<p class="hw6-sub">一笔成交从一张产品图开始，你只管上传，剩下的交给伙计。</p>'
+   +'<h1 class="hw6-title">上传一张产品图，给你一套能上架的图</h1>'
+   +'<p class="hw6-sub">白底主图、场景图、核心卖点图、细节材质图，外加配套文案；商品本身一点不动，到手就能直接上架。</p>'
    +'</div>'
    +'<div class="hw-dock" id="hwDock"></div>'
    +'<section class="hm6"><div class="hm6-head"><span class="hm6-h"><span class="hm6-wm"><svg viewBox="-0.6 1 20.4 14.8" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-1.06 -28.16)"><path fill="#f4f7fd" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/><path fill="#ea580c" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/></g></svg></span>Hogee创作探索</span></div><div class="hm-tabs" id="hmTabs"></div>'
@@ -3633,7 +3646,7 @@ function heroWelcome(){
  var HM_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
  function hmCardHtml(d){if(d.k==='ba')return rcBa(d);if(d.k==='v')return rcVideo(d);return rcImg(d);}
  var hmItems=[];
- var HM_BUILTIN_CATS=[{key:'product',n:'商品图'},{key:'video',n:'营销视频'},{key:'design',n:'平面设计'},{key:'ecom',n:'电商'},{key:'poster',n:'海报'}];
+ var HM_BUILTIN_CATS=[{key:'product',n:'商品图'}];
  var HM_CATS_CUSTOM=[];var HM_CAT='all';var HM_COUNT=21;var HM_CAT_CONFIRM=null;
  var HM_PIN_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6l-1.1 6.6 2.6 2.6v1.8h-4.1v5l-.9.9-.9-.9v-5H7.5v-1.8l2.6-2.6z"/></svg>';
  function hmEffCat(d){return (d&&d.cat)||((d&&d.k==='v')?'video':'product');}
@@ -3648,7 +3661,7 @@ function heroWelcome(){
   if(admin)html+='<button type="button" class="hm-tab hm-tab-add" id="hmCatAdd" title="添加分类"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>分类</button>';
   box.innerHTML=html;
  }
- function hmFiltered(){if(HM_CAT==='all')return hmItems.slice();return hmItems.filter(function(d){return hmEffCat(d)===HM_CAT;});}
+ function hmFiltered(){var isProd=function(d){var c=hmEffCat(d);return c==='product'||c==='ecom';};if(HM_CAT==='all'||HM_CAT==='product')return hmItems.filter(isProd);return hmItems.filter(function(d){return hmEffCat(d)===HM_CAT;});}
 
  function hmPromptBarHtml(d,isAdmin){
   if(!d.id)return '';
@@ -4467,7 +4480,7 @@ function acPanelQuota(){
  var st=(!u.status||u.status==='active')?'正常':String(u.status);
  var kpis=[[plan,'当前套餐'],[st,'账号状态'],['不限量','出图额度'],[String(parseInt(localStorage.getItem('hogee_gen_count')||'0',10)||0)+' 张','本机累计生成']];
  var kpi='<div class="ac-kpis">'+kpis.map(function(k){return '<div class="ac-kpi"><div class="n">'+esc(k[0])+'</div><div class="l">'+k[1]+'</div></div>';}).join('')+'</div>';
- var bens=[['img','商品图生成','白底图、场景图、详情页主图，手机实拍一键变商品图'],['pen','爆款文案','按小红书、抖音、朋友圈口吻写标题正文与话题'],['vid','营销视频','分镜、字幕、成片能力灰度开放，内测持续升级'],['book','企业知识库','上传产品资料，让伙计更懂你的生意'],['link','技能与连接','内置行业技能，登记通讯与媒体账号一键送达'],['spark','创作探索','官方作品墙，查看提示词并一键做同款']];
+ var bens=[['img','整套商品图','白底主图、场景图、核心卖点图、细节材质图，手机实拍一键变可上架套图'],['pen','配套文案','随套图配好标题、卖点和话题文案，广告法极限词自动过滤'],['book','企业知识库','上传产品资料，让出图更贴合你的真实商品'],['spark','创作探索','官方作品墙，查看提示词并一键做同款']];
  var ben='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 16px">内测权益</div><div class="ac-benefits">'+bens.map(function(b){return '<div class="ac-benefit"><div class="t">'+acIcon(b[0])+b[1]+'</div><div class="d">'+b[2]+'</div></div>';}).join('')+'</div></section>';
  var usage='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 10px">本机用量</div>'
   +'<div class="ac-row"><span class="k">我的作品（图 / 视频 / 文案）</span><span class="v">'+(typeof getStoredWorks==='function'?getStoredWorks().length:0)+' 件</span></div>'
@@ -4479,20 +4492,19 @@ function acPanelQuota(){
 }
 function acPanelHelp(){
  var faqs=[
-  ['如何生成商品图？','点对话框左上角的「上传产品图」，传一张或多张手机实拍，再用一句话说明用途（如白底图、场景图、详情页主图、想要的风格），发送后阿图就会生成可上架的商品图。'],
-  ['都能做哪些内容？','商品图、动态图、爆款文案、营销视频分镜，并按平台整理发布素材包；阿视的视频成片能力正在灰度开放，会持续升级。'],
-  ['文案怎么生成？','直接在对话框说「写文案」，给出产品名和主打卖点，阿文会按小红书、抖音、朋友圈等不同平台的口吻写好标题、正文和话题标签。'],
-  ['怎么发到抖音、小红书这些平台？','在左栏「技能与连接」里登记媒体账号；素材备好后阿发会复制文案、打开发布页，最后一下由你本人点发送，Hogee 不碰你的账号密码。'],
-  ['企业知识库有什么用？','把产品资料、品牌手册、规格参数上传到「我的知识库」，阿文写文案、阿图出图时会参考这些资料，让内容更贴合你的真实生意。'],
+  ['怎么生成整套商品图？','点中间的「上传产品图」，传一张手机实拍，选择平台和图种（默认按拼多多 3C 数码 / 小家电出白底主图、场景图、核心卖点图、细节材质图），点「开始生成」即可，商品本身一点不动。'],
+  ['一套图里都有什么？','默认包含白底主图、场景图、核心卖点图、细节材质图，并随套图配好标题、卖点和话题文案；商品动态图可按需补充，整套到手即可上架。'],
+  ['商品会被改得不像吗？','不会。先把你的产品主体精准抠出，只重绘背景、光影和卖点图形，再把真实产品像素贴回，颜色、Logo、型号、细节都保持原样。'],
+  ['文案是怎么来的？','出图时会随套图自动生成配套文案，含标题、卖点和小红书、朋友圈等多版口吻，并自动过滤「最」「第一」等广告法极限词。'],
+  ['企业知识库有什么用？','把产品资料、品牌手册、规格参数上传到「我的知识库」，出图和写文案时会参考这些资料，让内容更贴合你的真实商品。'],
   ['现在收费吗？额度怎么算？','内测阶段注册登录即可使用，不限出图数量。正式版将上线会员套餐与按量加量包，价格与权益上线时在「会员状态」页公布。'],
   ['支持哪些登录方式？会丢资料吗？','支持微信、手机号验证码、飞书 / 钉钉 / QQ 与邮箱登录。内测期作品与资料保存在本机，正式版将同步到账号云端、跨设备可查。'],
   ['支持什么设备和浏览器？','Web 网页版推荐在电脑上用 Chrome / Edge 打开，手机浏览器也可使用；微信小程序、桌面客户端与 App 即将上线。']
  ];
  var faq='<section class="vcard" style="margin-bottom:16px"><div class="vsec-h" style="margin:0 0 16px">常见问题</div><div class="ac-faq">'+faqs.map(function(f){return '<details><summary>'+f[0]+'<span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></summary><div class="a">'+f[1]+'</div></details>';}).join('')+'</div></section>';
  var cards='<section class="vcard"><div class="vsec-h" style="margin:0 0 16px">教程与反馈</div><div class="ac-contact">'
-  +'<a class="ac-cc" href="https://www.workhogee.com/" target="_blank" rel="noopener"><span class="ci">'+acIcon('guide')+'</span><span class="ct">使用教程 / 官网</span><span class="cd">查看产品介绍、五个伙计的能力与上手示例。</span></a>'
-  +'<a class="ac-cc" href="mailto:910036590@qq.com?subject=WorkHogee%20%E5%B8%AE%E5%8A%A9%E4%B8%8E%E5%8F%8D%E9%A6%88"><span class="ci">'+acIcon('mail')+'</span><span class="ct">联系伙计团队</span><span class="cd">问题、建议或合作，发邮件到 910036590@qq.com。</span></a>'
-  +'<button class="ac-cc" type="button" data-acgo="connect"><span class="ci">'+acIcon('link')+'</span><span class="ct">技能与连接</span><span class="cd">登记通讯工具和媒体账号，做好的图文一键送达。</span></button>'
+  +'<a class="ac-cc" href="https://www.workhogee.com/" target="_blank" rel="noopener"><span class="ci">'+acIcon('guide')+'</span><span class="ct">使用教程 / 官网</span><span class="cd">查看产品介绍、整套商品图能力与上手示例。</span></a>'
+  +'<a class="ac-cc" href="mailto:910036590@qq.com?subject=WorkHogee%20%E5%B8%AE%E5%8A%A9%E4%B8%8E%E5%8F%8D%E9%A6%88"><span class="ci">'+acIcon('mail')+'</span><span class="ct">联系我们</span><span class="cd">问题、建议或合作，发邮件到 910036590@qq.com。</span></a>'
   +'</div></section>';
  return faq+cards;
 }
@@ -5245,13 +5257,12 @@ function finishGenerate(){
  state.stage='result';
  state.copy.cps=buildCopies();state.copy.ready=true;state.copy.draft='';
  if(!state.results.length){botSay('这批一张都没出成，多半是网络或图片太大。换张图或稍后再试，也可以「再来一单」。','atu');card('<div class="card-pad"><div class="card-actions"><button class="btn btn-primary" data-act="newOrder">再来一单</button></div></div>','atu');renderDeliver();return;}
- botSay('齐活。<b>'+state.results.length+' 张成品</b>已放进右侧「交付物 · 图片」，商品一点没动。看好了，下一步让阿文按平台写文案；哪张要重做、换背景也可以直接说。','atu');
- card('<div class="card-pad"><div class="card-title">'+IC.check+' 成品已放入交付物</div>'
-  +'<div class="card-desc">右侧「图片」可看大图、单张重做、下载。确认没问题，就交给阿文写文案，之后还能让阿视剪视频、阿发送达。</div>'
+ botSay('齐活。<b>'+state.results.length+' 张成品</b>和<b>配套文案</b>已放进右侧交付物，商品一点没动，可直接下载上架。哪张要重做、换背景直接说。','atu');
+ card('<div class="card-pad"><div class="card-title">'+IC.check+' 整套成品已备好</div>'
+  +'<div class="card-desc">「图片」里是白底主图、场景图、卖点图、细节图，可看大图、单张重做、下载；「图文」里是随套图配好的标题、卖点和话题文案。整套到手即可上架。</div>'
   +'<div class="card-actions">'
-  +'<button class="btn btn-primary" data-quick="rf_to_awen">'+IC.pen+' 交给阿文写文案</button>'
-  +'<button class="btn btn-dark" data-act="openDeliver">'+IC.pack+' 查看 / 重做图片</button>'
-  +'<button class="btn btn-ghost" data-act="moreScene">换背景 / 补图</button>'
+  +'<button class="btn btn-primary" data-act="openDeliver">'+IC.pack+' 查看 / 下载整套成品</button>'
+  +'<button class="btn btn-dark" data-act="moreScene">换背景 / 补图</button>'
   +'<button class="btn btn-ghost" data-act="newOrder">再来一单</button></div></div>','atu');
  renderTopbar();renderDeliver();setTimeout(scrollBottom,120);setTimeout(scrollBottom,500);
 }
@@ -5276,7 +5287,7 @@ window.exitTaskFocus=function exitTaskFocus(){
  document.body.classList.remove('task-focus');
  document.body.dataset.rail='wide';
 }
-var CMP_PH={host:['上传产品图，伙计马上开工。'],
+var CMP_PH={host:['上传产品图，马上生成整套商品图。'],
  atu:['上传产品图，阿图帮你出能直接上架的商品图…','白底图、场景图、详情页主图，想要哪种尽管说…','商品本身一点不动，只把背景和质感做到位…'],
  awen:['说说你卖什么、主打什么卖点，阿文按平台口吻写文案…','给我产品名和卖点，标题、正文、话题标签一次写好…','小红书、抖音、朋友圈，同款产品写出不同味道…'],
  ashi:['传几张产品图，阿视帮你分镜、加字幕做成短视频…','产品展示、口播、卡点，想要什么节奏都可以…'],
@@ -5389,7 +5400,7 @@ function renderDeliver(){
  else if(tab==='img'){body.innerHTML=imagesSectionHtml()||emptyDeliverHtml();}
  else if(tab==='dyn'){body.innerHTML=dynSectionHtml();}
  else if(tab==='copy'){body.innerHTML=copySectionHtml()||emptyDeliverHtml();}
- else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+copySectionHtml()+videoSectionHtml()+reachSectionHtml()+aguSectionHtml();}
+ else {body.innerHTML=imagesSectionHtml()+(state.results.length?dynSectionHtml():'')+copySectionHtml();}
  var n=deliverCount();$('#dlCount').textContent=n;$('#dlCount').classList.toggle('show',n>0);
  $('#nImg').textContent=state.results.length?('('+state.results.length+')'):'';
  var dn=state.dyn.length+(state.dynGrid?1:0);$('#nDyn').textContent=dn?('('+dn+')'):'';
