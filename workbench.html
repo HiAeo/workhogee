@@ -691,6 +691,24 @@ body[data-stage="welcome"] .chat-inner{margin:auto 0;width:100%}
 /* ===== 纳米式大输入卡：顶部书签 + 左上大上传方块 ===== */
 .cmp-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.09);transition:border-color .16s,box-shadow .16s;overflow:hidden}
 .cmp-card:focus-within{border-color:rgba(249,115,22,.5);box-shadow:var(--shadow),0 0 0 3px var(--orange-soft)}
+/* ===== 对话框即梦式光影浮动：仅限卡片内部，柔和低饱和暖橙光斑缓慢漂移，不遮挡文字 ===== */
+.cmp-card{position:relative;isolation:isolate}
+.cmp-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+ background-image:
+  radial-gradient(42% 118% at 10% 0%, rgba(251,122,34,.18), rgba(251,122,34,0) 60%),
+  radial-gradient(48% 126% at 94% 112%, rgba(253,154,77,.13), rgba(253,154,77,0) 62%),
+  radial-gradient(34% 96% at 62% 6%, rgba(147,197,253,.085), rgba(147,197,253,0) 60%);
+ background-size:160% 160%,172% 172%,146% 146%;
+ background-repeat:no-repeat;
+ opacity:.92;
+ animation:cmpAurora 20s ease-in-out infinite alternate}
+.cmp-card:focus-within::before{opacity:1;animation-duration:12s}
+.cmp-card .cmp-body{position:relative;z-index:1}
+@keyframes cmpAurora{
+ 0%{background-position:0% 0%,100% 100%,64% 0%}
+ 50%{background-position:30% 32%,66% 64%,40% 44%}
+ 100%{background-position:6% 50%,84% 56%,68% 32%}}
+@media(prefers-reduced-motion:reduce){.cmp-card::before{animation:none}}
 .cmp-tabs{display:flex;gap:4px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0))}
 .cmp-tabs::-webkit-scrollbar{display:none}
 .cmp-tab{appearance:none;background:transparent;border:1px solid transparent;border-bottom:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.2px;color:var(--tx3);padding:10px 17px 11px;border-radius:11px 11px 0 0;white-space:nowrap;position:relative;transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s,color .18s,box-shadow .18s;display:inline-flex;align-items:center}
