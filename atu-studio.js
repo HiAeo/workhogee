@@ -35,7 +35,7 @@
 
  /* === 冻结契约枚举（API-CONTRACT §2） === */
  var LOCALE_LANG={US:'en',EU:'en',SEA:'en',JP:'ja',KR:'ko',CN:'zh-CN',generic:'zh-CN'};
- var PLATFORM_REGION={generic:'generic',amazon:'US',taobao:'CN',jd:'CN',douyin:'CN',xiaohongshu:'CN',aliexpress:'JP',shopee:'SEA',tiktokshop:'US'};
+ var PLATFORM_REGION={generic:'generic',pdd:'CN',amazon:'US',taobao:'CN',jd:'CN',douyin:'CN',xiaohongshu:'CN',aliexpress:'JP',shopee:'SEA',tiktokshop:'US'};
  /* 图种 → 默认比例 → 尺寸（契约 §0/§1）；plan 返回 size 时优先用 plan 的 */
  var TYPE_RATIO={white_main:'1:1',search_main:'1:1',core_selling:'4:3',selling_point:'16:9',icon_selling:'1:1',material:'1:1',scene_show:'16:9',multi_scene:'16:9',search_promo:'1:1',competitor_compare:'4:3',usage_compare:'4:3',size_chart:'1:1',product_detail:'1:1',
    hero:'4:3',scene_atmosphere:'16:9',multi_angle:'1:1',series:'1:1',ingredients:'1:1',usage_guide:'1:1',accessories:'1:1',after_sales:'1:1',mood:'16:9',atmosphere:'16:9',model_show:'3:4',
@@ -218,7 +218,7 @@ body.atu-open #atuStudio{display:flex}\
 
  /* === 图种 ID 与冻结契约 §0 对齐（不再使用旧短码） === */
  var SUITE_TYPES={
-  ecom:[['white_main','白底主图'],['search_main','搜索主图'],['search_promo','营销搜索图'],['core_selling','核心卖点图'],['selling_point','卖点图'],['icon_selling','图标卖点图'],['material','材质图'],['scene_show','场景展示图'],['atmosphere','氛围场景图'],['model_show','模特/手持图'],['multi_scene','多场景拼图'],['competitor_compare','竞品对比图'],['usage_compare','使用对比图'],['size_chart','尺寸/容量图'],['product_detail','产品细节图']],
+  ecom:[['white_main','白底主图'],['scene_show','场景图'],['core_selling','核心卖点图'],['material','细节材质图']],
   detail:[['hero','首屏主视觉'],['product_detail','产品细节图'],['scene_atmosphere','场景氛围图'],['multi_angle','多角度图'],['series','系列展示图'],['ingredients','商品成分图'],['usage_guide','使用建议图'],['accessories','配件/赠品图'],['after_sales','售后保障图'],['mood','氛围渲染图']],
   fashion:[['f_model','模特图'],['f_white','白底图'],['f_search','搜索主图'],['f_selling','卖点图'],['f_icon','图标卖点图'],['f_detail','细节图'],['f_fabric','面料质感图'],['f_angle','多角度视图'],['f_seeding','种草图'],['f_scene','多场景图'],['f_series','系列展示图'],['f_size','尺码图']]
  };
@@ -250,11 +250,11 @@ body.atu-open #atuStudio{display:flex}\
   trackA:'正在抠图保真（轨道A）…',
   why_wait:'白底主图走保真抠图（产品原像素 100% 保留）；其余营销图由 AI 渲染，场景/拼图类每张约 30–90 秒，好一张先放一张。',
   prog_ready:'正在准备…',doing_prefix:'正在做',done_prefix:'已完成',eta_prefix:'预计还需',min:'分',sec:'秒',
-  empty_h2:'一键生成爆款商品套图',
-  empty_p:'上传商品原图，选平台/站点/语种，伙计智能产出白底主图 + 卖点图 + 场景图 + 多场景拼图，整套图文结合的专业电商图一次配齐。',
+  empty_h2:'一键生成整套可上架商品图',
+  empty_p:'上传商品原图，默认按拼多多 3C 数码 / 小家电出白底主图、场景图、核心卖点图、细节材质图，外加配套文案；商品本身一点不动，到手就能直接上架。',
   retry:'重新生成',other_group:'其他',toast_noplan:'AI 已出图文方案，可逐张改文案后开始生成',toast_nofirst:'先上传商品原图',
   toast_needtype:'先勾选至少一个图种（或点 AI 帮写出方案）',gen_done:'出图完成，共',gen_fail:' 张失败可单张重做',no_success:'没有成功生成的成品',
-  t_white_main:'白底主图',t_search_main:'搜索主图',t_core_selling:'核心卖点图',t_selling_point:'卖点图',t_icon_selling:'图标卖点图',t_material:'材质图',t_scene_show:'场景展示图',t_multi_scene:'多场景拼图',t_competitor_compare:'竞品对比图',t_usage_compare:'使用对比图',t_size_chart:'尺寸/容量图',t_product_detail:'产品细节图',t_hero:'首屏主视觉',t_scene_atmosphere:'场景氛围图',t_multi_angle:'多角度图',t_series:'系列展示图',t_ingredients:'商品成分图',t_usage_guide:'使用建议图',t_accessories:'配件/赠品图',t_after_sales:'售后保障图',t_mood:'氛围渲染图',t_f_model:'模特图',t_f_white:'白底图',t_f_search:'搜索主图',t_f_selling:'卖点图',t_f_icon:'图标卖点图',t_f_detail:'细节图',t_f_fabric:'面料质感图',t_f_angle:'多角度视图',t_f_seeding:'种草图',t_f_scene:'多场景图',t_f_series:'系列展示图',t_f_size:'尺码图',p_generic:'通用（全平台适配）',p_amazon:'亚马逊 Amazon',p_taobao:'淘宝/天猫',p_jd:'京东',p_douyin:'抖音商城',p_xhs:'小红书',p_aliexpress:'速卖通 AliExpress',p_shopee:'Shopee',p_tiktokshop:'TikTok Shop',r_generic:'通用',r_cn:'国内（中国大陆）',r_us:'北美（美国）',r_eu:'欧洲',r_sea:'东南亚',r_jp:'日本',r_kr:'韩国',l_auto:'跟随站点',m_auto:'智能推荐（Seedream 4.5）',plan_notready:'当前语种方案生成中，请稍候再开始'
+  t_white_main:'白底主图',t_search_main:'搜索主图',t_core_selling:'核心卖点图',t_selling_point:'卖点图',t_icon_selling:'图标卖点图',t_material:'细节材质图',t_scene_show:'场景图',t_multi_scene:'多场景拼图',t_competitor_compare:'竞品对比图',t_usage_compare:'使用对比图',t_size_chart:'尺寸/容量图',t_product_detail:'产品细节图',t_hero:'首屏主视觉',t_scene_atmosphere:'场景氛围图',t_multi_angle:'多角度图',t_series:'系列展示图',t_ingredients:'商品成分图',t_usage_guide:'使用建议图',t_accessories:'配件/赠品图',t_after_sales:'售后保障图',t_mood:'氛围渲染图',t_f_model:'模特图',t_f_white:'白底图',t_f_search:'搜索主图',t_f_selling:'卖点图',t_f_icon:'图标卖点图',t_f_detail:'细节图',t_f_fabric:'面料质感图',t_f_angle:'多角度视图',t_f_seeding:'种草图',t_f_scene:'多场景图',t_f_series:'系列展示图',t_f_size:'尺码图',p_generic:'通用（全平台适配）',p_amazon:'亚马逊 Amazon',p_taobao:'淘宝/天猫',p_jd:'京东',p_pdd:'拼多多',p_douyin:'抖音商城',p_xhs:'小红书',p_aliexpress:'速卖通 AliExpress',p_shopee:'Shopee',p_tiktokshop:'TikTok Shop',r_generic:'通用',r_cn:'国内（中国大陆）',r_us:'北美（美国）',r_eu:'欧洲',r_sea:'东南亚',r_jp:'日本',r_kr:'韩国',l_auto:'跟随站点',m_auto:'智能推荐（Seedream 4.5）',plan_notready:'当前语种方案生成中，请稍候再开始'
  },
  'en':{
   nav_ecom:'Ecom Suite',nav_fashion:'Fashion Suite',nav_batch:'Batch',nav_records:'History',crumb_b:'Product Image Studio',
@@ -352,12 +352,12 @@ body.atu-open #atuStudio{display:flex}\
  root.innerHTML=
   '<div class="ats-top"><div class="ats-tl"><a class="ats-logo" href="javascript:void(0)" title="返回工作台首页" aria-label="返回工作台首页">'+LOGO_FULL+'</a><span class="ats-crumb">阿图 · <b data-i18n="crumb_b">商品图操作台</b></span></div><div class="ats-tr"><span class="ats-pill">'+I.spark+'Alpha 内测 · 出图不限</span><button class="ats-back" id="atsBack" type="button" title="返回工作台首页" aria-label="返回工作台首页">'+ARROW_LEFT+'<span class="ats-back-tx">返回首页</span></button></div></div>'+
   '<div class="ats-body">'+
-   '<div class="ats-rail"><button class="ats-nav on" data-suite="ecom" type="button">'+I.bag+'<span data-i18n="nav_ecom">电商套图</span></button><button class="ats-nav" data-suite="fashion" type="button">'+I.hanger+'<span data-i18n="nav_fashion">服装套图</span></button><button class="ats-nav" data-suite="batch" type="button">'+I.layers+'<span data-i18n="nav_batch">批量套图</span></button><button class="ats-nav" data-suite="records" type="button">'+I.clock+'<span data-i18n="nav_records">生成记录</span></button></div>'+
+   '<div class="ats-rail"><button class="ats-nav on" data-suite="ecom" type="button">'+I.bag+'<span data-i18n="nav_ecom">电商套图</span></button><button class="ats-nav" data-suite="fashion" type="button" style="display:none">'+I.hanger+'<span data-i18n="nav_fashion">服装套图</span></button><button class="ats-nav" data-suite="batch" type="button" style="display:none">'+I.layers+'<span data-i18n="nav_batch">批量套图</span></button><button class="ats-nav" data-suite="records" type="button" style="display:none">'+I.clock+'<span data-i18n="nav_records">生成记录</span></button></div>'+
    '<div class="ats-panel"><div class="ats-scroll" id="atsScroll">'+
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_origin">商品原图</div><button class="ats-cs mut" id="atsClear" type="button"><span data-i18n="btn_clear">清空</span></button></div><div class="ats-thumbs" id="atsThumbs"></div><div class="ats-hint" data-i18n="origin_hint">同一商品可传多角度（最多 5 张），系统按一套处理；主参考图请选主体清晰、背景简洁的实拍图。</div></div>'+
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_selling">商品卖点</div><button class="ats-cs" id="atsAiWrite" type="button">'+I.spark+'<span data-i18n="btn_aiwrite">AI 帮写</span></button></div><div id="atsSellingWrap"><textarea class="ats-ta" id="atsSelling" maxlength="2000" data-i18n-ph="selling_ph" placeholder="商品名称、核心卖点、适用人群、使用场景、规格参数都可以写在这里；没准备好就点「AI 帮写」，伙计看图先给你一版。"></textarea></div></div>'+
      '<div class="ats-card"><div class="ats-ch"><div class="ats-ct" data-i18n="card_settings">生成设置</div><button class="ats-cs mut" id="atsMoreBtn" type="button"><span data-i18n="btn_more">更多设置</span></button></div><div class="ats-grid">'+
-       '<div class="ats-field"><label data-i18n="f_platform">电商平台</label><select id="setPlatform"><option value="generic">通用（全平台适配）</option><option value="amazon">亚马逊 Amazon</option><option value="taobao">淘宝/天猫</option><option value="jd" selected>京东</option><option value="douyin">抖音商城</option><option value="xiaohongshu">小红书</option><option value="aliexpress">速卖通 AliExpress</option><option value="shopee">Shopee</option><option value="tiktokshop">TikTok Shop</option></select></div>'+
+       '<div class="ats-field"><label data-i18n="f_platform">电商平台</label><select id="setPlatform"><!-- 内测首发收窄为拼多多；其余平台保留在后端 PLATFORM_MAP，需要时从此恢复 --><option value="pdd" selected>拼多多</option></select></div>'+
        '<div class="ats-field"><label data-i18n="f_region">销售站点 / 区域</label><select id="setRegion"><option value="generic">通用</option><option value="CN" selected>国内（中国大陆）</option><option value="US">北美（美国）</option><option value="EU">欧洲</option><option value="SEA">东南亚</option><option value="JP">日本</option><option value="KR">韩国</option></select></div>'+
        '<div class="ats-field"><label data-i18n="f_lang">文案语种</label><select id="setLang"><option value="auto" selected>跟随站点</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div>'+
        '<div class="ats-field"><label data-i18n="f_q">清晰度</label><select id="setQ"><option>高清</option><option>标准</option><option>超清</option></select></div>'+
@@ -365,7 +365,7 @@ body.atu-open #atuStudio{display:flex}\
        '<div class="ats-more" id="atsMore"><div class="ats-field"><label>图片比例</label><select><option>智能适配图种</option><option>1:1</option><option>3:4</option><option>16:9</option></select></div><div class="ats-field"><label>文件格式</label><select><option>JPG</option><option>PNG（透明底）</option><option>WebP</option></select></div></div></div>'+
      '<div class="ats-card" id="planCard" style="display:none"><div class="ats-fold open" id="foldPlanText"><div class="ats-ct" data-i18n="plan_title">图文文案方案 <span class="ats-selcount" id="planCount"></span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody" style="display:flex" id="planTextBody"></div></div>'+
      '<div class="ats-card"><div class="ats-fold" id="foldPlan"><div class="ats-ct"><span data-i18n="style_title">智能视觉风格</span> <span style="font-size:11.5px;color:var(--tx3);font-weight:400" data-i18n="style_opt">（可选）</span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody"><div class="ats-switch-row"><span data-i18n="style_switch">智能风格推荐（关闭则由 AI 自动匹配）</span><button class="ats-sw" id="swStyle" type="button"></button></div><div class="ats-chips" id="styleChips" style="display:none">'+STYLE_TAGS.map(function(t,i){return '<button class="ats-chip" data-style="'+i+'" type="button">'+t+'</button>';}).join('')+'</div></div></div>'+
-     '<div class="ats-card"><div class="ats-fold open" id="foldSuite"><div class="ats-ct" data-i18n="suite_title">套图选择 <span class="ats-selcount" id="selCount"></span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody" style="display:flex"><div style="display:flex;align-items:center;justify-content:space-between"><div class="ats-seg" id="suiteSeg"><button class="on" data-seg="main" type="button">套图</button><button data-seg="detail" id="segDetail" type="button">详情 / A+</button></div><button class="ats-cs" id="aiSelect" type="button"><span data-i18n="btn_aipick">AI 帮选</span></button></div><div class="ats-chips" id="suiteChips"></div></div></div>'+
+     '<div class="ats-card"><div class="ats-fold open" id="foldSuite"><div class="ats-ct" data-i18n="suite_title">套图选择 <span class="ats-selcount" id="selCount"></span></div><span class="ats-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="ats-foldbody" style="display:flex"><div style="display:none"><div class="ats-seg" id="suiteSeg"><button class="on" data-seg="main" type="button">套图</button><button data-seg="detail" id="segDetail" type="button">详情 / A+</button></div><button class="ats-cs" id="aiSelect" type="button"><span data-i18n="btn_aipick">AI 帮选</span></button></div><div class="ats-chips" id="suiteChips"></div></div></div>'+
    '</div><div class="ats-genbar"><div class="ats-free"><span class="ats-free-l" data-i18n="free_left">内测剩余额度：</span><b data-i18n="free_val">不限</b><span class="ats-free-n" data-i18n="free_note">（仅对成功出图计费，失败/审核未出图不扣费）</span></div><button class="ats-gen" id="atsGen" type="button"><span data-i18n="btn_start">开始生成</span></button></div></div>'+
    '<div class="ats-stage"><div class="ats-stage-tabs" id="stageTabs" style="display:none"><div class="ats-stage-tt"><span data-i18n="deliver">交付成品</span> <span class="cnt" id="stageCnt"></span></div><div class="ats-stage-ops"><button class="ats-obtn" id="stageHome" type="button" title="返回工作台首页">'+ARROW_LEFT+'<span>返回首页</span></button><button class="ats-obtn" id="dlAll" type="button">'+I.download+'<span data-i18n="btn_dlall">全部下载</span></button></div></div><div class="ats-canvas" id="atsCanvas"></div></div>'+
   '</div><div class="ats-lb" id="atsLb"><button class="ats-lb-x" id="atsLbX" type="button">×</button><img id="atsLbImg" alt="成品大图"></div>'+
@@ -527,7 +527,7 @@ body.atu-open #atuStudio{display:flex}\
    // 按钮文字（更多设置/收起）
    var mb=this.$('#atsMoreBtn');if(mb)mb.innerHTML=(this.$('#atsMore').classList.contains('show')?t('btn_less'):t('btn_more'));
    // 下拉选项标签随语种
-   var PL={generic:'p_generic',amazon:'p_amazon',taobao:'p_taobao',jd:'p_jd',douyin:'p_douyin',xiaohongshu:'p_xhs',aliexpress:'p_aliexpress',shopee:'p_shopee',tiktokshop:'p_tiktokshop'};
+   var PL={pdd:'p_pdd',generic:'p_generic',amazon:'p_amazon',taobao:'p_taobao',jd:'p_jd',douyin:'p_douyin',xiaohongshu:'p_xhs',aliexpress:'p_aliexpress',shopee:'p_shopee',tiktokshop:'p_tiktokshop'};
    var RG={generic:'r_generic',CN:'r_cn',US:'r_us',EU:'r_eu',SEA:'r_sea',JP:'r_jp',KR:'r_kr'};
    function relabel(selId,map){var el=self.$(selId);if(!el)return;[].forEach.call(el.options,function(o){var k=map[o.value];if(k)o.textContent=t(k);});}
    relabel('#setPlatform',PL);relabel('#setRegion',RG);
@@ -572,10 +572,13 @@ body.atu-open #atuStudio{display:flex}\
   currentList:function(){if(this.suite==='fashion')return SUITE_TYPES.fashion;return (this.seg==='detail')?SUITE_TYPES.detail:SUITE_TYPES.ecom;},
   renderSuiteChips:function(){
    var box=this.$('#suiteChips');if(!box)return;var list=this.currentList();var self=this;
+   /* 内测首发：电商套图固定4图种（白底主图/场景图/核心卖点图/细节材质图），默认全选且锁定，零决策；服装/详情逻辑保留 */
+   var lockedEcom=(this.suite==='ecom'&&this.seg!=='detail');
+   if(lockedEcom){list.forEach(function(p){self.sel[p[0]]=true;});}
    box.innerHTML=list.map(function(p){
     return '<button class="ats-chip'+(self.sel[p[0]]?' on':'')+'" data-type="'+p[0]+'" type="button">'+esc(typeLabel(p[0]))+'</button>';
    }).join('');
-   box.querySelectorAll('.ats-chip').forEach(function(c){c.addEventListener('click',function(){var t=c.dataset.type;self.sel[t]=!self.sel[t];c.classList.toggle('on',!!self.sel[t]);self.updateSelCount();self._saveSession();});});
+   box.querySelectorAll('.ats-chip').forEach(function(c){c.addEventListener('click',function(){if(lockedEcom)return;var t=c.dataset.type;self.sel[t]=!self.sel[t];c.classList.toggle('on',!!self.sel[t]);self.updateSelCount();self._saveSession();});});
    var sd=this.$('#segDetail');if(sd)sd.style.display=(this.suite==='fashion')?'none':'';
    this.updateSelCount();
   },
@@ -641,7 +644,7 @@ body.atu-open #atuStudio{display:flex}\
      if(Array.isArray(p.materials)&&p.materials.length)lines.push(t('l_material')+'：'+p.materials.join(' / '));
      if(Array.isArray(p.specs)&&p.specs.length)lines.push(t('l_spec')+'：'+p.specs.join(' / '));
      if(ta)ta.value=lines.join('\n')||sellingText;
-     self.sel={};(j.recommended_types||[]).forEach(function(tp){self.sel[tp]=true;});
+     self.sel={};SUITE_TYPES.ecom.forEach(function(p){self.sel[p[0]]=true;});/* 内测固定4图种，不以后端 recommended_types 覆盖 */
      self.renderSuiteChips();self.updateSelCount();self.renderPlanText();
      self._saveSession();
      toast(t('toast_noplan'));
