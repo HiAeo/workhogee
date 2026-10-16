@@ -3,510 +3,717 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WorkHogee · 出海卖家的 AI 盯盘伙计 — Instagram 评论自动回复与私信获客</title>
-<meta name="description" content="面向出海卖家的 Instagram 评论监控与自动获客工具：7×24 盯评论，自动公开回复与私信，多语言询盘识别，线索 A/B/C/D 分级，高意向实时告警。官方 API 授权，不碰账号密码，数据归你。">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23fb7a22'/><text x='32' y='44' font-family='Arial,sans-serif' font-size='38' font-weight='900' fill='%23ffffff' text-anchor='middle' dominant-baseline='middle'>W</text></svg>">
+<title>WorkHogee · 出海卖家的 AI 评论盯盘伙计 — Instagram 评论自动回复与私信获客</title>
+<meta name="description" content="WorkHogee 是出海卖家的 AI 评论盯盘伙计：盯紧 Instagram 评论、自动公开回复并私信、识别意向、A/B/C/D 评分、沉淀线索。只走 Meta 官方 API，OAuth 授权不存密码。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563EB'/%3E%3Cpath d='M8 12h16M8 12a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4M8 12v8a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%23fff'/%3E%3C/svg%3E">
 <style>
 :root{
-  /* 即梦风中性深色：近黑纯灰底，靠亮度分层，品牌橙为唯一强调 */
-  --ink:#f5f5f6; --coal:#141414; --coal-2:#161616;
-  --ink-soft:rgba(245,245,246,.72); --ink-muted:rgba(245,245,246,.50);
-  --orange:#fb7a22; --orange-deep:#f2630d; --orange-light:#fd9a4d; --orange-soft:rgba(251,122,34,.14);
-  --paper:#161616; --sand:#1c1c1d; --sand-2:#242424; --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.14); --white:#fff;
-  --green:#22c55e; --red:#f87171;
-  --shadow-sm:0 1px 2px rgba(0,0,0,.30); --shadow-md:0 4px 18px rgba(0,0,0,.38);
-  --shadow-lg:0 20px 60px rgba(0,0,0,.55);
-  --r:10px; --r-md:14px; --r-lg:18px;
-  --maxw:1180px;
+  --blue:#2563EB; --blue-700:#1D4ED8; --blue-800:#1E40AF;
+  --blue-50:#EFF4FF; --blue-100:#E0EAFF;
+  --navy:#111936; --ink:#0B1220;
+  --dark:#0A0F1E; --dark-2:#0E1526; --dark-line:rgba(255,255,255,.08);
+  --text:#1B2438; --gray:#5B6478; --gray-2:#8A93A6;
+  --line:#E6EAF2; --bg:#F5F7FA; --bg-2:#F8FAFC;
+  --teal:#14B8A6; --teal-bg:#E6FAF7;
+  --white:#fff; --radius:12px;
+  --shadow-sm:0 4px 16px rgba(17,25,54,.06);
+  --shadow:0 24px 60px -18px rgba(17,25,54,.18);
+  --shadow-blue:0 18px 40px -12px rgba(37,99,235,.45);
+  --maxw:1200px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
-  background-color:#161616;
-  background-image:
-    radial-gradient(1100px 560px at 50% -10%, rgba(251,122,34,.10), rgba(251,122,34,0) 60%),
-    radial-gradient(rgba(255,255,255,.025) 1px, transparent 1.5px);
-  background-size:100% 100%,34px 34px;
-  background-attachment:fixed;
-  color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
-}
-section[id]{scroll-margin-top:88px;}
-img{max-width:100%;display:block;}
-a{color:inherit;text-decoration:none;}
-ul{list-style:none;}
-.container{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",sans-serif;color:var(--text);background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 28px;border-radius:var(--radius);font-size:16px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s ease;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:var(--shadow-blue)}
+.btn-primary:hover{background:var(--blue-700);transform:translateY(-1px)}
+.btn-ghost{background:#fff;color:var(--navy);border-color:#D6DEEC}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-light{background:#fff;color:var(--blue-800)}
+.btn-light:hover{background:#EAF1FF}
+.btn-glass{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.35)}
+.btn-glass:hover{background:rgba(255,255,255,.18)}
+.btn .arr{font-size:18px;line-height:1}
+.section{padding:96px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--blue);background:var(--blue-50);border:1px solid var(--blue-100);margin-bottom:22px}
+.eyebrow.on-dark{background:rgba(37,99,235,.16);color:#9DB8FF;border-color:rgba(96,143,255,.28)}
+.h2{font-size:clamp(30px,4vw,44px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.02em}
+.sub{font-size:17px;color:var(--gray);max-width:680px;margin:18px auto 0}
+.center{text-align:center}
+.fade{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.fade.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.fade{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 
-/* ===== 导航 ===== */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;border-bottom:1px solid transparent;transition:background .25s,border-color .25s;}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px;max-width:var(--maxw);margin:0 auto;padding:0 24px;}
-.nav-logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.2px;}
-.nav-logo img{width:30px;height:30px;border-radius:7px;}
-.nav-logo .nm{color:#fff;}
-.nav-links{display:flex;align-items:center;gap:6px;}
-.nav-links a{font-size:14.5px;color:var(--ink-soft);padding:8px 13px;border-radius:8px;transition:color .2s,background .2s;}
-.nav-links a:hover{color:#fff;background:rgba(255,255,255,.07);}
-.nav-cta{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;background:var(--orange);color:#fff;white-space:nowrap;box-shadow:0 6px 16px rgba(234,88,12,.28);transition:background .2s,transform .2s,box-shadow .2s;}
-.nav-cta:hover{background:var(--orange-deep);transform:translateY(-1px);box-shadow:0 10px 22px rgba(234,88,12,.4);}
-.nav.solid{background:rgba(20,20,20,.80);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--line);}
-.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px;}
-.nav-toggle span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;}
-@media(max-width:860px){
-  .nav-links{position:fixed;top:72px;left:0;right:0;flex-direction:column;align-items:stretch;gap:4px;padding:14px 20px 20px;background:rgba(20,20,20,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(18px);transform:translateY(-130%);transition:transform .3s cubic-bezier(.22,1,.36,1);}
-  .nav.panel-open .nav-links{transform:translateY(0);}
-  .nav-links a{padding:12px 14px;font-size:16px;}
-  .nav-toggle{display:flex;}
-  .nav-cta{display:none;}
-}
-
-/* ===== 通用按钮 ===== */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:15.5px;font-weight:600;line-height:1;padding:14px 26px;border-radius:11px;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:transform .2s,background .2s,box-shadow .2s,border-color .2s;}
-.btn-primary{background:var(--orange);color:#fff;box-shadow:0 10px 26px rgba(234,88,12,.3);}
-.btn-primary:hover{background:var(--orange-deep);transform:translateY(-2px);box-shadow:0 14px 32px rgba(234,88,12,.42);}
-.btn-ghost{background:rgba(255,255,255,.05);color:#fff;border-color:var(--line-strong);}
-.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);transform:translateY(-2px);}
+/* ===== Nav ===== */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;gap:32px;height:70px}
+.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.brand .logo{width:34px;height:34px}
+.nav-menu{display:flex;gap:4px;margin-left:8px}
+.nav-menu a{padding:8px 14px;font-size:15px;font-weight:500;color:#3A4458;border-radius:8px;transition:.15s}
+.nav-menu a:hover{color:var(--blue);background:var(--blue-50)}
+.nav-cta{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-cta .login{font-size:15px;font-weight:600;color:#3A4458}
+.nav-cta .login:hover{color:var(--blue)}
+.nav-cta .btn{height:42px;padding:0 20px;font-size:15px}
+.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;border-radius:2px;transition:.3s}
+.mobile-menu{display:none;max-height:0;overflow:hidden;background:#fff;border-bottom:1px solid var(--line);transition:max-height .3s ease}
+.mobile-menu.open{max-height:460px}
+.mobile-menu a{display:block;padding:15px 24px;font-size:16px;border-top:1px solid #F0F3F8}
+@media(max-width:920px){.nav-menu,.nav-cta{display:none}.burger{display:block}.mobile-menu{display:block}}
 
 /* ===== Hero ===== */
-.hero{padding:150px 0 70px;text-align:center;}
-.trust{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink-soft);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:8px 17px;margin-bottom:26px;}
-.trust .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,197,94,.16);}
-.hero h1{font-size:clamp(34px,5.6vw,58px);font-weight:800;letter-spacing:-1px;line-height:1.12;margin:0 auto 22px;max-width:14em;}
-.hero h1 .ac{color:var(--orange-light);}
-.hero .lead{font-size:clamp(16px,2vw,18.5px);color:var(--ink-soft);line-height:1.8;max-width:680px;margin:0 auto 34px;}
-.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-.hero-shot{margin:56px auto 0;max-width:1080px;}
-.browser{background:var(--coal);border:1px solid var(--line-strong);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-lg);}
-.browser-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#101010;border-bottom:1px solid var(--line);}
-.browser-bar .k{width:11px;height:11px;border-radius:50%;}
-.k1{background:#ff5f57;}.k2{background:#febc2e;}.k3{background:#28c840;}
-.browser-bar .url{margin-left:14px;flex:1;max-width:420px;background:rgba(255,255,255,.07);border-radius:7px;padding:5px 13px;font-size:12.5px;color:var(--ink-muted);text-align:center;}
-.browser img{width:100%;height:auto;}
-.hero-note{font-size:12.5px;color:var(--ink-muted);margin-top:14px;}
-
-/* ===== 章节标题 ===== */
-.section{padding:78px 0;}
-.shead{text-align:center;max-width:760px;margin:0 auto 52px;}
-.kicker{display:inline-block;font-size:13px;font-weight:700;color:var(--orange-light);letter-spacing:.5px;margin-bottom:14px;}
-.shead h2{font-size:clamp(27px,3.6vw,38px);font-weight:800;letter-spacing:-.5px;line-height:1.2;}
-.shead p{font-size:16px;color:var(--ink-soft);line-height:1.8;margin-top:15px;}
-
-/* ===== 痛点 ===== */
-.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-.pain{background:var(--sand);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 28px;}
-.pain .ic{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.28);color:var(--red);margin-bottom:18px;}
-.pain h3{font-size:17.5px;font-weight:700;margin-bottom:9px;}
-.pain p{font-size:14.5px;color:var(--ink-soft);line-height:1.75;}
-@media(max-width:860px){.pain-grid{grid-template-columns:1fr;}}
-
-/* ===== 工作流 ===== */
-.flow{background:var(--coal);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-.flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:step;}
-.fstep{position:relative;background:var(--sand);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 26px;}
-.fstep .no{font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--orange-light);margin-bottom:14px;}
-.fstep .no::before{content:"";display:inline-block;width:30px;height:2px;background:var(--orange);vertical-align:middle;margin-right:10px;}
-.fstep h3{font-size:17px;font-weight:700;margin-bottom:9px;}
-.fstep p{font-size:14px;color:var(--ink-soft);line-height:1.75;}
-.fstep .tags{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px;}
-.fstep .tags span{font-size:12px;color:var(--ink-soft);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:4px 11px;}
-@media(max-width:980px){.flow-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:600px){.flow-grid{grid-template-columns:1fr;}}
-
-/* ===== 能力 ===== */
-.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
-.cap{background:var(--sand);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 26px;transition:border-color .25s,transform .25s;}
-.cap:hover{border-color:rgba(251,122,34,.45);transform:translateY(-3px);}
-.cap .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--orange-soft);border:1.5px solid rgba(234,88,12,.34);color:var(--orange);margin-bottom:18px;}
-.cap h3{font-size:16.5px;font-weight:700;margin-bottom:9px;}
-.cap p{font-size:14px;color:var(--ink-soft);line-height:1.75;}
-.guard{margin-top:22px;display:flex;gap:15px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--r-md);padding:22px 26px;}
-.guard .ic{flex:0 0 auto;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);color:var(--ink-soft);}
-.guard h4{font-size:15px;font-weight:700;margin-bottom:4px;}
-.guard p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;}
-@media(max-width:980px){.cap-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:600px){.cap-grid{grid-template-columns:1fr;}}
-
-/* ===== 产品预览 ===== */
-.tabs{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;}
-.tab{appearance:none;font-family:inherit;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-soft);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:10px 20px;transition:.2s;}
-.tab.on{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 6px 16px rgba(234,88,12,.3);}
-.tab:hover:not(.on){border-color:var(--line-strong);color:#fff;}
-.shot-stage{max-width:1060px;margin:0 auto;background:var(--coal);border:1px solid var(--line-strong);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-lg);}
-.shot-stage img{width:100%;height:auto;}
-.shot-img{display:none;}
-.shot-img.on{display:block;}
-.shot-caption{max-width:1060px;margin:14px auto 0;font-size:13px;color:var(--ink-muted);text-align:center;}
-@media(max-width:600px){.tabs{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}.tab{flex:0 0 auto;}}
-
-/* ===== 安全 ===== */
-.secure{background:var(--coal);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-.sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-.sec{background:var(--sand);border:1px solid var(--line);border-radius:var(--r-lg);padding:32px 28px;}
-.sec .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid var(--line-strong);color:var(--green);margin-bottom:18px;}
-.sec h3{font-size:17px;font-weight:700;margin-bottom:9px;}
-.sec p{font-size:14px;color:var(--ink-soft);line-height:1.75;}
-@media(max-width:860px){.sec-grid{grid-template-columns:1fr;}}
-
-/* ===== FAQ ===== */
-.faq-list{max-width:820px;margin:0 auto;}
-.faq{border:1px solid var(--line);border-radius:var(--r-md);background:var(--sand);margin-bottom:12px;overflow:hidden;}
-.faq-q{width:100%;appearance:none;background:none;border:0;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;padding:20px 24px;font-size:16px;font-weight:600;color:var(--ink);}
-.faq-q .chev{flex:0 0 auto;width:22px;height:22px;color:var(--orange-light);transition:transform .25s;}
-.faq.open .chev{transform:rotate(180deg);}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-.faq-a p{padding:0 24px 22px;font-size:14.5px;color:var(--ink-soft);line-height:1.85;}
-
-/* ===== 最终 CTA ===== */
-.final{text-align:center;padding:96px 0;}
-.final-box{background:linear-gradient(160deg,#1c1c1d,#141414);border:1px solid var(--line);border-radius:24px;padding:70px 32px;}
-.final-box h2{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.5px;margin-bottom:16px;}
-.final-box p{font-size:16.5px;color:var(--ink-soft);max-width:560px;margin:0 auto 32px;line-height:1.8;}
-
-/* ===== 页脚 ===== */
-.footer{border-top:1px solid var(--line);background:var(--coal);padding:60px 0 32px;}
-.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:36px;}
-.footer-brand .fb-logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;margin-bottom:16px;}
-.footer-brand .fb-logo img{width:30px;height:30px;border-radius:7px;}
-.footer-brand p{font-size:14px;color:var(--ink-muted);line-height:1.8;max-width:300px;}
-.footer-col h5{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:16px;}
-.footer-col li{margin-bottom:11px;}
-.footer-col a{font-size:14px;color:var(--ink-muted);transition:color .2s;}
-.footer-col a:hover{color:var(--orange-light);}
-.footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-muted);}
-.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
-.footer-links a{color:var(--ink-muted);}
-.footer-links a:hover{color:var(--orange-light);}
-@media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr;gap:30px;}.footer-brand{grid-column:1/-1;}}
-@media(max-width:560px){.footer-grid{grid-template-columns:1fr;}.footer-bottom{flex-direction:column;align-items:flex-start;}}
+.hero{position:relative;background:var(--bg-2);padding:76px 0 0;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(17,25,54,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(17,25,54,.045) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 40%,transparent 100%)}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:880px;margin:0 auto}
+.hero h1{font-size:clamp(34px,8.6vw,76px);font-weight:800;color:var(--navy);line-height:1.12;letter-spacing:-.03em}
+.hero h1 .grad{background:linear-gradient(100deg,var(--blue) 10%,#3E7BFA 60%,#14B8A6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{font-size:18px;margin-top:24px;max-width:680px}
+.hero-actions{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.trust{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;margin-top:38px;padding-bottom:64px}
+.trust .t{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray)}
+.trust .t svg{width:18px;height:18px;color:var(--blue);flex:none}
 </style>
 </head>
 <body>
-<header class="nav" id="nav">
-  <div class="nav-inner">
-    <a href="#top" class="nav-logo"><img src="favicon.svg" alt="WorkHogee"><span class="nm">WorkHogee</span></a>
-    <nav class="nav-links" id="navLinks">
-      <a href="#flow">工作流</a>
-      <a href="#capabilities">能力</a>
-      <a href="#preview">产品预览</a>
-      <a href="#secure">安全</a>
-      <a href="#faq">常见问题</a>
+<!-- ===== Nav ===== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2563EB"/><path d="M8 12h16M8 12a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4M8 12v8a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="#fff"/></svg>
+      WorkHogee
+    </a>
+    <nav class="nav-menu" aria-label="主导航">
+      <a href="#features">功能</a>
+      <a href="#scenes">适用场景</a>
+      <a href="#metrics">效果</a>
+      <a href="#security">安全</a>
+      <a href="#pricing">定价</a>
     </nav>
-    <a class="nav-cta" href="https://app.workhogee.com/signin">进入工作台</a>
-    <button class="nav-toggle" id="navToggle" aria-label="菜单"><span></span><span></span><span></span></button>
+    <div class="nav-cta">
+      <a class="login" href="https://app.workhogee.com/signin">登录</a>
+      <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始</a>
+    </div>
+    <button class="burger" id="burger" aria-label="菜单" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">功能</a><a href="#scenes">适用场景</a><a href="#metrics">效果</a><a href="#security">安全</a><a href="#pricing">定价</a>
+    <a href="https://app.workhogee.com/signin">登录 / 免费开始</a>
   </div>
 </header>
 
-<main id="top">
-<section class="hero">
-  <div class="container">
-    <div class="trust"><span class="dot"></span>Meta 官方 API 授权 · 不碰账号密码 · 数据归你</div>
-    <h1>你只管做生意，<span class="ac">伙计帮你盯。</span></h1>
-    <p class="lead">WorkHogee 是给出海卖家的 AI 盯盘伙计：7×24 盯守 Instagram 评论与私信，自动识别询盘、用买家的语言公开回复并私信承接，再把高意向客户分级沉淀，该你出手的那一刻立刻提醒你。</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始</a>
-      <a class="btn btn-ghost" href="#capabilities">看看伙计能做什么</a>
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <span class="eyebrow">出海卖家的 Instagram 评论盯盘伙计</span>
+    <h1>每条评论都有人秒回<br><span class="grad">每个询盘都不漏成单</span></h1>
+    <p class="sub">从评论到私信，WorkHogee 7×24 盯守 Instagram，自动识别意向、公开回复并私信发链接，把询盘沉淀成可跟进的线索。只走官方 API，不用雇客服，也不用交出账号密码。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
+      <a class="btn btn-ghost" href="mailto:910036590@qq.com">预约演示</a>
     </div>
-    <div class="hero-shot">
-      <div class="browser">
-        <div class="browser-bar"><span class="k k1"></span><span class="k k2"></span><span class="k k3"></span><span class="url">app.workhogee.com/dashboard/monitor</span></div>
-        <img src="assets/v8/monitor.png" alt="WorkHogee 实时盯盘工作台：评论动态、高意向客户与自动回复" width="1440" height="900">
-      </div>
-      <p class="hero-note">产品演示界面（示例数据，非真实客户）</p>
-    </div>
-  </div>
-</section>
-<section class="section" id="pain">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">出海卖家的真实困境</span>
-      <h2>买家在评论里排队下单，而你没看见</h2>
-      <p>一个人、一家小店，守不住 24 小时不停涌进来的评论和私信。漏掉的不是消息，是订单。</p>
-    </div>
-    <div class="pain-grid">
-      <div class="pain">
-        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 8 10 8a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg></div>
-        <h3>询盘淹没在评论里</h3>
-        <p>爆款帖下几十上百条 “how much / where to buy”，刷过去就被竞品接走。你不可能一直盯着手机。</p>
-      </div>
-      <div class="pain">
-        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <h3>时差叠加多语言</h3>
-        <p>欧美买家半夜下单，西语、法语看不懂；等你第二天醒来回复，客户已经买了别家。</p>
-      </div>
-      <div class="pain">
-        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <h3>问完没人跟，线索散了</h3>
-        <p>公开问完没人接，私信里的报价、下单链接没人发，意向客户就这样一次次流失。</p>
-      </div>
+    <div class="trust">
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 Meta Graph API</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21M17 9v6"/></svg>OAuth 授权 · 不存密码</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6 4 4 6-7" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>意图识别 100%</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" stroke-linecap="round"/></svg>多语言 英·西·法·中</span>
     </div>
   </div>
-</section>
-<section class="section flow" id="flow">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">伙计怎么干活</span>
-      <h2>从连接账号到成交提醒，一条闭环</h2>
-      <p>你只需要授权一次，剩下盯评论、识别、回复、跟进的活儿，伙计全包。</p>
+  <div class="wrap" style="position:relative;z-index:1">
+<style>
+/* ===== Product mock ===== */
+.prod{position:relative;padding:20px 0 120px}
+.browser{position:relative;z-index:2;border-radius:16px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 40px 90px -30px rgba(17,25,54,.35),0 8px 24px rgba(17,25,54,.08)}
+.bar{display:flex;align-items:center;gap:8px;height:46px;padding:0 16px;background:#F4F7FC;border-bottom:1px solid var(--line)}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.r{background:#FF5F57}.dot.y{background:#FEBC2E}.dot.g{background:#28C840}
+.urlbar{flex:1;max-width:420px;margin:0 auto;height:28px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;color:#6B7280;border:1px solid #E6EBF3}
+.urlbar svg{width:13px;height:13px;color:var(--blue)}
+.app{display:grid;grid-template-columns:168px 252px 1fr 236px;height:600px;font-size:13px}
+/* rail */
+.rail{background:#fff;border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+.rail .logo2{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);font-size:15px;margin-bottom:14px}
+.rail .logo2 i{width:26px;height:26px;border-radius:7px;background:var(--blue);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:13px}
+.rail .acct{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11.5px}
+.rail .acct b{display:flex;align-items:center;gap:7px;color:var(--navy);font-size:12.5px}
+.rail .acct b s{width:22px;height:22px;border-radius:50%;background:var(--blue-50);color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.rail .acct small{color:var(--gray-2);display:block;margin-top:4px}
+.rail .ri{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:#4B5568;font-weight:500;cursor:default}
+.rail .ri.on{background:var(--blue-50);color:var(--blue);font-weight:700}
+.rail .ri svg{width:16px;height:16px;flex:none}
+/* conv list */
+.conv{border-right:1px solid var(--line);background:#FBFCFE;display:flex;flex-direction:column;min-width:0}
+.conv .ch{padding:14px 16px;font-weight:800;color:var(--navy);font-size:15px;display:flex;align-items:center;justify-content:space-between}
+.conv .search{margin:0 12px 10px;height:32px;background:#fff;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;padding:0 10px;gap:7px;color:var(--gray-2);font-size:12px}
+.conv .item{display:flex;gap:10px;padding:12px 16px;border-top:1px solid #F0F3F8;min-width:0}
+.conv .item.on{background:var(--blue-50);border-left:3px solid var(--blue);padding-left:13px}
+.conv .av{width:34px;height:34px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
+.av.c{background:linear-gradient(135deg,#2563EB,#1D4ED8)}.av.m{background:linear-gradient(135deg,#14B8A6,#0D9488)}
+.conv .bd{min-width:0;flex:1}
+.conv .nm{display:flex;justify-content:space-between;font-weight:700;color:var(--navy)}
+.conv .nm span{color:var(--gray-2);font-weight:400;font-size:11px}
+.conv .pv{color:var(--gray);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:6px;margin-top:4px;font-weight:600}
+.tag.rep{background:#E6FAF7;color:#0D9488}.tag.closed{background:#F1F5F9;color:#94A3B8}
+/* chat */
+.chat{display:flex;flex-direction:column;min-width:0;background:#fff}
+.chat .top{padding:14px 20px;border-bottom:1px solid var(--line)}
+.chat .top b{font-size:15px;color:var(--navy)}
+.chat .top .tt{display:flex;gap:6px;margin-top:5px}
+.mini{font-size:10.5px;padding:2px 8px;border-radius:999px;font-weight:600}
+.mini.b{background:var(--blue-50);color:var(--blue)}.mini.g{background:#E6FAF7;color:#0D9488}.mini.o{background:#FFF3E6;color:#D97706}
+.thread{flex:1;padding:20px;background:linear-gradient(180deg,#F8FAFF,#fff);display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:12.5px;line-height:1.5}
+.bubble.in{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;align-self:flex-start}
+.bubble.out{background:var(--blue);color:#fff;border-top-right-radius:4px;align-self:flex-end}
+.bubble.auto{background:var(--blue-50);border:1px solid var(--blue-100);border-top-left-radius:4px;align-self:flex-start}
+.auto-label{display:inline-flex;align-items:center;gap:5px;color:var(--blue);font-weight:700;font-size:11px;margin-bottom:4px}
+.bubble .tm{display:block;font-size:10px;color:var(--gray-2);margin-top:5px}
+.bubble.out .tm{color:rgba(255,255,255,.75)}
+.linkbtn{margin-top:8px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:9px;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;display:block}
+/* lead card */
+.lead{background:#FBFCFE;border-left:1px solid var(--line);padding:16px;overflow:hidden}
+.lead .lp{display:flex;align-items:center;gap:10px}
+.lead .lp .av{width:42px;height:42px}
+.lead .lp b{font-size:14px;color:var(--navy);display:block}
+.lead .lp small{color:var(--gray-2);font-size:11px}
+.score{display:flex;align-items:center;gap:10px;margin:14px 0}
+.score .grade{background:var(--blue);color:#fff;font-weight:800;font-size:13px;padding:4px 12px;border-radius:9px}
+.score .num{font-size:24px;font-weight:800;color:var(--navy)}
+.score .hot{font-size:11px;color:#fff;background:linear-gradient(135deg,#F97316,#EA580C);padding:3px 9px;border-radius:999px;font-weight:700}
+.lbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:10px}
+.lbox h5{font-size:11.5px;color:var(--gray-2);font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.lbox .p{font-size:12px;color:#374151;margin-bottom:6px}
+.lbox .rec{font-size:11.5px;background:var(--blue-50);color:var(--blue-800);border-radius:8px;padding:8px 10px}
+/* annotations under the browser */
+.anno-row{position:relative;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:46px auto 0;max-width:960px}
+.anno-row .ai{display:flex;flex-direction:column;align-items:center;text-align:center;gap:13px}
+.anno-row .ic{width:60px;height:60px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 28px -10px rgba(20,184,166,.6);flex:none}
+.anno-row .ic svg{width:28px;height:28px}
+.anno-row .tx{font-weight:700;font-size:15px;color:var(--navy);line-height:1.4}
+.anno-row .tx small{display:block;font-weight:500;color:var(--gray);font-size:13px;margin-top:4px}
+@media(max-width:1100px){.lead{display:none}.app{grid-template-columns:140px 220px 1fr}}
+@media(max-width:760px){.rail{display:none}.conv{display:none}.app{grid-template-columns:1fr;height:486px}.prod{padding-bottom:32px}.anno-row{grid-template-columns:1fr;gap:24px;margin-top:34px}}
+/* channels row */
+.channels{position:relative;z-index:2;text-align:center;margin-top:44px}
+.channels .row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.ch{width:58px;height:58px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;box-shadow:0 8px 18px -6px rgba(17,25,54,.3)}
+.ch svg{width:30px;height:30px}
+.ch.ig{background:linear-gradient(45deg,#feda75,#fa7e1e 25%,#d62976 55%,#4f5bd5)}
+.ch.fb{background:#1877F2}.ch.ms{background:linear-gradient(135deg,#1E88E5,#5E35B1)}
+.ch.dim{background:#CBD5E1;color:#fff;box-shadow:none}
+.ch-note{font-size:13px;color:var(--gray-2);margin-top:16px}
+</style>
+<div class="prod">
+  <div class="browser">
+    <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="urlbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>app.workhogee.com/dashboard</span>
     </div>
-    <div class="flow-grid">
-      <div class="fstep">
-        <div class="no">01</div>
-        <h3>连接 Instagram 账号</h3>
-        <p>通过 Meta 官方 OAuth 授权，不交出账号密码。多个账号统一管理，随时可解除授权。</p>
-        <div class="tags"><span>官方授权</span><span>多账号</span></div>
+    <div class="app">
+      <!-- 左导航 -->
+      <aside class="rail">
+        <div class="logo2"><i>阿</i>WorkHogee</div>
+        <div class="acct"><b><s>S</s>sondio.official</b><small>在 1 个已连接账号间切换</small></div>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>概览</span>
+        <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>实时监控</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>账号管理</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg>自动回复</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11a3 3 0 1 0 0-6M21.5 20a5.5 5.5 0 0 0-4-5.3"/></svg>线索</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z"/></svg>私信收件箱</span>
+      </aside>
+      <!-- 会话列表 -->
+      <div class="conv">
+        <div class="ch">私信</div>
+        <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>搜索客户、备注或邮箱</div>
+        <div class="item on">
+          <span class="av c">CM</span>
+          <div class="bd"><div class="nm">Carlos Méndez <span>5个月前</span></div><div class="pv">Perfect, I'll take 100 units. How do I pay?</div><span class="tag rep">评论询盘自动回复+私信</span></div>
+        </div>
+        <div class="item">
+          <span class="av m">MG</span>
+          <div class="bd"><div class="nm">Maria Garcia <span>5个月前</span></div><div class="pv">Thanks, I'll check the link now.</div><span class="tag closed">关键词要链接·自动私信</span></div>
+        </div>
       </div>
-      <div class="fstep">
-        <div class="no">02</div>
-        <h3>实时盯评论与私信</h3>
-        <p>每条消息自动识别意图、情感和语言：询价、咨询、投诉、闲聊，正面、中性还是负面，一目了然。</p>
-        <div class="tags"><span>意图识别</span><span>情感判断</span><span>多语言</span></div>
+      <!-- 聊天区 -->
+      <div class="chat">
+        <div class="top"><b>Carlos Méndez</b>
+          <div class="tt"><span class="mini b">询价客户</span><span class="mini b">已下单</span><span class="mini o">高意向</span></div>
+        </div>
+        <div class="thread">
+          <div class="bubble in">price<span class="tm">5月16日 19:29</span></div>
+          <div class="bubble auto"><span class="auto-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>伙计自动回复</span>Here is the price and order page:<a class="linkbtn" href="#features">查看商品与下单 ↗</a><span class="tm">5月16日 19:30</span></div>
+          <div class="bubble in">Hola, ¿cuál es el precio por mayor para 100 unidades?<span class="tm">5月16日 19:48</span></div>
+          <div class="bubble out">Perfect, I'll take 100 units. How do I pay?<span class="tm">客户回复</span></div>
+        </div>
       </div>
-      <div class="fstep">
-        <div class="no">03</div>
-        <h3>公开回复 + 私信承接</h3>
-        <p>高意向询盘先公开回复，再私信发报价与下单链接，全程跟随买家的语言；链接只走官方私信按钮。</p>
-        <div class="tags"><span>公开回复</span><span>私信报价</span></div>
-      </div>
-      <div class="fstep">
-        <div class="no">04</div>
-        <h3>分级沉淀，高意向告警</h3>
-        <p>线索按 A/B/C/D 打分沉淀，可导出；高意向客户实时提醒，售后负面转人工，绝不乱回。</p>
-        <div class="tags"><span>A/B/C/D</span><span>实时告警</span><span>负面转人工</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="section" id="capabilities">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">伙计的能力</span>
-      <h2>盯、回、跟、收，一个都不漏</h2>
-      <p>不是定时群发的机器人，而是一个能听懂买家、知道什么时候该回、什么时候该喊你的伙计。</p>
-    </div>
-    <div class="cap-grid">
-      <div class="cap">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <h3>实时盯评论与私信</h3>
-        <p>帖子下的每条评论、每条私信都实时过一遍，自动判断意图、情感和语言，高意向第一时间进你的视线。</p>
-      </div>
-      <div class="cap">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
-        <h3>公开回复 + 私信承接</h3>
-        <p>询盘先在评论区公开回复，让更多买家看到；再私信发送报价和下单链接，把流量直接引到成交。</p>
-      </div>
-      <div class="cap">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-        <h3>多语言询盘</h3>
-        <p>买家说英语、西班牙语、法语还是中文，伙计就用同一门语言回复，跨境沟通不再卡壳。</p>
-      </div>
-      <div class="cap">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <h3>分级沉淀与告警</h3>
-        <p>每条线索按意向 A/B/C/D 打分、打标签、留邮箱，可导出；高意向客户立刻提醒，不再等你翻聊天记录。</p>
-      </div>
-    </div>
-    <div class="guard">
-      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div>
-        <h4>哪些情况伙计绝不自动乱回</h4>
-        <p>遇到售后投诉、差评、垃圾广告或纯闲聊，伙计不会自动开口：负面消息自动标记并转人工跟进，避免火上浇油；自动回复里不编造价格、不发安全风险链接，报价和下单入口只走官方私信按钮。</p>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="section" id="preview">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">产品预览</span>
-      <h2>工作台长什么样</h2>
-      <p>下面是一个虚拟出海耳机品牌 Sondio Audio 的演示数据，点开每个标签，看伙计怎么把询盘跑成订单。</p>
-    </div>
-    <div class="tabs" id="shotTabs">
-      <button class="tab on" data-shot="monitor" data-cap="实时盯盘：每条高意向询盘（西语、英语、法语）都被识别、打分，并自动用买家语言回复。">实时盯盘</button>
-      <button class="tab" data-shot="overview" data-cap="运营概览：运行中的自动回复、线索、私信会话与失败数一目了然，多账号统一管理。">运营概览</button>
-      <button class="tab" data-shot="contacts" data-cap="线索：客户按 A/B/C/D 分级，带来源、标签与邮箱，可一键导出 CSV。">线索分级</button>
-      <button class="tab" data-shot="conversations" data-cap="私信承接：买家询价后，伙计自动私信报价和下单按钮，并跟进批发询盘。">私信承接</button>
-      <button class="tab" data-shot="automations" data-cap="自动回复：按关键词设置评论与私信规则，触发次数和点击率都可量化。">自动回复</button>
-    </div>
-    <div class="shot-stage">
-      <div class="browser">
-        <div class="browser-bar"><span class="k k1"></span><span class="k k2"></span><span class="k k3"></span><span class="url">app.workhogee.com</span></div>
-        <img class="shot-img on" src="assets/v8/monitor.png" alt="实时盯盘 - WorkHogee 工作台演示" width="1440" height="900">
-        <img class="shot-img" src="assets/v8/overview.png" alt="运营概览 - WorkHogee 工作台演示" width="1440" height="900">
-        <img class="shot-img" src="assets/v8/contacts.png" alt="线索分级 - WorkHogee 工作台演示" width="1440" height="900">
-        <img class="shot-img" src="assets/v8/conversations.png" alt="私信承接 - WorkHogee 工作台演示" width="1440" height="900">
-        <img class="shot-img" src="assets/v8/automations.png" alt="自动回复 - WorkHogee 工作台演示" width="1440" height="900">
-      </div>
-    </div>
-    <p class="shot-caption" id="shotCap">实时盯盘：每条高意向询盘（西语、英语、法语）都被识别、打分，并自动用买家语言回复。（示例数据，非真实客户）</p>
-  </div>
-</section>
-<section class="section secure" id="secure">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">合规与安全</span>
-      <h2>只走官方 API，账号在你手里</h2>
-      <p>获客可以自动化，但前提是安全、可控、可随时撤回。</p>
-    </div>
-    <div class="sec-grid">
-      <div class="sec">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
-        <h3>Meta 官方 Graph API</h3>
-        <p>读取评论、私信与发送回复，全部走 Meta Instagram Graph API 官方接口，不模拟登录、不碰任何非官方通道。</p>
-      </div>
-      <div class="sec">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <h3>OAuth 授权，不碰密码</h3>
-        <p>你只在 Meta 官方授权页点同意，WorkHogee 只拿到受限的访问令牌，永远不接触、也不存储你的账号密码。</p>
-      </div>
-      <div class="sec">
-        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></div>
-        <h3>数据归你，随时可撤</h3>
-        <p>线索、会话、标签都属于你，可随时导出；在 Meta 或工作台一键解除授权，访问立即停止。</p>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="section" id="faq">
-  <div class="container">
-    <div class="shead">
-      <span class="kicker">常见问题</span>
-      <h2>上手前你可能想知道</h2>
-    </div>
-    <div class="faq-list" id="faqList">
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">需要提供 Instagram 账号密码吗？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>不需要。连接账号走 Meta 官方 OAuth 授权，你在 Meta 自己的页面确认授权即可，WorkHogee 只接收受限的访问令牌，不接触账号密码，也不模拟登录。</p></div>
-      </div>
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">现在支持哪些平台？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>首发支持 Instagram 官方评论与私信场景：评论自动回复、私信承接、线索沉淀。需要你的 Instagram 是专业账号并完成 Meta 官方授权。更多平台会在官方 API 能力范围内陆续开放。</p></div>
-      </div>
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">支持哪些语言？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>意图识别与回复覆盖英语、西班牙语、法语、中文等常见出海市场语言。伙计会跟随买家使用的语言回复，不用你手动切换。</p></div>
-      </div>
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">伙计会不会乱回复、乱报价？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>不会。自动回复不编造价格、不发陌生链接，报价和下单入口只走官方私信按钮；售后投诉、差评、垃圾广告和闲聊不自动回复，负面消息会自动转人工跟进。</p></div>
-      </div>
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">这是自动养号、刷量工具吗？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>不是。WorkHogee 只做评论监控与正常的客服、获客回复，不刷赞、不刷粉、不主动发垃圾内容，所有动作都走官方 API，目的是帮你接住真实买家。</p></div>
-      </div>
-      <div class="faq">
-        <button class="faq-q" aria-expanded="false">适合什么规模的卖家？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <div class="faq-a"><p>特别适合一个人或小团队的出海卖家：评论量大、时差明显、多语言回复吃力、又没有专人盯私信的店铺。</p></div>
-      </div>
+      <!-- 右侧客户卡 -->
+      <aside class="lead">
+        <div class="lp"><span class="av c">CM</span><div><b>Carlos Méndez</b><small>@carlos.shop88</small></div></div>
+        <div class="score"><span class="grade">A级</span><span class="num">90</span><span class="hot">高意向</span></div>
+        <div class="lbox"><h5>意向判断</h5><div class="p">询价 · 想下单 · 正面</div><div class="p" style="color:var(--gray-2);font-size:11px">语言：西班牙语</div></div>
+        <div class="lbox"><h5>自动回复记录</h5><div class="rec">评论询盘自动回复+私信 · 已触发 214 次</div></div>
+        <div class="lbox"><h5>跟进序列</h5><div class="rec">询盘跟进 · 进行中</div></div>
+      </aside>
     </div>
   </div>
-</section>
-<section class="final">
-  <div class="container">
-    <div class="final-box">
-      <h2>让伙计替你盯评论，你专心做产品</h2>
-      <p>连接 Instagram 账号，几分钟就能跑起来。下一条高意向询盘，伙计会第一时间替你接住。</p>
-      <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始</a>
+  <!-- 能力标注 -->
+  <div class="anno-row">
+    <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7c0 2.5 1 4 1 5.5h12C18 13 19 11.5 19 9a7 7 0 0 0-7-7z" stroke-linejoin="round"/><path d="M9 18a3 3 0 0 0 6 0" stroke-linecap="round"/></svg></span><span class="tx">AI 识别意图 · 情感 · 语言<small>询价 / 咨询 / 投诉 / 闲聊，英西法中自动判别</small></span></div>
+    <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tx">A/B/C/D 评分 · 高意向告警<small>自动分级，重点客户第一时间不漏</small></span></div>
+    <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg></span><span class="tx">自动公开回复 + 私信<small>评论区回复报价，私信发送下单链接</small></span></div>
+  </div>
+  <!-- 渠道 -->
+  <div class="channels">
+    <div class="row">
+      <span class="ch ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.1C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>
+      <span class="ch fb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span>
+      <span class="ch ms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 1.4.3 2.7.9 3.9L3 21l5.2-1A9 9 0 1 0 12 3z" stroke-linejoin="round"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke-linecap="round"/></svg></span>
     </div>
+    <p class="ch-note">首发 Instagram · Facebook / Messenger 接入中 · 仅接入官方授权账号</p>
+  </div>
+</div>
   </div>
 </section>
-</main>
+<style>
+/* ===== Pain ===== */
+.pain{padding:100px 0 90px;text-align:center}
+.pain h2{font-size:clamp(30px,4.6vw,58px);font-weight:800;color:var(--navy);line-height:1.15;letter-spacing:-.02em}
+.pain .dots{display:flex;gap:8px;justify-content:center;margin:26px 0}
+.pain .dots i{width:9px;height:9px;border-radius:50%;background:#CBD5E1}
+.pain .dots i.on{background:var(--blue);width:28px;border-radius:5px}
+.pain p{max-width:720px;margin:0 auto;color:var(--gray);font-size:18px}
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="fb-logo"><img src="favicon.svg" alt="WorkHogee"><span>WorkHogee</span></div>
-        <p>出海卖家的 AI 盯盘伙计。盯评论、自动回复、私信承接、线索沉淀，让你不漏掉任何一个真实买家。</p>
+/* ===== Dark capability ===== */
+.dark{position:relative;background:var(--dark);color:#fff;padding:96px 0 104px;overflow:hidden}
+.dark::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(96,143,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(96,143,255,.05) 1px,transparent 1px);background-size:48px 48px}
+.dark::after{content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.28),transparent 65%);filter:blur(20px)}
+.dark .wrap{position:relative;z-index:1}
+.dark-head{text-align:center}
+.dark h2{font-size:clamp(28px,3.6vw,42px);font-weight:800;letter-spacing:-.01em}
+.dark .dsub{color:#9AA8C7;font-size:17px;margin-top:14px}
+.dtabs{display:grid;grid-template-columns:repeat(4,1fr);margin:54px 0 10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.dtab{background:none;border:0;color:#7E8CAC;cursor:pointer;padding:18px 8px 20px;text-align:left;position:relative;transition:.2s}
+.dtab .n{font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.dtab .l{font-size:15px;font-weight:600;margin-top:8px}
+.dtab.on{color:#fff}
+.dtab.on::after{content:"";position:absolute;left:0;bottom:-1px;height:3px;width:100%;background:linear-gradient(90deg,var(--blue),#60A5FA);border-radius:3px}
+.dpanel{display:none;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:52px 8px 0}
+.dpanel.on{display:grid}
+.cap-kick{display:inline-flex;align-items:center;gap:9px;color:#7FB0FF;font-size:14px;font-weight:700;margin-bottom:18px}
+.cap-kick i{width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,.2);display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+.cap-kick i svg{width:19px;height:19px}
+.dpanel h3{font-size:clamp(24px,2.6vw,32px);font-weight:800;line-height:1.25}
+.dpanel .desc{color:#A8B4D0;font-size:16px;margin-top:16px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:#D6E0F5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:7px 13px;border-radius:999px}
+.chip svg{width:14px;height:14px;color:#60A5FA}
+.bignum{display:flex;align-items:baseline;gap:12px;margin-top:32px}
+.bignum b{font-size:52px;font-weight:800;background:linear-gradient(100deg,#60A5FA,#2563EB);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.bignum span{font-size:15px;color:#9AA8C7}
+.more{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:#7FB0FF;font-size:14px;font-weight:600}
+/* mini panels */
+.mpanel{background:linear-gradient(180deg,#141B2E,#0F1626);border:1px solid rgba(96,143,255,.18);border-radius:16px;padding:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.mpanel .mh{font-size:13px;color:#9AA8C7;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.mrow{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:12.5px;color:#D6E0F5}
+.mrow .q{color:#fff;font-weight:600;margin-bottom:5px}
+.mtags{display:flex;gap:6px;flex-wrap:wrap}
+.mtags em{font-style:normal;font-size:10.5px;padding:2px 8px;border-radius:6px;background:rgba(37,99,235,.18);color:#9DB8FF}
+.mtags em.g{background:rgba(20,184,166,.16);color:#5EEAD4}
+.mtags em.o{background:rgba(249,115,22,.16);color:#FDBA74}
+.rule-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:13px;margin-bottom:10px}
+.rule-card .t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#fff}
+.rule-card .badge{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(20,184,166,.18);color:#5EEAD4}
+.rule-card .d{font-size:11.5px;color:#8A97B5;margin-top:5px}
+.rule-stat{display:flex;gap:24px;margin-top:6px}
+.rule-stat b{color:#60A5FA;font-size:20px}
+.grade-bar{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.grade-bar .g{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff}
+.g.a{background:#2563EB}.g.b{background:#3B82F6}.g.c{background:#64748B}.g.d{background:#94A3B8}
+.gtrack{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
+.gtrack i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#2563EB,#60A5FA)}
+.lead-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px}
+.lead-row .av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:#2563EB}
+.lead-row .nm{flex:1;color:#E6ECF7}
+.lead-row .sc{font-weight:800;color:#60A5FA}
+@media(max-width:860px){.dpanel{grid-template-columns:1fr;gap:32px}.dtab .n{font-size:32px}.dtab .l{font-size:13px}}
+</style>
+
+<!-- ===== Pain ===== -->
+<section class="pain wrap">
+  <span class="eyebrow">为什么选择 WorkHogee</span>
+  <h2>评论多了，<br>就代表订单多了吗？</h2>
+  <div class="dots"><i class="on"></i><i></i><i></i></div>
+  <p>评论刷得快、私信回不过来，西语法语看不懂，询盘散在各个帖子里。客户问完价格没人理，几分钟后就转头去了别家——多出来的流量，反而悄悄拖垮了你的转化。</p>
+</section>
+
+<!-- ===== Dark capabilities ===== -->
+<section class="dark" id="features">
+  <div class="wrap">
+    <div class="dark-head">
+      <span class="eyebrow on-dark">WorkHogee 如何帮你盯</span>
+      <h2>AI 驱动的评论盯盘工作台</h2>
+      <p class="dsub">从评论到私信，统一盯守、自动回复、识别意向、沉淀线索，让阿果贯穿每一个关键环节。</p>
+    </div>
+    <div class="dtabs" role="tablist">
+      <button class="dtab on" data-tab="0" role="tab"><div class="n">01</div><div class="l">盯紧评论</div></button>
+      <button class="dtab" data-tab="1" role="tab"><div class="n">02</div><div class="l">自动回复</div></button>
+      <button class="dtab" data-tab="2" role="tab"><div class="n">03</div><div class="l">识别意向</div></button>
+      <button class="dtab" data-tab="3" role="tab"><div class="n">04</div><div class="l">沉淀客户</div></button>
+    </div>
+
+    <div class="dpanel on" data-panel="0">
+      <div>
+        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></i>01 — 实时盯评论</div>
+        <h3>接住每一条 Instagram 评论与私信</h3>
+        <p class="desc">公开评论、私信统一盯守，英文、西语、法语、中文自动识别，多个账号集中在一个工作台，会话全程留痕，再也不用一条条翻评论翻到漏。</p>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>公开评论 + 私信</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>多语言自动识别</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>多账号集中</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>会话全程留痕</span>
+        </div>
+        <div class="bignum"><b>7×24</b><span>全天候盯守，不吃饭也不睡觉</span></div>
       </div>
-      <div class="footer-col">
-        <h5>产品</h5>
-        <ul>
-          <li><a href="https://app.workhogee.com/signin">进入工作台</a></li>
-          <li><a href="#capabilities">核心能力</a></li>
-          <li><a href="#preview">产品预览</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>资源</h5>
-        <ul>
-          <li><a href="privacy.html">隐私政策</a></li>
-          <li><a href="terms.html">服务条款</a></li>
-          <li><a href="mailto:support@workhogee.com">技术支持</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>关于</h5>
-        <ul>
-          <li><a href="mailto:hello@workhogee.com">商务合作</a></li>
-        </ul>
+      <div class="mpanel">
+        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0"/></svg>实时监控</div>
+        <div class="mrow"><div class="q">@carlos.shop88：¿cuál es el precio por mayor para 100 unidades?</div><div class="mtags"><em class="o">高意向</em><em>询价</em><em>正面</em><em>西班牙语</em></div></div>
+        <div class="mrow"><div class="q">@maria.g_buy：How can I order? Can you send the shop link?</div><div class="mtags"><em class="g">要链接</em><em>英语</em></div></div>
+        <div class="mrow"><div class="q">@emilie.boutique：Prix pour 50 pièces ?</div><div class="mtags"><em>询价</em><em>法语</em></div></div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div>© 2026 WorkHogee. All rights reserved. 做生意，找伙计。</div>
-      <div class="footer-links">
-        <a href="privacy.html">隐私政策</a>
-        <a href="terms.html">服务条款</a>
-        <a href="mailto:hello@workhogee.com">联系我们</a>
+
+    <div class="dpanel" data-panel="1">
+      <div>
+        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg></i>02 — 自动公开回复 + 私信</div>
+        <h3>让每条询盘都被秒回</h3>
+        <p class="desc">识别到询价、关键词，自动在评论区公开回复，同时私信发送报价与下单链接；客户开口的瞬间就被接住，链接只走官方富按钮，安全合规。</p>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>评论自动回复</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>关键词触发私信</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>富按钮发链接</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>规则可视化配置</span>
+        </div>
+        <div class="bignum"><b>214</b><span>次自动回复 · 链接点击率 40.2%（演示数据）</span></div>
       </div>
+      <div class="mpanel">
+        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>自动回复规则</div>
+        <div class="rule-card"><div class="t">评论询盘自动回复+私信 <span class="badge">运行中</span></div><div class="d">评论包含 price / how much / link 等词时，公开回复并私信报价链接</div><div class="rule-stat"><span>触发 <b>214</b></span><span>点击率 <b>40.2%</b></span></div></div>
+        <div class="rule-card"><div class="t">关键词要链接·自动私信 <span class="badge">运行中</span></div><div class="d">私信：Here is the price list and order link…</div></div>
+      </div>
+    </div>
+
+    <div class="dpanel" data-panel="2">
+      <div>
+        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 3 5-7 4 5" stroke-linecap="round" stroke-linejoin="round"/></svg></i>03 — 意向识别与评分</div>
+        <h3>把高意向客户挑出来</h3>
+        <p class="desc">每条互动自动判定意图（询价 / 咨询 / 投诉 / 闲聊）、情感（正 / 中 / 负）并打 A/B/C/D 分；高意向客户立刻告警，让你把时间花在最该跟的人身上。</p>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>意图四分类</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>情感正/中/负</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>A/B/C/D 评分</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>高意向即时告警</span>
+        </div>
+        <div class="bignum"><b>100%</b><span>意图识别 · 高意向识别（主测试集 n=143）</span></div>
+      </div>
+      <div class="mpanel">
+        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M3 17l5-6 4 3 5-7 4 5"/></svg>线索评分</div>
+        <div class="grade-bar"><span class="g a">A</span><span class="gtrack"><i style="width:90%"></i></span><b style="color:#60A5FA;width:34px">90</b></div>
+        <div class="grade-bar"><span class="g b">B</span><span class="gtrack"><i style="width:74%"></i></span><b style="color:#7FB0FF;width:34px">74</b></div>
+        <div class="grade-bar"><span class="g c">C</span><span class="gtrack"><i style="width:48%"></i></span><b style="color:#94A3B8;width:34px">48</b></div>
+        <div class="grade-bar"><span class="g d">D</span><span class="gtrack"><i style="width:8%"></i></span><b style="color:#94A3B8;width:34px">8</b></div>
+      </div>
+    </div>
+
+    <div class="dpanel" data-panel="3">
+      <div>
+        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round"/><circle cx="19" cy="17" r="2"/></svg></i>04 — 线索沉淀与跟进</div>
+        <h3>把询盘变成可经营的资产</h3>
+        <p class="desc">客户、标签、来源自动回复、跟进状态自动入库，支持按分级和规则筛选，一键导出 CSV，团队协作不漏人，老客户也能持续经营。</p>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>线索自动入库</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>跟进状态留痕</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>标签与来源管理</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>一键导出 CSV</span>
+        </div>
+        <div class="bignum"><b>386</b><span>条线索自动沉淀（演示数据）</span></div>
+      </div>
+      <div class="mpanel">
+        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/></svg>线索
+          <span style="margin-left:auto;font-size:11px;color:#60A5FA">导出 CSV</span></div>
+        <div class="lead-row"><span class="av">CM</span><span class="nm">Carlos Méndez</span><span class="sc">A · 90</span></div>
+        <div class="lead-row"><span class="av" style="background:#0D9488">MG</span><span class="nm">Maria Garcia</span><span class="sc" style="color:#5EEAD4">B · 74</span></div>
+        <div class="lead-row"><span class="av" style="background:#64748B">JC</span><span class="nm">James Carter</span><span style="color:#94A3B8;font-weight:700">C · 48</span></div>
+        <div class="lead-row"><span class="av" style="background:#94A3B8">DR</span><span class="nm">Danny Rivera</span><span style="color:#94A3B8;font-weight:700">D · 8</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+/* ===== Scenes ===== */
+.scenes{background:var(--bg);padding:96px 0}
+.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;margin:26px 0 40px;box-shadow:var(--shadow-sm)}
+.seg button{border:0;background:none;padding:9px 22px;border-radius:999px;font-size:15px;font-weight:600;color:var(--gray);cursor:pointer}
+.seg button.on{background:var(--blue);color:#fff}
+.scene-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.scene-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 22px;transition:.25s}
+.scene-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--blue-100)}
+.scene-card .ic{width:48px;height:48px;border-radius:12px;background:var(--blue-50);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
+.scene-card .ic svg{width:25px;height:25px}
+.scene-card h4{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.scene-card p{font-size:14px;color:var(--gray);line-height:1.6}
+.scene-pane{display:none}.scene-pane.on{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:920px){.scene-grid,.scene-pane.on{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.scene-pane.on{grid-template-columns:1fr}}
+
+/* ===== Metrics ===== */
+.metrics{padding:96px 0}
+.metric-card{max-width:920px;margin:46px auto 0;background:linear-gradient(180deg,#fff,#F8FAFF);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.metric-grid .m{padding:32px 20px;text-align:center;border-right:1px solid var(--line)}
+.metric-grid .m:last-child{border-right:0}
+.metric-grid .m b{display:block;font-size:40px;font-weight:800;color:var(--blue);line-height:1}
+.metric-grid .m span{font-size:13.5px;color:var(--gray);margin-top:10px;display:block}
+.metric-table{width:100%;border-collapse:collapse;font-size:14.5px}
+.metric-table th,.metric-table td{padding:15px 20px;text-align:center;border-top:1px solid var(--line)}
+.metric-table th{background:#F4F7FC;color:var(--navy);font-weight:700;font-size:13.5px}
+.metric-table th:first-child,.metric-table td:first-child{text-align:left;font-weight:600;color:var(--navy)}
+.metric-table .ok{color:var(--blue);font-weight:800}
+.metric-note{text-align:center;font-size:13px;color:var(--gray-2);margin-top:20px}
+@media(max-width:680px){.metric-grid{grid-template-columns:repeat(2,1fr)}.metric-grid .m{border-bottom:1px solid var(--line)}.metric-table{font-size:12.5px}.metric-table th,.metric-table td{padding:10px 8px}}
+
+/* ===== Security ===== */
+.security{background:var(--bg);padding:96px 0}
+.sec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:46px}
+.sec-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 24px}
+.sec-card .ic{width:46px;height:46px;border-radius:12px;background:var(--blue-50);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
+.sec-card .ic svg{width:24px;height:24px}
+.sec-card h4{font-size:16.5px;font-weight:800;color:var(--navy);margin-bottom:9px}
+.sec-card p{font-size:13.5px;color:var(--gray);line-height:1.65}
+@media(max-width:920px){.sec-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.sec-grid{grid-template-columns:1fr}}
+
+/* ===== Pricing ===== */
+.pricing{padding:96px 0;text-align:center}
+.price-card{max-width:680px;margin:44px auto 0;background:linear-gradient(160deg,#13233f,#0A1730);border-radius:24px;padding:48px 40px;color:#fff;box-shadow:0 40px 80px -30px rgba(30,64,175,.5)}
+.price-card .tag-free{display:inline-block;font-size:13px;font-weight:700;background:rgba(20,184,166,.2);color:#5EEAD4;padding:6px 16px;border-radius:999px;margin-bottom:18px}
+.price-card h3{font-size:42px;font-weight:800}
+.price-card .per{color:#9AA8C7;font-size:14px;margin-top:6px}
+.feat-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:30px 0 34px;text-align:left}
+.feat-list li{list-style:none;display:flex;align-items:flex-start;gap:9px;font-size:14.5px;color:#D6E0F5}
+.feat-list svg{width:18px;height:18px;color:#60A5FA;flex:none;margin-top:2px}
+.price-card .btn{height:50px}
+.price-foot{color:var(--gray-2);font-size:13px;margin-top:20px}
+@media(max-width:560px){.feat-list{grid-template-columns:1fr}}
+
+/* ===== Final CTA ===== */
+.final{padding:40px 24px 96px}
+.cta-box{max-width:1200px;margin:0 auto;border-radius:32px;background:linear-gradient(120deg,#0F1F44 0%,#1E3A8A 55%,#2563EB 100%);padding:80px 40px;text-align:center;color:#fff;position:relative;overflow:hidden}
+.cta-box::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 90% at 50% 0%,#000,transparent 100%)}
+.cta-box>*{position:relative}
+.cta-box h2{font-size:clamp(30px,4.4vw,56px);font-weight:800;line-height:1.15}
+.cta-box .sub{color:#C7D4F0;font-size:18px;margin:18px auto 0}
+.cta-actions{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.cta-points{display:flex;gap:10px 26px;justify-content:center;flex-wrap:wrap;margin-top:30px;font-size:14px;color:#B9C9EC}
+.cta-points i{font-style:normal;margin-right:7px}
+
+/* ===== Footer ===== */
+footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
+.fbrand .brand{color:#fff;margin-bottom:16px}
+.fbrand p{font-size:14px;line-height:1.7;max-width:280px}
+.fcol h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px}
+.fcol a{display:block;font-size:14px;color:#9AA8C7;margin-bottom:12px}
+.fcol a:hover{color:#60A5FA}
+.fsocial{display:flex;gap:12px;margin-top:18px}
+.fsocial span{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;color:#C7D4F0}
+.fsocial svg{width:19px;height:19px}
+.fbottom{border-top:1px solid rgba(255,255,255,.08);margin-top:48px;padding-top:24px;font-size:12.5px;color:#6B7898;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:820px){.fgrid{grid-template-columns:1fr 1fr}}
+</style>
+
+<!-- ===== Scenes ===== -->
+<section class="scenes" id="scenes">
+  <div class="wrap center">
+    <span class="eyebrow">适用场景</span>
+    <h2 class="h2">找到更适合你的盯盘方式</h2>
+    <p class="sub">无论你是什么角色、做什么品类，只要在 Instagram 上接询盘，阿果都能帮你把每条评论盯到底。</p>
+    <div class="seg">
+      <button class="on" data-seg="role">按角色</button>
+      <button data-seg="ind">按行业</button>
+    </div>
+    <div class="scene-pane on" id="pane-role">
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-6 9 6v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg></span><h4>独立站卖家</h4><p>广告引来的评论和私信，半夜也有人秒回、自动发链接，不让流量白白流走。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 6 6.5.5-5 4.5 1.5 6.5L12 16l-5.5 3.5L8 13 3 8.5 9.5 8z" stroke-linejoin="round"/></svg></span><h4>DTC 品牌</h4><p>统一话术与报价，负面评论不自动回、直接转人工，守住品牌口碑。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M15 20a5 5 0 0 1 6-4.8"/></svg></span><h4>跨境小团队</h4><p>一个人也能盯多个账号和多语言市场，线索统一分配，跟进不漏人。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg></span><h4>个人创业者</h4><p>不用雇客服，省下的时间用来选品和发货，伙计替你守着询盘。</p></div>
+    </div>
+    <div class="scene-pane" id="pane-ind">
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 5h2M9 18h6"/></svg></span><h4>3C 数码</h4><p>参数、批发起订量、库存与发货问题高频，关键词自动报价发链接。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4-3.5 7-8 9-4.5-2-8-5-8-9V4h16z" stroke-linejoin="round"/></svg></span><h4>服饰美妆</h4><p>尺码、色号、退换与团购问题，自动回复 + 私信引导下单。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-6 9 6M5 10v9h14v-9M9 19v-5h6v5" stroke-linejoin="round"/></svg></span><h4>家居户外</h4><p>大件物流、批量尺寸与海外仓咨询，西语英语都能接住。</p></div>
+      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="6" r="3"/><path d="M7 12c0 2 4 2 4 4v3M11 21a1 1 0 1 0 0-2"/></svg></span><h4>宠物用品</h4><p>成分、批发与复购咨询，自动识别老客户并跟进促单。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Metrics ===== -->
+<section class="metrics" id="metrics">
+  <div class="wrap center">
+    <span class="eyebrow">数据说话</span>
+    <h2 class="h2">用真实评论集跑出来的效果</h2>
+    <p class="sub">不是演示话术，而是 143 条主测试集 + 43 条盲测评论的真实 AI 评测结果。</p>
+    <div class="metric-card">
+      <div class="metric-grid">
+        <div class="m"><b>100%</b><span>意图识别（主集）</span></div>
+        <div class="m"><b>100%</b><span>高意向识别</span></div>
+        <div class="m"><b>97.2%</b><span>情感识别</span></div>
+        <div class="m"><b>100%</b><span>多语言识别</span></div>
+      </div>
+      <table class="metric-table">
+        <thead><tr><th>评测集</th><th>意图</th><th>高意向</th><th>情感</th><th>语言</th></tr></thead>
+        <tbody>
+          <tr><td>主测试集 n=143</td><td class="ok">100%</td><td class="ok">100%</td><td class="ok">97.2%</td><td class="ok">100%</td></tr>
+          <tr><td>盲测集 n=43</td><td class="ok">97.7%</td><td class="ok">100%</td><td class="ok">100%</td><td class="ok">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="metric-note">违规回复 0 条 · 数据来自 WorkHogee 内部评测（意图 / 情感 / 语言模型），测试集可应要求提供。</p>
+  </div>
+</section>
+
+<!-- ===== Security ===== -->
+<section class="security" id="security">
+  <div class="wrap center">
+    <span class="eyebrow">安全合规</span>
+    <h2 class="h2">只走官方 API，账号和数据都安心</h2>
+    <div class="sec-grid">
+      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h4>官方 Meta Graph API</h4><p>只通过 Meta 官方接口读取评论与发送消息，不使用任何非官方、高风险手段。</p></div>
+      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h4>OAuth 授权不存密码</h4><p>用 Facebook 官方授权接入，不索要、不存储你的账号密码，可随时撤销授权。</p></div>
+      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg></span><h4>最小权限 · 负面转人工</h4><p>仅申请管理评论与消息所需权限；负面评价与投诉不自动回复，转人工处理。</p></div>
+      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" stroke-linejoin="round"/><path d="M12 8v8M8 12h8" stroke-linecap="round"/></svg></span><h4>数据自主可控</h4><p>线索数据加密存储，支持一键导出与删除，你的客户始终属于你。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Pricing ===== -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <span class="eyebrow">价格方案</span>
+    <h2 class="h2">内测期免费开通，先跑起来再说</h2>
+    <div class="price-card">
+      <span class="tag-free">内测期 · 免费</span>
+      <h3>¥0</h3>
+      <p class="per">面向首批出海卖家，不按消息条数收费</p>
+      <ul class="feat-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Instagram 评论 / 私信实时盯守</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>自动公开回复 + 私信</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>意图 / 情感 / 语言识别</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>A/B/C/D 线索评分与告警</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>线索管理与 CSV 导出</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 API 授权 · 不存密码</li>
+      </ul>
+      <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
+      <p class="price-foot" style="color:#9AA8C7">正式定价将在公测后公布，内测用户保留优先权益。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Final CTA ===== -->
+<section class="final">
+  <div class="cta-box">
+    <span class="eyebrow on-dark">准备好开始了吗？</span>
+    <h2>让阿果替你盯评论<br>你只管做生意</h2>
+    <p class="sub">几分钟接入官方授权，从下一条评论开始，一个询盘都不丢。</p>
+    <div class="cta-actions">
+      <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
+      <a class="btn btn-glass" href="mailto:910036590@qq.com">预约演示</a>
+    </div>
+    <div class="cta-points"><span><i>·</i>免费试用</span><span><i>·</i>官方 API 授权</span><span><i>·</i>几分钟接入</span></div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fbrand">
+        <a class="brand" href="#top"><svg class="logo" width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2563EB"/><path d="M8 12h16M8 12a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4M8 12v8a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="#fff"/></svg>WorkHogee</a>
+        <p>出海卖家的 AI 评论盯盘伙计，帮你盯紧 Instagram 评论、自动回复私信、识别并沉淀线索。</p>
+        <div class="fsocial">
+          <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.1C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 1.4.3 2.7.9 3.9L3 21l5.2-1A9 9 0 1 0 12 3z" stroke-linejoin="round"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke-linecap="round"/></svg></span>
+        </div>
+      </div>
+      <div class="fcol">
+        <h5>产品</h5>
+        <a href="#features">实时监控</a><a href="#features">自动回复与私信</a><a href="#features">线索评分</a><a href="#features">线索管理与导出</a>
+      </div>
+      <div class="fcol">
+        <h5>资源</h5>
+        <a href="#metrics">效果数据</a><a href="#security">安全合规</a><a href="privacy.html">隐私政策</a><a href="terms.html">服务条款</a>
+      </div>
+      <div class="fcol">
+        <h5>联系</h5>
+        <a href="mailto:910036590@qq.com">910036590@qq.com</a>
+        <a href="https://app.workhogee.com/signin">登录工作台</a>
+        <a href="https://app.workhogee.com/signin">免费开始</a>
+      </div>
+    </div>
+    <div class="fbottom">
+      <span>© 2026 WorkHogee · Wang Qingli（王青利）。保留所有权利。</span>
+      <span>Instagram、Facebook、Messenger 等名称及商标归 Meta Platforms, Inc. 所有，WorkHogee 与其无隶属关系。</span>
     </div>
   </div>
 </footer>
-
 <script>
 (function(){
-  var nav = document.getElementById('nav');
-  var navToggle = document.getElementById('navToggle');
-  var navLinks = document.getElementById('navLinks');
-
-  function onScroll(){
-    if (window.scrollY > 24) { nav.classList.add('solid'); }
-    else { nav.classList.remove('solid'); }
+  "use strict";
+  // 移动端菜单
+  var burger=document.getElementById('burger');
+  var mm=document.getElementById('mobileMenu');
+  if(burger&&mm){
+    burger.addEventListener('click',function(){
+      var open=mm.classList.toggle('open');
+      burger.setAttribute('aria-expanded',open?'true':'false');
+    });
+    mm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mm.classList.remove('open');burger.setAttribute('aria-expanded','false');});});
   }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-
-  navToggle.addEventListener('click', function(){
-    nav.classList.toggle('panel-open');
-  });
-  navLinks.addEventListener('click', function(e){
-    if (e.target.tagName === 'A') { nav.classList.remove('panel-open'); }
-  });
-
-  // 产品预览 tab 切换（图片均为静态 src，只切换显示）
-  var tabs = document.querySelectorAll('#shotTabs .tab');
-  var shotImgs = document.querySelectorAll('.shot-img');
-  var shotCap = document.getElementById('shotCap');
-  var capBase = '（示例数据，非真实客户）';
-  var names = ['monitor','overview','contacts','conversations','automations'];
-  tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      tabs.forEach(function(t){ t.classList.remove('on'); });
-      tab.classList.add('on');
-      var idx = names.indexOf(tab.getAttribute('data-shot'));
-      shotImgs.forEach(function(im){ im.classList.remove('on'); });
-      if (idx >= 0 && shotImgs[idx]) { shotImgs[idx].classList.add('on'); }
-      shotCap.textContent = tab.getAttribute('data-cap') + capBase;
+  // 深色能力 01-04 tab
+  var dtabs=document.querySelectorAll('.dtab');
+  var dpanels=document.querySelectorAll('.dpanel');
+  dtabs.forEach(function(b){
+    b.addEventListener('click',function(){
+      var i=b.dataset.tab;
+      dtabs.forEach(function(x){x.classList.toggle('on',x===b);});
+      dpanels.forEach(function(p){p.classList.toggle('on',p.dataset.panel===i);});
     });
   });
-
-  // FAQ 折叠
-  var faqItems = document.querySelectorAll('#faqList .faq');
-  faqItems.forEach(function(item){
-    var q = item.querySelector('.faq-q');
-    var a = item.querySelector('.faq-a');
-    q.addEventListener('click', function(){
-      var open = item.classList.contains('open');
-      if (open) {
-        a.style.maxHeight = '0';
-        item.classList.remove('open');
-        q.setAttribute('aria-expanded','false');
-      } else {
-        a.style.maxHeight = a.scrollHeight + 'px';
-        item.classList.add('open');
-        q.setAttribute('aria-expanded','true');
-      }
+  // 角色 / 行业切换
+  var segBtns=document.querySelectorAll('.seg button');
+  var paneRole=document.getElementById('pane-role');
+  var paneInd=document.getElementById('pane-ind');
+  segBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.dataset.seg;
+      segBtns.forEach(function(x){x.classList.toggle('on',x===b);});
+      if(paneRole)paneRole.classList.toggle('on',k==='role');
+      if(paneInd)paneInd.classList.toggle('on',k==='ind');
     });
   });
+  // 滚动渐显（JS 运行后才隐藏，保证无 JS 时内容可见）
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:.1,rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.prod,.pain,.dark,.scenes,.metrics,.security,.pricing,.final').forEach(function(el){
+      el.classList.add('fade');io.observe(el);
+    });
+  }
 })();
 </script>
 </body>
