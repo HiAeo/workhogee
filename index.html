@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WorkHogee · 出海卖家的 AI 评论盯盘助手 — Instagram 评论自动回复与私信获客</title>
 <meta name="description" content="WorkHogee 是出海卖家的 AI 评论盯盘助手：盯紧 Instagram 评论、自动公开回复并私信、识别意向、A/B/C/D 评分、沉淀线索。只走 Meta 官方 API，OAuth 授权不存密码。">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563EB'/%3E%3Cpath d='M7 11 11 23 16 14.5 21 23 25 11' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%3E%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%232563EB%22%2F%3E%20%3Cg%20transform%3D%22translate%2811%2C14.6%29%20scale%282.3%29%20translate%28-1.06%2C-28.16%29%22%3E%20%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M13%2C32.58%2C9.81%2C42.11a1.34%2C1.34%2C0%2C0%2C1-1.33%2C1.12h-2a1.35%2C1.35%2C0%2C0%2C1-1.29-.94L1.13%2C30a1.36%2C1.36%2C0%2C0%2C1%2C1.29-1.78h2a1.35%2C1.35%2C0%2C0%2C1%2C1.29.94l2.15%2C6.58L9.09%2C32a1.13%2C1.13%2C0%2C0%2C1%2C1.07-.74l1.68%2C0A1.06%2C1.06%2C0%2C0%2C1%2C13%2C32.58Z%22%2F%3E%20%3Cpath%20fill%3D%22%23BFDBFE%22%20d%3D%22M12.88%2C43.23h2a1.38%2C1.38%2C0%2C0%2C0%2C1.3-.94l4-12.35a1.36%2C1.36%2C0%2C0%2C0-1.29-1.78h-2a1.35%2C1.35%2C0%2C0%2C0-1.3.93l-4%2C12.35A1.36%2C1.36%2C0%2C0%2C0%2C12.88%2C43.23Z%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E">
 <style>
 :root{
-  --blue:#2563EB; --blue-700:#1D4ED8; --blue-800:#1E40AF;
-  --blue-50:#EFF4FF; --blue-100:#E0EAFF;
+  --blue:#2563EB; --blue-600:#2563EB; --blue-700:#1D4ED8; --blue-800:#1E40AF;
+  --blue-50:#EFF4FF; --blue-100:#E0EAFF; --blue-200:#BFDBFE; --blue-300:#93B4FC;
   --navy:#111936; --ink:#0B1220;
-  --dark:#0A0F1E; --dark-2:#0E1526; --dark-line:rgba(255,255,255,.08);
-  --text:#1B2438; --gray:#5B6478; --gray-2:#8A93A6;
+  --dark:#070B16; --dark-2:#0C1322; --dark-card:#101828; --dark-line:rgba(255,255,255,.08);
+  --text:#1B2438; --gray:#5B6478; --gray-2:#8A93A6; --gray-3:#AEB8C8;
   --line:#E6EAF2; --bg:#F5F7FA; --bg-2:#F8FAFC;
-  --teal:#14B8A6; --teal-bg:#E6FAF7;
+  --teal:#14B8A6;
+  --yellow:#FFE64A; --yellow-2:#FFF3B0;
   --white:#fff; --radius:12px;
   --shadow-sm:0 4px 16px rgba(17,25,54,.06);
   --shadow:0 24px 60px -18px rgba(17,25,54,.18);
@@ -23,116 +24,155 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+button{font-family:inherit}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",sans-serif;color:var(--text);background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;display:block}
+ul{list-style:none}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-.btn{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 28px;border-radius:var(--radius);font-size:16px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s ease;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 28px;border-radius:var(--radius);font-size:16px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .22s cubic-bezier(.2,.7,.2,1);white-space:nowrap}
 .btn-primary{background:var(--blue);color:#fff;box-shadow:var(--shadow-blue)}
-.btn-primary:hover{background:var(--blue-700);transform:translateY(-1px)}
+.btn-primary:hover{background:var(--blue-700);transform:translateY(-2px);box-shadow:0 22px 46px -12px rgba(37,99,235,.55)}
 .btn-ghost{background:#fff;color:var(--navy);border-color:#D6DEEC}
-.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
 .btn-light{background:#fff;color:var(--blue-800)}
-.btn-light:hover{background:#EAF1FF}
+.btn-light:hover{background:#EAF1FF;transform:translateY(-2px)}
 .btn-glass{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.35)}
 .btn-glass:hover{background:rgba(255,255,255,.18)}
-.btn .arr{font-size:18px;line-height:1}
-.section{padding:96px 0}
-.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--blue);background:var(--blue-50);border:1px solid var(--blue-100);margin-bottom:22px}
+.btn .arr{font-size:18px;line-height:1;transition:transform .2s}
+.btn:hover .arr{transform:translateX(3px)}
+.section{padding:100px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 17px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--blue);background:var(--blue-50);border:1px solid var(--blue-100);margin-bottom:22px}
 .eyebrow.on-dark{background:rgba(37,99,235,.16);color:#9DB8FF;border-color:rgba(96,143,255,.28)}
-.h2{font-size:clamp(30px,4vw,44px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.02em}
-.sub{font-size:17px;color:var(--gray);max-width:680px;margin:18px auto 0}
+.h2{font-size:clamp(30px,4.2vw,46px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.02em}
+.sub{font-size:17px;color:var(--gray);max-width:700px;margin:18px auto 0}
 .center{text-align:center}
-.fade{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.fade{opacity:0;transform:translateY(30px);transition:opacity .75s cubic-bezier(.2,.7,.2,1),transform .75s cubic-bezier(.2,.7,.2,1)}
 .fade.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.fade{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 
+/* ===== 公告条 ===== */
+.announce{position:relative;z-index:120;background:linear-gradient(90deg,#FFE64A,#FFD400);color:#3d2b00;overflow:hidden}
+.announce-inner{display:flex;align-items:center;justify-content:center;gap:12px;height:42px;font-size:14px;font-weight:600;text-align:center;padding:0 16px}
+.announce .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(17,25,54,.92);color:#fff;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:999px;white-space:nowrap}
+.announce .pill svg{width:13px;height:13px}
+.announce a{color:#1d4ed8;font-weight:800;border-bottom:1.5px solid rgba(29,78,216,.4);white-space:nowrap}
+.announce a:hover{border-color:#1d4ed8}
+.confetti{position:absolute;inset:0;pointer-events:none;opacity:.55}
+.confetti i{position:absolute;top:-6px;width:7px;height:11px;border-radius:1px;animation:confettiFall linear infinite}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0)}100%{transform:translateY(52px) rotate(220deg)}}
+@media(max-width:640px){.announce-inner{font-size:12.5px;gap:8px}.announce .hide-sm{display:none}}
+
 /* ===== Nav ===== */
-.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav-inner{display:flex;align-items:center;gap:32px;height:70px}
-.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
-.brand .logo{width:34px;height:34px}
-.nav-menu{display:flex;gap:4px;margin-left:8px}
-.nav-menu a{padding:8px 14px;font-size:15px;font-weight:500;color:#3A4458;border-radius:8px;transition:.15s}
-.nav-menu a:hover{color:var(--blue);background:var(--blue-50)}
-.nav-cta{margin-left:auto;display:flex;align-items:center;gap:14px}
-.nav-cta .login{font-size:15px;font-weight:600;color:#3A4458}
+.nav{position:sticky;top:0;z-index:110;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;gap:20px;height:72px}
+.brand{display:flex;align-items:center;gap:12px;flex:none}
+.brand .wordmark{height:30px;width:auto}
+.meta-badge{display:flex;align-items:center;gap:9px;padding-left:13px;border-left:1px solid var(--line);height:34px;flex:none}
+.meta-badge .mb-infinity{width:26px;height:26px;color:#0064E0}
+.meta-badge .mb-txt{display:flex;flex-direction:column;line-height:1.05}
+.meta-badge .mb-name{font-size:15px;font-weight:800;color:#1c1917;letter-spacing:-.01em}
+.meta-badge .mb-sub{font-size:8.5px;font-weight:700;color:#5B6478;letter-spacing:.06em;text-transform:uppercase}
+.nav-menu{display:flex;gap:2px;margin-left:10px}
+.nav-menu>a{display:inline-flex;align-items:center;gap:4px;padding:8px 13px;font-size:14.5px;font-weight:500;color:#3A4458;border-radius:8px;transition:.15s}
+.nav-menu>a svg{width:11px;height:11px;opacity:.6}
+.nav-menu>a:hover{color:var(--blue);background:var(--blue-50)}
+.nav-menu>a.hot{color:#d97706}
+.nav-menu>a.hot .dollar{background:#fef3c7;color:#d97706;border-radius:5px;padding:0 3px;font-weight:800;font-size:11px}
+.nav-cta{margin-left:auto;display:flex;align-items:center;gap:12px}
+.nav-cta .login{font-size:14.5px;font-weight:600;color:#3A4458;padding:8px 6px}
 .nav-cta .login:hover{color:var(--blue)}
-.nav-cta .btn{height:42px;padding:0 20px;font-size:15px}
+.nav-cta .btn{height:42px;padding:0 19px;font-size:14.5px}
+.nav-cta .btn-demo{height:42px;padding:0 17px;font-size:14.5px;border-radius:10px;background:#fff;border:1px solid #D6DEEC;color:var(--navy)}
+.nav-cta .btn-demo:hover{border-color:var(--blue);color:var(--blue)}
 .burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;border-radius:2px;transition:.3s}
 .mobile-menu{display:none;max-height:0;overflow:hidden;background:#fff;border-bottom:1px solid var(--line);transition:max-height .3s ease}
-.mobile-menu.open{max-height:460px}
-.mobile-menu a{display:block;padding:15px 24px;font-size:16px;border-top:1px solid #F0F3F8}
-@media(max-width:920px){.nav-menu,.nav-cta{display:none}.burger{display:block}.mobile-menu{display:block}}
+.mobile-menu.open{max-height:560px}
+.mobile-menu a{display:block;padding:14px 24px;font-size:16px;border-top:1px solid #F0F3F8}
+@media(max-width:1080px){.nav-menu{display:none}}
+@media(max-width:1080px){.nav-cta .btn-demo{display:none}}
+@media(max-width:860px){.nav-cta{display:none}.burger{display:block}.mobile-menu{display:block}.meta-badge{display:none}.brand .wordmark{height:27px}}
 
 /* ===== Hero ===== */
-.hero{position:relative;background:var(--bg-2);padding:76px 0 0;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(17,25,54,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(17,25,54,.045) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 40%,transparent 100%)}
-.hero-inner{position:relative;z-index:1;text-align:center;max-width:880px;margin:0 auto}
-.hero h1{font-size:clamp(34px,8.6vw,76px);font-weight:800;color:var(--navy);line-height:1.12;letter-spacing:-.03em}
-.hero h1 .grad{background:linear-gradient(100deg,var(--blue) 10%,#3E7BFA 60%,#14B8A6);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{font-size:18px;margin-top:24px;max-width:680px}
-.hero-actions{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
-.trust{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;margin-top:38px;padding-bottom:64px}
-.trust .t{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray)}
+.hero{position:relative;background:var(--bg-2);padding:80px 0 0;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(17,25,54,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(17,25,54,.045) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse 82% 62% at 50% 0%,#000 38%,transparent 100%);mask-image:radial-gradient(ellipse 82% 62% at 50% 0%,#000 38%,transparent 100%)}
+.hero::after{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:1000px;height:520px;background:radial-gradient(ellipse,rgba(37,99,235,.10),transparent 65%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:900px;margin:0 auto}
+.hero h1{font-size:clamp(38px,8.6vw,84px);font-weight:800;color:var(--navy);line-height:1.08;letter-spacing:-.035em}
+.hero h1 .grad{background:linear-gradient(100deg,#1D4ED8 5%,#2563EB 45%,#3E7BFA 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{font-size:clamp(15.5px,1.5vw,18.5px);margin-top:26px;max-width:720px}
+.hero-actions{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap}
+.hero-actions .btn{height:56px;padding:0 32px;font-size:17px;border-radius:12px}
+.trust{display:flex;flex-wrap:wrap;gap:12px 26px;justify-content:center;margin-top:40px;padding-bottom:60px}
+.trust .t{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray);font-weight:500}
 .trust .t svg{width:18px;height:18px;color:var(--blue);flex:none}
-.sec-card{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
-.sec-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--blue-100)}
-/* ===== Motion layer（仅在允许动效时启用；reduced-motion 下全部静态终态） ===== */
+.trust .t .div{width:4px;height:4px;border-radius:50%;background:var(--gray-3)}
 @media (prefers-reduced-motion:no-preference){
-  .hero-inner>.eyebrow,.hero-inner h1,.hero-inner>.sub,.hero-actions,.hero-inner>.trust{opacity:0;animation:heroRise .72s cubic-bezier(.2,.7,.2,1) forwards}
-  .hero-inner>.eyebrow{animation-delay:.04s}
-  .hero-inner h1{animation-delay:.14s}
-  .hero-inner>.sub{animation-delay:.27s}
-  .hero-actions{animation-delay:.39s}
-  .hero-inner>.trust{animation-delay:.51s}
-  .hero .browser{opacity:0;animation:heroRise .85s .5s cubic-bezier(.2,.7,.2,1) forwards}
-  @keyframes heroRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .hero-inner>.eyebrow,.hero-inner h1,.hero-inner>.sub,.hero-actions,.hero-inner>.trust{opacity:0;animation:heroRise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero-inner>.eyebrow{animation-delay:.05s}
+  .hero-inner h1{animation-delay:.16s}
+  .hero-inner>.sub{animation-delay:.3s}
+  .hero-actions{animation-delay:.42s}
+  .hero-inner>.trust{animation-delay:.54s}
+  @keyframes heroRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
   .nav{transition:box-shadow .25s ease,border-color .25s ease}
   .nav.scrolled{box-shadow:0 12px 30px -16px rgba(17,25,54,.28);border-bottom-color:transparent}
-  .live-dot{display:inline-flex;align-items:center;gap:6px;color:#0D9488;font-size:10.5px;font-weight:700;margin-left:8px;vertical-align:middle}
-  .live-dot i{width:7px;height:7px;border-radius:50%;background:#14B8A6;position:relative}
-  .live-dot i::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:rgba(20,184,166,.45);animation:livePulse 1.7s ease-out infinite}
-  @keyframes livePulse{0%{transform:scale(.5);opacity:.85}70%{transform:scale(1.7);opacity:0}100%{transform:scale(1.7);opacity:0}}
-  .live-swap{animation:liveSwap .5s cubic-bezier(.2,.7,.2,1)}
-  @keyframes liveSwap{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-  .ch{transition:transform .25s ease,box-shadow .25s ease}
-  .ch:hover{transform:translateY(-4px) scale(1.08)}
-  .channels.in .ch{opacity:0;animation:chPop .55s cubic-bezier(.2,.9,.3,1.4) forwards}
-  .channels.in .ch:nth-child(1){animation-delay:.05s}
-  .channels.in .ch:nth-child(2){animation-delay:.16s}
-  .channels.in .ch:nth-child(3){animation-delay:.27s}
-  @keyframes chPop{from{opacity:0;transform:translateY(16px) scale(.82)}to{opacity:1;transform:none}}
-  .gtrack i{transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
-  .dtab .n{transition:transform .2s ease}
-  .dtab:hover .n{transform:translateX(3px)}
 }
 </style>
 </head>
 <body>
+
+<!-- ===== 公告条 ===== -->
+<div class="announce">
+  <span class="confetti" id="confetti" aria-hidden="true"></span>
+  <div class="announce-inner">
+    <span class="pill">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      点击观看
+    </span>
+    <span class="hide-sm">1 分钟看懂 AI 评论盯盘如何帮你接住每一条询盘</span>
+    <a href="https://app.workhogee.com/signin">内测期免费开通，立即开始 ›</a>
+  </div>
+</div>
+
 <!-- ===== Nav ===== -->
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top">
-      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#2563EB"/><path d="M7 11 11 23 16 14.5 21 23 25 11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      WorkHogee
+    <a class="brand" href="#top" aria-label="WorkHogee 首页">
+      <svg class="wordmark" viewBox="0 0 118 19.13" aria-hidden="true">
+        <g transform="translate(-1.06 -28.16)">
+          <path fill="#1c1917" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+          <path fill="#2563EB" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+          <path fill="#1c1917" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+          <path fill="#1c1917" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+          <path fill="#1c1917" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+          <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+        </g>
+      </svg>
+      <span class="meta-badge">
+        <svg class="mb-infinity" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"/></svg>
+        <span class="mb-txt"><span class="mb-name">Meta</span><span class="mb-sub">Business Partner</span></span>
+      </span>
     </a>
     <nav class="nav-menu" aria-label="主导航">
-      <a href="#features">功能</a>
-      <a href="#scenes">适用场景</a>
-      <a href="#metrics">效果</a>
+      <a href="#features">产品<svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L2 4h8z"/></svg></a>
+      <a href="#scenes">解决方案<svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L2 4h8z"/></svg></a>
+      <a href="#metrics">AI 效果</a>
+      <a href="#channels">渠道</a>
       <a href="#security">安全</a>
-      <a href="#pricing">定价</a>
+      <a href="#pricing">价格方案</a>
     </nav>
     <div class="nav-cta">
       <a class="login" href="https://app.workhogee.com/signin">登录</a>
       <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始</a>
+      <a class="btn-demo" href="mailto:910036590@qq.com">预约演示</a>
     </div>
     <button class="burger" id="burger" aria-label="菜单" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#features">功能</a><a href="#scenes">适用场景</a><a href="#metrics">效果</a><a href="#security">安全</a><a href="#pricing">定价</a>
+    <a href="#features">产品</a><a href="#scenes">解决方案</a><a href="#metrics">AI 效果</a><a href="#channels">渠道</a><a href="#security">安全</a><a href="#pricing">价格方案</a>
+    <a href="mailto:910036590@qq.com">预约演示</a>
     <a href="https://app.workhogee.com/signin">登录 / 免费开始</a>
   </div>
 </header>
@@ -141,44 +181,43 @@ img{max-width:100%;display:block}
 <section class="hero" id="top">
   <div class="wrap hero-inner">
     <span class="eyebrow">出海卖家的 Instagram 评论盯盘助手</span>
-    <h1>每条评论都有人秒回<br><span class="grad">每个询盘都不漏成单</span></h1>
-    <p class="sub">从评论到私信，WorkHogee 7×24 盯守 Instagram，自动识别意向、公开回复并私信发链接，把询盘沉淀成可跟进的线索。只走官方 API，不用雇客服，也不用交出账号密码。</p>
+    <h1>让每一条评论<br><span class="grad">都变成生意机会</span></h1>
+    <p class="sub">WorkHogee 7×24 盯守 Instagram 评论与私信：评论区自动公开回复、私信秒发报价与下单链接，自动识别意向、A/B/C/D 评分、高意向立即告警，把询盘沉淀成可跟进的线索。只走 Meta 官方 API，不用雇客服，也不用交出账号密码。</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
       <a class="btn btn-ghost" href="mailto:910036590@qq.com">预约演示</a>
     </div>
     <div class="trust">
       <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 Meta Graph API</span>
-      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21M17 9v6"/></svg>OAuth 授权 · 不存密码</span>
       <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6 4 4 6-7" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>意图识别 100%</span>
-      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" stroke-linecap="round"/></svg>多语言 英·西·法·中</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>7×24 全天盯守</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21M17 9v6"/></svg>OAuth 授权 · 不存密码</span>
+      <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" stroke-linecap="round"/></svg>英 · 西 · 法 · 中 多语言</span>
     </div>
   </div>
   <div class="wrap" style="position:relative;z-index:1">
 <style>
 /* ===== Product mock ===== */
-.prod{position:relative;padding:20px 0 120px}
-.browser{position:relative;z-index:2;border-radius:16px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 40px 90px -30px rgba(17,25,54,.35),0 8px 24px rgba(17,25,54,.08)}
-.bar{display:flex;align-items:center;gap:8px;height:46px;padding:0 16px;background:#F4F7FC;border-bottom:1px solid var(--line)}
+.prod{position:relative;padding:26px 0 110px}
+.browser{position:relative;z-index:2;border-radius:18px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 50px 100px -34px rgba(17,25,54,.42),0 10px 30px rgba(17,25,54,.1)}
+.bar{display:flex;align-items:center;gap:8px;height:48px;padding:0 18px;background:#F4F7FC;border-bottom:1px solid var(--line)}
 .dot{width:12px;height:12px;border-radius:50%}
 .dot.r{background:#FF5F57}.dot.y{background:#FEBC2E}.dot.g{background:#28C840}
-.urlbar{flex:1;max-width:420px;margin:0 auto;height:28px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;color:#6B7280;border:1px solid #E6EBF3}
+.urlbar{flex:1;max-width:440px;margin:0 auto;height:30px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;color:#6B7280;border:1px solid #E6EBF3}
 .urlbar svg{width:13px;height:13px;color:var(--blue)}
-.app{display:grid;grid-template-columns:168px 252px 1fr 236px;height:600px;font-size:13px}
-/* rail */
+.app{display:grid;grid-template-columns:172px 256px 1fr 244px;height:612px;font-size:13px}
 .rail{background:#fff;border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:2px}
 .rail .logo2{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);font-size:15px;margin-bottom:14px}
-.rail .logo2 i{width:26px;height:26px;border-radius:7px;background:var(--blue);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:13px}
+.rail .logo2 i{width:26px;height:26px;border-radius:7px;background:var(--blue);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:12px;font-weight:800}
 .rail .acct{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11.5px}
 .rail .acct b{display:flex;align-items:center;gap:7px;color:var(--navy);font-size:12.5px}
 .rail .acct b s{width:22px;height:22px;border-radius:50%;background:var(--blue-50);color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
 .rail .acct small{color:var(--gray-2);display:block;margin-top:4px}
-.rail .ri{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:#4B5568;font-weight:500;cursor:default}
+.rail .ri{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:#4B5568;font-weight:500}
 .rail .ri.on{background:var(--blue-50);color:var(--blue);font-weight:700}
 .rail .ri svg{width:16px;height:16px;flex:none}
-/* conv list */
 .conv{border-right:1px solid var(--line);background:#FBFCFE;display:flex;flex-direction:column;min-width:0}
-.conv .ch{padding:14px 16px;font-weight:800;color:var(--navy);font-size:15px;display:flex;align-items:center;justify-content:space-between}
+.conv .ch{padding:14px 16px;font-weight:800;color:var(--navy);font-size:15px}
 .conv .search{margin:0 12px 10px;height:32px;background:#fff;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;padding:0 10px;gap:7px;color:var(--gray-2);font-size:12px}
 .conv .item{display:flex;gap:10px;padding:12px 16px;border-top:1px solid #F0F3F8;min-width:0}
 .conv .item.on{background:var(--blue-50);border-left:3px solid var(--blue);padding-left:13px}
@@ -190,13 +229,16 @@ img{max-width:100%;display:block}
 .conv .pv{color:var(--gray);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:6px;margin-top:4px;font-weight:600}
 .tag.rep{background:#E6FAF7;color:#0D9488}.tag.closed{background:#F1F5F9;color:#94A3B8}
-/* chat */
 .chat{display:flex;flex-direction:column;min-width:0;background:#fff}
 .chat .top{padding:14px 20px;border-bottom:1px solid var(--line)}
 .chat .top b{font-size:15px;color:var(--navy)}
 .chat .top .tt{display:flex;gap:6px;margin-top:5px}
 .mini{font-size:10.5px;padding:2px 8px;border-radius:999px;font-weight:600}
 .mini.b{background:var(--blue-50);color:var(--blue)}.mini.g{background:#E6FAF7;color:#0D9488}.mini.o{background:#FFF3E6;color:#D97706}
+.live-dot{display:inline-flex;align-items:center;gap:6px;color:#0D9488;font-size:10.5px;font-weight:700;margin-left:8px;vertical-align:middle}
+.live-dot i{width:7px;height:7px;border-radius:50%;background:#14B8A6;position:relative}
+.live-dot i::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:rgba(20,184,166,.45);animation:livePulse 1.7s ease-out infinite}
+@keyframes livePulse{0%{transform:scale(.5);opacity:.85}70%{transform:scale(1.7);opacity:0}100%{transform:scale(1.7);opacity:0}}
 .thread{flex:1;padding:20px;background:linear-gradient(180deg,#F8FAFF,#fff);display:flex;flex-direction:column;gap:14px;overflow:hidden}
 .bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:12.5px;line-height:1.5}
 .bubble.in{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;align-self:flex-start}
@@ -206,7 +248,6 @@ img{max-width:100%;display:block}
 .bubble .tm{display:block;font-size:10px;color:var(--gray-2);margin-top:5px}
 .bubble.out .tm{color:rgba(255,255,255,.75)}
 .linkbtn{margin-top:8px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:9px;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;display:block}
-/* lead card */
 .lead{background:#FBFCFE;border-left:1px solid var(--line);padding:16px;overflow:hidden}
 .lead .lp{display:flex;align-items:center;gap:10px}
 .lead .lp .av{width:42px;height:42px}
@@ -220,24 +261,36 @@ img{max-width:100%;display:block}
 .lbox h5{font-size:11.5px;color:var(--gray-2);font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:6px}
 .lbox .p{font-size:12px;color:#374151;margin-bottom:6px}
 .lbox .rec{font-size:11.5px;background:var(--blue-50);color:var(--blue-800);border-radius:8px;padding:8px 10px}
-/* annotations under the browser */
-.anno-row{position:relative;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:46px auto 0;max-width:960px}
+.live-swap{animation:liveSwap .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes liveSwap{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+/* 标注气泡 */
+.anno-row{position:relative;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:52px auto 0;max-width:1000px}
 .anno-row .ai{display:flex;flex-direction:column;align-items:center;text-align:center;gap:13px}
-.anno-row .ic{width:60px;height:60px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 28px -10px rgba(20,184,166,.6);flex:none}
-.anno-row .ic svg{width:28px;height:28px}
-.anno-row .tx{font-weight:700;font-size:15px;color:var(--navy);line-height:1.4}
-.anno-row .tx small{display:block;font-weight:500;color:var(--gray);font-size:13px;margin-top:4px}
-@media(max-width:1100px){.lead{display:none}.app{grid-template-columns:140px 220px 1fr}}
-@media(max-width:760px){.rail{display:none}.conv{display:none}.app{grid-template-columns:1fr;height:486px}.prod{padding-bottom:32px}.anno-row{grid-template-columns:1fr;gap:24px;margin-top:34px}}
-/* channels row */
-.channels{position:relative;z-index:2;text-align:center;margin-top:44px}
-.channels .row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:24px}
-.ch{width:58px;height:58px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;box-shadow:0 8px 18px -6px rgba(17,25,54,.3)}
-.ch svg{width:30px;height:30px}
+.anno-row .ic{width:64px;height:64px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 30px -10px rgba(37,99,235,.6);flex:none;border:6px solid #fff;transition:transform .3s cubic-bezier(.2,.9,.3,1.4)}
+.anno-row .ai:nth-child(2) .ic{background:linear-gradient(135deg,#14B8A6,#0D9488);box-shadow:0 16px 30px -10px rgba(20,184,166,.6)}
+.anno-row .ai:nth-child(3) .ic{background:linear-gradient(135deg,#7C3AED,#2563EB);box-shadow:0 16px 30px -10px rgba(124,58,237,.55)}
+.anno-row .ai:hover .ic{transform:translateY(-6px) scale(1.08)}
+.anno-row .ic svg{width:29px;height:29px}
+.anno-row .tx{font-weight:700;font-size:15.5px;color:var(--navy);line-height:1.4}
+.anno-row .tx small{display:block;font-weight:500;color:var(--gray);font-size:13px;margin-top:5px}
+@media(max-width:1100px){.lead{display:none}.app{grid-template-columns:146px 226px 1fr}}
+@media(max-width:760px){.rail{display:none}.conv{display:none}.app{grid-template-columns:1fr;height:486px}.prod{padding-bottom:36px}.anno-row{grid-template-columns:1fr;gap:24px;margin-top:34px}}
+/* 平台图标行 */
+.channels{position:relative;z-index:2;text-align:center;margin-top:50px}
+.channels .row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.ch{width:62px;height:62px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 10px 22px -8px rgba(17,25,54,.32);transition:transform .28s cubic-bezier(.2,.9,.3,1.4)}
+.ch:hover{transform:translateY(-6px) scale(1.1)}
+.ch svg{width:32px;height:32px}
 .ch.ig{background:linear-gradient(45deg,#feda75,#fa7e1e 25%,#d62976 55%,#4f5bd5)}
-.ch.fb{background:#1877F2}.ch.ms{background:linear-gradient(135deg,#1E88E5,#5E35B1)}
-.ch.dim{background:#CBD5E1;color:#fff;box-shadow:none}
-.ch-note{font-size:13px;color:var(--gray-2);margin-top:16px}
+.ch.fb{background:#1877F2}.ch.wa{background:#25D366}.ch.ms{background:linear-gradient(135deg,#1E88E5,#5E35B1)}
+.ch.soon{background:#fff;border:1.5px dashed var(--gray-3);box-shadow:none;color:var(--gray-2)}
+.channels.in .ch{opacity:0;animation:chPop .6s cubic-bezier(.2,.9,.3,1.5) forwards}
+.channels.in .ch:nth-child(1){animation-delay:.05s}.channels.in .ch:nth-child(2){animation-delay:.15s}
+.channels.in .ch:nth-child(3){animation-delay:.25s}.channels.in .ch:nth-child(4){animation-delay:.35s}
+.channels.in .ch:nth-child(5){animation-delay:.45s}.channels.in .ch:nth-child(6){animation-delay:.55s}
+@keyframes chPop{from{opacity:0;transform:translateY(20px) scale(.8)}to{opacity:1;transform:none}}
+.ch-note{font-size:13.5px;color:var(--gray-2);margin-top:18px}
+@media (prefers-reduced-motion:reduce){.live-dot i::after{animation:none}.channels.in .ch{opacity:1;animation:none}}
 </style>
 <div class="prod">
   <div class="browser">
@@ -245,7 +298,6 @@ img{max-width:100%;display:block}
       <span class="urlbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>app.workhogee.com/dashboard</span>
     </div>
     <div class="app">
-      <!-- 左导航 -->
       <aside class="rail">
         <div class="logo2"><i>W</i>WorkHogee</div>
         <div class="acct"><b><s>S</s>sondio.official</b><small>在 1 个已连接账号间切换</small></div>
@@ -256,20 +308,18 @@ img{max-width:100%;display:block}
         <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11a3 3 0 1 0 0-6M21.5 20a5.5 5.5 0 0 0-4-5.3"/></svg>线索</span>
         <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z"/></svg>私信收件箱</span>
       </aside>
-      <!-- 会话列表 -->
       <div class="conv">
-        <div class="ch">私信</div>
+        <div class="ch">会话</div>
         <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>搜索客户、备注或邮箱</div>
         <div class="item on" id="liveConv">
           <span class="av c" id="liveAv">CM</span>
-          <div class="bd"><div class="nm"><span id="liveNm">Carlos Méndez</span> <span id="liveTime">5个月前</span></div><div class="pv" id="livePv">Perfect, I'll take 100 units. How do I pay?</div><span class="tag rep" id="liveTag">评论询盘自动回复+私信</span></div>
+          <div class="bd"><div class="nm"><span id="liveNm">Carlos Méndez</span> <span id="liveTime">刚刚</span></div><div class="pv" id="livePv">Perfect, I'll take 100 units. How do I pay?</div><span class="tag rep" id="liveTag">评论询盘自动回复+私信</span></div>
         </div>
         <div class="item">
           <span class="av m">SL</span>
           <div class="bd"><div class="nm">Sofía López <span>5个月前</span></div><div class="pv">¿Tienen envío a México? Gracias.</div><span class="tag closed">关键词要链接·自动私信</span></div>
         </div>
       </div>
-      <!-- 聊天区 -->
       <div class="chat">
         <div class="top"><b id="liveName">Carlos Méndez</b><span class="live-dot"><i></i>实时盯盘</span>
           <div class="tt" id="liveTags"><span class="mini b">询价客户</span><span class="mini b">已下单</span><span class="mini o">高意向</span></div>
@@ -281,7 +331,6 @@ img{max-width:100%;display:block}
           <div class="bubble out">Perfect, I'll take 100 units. How do I pay?<span class="tm">客户回复</span></div>
         </div>
       </div>
-      <!-- 右侧客户卡 -->
       <aside class="lead" id="liveLeadCard">
         <div class="lp"><span class="av c" id="liveLeadAv">CM</span><div><b id="liveLeadName">Carlos Méndez</b><small id="liveHandle">@carlos.shop88</small></div></div>
         <div class="score"><span class="grade" id="liveGrade">A级</span><span class="num" id="liveScore">90</span><span class="hot" id="liveHot">高意向</span></div>
@@ -291,422 +340,915 @@ img{max-width:100%;display:block}
       </aside>
     </div>
   </div>
-  <!-- 能力标注 -->
   <div class="anno-row">
     <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7c0 2.5 1 4 1 5.5h12C18 13 19 11.5 19 9a7 7 0 0 0-7-7z" stroke-linejoin="round"/><path d="M9 18a3 3 0 0 0 6 0" stroke-linecap="round"/></svg></span><span class="tx">AI 识别意图 · 情感 · 语言<small>询价 / 咨询 / 投诉 / 闲聊，英西法中自动判别</small></span></div>
     <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tx">A/B/C/D 评分 · 高意向告警<small>自动分级，重点客户第一时间不漏</small></span></div>
     <div class="ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg></span><span class="tx">自动公开回复 + 私信<small>评论区回复报价，私信发送下单链接</small></span></div>
   </div>
-  <!-- 渠道 -->
   <div class="channels">
     <div class="row">
-      <span class="ch ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.1C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>
-      <span class="ch fb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span>
-      <span class="ch ms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 1.4.3 2.7.9 3.9L3 21l5.2-1A9 9 0 1 0 12 3z" stroke-linejoin="round"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke-linecap="round"/></svg></span>
+      <span class="ch ig" title="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.1C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>
+      <span class="ch fb" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span>
+      <span class="ch ms" title="Messenger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.9 2 3 5.7 3 10.6c0 2.5 1.1 4.6 3 6.1V22l2.8-1.6c1 .3 2.1.4 3.2.4 5.1 0 9-3.7 9-8.6S17.1 2 12 2zm1 11.5l-2.3-2.5-4.5 2.5 5-5.3 2.3 2.5 4.5-2.5-5 5.3z"/></svg></span>
+      <span class="ch wa" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.05 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5a10 10 0 1 0 5.15-18.5zm5.9 14.1c-.2.7-1.3 1.3-1.8 1.4-.5.1-1.1.2-1.7-.1-.4-.2-.9-.5-1.6-.9-2.8-1.5-4.6-4.3-4.7-4.5-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.3.4c-.1.1-.3.3-.1.5.2.3.4.6.6.8.3.4.6.6.9.8.2.2.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.3.1.8-.1 1.4z"/></svg></span>
+      <span class="ch soon" title="规划中"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 5.8c-.7.3-1.5.6-2.3.7a4 4 0 0 0-7 2.7v.9a9.5 9.5 0 0 1-6.9-3.5s-3 6.9 3.8 10a10.2 10.2 0 0 1-6 1.7c6.9 3.8 15.2 0 15.2-9.1v-.4c.8-.6 1.5-1.3 2-2.1z" stroke-linejoin="round"/></svg></span>
+      <span class="ch soon" title="规划中"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.5 6.5l-4.5 4.5V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-4l4.5 4.5a.5.5 0 0 0 .8-.4V6.9a.5.5 0 0 0-.8-.4z" stroke-linejoin="round"/></svg></span>
     </div>
-    <p class="ch-note">首发 Instagram · Facebook / Messenger 接入中 · 仅接入官方授权账号</p>
+    <p class="ch-note">首发 Instagram · Facebook / Messenger 接入中 · 仅接入官方授权账号，不使用任何非官方手段</p>
   </div>
 </div>
   </div>
 </section>
 <style>
-/* ===== Pain ===== */
-.pain{padding:100px 0 90px;text-align:center}
-.pain h2{font-size:clamp(30px,4.6vw,58px);font-weight:800;color:var(--navy);line-height:1.15;letter-spacing:-.02em}
-.pain .dots{display:flex;gap:8px;justify-content:center;margin:26px 0}
-.pain .dots i{width:9px;height:9px;border-radius:50%;background:#CBD5E1}
-.pain .dots i.on{background:var(--blue);width:28px;border-radius:5px}
-.pain p{max-width:720px;margin:0 auto;color:var(--gray);font-size:18px}
-
-/* ===== Dark capability ===== */
-.dark{position:relative;background:var(--dark);color:#fff;padding:96px 0 104px;overflow:hidden}
-.dark::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(96,143,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(96,143,255,.05) 1px,transparent 1px);background-size:48px 48px}
-.dark::after{content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.28),transparent 65%);filter:blur(20px)}
-.dark .wrap{position:relative;z-index:1}
-.dark-head{text-align:center}
-.dark h2{font-size:clamp(28px,3.6vw,42px);font-weight:800;letter-spacing:-.01em}
-.dark .dsub{color:#9AA8C7;font-size:17px;margin-top:14px}
-.dtabs{display:grid;grid-template-columns:repeat(4,1fr);margin:54px 0 10px;border-bottom:1px solid rgba(255,255,255,.1)}
-.dtab{background:none;border:0;color:#7E8CAC;cursor:pointer;padding:18px 8px 20px;text-align:left;position:relative;transition:.2s}
-.dtab .n{font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em}
-.dtab .l{font-size:15px;font-weight:600;margin-top:8px}
-.dtab.on{color:#fff}
-.dtab.on::after{content:"";position:absolute;left:0;bottom:-1px;height:3px;width:100%;background:linear-gradient(90deg,var(--blue),#60A5FA);border-radius:3px}
-.dpanel{display:none;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:52px 8px 0}
-.dpanel.on{display:grid}
-.cap-kick{display:inline-flex;align-items:center;gap:9px;color:#7FB0FF;font-size:14px;font-weight:700;margin-bottom:18px}
-.cap-kick i{width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,.2);display:inline-flex;align-items:center;justify-content:center;font-style:normal}
-.cap-kick i svg{width:19px;height:19px}
-.dpanel h3{font-size:clamp(24px,2.6vw,32px);font-weight:800;line-height:1.25}
-.dpanel .desc{color:#A8B4D0;font-size:16px;margin-top:16px}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:#D6E0F5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:7px 13px;border-radius:999px}
-.chip svg{width:14px;height:14px;color:#60A5FA}
-.bignum{display:flex;align-items:baseline;gap:12px;margin-top:32px}
-.bignum b{font-size:52px;font-weight:800;background:linear-gradient(100deg,#60A5FA,#2563EB);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-.bignum span{font-size:15px;color:#9AA8C7}
-.more{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:#7FB0FF;font-size:14px;font-weight:600}
-/* mini panels */
-.mpanel{background:linear-gradient(180deg,#141B2E,#0F1626);border:1px solid rgba(96,143,255,.18);border-radius:16px;padding:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
-.mpanel .mh{font-size:13px;color:#9AA8C7;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.mrow{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:12.5px;color:#D6E0F5}
-.mrow .q{color:#fff;font-weight:600;margin-bottom:5px}
-.mtags{display:flex;gap:6px;flex-wrap:wrap}
-.mtags em{font-style:normal;font-size:10.5px;padding:2px 8px;border-radius:6px;background:rgba(37,99,235,.18);color:#9DB8FF}
-.mtags em.g{background:rgba(20,184,166,.16);color:#5EEAD4}
-.mtags em.o{background:rgba(249,115,22,.16);color:#FDBA74}
-.rule-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:13px;margin-bottom:10px}
-.rule-card .t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#fff}
-.rule-card .badge{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(20,184,166,.18);color:#5EEAD4}
-.rule-card .d{font-size:11.5px;color:#8A97B5;margin-top:5px}
-.rule-stat{display:flex;gap:24px;margin-top:6px}
-.rule-stat b{color:#60A5FA;font-size:20px}
-.grade-bar{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.grade-bar .g{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff}
-.g.a{background:#2563EB}.g.b{background:#3B82F6}.g.c{background:#64748B}.g.d{background:#94A3B8}
-.gtrack{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
-.gtrack i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#2563EB,#60A5FA)}
-.lead-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px}
-.lead-row .av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:#2563EB}
-.lead-row .nm{flex:1;color:#E6ECF7}
-.lead-row .sc{font-weight:800;color:#60A5FA}
-@media(max-width:860px){.dpanel{grid-template-columns:1fr;gap:32px}.dtab .n{font-size:32px}.dtab .l{font-size:13px}}
+/* ===== 信任墙（为谁而生，替代虚构客户 logo） ===== */
+.wall{background:#fff;padding:84px 0 70px;border-bottom:1px solid var(--line)}
+.wall .wall-title{text-align:center;font-size:clamp(19px,2.4vw,28px);font-weight:800;color:var(--navy);letter-spacing:-.01em}
+.wall .wall-title b{color:var(--blue)}
+.wall-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:34px 0 0}
+.wall-tag{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:14px;background:var(--bg-2);border:1px solid var(--line);color:var(--navy);font-size:15px;font-weight:600;transition:.25s}
+.wall-tag svg{width:19px;height:19px;color:var(--blue)}
+.wall-tag:hover{transform:translateY(-3px);border-color:var(--blue-300);background:var(--blue-50);box-shadow:0 14px 30px -16px rgba(37,99,235,.5)}
+.wall-foot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:34px;color:var(--gray);font-size:14px}
+.wall-foot svg{width:17px;height:17px;color:var(--blue)}
+.wall.fade .wall-tag{opacity:0;transform:translateY(20px)}
+.wall.fade.in .wall-tag{opacity:1;transform:none;transition:opacity .55s cubic-bezier(.2,.9,.3,1.3),transform .55s cubic-bezier(.2,.9,.3,1.3),border-color .25s,background .25s,box-shadow .25s}
+.wall.in .wall-tag:nth-child(1){transition-delay:.04s}.wall.in .wall-tag:nth-child(2){transition-delay:.1s}.wall.in .wall-tag:nth-child(3){transition-delay:.16s}
+.wall.in .wall-tag:nth-child(4){transition-delay:.22s}.wall.in .wall-tag:nth-child(5){transition-delay:.28s}.wall.in .wall-tag:nth-child(6){transition-delay:.34s}
 </style>
-
-<!-- ===== Pain ===== -->
-<section class="pain wrap">
-  <span class="eyebrow">为什么选择 WorkHogee</span>
-  <h2>评论多了，<br>就代表订单多了吗？</h2>
-  <div class="dots"><i class="on"></i><i></i><i></i></div>
-  <p>评论刷得快、私信回不过来，西语法语看不懂，询盘散在各个帖子里。客户问完价格没人理，几分钟后就转头去了别家——多出来的流量，反而悄悄拖垮了你的转化。</p>
-</section>
-
-<!-- ===== Dark capabilities ===== -->
-<section class="dark" id="features">
+<section class="wall">
   <div class="wrap">
-    <div class="dark-head">
-      <span class="eyebrow on-dark">WorkHogee 如何帮你盯</span>
-      <h2>AI 驱动的评论盯盘工作台</h2>
-      <p class="dsub">从评论到私信，统一盯守、自动回复、识别意向、沉淀线索，让WorkHogee贯穿每一个关键环节。</p>
+    <p class="wall-title">为每一个在 <b>Instagram</b> 接单的出海小团队</p>
+    <div class="wall-row">
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-6 9 6v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg>独立站卖家</span>
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 6 6.5.5-5 4.5 1.5 6.5L12 16l-5.5 3.5L8 13 3 8.5 9.5 8z" stroke-linejoin="round"/></svg>DTC 品牌</span>
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M15 20a5 5 0 0 1 6-4.8"/></svg>跨境小团队</span>
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg>个人创业者</span>
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v13H3z" stroke-linejoin="round"/><path d="M8 7V5a4 4 0 0 1 8 0v2M3 11h18"/></svg>批发供货商</span>
+      <span class="wall-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11c0 5-8 11-8 11s-8-6-8-11a8 8 0 0 1 16 0z" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.5"/></svg>手作 / 小众店铺</span>
     </div>
-    <div class="dtabs" role="tablist">
-      <button class="dtab on" data-tab="0" role="tab"><div class="n">01</div><div class="l">盯紧评论</div></button>
-      <button class="dtab" data-tab="1" role="tab"><div class="n">02</div><div class="l">自动回复</div></button>
-      <button class="dtab" data-tab="2" role="tab"><div class="n">03</div><div class="l">识别意向</div></button>
-      <button class="dtab" data-tab="3" role="tab"><div class="n">04</div><div class="l">沉淀客户</div></button>
+    <div class="wall-foot">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Meta 官方生态授权 · 只走官方 API · 从下一条评论开始，一个询盘都不丢
     </div>
+  </div>
+</section>
+<style>
+/* ===== Pain 增长之问 ===== */
+.pain{background:var(--bg-2);padding:120px 0 110px;text-align:center}
+.pain h2{font-size:clamp(30px,4.6vw,60px);font-weight:800;line-height:1.2;letter-spacing:-.025em;color:var(--navy)}
+.pain h2 .line{display:block;opacity:0;transform:translateY(34px);transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+.pain h2 .line.grey{color:#B0B9C9}
+.pain.in h2 .line{opacity:1;transform:none}
+.pain.in h2 .line:nth-child(2){transition-delay:.22s}
+.pain .dots{display:flex;gap:8px;justify-content:center;margin:30px 0}
+.pain .dots i{width:8px;height:8px;border-radius:50%;background:#D6DEEC;transition:.3s}
+.pain.in .dots i{background:var(--blue)}
+.pain.in .dots i:nth-child(2){transition-delay:.2s}.pain.in .dots i:nth-child(3){transition-delay:.4s}
+.pain .sub{margin-top:10px}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:58px;text-align:left}
+.pain-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .3s,border-color .3s}
+.pain.in .pain-card{opacity:1;transform:none}
+.pain.in .pain-card:nth-child(1){transition-delay:.15s}.pain.in .pain-card:nth-child(2){transition-delay:.3s}.pain.in .pain-card:nth-child(3){transition-delay:.45s}
+.pain-card:hover{border-color:var(--blue-300);box-shadow:var(--shadow);transform:translateY(-6px)}
+.pain-card .pi{width:48px;height:48px;border-radius:13px;background:#FEF2F2;color:#E0455B;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.pain-card:nth-child(2) .pi{background:#FFF3E6;color:#EA580C}
+.pain-card:nth-child(3) .pi{background:#FFF7E6;color:#CA8A04}
+.pain-card .pi svg{width:25px;height:25px}
+.pain-card h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.pain-card p{font-size:14px;color:var(--gray);line-height:1.7}
+.pain-card .stat{margin-top:14px;font-size:13px;font-weight:700;color:#E0455B;background:#FEF2F2;border-radius:8px;padding:7px 12px;display:inline-block}
+.pain-card:nth-child(2) .stat{background:#FFF3E6;color:#C2410C}
+.pain-card:nth-child(3) .stat{background:#FFF7E6;color:#A16207}
+.pain-trans{margin-top:44px;font-size:17px;font-weight:600;color:var(--navy);opacity:0;transition:opacity .7s ease .6s}
+.pain.in .pain-trans{opacity:1}
+.pain-trans b{color:var(--blue)}
+@media(max-width:860px){.pain-grid{grid-template-columns:1fr;gap:16px}}
+</style>
+<section class="pain">
+  <div class="wrap">
+    <span class="eyebrow">为什么选择 WorkHogee</span>
+    <h2>
+      <span class="line">评论多了，</span>
+      <span class="line grey">就代表更快出单吗？</span>
+    </h2>
+    <div class="dots"><i></i><i></i><i></i></div>
+    <p class="sub">更多流量涌入的评论区，正在变成你的营收漏洞——一个人盯不过来，恰恰是询盘流失的开始。</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke-linejoin="round"/><path d="M3 3l18 18" stroke-linecap="round"/></svg></div>
+        <h3>盯着回复，人不在就漏</h3>
+        <p>评论区靠人盯，一条没回就可能被同行的置顶评论抢走。深夜、节假日、时差，正是海外客户最活跃的时候。</p>
+        <span class="stat">行业里 30–45% 评论未被及时回复</span>
+      </div>
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2" stroke-linecap="round"/><circle cx="12" cy="12" r="9"/><path d="M5 3L3 6M21 3l-2 3" stroke-linecap="round"/></svg></div>
+        <h3>人工回复，慢且重复</h3>
+        <p>绝大多数是「多少钱、怎么下单、怎么发货」的重复询价。逐个手动回复，小团队精力被耗尽，还经常语言不通、语气不一致。</p>
+        <span class="stat">询价 · 咨询 · 投诉 · 闲聊，天天重复</span>
+      </div>
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14l-7 7-9-9V4h8z" stroke-linejoin="round" transform="rotate(180 12 12)"/><path d="M22 12h-6M16 9l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>客户想问，转身就走</h3>
+        <p>想买的客户需要一个下单链接、一个价格、一个付款方式。回复慢一步，他们就划走或被同行接住。</p>
+        <span class="stat">私信被埋在消息堆里，最容易被忽略</span>
+      </div>
+    </div>
+    <p class="pain-trans">这些问题，<b>不是靠多雇客服解决的</b>——它们都能被 AI 盯盘自动化。</p>
+  </div>
+</section>
+<style>
+/* ===== Dark 工作台 4 tab ===== */
+.dark{background:#070B16;color:#EAEAEA}
+.dkbar{background:linear-gradient(90deg,#0A1020,#101A30,#0A1020);border-bottom:1px solid rgba(255,255,255,.06);padding:20px 0;text-align:center}
+.dkbar p{font-size:clamp(15px,1.7vw,20px);font-weight:700;color:#CBD5E1;letter-spacing:.01em}
+.dkbar p b{color:#fff}
+.dark-body{padding:92px 0 100px}
+.dark-body .center .h2{color:#fff}
+.dark-body .sub{color:#94A3B8}
+.dtabs{display:flex;border-bottom:1px solid rgba(255,255,255,.09);margin-top:46px}
+.dtab{flex:1;min-width:0;padding:22px 8px 18px;cursor:pointer;position:relative;color:#86919E;transition:color .25s}
+.dtab .dn{font-size:13px;font-weight:800;color:#475569;letter-spacing:.05em}
+.dtab .dt{font-size:clamp(15px,1.5vw,19px);font-weight:800;margin-top:6px;white-space:nowrap}
+.dtab:hover{color:#CBD5E1}
+.dtab.active{color:#fff}
+.dtab.active .dn{color:#60A5FA}
+.dtab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:2px;background:linear-gradient(90deg,#3B82F6,#2563EB);box-shadow:0 0 18px rgba(59,130,246,.7)}
+.panel{display:none;grid-template-columns:minmax(0,.92fr) minmax(0,1.15fr);gap:54px;align-items:center;padding:58px 0 6px}
+.panel.active{display:grid;animation:panelIn .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font-size:13px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.13);color:#CBD5E1}
+.chip.hot{background:rgba(37,99,235,.18);border-color:rgba(96,143,255,.4);color:#93C5FD}
+.bignum{font-size:clamp(52px,6vw,76px);font-weight:800;line-height:1;background:linear-gradient(120deg,#60A5FA,#3B82F6);-webkit-background-clip:text;background-clip:text;color:transparent;margin:24px 0 14px}
+.bignum small{font-size:15px;color:#94A3B8;font-weight:500;margin-left:10px;-webkit-text-fill-color:#94A3B8}
+.panel h3{font-size:clamp(24px,2.6vw,32px);font-weight:800;color:#f1f5f9;line-height:1.3;letter-spacing:-.01em}
+.panel .pp{color:#94A3B8;font-size:15.5px;margin-top:16px;line-height:1.8}
+.panel .plink{display:inline-flex;align-items:center;gap:8px;margin-top:26px;color:#60A5FA;font-weight:700;font-size:14.5px;cursor:pointer}
+.panel .plink svg{width:16px;height:16px;transition:transform .2s}
+.panel .plink:hover svg{transform:translateX(4px)}
+.mpanel{background:#121828;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.8);min-height:392px}
+.mpanel .mpbar{display:flex;align-items:center;gap:7px;padding:12px 16px;background:#1A2238;border-bottom:1px solid rgba(255,255,255,.06)}
+.mpanel .mpbar i{width:10px;height:10px;border-radius:50%}
+.mpanel .mpbar .r{background:#FF5F57}.mpanel .mpbar .y{background:#FEBC2E}.mpanel .mpbar .g{background:#28C840}
+.mpanel .mpbar .ml{margin-left:auto;font-size:12px;color:#64748B}
+.mpbody{padding:18px}
+.dn{display:flex;align-items:flex-start;gap:12px;padding:13px 10px;border-radius:10px;border:1px solid transparent}
+.dn:hover{background:rgba(255,255,255,.03)}
+.dn .ig{width:36px;height:36px;border-radius:50%;background:linear-gradient(45deg,#feda75,#d62976 55%,#4f5bd5);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.dn .ig svg{width:18px;height:18px}
+.dn .db{flex:1;min-width:0}
+.dn .db b{font-size:12.5px;color:#EAEAEA}
+.dn .db b span{color:#60A5FA;font-weight:500;margin-left:6px}
+.dn .db p{font-size:12.5px;color:#94A3B8;margin-top:3px}
+.dn .badge{font-size:10.5px;padding:2px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
+.dn .badge.g{background:rgba(20,184,166,.16);color:#2DD4BF}
+.dn .badge.b{background:rgba(59,130,246,.16);color:#60A5FA}
+.dn .badge.o{background:rgba(249,115,22,.16);color:#FB923C}
+.dn .badge.d{background:rgba(148,163,184,.14);color:#94A3B8}
+.dn .badge.r{background:rgba(239,68,68,.16);color:#F87171}
+.rt-box{background:#0C1322;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;margin-bottom:13px}
+.rt-box .rt-head{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#94A3B8;margin-bottom:10px}
+.rt-box .rt-head .on{margin-left:auto;color:#2DD4BF;font-weight:700}
+.rt-box .rt-head .sw{width:30px;height:17px;border-radius:9px;background:var(--blue);position:relative}
+.rt-box .rt-head .sw::after{content:"";position:absolute;right:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff}
+.rt-tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#CBD5E1;margin:0 7px 7px 0}
+.rt-box .rt-out{background:rgba(37,99,235,.12);border:1px solid rgba(59,130,246,.25);border-radius:9px;padding:11px 13px;font-size:12.5px;color:#BFDBFE;line-height:1.6}
+table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
+.ct th{text-align:left;color:#64748B;font-weight:600;font-size:11.5px;padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.ct td{padding:11px 10px;color:#CBD5E1;border-bottom:1px solid rgba(255,255,255,.05)}
+.ct .gr{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.ct .st{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:700}
+.ct .st.g{background:rgba(20,184,166,.16);color:#2DD4BF}.ct .st.b{background:rgba(59,130,246,.16);color:#60A5FA}
+.lr{display:flex;align-items:center;gap:13px;padding:14px 10px;border-radius:11px;border-bottom:1px solid rgba(255,255,255,.05)}
+.lr .av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.lr .info{flex:1;min-width:0}
+.lr .info b{font-size:13px;color:#EAEAEA;display:block}
+.lr .info span{font-size:11.5px;color:#94A3B8;display:block;margin-top:2px}
+.lr .sc{font-size:22px;font-weight:800;flex:none;line-height:1}
+.lr .sc.a{color:#60A5FA}.lr .sc.b{color:#2DD4BF}.lr .sc.c{color:#FBBF24}
+.lr .grade{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:700;margin-top:3px;display:inline-block}
+.lr .grade.a{background:rgba(59,130,246,.18);color:#60A5FA}.lr .grade.b{background:rgba(20,184,166,.16);color:#2DD4BF}.lr .grade.c{background:rgba(251,191,36,.16);color:#FBBF24}
+@media(max-width:900px){.panel{grid-template-columns:1fr;gap:32px}.dtab{min-width:0;padding:20px 2px 15px}.dtab .dn{font-size:12px}.dtab .dt{font-size:13px;margin-top:4px}}
+</style>
+<section class="dark" id="features">
+  <div class="dkbar"><div class="wrap"><p>评论回复上的短板，会演变成<b>营收上的漏洞</b> —— WorkHogee 把整条链路用 AI 补齐</p></div></div>
+  <div class="dark-body">
+    <div class="wrap">
+      <div class="center">
+        <span class="eyebrow on-dark">WorkHogee 如何助力增长</span>
+        <h2 class="h2">AI 驱动的评论盯盘工作台</h2>
+        <p class="sub">从一条评论到一个可跟进的线索，四个环节自动完成，全程留痕、可接管、可导出。</p>
+      </div>
+      <div class="dtabs">
+        <div class="dtab active" data-tab="0"><div class="dn">01</div><div class="dt">盯紧评论</div></div>
+        <div class="dtab" data-tab="1"><div class="dn">02</div><div class="dt">自动回复</div></div>
+        <div class="dtab" data-tab="2"><div class="dn">03</div><div class="dt">识别意向</div></div>
+        <div class="dtab" data-tab="3"><div class="dn">04</div><div class="dt">沉淀客户</div></div>
+      </div>
 
-    <div class="dpanel on" data-panel="0">
-      <div>
-        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></i>01 — 实时盯评论</div>
-        <h3>接住每一条 Instagram 评论与私信</h3>
-        <p class="desc">公开评论、私信统一盯守，英文、西语、法语、中文自动识别，多个账号集中在一个工作台，会话全程留痕，再也不用一条条翻评论翻到漏。</p>
-        <div class="chips">
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>公开评论 + 私信</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>多语言自动识别</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>多账号集中</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>会话全程留痕</span>
+      <div class="panel active" data-panel="0">
+        <div class="pleft">
+          <div class="chips"><span class="chip hot">Instagram 评论</span><span class="chip">评论 / 回复</span><span class="chip">私信</span><span class="chip">Reels / Story</span><span class="chip">广告评论</span></div>
+          <div class="bignum">7×24<small>全天盯守，不漏一条</small></div>
+          <h3>盯紧每一条评论，不再靠人刷</h3>
+          <p class="pp">连接 Instagram 官方账号后，评论、回复、私信、Reels 评论、广告评论实时汇入一个监控流。新评论即时进入待处理队列，不用人工不停刷新；海外深夜、节假日，AI 照样在线。</p>
+          <a class="plink" href="#features">了解实时监控 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
-        <div class="bignum"><b>7×24</b><span>全天候盯守，不吃饭也不睡觉</span></div>
+        <div class="mpanel">
+          <div class="mpbar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ml">实时监控 · sondio.official</span></div>
+          <div class="mpbody">
+            <div class="dn"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 5.4A4.4 4.4 0 1 0 16.4 12 4.4 4.4 0 0 0 12 7.6z"/></svg></span><div class="db"><b>Carlos Méndez<span>19:29</span></b><p>Hola, ¿cuál es el precio por mayor para 100 unidades?</p></div><span class="badge b">西班牙语</span></div>
+            <div class="dn"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z"/></svg></span><div class="db"><b>Sofía López<span>19:31</span></b><p>¿Tienen envío a México?</p></div><span class="badge g">咨询</span></div>
+            <div class="dn"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z"/></svg></span><div class="db"><b>Mike Brown<span>19:33</span></b><p>price</p></div><span class="badge o">询价</span></div>
+            <div class="dn"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z"/></svg></span><div class="db"><b>Anna Wang<span>19:35</span></b><p>这款有现货吗？多久发货？</p></div><span class="badge d">中文</span></div>
+            <div class="dn"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z"/></svg></span><div class="db"><b>troll_99<span>19:36</span></b><p>This is garbage lol</p></div><span class="badge r">负面</span></div>
+          </div>
+        </div>
       </div>
-      <div class="mpanel">
-        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0"/></svg>实时监控</div>
-        <div class="mrow"><div class="q">@carlos.shop88：¿cuál es el precio por mayor para 100 unidades?</div><div class="mtags"><em class="o">高意向</em><em>询价</em><em>正面</em><em>西班牙语</em></div></div>
-        <div class="mrow"><div class="q">@maria.g_buy：How can I order? Can you send the shop link?</div><div class="mtags"><em class="g">要链接</em><em>英语</em></div></div>
-        <div class="mrow"><div class="q">@emilie.boutique：Prix pour 50 pièces ?</div><div class="mtags"><em>询价</em><em>法语</em></div></div>
-      </div>
-    </div>
 
-    <div class="dpanel" data-panel="1">
-      <div>
-        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg></i>02 — 自动公开回复 + 私信</div>
-        <h3>让每条询盘都被秒回</h3>
-        <p class="desc">识别到询价、关键词，自动在评论区公开回复，同时私信发送报价与下单链接；客户开口的瞬间就被接住，链接只走官方富按钮，安全合规。</p>
-        <div class="chips">
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>评论自动回复</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>关键词触发私信</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>富按钮发链接</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>规则可视化配置</span>
+      <div class="panel" data-panel="1">
+        <div class="pleft">
+          <div class="chips"><span class="chip hot">公开评论回复</span><span class="chip">私信下单链接</span><span class="chip">自动翻译</span><span class="chip">关键词话术</span><span class="chip">AI 拟回复</span></div>
+          <div class="bignum"><span class="countUp" data-count="90">0</span>%<small>询价自动触达率</small></div>
+          <h3>评论区公开回复 + 私信自动承接</h3>
+          <p class="pp">按关键词或 AI 意图自动在评论区回复（带产品与下单入口），同时给客户发私信附上报价与链接。多语言自动翻译、语气一致；敏感、负面、模糊问题自动转人工，不乱承诺。</p>
+          <a class="plink" href="#features">了解自动回复 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
-        <div class="bignum"><b class="count bnum" data-to="214" data-dec="0" data-suffix="">214</b><span>次自动回复 · 链接点击率 40.2%（演示数据）</span></div>
+        <div class="mpanel">
+          <div class="mpbar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ml">自动回复 · 规则编辑</span></div>
+          <div class="mpbody">
+            <div class="rt-box"><div class="rt-head"><span class="sw"></span><span class="rt-name">评论询盘自动回复 + 私信</span><span class="on">已启用</span></div><div><span class="rt-tag">询价</span><span class="rt-tag">报价</span><span class="rt-tag">要链接</span><span class="rt-tag">问发货</span></div><div class="rt-out">已触发 <b>214</b> 次 · 公开回复「价格与下单链接请看这里」并自动私信报价卡</div></div>
+            <div class="rt-box"><div class="rt-head"><span class="sw"></span><span class="rt-name">AI 拟回复（多语言）</span><span class="on">已启用</span></div><div class="rt-out">Hi! 这款批发价 $19.8/件，100 件起订，支持 PayPal / 信用卡，下单链接已私信你</div></div>
+            <div class="rt-box"><div class="rt-head"><span class="sw" style="background:#475569"></span><span class="rt-name">关键词 · 仅发链接</span><span class="on" style="color:#94A3B8">已启用</span></div><div class="rt-out" style="background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:#94A3B8">命中 price / link 时，自动私信产品页与下单链接，不发多余话术</div></div>
+          </div>
+        </div>
       </div>
-      <div class="mpanel">
-        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>自动回复规则</div>
-        <div class="rule-card"><div class="t">评论询盘自动回复+私信 <span class="badge">运行中</span></div><div class="d">评论包含 price / how much / link 等词时，公开回复并私信报价链接</div><div class="rule-stat"><span>触发 <b>214</b></span><span>点击率 <b>40.2%</b></span></div></div>
-        <div class="rule-card"><div class="t">关键词要链接·自动私信 <span class="badge">运行中</span></div><div class="d">私信：Here is the price list and order link…</div></div>
-      </div>
-    </div>
 
-    <div class="dpanel" data-panel="2">
-      <div>
-        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 3 5-7 4 5" stroke-linecap="round" stroke-linejoin="round"/></svg></i>03 — 意向识别与评分</div>
-        <h3>把高意向客户挑出来</h3>
-        <p class="desc">每条互动自动判定意图（询价 / 咨询 / 投诉 / 闲聊）、情感（正 / 中 / 负）并打 A/B/C/D 分；高意向客户立刻告警，让你把时间花在最该跟的人身上。</p>
-        <div class="chips">
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>意图四分类</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>情感正/中/负</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>A/B/C/D 评分</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>高意向即时告警</span>
+      <div class="panel" data-panel="2">
+        <div class="pleft">
+          <div class="chips"><span class="chip hot">意图识别</span><span class="chip">情感分析</span><span class="chip">语言检测</span><span class="chip">A/B/C/D 分级</span><span class="chip">高意向告警</span></div>
+          <div class="bignum"><span class="countUp" data-count="100">0</span>%<small>主测试集意图 / 高意向识别</small></div>
+          <h3>识别意向并分级，重点客户立刻高亮</h3>
+          <p class="pp">AI 自动判别每条评论的意图、情感、语言，按 0–100 评分并归入 A/B/C/D 四级。高意向客户在评论、私信里立刻高亮告警，把团队精力集中到真正要下单的人身上。</p>
+          <a class="plink" href="#features">了解评分模型 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
-        <div class="bignum"><b class="count bnum" data-to="100" data-dec="0" data-suffix="%">100%</b><span>意图识别 · 高意向识别（主测试集 n=143）</span></div>
+        <div class="mpanel">
+          <div class="mpbar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ml">AI 识别 · 客户列表</span></div>
+          <div class="mpbody">
+            <table class="ct">
+              <thead><tr><th>客户</th><th>意图</th><th>情感</th><th>语言</th><th>评分</th></tr></thead>
+              <tbody>
+                <tr><td><span class="gr" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">CM</span> Carlos</td><td>询价</td><td>正面</td><td>西</td><td><span class="st g">A · 90</span></td></tr>
+                <tr><td><span class="gr" style="background:linear-gradient(135deg,#14B8A6,#0D9488)">SL</span> Sofía</td><td>咨询</td><td>中性</td><td>西</td><td><span class="st b">B · 72</span></td></tr>
+                <tr><td><span class="gr" style="background:linear-gradient(135deg,#F59E0B,#D97706)">MB</span> Mike</td><td>询价</td><td>中性</td><td>英</td><td><span class="st g">B · 76</span></td></tr>
+              </tbody>
+            </table>
+            <div class="rt-box" style="margin-top:16px"><div class="rt-out">分级规则：A 高意向（询价 / 要下单 / 想私聊）· B 有兴趣 · C 普通 · D 低意向或负面；命中 A 级立即推送告警</div></div>
+          </div>
+        </div>
       </div>
-      <div class="mpanel">
-        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><path d="M3 17l5-6 4 3 5-7 4 5"/></svg>线索评分</div>
-        <div class="grade-bar"><span class="g a">A</span><span class="gtrack"><i style="width:90%" data-w="90"></i></span><b style="color:#60A5FA;width:34px">90</b></div>
-        <div class="grade-bar"><span class="g b">B</span><span class="gtrack"><i style="width:74%" data-w="74"></i></span><b style="color:#7FB0FF;width:34px">74</b></div>
-        <div class="grade-bar"><span class="g c">C</span><span class="gtrack"><i style="width:48%" data-w="48"></i></span><b style="color:#94A3B8;width:34px">48</b></div>
-        <div class="grade-bar"><span class="g d">D</span><span class="gtrack"><i style="width:8%" data-w="8"></i></span><b style="color:#94A3B8;width:34px">8</b></div>
-      </div>
-    </div>
 
-    <div class="dpanel" data-panel="3">
-      <div>
-        <div class="cap-kick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round"/><circle cx="19" cy="17" r="2"/></svg></i>04 — 线索沉淀与跟进</div>
-        <h3>把询盘变成可经营的资产</h3>
-        <p class="desc">客户、标签、来源自动回复、跟进状态自动入库，支持按分级和规则筛选，一键导出 CSV，团队协作不漏人，老客户也能持续经营。</p>
-        <div class="chips">
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>线索自动入库</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>跟进状态留痕</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>标签与来源管理</span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>一键导出 CSV</span>
+      <div class="panel" data-panel="3">
+        <div class="pleft">
+          <div class="chips"><span class="chip hot">线索库</span><span class="chip">跟进序列</span><span class="chip">状态标签</span><span class="chip">CSV 导出</span><span class="chip">多账号集中</span></div>
+          <div class="bignum"><span class="countUp" data-count="100">0</span>%<small>线索可跟进 · 不再石沉大海</small></div>
+          <h3>沉淀成可跟进的线索，自动安排下一步</h3>
+          <p class="pp">每条询盘自动成为线索，带着评分、意向、标签、来源评论和对话记录沉淀到客户库。按状态分组跟进，成交后可一键导出；多个账号的询盘集中到一个工作台。</p>
+          <a class="plink" href="#features">了解线索管理 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
-        <div class="bignum"><b class="count bnum" data-to="386" data-dec="0" data-suffix="">386</b><span>条线索自动沉淀（演示数据）</span></div>
-      </div>
-      <div class="mpanel">
-        <div class="mh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/></svg>线索
-          <span style="margin-left:auto;font-size:11px;color:#60A5FA">导出 CSV</span></div>
-        <div class="lead-row"><span class="av">CM</span><span class="nm">Carlos Méndez</span><span class="sc">A · 90</span></div>
-        <div class="lead-row"><span class="av" style="background:#0D9488">MG</span><span class="nm">Maria Garcia</span><span class="sc" style="color:#5EEAD4">B · 74</span></div>
-        <div class="lead-row"><span class="av" style="background:#64748B">JC</span><span class="nm">James Carter</span><span style="color:#94A3B8;font-weight:700">C · 48</span></div>
-        <div class="lead-row"><span class="av" style="background:#94A3B8">DR</span><span class="nm">Danny Rivera</span><span style="color:#94A3B8;font-weight:700">D · 8</span></div>
+        <div class="mpanel">
+          <div class="mpbar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="ml">线索库</span></div>
+          <div class="mpbody">
+            <div class="lr"><span class="av" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">CM</span><div class="info"><b>Carlos Méndez</b><span>@carlos.shop88 · 询价 · 100 件起订</span><span class="grade a">A级 · 高意向</span></div><span class="sc a">90</span></div>
+            <div class="lr"><span class="av" style="background:linear-gradient(135deg,#14B8A6,#0D9488)">SL</span><div class="info"><b>Sofía López</b><span>@sofia.l · 咨询发货 · 墨西哥</span><span class="grade b">B级 · 有兴趣</span></div><span class="sc b">72</span></div>
+            <div class="lr"><span class="av" style="background:linear-gradient(135deg,#F59E0B,#D97706)">MB</span><div class="info"><b>Mike Brown</b><span>@mike_b · 询价 · 要链接</span><span class="grade c">C级 · 普通</span></div><span class="sc c">58</span></div>
+            <div class="rt-box" style="margin-top:8px"><div class="rt-out">跟进序列：询盘 → 报价 → 确认付款 → 成交；未读 24h 自动提醒</div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 <style>
-/* ===== Scenes ===== */
-.scenes{background:var(--bg);padding:96px 0}
-.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;margin:26px 0 40px;box-shadow:var(--shadow-sm)}
-.seg button{border:0;background:none;padding:9px 22px;border-radius:999px;font-size:15px;font-weight:600;color:var(--gray);cursor:pointer}
-.seg button.on{background:var(--blue);color:#fff}
-.scene-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.scene-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 22px;transition:.25s}
-.scene-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--blue-100)}
-.scene-card .ic{width:48px;height:48px;border-radius:12px;background:var(--blue-50);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
-.scene-card .ic svg{width:25px;height:25px}
-.scene-card h4{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:8px}
-.scene-card p{font-size:14px;color:var(--gray);line-height:1.6}
-.scene-pane{display:none}.scene-pane.on{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-@media(max-width:920px){.scene-grid,.scene-pane.on{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.scene-pane.on{grid-template-columns:1fr}}
-
-/* ===== Metrics ===== */
-.metrics{padding:96px 0}
-.metric-card{max-width:920px;margin:46px auto 0;background:linear-gradient(180deg,#fff,#F8FAFF);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
-.metric-grid{display:grid;grid-template-columns:repeat(4,1fr)}
-.metric-grid .m{padding:32px 20px;text-align:center;border-right:1px solid var(--line)}
-.metric-grid .m:last-child{border-right:0}
-.metric-grid .m b{display:block;font-size:40px;font-weight:800;color:var(--blue);line-height:1}
-.metric-grid .m span{font-size:13.5px;color:var(--gray);margin-top:10px;display:block}
-.metric-table{width:100%;border-collapse:collapse;font-size:14.5px}
-.metric-table th,.metric-table td{padding:15px 20px;text-align:center;border-top:1px solid var(--line)}
-.metric-table th{background:#F4F7FC;color:var(--navy);font-weight:700;font-size:13.5px}
-.metric-table th:first-child,.metric-table td:first-child{text-align:left;font-weight:600;color:var(--navy)}
-.metric-table .ok{color:var(--blue);font-weight:800}
-.metric-note{text-align:center;font-size:13px;color:var(--gray-2);margin-top:20px}
-@media(max-width:680px){.metric-grid{grid-template-columns:repeat(2,1fr)}.metric-grid .m{border-bottom:1px solid var(--line)}.metric-table{font-size:12.5px}.metric-table th,.metric-table td{padding:10px 8px}}
-
-/* ===== Security ===== */
-.security{background:var(--bg);padding:96px 0}
-.sec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:46px}
-.sec-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 24px}
-.sec-card .ic{width:46px;height:46px;border-radius:12px;background:var(--blue-50);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
-.sec-card .ic svg{width:24px;height:24px}
-.sec-card h4{font-size:16.5px;font-weight:800;color:var(--navy);margin-bottom:9px}
-.sec-card p{font-size:13.5px;color:var(--gray);line-height:1.65}
-@media(max-width:920px){.sec-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.sec-grid{grid-template-columns:1fr}}
-
-/* ===== Pricing ===== */
-.pricing{padding:96px 0;text-align:center}
-.price-card{max-width:680px;margin:44px auto 0;background:linear-gradient(160deg,#13233f,#0A1730);border-radius:24px;padding:48px 40px;color:#fff;box-shadow:0 40px 80px -30px rgba(30,64,175,.5)}
-.price-card .tag-free{display:inline-block;font-size:13px;font-weight:700;background:rgba(20,184,166,.2);color:#5EEAD4;padding:6px 16px;border-radius:999px;margin-bottom:18px}
-.price-card h3{font-size:42px;font-weight:800}
-.price-card .per{color:#9AA8C7;font-size:14px;margin-top:6px}
-.feat-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:30px 0 34px;text-align:left}
-.feat-list li{list-style:none;display:flex;align-items:flex-start;gap:9px;font-size:14.5px;color:#D6E0F5}
-.feat-list svg{width:18px;height:18px;color:#60A5FA;flex:none;margin-top:2px}
-.price-card .btn{height:50px}
-.price-foot{color:var(--gray-2);font-size:13px;margin-top:20px}
-@media(max-width:560px){.feat-list{grid-template-columns:1fr}}
-
-/* ===== Final CTA ===== */
-.final{padding:40px 24px 96px}
-.cta-box{max-width:1200px;margin:0 auto;border-radius:32px;background:linear-gradient(120deg,#0F1F44 0%,#1E3A8A 55%,#2563EB 100%);padding:80px 40px;text-align:center;color:#fff;position:relative;overflow:hidden}
-.cta-box::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 90% at 50% 0%,#000,transparent 100%)}
-.cta-box>*{position:relative}
-.cta-box h2{font-size:clamp(30px,4.4vw,56px);font-weight:800;line-height:1.15}
-.cta-box .sub{color:#C7D4F0;font-size:18px;margin:18px auto 0}
-.cta-actions{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
-.cta-points{display:flex;gap:10px 26px;justify-content:center;flex-wrap:wrap;margin-top:30px;font-size:14px;color:#B9C9EC}
-.cta-points i{font-style:normal;margin-right:7px}
-
-/* ===== Footer ===== */
-footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
-.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
-.fbrand .brand{color:#fff;margin-bottom:16px}
-.fbrand p{font-size:14px;line-height:1.7;max-width:280px}
-.fcol h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px}
-.fcol a{display:block;font-size:14px;color:#9AA8C7;margin-bottom:12px}
-.fcol a:hover{color:#60A5FA}
-.fsocial{display:flex;gap:12px;margin-top:18px}
-.fsocial span{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;color:#C7D4F0}
-.fsocial svg{width:19px;height:19px}
-.fbottom{border-top:1px solid rgba(255,255,255,.08);margin-top:48px;padding-top:24px;font-size:12.5px;color:#6B7898;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-@media(max-width:820px){.fgrid{grid-template-columns:1fr 1fr}}
+/* ===== Channels 渠道接入 ===== */
+.channels-section{background:#fff;padding:100px 0 104px;text-align:center}
+.ch-label{font-size:14px;font-weight:700;color:var(--gray-2);letter-spacing:.04em;margin:42px 0 22px;display:flex;align-items:center;gap:12px}
+.ch-label::before,.ch-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.ch-grid{display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+.ci{display:flex;flex-direction:column;align-items:center;gap:13px;opacity:0;transform:translateY(24px)}
+.channels-section.in .ci{opacity:1;transform:translateY(0);transition:opacity .55s cubic-bezier(.2,.9,.3,1.3),transform .55s cubic-bezier(.2,.9,.3,1.3)}
+.ci .circle{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 16px 32px -14px rgba(17,25,54,.38);position:relative;transition:transform .3s cubic-bezier(.2,.9,.3,1.4)}
+.ci:hover .circle{transform:translateY(-6px) scale(1.07)}
+.ci .circle svg{width:38px;height:38px}
+.ci .circle.touch{background:linear-gradient(135deg,#2563EB,#3B82F6 55%,#7C3AED)}
+.ci .circle.ig{background:linear-gradient(45deg,#feda75,#fa7e1e 25%,#d62976 55%,#4f5bd5)}
+.ci .circle.fb{background:#1877F2}
+.ci .circle.ms{background:linear-gradient(135deg,#1E88E5,#5E35B1)}
+.ci .circle.wa{background:#25D366}
+.ci .circle.tg{background:#229ED9}
+.ci .circle.plan{background:#fff;border:1.5px dashed var(--gray-3);color:var(--gray-3);box-shadow:none}
+.ci .nm{font-size:13.5px;font-weight:600;color:var(--navy)}
+.ci .st-badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+.ci .st-badge.live{background:#DCFCE7;color:#15803D}
+.ci .st-badge.wip{background:#E0EAFF;color:#1D4ED8}
+.ci .st-badge.plan{background:#F1F5F9;color:#94A3B8}
+.ch-more{margin-top:46px}
+.ch-more a{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--blue);border:1px solid var(--blue-100);background:var(--blue-50);padding:13px 26px;border-radius:12px;transition:.22s}
+.ch-more a:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ch-more a svg{width:16px;height:16px;transition:transform .2s}
+.ch-more a:hover svg{transform:translateX(4px)}
 </style>
+<section class="channels-section" id="channels">
+  <div class="wrap">
+    <span class="eyebrow">多触点 · 多渠道聚合</span>
+    <h2 class="h2">一个 Instagram，所有触点都盯住</h2>
+    <p class="sub">评论、回复、私信、Reels、Story、广告评论全部汇入同一个监控流；Meta 家族与更多渠道按官方授权逐步开放。</p>
 
-<!-- ===== Scenes ===== -->
+    <div class="ch-label">INSTAGRAM 触点</div>
+    <div class="ch-grid" id="touchGrid">
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg></span><span class="nm">帖子评论</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17l-5-5 5-5M4 12h11a5 5 0 0 1 5 5v2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nm">评论回复</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3L2 11l6.5 2.5L11 20l3-5 7-11z"/></svg></span><span class="nm">私信 DM</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M11 9l5 3-5 3z" stroke-linejoin="round"/></svg></span><span class="nm">Reels 评论</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14a4 4 0 0 1 8 0" stroke-linecap="round"/></svg></span><span class="nm">Story 提及</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l5-5 5 5M8 6v12M15 19l6-6-6-6M21 13v6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nm">广告评论</span></div>
+      <div class="ci"><span class="circle touch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="3.5"/><path d="M12 12.5v6M4 21c0-4 3.5-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></span><span class="nm">@ 提及 · 标签</span></div>
+    </div>
+
+    <div class="ch-label">META 家族与更多渠道</div>
+    <div class="ch-grid" id="platGrid">
+      <div class="ci"><span class="circle ig"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span><span class="nm">Instagram</span><span class="st-badge live">已上线</span></div>
+      <div class="ci"><span class="circle fb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span><span class="nm">Facebook</span><span class="st-badge wip">接入中</span></div>
+      <div class="ci"><span class="circle ms"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.9 2 3 5.7 3 10.6c0 2.5 1.1 4.6 3 6.1V22l2.8-1.6c1 .3 2.1.4 3.2.4 5.1 0 9-3.7 9-8.6S17.1 2 12 2zm1 11.5l-2.3-2.5-4.5 2.5 5-5.3 2.3 2.5 4.5-2.5-5 5.3z"/></svg></span><span class="nm">Messenger</span><span class="st-badge wip">接入中</span></div>
+      <div class="ci"><span class="circle wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.05 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5a10 10 0 1 0 5.15-18.5zm5.9 14.1c-.2.7-1.3 1.3-1.8 1.4-.5.1-1.1.2-1.7-.1-.4-.2-.9-.5-1.6-.9-2.8-1.5-4.6-4.3-4.7-4.5-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.3.4c-.1.1-.3.3-.1.5.2.3.4.6.6.8.3.4.6.6.9.8.2.2.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.3.1.8-.1 1.4z"/></svg></span><span class="nm">WhatsApp</span><span class="st-badge plan">规划中</span></div>
+      <div class="ci"><span class="circle tg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3L18.7 20c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L6.3 13.9l-4.4-1.4c-1-.3-1-1 .2-1.4l17.2-6.6c.8-.3 1.5.2 1.2 1.8z"/></svg></span><span class="nm">Telegram</span><span class="st-badge plan">规划中</span></div>
+      <div class="ci"><span class="circle plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nm">邮件</span><span class="st-badge plan">规划中</span></div>
+    </div>
+
+    <div class="ch-more"><a href="mailto:910036590@qq.com">需要其他渠道？预约演示 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+  </div>
+</section>
+<style>
+/* ===== Scenes 解决方案 ===== */
+.scenes{background:var(--bg);padding:100px 0}
+.seg{display:inline-flex;background:#E8ECF4;border-radius:11px;padding:4px;margin:30px auto 0}
+.seg button{border:0;background:transparent;padding:10px 28px;border-radius:8px;font-size:15px;font-weight:600;color:var(--gray);cursor:pointer;transition:.2s}
+.seg button.on{background:var(--blue);color:#fff;box-shadow:0 6px 16px -6px rgba(37,99,235,.6)}
+.scene-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+.scene-grid.hide{display:none}
+.scene-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line);transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s;display:flex;flex-direction:column}
+.scene-card:hover{transform:translateY(-7px);box-shadow:var(--shadow)}
+.scene-card .ph{height:182px;position:relative;background-size:cover;background-position:center}
+.scene-card .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(10,16,32,.62))}
+.scene-card .ph .phlabel{position:absolute;left:16px;bottom:13px;z-index:1;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.scene-card .ph .phlabel::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+.ph-ind-cloth{background-image:url('images/clothing-store.jpg')}
+.ph-ind-beauty{background-image:url('images/beauty-lipstick-pro.jpg')}
+.ph-ind-3c{background-image:url('images/3c-earphone-pro.jpg')}
+.ph-ind-home{background-image:url('images/room-nordic.jpg')}
+.scene-card .ph-icon{height:182px;display:flex;align-items:center;justify-content:center;color:#fff}
+.scene-card .ph-icon svg{width:64px;height:64px}
+.pi-1{background:linear-gradient(135deg,#2563EB,#1D4ED8)}.pi-2{background:linear-gradient(135deg,#14B8A6,#0D9488)}
+.pi-3{background:linear-gradient(135deg,#7C3AED,#2563EB)}.pi-4{background:linear-gradient(135deg,#F59E0B,#EA580C)}
+.scene-card .body{padding:22px 22px 24px}
+.scene-card h3{font-size:17.5px;font-weight:700;color:var(--navy);margin-bottom:9px}
+.scene-card p{font-size:13.5px;color:var(--gray);line-height:1.7}
+.scene-card .mini-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.scene-card .mini-tags span{font-size:11px;color:var(--blue);background:var(--blue-50);padding:3px 10px;border-radius:999px;font-weight:600}
+@media(max-width:1000px){.scene-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.scene-grid{grid-template-columns:1fr}}
+</style>
 <section class="scenes" id="scenes">
-  <div class="wrap center">
-    <span class="eyebrow">适用场景</span>
-    <h2 class="h2">找到更适合你的盯盘方式</h2>
-    <p class="sub">无论你是什么角色、做什么品类，只要在 Instagram 上接询盘，WorkHogee都能帮你把每条评论盯到底。</p>
-    <div class="seg">
-      <button class="on" data-seg="role">按角色</button>
-      <button data-seg="ind">按行业</button>
-    </div>
-    <div class="scene-pane on" id="pane-role">
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-6 9 6v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg></span><h4>独立站卖家</h4><p>广告引来的评论和私信，半夜也有人秒回、自动发链接，不让流量白白流走。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 6 6.5.5-5 4.5 1.5 6.5L12 16l-5.5 3.5L8 13 3 8.5 9.5 8z" stroke-linejoin="round"/></svg></span><h4>DTC 品牌</h4><p>统一话术与报价，负面评论不自动回、直接转人工，守住品牌口碑。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M15 20a5 5 0 0 1 6-4.8"/></svg></span><h4>跨境小团队</h4><p>一个人也能盯多个账号和多语言市场，线索统一分配，跟进不漏人。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg></span><h4>个人创业者</h4><p>不用雇客服，省下的时间用来选品和发货，WorkHogee 替你守着询盘。</p></div>
-    </div>
-    <div class="scene-pane" id="pane-ind">
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 5h2M9 18h6"/></svg></span><h4>3C 数码</h4><p>参数、批发起订量、库存与发货问题高频，关键词自动报价发链接。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4-3.5 7-8 9-4.5-2-8-5-8-9V4h16z" stroke-linejoin="round"/></svg></span><h4>服饰美妆</h4><p>尺码、色号、退换与团购问题，自动回复 + 私信引导下单。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-6 9 6M5 10v9h14v-9M9 19v-5h6v5" stroke-linejoin="round"/></svg></span><h4>家居户外</h4><p>大件物流、批量尺寸与海外仓咨询，西语英语都能接住。</p></div>
-      <div class="scene-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="6" r="3"/><path d="M7 12c0 2 4 2 4 4v3M11 21a1 1 0 1 0 0-2"/></svg></span><h4>宠物用品</h4><p>成分、批发与复购咨询，自动识别老客户并跟进促单。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Metrics ===== -->
-<section class="metrics" id="metrics">
-  <div class="wrap center">
-    <span class="eyebrow">数据说话</span>
-    <h2 class="h2">用真实评论集跑出来的效果</h2>
-    <p class="sub">不是演示话术，而是 143 条主测试集 + 43 条盲测评论的真实 AI 评测结果。</p>
-    <div class="metric-card">
-      <div class="metric-grid">
-        <div class="m"><b class="count" data-to="100" data-dec="0" data-suffix="%">100%</b><span>意图识别（主集）</span></div>
-        <div class="m"><b class="count" data-to="100" data-dec="0" data-suffix="%">100%</b><span>高意向识别</span></div>
-        <div class="m"><b class="count" data-to="97.2" data-dec="1" data-suffix="%">97.2%</b><span>情感识别</span></div>
-        <div class="m"><b class="count" data-to="100" data-dec="0" data-suffix="%">100%</b><span>多语言识别</span></div>
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">解决方案</span>
+      <h2 class="h2">找到更适合你的增长方式</h2>
+      <p class="sub">无论你是一个人开店，还是带一个小团队，只要在 Instagram 上接询盘，WorkHogee 都能替你盯。</p>
+      <div class="seg" id="sceneSeg">
+        <button class="on" data-group="role">按角色</button>
+        <button data-group="industry">按行业</button>
       </div>
-      <table class="metric-table">
-        <thead><tr><th>评测集</th><th>意图</th><th>高意向</th><th>情感</th><th>语言</th></tr></thead>
-        <tbody>
-          <tr><td>主测试集 n=143</td><td class="ok">100%</td><td class="ok">100%</td><td class="ok">97.2%</td><td class="ok">100%</td></tr>
-          <tr><td>盲测集 n=43</td><td class="ok">97.7%</td><td class="ok">100%</td><td class="ok">100%</td><td class="ok">100%</td></tr>
-        </tbody>
-      </table>
     </div>
-    <p class="metric-note">违规回复 0 条 · 数据来自 WorkHogee 内部评测（意图 / 情感 / 语言模型），测试集可应要求提供。</p>
+
+    <div class="scene-grid" id="grid-role">
+      <div class="scene-card"><div class="ph-icon pi-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0M18 8l3 2-3 2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="body"><h3>一个人开店的店主</h3><p>分身乏术也要有人盯评：AI 帮你公开回复、私信报价，夜里也不漏单，把时间留给选品和发货。</p><div class="mini-tags"><span>7×24 盯守</span><span>一人顶一个客服</span></div></div></div>
+      <div class="scene-card"><div class="ph-icon pi-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg></div><div class="body"><h3>客服 / 运营</h3><p>重复询价、问价、问发货全部自动答，多语言自动翻译；只把负面、模糊、高意向问题转人工。</p><div class="mini-tags"><span>自动回复</span><span>多语言</span></div></div></div>
+      <div class="scene-card"><div class="ph-icon pi-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11a3 3 0 1 0 0-6M21.5 20a5.5 5.5 0 0 0-4-5.3"/></svg></div><div class="body"><h3>销售 / 私域</h3><p>高意向客户自动分级、立刻告警，带着评分和对话记录跟进，成交后沉淀进客户库，不丢任何一个大单。</p><div class="mini-tags"><span>A/B/C/D 分级</span><span>高意向告警</span></div></div></div>
+      <div class="scene-card"><div class="ph-icon pi-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18" stroke-linecap="round"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="body"><h3>投放 / 增长</h3><p>广告和 Reels 带来的评论一落地就被接住，每条流量都转化为一次报价与私信，投放回报看得见。</p><div class="mini-tags"><span>广告评论</span><span>转化不漏</span></div></div></div>
+    </div>
+
+    <div class="scene-grid hide" id="grid-industry">
+      <div class="scene-card"><div class="ph ph-ind-cloth"><span class="phlabel">服饰 · 鞋包</span></div><div class="body"><h3>尺码、颜色、现货自动答</h3><p>评论区问尺码、问搭配、问有没有货，AI 自动回复并私信下单链接，旺季也不积压。</p><div class="mini-tags"><span>问尺码</span><span>问库存</span></div></div></div>
+      <div class="scene-card"><div class="ph ph-ind-beauty"><span class="phlabel">美妆 · 个护</span></div><div class="body"><h3>成分、功效、套装秒回</h3><p>产品功效、使用方法、套装组合标准化回复，敏感与投诉自动转人工，守住品牌口碑。</p><div class="mini-tags"><span>功效咨询</span><span>投诉转人工</span></div></div></div>
+      <div class="scene-card"><div class="ph ph-ind-3c"><span class="phlabel">3C · 数码</span></div><div class="body"><h3>规格、保修、批发价清晰</h3><p>参数、保修、起订量按产品知识库准确回复，批发询价自动识别为高意向并提醒。</p><div class="mini-tags"><span>参数询价</span><span>批发线索</span></div></div></div>
+      <div class="scene-card"><div class="ph ph-ind-home"><span class="phlabel">家居 · 生活</span></div><div class="body"><h3>尺寸、物流、定制全跟进</h3><p>大件商品问尺寸、问运费、问定制，AI 先承接信息，再把高意向交给销售一对一促成。</p><div class="mini-tags"><span>大件物流</span><span>定制跟进</span></div></div></div>
+    </div>
   </div>
 </section>
-
-<!-- ===== Security ===== -->
+<style>
+/* ===== Metrics AI 实测 ===== */
+.metrics{background:#fff;padding:100px 0}
+.mstats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:48px 0 28px}
+.mstat{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:28px 20px;text-align:center;position:relative;overflow:hidden;transition:.3s}
+.mstat::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--blue),#3B82F6);opacity:0;transition:opacity .3s}
+.mstat:hover{transform:translateY(-5px);box-shadow:var(--shadow-sm);border-color:var(--blue-200)}
+.mstat:hover::before{opacity:1}
+.mstat .mnum{font-size:clamp(38px,4vw,52px);font-weight:800;color:var(--blue);line-height:1}
+.mstat .mnum small{font-size:18px}
+.mstat .ml{font-size:14px;font-weight:700;color:var(--navy);margin-top:12px}
+.mstat .ms{font-size:12px;color:var(--gray-2);margin-top:5px}
+.mstat .mnum.zero{color:#16A34A}
+.mrows{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.mtable{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:26px 28px}
+.mtable h4{font-size:16px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.mtable h4 i{width:9px;height:9px;border-radius:50%;background:var(--blue)}
+.mtable .note{font-size:12.5px;color:var(--gray-2);margin-bottom:18px}
+.mtable table{width:100%;border-collapse:collapse;font-size:14px}
+.mtable th{text-align:left;color:var(--gray);font-weight:600;padding:10px 0;border-bottom:1px solid var(--line)}
+.mtable td{padding:12px 0;border-bottom:1px solid #EEF2F8}
+.mtable tr:last-child td{border-bottom:0}
+.mtable .pct{text-align:right;font-weight:800;color:var(--blue)}
+.mtable .pct.g{color:#16A34A}
+.metric-note{margin-top:30px;background:var(--blue-50);border:1px solid var(--blue-100);border-radius:12px;padding:16px 20px;font-size:13.5px;color:var(--blue-800);display:flex;gap:11px;align-items:flex-start}
+.metric-note svg{width:19px;height:19px;flex:none;margin-top:2px}
+@media(max-width:900px){.mstats{grid-template-columns:repeat(2,1fr)}.mrows{grid-template-columns:1fr}}
+</style>
+<section class="metrics" id="metrics">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">AI 效果实测</span>
+      <h2 class="h2">不替它说好话，让真实评测说话</h2>
+      <p class="sub">上线前用一套真实多语言评论集跑了全量测试。我们把准确率、违规数、样本量和局限全部公开。</p>
+    </div>
+    <div class="mstats">
+      <div class="mstat"><div class="mnum"><span class="countUp" data-count="100">0</span><small>%</small></div><div class="ml">意图识别</div><div class="ms">主测试集 n=143</div></div>
+      <div class="mstat"><div class="mnum"><span class="countUp" data-count="100">0</span><small>%</small></div><div class="ml">高意向识别</div><div class="ms">主测试集 n=143</div></div>
+      <div class="mstat"><div class="mnum"><span class="countUp" data-count="97.2" data-decimals="1">0</span><small>%</small></div><div class="ml">情感分析</div><div class="ms">主测试集 n=143</div></div>
+      <div class="mstat"><div class="mnum zero"><span class="countUp" data-count="0">0</span><small> 条</small></div><div class="ml">违规回复</div><div class="ms">186 条评测中</div></div>
+    </div>
+    <div class="mrows">
+      <div class="mtable">
+        <h4><i></i>主测试集</h4>
+        <div class="note">n=143，覆盖英文 / 西班牙语 / 法语 / 中文，含询价、咨询、要链接、投诉、负面、闲聊</div>
+        <table>
+          <tr><th>评测维度</th><th style="text-align:right">准确率</th></tr>
+          <tr><td>意图识别</td><td class="pct">100%</td></tr>
+          <tr><td>高意向识别</td><td class="pct">100%</td></tr>
+          <tr><td>情感分析</td><td class="pct">97.2%</td></tr>
+          <tr><td>语言检测</td><td class="pct">100%</td></tr>
+        </table>
+      </div>
+      <div class="mtable">
+        <h4><i></i>独立盲测 / 留测集</h4>
+        <div class="note">n=43，训练时未见过的样本，用于检验泛化</div>
+        <table>
+          <tr><th>评测维度</th><th style="text-align:right">准确率</th></tr>
+          <tr><td>意图识别</td><td class="pct">97.7%</td></tr>
+          <tr><td>高意向识别</td><td class="pct">100%</td></tr>
+          <tr><td>情感分析</td><td class="pct g">100%</td></tr>
+          <tr><td>语言检测</td><td class="pct">100%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="metric-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11v5" stroke-linecap="round"/></svg>
+      <span>数据透明声明：以上为固定样本下的离线评测结果，<b>不等同于对所有行业、所有评论的保证</b>。模型可能误判或给出错误回复，因此敏感、负面、模糊问题会自动转人工；每条自动回复都留痕，可在后台随时修改或关闭。</span>
+    </div>
+  </div>
+</section>
+<style>
+/* ===== Security 安全信任 ===== */
+.security{background:var(--bg);padding:100px 0}
+.badge-row{display:flex;flex-wrap:wrap;justify-content:center;gap:34px 40px;margin:52px 0 60px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:15px;width:158px}
+.badge .bc{width:106px;height:106px;border-radius:50%;background:#fff;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:#94A3B8;transition:transform .3s cubic-bezier(.2,.9,.3,1.4),border-color .3s,color .3s,box-shadow .3s}
+.badge .bc svg{width:46px;height:46px}
+.badge:hover .bc{transform:translateY(-6px) scale(1.05);border-color:var(--blue-300);color:var(--blue);box-shadow:var(--shadow-sm)}
+.badge.meta .bc{background:linear-gradient(135deg,#fff,#EAF1FF);border-color:var(--blue-200);color:#0064E0}
+.badge .bt{font-size:14px;font-weight:700;color:var(--navy);text-align:center;line-height:1.4}
+.badge .bd{font-size:11.5px;color:var(--gray-2);text-align:center;line-height:1.5;margin-top:-9px}
+.security.fade .badge{opacity:0;transform:translateY(24px)}
+.security.fade.in .badge{opacity:1;transform:translateY(0);transition:opacity .6s cubic-bezier(.2,.9,.3,1.3),transform .6s cubic-bezier(.2,.9,.3,1.3)}
+.security.in .badge:nth-child(1){transition-delay:.05s}.security.in .badge:nth-child(2){transition-delay:.13s}.security.in .badge:nth-child(3){transition-delay:.21s}
+.security.in .badge:nth-child(4){transition-delay:.29s}.security.in .badge:nth-child(5){transition-delay:.37s}.security.in .badge:nth-child(6){transition-delay:.45s}
+.sec-values{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.sec-value{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px}
+.sec-value .si{width:46px;height:46px;border-radius:12px;background:var(--blue-50);color:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.sec-value .si svg{width:24px;height:24px}
+.sec-value h3{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:9px}
+.sec-value p{font-size:14px;color:var(--gray);line-height:1.75}
+@media(max-width:900px){.sec-values{grid-template-columns:1fr}}
+</style>
 <section class="security" id="security">
-  <div class="wrap center">
-    <span class="eyebrow">安全合规</span>
-    <h2 class="h2">只走官方 API，账号和数据都安心</h2>
-    <div class="sec-grid">
-      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h4>官方 Meta Graph API</h4><p>只通过 Meta 官方接口读取评论与发送消息，不使用任何非官方、高风险手段。</p></div>
-      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h4>OAuth 授权不存密码</h4><p>用 Facebook 官方授权接入，不索要、不存储你的账号密码，可随时撤销授权。</p></div>
-      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg></span><h4>最小权限 · 负面转人工</h4><p>仅申请管理评论与消息所需权限；负面评价与投诉不自动回复，转人工处理。</p></div>
-      <div class="sec-card"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" stroke-linejoin="round"/><path d="M12 8v8M8 12h8" stroke-linecap="round"/></svg></span><h4>数据自主可控</h4><p>线索数据加密存储，支持一键导出与删除，你的客户始终属于你。</p></div>
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">安全与信任</span>
+      <h2 class="h2">官方 API 为基，账号安全为证</h2>
+      <p class="sub">我们不碰你的账号密码、不做任何非官方操作，只在 Meta 官方授权边界内工作，并把控制权与数据都留给你。</p>
+    </div>
+    <div class="badge-row">
+      <div class="badge meta"><span class="bc"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"/></svg></span><span class="bt">Meta Business Partner</span><span class="bd">Meta 官方技术生态</span></div>
+      <div class="badge"><span class="bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7l-4 4 4 4M16 7l4 4-4 4M13 4l-2 16" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt">官方 Graph API</span><span class="bd">仅走官方接口</span></div>
+      <div class="badge"><span class="bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3m-3 0h3v3M16 7l-2.2 2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt">OAuth 授权</span><span class="bd">不存储账号密码</span></div>
+      <div class="badge"><span class="bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt">最小权限</span><span class="bd">只申请必要权限</span></div>
+      <div class="badge"><span class="bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l8-5 8 5v10H4z" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt">数据自主</span><span class="bd">随时可导出 CSV</span></div>
+      <div class="badge"><span class="bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 8a3 3 0 1 0 1-5.8M21 20a6 6 0 0 0-4-5.6" stroke-linecap="round"/></svg></span><span class="bt">敏感转人工</span><span class="bd">负面 / 模糊不乱答</span></div>
+    </div>
+    <div class="sec-values">
+      <div class="sec-value"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>不碰密码，不做非官方操作</h3><p>通过 Meta 官方 OAuth 登录授权，全程不要求你提供账号密码；不使用任何可能触发风控的非官方接口或外挂。</p></div>
+      <div class="sec-value"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16v12H4z" stroke-linejoin="round"/><path d="M4 10h16M8 14h3" stroke-linecap="round"/></svg></div><h3>权限最小化，能撤销</h3><p>只申请评论与私信所必需的官方权限，你可以随时在 Meta 设置里一键撤销授权，连接立即断开。</p></div>
+      <div class="sec-value"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M8 11l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke-linecap="round"/></svg></div><h3>数据与记录都归你</h3><p>所有评论、对话、线索与自动回复记录都可查看、导出和删除；自动化规则由你决定，随时可改可关。</p></div>
     </div>
   </div>
 </section>
-
-<!-- ===== Pricing ===== -->
+<style>
+/* ===== LiveLog 自动处理实录轮播 ===== */
+.livelog{background:#fff;padding:100px 0}
+.livelog .demo-note{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;color:var(--gray-2);background:var(--bg);border:1px dashed var(--line);padding:5px 13px;border-radius:999px}
+.livelog .demo-note svg{width:13px;height:13px}
+.carousel{position:relative;margin-top:50px}
+.carousel-viewport{overflow:hidden;margin:0 60px}
+.carousel-track{display:flex;transition:transform .55s cubic-bezier(.2,.7,.2,1)}
+.lcard{flex:0 0 calc((100% - 48px)/3);margin-right:24px;background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;min-height:320px}
+.lcard .lhead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lcard .lhead .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex:none}
+.lcard .lhead .who{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3}
+.lcard .lhead .who span{display:block;font-weight:500;color:var(--gray-2);font-size:11px}
+.lcard .lhead .touch{margin-left:auto;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--blue-50);color:var(--blue);white-space:nowrap}
+.lcard .lmsg{border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.6;max-width:90%}
+.lcard .lmsg.in{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;align-self:flex-start}
+.lcard .lmsg.auto{background:var(--blue);color:#fff;border-top-right-radius:4px;border-radius:12px 12px 4px 12px;align-self:flex-end;margin-top:9px}
+.lcard .lmsg.auto .al{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;opacity:.85;margin-bottom:3px}
+.lcard .lmsg.auto .al svg{width:11px;height:11px}
+.lcard .lchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.lcard .lchips span{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:6px;background:#fff;border:1px solid var(--line);color:var(--gray)}
+.lcard .lchips span.h{color:var(--blue);background:var(--blue-50);border-color:var(--blue-100)}
+.lcard .lchips span.r{color:#DC2626;background:#FEF2F2;border-color:#FEE2E2}
+.lcard .laction{margin-top:auto;padding-top:15px;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700}
+.lcard .laction.g{color:#15803D}
+.lcard .laction.b{color:var(--blue)}
+.lcard .laction.r{color:#B45309}
+.lcard .laction svg{width:16px;height:16px}
+.carrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm);color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:.22s}
+.carrow:hover{background:var(--blue);color:#fff;border-color:var(--blue);transform:translateY(-50%) scale(1.06)}
+.carrow svg{width:21px;height:21px}
+.carrow.prev{left:0}.carrow.next{right:0}
+.carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:34px}
+.carousel-dots i{width:8px;height:8px;border-radius:50%;background:#D6DEEC;cursor:pointer;transition:.25s}
+.carousel-dots i.on{background:var(--blue);width:22px;border-radius:4px}
+@media(max-width:900px){.lcard{flex:0 0 calc((100% - 20px)/2);margin-right:20px}.carousel-viewport{margin:0 44px}}
+@media(max-width:640px){.lcard{flex:0 0 100%;margin-right:0}.carousel-viewport{margin:0 46px}}
+</style>
+<section class="livelog" id="livelog">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">AI 自动处理实录</span>
+      <h2 class="h2">一条评论进来后，发生了什么</h2>
+      <p class="sub">从识别到回复、私信、分级、转人工，全程自动且留痕。下面是不同语言、不同意图的真实处理流程。</p>
+      <span class="demo-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>以下为演示数据，用于说明处理流程</span>
+    </div>
+    <div class="carousel" id="logCarousel">
+      <button class="carrow prev" id="logPrev" aria-label="上一组"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="carrow next" id="logNext" aria-label="下一组"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="logTrack">
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">CM</span><span class="who">Carlos Méndez<span>@carlos.shop88</span></span><span class="touch">帖子评论</span></div>
+            <div class="lmsg in">Hola, ¿cuál es el precio por mayor para 100 unidades?</div>
+            <div class="lmsg auto"><span class="al"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>AI 自动公开回复 + 私信</span>¡Hola! El precio mayorista para 100 unidades es $19.8 c/u. Te envié el enlace de compra por DM</div>
+            <div class="lchips"><span class="h">询价</span><span class="h">西班牙语</span><span>正面</span><span class="h">A 级 · 90</span></div>
+            <div class="laction g" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3L2 11l6.5 2.5L11 20z" stroke-linejoin="round"/></svg>已私信报价卡 · 高意向告警</div>
+          </div>
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#14B8A6,#0D9488)">MB</span><span class="who">Mike Brown<span>@mike_b</span></span><span class="touch">Reels 评论</span></div>
+            <div class="lmsg in">price</div>
+            <div class="lmsg auto"><span class="al"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>AI 自动私信</span>Hi! Here's the price &amp; order page, just sent you the link</div>
+            <div class="lchips"><span class="h">询价</span><span class="h">英语</span><span>中性</span><span class="h">B 级 · 76</span></div>
+            <div class="laction b" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3L2 11l6.5 2.5L11 20z" stroke-linejoin="round"/></svg>命中关键词 · 自动发链接</div>
+          </div>
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#F59E0B,#D97706)">AW</span><span class="who">Anna Wang<span>@anna.w</span></span><span class="touch">帖子评论</span></div>
+            <div class="lmsg in">这款有现货吗？多久发货？</div>
+            <div class="lmsg auto"><span class="al"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>AI 自动回复</span>有现货，下单后 48 小时内发货，支持追踪物流，已把详情和链接私信给你～</div>
+            <div class="lchips"><span class="h">咨询</span><span class="h">中文</span><span>中性</span><span>B 级 · 72</span></div>
+            <div class="laction b" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/></svg>已回复库存与物流</div>
+          </div>
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">LD</span><span class="who">Léa Dubois<span>@lea.dbs</span></span><span class="touch">广告评论</span></div>
+            <div class="lmsg in">Est-ce que vous livrez en France ?</div>
+            <div class="lmsg auto"><span class="al"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>AI 自动回复（法语）</span>Bonjour ! Oui, nous livrons en France, délai 7-12 jours. Lien de commande en DM 🇫🇷</div>
+            <div class="lchips"><span class="h">咨询</span><span class="h">法语</span><span>中性</span><span>C 级 · 64</span></div>
+            <div class="laction b" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 13h.01M12 13h.01M16 13h.01M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2" stroke-linecap="round"/></svg>自动识别语种并翻译回复</div>
+          </div>
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#64748B,#334155)">TR</span><span class="who">troll_99<span>@troll_99</span></span><span class="touch">帖子评论</span></div>
+            <div class="lmsg in">This is garbage lol</div>
+            <div class="lmsg auto" style="background:#F1F5F9;color:#64748B;border:1px solid var(--line);border-radius:12px 12px 4px 12px"><span class="al" style="color:#94A3B8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>AI 不自动回复</span>识别为负面 / 攻击性评论，不在公开区争辩，已通知人工判断是否处理</div>
+            <div class="lchips"><span class="r">负面</span><span class="r">英语</span><span class="r">无询盘</span><span class="r">D 级</span></div>
+            <div class="laction r" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4M12 16h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-linecap="round"/></svg>负面识别 · 自动转人工</div>
+          </div>
+          <div class="lcard">
+            <div class="lhead"><span class="av" style="background:linear-gradient(135deg,#DC2626,#B91C1C)">JS</span><span class="who">James S.<span>@james.s</span></span><span class="touch">私信</span></div>
+            <div class="lmsg in">My order never arrived! What is going on?</div>
+            <div class="lmsg auto" style="background:#FFF7ED;color:#9A3412;border:1px solid #FED7AA;border-radius:12px 12px 4px 12px"><span class="al" style="color:#C2410C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM19 8v6M22 11h-6" stroke-linecap="round"/></svg>AI 不自动承诺 · 转人工</span>识别为售后投诉，立刻升级给人工，附订单与对话记录，先安抚再处理</div>
+            <div class="lchips"><span class="r">投诉</span><span class="r">英语</span><span>负面</span><span class="r">需人工</span></div>
+            <div class="laction r" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8" stroke-linecap="round"/></svg>投诉升级 · 人工接手</div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="logDots"></div>
+    </div>
+  </div>
+</section>
+<style>
+/* ===== Pricing ===== */
+.pricing{background:var(--bg);padding:100px 0}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px;align-items:stretch}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px 32px;display:flex;flex-direction:column;position:relative;transition:transform .3s,box-shadow .3s}
+.pcard:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.pcard.hot{background:linear-gradient(165deg,#0C1322,#15223F 60%,#1B3464);border-color:transparent;color:#fff;box-shadow:0 40px 80px -30px rgba(12,19,34,.6)}
+.pcard.hot:hover{transform:translateY(-5px) scale(1.02)}
+.pcard .ribbon{position:absolute;top:18px;right:18px;background:linear-gradient(90deg,#3B82F6,#2563EB);color:#fff;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px}
+.pcard .plan{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.pcard.hot .plan{color:#fff}
+.pcard .pdesc{font-size:13px;color:var(--gray-2);margin-bottom:22px}
+.pcard.hot .pdesc{color:#9FB0CC}
+.pcard .price{font-size:48px;font-weight:800;color:var(--navy);line-height:1}
+.pcard.hot .price{color:#fff}
+.pcard .price small{font-size:15px;font-weight:500;color:var(--gray-2);margin-left:6px}
+.pcard.hot .price small{color:#9FB0CC}
+.pcard .pfeatures{margin:26px 0 30px;display:flex;flex-direction:column;gap:13px}
+.pcard .pfeatures li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--gray)}
+.pcard.hot .pfeatures li{color:#C7D3E6}
+.pcard .pfeatures svg{width:18px;height:18px;color:var(--blue);flex:none;margin-top:1px}
+.pcard.hot .pfeatures svg{color:#60A5FA}
+.pcard .pcta{margin-top:auto}
+.pcard .pcta .btn{width:100%;height:50px}
+.pcard.plan-soon .price{color:var(--gray-2)}
+.pcard .soontag{display:inline-block;font-size:11.5px;color:var(--gray-2);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 11px;margin-bottom:14px}
+.pcard.plan-soon{background:var(--bg-2)}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr}.pcard.hot{transform:none;order:-1}}
+</style>
 <section class="pricing" id="pricing">
   <div class="wrap">
-    <span class="eyebrow">价格方案</span>
-    <h2 class="h2">内测期免费开通，先跑起来再说</h2>
-    <div class="price-card">
-      <span class="tag-free">内测期 · 免费</span>
-      <h3>¥0</h3>
-      <p class="per">面向首批出海卖家，不按消息条数收费</p>
-      <ul class="feat-list">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Instagram 评论 / 私信实时盯守</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>自动公开回复 + 私信</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>意图 / 情感 / 语言识别</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>A/B/C/D 线索评分与告警</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>线索管理与 CSV 导出</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 API 授权 · 不存密码</li>
-      </ul>
-      <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
-      <p class="price-foot" style="color:#9AA8C7">正式定价将在公测后公布，内测用户保留优先权益。</p>
+    <div class="center">
+      <span class="eyebrow">内测期 · 价格方案</span>
+      <h2 class="h2">现在内测，0 元开始</h2>
+      <p class="sub">内测期间核心功能完全免费，我们会和你一起把产品打磨好；正式定价前会提前通知，老用户优先。</p>
+    </div>
+    <div class="pgrid">
+      <div class="pcard plan-soon">
+        <span class="soontag">规划中</span>
+        <div class="plan">成长版</div>
+        <div class="pdesc">正式上线后推出</div>
+        <div class="price">待定</div>
+        <ul class="pfeatures">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>更多 Instagram 账号</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>更高评论 / 私信额度</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>自动跟进序列</li>
+        </ul>
+        <div class="pcta"><a class="btn btn-ghost" href="mailto:910036590@qq.com">了解上线计划</a></div>
+      </div>
+      <div class="pcard hot">
+        <span class="ribbon">内测免费</span>
+        <div class="plan">内测版</div>
+        <div class="pdesc">现在加入即可开通</div>
+        <div class="price">¥0<small> / 内测期</small></div>
+        <ul class="pfeatures">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Instagram 评论 / 私信实时盯盘</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>自动公开回复 + 私信、多语言</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>意图识别 + A/B/C/D 评分 + 高意向告警</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>线索库、跟进记录与 CSV 导出</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 API 授权 · 不存密码</li>
+        </ul>
+        <div class="pcta"><a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始</a></div>
+      </div>
+      <div class="pcard plan-soon">
+        <span class="soontag">规划中</span>
+        <div class="plan">团队版</div>
+        <div class="pdesc">多成员 / 多渠道协作</div>
+        <div class="price">待定</div>
+        <ul class="pfeatures">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>多成员协作与分配</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Facebook / Messenger 等更多渠道</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>数据看板与团队管理</li>
+        </ul>
+        <div class="pcta"><a class="btn btn-ghost" href="mailto:910036590@qq.com">预约沟通</a></div>
+      </div>
     </div>
   </div>
 </section>
-
-<!-- ===== Final CTA ===== -->
-<section class="final">
-  <div class="cta-box">
-    <span class="eyebrow on-dark">准备好开始了吗？</span>
-    <h2>让WorkHogee替你盯评论<br>你只管做生意</h2>
-    <p class="sub">几分钟接入官方授权，从下一条评论开始，一个询盘都不丢。</p>
-    <div class="cta-actions">
-      <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
-      <a class="btn btn-glass" href="mailto:910036590@qq.com">预约演示</a>
+<style>
+/* ===== Final CTA ===== */
+.cta-sec{padding:110px 0;background:var(--bg)}
+.cta-card{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(135deg,#0E1A3A 0%,#1E3A8A 55%,#2563EB 120%);padding:76px 24px;text-align:center;color:#fff}
+.cta-card::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 90% at 50% 0%,#000,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 90% at 50% 0%,#000,transparent 75%)}
+.cta-card::after{content:"";position:absolute;bottom:-180px;left:50%;transform:translateX(-50%);width:640px;height:320px;background:radial-gradient(ellipse,rgba(96,165,250,.35),transparent 65%)}
+.cta-card>*{position:relative;z-index:1}
+.cta-card .ce{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#DCE9FF}
+.cta-card h2{font-size:clamp(30px,4.2vw,48px);font-weight:800;line-height:1.2;letter-spacing:-.02em}
+.cta-card p{font-size:17px;color:#C4D4F0;margin:18px auto 0;max-width:560px}
+.cta-actions{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+.cta-actions .btn{height:54px;padding:0 30px;border-radius:12px;font-size:16px}
+.cta-points{display:flex;gap:12px 28px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.cta-points span{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:#BCD2F5}
+.cta-points i{width:7px;height:7px;border-radius:50%;background:#60A5FA;box-shadow:0 0 10px #60A5FA}
+</style>
+<section class="cta-sec">
+  <div class="wrap">
+    <div class="cta-card">
+      <span class="eyebrow ce">准备好开始了吗？</span>
+      <h2>让 WorkHogee 替你盯评论<br>你只管做生意</h2>
+      <p>从下一条 Instagram 评论开始，一个询盘都不丢。官方 API 授权，几分钟即可连上。</p>
+      <div class="cta-actions">
+        <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
+        <a class="btn btn-glass" href="mailto:910036590@qq.com">预约演示</a>
+      </div>
+      <div class="cta-points">
+        <span><i></i>内测期免费</span>
+        <span><i></i>官方 Meta API 授权</span>
+        <span><i></i>即开即用，无需部署</span>
+      </div>
     </div>
-    <div class="cta-points"><span><i>·</i>免费试用</span><span><i>·</i>官方 API 授权</span><span><i>·</i>几分钟接入</span></div>
   </div>
 </section>
-
-<!-- ===== Footer ===== -->
-<footer>
+<style>
+/* ===== Footer ===== */
+.footer{background:#fff;border-top:1px solid var(--line);padding:72px 0 32px}
+.fgrid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1.1fr;gap:42px}
+.fbrand .fmark{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fbrand .fmark .wordmark{height:30px}
+.fbrand .fdesc{font-size:13.5px;color:var(--gray);line-height:1.8;margin:18px 0 20px;max-width:320px}
+.fbrand .fmail{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--navy);font-weight:600}
+.fbrand .fmail svg{width:16px;height:16px;color:var(--blue)}
+.fbrand .fdemo{margin-top:18px}
+.fbrand .fdemo .btn{height:44px;padding:0 22px;font-size:14px}
+.fcol h4{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:18px}
+.fcol li{margin-bottom:12px}
+.fcol a{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--gray);transition:.15s}
+.fcol a:hover{color:var(--blue)}
+.fcol a .tag{font-size:10px;font-weight:800;padding:1px 6px;border-radius:5px}
+.fcol a .tag.live{background:#DCFCE7;color:#15803D}
+.fcol a .tag.wip{background:#E0EAFF;color:#1D4ED8}
+.fcol a .tag.plan{background:#F1F5F9;color:#94A3B8}
+.fbar{border-top:1px solid var(--line);margin-top:52px;padding-top:26px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.fbar .copy{font-size:12.5px;color:var(--gray-2);line-height:1.7}
+.fbar .copy .mb{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-weight:700;color:var(--navy);font-size:13px}
+.fbar .copy .mb svg{width:18px;height:18px;color:#0064E0}
+.fsocial{display:flex;gap:10px}
+.fsocial a{width:38px;height:38px;border-radius:50%;background:var(--bg-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gray);transition:.2s}
+.fsocial a:hover{background:var(--blue);color:#fff;border-color:var(--blue);transform:translateY(-3px)}
+.fsocial a svg{width:18px;height:18px}
+@media(max-width:900px){.fgrid{grid-template-columns:1fr 1fr;gap:32px}.fbrand{grid-column:1/-1}}
+@media(max-width:520px){.fgrid{grid-template-columns:1fr}.fbar{flex-direction:column;align-items:flex-start}}
+</style>
+<footer class="footer">
   <div class="wrap">
     <div class="fgrid">
       <div class="fbrand">
-        <a class="brand" href="#top"><svg class="logo" width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#2563EB"/><path d="M7 11 11 23 16 14.5 21 23 25 11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>WorkHogee</a>
-        <p>出海卖家的 AI 评论盯盘助手，帮你盯紧 Instagram 评论、自动回复私信、识别并沉淀线索。</p>
-        <div class="fsocial">
-          <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.1C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>
-          <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 1.4.3 2.7.9 3.9L3 21l5.2-1A9 9 0 1 0 12 3z" stroke-linejoin="round"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke-linecap="round"/></svg></span>
+        <div class="fmark">
+          <svg class="wordmark" viewBox="0 0 118 19.13" aria-label="WorkHogee">
+            <g transform="translate(-1.06 -28.16)">
+              <path fill="#1c1917" d="M13,32.58,9.81,42.11a1.34,1.34,0,0,1-1.33,1.12h-2a1.35,1.35,0,0,1-1.29-.94L1.13,30a1.36,1.36,0,0,1,1.29-1.78h2a1.35,1.35,0,0,1,1.29.94l2.15,6.58L9.09,32a1.13,1.13,0,0,1,1.07-.74l1.68,0A1.06,1.06,0,0,1,13,32.58Z"/>
+              <path fill="#2563EB" d="M12.88,43.23h2a1.38,1.38,0,0,0,1.3-.94l4-12.35a1.36,1.36,0,0,0-1.29-1.78h-2a1.35,1.35,0,0,0-1.3.93l-4,12.35A1.36,1.36,0,0,0,12.88,43.23Z"/>
+              <path fill="#1c1917" d="M19.12,37.64a5.39,5.39,0,0,1,5.62-5.58,5.4,5.4,0,0,1,5.64,5.58,5.41,5.41,0,0,1-5.64,5.6A5.4,5.4,0,0,1,19.12,37.64Zm8.35,0a2.74,2.74,0,1,0-5.44,0c0,1.67,1,3.11,2.71,3.11A2.82,2.82,0,0,0,27.47,37.64Z"/>
+              <path fill="#1c1917" d="M33.75,32.32a.43.43,0,0,1,.43.43h0a.43.43,0,0,0,.69.34,4.61,4.61,0,0,1,2.26-1,.4.4,0,0,1,.45.4v1.82a.4.4,0,0,1-.4.4h-.37a3.68,3.68,0,0,0-2.55,1.1.43.43,0,0,0-.08.24c0,1,0,6.9,0,6.9h-2.4a.4.4,0,0,1-.4-.4V32.73a.4.4,0,0,1,.4-.41Z"/>
+              <path fill="#1c1917" d="M42.25,39.39l-.64.68a.58.58,0,0,0-.15.39V42.4a.57.57,0,0,1-.57.57H39.23a.56.56,0,0,1-.57-.57V28.84a.56.56,0,0,1,.57-.57h1.66a.57.57,0,0,1,.57.57v6.68a.57.57,0,0,0,1,.37l2.86-3.37a.6.6,0,0,1,.43-.2h1.93a.57.57,0,0,1,.43,1L45,36.81a.57.57,0,0,0,0,.71l3.39,4.54a.57.57,0,0,1-.45.91H45.86a.56.56,0,0,1-.47-.24l-2.25-3.28A.57.57,0,0,0,42.25,39.39Z"/>
+              <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
+            </g>
+          </svg>
+          <span class="meta-badge" style="padding-left:13px;border-left:1px solid var(--line)">
+            <svg class="mb-infinity" viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;color:#0064E0"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"/></svg>
+            <span class="mb-txt"><span class="mb-name">Meta</span><span class="mb-sub">Business Partner</span></span>
+          </span>
         </div>
+        <p class="fdesc">出海卖家的 AI 评论盯盘助手。盯紧 Instagram 评论与私信，自动回复、识别意向、沉淀线索，让每一条询盘都不被漏掉。</p>
+        <a class="fmail" href="mailto:910036590@qq.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>910036590@qq.com</a>
+        <div class="fdemo"><a class="btn btn-primary" href="mailto:910036590@qq.com">预约演示</a></div>
       </div>
       <div class="fcol">
-        <h5>产品</h5>
-        <a href="#features">实时监控</a><a href="#features">自动回复与私信</a><a href="#features">线索评分</a><a href="#features">线索管理与导出</a>
+        <h4>渠道接入</h4>
+        <ul>
+          <li><a href="#channels">Instagram <span class="tag live">已上线</span></a></li>
+          <li><a href="#channels">Facebook <span class="tag wip">接入中</span></a></li>
+          <li><a href="#channels">Messenger <span class="tag wip">接入中</span></a></li>
+          <li><a href="#channels">WhatsApp <span class="tag plan">规划中</span></a></li>
+          <li><a href="#channels">Telegram <span class="tag plan">规划中</span></a></li>
+        </ul>
       </div>
       <div class="fcol">
-        <h5>资源</h5>
-        <a href="#metrics">效果数据</a><a href="#security">安全合规</a><a href="privacy.html">隐私政策</a><a href="terms.html">服务条款</a>
+        <h4>核心功能</h4>
+        <ul>
+          <li><a href="#features">实时监控</a></li>
+          <li><a href="#features">自动公开回复 + 私信</a></li>
+          <li><a href="#features">AI 意向识别与分级</a></li>
+          <li><a href="#features">高意向告警</a></li>
+          <li><a href="#features">线索库与跟进</a></li>
+          <li><a href="#features">数据导出</a></li>
+        </ul>
       </div>
       <div class="fcol">
-        <h5>联系</h5>
-        <a href="mailto:910036590@qq.com">910036590@qq.com</a>
-        <a href="https://app.workhogee.com/signin">登录工作台</a>
-        <a href="https://app.workhogee.com/signin">免费开始</a>
+        <h4>资源与条款</h4>
+        <ul>
+          <li><a href="#metrics">AI 效果实测</a></li>
+          <li><a href="#security">安全与信任</a></li>
+          <li><a href="#pricing">价格方案</a></li>
+          <li><a href="privacy.html">隐私政策</a></li>
+          <li><a href="terms.html">服务条款</a></li>
+          <li><a href="https://app.workhogee.com/signin">登录工作台</a></li>
+        </ul>
       </div>
     </div>
-    <div class="fbottom">
-      <span>© 2026 WorkHogee · Wang Qingli（王青利）。保留所有权利。</span>
-      <span>Instagram、Facebook、Messenger 等名称及商标归 Meta Platforms, Inc. 所有，WorkHogee 与其无隶属关系。</span>
+    <div class="fbar">
+      <div class="copy">
+        <span class="mb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4z"/></svg>Meta Business Partner</span>
+        © 2026 WorkHogee. 只走官方 Meta API，不做任何非官方操作。
+      </div>
+      <div class="fsocial">
+        <a href="https://www.instagram.com/workhogee" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></a>
+        <a href="mailto:910036590@qq.com" aria-label="邮件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
     </div>
   </div>
 </footer>
+<style>
+/* ===== Support Widget ===== */
+.support-widget{position:fixed;right:20px;bottom:22px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:13px}
+.sw-card{width:314px;max-width:calc(100vw - 40px);background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 28px 64px -20px rgba(10,16,32,.45);overflow:hidden;transform-origin:bottom right;transition:opacity .28s ease,transform .28s cubic-bezier(.2,.9,.3,1.3)}
+.sw-card.hidden{opacity:0;transform:translateY(14px) scale(.92);pointer-events:none}
+.sw-head{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.sw-head .swav{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+.sw-head .swt{font-size:15px;font-weight:800;line-height:1.3}
+.sw-head .sws{font-size:12px;color:#C9DAFF;display:flex;align-items:center;gap:5px}
+.sw-head .sws i{width:7px;height:7px;border-radius:50%;background:#4ADE80}
+.sw-close{margin-left:auto;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);border:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.sw-close:hover{background:rgba(255,255,255,.28)}
+.sw-body{padding:18px 20px 20px}
+.sw-body .sw-msg{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;border-top-left-radius:4px;padding:12px 14px;font-size:13.5px;color:var(--text);line-height:1.7;margin-bottom:14px}
+.sw-actions{display:flex;flex-direction:column;gap:9px}
+.sw-actions .btn{height:44px;font-size:14px;border-radius:10px}
+.sw-actions .sw-mail{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12.5px;color:var(--gray);margin-top:4px}
+.sw-actions .sw-mail svg{width:14px;height:14px;color:var(--blue)}
+.sw-fab{width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;box-shadow:0 16px 32px -10px rgba(37,99,235,.7);display:flex;align-items:center;justify-content:center;transition:transform .3s cubic-bezier(.2,.9,.3,1.5);position:relative}
+.sw-fab:hover{transform:scale(1.08) rotate(4deg)}
+.sw-fab svg{width:27px;height:27px}
+.sw-fab .ic-close{display:none}
+.sw-fab.open .ic-chat{display:none}
+.sw-fab.open .ic-close{display:block}
+.sw-fab .swdot{position:absolute;top:4px;right:5px;width:13px;height:13px;border-radius:50%;background:#EF4444;border:2px solid #fff}
+.sw-fab.open .swdot{display:none}
+@media(max-width:600px){.support-widget{right:14px;bottom:14px}.sw-card{width:calc(100vw - 28px)}}
+</style>
+<div class="support-widget" id="supportWidget">
+  <div class="sw-card hidden" id="swCard">
+    <div class="sw-head">
+      <span class="swav">W</span>
+      <div>
+        <div class="swt">WorkHogee 在线支持</div>
+        <div class="sws"><i></i>工作日通常很快回复</div>
+      </div>
+      <button class="sw-close" id="swClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="sw-body">
+      <div class="sw-msg">你好，我是 WorkHogee。想看看怎么替你盯 Instagram 评论？可以预约演示，或直接免费开始用。</div>
+      <div class="sw-actions">
+        <a class="btn btn-primary" href="mailto:910036590@qq.com">预约演示</a>
+        <a class="btn btn-ghost" href="https://app.workhogee.com/signin">免费开始</a>
+        <a class="sw-mail" href="mailto:910036590@qq.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>910036590@qq.com</a>
+      </div>
+    </div>
+  </div>
+  <button class="sw-fab" id="swFab" aria-label="在线支持">
+    <svg class="ic-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg>
+    <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    <span class="swdot"></span>
+  </button>
+</div>
 <script>
 (function(){
   "use strict";
   var REDUCED=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function $(s,el){return (el||document).querySelector(s);}
   function $$(s,el){return Array.prototype.slice.call((el||document).querySelectorAll(s));}
+
+  /* ---------- 公告条彩纸 ---------- */
+  var conf=document.getElementById('confetti');
+  if(conf){
+    if(REDUCED){conf.style.display='none';}
+    else{
+      var colors=['#2563EB','#1D4ED8','#ffffff','#0C1322','#60A5FA','#14B8A6'];
+      for(var c=0;c<26;c++){
+        var bit=document.createElement('i');
+        bit.style.left=(Math.random()*100)+'%';
+        bit.style.background=colors[Math.floor(Math.random()*colors.length)];
+        bit.style.animationDuration=(2.4+Math.random()*2.4)+'s';
+        bit.style.animationDelay=(-Math.random()*3)+'s';
+        bit.style.opacity=(0.55+Math.random()*0.45).toFixed(2);
+        var w=5+Math.random()*5;bit.style.width=w+'px';bit.style.height=(w*1.5)+'px';
+        conf.appendChild(bit);
+      }
+    }
+  }
 
   /* ---------- 移动端菜单 ---------- */
   var burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu');
@@ -718,88 +1260,111 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
     $$('a',mm).forEach(function(a){a.addEventListener('click',function(){mm.classList.remove('open');burger.setAttribute('aria-expanded','false');});});
   }
 
+  /* ---------- 导航滚动阴影 ---------- */
+  var navEl=$('.nav');
+  function onScroll(){if(navEl){if(window.scrollY>10)navEl.classList.add('scrolled');else navEl.classList.remove('scrolled');}}
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
   /* ---------- 数字滚动 ---------- */
-  function countUp(el,to,dec,suffix){
-    if(REDUCED||el.getAttribute('data-done')==='1')return;
+  function countUp(el){
+    if(!el||el.getAttribute('data-done')==='1')return;
+    var to=parseFloat(el.getAttribute('data-count'));if(isNaN(to))return;
+    var dec=parseInt(el.getAttribute('data-decimals')||'0',10)||0;
     el.setAttribute('data-done','1');
-    dec=dec||0;
-    function fmt(v){return v.toFixed(dec)+(suffix||'');}
+    function fmt(v){return v.toFixed(dec);}
+    if(REDUCED||!window.requestAnimationFrame){el.textContent=fmt(to);return;}
     el.textContent=fmt(0);
-    if(!window.requestAnimationFrame){el.textContent=fmt(to);return;}
-    var dur=1100,start=null;
-    function step(ts){
+    var dur=1200,start=null;
+    function run(ts){
       if(start===null)start=ts;
-      var p=Math.min((ts-start)/dur,1),eased=1-Math.pow(1-p,3);
-      el.textContent=fmt(to*eased);
-      if(p<1)requestAnimationFrame(step);else el.textContent=fmt(to);
+      var p=Math.min((ts-start)/dur,1);
+      el.textContent=fmt(to*(1-Math.pow(1-p,3)));
+      if(p<1)requestAnimationFrame(run);else el.textContent=fmt(to);
     }
-    requestAnimationFrame(step);
+    requestAnimationFrame(run);
   }
 
-  /* ---------- 深色能力 01-04 tab（手动 + 自动轮播 + 面板内数字/评分条） ---------- */
-  var dtabs=$$('.dtab'),dpanels=$$('.dpanel'),dark=$('.dark');
-  var playedPanels={},autoTimer=null,autoStopped=false,darkInView=false;
-  function animatePanel(panel){
-    if(REDUCED)return;
-    $$('.gtrack i',panel).forEach(function(bar,idx){
-      var w=bar.getAttribute('data-w');
-      if(!w)return;
-      bar.style.width='0%';
-      setTimeout(function(){bar.style.width=w+'%';},120+idx*120);
+  /* ---------- 滚动入场（JS 运行后才加 fade，保证无 JS 可见） ---------- */
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:.12,rootMargin:'0px 0px -7% 0px'});
+    var fadeSel=['.wall','.pain','.dark','.scenes','.metrics','.livelog','.security','.pricing','.cta-sec'];
+    fadeSel.forEach(function(sel){
+      $$(sel).forEach(function(el){el.classList.add('fade');io.observe(el);});
     });
-    $$('.bnum',panel).forEach(function(b){
-      countUp(b,parseFloat(b.getAttribute('data-to')),parseInt(b.getAttribute('data-dec')||'0',10),b.getAttribute('data-suffix')||'');
+    ['.channels','.channels-section'].forEach(function(sel){
+      $$(sel).forEach(function(el){io.observe(el);});
     });
+  }else{
+    $$('.wall,.pain,.channels,.channels-section,.dark,.scenes,.metrics,.livelog,.security,.pricing,.cta-sec').forEach(function(el){el.classList.add('in');});
   }
-  function activateTab(i,user){
-    for(var k=0;k<dtabs.length;k++){
-      dtabs[k].classList.toggle('on',k===i);
-      dpanels[k].classList.toggle('on',k===i);
+
+  /* ---------- metrics 数字（进入视口计数） ---------- */
+  var metricsEl=$('.metrics');
+  if(metricsEl){
+    function playMetrics(){
+      $$('.mstats .countUp',metricsEl).forEach(function(b,i){
+        setTimeout(function(){countUp(b);},i*140);
+      });
     }
-    if(!playedPanels[i]){playedPanels[i]=true;animatePanel(dpanels[i]);}
-    if(user){autoStopped=true;if(autoTimer){clearInterval(autoTimer);autoTimer=null;}}
+    if(REDUCED){playMetrics();}
+    else if('IntersectionObserver' in window){
+      var mIO=new IntersectionObserver(function(es){
+        es.forEach(function(e){if(e.isIntersecting){playMetrics();mIO.disconnect();}});
+      },{threshold:.4});mIO.observe(metricsEl);
+    }else{playMetrics();}
   }
-  dtabs.forEach(function(b,k){b.addEventListener('click',function(){activateTab(k,true);});});
-  function currentTab(){
-    for(var k=0;k<dtabs.length;k++){if(dtabs[k].classList.contains('on'))return k;}
-    return 0;
-  }
-  function startAuto(){
-    if(REDUCED||autoStopped||autoTimer)return;
-    autoTimer=setInterval(function(){
-      if(darkInView)activateTab((currentTab()+1)%dtabs.length,false);
-    },5200);
-  }
-  if(dark){
-    if(!REDUCED){
-      dark.addEventListener('mouseenter',function(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}});
-      dark.addEventListener('mouseleave',startAuto);
+
+  /* ---------- 深色能力 01-04 tab（手动 + 自动轮播） ---------- */
+  var dark=$('.dark'),dtabs=$$('.dark .dtab'),dpanels=$$('.dark .panel');
+  if(dtabs.length&&dpanels.length){
+    var played={},autoTimer=null,autoStopped=false,darkInView=false;
+    function activateTab(i,user){
+      for(var k=0;k<dtabs.length;k++){
+        dtabs[k].classList.toggle('active',k===i);
+        if(dpanels[k])dpanels[k].classList.toggle('active',k===i);
+      }
+      if(!played[i]){
+        played[i]=true;
+        $$('.countUp',dpanels[i]).forEach(function(b,bi){setTimeout(function(){countUp(b);},180+bi*160);});
+      }
+      if(user){autoStopped=true;if(autoTimer){clearInterval(autoTimer);autoTimer=null;}}
     }
-    if('IntersectionObserver' in window){
-      new IntersectionObserver(function(es){
-        es.forEach(function(e){
-          darkInView=e.isIntersecting;
-          if(e.isIntersecting){
-            if(!playedPanels[0]){playedPanels[0]=true;animatePanel(dpanels[0]);}
-            startAuto();
-          }
-        });
-      },{threshold:.25}).observe(dark);
+    dtabs.forEach(function(b,k){b.addEventListener('click',function(){activateTab(k,true);});});
+    function curTab(){for(var k=0;k<dtabs.length;k++){if(dtabs[k].classList.contains('active'))return k;}return 0;}
+    function startAuto(){if(REDUCED||autoStopped||autoTimer)return;autoTimer=setInterval(function(){if(darkInView)activateTab((curTab()+1)%dtabs.length,false);},5200);}
+    if(dark){
+      if(!REDUCED){
+        dark.addEventListener('mouseenter',function(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}});
+        dark.addEventListener('mouseleave',startAuto);
+      }
+      if('IntersectionObserver' in window){
+        new IntersectionObserver(function(es){
+          es.forEach(function(e){
+            darkInView=e.isIntersecting;
+            if(e.isIntersecting){
+              if(!played[0]){played[0]=true;$$('.countUp',dpanels[0]).forEach(function(b,bi){setTimeout(function(){countUp(b);},200+bi*160);});}
+              startAuto();
+            }
+          });
+        },{threshold:.25}).observe(dark);
+      }
     }
   }
 
   /* ---------- 角色 / 行业切换 ---------- */
-  var segBtns=$$('.seg button'),paneRole=document.getElementById('pane-role'),paneInd=document.getElementById('pane-ind');
+  var segBtns=$$('#sceneSeg button'),gridRole=document.getElementById('grid-role'),gridInd=document.getElementById('grid-industry');
   segBtns.forEach(function(b){
     b.addEventListener('click',function(){
-      var k=b.dataset.seg;
+      var g=b.getAttribute('data-group');
       segBtns.forEach(function(x){x.classList.toggle('on',x===b);});
-      if(paneRole)paneRole.classList.toggle('on',k==='role');
-      if(paneInd)paneInd.classList.toggle('on',k==='ind');
+      if(gridRole)gridRole.classList.toggle('hide',g!=='role');
+      if(gridInd)gridInd.classList.toggle('hide',g!=='industry');
     });
   });
 
-  /* ---------- Hero 工作台 Live 轮播（模拟实时盯盘） ---------- */
+  /* ---------- Hero 工作台 Live 轮播 ---------- */
   var BOLT='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>';
   var SCENES=[
     {av:'CM',color:'#0D9488',name:'Carlos Méndez',pv:"Perfect, I'll take 100 units. How do I pay?",tagCls:'rep',tag:'评论询盘自动回复+私信',
@@ -820,7 +1385,7 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
      tags:'<span class="mini b">咨询客户</span><span class="mini b">保修问题</span>',
      rule:'咨询自动回复',follow:'常规咨询 · 培育中',
      thread:[['in','Does this come with a warranty?','刚刚'],['auto','Yes, every unit includes a 12-month warranty. See details:','查看商品与下单 ↗','AI 秒回'],['in','How long is shipping to the US?','1分钟前'],['out',"Thanks, I'll think about it.",'客户回复']]},
-    {av:'EB',color:'#2563EB',name:'Emilie Boutin',pv:'Parfait, je passe commande.',tagCls:'rep',tag:'评论询盘自动回复+私信',
+    {av:'EB',color:'#7C3AED',name:'Emilie Boutin',pv:'Parfait, je passe commande.',tagCls:'rep',tag:'评论询盘自动回复+私信',
      handle:'@emilie.boutique',grade:'B级',score:'74',hot:'要链接',
      intent:'询价 · 比价 · 正面',lang:'语言：法语',
      tags:'<span class="mini b">询价客户</span><span class="mini b">法语</span><span class="mini o">批发</span>',
@@ -829,7 +1394,7 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
   ];
   var live={conv:document.getElementById('liveConv'),av:document.getElementById('liveAv'),nm:document.getElementById('liveNm'),time:document.getElementById('liveTime'),pv:document.getElementById('livePv'),tag:document.getElementById('liveTag'),
     name:document.getElementById('liveName'),tags:document.getElementById('liveTags'),thread:document.getElementById('liveThread'),
-    card:document.getElementById('liveLeadCard'),lav:document.getElementById('liveLeadAv'),lname:document.getElementById('liveLeadName'),handle:document.getElementById('liveHandle'),
+    lav:document.getElementById('liveLeadAv'),lname:document.getElementById('liveLeadName'),handle:document.getElementById('liveHandle'),
     grade:document.getElementById('liveGrade'),score:document.getElementById('liveScore'),hot:document.getElementById('liveHot'),
     intent:document.getElementById('liveIntent'),lang:document.getElementById('liveLang'),record:document.getElementById('liveRecord'),follow:document.getElementById('liveFollow')};
   var liveIdx=0,triggered=214;
@@ -841,7 +1406,7 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
       return '<div class="bubble '+m[0]+'">'+m[1]+'<span class="tm">'+m[2]+'</span></div>';
     }).join('');
   }
-  function swap(el){if(!el||REDUCED)return;el.classList.remove('live-swap');void el.offsetWidth;el.classList.add('live-swap');}
+  function swap(el){if(!el)return;el.classList.remove('live-swap');void el.offsetWidth;el.classList.add('live-swap');}
   function renderScene(idx,anim){
     var s=SCENES[idx];if(!s)return;
     triggered+=1;
@@ -863,10 +1428,10 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
     if(live.lang)live.lang.textContent=s.lang;
     if(live.record)live.record.textContent=s.rule+' · 已触发 '+triggered+' 次';
     if(live.follow)live.follow.textContent=s.follow;
-    if(anim){swap(live.conv);swap(live.thread);swap(live.card);}
+    if(anim){swap(live.conv);swap(live.thread);swap(document.getElementById('liveLeadCard'));}
   }
   if(!REDUCED&&live.thread){
-    var livePaused=false,browserEl=$('.hero .browser');
+    var livePaused=false,browserEl=$('.prod .browser');
     if(browserEl){
       browserEl.addEventListener('mouseenter',function(){livePaused=true;});
       browserEl.addEventListener('mouseleave',function(){livePaused=false;});
@@ -880,44 +1445,70 @@ footer{background:var(--dark);color:#9AA8C7;padding:64px 0 30px}
     },1900);
   }
 
-  /* ---------- metrics 数字计数 ---------- */
-  var metricsEl=$('.metrics');
-  if(metricsEl&&!REDUCED&&'IntersectionObserver' in window){
-    var mIO=new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(!e.isIntersecting)return;
-        $$('.metric-grid .count').forEach(function(b,i){
-          setTimeout(function(){countUp(b,parseFloat(b.getAttribute('data-to')),parseInt(b.getAttribute('data-dec')||'0',10),b.getAttribute('data-suffix')||'');},i*130);
-        });
-        mIO.disconnect();
-      });
-    },{threshold:.4});
-    mIO.observe(metricsEl);
+  /* ---------- AI 处理实录轮播 ---------- */
+  var carousel=document.getElementById('logCarousel');
+  if(carousel){
+    var track=document.getElementById('logTrack'),cards=$$('.lcard',track),
+        prevBtn=document.getElementById('logPrev'),nextBtn=document.getElementById('logNext'),
+        dotsBox=document.getElementById('logDots');
+    var cIndex=0,step=0,maxIndex=0,visible=3,dots=[];
+    function visibleCount(){
+      var w=window.innerWidth;
+      if(w<=640)return 1;
+      if(w<=900)return 2;
+      return 3;
+    }
+    function buildDots(){
+      dotsBox.innerHTML='';dots=[];
+      for(var k=0;k<=maxIndex;k++){
+        (function(k){
+          var d=document.createElement('i');
+          d.addEventListener('click',function(){go(k);});
+          dotsBox.appendChild(d);dots.push(d);
+        })(k);
+      }
+    }
+    function paint(){
+      track.style.transform='translateX('+(-cIndex*step)+'px)';
+      dots.forEach(function(d,k){d.classList.toggle('on',k===cIndex);});
+    }
+    function go(i){
+      cIndex=Math.max(0,Math.min(i,maxIndex));
+      paint();
+    }
+    function recalc(){
+      visible=visibleCount();
+      if(cards.length){
+        var gap=window.innerWidth<=640?0:(window.innerWidth<=900?20:24);
+        step=cards[0].getBoundingClientRect().width+gap;
+      }
+      maxIndex=Math.max(0,cards.length-visible);
+      if(cIndex>maxIndex)cIndex=maxIndex;
+      buildDots();paint();
+    }
+    nextBtn.addEventListener('click',function(){go(cIndex>=maxIndex?0:cIndex+1);});
+    prevBtn.addEventListener('click',function(){go(cIndex<=0?maxIndex:cIndex-1);});
+    recalc();
+    var rT;
+    if(!REDUCED){
+      rT=setInterval(function(){go(cIndex>=maxIndex?0:cIndex+1);},5000);
+      carousel.addEventListener('mouseenter',function(){clearInterval(rT);});
+      carousel.addEventListener('mouseleave',function(){rT=setInterval(function(){go(cIndex>=maxIndex?0:cIndex+1);},5000);});
+    }
+    var rzT;
+    window.addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(recalc,200);});
   }
 
-  /* ---------- 渠道入场 ---------- */
-  var channelsEl=$('.channels');
-  if(channelsEl&&!REDUCED&&'IntersectionObserver' in window){
-    var cIO=new IntersectionObserver(function(es){
-      es.forEach(function(e){if(e.isIntersecting){channelsEl.classList.add('in');cIO.disconnect();}});
-    },{threshold:.3});
-    cIO.observe(channelsEl);
-  }
-
-  /* ---------- 导航滚动阴影 ---------- */
-  var navEl=$('.nav');
-  function onScroll(){if(navEl){if(window.scrollY>10)navEl.classList.add('scrolled');else navEl.classList.remove('scrolled');}}
-  window.addEventListener('scroll',onScroll,{passive:true});
-  onScroll();
-
-  /* ---------- 滚动渐显（JS 运行后才隐藏，保证无 JS 时内容可见） ---------- */
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-    },{threshold:.1,rootMargin:'0px 0px -8% 0px'});
-    $$('.pain,.dark,.scenes,.metrics,.security,.pricing,.final').forEach(function(el){
-      el.classList.add('fade');io.observe(el);
-    });
+  /* ---------- 右侧客服浮窗 ---------- */
+  var swFab=document.getElementById('swFab'),swCard=document.getElementById('swCard'),swClose=document.getElementById('swClose');
+  if(swFab&&swCard){
+    function setOpen(o){
+      swCard.classList.toggle('hidden',!o);
+      swFab.classList.toggle('open',o);
+      swFab.setAttribute('aria-expanded',o?'true':'false');
+    }
+    swFab.addEventListener('click',function(){setOpen(swCard.classList.contains('hidden'));});
+    if(swClose)swClose.addEventListener('click',function(){setOpen(false);});
   }
 })();
 </script>
