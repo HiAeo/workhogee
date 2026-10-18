@@ -44,8 +44,8 @@ ul{list-style:none}
 .section{padding:100px 0}
 .eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 17px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--blue);background:var(--blue-50);border:1px solid var(--blue-100);margin-bottom:22px}
 .eyebrow.on-dark{background:rgba(37,99,235,.16);color:#9DB8FF;border-color:rgba(96,143,255,.28)}
-.h2{font-size:clamp(30px,4.2vw,46px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.02em}
-.sub{font-size:17px;color:var(--gray);max-width:700px;margin:18px auto 0}
+.h2{font-size:clamp(30px,4.2vw,46px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.02em;text-wrap:balance}
+.sub{font-size:17px;color:var(--gray);max-width:700px;margin:18px auto 0;text-wrap:balance}
 .center{text-align:center}
 .fade{opacity:0;transform:translateY(30px);transition:opacity .75s cubic-bezier(.2,.7,.2,1),transform .75s cubic-bezier(.2,.7,.2,1)}
 .fade.in{opacity:1;transform:none}
@@ -68,11 +68,11 @@ ul{list-style:none}
 .nav-inner{display:flex;align-items:center;gap:20px;height:72px}
 .brand{display:flex;align-items:center;gap:12px;flex:none}
 .brand .wordmark{height:30px;width:auto}
-.meta-badge{display:flex;align-items:center;gap:9px;padding-left:13px;border-left:1px solid var(--line);height:34px;flex:none}
-.meta-badge .mb-infinity{width:26px;height:26px;color:#0064E0}
-.meta-badge .mb-txt{display:flex;flex-direction:column;line-height:1.05}
-.meta-badge .mb-name{font-size:15px;font-weight:800;color:#1c1917;letter-spacing:-.01em}
-.meta-badge .mb-sub{font-size:8.5px;font-weight:700;color:#5B6478;letter-spacing:.06em;text-transform:uppercase}
+.meta-badge{display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid var(--line);height:34px;flex:none}
+.meta-badge .mb-infinity{width:21px;height:21px;color:#0064E0;flex:none}
+.meta-badge .mb-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.18;gap:1px}
+.meta-badge .mb-name{font-size:13px;font-weight:700;color:#1c1917;letter-spacing:-.01em}
+.meta-badge .mb-sub{font-size:7.5px;font-weight:600;color:#667085;letter-spacing:.13em;text-transform:uppercase}
 .nav-menu{display:flex;gap:2px;margin-left:10px}
 .nav-menu>a{display:inline-flex;align-items:center;gap:4px;padding:8px 13px;font-size:14.5px;font-weight:500;color:#3A4458;border-radius:8px;transition:.15s}
 .nav-menu>a svg{width:11px;height:11px;opacity:.6}
@@ -83,7 +83,7 @@ ul{list-style:none}
 .nav-cta .login{font-size:14.5px;font-weight:600;color:#3A4458;padding:8px 6px}
 .nav-cta .login:hover{color:var(--blue)}
 .nav-cta .btn{height:42px;padding:0 19px;font-size:14.5px}
-.nav-cta .btn-demo{height:42px;padding:0 17px;font-size:14.5px;border-radius:10px;background:#fff;border:1px solid #D6DEEC;color:var(--navy)}
+.nav-cta .btn-demo{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 18px;font-size:14.5px;font-weight:600;line-height:1;border-radius:10px;background:#fff;border:1px solid #D6DEEC;color:var(--navy);white-space:nowrap}
 .nav-cta .btn-demo:hover{border-color:var(--blue);color:var(--blue)}
 .burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;border-radius:2px;transition:.3s}
@@ -161,18 +161,17 @@ ul{list-style:none}
       <a href="#metrics">AI 效果</a>
       <a href="#channels">渠道</a>
       <a href="#security">安全</a>
-      <a href="#pricing">价格方案</a>
     </nav>
     <div class="nav-cta">
       <a class="login" href="https://app.workhogee.com/signin">登录</a>
       <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始</a>
-      <a class="btn-demo" href="mailto:910036590@qq.com">预约演示</a>
+      <a class="btn-demo" href="mailto:workhogee@gmail.com">预约演示</a>
     </div>
     <button class="burger" id="burger" aria-label="菜单" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#features">产品</a><a href="#scenes">解决方案</a><a href="#metrics">AI 效果</a><a href="#channels">渠道</a><a href="#security">安全</a><a href="#pricing">价格方案</a>
-    <a href="mailto:910036590@qq.com">预约演示</a>
+    <a href="#features">产品</a><a href="#scenes">解决方案</a><a href="#metrics">AI 效果</a><a href="#channels">渠道</a><a href="#security">安全</a>
+    <a href="mailto:workhogee@gmail.com">预约演示</a>
     <a href="https://app.workhogee.com/signin">登录 / 免费开始</a>
   </div>
 </header>
@@ -185,7 +184,7 @@ ul{list-style:none}
     <p class="sub">WorkHogee 7×24 盯守 Instagram 评论与私信：评论区自动公开回复、私信秒发报价与下单链接，自动识别意向、A/B/C/D 评分、高意向立即告警，把询盘沉淀成可跟进的线索。只走 Meta 官方 API，不用雇客服，也不用交出账号密码。</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
-      <a class="btn btn-ghost" href="mailto:910036590@qq.com">预约演示</a>
+      <a class="btn btn-ghost" href="mailto:workhogee@gmail.com">预约演示</a>
     </div>
     <div class="trust">
       <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 Meta Graph API</span>
@@ -362,7 +361,7 @@ ul{list-style:none}
 <style>
 /* ===== 信任墙（为谁而生，替代虚构客户 logo） ===== */
 .wall{background:#fff;padding:84px 0 70px;border-bottom:1px solid var(--line)}
-.wall .wall-title{text-align:center;font-size:clamp(19px,2.4vw,28px);font-weight:800;color:var(--navy);letter-spacing:-.01em}
+.wall .wall-title{text-align:center;font-size:clamp(19px,2.4vw,28px);font-weight:800;color:var(--navy);letter-spacing:-.01em;text-wrap:balance}
 .wall .wall-title b{color:var(--blue)}
 .wall-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:34px 0 0}
 .wall-tag{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:14px;background:var(--bg-2);border:1px solid var(--line);color:var(--navy);font-size:15px;font-weight:600;transition:.25s}
@@ -685,7 +684,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
       <div class="ci"><span class="circle plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nm">邮件</span><span class="st-badge plan">规划中</span></div>
     </div>
 
-    <div class="ch-more"><a href="mailto:910036590@qq.com">需要其他渠道？预约演示 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+    <div class="ch-more"><a href="mailto:workhogee@gmail.com">需要其他渠道？预约演示 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
   </div>
 </section>
 <style>
@@ -961,84 +960,6 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
   </div>
 </section>
 <style>
-/* ===== Pricing ===== */
-.pricing{background:var(--bg);padding:100px 0}
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px;align-items:stretch}
-.pcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px 32px;display:flex;flex-direction:column;position:relative;transition:transform .3s,box-shadow .3s}
-.pcard:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
-.pcard.hot{background:linear-gradient(165deg,#0C1322,#15223F 60%,#1B3464);border-color:transparent;color:#fff;box-shadow:0 40px 80px -30px rgba(12,19,34,.6)}
-.pcard.hot:hover{transform:translateY(-5px) scale(1.02)}
-.pcard .ribbon{position:absolute;top:18px;right:18px;background:linear-gradient(90deg,#3B82F6,#2563EB);color:#fff;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px}
-.pcard .plan{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
-.pcard.hot .plan{color:#fff}
-.pcard .pdesc{font-size:13px;color:var(--gray-2);margin-bottom:22px}
-.pcard.hot .pdesc{color:#9FB0CC}
-.pcard .price{font-size:48px;font-weight:800;color:var(--navy);line-height:1}
-.pcard.hot .price{color:#fff}
-.pcard .price small{font-size:15px;font-weight:500;color:var(--gray-2);margin-left:6px}
-.pcard.hot .price small{color:#9FB0CC}
-.pcard .pfeatures{margin:26px 0 30px;display:flex;flex-direction:column;gap:13px}
-.pcard .pfeatures li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--gray)}
-.pcard.hot .pfeatures li{color:#C7D3E6}
-.pcard .pfeatures svg{width:18px;height:18px;color:var(--blue);flex:none;margin-top:1px}
-.pcard.hot .pfeatures svg{color:#60A5FA}
-.pcard .pcta{margin-top:auto}
-.pcard .pcta .btn{width:100%;height:50px}
-.pcard.plan-soon .price{color:var(--gray-2)}
-.pcard .soontag{display:inline-block;font-size:11.5px;color:var(--gray-2);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 11px;margin-bottom:14px}
-.pcard.plan-soon{background:var(--bg-2)}
-@media(max-width:900px){.pgrid{grid-template-columns:1fr}.pcard.hot{transform:none;order:-1}}
-</style>
-<section class="pricing" id="pricing">
-  <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">内测期 · 价格方案</span>
-      <h2 class="h2">现在内测，0 元开始</h2>
-      <p class="sub">内测期间核心功能完全免费，我们会和你一起把产品打磨好；正式定价前会提前通知，老用户优先。</p>
-    </div>
-    <div class="pgrid">
-      <div class="pcard plan-soon">
-        <span class="soontag">规划中</span>
-        <div class="plan">成长版</div>
-        <div class="pdesc">正式上线后推出</div>
-        <div class="price">待定</div>
-        <ul class="pfeatures">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>更多 Instagram 账号</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>更高评论 / 私信额度</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>自动跟进序列</li>
-        </ul>
-        <div class="pcta"><a class="btn btn-ghost" href="mailto:910036590@qq.com">了解上线计划</a></div>
-      </div>
-      <div class="pcard hot">
-        <span class="ribbon">内测免费</span>
-        <div class="plan">内测版</div>
-        <div class="pdesc">现在加入即可开通</div>
-        <div class="price">¥0<small> / 内测期</small></div>
-        <ul class="pfeatures">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Instagram 评论 / 私信实时盯盘</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>自动公开回复 + 私信、多语言</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>意图识别 + A/B/C/D 评分 + 高意向告警</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>线索库、跟进记录与 CSV 导出</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>官方 API 授权 · 不存密码</li>
-        </ul>
-        <div class="pcta"><a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始</a></div>
-      </div>
-      <div class="pcard plan-soon">
-        <span class="soontag">规划中</span>
-        <div class="plan">团队版</div>
-        <div class="pdesc">多成员 / 多渠道协作</div>
-        <div class="price">待定</div>
-        <ul class="pfeatures">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>多成员协作与分配</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Facebook / Messenger 等更多渠道</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>数据看板与团队管理</li>
-        </ul>
-        <div class="pcta"><a class="btn btn-ghost" href="mailto:910036590@qq.com">预约沟通</a></div>
-      </div>
-    </div>
-  </div>
-</section>
-<style>
 /* ===== Final CTA ===== */
 .cta-sec{padding:110px 0;background:var(--bg)}
 .cta-card{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(135deg,#0E1A3A 0%,#1E3A8A 55%,#2563EB 120%);padding:76px 24px;text-align:center;color:#fff}
@@ -1047,7 +968,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
 .cta-card>*{position:relative;z-index:1}
 .cta-card .ce{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#DCE9FF}
 .cta-card h2{font-size:clamp(30px,4.2vw,48px);font-weight:800;line-height:1.2;letter-spacing:-.02em}
-.cta-card p{font-size:17px;color:#C4D4F0;margin:18px auto 0;max-width:560px}
+.cta-card p{font-size:17px;color:#C4D4F0;margin:18px auto 0;max-width:560px;text-wrap:balance}
 .cta-actions{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
 .cta-actions .btn{height:54px;padding:0 30px;border-radius:12px;font-size:16px}
 .cta-points{display:flex;gap:12px 28px;justify-content:center;flex-wrap:wrap;margin-top:34px}
@@ -1062,7 +983,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
       <p>从下一条 Instagram 评论开始，一个询盘都不丢。官方 API 授权，几分钟即可连上。</p>
       <div class="cta-actions">
         <a class="btn btn-light" href="https://app.workhogee.com/signin">免费开始 <span class="arr">›</span></a>
-        <a class="btn btn-glass" href="mailto:910036590@qq.com">预约演示</a>
+        <a class="btn btn-glass" href="mailto:workhogee@gmail.com">预约演示</a>
       </div>
       <div class="cta-points">
         <span><i></i>内测期免费</span>
@@ -1117,14 +1038,14 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
               <text x="53" y="42.3" font-family="'Trebuchet MS','Trebuchet','Lucida Sans Unicode',sans-serif" font-size="18" font-weight="400" fill="#1c1917">Hogee</text>
             </g>
           </svg>
-          <span class="meta-badge" style="padding-left:13px;border-left:1px solid var(--line)">
-            <svg class="mb-infinity" viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;color:#0064E0"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"/></svg>
+          <span class="meta-badge">
+            <svg class="mb-infinity" viewBox="0 0 24 24" fill="currentColor"><path d="M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"/></svg>
             <span class="mb-txt"><span class="mb-name">Meta</span><span class="mb-sub">Business Partner</span></span>
           </span>
         </div>
         <p class="fdesc">出海卖家的 AI 评论盯盘助手。盯紧 Instagram 评论与私信，自动回复、识别意向、沉淀线索，让每一条询盘都不被漏掉。</p>
-        <a class="fmail" href="mailto:910036590@qq.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>910036590@qq.com</a>
-        <div class="fdemo"><a class="btn btn-primary" href="mailto:910036590@qq.com">预约演示</a></div>
+        <a class="fmail" href="mailto:workhogee@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>workhogee@gmail.com</a>
+        <div class="fdemo"><a class="btn btn-primary" href="mailto:workhogee@gmail.com">预约演示</a></div>
       </div>
       <div class="fcol">
         <h4>渠道接入</h4>
@@ -1152,7 +1073,6 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
         <ul>
           <li><a href="#metrics">AI 效果实测</a></li>
           <li><a href="#security">安全与信任</a></li>
-          <li><a href="#pricing">价格方案</a></li>
           <li><a href="privacy.html">隐私政策</a></li>
           <li><a href="terms.html">服务条款</a></li>
           <li><a href="https://app.workhogee.com/signin">登录工作台</a></li>
@@ -1166,7 +1086,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
       </div>
       <div class="fsocial">
         <a href="https://www.instagram.com/workhogee" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.4A6.4 6.4 0 1 0 18.4 12 6.4 6.4 0 0 0 12 5.6zm0 10.5A4.1 4.1 0 1 1 16.1 12 4.1 4.1 0 0 1 12 16.1zm6.6-10.7a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></a>
-        <a href="mailto:910036590@qq.com" aria-label="邮件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="mailto:workhogee@gmail.com" aria-label="邮件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
   </div>
@@ -1212,9 +1132,9 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
     <div class="sw-body">
       <div class="sw-msg">你好，我是 WorkHogee。想看看怎么替你盯 Instagram 评论？可以预约演示，或直接免费开始用。</div>
       <div class="sw-actions">
-        <a class="btn btn-primary" href="mailto:910036590@qq.com">预约演示</a>
+        <a class="btn btn-primary" href="mailto:workhogee@gmail.com">预约演示</a>
         <a class="btn btn-ghost" href="https://app.workhogee.com/signin">免费开始</a>
-        <a class="sw-mail" href="mailto:910036590@qq.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>910036590@qq.com</a>
+        <a class="sw-mail" href="mailto:workhogee@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>workhogee@gmail.com</a>
       </div>
     </div>
   </div>
@@ -1289,7 +1209,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
     var io=new IntersectionObserver(function(es){
       es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
     },{threshold:.12,rootMargin:'0px 0px -7% 0px'});
-    var fadeSel=['.wall','.pain','.dark','.scenes','.metrics','.livelog','.security','.pricing','.cta-sec'];
+    var fadeSel=['.wall','.pain','.dark','.scenes','.metrics','.livelog','.security','.cta-sec'];
     fadeSel.forEach(function(sel){
       $$(sel).forEach(function(el){el.classList.add('fade');io.observe(el);});
     });
@@ -1297,7 +1217,7 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
       $$(sel).forEach(function(el){io.observe(el);});
     });
   }else{
-    $$('.wall,.pain,.channels,.channels-section,.dark,.scenes,.metrics,.livelog,.security,.pricing,.cta-sec').forEach(function(el){el.classList.add('in');});
+    $$('.wall,.pain,.channels,.channels-section,.dark,.scenes,.metrics,.livelog,.security,.cta-sec').forEach(function(el){el.classList.add('in');});
   }
 
   /* ---------- metrics 数字（进入视口计数） ---------- */
