@@ -200,62 +200,129 @@ ul{list-style:none}
 .dot.r{background:#FF5F57}.dot.y{background:#FEBC2E}.dot.g{background:#28C840}
 .urlbar{flex:1;max-width:440px;margin:0 auto;height:30px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;color:#6B7280;border:1px solid #E6EBF3}
 .urlbar svg{width:13px;height:13px;color:var(--blue)}
-.app{display:grid;grid-template-columns:172px 256px 1fr 244px;height:612px;font-size:13px}
-.rail{background:#fff;border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:2px}
-.rail .logo2{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);font-size:15px;margin-bottom:14px}
-.rail .logo2 i{width:26px;height:26px;border-radius:7px;background:var(--blue);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:12px;font-weight:800}
-.rail .acct{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11.5px}
-.rail .acct b{display:flex;align-items:center;gap:7px;color:var(--navy);font-size:12.5px}
-.rail .acct b s{width:22px;height:22px;border-radius:50%;background:var(--blue-50);color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
-.rail .acct small{color:var(--gray-2);display:block;margin-top:4px}
-.rail .ri{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:#4B5568;font-weight:500}
-.rail .ri.on{background:var(--blue-50);color:var(--blue);font-weight:700}
+.app{display:grid;grid-template-columns:178px 266px 1fr 266px;height:648px;font-size:13px;color:#1F2937;--ink:#101828;--ink2:#475467;--ink3:#98A2B3;--line2:#E9EDF3;--panel:#F7F8FA}
+/* ── 左栏：导航 ── */
+.rail{background:#fff;border-right:1px solid var(--line2);padding:14px 11px;display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.rail .logo2{display:flex;align-items:center;gap:8px;font-weight:800;color:#0F172A;font-size:15px;margin:2px 4px 12px}
+.rail .logo2 i{width:27px;height:27px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#2563EB);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:12px;font-weight:800;box-shadow:0 6px 14px -6px rgba(37,99,235,.6)}
+.rail .acct{border:1px solid var(--line2);border-radius:10px;padding:9px 10px;margin-bottom:12px;font-size:11px;background:#FBFCFE}
+.rail .acct b{display:flex;align-items:center;gap:7px;color:#0F172A;font-size:12px}
+.rail .acct b s{width:22px;height:22px;border-radius:50%;background:#EAF1FF;color:#2563EB;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.rail .acct small{color:var(--ink3);display:block;margin-top:4px;line-height:1.35}
+.rail .ri{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:#475467;font-weight:500;font-size:12.5px}
+.rail .ri.on{background:#EAF1FF;color:#2563EB;font-weight:700}
 .rail .ri svg{width:16px;height:16px;flex:none}
-.conv{border-right:1px solid var(--line);background:#FBFCFE;display:flex;flex-direction:column;min-width:0}
-.conv .ch{padding:14px 16px;font-weight:800;color:var(--navy);font-size:15px}
-.conv .search{margin:0 12px 10px;height:32px;background:#fff;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;padding:0 10px;gap:7px;color:var(--gray-2);font-size:12px}
-.conv .item{display:flex;gap:10px;padding:12px 16px;border-top:1px solid #F0F3F8;min-width:0}
-.conv .item.on{background:var(--blue-50);border-left:3px solid var(--blue);padding-left:13px}
-.conv .av{width:34px;height:34px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
+/* ── 会话列表 ── */
+.conv{border-right:1px solid var(--line2);background:var(--panel);display:flex;flex-direction:column;min-width:0}
+.conv .ch{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 8px;font-weight:800;color:var(--ink);font-size:15px;width:auto;height:auto;white-space:nowrap;line-height:1;border-radius:0;box-shadow:none}
+.conv .ch .tt{flex:1}
+.conv .ch .add{width:22px;height:22px;border-radius:6px;background:#EAF1FF;color:#2563EB;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;line-height:1;flex:none}
+.conv .tabs{display:flex;gap:4px;padding:0 12px 8px}
+.conv .tabs button{flex:1;height:27px;border:0;border-radius:7px;background:#fff;border:1px solid var(--line2);color:var(--ink2);font-size:11.5px;font-weight:600;cursor:pointer}
+.conv .tabs button.on{background:#2563EB;color:#fff;border-color:#2563EB;box-shadow:0 5px 12px -5px rgba(37,99,235,.7)}
+.conv .search{margin:0 12px 8px;height:32px;background:#fff;border:1px solid var(--line2);border-radius:8px;display:flex;align-items:center;padding:0 10px;gap:7px;color:var(--ink3);font-size:11.5px}
+.conv .list{flex:1;overflow:hidden}
+.conv .item{display:flex;gap:9px;padding:11px 13px;border-top:1px solid #EEF1F5;min-width:0;position:relative;cursor:pointer}
+.conv .item.on{background:#EAF1FF}
+.conv .item.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#2563EB}
+.conv .av{position:relative;width:38px;height:38px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
 .av.c{background:linear-gradient(135deg,#2563EB,#1D4ED8)}.av.m{background:linear-gradient(135deg,#14B8A6,#0D9488)}
+.conv .av .ol{position:absolute;right:-1px;top:-1px;width:11px;height:11px;border-radius:50%;background:#22C55E;border:2px solid #fff;z-index:1}
+.conv .av .ig{position:absolute;right:-2px;bottom:-2px;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#feda75,#fa7e1e 25%,#d62976 55%,#4f5bd5);border:2px solid #fff}
+.conv .av .ig svg{width:9px;height:9px;color:#fff}
 .conv .bd{min-width:0;flex:1}
-.conv .nm{display:flex;justify-content:space-between;font-weight:700;color:var(--navy)}
-.conv .nm span{color:var(--gray-2);font-weight:400;font-size:11px}
-.conv .pv{color:var(--gray);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-.tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:6px;margin-top:4px;font-weight:600}
+.conv .nm{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--ink);font-size:12.5px}
+.conv .nm .tm{color:var(--ink3);font-weight:400;font-size:10.5px;display:inline-flex;align-items:center;gap:3px}
+.conv .pv{color:var(--ink2);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;display:flex;align-items:center;gap:4px}
+.conv .pv .ck{color:#2563EB;flex:none;font-size:11px;display:inline-flex;align-items:center}
+.conv .pv .ck svg{width:12px;height:8px;display:block}
+.conv .pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ptag{font-size:9.5px;padding:1.5px 7px;border-radius:999px;font-weight:600;line-height:1.5;white-space:nowrap}
+.ptag.hi{background:#F1ECFF;color:#7C3AED}.ptag.cart{background:#FFF1E8;color:#EA580C}.ptag.val{background:#EAF1FF;color:#2563EB}.ptag.course{background:#E6FAF7;color:#0D9488}.ptag.demo{background:#FDEAF3;color:#DB2777}.ptag.new{background:#E9F9EF;color:#16A34A}.ptag.ft{background:#EEF2F7;color:#475569}
+.conv .badge{position:absolute;top:31px;right:11px;min-width:18px;width:auto;height:18px;padding:0 5px;border-radius:9px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:0;flex:none;z-index:2}
+.tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:6px;margin-top:4px;font-weight:600}
 .tag.rep{background:#E6FAF7;color:#0D9488}.tag.closed{background:#F1F5F9;color:#94A3B8}
-.chat{display:flex;flex-direction:column;min-width:0;background:#fff}
-.chat .top{padding:14px 20px;border-bottom:1px solid var(--line)}
-.chat .top b{font-size:15px;color:var(--navy)}
-.chat .top .tt{display:flex;gap:6px;margin-top:5px}
-.mini{font-size:10.5px;padding:2px 8px;border-radius:999px;font-weight:600}
-.mini.b{background:var(--blue-50);color:var(--blue)}.mini.g{background:#E6FAF7;color:#0D9488}.mini.o{background:#FFF3E6;color:#D97706}
-.live-dot{display:inline-flex;align-items:center;gap:6px;color:#0D9488;font-size:10.5px;font-weight:700;margin-left:8px;vertical-align:middle}
-.live-dot i{width:7px;height:7px;border-radius:50%;background:#14B8A6;position:relative}
-.live-dot i::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:rgba(20,184,166,.45);animation:livePulse 1.7s ease-out infinite}
+/* ── 聊天区 ── */
+.chat{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;background:#fff}
+.chat .top{padding:12px 18px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:11px}
+.chat .top .tav{position:relative;width:38px;height:38px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;background:linear-gradient(135deg,#2563EB,#1D4ED8)}
+.chat .top .tav .ol{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#22C55E;border:2px solid #fff}
+.chat .top .tn{min-width:0;flex:1}
+.chat .top .tn b{font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:6px}
+.chat .top .tt{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+.chat .assign{display:flex;align-items:center;gap:6px;border:1px solid var(--line2);background:#fff;border-radius:9px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--ink2);flex:none}
+.chat .assign .ai{width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+.chat .assign svg{width:12px;height:12px;color:var(--ink3)}
+.mini{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600}
+.mini.b{background:#EAF1FF;color:#2563EB}.mini.g{background:#E6FAF7;color:#0D9488}.mini.o{background:#FDEAF3;color:#DB2777}.mini.p{background:#F1ECFF;color:#7C3AED}
+.live-dot{display:inline-flex;align-items:center;gap:5px;color:#16A34A;font-size:10px;font-weight:700}
+.live-dot i{width:7px;height:7px;border-radius:50%;background:#22C55E;position:relative}
+.live-dot i::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:rgba(34,197,94,.4);animation:livePulse 1.7s ease-out infinite}
 @keyframes livePulse{0%{transform:scale(.5);opacity:.85}70%{transform:scale(1.7);opacity:0}100%{transform:scale(1.7);opacity:0}}
-.thread{flex:1;padding:20px;background:linear-gradient(180deg,#F8FAFF,#fff);display:flex;flex-direction:column;gap:14px;overflow:hidden}
-.bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:12.5px;line-height:1.5}
-.bubble.in{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;align-self:flex-start}
-.bubble.out{background:var(--blue);color:#fff;border-top-right-radius:4px;align-self:flex-end}
-.bubble.auto{background:var(--blue-50);border:1px solid var(--blue-100);border-top-left-radius:4px;align-self:flex-start}
-.auto-label{display:inline-flex;align-items:center;gap:5px;color:var(--blue);font-weight:700;font-size:11px;margin-bottom:4px}
-.bubble .tm{display:block;font-size:10px;color:var(--gray-2);margin-top:5px}
-.bubble.out .tm{color:rgba(255,255,255,.75)}
-.linkbtn{margin-top:8px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:9px;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;display:block}
-.lead{background:#FBFCFE;border-left:1px solid var(--line);padding:16px;overflow:hidden}
-.lead .lp{display:flex;align-items:center;gap:10px}
-.lead .lp .av{width:42px;height:42px}
-.lead .lp b{font-size:14px;color:var(--navy);display:block}
-.lead .lp small{color:var(--gray-2);font-size:11px}
-.score{display:flex;align-items:center;gap:10px;margin:14px 0}
-.score .grade{background:var(--blue);color:#fff;font-weight:800;font-size:13px;padding:4px 12px;border-radius:9px}
-.score .num{font-size:24px;font-weight:800;color:var(--navy)}
-.score .hot{font-size:11px;color:#fff;background:linear-gradient(135deg,#F97316,#EA580C);padding:3px 9px;border-radius:999px;font-weight:700}
-.lbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:10px}
-.lbox h5{font-size:11.5px;color:var(--gray-2);font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:6px}
-.lbox .p{font-size:12px;color:#374151;margin-bottom:6px}
-.lbox .rec{font-size:11.5px;background:var(--blue-50);color:var(--blue-800);border-radius:8px;padding:8px 10px}
+.thread{flex:1 1 auto;min-height:0;padding:12px 20px;background:#F7F9FC;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.daysep{align-self:center;font-size:10.5px;color:var(--ink3);background:#fff;border:1px solid var(--line2);border-radius:999px;padding:3px 12px;font-weight:600}
+.mrow{display:flex;gap:8px;max-width:82%;align-items:flex-end}
+.mrow.me{width:100%;max-width:100%;justify-content:flex-end}
+.mrow.me .bubble{max-width:78%;min-width:0}
+.mrow .mav{width:26px;height:26px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;background:linear-gradient(135deg,#2563EB,#1D4ED8)}
+.bubble{padding:8px 12px;border-radius:14px;font-size:12.5px;line-height:1.42}
+.mrow:not(.me) .bubble{border-top-left-radius:4px}
+.mrow.me .bubble{border-top-right-radius:4px}
+.bubble.in{background:#fff;border:1px solid var(--line2);color:var(--ink)}
+.bubble.out{background:#2563EB;color:#fff}
+.bubble.auto{background:#F3F7FF;border:1px solid #DCE7FF;border-top-left-radius:4px}
+.auto-label{display:inline-flex;align-items:center;gap:5px;color:#2563EB;font-weight:700;font-size:10.5px;margin-bottom:4px;margin-right:5px}
+.bubble .tm{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--ink3);margin-top:4px}
+.bubble.out .tm{color:rgba(255,255,255,.78);justify-content:flex-end}
+.bubble .tm .ck{color:#2563EB;font-size:10px;display:inline-flex;align-items:center}.bubble .tm svg{width:13px;height:9px;display:block;flex:none}.bubble .tm .ck svg{width:13px;height:9px;display:block}.bubble.out .tm .ck{color:rgba(255,255,255,.85)}
+.linkbtn{margin-top:6px;background:#fff;border:1px solid #2563EB;color:#2563EB;border-radius:9px;padding:6px 12px;text-align:center;font-weight:700;font-size:11.5px;display:block;white-space:nowrap}
+.aimenu{margin-top:8px;border:1px solid var(--line2);border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 10px 24px -14px rgba(16,24,40,.3)}
+.aimenu .amh{display:flex;align-items:center;gap:6px;padding:5px 10px;font-size:10.5px;font-weight:700;color:#475467;border-bottom:1px solid var(--line2);background:#FBFCFE}
+.aimenu .ami{display:flex;align-items:center;justify-content:space-between;padding:3px 10px;font-size:11px;color:#475467;border-top:1px solid #F1F4F8}
+.aimenu .ami:first-of-type{border-top:0}
+.aimenu .ami svg{width:12px;height:12px;color:var(--ink3)}
+/* 底部输入工具栏 */
+.composer{border-top:1px solid var(--line2);background:#fff;padding:11px 16px 12px}
+.composer .ctools{display:flex;align-items:center;gap:3px;margin-bottom:7px}
+.composer .ct{width:27px;height:27px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#667085;cursor:pointer}
+.composer .ct.ai{background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff}
+.composer .ct svg{width:16px;height:16px}
+.composer .cbox{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--line2);border-radius:12px;padding:8px 10px;background:#FBFCFE}
+.composer .cbox .ph{flex:1;font-size:11.5px;color:var(--ink3);line-height:1.5}
+.composer .send{width:30px;height:30px;border-radius:9px;background:#2563EB;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.composer .send svg{width:15px;height:15px}
+/* ── 右侧 CRM ── */
+.lead{background:var(--panel);border-left:1px solid var(--line2);padding:12px;overflow:hidden;display:flex;flex-direction:column}
+.lead .lp{flex:none;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px}
+.lead .lp .av{width:44px;height:44px;font-size:15px;background:linear-gradient(135deg,#2563EB,#1D4ED8)}
+.lead .lp b{font-size:14px;color:var(--ink);display:flex;align-items:center;gap:5px}
+.lead .lp small{color:var(--ink3);font-size:10.5px}
+.lead .hipill{margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#F1ECFF;color:#7C3AED;font-size:10.5px;font-weight:700;padding:4px 12px;border-radius:999px}
+.crmrows{flex:none;margin:6px 0 4px;border:1px solid var(--line2);border-radius:10px;background:#fff;overflow:hidden}
+.crmrows .r{display:flex;align-items:center;gap:8px;padding:5px 10px;font-size:11.5px;color:#475467;border-top:1px solid #F1F4F8}
+.crmrows .r:first-child{border-top:0}
+.crmrows .r .ric{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none;opacity:1;transform:none}
+.crmrows .r .ric svg{width:13px;height:13px}
+.crmrows .r .k{color:var(--ink3);font-size:10.5px}
+.score{flex:none;display:flex;align-items:center;gap:9px;margin:6px 0 4px;background:#fff;border:1px solid var(--line2);border-radius:10px;padding:7px 11px}
+.score .grade{background:#2563EB;color:#fff;font-weight:800;font-size:12px;padding:3px 10px;border-radius:8px}
+.score .num{font-size:22px;font-weight:800;color:var(--ink)}
+.score .hot{font-size:10px;color:#fff;background:linear-gradient(135deg,#F97316,#EA580C);padding:3px 9px;border-radius:999px;font-weight:700;margin-left:auto}
+.lbox{flex:none;background:#fff;border:1px solid var(--line2);border-radius:10px;padding:6px 11px;margin-bottom:4px}
+.lbox h5{font-size:10.5px;color:var(--ink3);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.03em}
+.lbox .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lbox .add{display:inline-flex;align-items:center;gap:3px;border:1px dashed #CBD5E1;color:#667085;border-radius:999px;padding:2px 9px;font-size:10px;font-weight:600}
+.lbox .kv{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:#475467}
+.lbox .kv span:first-child{color:var(--ink3)}.lbox .kv span:last-child{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.lbox .rec{font-size:11px;background:#EAF1FF;color:#1D4ED8;border-radius:7px;padding:7px 9px;line-height:1.45}
+.tl{position:relative;margin-left:2px;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#E5EAF0}
+.tl .ti{position:relative;padding:0 0 5px}
+.tl .ti:last-child{padding-bottom:0}
+.tl .ti::before{content:"";position:absolute;left:-19px;top:3px;width:10px;height:10px;border-radius:50%;background:#2563EB;border:2.5px solid #fff;box-sizing:border-box}
+.tl .td{font-size:10px;color:var(--ink3);font-weight:700;font-variant-numeric:tabular-nums}
+.tl .tt{font-size:11px;color:#475467;margin-top:1px;line-height:1.4}
+.tl .view{font-size:10.5px;color:#2563EB;font-weight:600;margin-top:2px;display:inline-block}
 .live-swap{animation:liveSwap .5s cubic-bezier(.2,.7,.2,1)}
 @keyframes liveSwap{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 /* 标注气泡 */
@@ -268,8 +335,8 @@ ul{list-style:none}
 .anno-row .ic svg{width:29px;height:29px}
 .anno-row .tx{font-weight:700;font-size:15.5px;color:var(--navy);line-height:1.4}
 .anno-row .tx small{display:block;font-weight:500;color:var(--gray);font-size:13px;margin-top:5px}
-@media(max-width:1100px){.lead{display:none}.app{grid-template-columns:146px 226px 1fr}}
-@media(max-width:760px){.rail{display:none}.conv{display:none}.app{grid-template-columns:1fr;height:486px}.prod{padding-bottom:36px}.anno-row{grid-template-columns:1fr;gap:24px;margin-top:34px}}
+@media(max-width:1100px){.lead{display:none}.app{grid-template-columns:158px 234px 1fr;height:600px}}
+@media(max-width:760px){.rail{display:none}.conv{display:none}.app{grid-template-columns:1fr;height:520px}.prod{padding-bottom:36px}.anno-row{grid-template-columns:1fr;gap:24px;margin-top:34px}}
 /* 平台图标行 */
 .channels{position:relative;z-index:2;text-align:center;margin-top:50px}
 .channels .row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:26px}
@@ -297,41 +364,75 @@ ul{list-style:none}
         <div class="logo2"><i>W</i>WorkHogee</div>
         <div class="acct"><b><s>S</s>sondio.official</b><small>在 1 个已连接账号间切换</small></div>
         <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>概览</span>
-        <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>实时监控</span>
-        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>账号管理</span>
-        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg>自动回复</span>
+        <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z"/></svg>私信收件箱</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 16 0M7 12a5 5 0 0 1 10 0" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>实时监控</span>
         <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11a3 3 0 1 0 0-6M21.5 20a5.5 5.5 0 0 0-4-5.3"/></svg>线索</span>
-        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z"/></svg>私信收件箱</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg>自动回复</span>
+        <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>账号管理</span>
       </aside>
       <div class="conv">
-        <div class="ch">会话</div>
+        <div class="ch"><span class="tt">会话</span><span class="add">+</span></div>
+        <div class="tabs"><button class="on">全部</button><button>未分配</button><button>机器人</button></div>
         <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>搜索客户、备注或邮箱</div>
-        <div class="item on" id="liveConv">
-          <span class="av c" id="liveAv">CM</span>
-          <div class="bd"><div class="nm"><span id="liveNm">Carlos Méndez</span> <span id="liveTime">刚刚</span></div><div class="pv" id="livePv">Perfect, I'll take 100 units. How do I pay?</div><span class="tag rep" id="liveTag">评论询盘自动回复+私信</span></div>
-        </div>
-        <div class="item">
-          <span class="av m">SL</span>
-          <div class="bd"><div class="nm">Sofía López <span>5个月前</span></div><div class="pv">¿Tienen envío a México? Gracias.</div><span class="tag closed">关键词要链接·自动私信</span></div>
+        <div class="list">
+          <div class="item on" id="liveConv">
+            <span class="av"><span id="liveAv">CM</span><i class="ol"></i><i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm"><span id="liveNm">Carlos Méndez</span><span class="tm">18:23</span></div><div class="pv"><span class="ck"><svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.4L10 2.5"/><path d="M7 9.4l1.2 1L17 1.6"/></svg></span><span id="livePv">Perfect, I'll take 100 units…</span></div><div class="pills" id="livePills"><span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span></div></div>
+            <span class="badge" id="liveBadge">2</span>
+          </div>
+          <div class="item">
+            <span class="av m">EM<i class="ol"></i><i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm">Emma Wilson <span class="tm">18:11</span></div><div class="pv"><span class="ck"><svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.4L10 2.5"/><path d="M7 9.4l1.2 1L17 1.6"/></svg></span>A free demo class for my team?</div><div class="pills"><span class="ptag hi">High Intent</span><span class="ptag demo">Demo Request</span></div></div>
+            <span class="badge">1</span>
+          </div>
+          <div class="item">
+            <span class="av" style="background:linear-gradient(135deg,#F59E0B,#D97706)">CH<i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm">Chris Davis <span class="tm">17:42</span></div><div class="pv">Hi, is this product in stock?</div><div class="pills"><span class="ptag cart">Abandoned Cart</span><span class="ptag val">High Value</span></div></div>
+            <span class="badge">2</span>
+          </div>
+          <div class="item">
+            <span class="av" style="background:linear-gradient(135deg,#7C3AED,#6D28D9)">JC<i class="ol"></i><i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm">James Carter <span class="tm">17:27</span></div><div class="pv"><span class="ck"><svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.4L10 2.5"/><path d="M7 9.4l1.2 1L17 1.6"/></svg></span>Thanks, I'll think about it.</div><div class="pills"><span class="ptag ft">First-Time</span></div></div>
+          </div>
+          <div class="item">
+            <span class="av" style="background:linear-gradient(135deg,#DB2777,#BE185D)">SL<i class="ol"></i><i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm">Sofía López <span class="tm">16:52</span></div><div class="pv"><span class="ck"><svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.4L10 2.5"/><path d="M7 9.4l1.2 1L17 1.6"/></svg></span>¿Tienen envío a México? Gracias.</div><div class="pills"><span class="ptag val">Wholesale</span><span class="ptag ft">Shipping</span></div></div>
+          </div>
+          <div class="item">
+            <span class="av" style="background:linear-gradient(135deg,#0891B2,#0E7490)">MB<i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></i></span>
+            <div class="bd"><div class="nm">Michael Brown <span class="tm">16:30</span></div><div class="pv">Can you send the order link please?</div><div class="pills"><span class="ptag course">Wants Link</span><span class="ptag val">English</span></div></div>
+            <span class="badge">1</span>
+          </div>
         </div>
       </div>
       <div class="chat">
-        <div class="top"><b id="liveName">Carlos Méndez</b><span class="live-dot"><i></i>实时盯盘</span>
-          <div class="tt" id="liveTags"><span class="mini b">询价客户</span><span class="mini b">已下单</span><span class="mini o">高意向</span></div>
+        <div class="top">
+          <span class="tav"><span id="liveTav">CM</span><i class="ol"></i></span>
+          <div class="tn"><b><span id="liveName">Carlos Méndez</span> <span class="live-dot"><i></i>在线</span></b><div class="tt" id="liveTags"><span class="mini b">询价客户</span><span class="mini p">高意向</span><span class="mini b">已下单</span></div></div>
+          <div class="assign"><span class="ai">AI</span>AI 助手已接管<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
-        <div class="thread" id="liveThread">
-          <div class="bubble in">price<span class="tm">5月16日 19:29</span></div>
-          <div class="bubble auto"><span class="auto-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>AI 自动回复</span>Here is the price and order page:<a class="linkbtn" href="#features">查看商品与下单 ↗</a><span class="tm">5月16日 19:30</span></div>
-          <div class="bubble in">Hola, ¿cuál es el precio por mayor para 100 unidades?<span class="tm">5月16日 19:48</span></div>
-          <div class="bubble out">Perfect, I'll take 100 units. How do I pay?<span class="tm">客户回复</span></div>
+        <div class="thread" id="liveThread"></div>
+        <div class="composer">
+          <div class="ctools">
+            <span class="ct ai" title="AI 助手"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg></span>
+            <span class="ct" title="附件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.4 11.05l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="ct" title="表情"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-linecap="round"/><circle cx="9" cy="9.5" r=".8" fill="currentColor"/><circle cx="15" cy="9.5" r=".8" fill="currentColor"/></svg></span>
+            <span class="ct" title="语音"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg></span>
+          </div>
+          <div class="cbox"><span class="ph">输入消息，Enter 发送 · Shift + Enter 换行…</span><span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" stroke-linejoin="round" stroke-linecap="round"/></svg></span></div>
         </div>
       </div>
       <aside class="lead" id="liveLeadCard">
-        <div class="lp"><span class="av c" id="liveLeadAv">CM</span><div><b id="liveLeadName">Carlos Méndez</b><small id="liveHandle">@carlos.shop88</small></div></div>
+        <div class="lp"><span class="av" id="liveLeadAv">CM</span><b id="liveLeadName">Carlos Méndez</b><small id="liveHandle">@carlos.shop88</small><span class="hipill" id="liveHi">High Intent</span></div>
+        <div class="crmrows">
+          <div class="r"><span class="ric" style="background:linear-gradient(45deg,#feda75,#fa7e1e 25%,#d62976 55%,#4f5bd5)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="#fff" stroke="none"/></svg></span><span class="k">渠道</span><span style="margin-left:auto;font-weight:600;color:var(--ink)">Instagram</span></div>
+          <div class="r"><span class="ric" style="background:#EAF1FF;color:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2M11 15a4 4 0 1 1-7.7 1.5M4 19c0-2 2-4 5-4s5 2 5 4" stroke-linecap="round"/><path d="M15 9l4 6M19 9l-4 6" stroke-linecap="round"/></svg></span><span class="k">语言</span><span id="liveLang" style="margin-left:auto;font-weight:600;color:var(--ink)">西班牙语</span></div>
+          <div class="r"><span class="ric" style="background:#E6FAF7;color:#0D9488"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="k">地区</span><span id="liveRegion" style="margin-left:auto;font-weight:600;color:var(--ink)">Mexico</span></div>
+        </div>
         <div class="score"><span class="grade" id="liveGrade">A级</span><span class="num" id="liveScore">90</span><span class="hot" id="liveHot">高意向</span></div>
-        <div class="lbox"><h5>意向判断</h5><div class="p" id="liveIntent">询价 · 想下单 · 正面</div><div class="p" id="liveLang" style="color:var(--gray-2);font-size:11px">语言：西班牙语</div></div>
-        <div class="lbox"><h5>自动回复记录</h5><div class="rec" id="liveRecord">评论询盘自动回复+私信 · 已触发 214 次</div></div>
-        <div class="lbox"><h5>跟进序列</h5><div class="rec" id="liveFollow">询盘跟进 · 进行中</div></div>
+        <div class="lbox"><h5>Lead Details</h5><div class="chips" id="liveCrmTags"><span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span><span class="ptag course">Bulk Order</span><span class="add">+ Add</span></div></div>
+        <div class="lbox"><h5>线索档案</h5><div class="kv"><span>Lead ID</span><span id="liveLeadId">C00012345</span></div><div class="kv"><span>首次联系</span><span id="liveFirst">2026-01-10</span></div><div class="kv"><span>自动回复</span><span id="liveRecord">已触发 214 次</span></div></div>
+        <div class="lbox"><h5>互动历史</h5><div class="tl" id="liveHistory"><div class="ti"><div class="td">05-16 19:48</div><div class="tt">询盘 100 件批发价</div></div><div class="ti"><div class="td">05-16 19:30</div><div class="tt">查看价格与下单链接</div></div><div class="ti"><div class="td">01-10</div><div class="tt">首次评论建立联系</div></div></div><span class="view">View All →</span></div>
       </aside>
     </div>
   </div>
@@ -1278,70 +1379,99 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
 
   /* ---------- Hero 工作台 Live 轮播 ---------- */
   var BOLT='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>';
+  var CK='<svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.4L10 2.5"/><path d="M7 9.4l1.2 1L17 1.6"/></svg>';
+  var AI_MENU='<div class="aimenu"><div class="amh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z" stroke-linejoin="round"/></svg>AI Assistant</div><div class="ami">改变语气<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div><div class="ami">修正语法<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div><div class="ami">总结对话<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>';
+  var ADD='<span class="add">+ Add</span>';
   var SCENES=[
-    {av:'CM',color:'#0D9488',name:'Carlos Méndez',pv:"Perfect, I'll take 100 units. How do I pay?",tagCls:'rep',tag:'评论询盘自动回复+私信',
-     handle:'@carlos.shop88',grade:'A级',score:'90',hot:'高意向',
-     intent:'询价 · 想下单 · 正面',lang:'语言：西班牙语',
-     tags:'<span class="mini b">询价客户</span><span class="mini b">已下单</span><span class="mini o">高意向</span>',
-     rule:'评论询盘自动回复+私信',follow:'询盘跟进 · 进行中',
-     thread:[['in','price','刚刚'],['auto','Here is the price and order page:','查看商品与下单 ↗','AI 秒回'],['in','Hola, ¿cuál es el precio por mayor para 100 unidades?','1分钟前'],['out',"Perfect, I'll take 100 units. How do I pay?",'客户回复']]},
-    {av:'MG',color:'#2563EB',name:'Maria Garcia',pv:'Do you ship to Spain?',tagCls:'closed',tag:'关键词要链接·自动私信',
-     handle:'@maria.g_buy',grade:'B级',score:'74',hot:'要链接',
-     intent:'询价 · 要链接 · 中性',lang:'语言：英语',
-     tags:'<span class="mini b">询价客户</span><span class="mini b">要链接</span><span class="mini b">英语</span>',
-     rule:'关键词要链接·自动私信',follow:'已发链接 · 待回复',
-     thread:[['in','How can I order? Can you send the shop link?','刚刚'],['auto',"Sure! Here's the price list and order link:",'查看商品与下单 ↗','AI 秒回'],['in',"Thanks, I'll check the link now.",'1分钟前'],['out','Do you ship to Spain?','客户回复']]},
-    {av:'JC',color:'#64748B',name:'James Carter',pv:"Thanks, I'll think about it.",tagCls:'rep',tag:'咨询自动回复',
-     handle:'@james.c_deals',grade:'C级',score:'48',hot:'咨询中',
-     intent:'咨询 · 保修发货 · 中性',lang:'语言：英语',
-     tags:'<span class="mini b">咨询客户</span><span class="mini b">保修问题</span>',
-     rule:'咨询自动回复',follow:'常规咨询 · 培育中',
-     thread:[['in','Does this come with a warranty?','刚刚'],['auto','Yes, every unit includes a 12-month warranty. See details:','查看商品与下单 ↗','AI 秒回'],['in','How long is shipping to the US?','1分钟前'],['out',"Thanks, I'll think about it.",'客户回复']]},
-    {av:'EB',color:'#7C3AED',name:'Emilie Boutin',pv:'Parfait, je passe commande.',tagCls:'rep',tag:'评论询盘自动回复+私信',
-     handle:'@emilie.boutique',grade:'B级',score:'74',hot:'要链接',
-     intent:'询价 · 比价 · 正面',lang:'语言：法语',
-     tags:'<span class="mini b">询价客户</span><span class="mini b">法语</span><span class="mini o">批发</span>',
-     rule:'评论询盘自动回复+私信',follow:'已发链接 · 待回复',
-     thread:[['in','Prix pour 50 pièces ?','刚刚'],['auto','Voici le prix de gros et le lien de commande :','查看商品与下单 ↗','AI 秒回'],['in','Avez-vous ce modèle en blanc ?','1分钟前'],['out','Parfait, je passe commande.','客户回复']]}
+    {av:'CM',color:'linear-gradient(135deg,#0D9488,#0F766E)',name:'Carlos Méndez',pv:"Perfect, I'll take 100 units…",badge:2,day:'2026-05-16',
+     pills:'<span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span>',
+     handle:'@carlos.shop88',hi:'High Intent',lang:'西班牙语',region:'Mexico',
+     grade:'A级',score:'90',hot:'高意向',
+     topTags:'<span class="mini b">询价客户</span><span class="mini p">高意向</span><span class="mini b">已下单</span>',
+     crmTags:'<span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span><span class="ptag course">Bulk Order</span>'+ADD,
+     leadId:'C00012345',firstContact:'2026-01-10',
+     history:[['05-16 19:48','询盘 100 件批发价'],['05-16 19:30','查看价格与下单链接'],['01-10','首次评论建立联系']],
+     thread:[['in','Hola, ¿cuál es el precio por mayor para 100 unidades?','19:29'],['auto','¡Perfecto! Aquí tienes el precio de mayor y el enlace de pedido:','查看商品与下单 ↗','19:30 · AI 秒回',true],['in',"Perfect, I'll take 100 units. How do I pay?",'19:48'],['out','¡Gracias! Te envío la factura proforma en 5 minutos.','19:50 · 已读']]},
+    {av:'MG',color:'linear-gradient(135deg,#2563EB,#1D4ED8)',name:'Maria Garcia',pv:'Do you ship to Spain?',badge:1,day:'2026-05-15',
+     pills:'<span class="ptag course">Wants Link</span><span class="ptag ft">Shipping</span>',
+     handle:'@maria.g_buy',hi:'要链接',lang:'英语',region:'Spain',
+     grade:'B级',score:'74',hot:'要链接',
+     topTags:'<span class="mini b">询价客户</span><span class="mini g">要链接</span>',
+     crmTags:'<span class="ptag course">Wants Link</span><span class="ptag ft">Shipping</span><span class="ptag val">English</span>'+ADD,
+     leadId:'C00012346',firstContact:'2026-02-14',
+     history:[['05-15 14:08','询问能否发往西班牙'],['05-15 14:02','索要店铺下单链接'],['02-14','首次评论建立联系']],
+     thread:[['in','How can I order? Can you send the shop link?','14:02'],['auto',"Sure! Here's the price list and order link:",'查看商品与下单 ↗','14:02 · AI 秒回'],['in','Thanks, I\'ll check the link now. Do you ship to Spain?','14:08'],['out','Yes, we ship to Spain, delivery in 7-12 days.','14:10 · 已读']]},
+    {av:'JC',color:'linear-gradient(135deg,#64748B,#475569)',name:'James Carter',pv:"Thanks, I'll think about it.",badge:0,day:'2026-05-14',
+     pills:'<span class="ptag ft">First-Time</span><span class="ptag course">Warranty</span>',
+     handle:'@james.c_deals',hi:'咨询中',lang:'英语',region:'United States',
+     grade:'C级',score:'48',hot:'咨询中',
+     topTags:'<span class="mini b">咨询客户</span><span class="mini g">保修问题</span>',
+     crmTags:'<span class="ptag course">Warranty</span><span class="ptag ft">First-Time</span>'+ADD,
+     leadId:'C00012347',firstContact:'2026-03-02',
+     history:[['05-14 11:26','询问美国物流时效'],['05-14 11:20','咨询保修政策'],['03-02','首次评论建立联系']],
+     thread:[['in','Does this come with a warranty?','11:20'],['auto','Yes, every unit includes a 12-month warranty. See details:','查看商品与下单 ↗','11:20 · AI 秒回'],['in','How long is shipping to the US?','11:26'],['out','Standard shipping to the US takes 5-8 days.','11:28 · 已读']]},
+    {av:'EB',color:'linear-gradient(135deg,#7C3AED,#6D28D9)',name:'Emilie Boutin',pv:'Parfait, je passe commande.',badge:3,day:'2026-05-13',
+     pills:'<span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span>',
+     handle:'@emilie.boutique',hi:'High Intent',lang:'法语',region:'France',
+     grade:'B级',score:'74',hot:'要链接',
+     topTags:'<span class="mini b">询价客户</span><span class="mini p">高意向</span><span class="mini o">批发</span>',
+     crmTags:'<span class="ptag hi">High Intent</span><span class="ptag val">Wholesale</span><span class="ptag demo">French</span>'+ADD,
+     leadId:'C00012348',firstContact:'2026-03-20',
+     history:[['05-13 16:12','询问是否有白色款'],['05-13 16:05','询盘 50 件批发价'],['03-20','首次评论建立联系']],
+     thread:[['in','Prix pour 50 pièces ?','16:05'],['auto','Voici le prix de gros et le lien de commande :','查看商品与下单 ↗','16:05 · AI 秒回'],['in','Avez-vous ce modèle en blanc ?','16:12'],['out','Oui, le blanc est disponible. Je vous réserve 50 pièces.','16:15 · 已读']]}
   ];
-  var live={conv:document.getElementById('liveConv'),av:document.getElementById('liveAv'),nm:document.getElementById('liveNm'),time:document.getElementById('liveTime'),pv:document.getElementById('livePv'),tag:document.getElementById('liveTag'),
+  var live={conv:document.getElementById('liveConv'),av:document.getElementById('liveAv'),tav:document.getElementById('liveTav'),nm:document.getElementById('liveNm'),pv:document.getElementById('livePv'),pills:document.getElementById('livePills'),badge:document.getElementById('liveBadge'),
     name:document.getElementById('liveName'),tags:document.getElementById('liveTags'),thread:document.getElementById('liveThread'),
-    lav:document.getElementById('liveLeadAv'),lname:document.getElementById('liveLeadName'),handle:document.getElementById('liveHandle'),
+    lav:document.getElementById('liveLeadAv'),lname:document.getElementById('liveLeadName'),handle:document.getElementById('liveHandle'),hi:document.getElementById('liveHi'),
     grade:document.getElementById('liveGrade'),score:document.getElementById('liveScore'),hot:document.getElementById('liveHot'),
-    intent:document.getElementById('liveIntent'),lang:document.getElementById('liveLang'),record:document.getElementById('liveRecord'),follow:document.getElementById('liveFollow')};
+    lang:document.getElementById('liveLang'),region:document.getElementById('liveRegion'),crmTags:document.getElementById('liveCrmTags'),
+    leadId:document.getElementById('liveLeadId'),first:document.getElementById('liveFirst'),record:document.getElementById('liveRecord'),history:document.getElementById('liveHistory')};
   var liveIdx=0,triggered=214;
+  function historyHTML(s){return s.history.map(function(h){return '<div class="ti"><div class="td">'+h[0]+'</div><div class="tt">'+h[1]+'</div></div>';}).join('');}
   function threadHTML(s){
-    return s.thread.map(function(m){
+    var h='<div class="daysep">'+s.day+'</div>';
+    s.thread.forEach(function(m){
       if(m[0]==='auto'){
-        return '<div class="bubble auto"><span class="auto-label">'+BOLT+'AI 自动回复</span>'+m[1]+'<a class="linkbtn" href="#features">'+m[2]+'</a><span class="tm">'+m[3]+'</span></div>';
+        h+='<div class="mrow"><span class="mav" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">AI</span><div style="min-width:0"><div class="bubble auto"><span class="auto-label">'+BOLT+'AI 自动回复</span>'+m[1]+'<a class="linkbtn" href="#features">'+m[2]+'</a><div class="tm">'+m[3]+'</div></div>'+(m[4]?AI_MENU:'')+'</div></div>';
+      }else if(m[0]==='in'){
+        h+='<div class="mrow"><span class="mav" style="background:'+s.color+'">'+s.av+'</span><div class="bubble in">'+m[1]+'<div class="tm">'+m[2]+'</div></div></div>';
+      }else{
+        h+='<div class="mrow me"><div class="bubble out">'+m[1]+'<div class="tm">'+CK+' '+m[2]+'</div></div></div>';
       }
-      return '<div class="bubble '+m[0]+'">'+m[1]+'<span class="tm">'+m[2]+'</span></div>';
-    }).join('');
+    });
+    return h;
   }
   function swap(el){if(!el)return;el.classList.remove('live-swap');void el.offsetWidth;el.classList.add('live-swap');}
+  function setParentBg(el,c){if(el&&el.parentElement)el.parentElement.style.background=c;}
   function renderScene(idx,anim){
     var s=SCENES[idx];if(!s)return;
     triggered+=1;
-    if(live.av){live.av.textContent=s.av;live.av.style.background=s.color;}
+    if(live.av){live.av.textContent=s.av;setParentBg(live.av,s.color);}
+    if(live.tav){live.tav.textContent=s.av;setParentBg(live.tav,s.color);}
     if(live.nm)live.nm.textContent=s.name;
-    if(live.time)live.time.textContent='刚刚';
     if(live.pv)live.pv.textContent=s.pv;
-    if(live.tag){live.tag.className='tag '+s.tagCls;live.tag.textContent=s.tag;}
+    if(live.pills)live.pills.innerHTML=s.pills;
+    if(live.badge){if(s.badge>0){live.badge.textContent=s.badge;live.badge.style.display='flex';}else{live.badge.style.display='none';}}
     if(live.name)live.name.textContent=s.name;
-    if(live.tags)live.tags.innerHTML=s.tags;
+    if(live.tags)live.tags.innerHTML=s.topTags;
     if(live.thread)live.thread.innerHTML=threadHTML(s);
     if(live.lav){live.lav.textContent=s.av;live.lav.style.background=s.color;}
     if(live.lname)live.lname.textContent=s.name;
     if(live.handle)live.handle.textContent=s.handle;
+    if(live.hi)live.hi.textContent=s.hi;
     if(live.grade)live.grade.textContent=s.grade;
     if(live.score)live.score.textContent=s.score;
     if(live.hot)live.hot.textContent=s.hot;
-    if(live.intent)live.intent.textContent=s.intent;
     if(live.lang)live.lang.textContent=s.lang;
-    if(live.record)live.record.textContent=s.rule+' · 已触发 '+triggered+' 次';
-    if(live.follow)live.follow.textContent=s.follow;
+    if(live.region)live.region.textContent=s.region;
+    if(live.crmTags)live.crmTags.innerHTML=s.crmTags;
+    if(live.leadId)live.leadId.textContent=s.leadId;
+    if(live.first)live.first.textContent=s.firstContact;
+    if(live.record)live.record.textContent='已触发 '+triggered+' 次';
+    if(live.history)live.history.innerHTML=historyHTML(s);
     if(anim){swap(live.conv);swap(live.thread);swap(document.getElementById('liveLeadCard'));}
   }
+  renderScene(0,false);
   if(!REDUCED&&live.thread){
     var livePaused=false,browserEl=$('.prod .browser');
     if(browserEl){
@@ -1356,6 +1486,36 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
       },4200);
     },1900);
   }
+
+  /* 仿真图：会话筛选 tabs 与会话项点击切换（真实视觉交互） */
+  (function(){
+    var demoConv=document.querySelector('.prod .browser .conv');
+    if(!demoConv)return;
+    var demoTabs=demoConv.querySelector('.tabs'),demoList=demoConv.querySelector('.list');
+    if(demoTabs){
+      demoTabs.addEventListener('click',function(e){
+        var b=e.target.closest('button');if(!b)return;
+        demoTabs.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
+        b.classList.add('on');
+      });
+    }
+    if(demoList){
+      demoList.addEventListener('click',function(e){
+        var it=e.target.closest('.item');if(!it)return;
+        demoList.querySelectorAll('.item').forEach(function(x){x.classList.remove('on');});
+        it.classList.add('on');
+      });
+    }
+    var demoBrowser=document.querySelector('.prod .browser');
+    if(demoBrowser){
+      demoBrowser.addEventListener('mouseleave',function(){
+        if(demoList){var live=demoList.querySelector('#liveConv');
+          if(live){demoList.querySelectorAll('.item').forEach(function(x){x.classList.remove('on');});live.classList.add('on');}}
+        if(demoTabs){var first=demoTabs.querySelector('button');
+          if(first){demoTabs.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});first.classList.add('on');}}
+      });
+    }
+  })();
 
   /* ---------- AI 处理实录轮播 ---------- */
   var carousel=document.getElementById('logCarousel');
