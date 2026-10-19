@@ -54,8 +54,20 @@ ul{list-style:none}
 /* ===== 公告条 ===== */
 .announce{position:relative;z-index:120;background:linear-gradient(90deg,#FFE64A,#FFD400);color:#3d2b00;overflow:hidden}
 .announce-inner{display:flex;align-items:center;justify-content:center;gap:12px;height:42px;font-size:14px;font-weight:600;text-align:center;padding:0 16px}
-.announce .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(17,25,54,.92);color:#fff;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:999px;white-space:nowrap}
+.announce .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(17,25,54,.92);color:#fff;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;line-height:1.4;transition:background .2s ease,transform .15s ease}
+.announce .pill:hover{background:rgba(17,25,54,1)}
+.announce .pill:active{transform:scale(.96)}
 .announce .pill svg{width:13px;height:13px}
+/* 视频弹窗 */
+.video-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,14,26,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.video-modal.open{display:flex;animation:vmFade .25s ease}
+@keyframes vmFade{from{opacity:0}to{opacity:1}}
+.video-modal .vm-box{position:relative;width:min(1060px,94vw);background:#000;border-radius:14px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:vmPop .28s cubic-bezier(.2,.8,.25,1)}
+@keyframes vmPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.video-modal .vm-box video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}
+.video-modal .vm-close{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:none;background:rgba(10,14,26,.55);color:#fff;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s ease}
+.video-modal .vm-close:hover{background:rgba(10,14,26,.8)}
+@media(max-width:640px){.video-modal{padding:0;background:rgba(10,14,26,.92)}.video-modal .vm-box{width:100%;border-radius:0}}
 .announce a{color:#1d4ed8;font-weight:800;border-bottom:1.5px solid rgba(29,78,216,.4);white-space:nowrap}
 .announce a:hover{border-color:#1d4ed8}
 .confetti{position:absolute;inset:0;pointer-events:none;opacity:.55}
@@ -125,12 +137,23 @@ ul{list-style:none}
 <div class="announce">
   <span class="confetti" id="confetti" aria-hidden="true"></span>
   <div class="announce-inner">
-    <span class="pill">
+    <button class="pill" id="promoBtn" type="button" aria-haspopup="dialog" aria-controls="promoModal">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       点击观看
-    </span>
+    </button>
     <span class="hide-sm">1 分钟看懂 AI 评论盯盘如何帮你接住每一条询盘</span>
     <a href="https://app.workhogee.com/signin">内测期免费开通，立即开始 ›</a>
+  </div>
+</div>
+
+<!-- ===== 宣传片弹窗 ===== -->
+<div class="video-modal" id="promoModal" role="dialog" aria-modal="true" aria-label="WorkHogee 产品宣传片" hidden>
+  <div class="vm-box">
+    <button class="vm-close" type="button" id="promoClose" aria-label="关闭">&times;</button>
+    <video id="promoVideo" controls preload="none" playsinline poster="images/promo-poster.jpg">
+      <source src="video/workhogee-promo.mp4" type="video/mp4">
+      您的浏览器不支持视频播放，请直接访问 <a href="https://app.workhogee.com">app.workhogee.com</a>。
+    </video>
   </div>
 </div>
 
@@ -1582,6 +1605,33 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
     swFab.addEventListener('click',function(){setOpen(swCard.classList.contains('hidden'));});
     if(swClose)swClose.addEventListener('click',function(){setOpen(false);});
   }
+
+  /* ---------- 宣传片视频弹窗 ---------- */
+  var promoBtn=document.getElementById('promoBtn'),
+      promoModal=document.getElementById('promoModal'),
+      promoClose=document.getElementById('promoClose'),
+      promoVideo=document.getElementById('promoVideo');
+  function openPromo(){
+    if(!promoModal)return;
+    promoModal.hidden=false;
+    void promoModal.offsetWidth;
+    promoModal.classList.add('open');
+    document.body.style.overflow='hidden';
+    if(promoVideo){promoVideo.currentTime=0;var pr=promoVideo.play();if(pr&&pr.catch)pr.catch(function(){});}
+  }
+  function closePromo(){
+    if(!promoModal)return;
+    promoModal.classList.remove('open');
+    document.body.style.overflow='';
+    if(promoVideo){promoVideo.pause();promoVideo.currentTime=0;}
+    setTimeout(function(){promoModal.hidden=true;},250);
+  }
+  if(promoBtn)promoBtn.addEventListener('click',openPromo);
+  if(promoClose)promoClose.addEventListener('click',closePromo);
+  if(promoModal)promoModal.addEventListener('click',function(e){if(e.target===promoModal)closePromo();});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&promoModal&&promoModal.classList.contains('open'))closePromo();
+  });
 })();
 </script>
 </body>
