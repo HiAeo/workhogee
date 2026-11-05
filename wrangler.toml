@@ -1,0 +1,13 @@
+# WorkHogee 官网（Cloudflare Pages，Direct Upload）+ 在线客服 Pages Functions / D1
+# 本文件位于静态站根目录，与 server-cloudflare/wrangler.toml（独立 Worker：workhogee-image-api）互不影响。
+# 直传发布仍使用 `wrangler pages deploy <干净目录>`，本文件主要声明 D1 绑定并供本地 `pages dev` 使用。
+name = "workhogee"
+compatibility_date = "2025-06-01"
+
+# 客服消息库。binding 名称与 functions/api/support/*.js 中的 env.DB 对应。
+[[d1_databases]]
+binding = "DB"
+database_name = "workhogee-support"
+# 云端真实库 id（#729 已创建 workhogee-support，region WNAM）。
+# 本地 pages dev / d1 --local 仍模拟到 --persist-to 目录，不会访问该云端库。
+database_id = "f1bad44e-cc90-419c-9888-efa053d96e0a"

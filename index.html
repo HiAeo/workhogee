@@ -1202,23 +1202,51 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
   </div>
 </footer>
 <style>
-/* ===== Support Widget ===== */
+/* ===== Support Chat Widget ===== */
 .support-widget{position:fixed;right:20px;bottom:22px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:13px}
-.sw-card{width:314px;max-width:calc(100vw - 40px);background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 28px 64px -20px rgba(10,16,32,.45);overflow:hidden;transform-origin:bottom right;transition:opacity .28s ease,transform .28s cubic-bezier(.2,.9,.3,1.3)}
+.sw-card{width:332px;max-width:calc(100vw - 28px);height:min(564px,calc(100vh - 116px));background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 28px 64px -20px rgba(10,16,32,.45);overflow:hidden;transform-origin:bottom right;transition:opacity .28s ease,transform .28s cubic-bezier(.2,.9,.3,1.3);display:flex;flex-direction:column}
 .sw-card.hidden{opacity:0;transform:translateY(14px) scale(.92);pointer-events:none}
-.sw-head{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.sw-head{flex:none;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;padding:15px 16px;display:flex;align-items:center;gap:11px}
 .sw-head .swav{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
 .sw-head .swt{font-size:15px;font-weight:800;line-height:1.3}
-.sw-head .sws{font-size:12px;color:#C9DAFF;display:flex;align-items:center;gap:5px}
+.sw-head .sws{font-size:11.5px;color:#C9DAFF;display:flex;align-items:center;gap:5px;margin-top:2px}
 .sw-head .sws i{width:7px;height:7px;border-radius:50%;background:#4ADE80}
 .sw-close{margin-left:auto;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);border:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
 .sw-close:hover{background:rgba(255,255,255,.28)}
-.sw-body{padding:18px 20px 20px}
-.sw-body .sw-msg{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;border-top-left-radius:4px;padding:12px 14px;font-size:13.5px;color:var(--text);line-height:1.7;margin-bottom:14px}
-.sw-actions{display:flex;flex-direction:column;gap:9px}
-.sw-actions .btn{height:44px;font-size:14px;border-radius:10px}
-.sw-actions .sw-mail{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12.5px;color:var(--gray);margin-top:4px}
-.sw-actions .sw-mail svg{width:14px;height:14px;color:var(--blue)}
+.sw-thread{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:15px 14px;display:flex;flex-direction:column;gap:9px;background:#F8FAFC}
+.sw-msg{display:flex;flex-direction:column;max-width:84%;animation:swIn .22s ease both}
+.sw-msg.bot{align-self:flex-start;align-items:flex-start}
+.sw-msg.me{align-self:flex-end;align-items:flex-end}
+.sw-msg .bubble{padding:9px 12px;font-size:13.5px;line-height:1.62;border-radius:14px;word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap;box-shadow:0 1px 2px rgba(10,16,32,.05)}
+.sw-msg.bot .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;color:#1F2937}
+.sw-msg.me .bubble{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border-top-right-radius:4px}
+.sw-msg .m-meta{font-size:10px;color:#98A2B3;margin-top:3px;padding:0 3px;display:flex;align-items:center;gap:5px}
+.sw-msg.me .m-meta{color:#7B8AA0}
+.sw-msg .m-retry{border:0;background:none;color:#DC2626;font-size:10px;cursor:pointer;padding:0;font-weight:600}
+.b-acts{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+.b-acts a{display:block;text-align:center;height:36px;line-height:36px;border-radius:9px;font-size:12.5px;font-weight:700;text-decoration:none}
+.b-acts a.ba-primary{background:#2563EB;color:#fff}
+.b-acts a.ba-primary:hover{background:#1D4ED8}
+.b-acts a.ba-ghost{border:1px solid #BFDBFE;color:#1D4ED8;background:#F5F9FF}
+.b-acts a.ba-ghost:hover{background:#EFF6FF}
+.sw-typing{display:inline-flex;gap:4px;align-items:center;padding:11px 13px;background:#fff;border:1px solid var(--line);border-radius:14px;border-top-left-radius:4px;align-self:flex-start}
+.sw-typing span{width:7px;height:7px;border-radius:50%;background:#9AA7B8;animation:swBlink 1.1s infinite ease both}
+.sw-typing span:nth-child(2){animation-delay:.18s}
+.sw-typing span:nth-child(3){animation-delay:.36s}
+@keyframes swBlink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+@keyframes swIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sw-quick{flex:none;display:flex;flex-wrap:wrap;gap:7px;padding:10px 12px 0;background:#F8FAFC}
+.sw-quick .chip{border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1.2}
+.sw-quick .chip:hover{background:#DBEAFE}
+.sw-composer{flex:none;display:flex;align-items:flex-end;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid var(--line)}
+.sw-input{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:13.5px;line-height:1.5;max-height:92px;min-height:40px;font-family:inherit;background:#F8FAFC;color:#1F2937}
+.sw-input:focus{outline:none;border-color:#2563EB;background:#fff}
+.sw-send{flex:none;width:40px;height:40px;border-radius:11px;border:0;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sw-send:disabled{opacity:.45;cursor:not-allowed}
+.sw-send svg{width:19px;height:19px}
+.sw-foot{flex:none;background:#fff;text-align:center;padding:2px 12px 9px}
+.sw-foot a{font-size:11.5px;color:var(--gray);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.sw-foot a svg{width:13px;height:13px;color:var(--blue)}
 .sw-fab{width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;box-shadow:0 16px 32px -10px rgba(37,99,235,.7);display:flex;align-items:center;justify-content:center;transition:transform .3s cubic-bezier(.2,.9,.3,1.5);position:relative}
 .sw-fab:hover{transform:scale(1.08) rotate(4deg)}
 .sw-fab svg{width:27px;height:27px}
@@ -1227,31 +1255,31 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
 .sw-fab.open .ic-close{display:block}
 .sw-fab .swdot{position:absolute;top:4px;right:5px;width:13px;height:13px;border-radius:50%;background:#EF4444;border:2px solid #fff}
 .sw-fab.open .swdot{display:none}
-@media(max-width:600px){.support-widget{right:14px;bottom:14px}.sw-card{width:calc(100vw - 28px)}}
+@media(max-width:600px){.support-widget{right:14px;bottom:14px}.sw-card{width:calc(100vw - 28px);height:min(620px,calc(100vh - 96px))}}
+@media(prefers-reduced-motion:reduce){.sw-msg,.sw-typing span{animation:none}.sw-card,.sw-fab{transition:none}}
 </style>
 <div class="support-widget" id="supportWidget">
-  <div class="sw-card hidden" id="swCard">
+  <div class="sw-card hidden" id="swCard" role="dialog" aria-label="WorkHogee 在线支持对话" aria-hidden="true">
     <div class="sw-head">
-      <span class="swav">W</span>
+      <span class="swav" aria-hidden="true">W</span>
       <div>
         <div class="swt">WorkHogee 在线支持</div>
-        <div class="sws"><i></i>工作日通常很快回复</div>
+        <div class="sws"><i aria-hidden="true"></i>工作日通常很快回复</div>
       </div>
-      <button class="sw-close" id="swClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+      <button class="sw-close" id="swClose" type="button" aria-label="关闭聊天"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
     </div>
-    <div class="sw-body">
-      <div class="sw-msg">你好，我是 WorkHogee。想看看怎么替你盯 Instagram 评论？可以预约演示，或直接免费开始用。</div>
-      <div class="sw-actions">
-        <a class="btn btn-primary" href="mailto:support@workhogee.com">预约演示</a>
-        <a class="btn btn-ghost" href="https://app.workhogee.com/signin">免费开始</a>
-        <a class="sw-mail" href="mailto:support@workhogee.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>support@workhogee.com</a>
-      </div>
+    <div class="sw-thread" id="swThread" role="log" aria-live="polite" aria-label="客服对话消息"></div>
+    <div class="sw-quick" id="swQuick"></div>
+    <div class="sw-composer">
+      <textarea class="sw-input" id="swInput" rows="1" maxlength="2000" placeholder="输入消息，Enter 发送" aria-label="输入客服消息"></textarea>
+      <button class="sw-send" id="swSend" type="button" aria-label="发送消息" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
     </div>
+    <div class="sw-foot"><a href="mailto:support@workhogee.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>support@workhogee.com</a></div>
   </div>
-  <button class="sw-fab" id="swFab" aria-label="在线支持">
+  <button class="sw-fab" id="swFab" type="button" aria-label="打开在线支持" aria-controls="swCard" aria-expanded="false">
     <svg class="ic-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12z" stroke-linejoin="round"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke-linecap="round"/></svg>
     <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
-    <span class="swdot"></span>
+    <span class="swdot" id="swDot"></span>
   </button>
 </div>
 <script>
@@ -1588,17 +1616,119 @@ table.ct{width:100%;border-collapse:collapse;font-size:12.5px}
     window.addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(recalc,200);});
   }
 
-  /* ---------- 右侧客服浮窗 ---------- */
-  var swFab=document.getElementById('swFab'),swCard=document.getElementById('swCard'),swClose=document.getElementById('swClose');
-  if(swFab&&swCard){
-    function setOpen(o){
-      swCard.classList.toggle('hidden',!o);
-      swFab.classList.toggle('open',o);
-      swFab.setAttribute('aria-expanded',o?'true':'false');
+  /* ---------- 右侧在线客服（真实对话版） ---------- */
+  (function(){
+    var fab=document.getElementById('swFab'),card=document.getElementById('swCard'),closeBtn=document.getElementById('swClose'),
+        thread=document.getElementById('swThread'),quickBox=document.getElementById('swQuick'),
+        input=document.getElementById('swInput'),sendBtn=document.getElementById('swSend'),dot=document.getElementById('swDot');
+    if(!fab||!card||!thread||!input||!sendBtn)return;
+    var STORE_KEY='whg_support_v1', POST_URL='/api/support/message', HISTORY_URL='/api/support/history?sid=',
+        MAXLEN=2000, reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        EMAIL_RE=/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i, lastSentAt=0, backendOff=false, replying=false;
+    var ACTIONS={
+      demo:{label:'预约演示',href:'mailto:support@workhogee.com'},
+      start:{label:'免费开始',href:'https://app.workhogee.com/signin'}
+    };
+    var QUICK=['怎么盯 Instagram 评论？','怎么收费？','如何预约演示？','免费开始使用'];
+    var WELCOME='你好，我是 WorkHogee 在线助手。想了解怎么自动盯 Instagram 评论、如何收费，或预约演示、免费开始，都可以直接输入，也可以点下面的常见问题。';
+    function uid(p){return p+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+    function sid(){if(window.crypto&&crypto.randomUUID){try{return crypto.randomUUID();}catch(e){}}return uid('s');}
+    function hm(t){var d=new Date(t);function p(n){return(n<10?'0':'')+n;}return p(d.getHours())+':'+p(d.getMinutes());}
+    function load(){try{var raw=localStorage.getItem(STORE_KEY);if(raw){var o=JSON.parse(raw);if(o&&o.sid&&o.msgs)return o;}}catch(e){}return null;}
+    var persisted=load();
+    var state=persisted||{v:1,sid:sid(),email:'',msgs:[]};
+    function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){}}
+    function escHref(h){return /^https:\/\/app\.workhogee\.com\/[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]*$/.test(h)||/^mailto:support@workhogee\.com(\?.*)?$/.test(h)?h:'';}
+    function scrollBottom(){thread.scrollTop=thread.scrollHeight;}
+    function buildActions(keys,into){
+      if(!keys||!keys.length)return;
+      var wrap=document.createElement('div');wrap.className='b-acts';
+      for(var i=0;i<keys.length;i++){var a0=ACTIONS[keys[i]];if(!a0)continue;var href=escHref(a0.href);if(!href)continue;
+        var a=document.createElement('a');a.className=i===0?'ba-primary':'ba-ghost';a.textContent=a0.label;a.href=href;
+        if(/^https:/.test(href)){a.target='_blank';a.rel='noopener';}
+        wrap.appendChild(a);}
+      if(wrap.children.length)into.appendChild(wrap);
     }
-    swFab.addEventListener('click',function(){setOpen(swCard.classList.contains('hidden'));});
-    if(swClose)swClose.addEventListener('click',function(){setOpen(false);});
-  }
+    function renderMsg(m){
+      var row=document.createElement('div');row.className='sw-msg '+(m.role==='me'?'me':'bot');row.dataset.id=m.id;
+      var b=document.createElement('div');b.className='bubble';b.textContent=m.text;row.appendChild(b);
+      if(m.actions&&m.actions.length)buildActions(m.actions,row);
+      var meta=document.createElement('div');meta.className='m-meta';
+      var ts=document.createElement('span');ts.textContent=hm(m.ts);meta.appendChild(ts);
+      if(m.role==='me'&&m.status==='pending'){var r=document.createElement('button');r.type='button';r.className='m-retry';r.textContent='未送达 · 重试';r.addEventListener('click',function(){flushOne(m);});meta.appendChild(r);}
+      if(m.role==='me'&&m.status==='sending'){var s=document.createElement('span');s.textContent='发送中…';meta.appendChild(s);}
+      row.appendChild(meta);thread.appendChild(row);
+    }
+    function renderAll(){thread.innerHTML='';for(var i=0;i<state.msgs.length;i++)renderMsg(state.msgs[i]);scrollBottom();}
+    function typing(){var t=document.createElement('div');t.className='sw-typing';t.id='swTyping';for(var i=0;i<3;i++){var sp=document.createElement('span');t.appendChild(sp);}thread.appendChild(t);scrollBottom();return t;}
+    function renderQuick(){quickBox.innerHTML='';for(var i=0;i<QUICK.length;i++){(function(q){var c=document.createElement('button');c.type='button';c.className='chip';c.textContent=q;c.addEventListener('click',function(){onUserSend(q);});quickBox.appendChild(c);})(QUICK[i]);}}
+    function setDot(on){if(dot)dot.style.display=on?'block':'none';}
+    function setOpen(o){
+      card.classList.toggle('hidden',!o);fab.classList.toggle('open',o);
+      card.setAttribute('aria-hidden',o?'false':'true');fab.setAttribute('aria-expanded',o?'true':'false');
+      if(o){setDot(false);pullHistory();setTimeout(function(){try{input.focus();}catch(e){}},120);}
+    }
+    function botReply(text){
+      var t=text.toLowerCase(),out={text:'',actions:[]};
+      var m0=text.match(EMAIL_RE);
+      if(m0){state.email=m0[0];save();out.text='已记下你的邮箱 '+m0[0]+'。我们工作日会通过它回复你，你也可以直接把问题或需求继续发在这里。';out.actions=['demo'];return out;}
+      if(/收费|价格|多少钱|费用|报价|pricing|price|cost/.test(t)){out.text='WorkHogee 现在可以免费注册开始使用；具体方案会根据你托管的 Instagram 账号数量和自动化规模有所不同。预约一次演示，我们会按你的实际场景给出方案和报价。';out.actions=['demo','start'];return out;}
+      if(/评论|盯|自动回复|关键词|功能|能做|怎么用|如何用|comment|怎么回事|干嘛/.test(t)){out.text='WorkHogee 通过 Meta 官方接口接入 Instagram 专业账号，主要能做：1）评论自动回复并把用户转入私信；2）关键词私信触发；3）定时跟进序列；4）统一查看联系人与会话记录。全程只走官方 Graph API，不做任何非官方操作。';out.actions=['start','demo'];return out;}
+      if(/私信|收件箱|inbox|\bdm\b|消息|对话/.test(t)){out.text='Instagram 私信和评论会汇总到统一会话收件箱，可查看完整联系人历史、自动回复并安排跟进，注册后在工作台收件箱即可体验。';out.actions=['start'];return out;}
+      if(/演示|预约|demo|联系|人工|客服|真人|邮箱|邮件|agent/.test(t)){out.text='预约演示请发邮件到 support@workhogee.com，留下你的 Instagram 账号和需求，我们工作日会很快联系你；想立刻体验也可以直接免费注册。';out.actions=['demo','start'];return out;}
+      if(/注册|登录|免费|开始|试用|账号|sign\s?in|sign up|注册/.test(t)){out.text='点击下面按钮即可免费注册，并连接你的 Instagram 专业账号开始使用。';out.actions=['start'];return out;}
+      if(/安全|封号|合规|官方|api|风险|授权|密码|违规/.test(t)){out.text='WorkHogee 只通过 Meta 官方 Graph API 与官方登录授权接入，不保存你的账号密码、不做任何非官方操作，符合平台规则；你也可以随时在 Meta 设置中撤销授权。';out.actions=['start'];return out;}
+      out.text='这个问题我还在学习中，暂时不能完整回答。你可以点下方常见问题，或把邮箱和需求留在这里，也可以发邮件到 support@workhogee.com，我们工作日会人工回复你。';out.actions=['demo'];return out;
+    }
+    function addBot(text,actions){var m={id:uid('b'),role:'bot',text:text,actions:actions||[],ts:Date.now(),local:true};state.msgs.push(m);save();renderMsg(m);if(!card.classList.contains('hidden'))scrollBottom();else setDot(true);}
+    function onUserSend(raw){
+      var text=(raw||'').replace(/\s+$/,'');if(!text||replying)return;
+      text=text.slice(0,MAXLEN);
+      var now=Date.now();if(now-lastSentAt<500)return;lastSentAt=now;
+      var m={id:uid('m'),role:'me',text:text,ts:now,status:'sending'};state.msgs.push(m);save();renderMsg(m);scrollBottom();
+      input.value='';input.style.height='auto';syncSendDisabled();
+      flushOne(m);
+      replying=true;var ty=typing();
+      setTimeout(function(){if(ty&&ty.parentNode)ty.parentNode.removeChild(ty);var r=botReply(text);addBot(r.text,r.actions);replying=false;save();},reduced?30:480);
+    }
+    function asJson(res){var ct=res.headers.get('content-type')||'';if(ct.indexOf('application/json')===-1)return null;return res.json().catch(function(){return null;});}
+    function flushOne(m){
+      if(backendOff||m.status==='sent')return Promise.resolve();
+      m.status='sending';var el=thread.querySelector('[data-id="'+m.id+'"]');if(el){var old=thread.querySelector('[data-id="'+m.id+'"] .m-meta');if(old)old.remove();renderMeta(m,el);}
+      var payload=JSON.stringify({cid:m.id,sid:state.sid,text:m.text,email:state.email||'',path:location.pathname,ts:m.ts});
+      if(!window.fetch){m.status='pending';save();return Promise.resolve();}
+      var ctrl=window.AbortController?new AbortController():null,timer=ctrl?setTimeout(function(){try{ctrl.abort();}catch(e){}},8000):null;
+      return fetch(POST_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:payload,signal:ctrl?ctrl.signal:undefined,credentials:'same-origin'}).then(function(res){if(timer)clearTimeout(timer);if(!res.ok){m.status='pending';save();refreshEl(m);return;}return asJson(res).then(function(j){if(j&&j.ok===true){m.status='sent';}else{backendOff=true;m.status='pending';}save();refreshEl(m);});}).catch(function(){if(timer)clearTimeout(timer);m.status='pending';save();refreshEl(m);});
+    }
+    function renderMeta(m,el){var meta=document.createElement('div');meta.className='m-meta';var ts=document.createElement('span');ts.textContent=hm(m.ts);meta.appendChild(ts);if(m.status==='pending'){var r=document.createElement('button');r.type='button';r.className='m-retry';r.textContent='未送达 · 重试';r.addEventListener('click',function(){backendOff=false;flushOne(m);});meta.appendChild(r);}if(m.status==='sending'){var s=document.createElement('span');s.textContent='发送中…';meta.appendChild(s);}el.appendChild(meta);}
+    function refreshEl(m){var el=thread.querySelector('[data-id="'+m.id+'"]');if(!el)return;var old=el.querySelector('.m-meta');if(old)old.remove();renderMeta(m,el);}
+    function replayPending(){var pend=state.msgs.filter(function(m){return m.role==='me'&&m.status==='pending';});if(!pend.length||backendOff)return;pend.forEach(function(m,i){setTimeout(function(){flushOne(m);},i*400);});}
+    function pullHistory(){if(backendOff||!window.fetch)return;fetch(HISTORY_URL+encodeURIComponent(state.sid),{credentials:'same-origin'}).then(function(res){if(!res.ok)return null;return asJson(res);}).then(function(j){if(!j||j.ok!==true||!j.msgs)return;var have={};state.msgs.forEach(function(m){have[m.id]=true;});var added=false,botAdded=false;j.msgs.forEach(function(r){if(r&&r.cid&&have[r.cid])return;var isBot=r.role!=='me';var nm={id:r.cid||uid('a'),role:isBot?'bot':'me',text:String(r.text||''),ts:r.ts||Date.now(),actions:[],local:false};state.msgs.push(nm);have[nm.id]=true;added=true;if(isBot)botAdded=true;});if(added){state.msgs.sort(function(a,b){return a.ts-b.ts;});save();renderAll();if(botAdded&&card.classList.contains('hidden'))setDot(true);}}).catch(function(){});}
+    function syncSendDisabled(){sendBtn.disabled=!(input.value&&input.value.replace(/\s/g,'').length);}
+    sendBtn.addEventListener('click',function(){onUserSend(input.value);});
+    input.addEventListener('input',function(){input.style.height='auto';input.style.height=Math.min(input.scrollHeight,92)+'px';syncSendDisabled();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();onUserSend(input.value);}});
+    fab.addEventListener('click',function(){setOpen(card.classList.contains('hidden'));});
+    closeBtn.addEventListener('click',function(){setOpen(false);});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!card.classList.contains('hidden'))setOpen(false);});
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){replayPending();pullHistory();}});
+    window.addEventListener('pagehide',function(){
+      var pend=state.msgs.filter(function(m){return m.role==='me'&&m.status!=='sent';});
+      if(pend.length&&navigator.sendBeacon){
+        pend.forEach(function(m){
+          try{
+            var blob=new Blob([JSON.stringify({cid:m.id,sid:state.sid,text:m.text,email:state.email||'',path:location.pathname,ts:m.ts,beacon:1})],{type:'application/json'});
+            navigator.sendBeacon(POST_URL,blob);
+          }catch(e){}
+        });
+      }
+    });
+    if(!state.msgs.length){addBot(WELCOME,[]);}
+    renderAll();renderQuick();syncSendDisabled();setDot(false);
+    replayPending();pullHistory();
+    // 前台每 10s 轻量轮询，拉取人工客服（role=bot）回复；页面隐藏时跳过，后端缺席时 pullHistory 内部自行短路。
+    setInterval(function(){if(!document.hidden)pullHistory();},10000);
+  })();
 
   /* ---------- 宣传片视频弹窗 ---------- */
   var promoBtn=document.getElementById('promoBtn'),

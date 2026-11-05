@@ -53,6 +53,8 @@ _backup/
 # ============================================================
 # 下划线开头的临时文件与目录（任意层级；已跟踪的 _redirects 不受影响）
 **/_*
+# 例外：在线客服 Pages Functions 的后端共享模块是运行必需文件，必须入库
+!functions/api/support/_lib.js
 
 # 测试 / 归档 / 备份目录（根目录锚定）
 /backup/
@@ -114,3 +116,14 @@ _backup/
 
 # 根目录一次性批处理（start-tunnel.bat 已跟踪，不受影响）
 /*.bat
+
+# ============================================================
+# 在线客服 Pages Functions / D1：本地联调产物，禁止入库
+# ============================================================
+/.local-serve/
+/.wrangler/
+/wrangler-local.db
+/wrangler-local.db-*
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
